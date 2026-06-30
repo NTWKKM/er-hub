@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post-Intubation Sedation Order — ED MNRH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/base.css">
+    <link rel="stylesheet" href="../shared/print.css">
+    <style>
+        .sedation-card-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .sedation-card {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background: #fafafa;
+        }
+
+        .sedation-card h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--cardiac-primary);
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body class="theme-cardiac">
+<div class="container">
+
+    <!-- ══════════════ FORM ══════════════ -->
+    <div class="form-container">
+        <div class="header">
+            <h1>🌬️ Post-Intubation Sedation Generator</h1>
+            <p style="margin:4px 0;color:#666;font-size:14px;">
+                Emergency Department — Maharat Nakhon Ratchasima Hospital
+            </p>
+            <small style="color:#aaa;">
+                Guideline: ER Standing Order for Sedation (Fentanyl + Midazolam) | Update 22/04/2026
+            </small>
+        </div>
+
+        <form id="sedation-form">
+            <div class="input-layout">
+                <!-- Column 1: Patient Details -->
+                <div class="input-column">
+                    <h3>1. ข้อมูลผู้ป่วย</h3>
+                    
+                    <div class="inline-input-group">
+                        <label for="dept">Department:</label>
+                        <input type="text" id="dept" placeholder="เช่น Emergency">
+                    </div>
+                    <div class="inline-input-group">
+                        <label for="ward">Ward:</label>
+                        <input type="text" id="ward" placeholder="เช่น ER">
+                    </div>
+                    <div class="inline-input-group">
+                        <label for="hn">HN:</label>
+                        <input type="text" id="hn" required placeholder="กรอก HN">
+                    </div>
+                    <div class="inline-input-group">
+                        <label for="weight">น้ำหนัก (BW kg):</label>
+                        <input type="number" id="weight" step="0.1" min="30" max="200" required placeholder="เช่น 60.0">
+                    </div>
+                </div>
+
+                <!-- Column 2: Initial Targets -->
+                <div class="input-column">
+                    <h3>2. ตั้งขนาดยาบำรุงรักษา (Maintenance)</h3>
+                    
+                    <div class="sedation-card">
+                        <h4>Fentanyl Drip</h4>
+                        <div style="font-size:12px; color:#555; margin-bottom:8px;">
+                            สูตรเจือจาง: Fentanyl 500 mcg + NSS 100 mL (5 mcg/mL)
+                        </div>
+                        <div class="inline-input-group" style="margin-bottom:0;">
+                            <label for="fen-dose" style="width:120px;">Dose (mcg/kg/h):</label>
+                            <input type="number" id="fen-dose" step="0.1" min="0.5" max="1.0" value="0.5" required style="width:70px;">
+                            <span class="unit-label-small">(0.5–1.0)</span>
+                        </div>
+                    </div>
+
+                    <div class="sedation-card" style="margin-top:10px;">
+                        <h4>Midazolam Drip</h4>
+                        <div style="font-size:12px; color:#555; margin-bottom:8px;">
+                            สูตรเจือจาง: Midazolam 100 mg + NSS 100 mL (1 mg/mL)
+                        </div>
+                        <div class="inline-input-group" style="margin-bottom:0;">
+                            <label for="mid-dose" style="width:120px;">Dose (mg/kg/h):</label>
+                            <input type="number" id="mid-dose" step="0.01" min="0.02" max="0.2" value="0.02" required style="width:70px;">
+                            <span class="unit-label-small">(0.02–0.2)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-calculate">🧮 คำนวณขนาดยาและสร้างใบสั่งยา</button>
+            <button type="button" id="clear-btn" class="btn btn-clear">🗑️ ล้างข้อมูล (Clear)</button>
+        </form>
+    </div>
+
+    <!-- ══════════════ RESULTS ══════════════ -->
+    <div id="results-container" class="results-container hidden">
+        <div class="summary-banner">
+            <div class="dose-badge" style="background:#e8f8f0; border:1px solid #2cc771;">
+                <div>
+                    <div class="dose-label" style="color:#27ae60;">Fentanyl Infusion Rate</div>
+                    <div class="dose-num" id="screen-fen-rate" style="color:#27ae60;">--</div>
+                </div>
+            </div>
+            <div class="dose-badge" style="background:#e8f8f0; border:1px solid #2cc771;">
+                <div>
+                    <div class="dose-label" style="color:#27ae60;">Midazolam Infusion Rate</div>
+                    <div class="dose-num" id="screen-mid-rate" style="color:#27ae60;">--</div>
+                </div>
+            </div>
+        </div>
+
+        <h3>3. ตรวจสอบและพิมพ์ใบสั่งยา</h3>
+        
+        <div id="print-area">
+            <div id="print-header-container"></div>
+
+            <div class="order-grid-5col">
+                <div class="grid-header">Progress note สหสาขาวิชาชีพ</div>
+                <div class="grid-header">Date/<br>Time</div>
+                <div class="grid-header">Orders for one day</div>
+                <div class="grid-header">Date/<br>Time</div>
+                <div class="grid-header">Order for Continuation</div>
+
+                <!-- Col 1: Progress Note -->
+                <div class="grid-cell">
+                    <strong>Post Intubation Sedation (ER)</strong><br>
+                    HN: <span id="p-hn" class="highlight">--</span><br>
+                    BW: <strong id="p-weight" class="highlight">--</strong> kg
+                    <br><br>
+                    <strong>Sedation Plan:</strong><br>
+                    - Fentanyl maintenance: <span id="p-fen-dose">--</span> mcg/kg/hr<br>
+                    - Midazolam maintenance: <span id="p-mid-dose">--</span> mg/kg/hr
+                    <br><br>
+                    ลงชื่อแพทย์ผู้สั่งใช้: <span class="dotted-line"></span><br>
+                    เลขว.: <span class="dotted-line" style="min-width:45px;"></span>
+                </div>
+
+                <!-- Col 2: Date/Time -->
+                <div class="grid-cell" id="p-dt-1">--</div>
+
+                <!-- Col 3: One day orders -->
+                <div class="grid-cell">
+                    <strong>Analgesic drug:</strong>
+                    <ul class="order-list">
+                        <li>☑ Fentanyl <strong>25 - 50 mcg</strong> IV bolus stat prn pain</li>
+                    </ul>
+                    
+                    <div class="divider"></div>
+                    <strong>Continuous Drip:</strong>
+                    <div class="fib-order-box chosen" style="border-color:#28a745; background:#fafffa;">
+                        ☑ <strong>Fentanyl 500 mcg + NSS/5%DW 100 mL</strong> (5 mcg/mL)<br>
+                        IV drip <strong><span id="p-fen-rate" class="highlight">--</span> mL/hr</strong> (<span id="p-fen-target">--</span> mcg/kg/hr)
+                    </div>
+
+                    <div class="fib-order-box chosen" style="border-color:#28a745; background:#fafffa; margin-top:8px;">
+                        ☑ <strong>Midazolam 100 mg + NSS/5%DW 100 mL</strong> (1 mg/mL)<br>
+                        IV drip <strong><span id="p-mid-rate" class="highlight">--</span> mL/hr</strong> (<span id="p-mid-target">--</span> mg/kg/hr)
+                    </div>
+                </div>
+
+                <!-- Col 4: Date/Time -->
+                <div class="grid-cell" id="p-dt-2">--</div>
+
+                <!-- Col 5: Continuation -->
+                <div class="grid-cell">
+                    <strong>Sedation Target:</strong>
+                    <ul class="order-list">
+                        <li>☑ Keep sedation level (RASS score -2 to 0)</li>
+                        <li>☑ Monitor respiratory and BP signs q 1 hr</li>
+                    </ul>
+                    <div style="height:120px;"></div>
+                    ลงชื่อแพทย์ (ward): <span class="dotted-line"></span><br>
+                    เลขว.: <span class="dotted-line" style="min-width:45px;"></span>
+                    <br><br>
+                    <small style="color:#777;font-size:9px;">
+                        Update: 22/04/2026 | ED MNRH<br>
+                        Generated: <span id="p-generated">--</span>
+                    </small>
+                </div>
+            </div>
+
+            <div id="print-sticker-container"></div>
+        </div>
+
+        <button id="print-btn" class="btn btn-print">🖨️ พิมพ์ใบสั่งยา (Print Order)</button>
+    </div>
+
+</div>
+
+<script src="../shared/components.js"></script>
+<script src="../shared/calc-engine.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const $ = id => document.getElementById(id);
+
+    $('sedation-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const dept = $('dept').value.trim() || '...';
+        const ward = $('ward').value.trim() || '...';
+        const hn = $('hn').value.trim() || '...';
+        const weight = parseFloat($('weight').value);
+        const fenDose = parseFloat($('fen-dose').value);
+        const midDose = parseFloat($('mid-dose').value);
+
+        if (isNaN(weight) || weight < 30 || weight > 200) {
+            alert('กรุณากรอกน้ำหนักให้ถูกต้อง (30-200 kg)');
+            return;
+        }
+
+        // Fentanyl: conc = 5.0 mcg/mL, unit = mcg/kg/hr
+        const fenRate = calcDripRate({
+            doseValue: fenDose,
+            doseUnit: 'mcg/kg/hr',
+            weightKg: weight,
+            concentration: 5.0
+        });
+
+        // Midazolam: conc = 1.0 mg/mL, unit = mg/kg/hr
+        const midRate = calcDripRate({
+            doseValue: midDose,
+            doseUnit: 'mg/kg/hr',
+            weightKg: weight,
+            concentration: 1.0
+        });
+
+        // Update Screen
+        $('screen-fen-rate').textContent = `${fenRate.toFixed(1)} mL/hr`;
+        $('screen-mid-rate').textContent = `${midRate.toFixed(1)} mL/hr`;
+
+        // Update Print Area
+        ED_COMPONENTS.injectPrintHeader('print-header-container', dept, ward);
+        ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
+
+        $('p-hn').textContent = hn;
+        $('p-weight').textContent = weight.toFixed(1);
+        $('p-fen-dose').textContent = fenDose.toFixed(1);
+        $('p-mid-dose').textContent = midDose.toFixed(2);
+
+        $('p-fen-rate').textContent = fenRate.toFixed(1);
+        $('p-fen-target').textContent = fenDose.toFixed(1);
+        $('p-mid-rate').textContent = midRate.toFixed(1);
+        $('p-mid-target').textContent = midDose.toFixed(2);
+
+        const now = new Date();
+        const dtStr = `${ED_COMPONENTS.fmtDate(now)}<br>${ED_COMPONENTS.fmtTime(now)}`;
+        $('p-dt-1').innerHTML = dtStr;
+        $('p-dt-2').innerHTML = dtStr;
+        ED_COMPONENTS.updateGeneratedTime('p-generated', now);
+
+        $('results-container').classList.remove('hidden');
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    });
+
+    $('clear-btn').addEventListener('click', () => {
+        document.getElementById('sedation-form').reset();
+        $('results-container').classList.add('hidden');
+        $('hn').focus();
+    });
+
+    ED_COMPONENTS.setupCommonActions();
+});
+</script>
+</body>
+</html>

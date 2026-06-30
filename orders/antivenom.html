@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antivenom Standing Order — ED MNRH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/base.css">
+    <link rel="stylesheet" href="../shared/print.css">
+    <style>
+        .snake-category-box {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .snake-category-box.selected {
+            border-color: var(--cardiac-primary);
+            background: #fff5f5;
+        }
+        
+        .indication-block {
+            background: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 8px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body class="theme-cardiac">
+<div class="container">
+
+    <!-- ══════════════ FORM ══════════════ -->
+    <div class="form-container">
+        <div class="header">
+            <h1>🐍 Standing Order for Antivenom</h1>
+            <p style="margin:4px 0;color:#666;font-size:14px;">
+                Emergency Department — Maharat Nakhon Ratchasima Hospital
+            </p>
+            <small style="color:#aaa;">
+                Guideline: Standing Order for Antivenom Update | Maharat Nakhon Ratchasima Hospital
+            </small>
+        </div>
+
+        <form id="antivenom-form">
+            <div class="input-layout">
+                <!-- Column 1: Patient and History -->
+                <div class="input-column">
+                    <h3>1. ข้อมูลผู้ป่วย</h3>
+                    
+                    <div class="inline-input-group">
+                        <label for="dept">Department:</label>
+                        <input type="text" id="dept" placeholder="เช่น Emergency">
+                    </div>
+                    <div class="inline-input-group">
+                        <label for="ward">Ward:</label>
+                        <input type="text" id="ward" placeholder="เช่น ER">
+                    </div>
+                    <div class="inline-input-group">
+                        <label for="hn">HN:</label>
+                        <input type="text" id="hn" required placeholder="กรอก HN">
+                    </div>
+                    
+                    <div style="margin-top:14px; padding:10px; background:#f8f9fa; border-radius:6px;">
+                        <strong style="font-size:13.5px; display:block; margin-bottom:6px;">ประวัติวัคซีนบาดทะยัก:</strong>
+                        <select id="tetanus-select" required style="width:100%;">
+                            <option value="complete_5y">ครบ 3 เข็ม ภายใน 5 ปี</option>
+                            <option value="complete_gt5y">ครบ 3 เข็ม มากกว่า 5 ปี</option>
+                            <option value="incomplete">ไม่ได้รับ/ไม่ครบ/ไม่ทราบประวัติ</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-top:10px; padding:10px; background:#f8f9fa; border-radius:6px;">
+                        <strong style="font-size:13.5px; display:block; margin-bottom:6px;">ประวัติแพ้เซรุ่มจากม้า:</strong>
+                        <label style="cursor:pointer; font-size:13.5px;"><input type="radio" name="horse-allergy" value="no" checked> ไม่มีประวัติแพ้</label>
+                        <label style="cursor:pointer; font-size:13.5px; margin-left:15px;"><input type="radio" name="horse-allergy" value="yes"> มีประวัติแพ้ ⚠️</label>
+                        <input type="text" id="horse-allergy-detail" placeholder="ระบุอาการแพ้" style="width:100%; margin-top:5px; font-size:13px; display:none;">
+                    </div>
+
+                    <div style="margin-top:12px;">
+                        <label class="flag-label" style="font-weight: normal;">
+                            <input type="checkbox" id="use-current-time" checked>
+                            บันทึกเวลาปัจจุบัน (Use Current Time)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Column 2: Snake & Indications Check -->
+                <div class="input-column">
+                    <h3>2. คัดกรองกลุ่มพิษงูและเกณฑ์การให้เซรุ่ม (Indications)</h3>
+                    
+                    <!-- Hematotoxin -->
+                    <div class="snake-category-box selected" id="box-hemato">
+                        <label style="font-weight:bold; font-size:14.5px; cursor:pointer;">
+                            <input type="radio" name="snake-type" value="hematotoxin" checked>
+                            🩸 กลุ่มพิษต่อระบบโลหิต (Hematotoxin)
+                        </label>
+                        <div class="indication-block" id="block-hemato-ind">
+                            <strong style="font-size:12px; color:#555; display:block; margin-bottom:4px;">เลือกชนิดงู:</strong>
+                            <select id="hemato-snake-select" style="width:100%; margin-bottom:8px;">
+                                <option value="green_pit_viper">งูเขียวหางไหม้</option>
+                                <option value="malayan_pit_viper">งูกะปะ (MVP)</option>
+                                <option value="russell_viper">งูแมวเซา (RV)</option>
+                                <option value="unknown_hemato">พิษระบบโลหิตไม่ทราบชนิด (Unknown)</option>
+                            </select>
+                            
+                            <strong style="font-size:12px; color:#c0392b; display:block; margin-bottom:4px;">เกณฑ์ข้อบ่งใช้ (เลือกอย่างน้อย 1 ข้อ):</strong>
+                            <label class="flag-label"><input type="checkbox" class="ind-hemato"> Systemic bleeding (มีเลือดออกผิดปกติ)</label>
+                            <label class="flag-label"><input type="checkbox" class="ind-hemato"> INR &gt; 1.2</label>
+                            <label class="flag-label"><input type="checkbox" class="ind-hemato"> Platelet &lt; 50,000 /mm³</label>
+                            <label class="flag-label"><input type="checkbox" class="ind-hemato"> 20min WBCT unclot (เลือดไม่แข็งตัว)</label>
+                            <label class="flag-label"><input type="checkbox" class="ind-hemato"> Compartment syndrome</label>
+                        </div>
+                    </div>
+
+                    <!-- Neurotoxin -->
+                    <div class="snake-category-box" id="box-neuro">
+                        <label style="font-weight:bold; font-size:14.5px; cursor:pointer;">
+                            <input type="radio" name="snake-type" value="neurotoxin">
+                            ⚡ กลุ่มพิษต่อระบบประสาท (Neurotoxin)
+                        </label>
+                        <div class="indication-block" id="block-neuro-ind" style="display:none;">
+                            <strong style="font-size:12px; color:#555; display:block; margin-bottom:4px;">เลือกชนิดงู:</strong>
+                            <select id="neuro-snake-select" style="width:100%; margin-bottom:8px;">
+                                <option value="cobra">งูเห่า (Cobra)</option>
+                                <option value="king_cobra">งูจงอาง (King Cobra)</option>
+                                <option value="malayan_krait">งูทับสมิงคลา (Malayan Krait)</option>
+                                <option value="banded_krait">งูสามเหลี่ยม (Banded Krait)</option>
+                                <option value="unknown_neuro">พิษระบบประสาทไม่ทราบชนิด (Unknown)</option>
+                            </select>
+
+                            <strong style="font-size:12px; color:#c0392b; display:block; margin-bottom:4px;">เกณฑ์ข้อบ่งใช้ (เลือกอย่างน้อย 1 ข้อ):</strong>
+                            <label class="flag-label"><input type="checkbox" class="ind-neuro"> Weakness (กล้ามเนื้ออ่อนแรง)</label>
+                            <label class="flag-label"><input type="checkbox" class="ind-neuro"> Respiratory failure (เริ่มล้มเหลวในการหายใจ)</label>
+                            <label class="flag-label"><input type="checkbox" class="ind-neuro"> Ptosis / Dysphagia / Dysphonia (หนังตาตก/กลืนลำบาก/พูดจาอ้อแอ้)</label>
+                            <label class="flag-label"><input type="checkbox" class="ind-neuro" id="ind-krait-bite"> ประวัติโดนงูทับสมิงคลา หรือ งูสามเหลี่ยมกัดจริง (ให้เซรุ่มทันทีไม่ต้องรอกล้ามเนื้ออ่อนแรง)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-calculate">🧮 ตรวจสอบและสร้างใบสั่งเซรุ่ม</button>
+            <button type="button" id="clear-btn" class="btn btn-clear">🗑️ ล้างข้อมูล (Clear)</button>
+        </form>
+    </div>
+
+    <!-- ══════════════ RESULTS ══════════════ -->
+    <div id="results-container" class="results-container hidden">
+        <div class="summary-banner">
+            <div class="dose-badge">
+                <div>
+                    <div class="dose-label">เซรุ่มต้านพิษงู / ขนาดยาแนะนำ</div>
+                    <div class="dose-num" id="screen-dose">--</div>
+                </div>
+            </div>
+            <div class="note-pill warn" id="screen-allergy-alert" style="display:none;">⚠️ คนไข้มีประวัติแพ้วัคซีน/เซรุ่มจากม้า!</div>
+        </div>
+
+        <h3>3. ตรวจสอบและพิมพ์ใบสั่งยา</h3>
+        
+        <div id="print-area">
+            <div id="print-header-container"></div>
+
+            <div class="order-grid-5col">
+                <div class="grid-header">Progress note สหสาขาวิชาชีพ</div>
+                <div class="grid-header">Date/<br>Time</div>
+                <div class="grid-header">Orders for one day</div>
+                <div class="grid-header">Date/<br>Time</div>
+                <div class="grid-header">Order for Continuation</div>
+
+                <!-- Col 1: Progress Note -->
+                <div class="grid-cell">
+                    <strong>Venomous Snake Bite</strong><br>
+                    HN: <span id="p-hn" class="highlight">--</span><br>
+                    ประวัติวัคซีนบาดทะยัก: <span id="p-tetanus">--</span><br>
+                    ประวัติแพ้เซรุ่มม้า: <span id="p-horse-allergy">No</span>
+                    
+                    <div class="divider"></div>
+                    <strong>ผลการจำแนกงูและข้อบ่งชี้:</strong><br>
+                    งูที่ระบุ: <strong id="p-snake-name">--</strong><br>
+                    ชนิดของพิษ: <span id="p-venom-type">--</span>
+                    <div class="divider"></div>
+                    ลงชื่อแพทย์ผู้สั่งใช้ยา: <span class="dotted-line"></span><br>
+                    เลขว.: <span class="dotted-line" style="min-width:45px;"></span>
+                </div>
+
+                <!-- Col 2: Date/Time -->
+                <div class="grid-cell" id="p-dt-1">--</div>
+
+                <!-- Col 3: One day orders -->
+                <div class="grid-cell">
+                    <strong>Lab workup:</strong>
+                    <ul class="order-list" style="font-size:9.5px;">
+                        <li>☑ CBC, Coagulogram, BUN, Creatinine</li>
+                        <li>☑ 20-min WBCT (Whole Blood Clotting Time)</li>
+                    </ul>
+
+                    <div class="divider"></div>
+                    <strong>Antivenom Administration:</strong>
+                    <div class="fib-order-box chosen" id="p-antivenom-order-box">
+                        ☑ <strong>--</strong>
+                    </div>
+
+                    <div class="divider"></div>
+                    <strong>Safety &amp; Observation:</strong>
+                    <ul class="order-list" style="font-size:9.5px;">
+                        <li>☑ Observe signs of anaphylaxis during and post antivenom infusion</li>
+                        <li>☑ <strong>Prepare Adrenaline (1:1000) 0.5 mg at bedside</strong></li>
+                        <li id="p-obs-neuro" style="display:none;">☑ Observe neuro signs q 1 hr. If GCS drop &gt; 1, RR &lt; 12, ptosis, dysphagia, or weakness notify doctor</li>
+                        <li>☑ Observe for compartment syndrome (6Ps) of bitten extremity</li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Date/Time -->
+                <div class="grid-cell" id="p-dt-2">--</div>
+
+                <!-- Col 5: Continuation -->
+                <div class="grid-cell">
+                    <strong>Continuation:</strong>
+                    <ul class="order-list" style="font-size:9.5px;">
+                        <li>☑ NPO</li>
+                        <li>☑ Record vital signs</li>
+                        <li>☑ Elevate bitten area 30 degrees</li>
+                        <li>☑ Bleeding precaution</li>
+                    </ul>
+                    <div class="divider"></div>
+                    <strong>Standard Antibiotic:</strong>
+                    <ul class="order-list" style="font-size:9px;">
+                        <li>☑ Augmentin 1.2 g IV q 8 hr OR Augmentin (1g) 1x2 po pc</li>
+                        <li>☑ Paracetamol (500) 1-2 tab po prn q 4-6 hr</li>
+                        <li>☑ Penicillin allergy alternative: Ciprofloxacin (500) 1x2 po pc + Clindamycin (300) 1x3 po pc</li>
+                    </ul>
+                    <div class="divider"></div>
+                    ลงชื่อแพทย์ (ward): <span class="dotted-line"></span><br>
+                    เลขว.: <span class="dotted-line" style="min-width:45px;"></span>
+                </div>
+            </div>
+
+            <div id="print-sticker-container"></div>
+        </div>
+
+        <button id="print-btn" class="btn btn-print">🖨️ พิมพ์ใบสั่งยา (Print Order)</button>
+    </div>
+
+</div>
+
+<script src="../shared/components.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const $ = id => document.getElementById(id);
+
+    // Horse allergy text box toggle
+    const allergyRadios = document.querySelectorAll('input[name="horse-allergy"]');
+    allergyRadios.forEach(r => {
+        r.addEventListener('change', () => {
+            $('horse-allergy-detail').style.display = r.value === 'yes' ? 'block' : 'none';
+        });
+    });
+
+    // Form inputs and box selects toggle
+    const snakeRadios = document.querySelectorAll('input[name="snake-type"]');
+    snakeRadios.forEach(r => {
+        r.addEventListener('change', () => {
+            const hemSel = r.value === 'hematotoxin';
+            $('box-hemato').classList.toggle('selected', hemSel);
+            $('box-neuro').classList.toggle('selected', !hemSel);
+            $('block-hemato-ind').style.display = hemSel ? 'block' : 'none';
+            $('block-neuro-ind').style.display = hemSel ? 'none' : 'block';
+        });
+    });
+
+    // Special trigger: if Malayan krait or Banded krait is chosen, auto check the indication
+    const neuroSelect = $('neuro-snake-select');
+    neuroSelect.addEventListener('change', () => {
+        const val = neuroSelect.value;
+        if (val === 'malayan_krait' || val === 'banded_krait') {
+            $('ind-krait-bite').checked = true;
+        } else {
+            $('ind-krait-bite').checked = false;
+        }
+    });
+
+    $('antivenom-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const dept = $('dept').value.trim() || '...';
+        const ward = $('ward').value.trim() || '...';
+        const hn = $('hn').value.trim() || '...';
+        const tetanus = $('tetanus-select').value;
+        const horseAllergy = document.querySelector('input[name="horse-allergy"]:checked').value === 'yes';
+        const allergyDetail = $('horse-allergy-detail').value.trim();
+        const snakeType = document.querySelector('input[name="snake-type"]:checked').value;
+
+        // Perform Indication Checklist verification
+        let indicationCount = 0;
+        if (snakeType === 'hematotoxin') {
+            indicationCount = [...document.querySelectorAll('.ind-hemato')].filter(c => c.checked).length;
+        } else {
+            indicationCount = [...document.querySelectorAll('.ind-neuro')].filter(c => c.checked).length;
+        }
+
+        if (indicationCount === 0) {
+            alert('⚠️ กรุณาเลือกข้อบ่งใช้ (Indication) อย่างน้อย 1 ข้อ ก่อนคำนวณและสั่งใช้เซรุ่มต้านพิษงู');
+            return;
+        }
+
+        // Tetanus text translation
+        let tetanusText = '';
+        if (tetanus === 'complete_5y') TetanusText = 'ครบ 3 เข็ม ภายใน 5 ปี (ไม่ต้องฉีดเพิ่ม)';
+        else if (tetanus === 'complete_gt5y') TetanusText = 'ครบ 3 เข็ม มากกว่า 5 ปี (พิจารณาฉีด Td กระตุ้น 1 เข็ม)';
+        else TetanusText = 'ไม่ได้รับ/ไม่ทราบ/ไม่ครบ 3 เข็ม (พิจารณาให้ Tetanus vaccine + Tetagam)';
+
+        // Vial lookup and prescription details
+        let antivenomText = '';
+        let snakeName = '';
+        let screenLabel = '';
+        
+        if (snakeType === 'hematotoxin') {
+            const selectedSnake = $('hemato-snake-select').value;
+            if (selectedSnake === 'green_pit_viper') {
+                snakeName = 'งูเขียวหางไหม้';
+                antivenomText = 'Green pit viper antivenom 3 vials in NSS 100 mL IV drip in 30 min';
+                screenLabel = 'เซรุ่มงูเขียวหางไหม้ 3 ขวด (drip 30 min)';
+            } else if (selectedSnake === 'malayan_pit_viper') {
+                snakeName = 'งูกะปะ (MVP)';
+                antivenomText = 'Malayan pit viper antivenom 5 vials in NSS 100 mL IV drip in 30 min';
+                screenLabel = 'เซรุ่มงูกะปะ 5 ขวด (drip 30 min)';
+            } else if (selectedSnake === 'russell_viper') {
+                snakeName = 'งูแมวเซา (RV)';
+                antivenomText = 'Russell’s viper antivenom 5 vials in NSS 100 mL IV drip in 30 min';
+                screenLabel = 'เซรุ่มงูแมวเซา 5 ขวด (drip 30 min)';
+            } else {
+                snakeName = 'พิษระบบโลหิตไม่ทราบชนิด (Unknown)';
+                antivenomText = 'Hematotoxin antivenom (polyvalent) 5 vials in NSS 100 mL IV drip in 30 min';
+                screenLabel = 'เซรุ่มรวมพิษต่อระบบโลหิต 5 ขวด (drip 30 min)';
+            }
+        } else {
+            const selectedSnake = $('neuro-snake-select').value;
+            if (selectedSnake === 'cobra') {
+                snakeName = 'งูเห่า (Cobra)';
+                antivenomText = 'Cobra antivenom 10 vials in NSS 100 mL IV drip in 60 min';
+                screenLabel = 'เซรุ่มงูเห่า 10 ขวด (drip 60 min)';
+            } else if (selectedSnake === 'king_cobra') {
+                snakeName = 'งูจงอาง (King Cobra)';
+                antivenomText = 'King cobra antivenom 10 vials in NSS 100 mL IV drip in 60 min';
+                screenLabel = 'เซรุ่มงูจงอาง 10 ขวด (drip 60 min)';
+            } else if (selectedSnake === 'malayan_krait') {
+                snakeName = 'งูทับสมิงคลา (Malayan Krait)';
+                antivenomText = 'Malayan krait antivenom 5 vials in NSS 100 mL IV drip in 30 min';
+                screenLabel = 'เซรุ่มงูทับสมิงคลา 5 ขวด (drip 30 min)';
+            } else if (selectedSnake === 'banded_krait') {
+                snakeName = 'งูสามเหลี่ยม (Banded Krait)';
+                antivenomText = 'Neurotoxin antivenom (polyvalent) 10 vials in NSS 100 mL IV drip in 60 min';
+                screenLabel = 'เซรุ่มรวมพิษระบบประสาท 10 ขวด (drip 60 min)';
+            } else {
+                snakeName = 'พิษระบบประสาทไม่ทราบชนิด (Unknown)';
+                antivenomText = 'Neurotoxin antivenom (polyvalent) 10 vials in NSS 100 mL IV drip in 60 min';
+                screenLabel = 'เซรุ่มรวมพิษต่อระบบประสาท 10 ขวด (drip 60 min)';
+            }
+        }
+
+        // Update Screen
+        $('screen-dose').textContent = screenLabel;
+        $('screen-allergy-alert').style.display = horseAllergy ? 'inline-block' : 'none';
+
+        // Update Print Area
+        ED_COMPONENTS.injectPrintHeader('print-header-container', dept, ward);
+        ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
+
+        $('p-hn').textContent = hn;
+        $('p-tetanus').textContent = TetanusText;
+        $('p-horse-allergy').innerHTML = horseAllergy 
+            ? `<strong style="color:red;">YES ⚠️ (มีประวัติแพ้: ${allergyDetail || 'ไม่ได้ระบุ'})</strong>` 
+            : 'No';
+        
+        $('p-snake-name').textContent = snakeName;
+        $('p-venom-type').textContent = snakeType === 'hematotoxin' ? 'พิษระบบโลหิต (Hematotoxin)' : 'พิษระบบประสาท (Neurotoxin)';
+
+        $('p-antivenom-order-box').innerHTML = `☑ <strong>${antivenomText}</strong>`;
+        $('p-obs-neuro').style.display = snakeType === 'neurotoxin' ? 'list-item' : 'none';
+
+        const now = new Date();
+        const dtStr = `${ED_COMPONENTS.fmtDate(now)}<br>${ED_COMPONENTS.fmtTime(now)}`;
+        $('p-dt-1').innerHTML = dtStr;
+        $('p-dt-2').innerHTML = dtStr;
+
+        $('results-container').classList.remove('hidden');
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    });
+
+    $('clear-btn').addEventListener('click', () => {
+        document.getElementById('antivenom-form').reset();
+        $('horse-allergy-detail').style.display = 'none';
+        $('block-hemato-ind').style.display = 'block';
+        $('block-neuro-ind').style.display = 'none';
+        $('box-hemato').classList.add('selected');
+        $('box-neuro').classList.remove('selected');
+        $('results-container').classList.add('hidden');
+        $('hn').focus();
+    });
+
+    ED_COMPONENTS.setupCommonActions();
+});
+</script>
+</body>
+</html>

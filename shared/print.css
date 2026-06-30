@@ -1,0 +1,229 @@
+/* ===== Print Constraints (A4 Layout) ===== */
+#print-area {
+    font-size: 11px;
+    line-height: 1.4;
+    overflow-x: auto;
+}
+
+.print-header {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.print-header h4 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.print-header small {
+    color: #777;
+}
+
+/* 5-column Doctor Order grid */
+.order-grid-5col {
+    display: grid;
+    grid-template-columns: 2fr 1fr 3fr 1fr 3fr;
+    border: 1px solid #000;
+    min-width: 900px; /* Keep table format intact on screen */
+    background: #fff;
+    color: #000;
+}
+
+.grid-header {
+    font-weight: bold;
+    background-color: #e9ecef;
+    padding: 6px 4px;
+    border-bottom: 1px solid #000;
+    border-right: 1px solid #000;
+    text-align: center;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.3;
+}
+
+.grid-header:last-child {
+    border-right: none;
+}
+
+.grid-cell {
+    padding: 6px 5px;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+    vertical-align: top;
+    font-size: 10.5px;
+    background: #fff;
+    color: #000;
+}
+
+.grid-cell:nth-child(5n) {
+    border-right: none;
+}
+
+.grid-cell:nth-child(5n+2),
+.grid-cell:nth-child(5n+4) {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #c0392b;
+}
+
+.order-list {
+    padding-left: 15px;
+    margin: 2px 0;
+}
+
+.order-list li {
+    margin-bottom: 2px;
+    line-height: 1.4;
+}
+
+.divider {
+    border-top: 1px solid #ddd;
+    margin: 5px 0;
+}
+
+.dotted-line {
+    border-bottom: 1px dotted #000;
+    display: inline-block;
+    min-width: 70px;
+}
+
+/* Fibrinolysis and Anticoagulant choice print cards */
+.fib-order-box, .ac-opt {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 6px 8px;
+    margin-top: 4px;
+    font-size: 10.5px;
+}
+
+.fib-order-box.chosen, .ac-opt.recommended {
+    border: 2px solid #c0392b;
+    background: #fff8f8;
+}
+
+.ac-opt.na {
+    opacity: 0.55;
+    font-size: 9.5px;
+}
+
+.monitor-alert {
+    margin-top: 4px;
+    padding: 5px 7px;
+    background: #fff3cd;
+    border-left: 3px solid #e67e22;
+    font-size: 9.5px;
+    line-height: 1.5;
+}
+
+/* Patient Sticker Box */
+.sticker-box-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.sticker-area {
+    border: 1px dashed #999;
+    padding: 10px;
+    width: 200px;
+    height: 65px;
+    text-align: center;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+/* Print Overrides */
+@media print {
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 210mm;
+        background: #fff;
+        color: #000;
+    }
+    
+    .form-container,
+    .summary-banner,
+    .grace-summary,
+    .results-container > h3,
+    .btn-print,
+    .btn-clear,
+    #print-btn,
+    header,
+    nav {
+        display: none !important;
+    }
+    
+    .container {
+        box-shadow: none;
+        max-width: 100%;
+        border-radius: 0;
+        padding: 0;
+        margin: 0;
+        background: #fff;
+    }
+    
+    .results-container {
+        margin: 0;
+        padding: 4mm;
+        border-top: none;
+        background: #fff;
+    }
+    
+    #print-area {
+        border: none;
+        font-size: 9pt;
+        line-height: 1.3;
+        overflow: visible;
+    }
+    
+    .order-grid-5col {
+        min-width: auto;
+        border: 1px solid #000;
+        page-break-inside: avoid;
+    }
+    
+    .grid-cell, .grid-header {
+        padding: 3px;
+        border-right: 1px solid #000;
+        border-bottom: 1px solid #000;
+    }
+    
+    .order-grid-5col .grid-header:first-child { 
+        font-size: 8pt; 
+        line-height: 1.1;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    
+    .fib-order-box.chosen, .ac-opt.recommended {
+        border: 2px solid #000 !important;
+        background: #f4f4f4 !important;
+    }
+    
+    .sticker-area {
+        width: 58mm;
+        height: 20mm;
+        font-size: 8pt;
+        border: 1px dashed #000 !important;
+    }
+    
+    .sticker-box-container {
+        page-break-inside: avoid;
+    }
+
+    /* Keep table styling standard */
+    .tnk-table tr.active-row {
+        background: #ddd !important;
+    }
+}

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IV Infusion Drip Calculator — ED MNRH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/base.css">
+    <style>
+        /* Neutral Green theme variables local override */
+        .theme-neutral h1 { color: #27ae60; }
+        .theme-neutral h3 { border-bottom: 2px solid #27ae60; }
+        
+        .calculator-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 15px;
+        }
+
+        .result-box {
+            background: #e8f8f0;
+            border: 2px solid #2cc771;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .rate-large {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #e67e22;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .guide-box {
+            background: #f4f6f7;
+            border-left: 4px solid #7f8c8d;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #27ae60;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .unit-label-small {
+            font-size: 13px;
+            color: #666;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body class="theme-neutral">
+<div class="container">
+    <div class="form-container">
+        <a href="../index.html" class="back-link">← กลับหน้าหลัก Portal</a>
+        
+        <div class="header">
+            <h1>🧪 IV Infusion Drip Calculator</h1>
+            <p style="margin:4px 0;color:#666;font-size:14px;">
+                Emergency Department — Maharat Nakhon Ratchasima Hospital
+            </p>
+            <small style="color:#aaa;">
+                เครื่องมือคำนวณอัตราการหยดยาทางหลอดเลือดดำ (mL/hr) สำหรับยากลุ่ม HAD ทั้ง 12 ชนิด
+            </small>
+        </div>
+
+        <form id="calc-form">
+            <div class="input-layout">
+                <!-- Column 1: Patient Weight & Drug -->
+                <div class="input-column">
+                    <h3>1. เลือกยาและข้อมูลคนไข้</h3>
+                    
+                    <div class="inline-input-group">
+                        <label for="weight">น้ำหนัก (BW kg):</label>
+                        <input type="number" id="weight" step="0.1" min="30" max="200" required placeholder="เช่น 60.0">
+                    </div>
+
+                    <div class="inline-input-group">
+                        <label for="drug-select">เลือกยา IV:</label>
+                        <select id="drug-select" required>
+                            <option value="">-- เลือกยากลุ่มเสี่ยงสูง --</option>
+                        </select>
+                    </div>
+
+                    <div class="inline-input-group">
+                        <label for="prep-select">สูตรการเตรียมยา:</label>
+                        <select id="prep-select" required disabled>
+                            <option value="">-- กรุณาเลือกยาก่อน --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Column 2: Dose & Rate -->
+                <div class="input-column">
+                    <h3>2. กำหนดขนาดของยา (Target Dose)</h3>
+                    
+                    <div class="inline-input-group">
+                        <label for="dose-input">ขนาดยาที่ต้องการ:</label>
+                        <input type="number" id="dose-input" step="0.01" required disabled placeholder="ระบุขนาดยา">
+                        <span id="unit-display" class="unit-label-small"></span>
+                    </div>
+
+                    <div id="esmolol-dual-display" style="display:none; padding-left:150px; margin-top:-5px; margin-bottom:10px;">
+                        <span id="esmolol-alt-value" style="font-weight:bold; color:#e67e22; font-size:13.5px;"></span>
+                    </div>
+
+                    <div class="inline-input-group">
+                        <label>ความเข้มข้นหลังผสม:</label>
+                        <input type="text" id="concentration-display" readonly style="background:#f8f9fa;" placeholder="ความเข้มข้น">
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-calculate" style="background:#27ae60;">🧮 คำนวณอัตราการหยด (mL/hr)</button>
+        </form>
+
+        <!-- Calculation Result -->
+        <div id="result-container" class="hidden">
+            <div class="result-box">
+                <div>
+                    <strong style="font-size:15px; color:#2c3e50;">อัตราการบริหารยาทาง Infusion Pump:</strong>
+                    <div style="font-size:12px; color:#666; margin-top:4px;">
+                        คำนวณสำหรับน้ำหนัก <span id="res-weight">--</span> kg | ขนาดที่ต้องการ <span id="res-target">--</span>
+                    </div>
+                </div>
+                <div class="rate-large"><span id="res-rate">--</span> mL/hr</div>
+            </div>
+
+            <!-- Titration Guide -->
+            <div id="guide-container" class="guide-box">
+                <strong>📝 คู่มือการปรับขนาดยา (Titration Guide):</strong>
+                <p id="guide-text" style="margin:6px 0 0 0;"></p>
+            </div>
+
+            <!-- Safety Warnings -->
+            <div id="warning-container" class="warning-box">
+                <strong>⚠️ ข้อควรระวังและความปลอดภัย (HAD Safety warnings):</strong>
+                <ul id="warning-list" style="margin:6px 0 0 0; padding-left:20px;"></ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="../shared/calc-engine.js"></script>
+<script src="../shared/drug-data.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const $ = id => document.getElementById(id);
+    
+    const drugSelect = $('drug-select');
+    const prepSelect = $('prep-select');
+    const doseInput = $('dose-input');
+    const unitDisplay = $('unit-display');
+    const concDisplay = $('concentration-display');
+    const resultContainer = $('result-container');
+    const esmololDualDisplay = $('esmolol-dual-display');
+    const esmololAltValue = $('esmolol-alt-value');
+
+    // Populate drug select dropdown
+    EMERGENCY_DRUG_DATA.forEach(drug => {
+        const opt = document.createElement('option');
+        opt.value = drug.id;
+        opt.textContent = `${drug.name} (${drug.thaiName || ''})`;
+        drugSelect.appendChild(opt);
+    });
+
+    let selectedDrug = null;
+    let selectedPrep = null;
+
+    // Handle drug selection change
+    drugSelect.addEventListener('change', () => {
+        const drugId = drugSelect.value;
+        resultContainer.classList.add('hidden');
+        esmololDualDisplay.style.display = 'none';
+
+        if (!drugId) {
+            prepSelect.innerHTML = '<option value="">-- กรุณาเลือกยาก่อน --</option>';
+            prepSelect.disabled = true;
+            doseInput.disabled = true;
+            doseInput.value = '';
+            unitDisplay.textContent = '';
+            concDisplay.value = '';
+            return;
+        }
+
+        selectedDrug = EMERGENCY_DRUG_DATA.find(d => d.id === drugId);
+        
+        // Populate preparations dropdown
+        prepSelect.innerHTML = '';
+        selectedDrug.preparations.forEach((prep, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = prep.label;
+            prepSelect.appendChild(opt);
+        });
+        prepSelect.disabled = false;
+
+        // Set default preparation
+        prepSelect.value = selectedDrug.defaultPreparationIndex;
+        selectedPrep = selectedDrug.preparations[selectedDrug.defaultPreparationIndex];
+
+        // Configure dose input parameters
+        doseInput.disabled = false;
+        doseInput.min = selectedDrug.doseRange.min;
+        doseInput.max = selectedDrug.doseRange.max;
+        doseInput.step = selectedDrug.doseRange.step;
+        doseInput.value = selectedDrug.doseRange.default;
+        
+        unitDisplay.textContent = selectedDrug.doseUnit;
+        concDisplay.value = `${selectedPrep.concentration} units/mL`;
+
+        updateEsmololDualDisplay();
+    });
+
+    // Handle preparation selection change
+    prepSelect.addEventListener('change', () => {
+        if (!selectedDrug) return;
+        const idx = parseInt(prepSelect.value);
+        selectedPrep = selectedDrug.preparations[idx];
+        concDisplay.value = `${selectedPrep.concentration} units/mL`;
+        resultContainer.classList.add('hidden');
+    });
+
+    // Handle dose input updates (specifically for Esmolol dual units display)
+    doseInput.addEventListener('input', () => {
+        updateEsmololDualDisplay();
+    });
+
+    function updateEsmololDualDisplay() {
+        if (selectedDrug && selectedDrug.id === 'esmolol') {
+            const val = parseFloat(doseInput.value);
+            if (!isNaN(val)) {
+                // 1 mg/kg/min = 1000 mcg/kg/min
+                const mcgVal = Math.round(val * 1000);
+                esmololAltValue.textContent = `เทียบเท่ากับ: ${mcgVal} mcg/kg/min`;
+                esmololDualDisplay.style.display = 'block';
+            } else {
+                esmololDualDisplay.style.display = 'none';
+            }
+        } else {
+            esmololDualDisplay.style.display = 'none';
+        }
+    }
+
+    // Form submit / calculation
+    $('calc-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const weight = parseFloat($('weight').value);
+        const dose = parseFloat(doseInput.value);
+
+        if (isNaN(weight) || weight < 30 || weight > 200) {
+            alert('กรุณากรอกน้ำหนักตัวคนไข้ให้ถูกต้อง (30-200 kg)');
+            return;
+        }
+
+        if (!selectedDrug || !selectedPrep) return;
+
+        // Run calculation engine
+        const rate = calcDripRate({
+            doseValue: dose,
+            doseUnit: selectedDrug.doseUnit,
+            weightKg: weight,
+            concentration: selectedPrep.concentration
+        });
+
+        // Update screen display
+        $('res-weight').textContent = weight;
+        
+        // Esmolol special display format
+        if (selectedDrug.id === 'esmolol') {
+            $('res-target').textContent = `${dose} mg/kg/min (${Math.round(dose * 1000)} mcg/kg/min)`;
+        } else {
+            $('res-target').textContent = `${dose} ${selectedDrug.doseUnit}`;
+        }
+        
+        $('res-rate').textContent = rate.toFixed(1);
+
+        // Render titration guide
+        $('guide-text').textContent = selectedDrug.titrationGuide;
+
+        // Render safety warnings list
+        const warningList = $('warning-list');
+        warningList.innerHTML = '';
+        selectedDrug.safetyWarnings.forEach(w => {
+            const li = document.createElement('li');
+            li.textContent = w;
+            warningList.appendChild(li);
+        });
+
+        resultContainer.classList.remove('hidden');
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    });
+});
+</script>
+</body>
+</html>
