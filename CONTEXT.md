@@ -49,7 +49,7 @@
 
 ### ADR-05: Portal Card Simplification
 - **Context:** The original portal displayed detailed Thai descriptions on each card, a yellow alert banner for rt-PA Stroke redirect, and a section title "📄 รายการ Standing Orders สำหรับผู้ป่วยฉุกเฉิน". This created visual clutter and duplicated information already conveyed by the card titles.
-- **Decision:** Remove all card descriptions, the yellow alert banner, and the section title. Cards display only icon + name + status badge + print-blank button. Cards are center-aligned with reduced padding (18px 20px) and tighter grid (280px min, 16px gap).
+- **Decision:** Remove all card descriptions, the yellow alert banner, and the section title. Cards display only icon + name + print-blank button. Cards are center-aligned with reduced padding (18px 20px) and tighter grid (280px min, 16px gap).
 - **Rationale:** ER staff already know what each protocol does from the name alone. Compact cards increase scan density and reduce cognitive load during high-pressure situations.
 
 ### ADR-06: Lab/IV/O2 Print Hygiene
@@ -61,3 +61,8 @@
 - **Context:** Portal cards displayed status badges ("ใช้งานจริง (Production)" / "อัปเดตใหม่ (New)") and the header used an emoji (🏥) as a logo. The badges added visual noise without clinical utility; the emoji lacked professional branding.
 - **Decision:** Remove all status badges from portal cards. Replace the emoji with a minimal inline SVG logo (52×52, circle + medical cross, white on blue gradient). Place logo and title on the same flex row.
 - **Rationale:** ER staff do not need production/new labels — all protocols in the hub are production-ready. A clean medical-cross logo conveys clinical authority without relying on platform-dependent emoji rendering.
+
+### ADR-08: A4 Print Standardization
+- **Context:** Print output across the 7 order pages was inconsistent — no explicit `@page` directive, `body { display: flex }` from `base.css` broke print flow, the 5-column grid had `min-width: 900px` exceeding A4 width (210mm ≈ 794px), and font sizes varied per page.
+- **Decision:** Centralize all print rules in `shared/print.css` with `@page { size: A4; margin: 8mm 10mm 10mm 10mm }`. Override `body { display: block !important }` in print. Set grid to `min-width: auto; width: 100%; font-size: 8pt`. Unify all print font sizes (grid 8pt, headers 8pt, lists 8pt, fib boxes 8pt). Force black-on-white with `print-color-adjust: exact`. Stroke multi-page documents use `width: 100%` with `page-break-before: always`.
+- **Rationale:** A single shared print stylesheet ensures all 7 order pages produce consistent, properly-sized A4 output. The `@page` directive gives the browser explicit paper dimensions. Overriding the screen flex layout prevents content from being squeezed into a centered column during print.
