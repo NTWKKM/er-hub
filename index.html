@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ED Standing Order Hub — Maharat Nakhon Ratchasima Hospital</title>
+    <title>MNRH-ED Standing Order Hub — Maharat Nakhon Ratchasima Hospital</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
@@ -60,51 +60,6 @@
             opacity: 0.9;
         }
 
-        .alert-stroke-badge {
-            background: #ffeaa7;
-            border: 2px solid #e67e22;
-            color: #d35400;
-            border-radius: 8px;
-            padding: 16px 20px;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(230, 126, 34, 0.15);
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .alert-stroke-badge h4 {
-            margin: 0 0 4px 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .alert-stroke-badge p {
-            margin: 0;
-            font-size: 13.5px;
-        }
-
-        .btn-stroke-direct {
-            background: #007bff;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 14.5px;
-            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
-            transition: all 0.2s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-stroke-direct:hover {
-            background: #0056b3;
-            box-shadow: 0 4px 10px rgba(0, 86, 179, 0.35);
-        }
-
         .grid-section-title {
             font-size: 1.35em;
             font-weight: bold;
@@ -117,21 +72,23 @@
 
         .portal-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
         }
 
         .portal-card {
             background: #fff;
             border: 1px solid #dee2e6;
             border-radius: 8px;
-            padding: 24px;
+            padding: 18px 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             transition: all 0.25s ease-in-out;
             text-decoration: none;
             color: inherit;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            text-align: center;
             justify-content: space-between;
         }
 
@@ -142,39 +99,30 @@
         }
 
         .card-header-block {
-            margin-bottom: 15px;
+            margin-bottom: 0;
         }
 
         .card-icon {
-            font-size: 2.2em;
-            margin-bottom: 10px;
+            font-size: 1.8em;
+            margin-bottom: 6px;
             display: inline-block;
         }
 
         .card-title {
-            font-size: 17px;
+            font-size: 15px;
             font-weight: bold;
             color: #1e3c72;
-            margin: 0 0 6px 0;
-        }
-
-        .card-desc {
-            font-size: 13.5px;
-            color: #666;
-            line-height: 1.5;
             margin: 0;
         }
 
         .card-status {
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             display: inline-block;
             padding: 3px 8px;
             border-radius: 4px;
-            margin-top: 15px;
-            align-self: flex-start;
         }
 
         .status-production {
@@ -191,8 +139,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: 15px;
+            margin-top: 12px;
             gap: 10px;
+            width: 100%;
         }
 
         .btn-card-print-blank {
@@ -220,28 +169,17 @@
 <div class="portal-container">
     <!-- Header -->
     <div class="portal-header">
-        <h1>🏥 ED Standing Order &amp; Drip Hub</h1>
-        <p>ศูนย์รวมเครื่องมือคำนวณและผลิตใบสั่งแพทย์ (Standing Orders) ประจำแผนกอุบัติเหตุและฉุกเฉิน โรงพยาบาลมหาราชนครราชสีมา</p>
-    </div>
-
-    <!-- Alert / Backward Compatibility Banner -->
-    <div class="alert-stroke-badge">
-        <div>
-            <h4>🧠 หากต้องการหน้าคำนวณ rt-PA Stroke FAST TRACK ดั้งเดิม?</h4>
-            <p>ทางระบบได้ย้ายหน้าคำนวณประเมิน rt-PA Stroke เดิมไปที่หมวดหมู่ Standing Orders แล้ว เพื่อสุขอนามัยที่ดีของระบบ</p>
-        </div>
-        <a href="orders/rtpa.html" class="btn-stroke-direct">👉 เข้าสู่หน้า rt-PA Stroke (ยืนยัน)</a>
+        <h1>🏥 MNRH-ED Standing Order &amp; Drip Hub</h1>
+        <p>ศูนย์รวมเครื่องมือคำนวณและผลิตใบสั่งแพทย์ (Standing Orders) ประจำแผนกอุบัติเหตุและฉุกเฉิน</p>
     </div>
 
     <!-- Standing Orders Section -->
-    <div class="grid-section-title">📄 รายการ Standing Orders สำหรับผู้ป่วยฉุกเฉิน</div>
     <div class="portal-grid">
         <!-- rt-PA Stroke -->
         <a href="orders/rtpa.html" class="portal-card">
             <div class="card-header-block">
                 <span class="card-icon">🧠</span>
                 <h4 class="card-title">rt-PA Stroke FAST TRACK</h4>
-                <p class="card-desc">ใบประเมินเกณฑ์ Inclusion/Exclusion, หนังสือแสดงความยินยอม และใบสั่งยาคำนวณ Dose rt-PA (Alteplase) ของคนไข้</p>
             </div>
             <div class="card-footer">
                 <span class="card-status status-production">ใช้งานจริง (Production)</span>
@@ -254,7 +192,6 @@
             <div class="card-header-block">
                 <span class="card-icon">🫀</span>
                 <h4 class="card-title">STEMI Standing Order</h4>
-                <p class="card-desc">คำนวณขนาดและสั่งใช้ยา Tenecteplase (TNK) หรือ Streptokinase (SK) พร้อมใบ Doctor Order และ Progress Note มาตรฐาน</p>
             </div>
             <div class="card-footer">
                 <span class="card-status status-production">ใช้งานจริง (Production)</span>
@@ -267,7 +204,6 @@
             <div class="card-header-block">
                 <span class="card-icon">🩸</span>
                 <h4 class="card-title">NSTEMI Standing Order</h4>
-                <p class="card-desc">ประเมินระดับความเสี่ยงด้วยระบบ GRACE Score คาดการณ์เวลาเจาะ Troponin H0/H1/H3 และให้ยาป้องกันการแข็งตัวของเลือดตาม eGFR</p>
             </div>
             <div class="card-footer">
                 <span class="card-status status-production">ใช้งานจริง (Production)</span>
@@ -280,7 +216,6 @@
             <div class="card-header-block">
                 <span class="card-icon">🫁</span>
                 <h4 class="card-title">Massive PE Fibrinolysis</h4>
-                <p class="card-desc">ประเมินข้อบ่งชี้คัดกรองภาวะลิ่มเลือดอุดกั้นในปอดรุนแรง และคำนวณสูตรยาละลายลิ่มเลือด (SK/rt-PA) ทั้ง 4 Regimens</p>
             </div>
             <div class="card-footer">
                 <span class="card-status status-new">อัปเดตใหม่ (New)</span>
@@ -293,7 +228,6 @@
             <div class="card-header-block">
                 <span class="card-icon">💊</span>
                 <h4 class="card-title">Heparin Standalone Protocol</h4>
-                <p class="card-desc">ประเมินคัดกรองภาวะเลือดออกง่าย 12 ประการ คำนวณขนาด Dose เริ่มต้น 4 กลุ่มโรค และเครื่องมือปรับอัตราการหยดยาด้วย aPTT ratio</p>
             </div>
             <div class="card-footer">
                 <span class="card-status status-new">อัปเดตใหม่ (New)</span>
@@ -306,7 +240,6 @@
             <div class="card-header-block">
                 <span class="card-icon">🐍</span>
                 <h4 class="card-title">Antivenom Standing Order</h4>
-                <p class="card-desc">คัดกรองประเมินข้อบ่งชี้รับเซรุ่มแก้พิษงู จำแนกปริมาณขวดยาและเวลาบริหารตามกลุ่มพิษประสาท/ระบบโลหิต 8 ชนิดงู</p>
             </div>
             <div class="card-footer">
                 <span class="card-status status-new">อัปเดตใหม่ (New)</span>
@@ -319,7 +252,6 @@
             <div class="card-header-block">
                 <span class="card-icon">🌬️</span>
                 <h4 class="card-title">Post-Intubation Sedation</h4>
-                <p class="card-desc">ใบประเมินและสั่งยาสำหรับความระงับความรู้สึกหลังใส่ท่อช่วยหายใจ (Fentanyl + Midazolam drip) คำนวณอัตราหยดตรงสัมพันธ์กับน้ำหนักตัว</p>
             </div>
             <div class="card-footer">
                 <span class="card-status status-new">อัปเดตใหม่ (New)</span>
@@ -336,7 +268,6 @@
             <div class="card-header-block">
                 <span class="card-icon">🧪</span>
                 <h4 class="card-title">IV Infusion Drip Calculator</h4>
-                <p class="card-desc">คำนวณอัตราหยด mL/hr ของยาสารน้ำความเสี่ยงสูง 12 ชนิดอ้างอิงของโรงพยาบาล แบบหยดคงที่หรืออ้างอิงน้ำหนักตัวคนไข้</p>
             </div>
             <span class="card-status status-new">เครื่องมือแพทย์ (Tool)</span>
         </a>

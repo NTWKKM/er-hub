@@ -39,10 +39,20 @@
 
 ### ADR-03: Backward-Compatible Root URL
 - **Context:** Overwriting `index.html` with the new ER-Hub portal might disrupt clinical staff accessing the rt-PA Stroke page directly via old links or QR codes.
-- **Decision:** Use `index.html` as the ER-Hub portal, but implement a prominent visual link at the header and automatic query routing (e.g., checking if the incoming path has a query or hash for stroke, or placing a clear rt-PA badge at the top page fold).
-- **Rationale:** Minimizes disruption to emergency pathways while adopting a cleaner hierarchical codebase layout.
+- **Decision:** Use `index.html` as the ER-Hub portal with a JS redirect script that detects old query/hash parameters (`order=rtpa`, `hn=`, `weight=`) and auto-redirects to `orders/rtpa.html`. The rt-PA card remains the first card in the portal grid for discoverability.
+- **Rationale:** Minimizes disruption to emergency pathways while adopting a cleaner hierarchical codebase layout. The JS redirect handles all legacy URL patterns without requiring a visible banner.
 
 ### ADR-04: Manual Input Streamlining and Blank Orders
 - **Context:** Emergency Room clinical workflow requires maximum speed. Manually typing department and ward details on screen adds friction. Attending staff sometimes need to print blank order templates immediately for manual checkout.
 - **Decision:** Remove `Department` and `Ward` screen input fields. Default the printed header to blank dotted lines for manual entry. Introduce a "Print Blank Order" button on all forms that bypasses validation and triggers `window.print()` with an empty order template.
 - **Rationale:** Reduces on-screen data-entry overhead and provides a fallback paper workflow for high-velocity emergencies.
+
+### ADR-05: Portal Card Simplification
+- **Context:** The original portal displayed detailed Thai descriptions on each card, a yellow alert banner for rt-PA Stroke redirect, and a section title "📄 รายการ Standing Orders สำหรับผู้ป่วยฉุกเฉิน". This created visual clutter and duplicated information already conveyed by the card titles.
+- **Decision:** Remove all card descriptions, the yellow alert banner, and the section title. Cards display only icon + name + status badge + print-blank button. Cards are center-aligned with reduced padding (18px 20px) and tighter grid (280px min, 16px gap).
+- **Rationale:** ER staff already know what each protocol does from the name alone. Compact cards increase scan density and reduce cognitive load during high-pressure situations.
+
+### ADR-06: Lab/IV/O2 Print Hygiene
+- **Context:** Previous print output auto-checked (☑) lab investigations, IV fluids, oxygen, monitoring, and non-drug continuation orders when patient data was entered. This created a clinical risk: pre-checked orders could be misinterpreted as physician-approved.
+- **Decision:** All lab investigations, IV fluids, oxygen orders, monitoring instructions, and non-drug continuation orders render as unchecked (☐) in print output regardless of whether patient data has been entered. Only drug-related orders (ASA, Clopidogrel, Fentanyl, Midazolam, Heparin dosing, Antivenom dosing, Antibiotics) auto-check (☑) based on input data.
+- **Rationale:** Investigations and supportive care must be explicitly ordered by the attending physician. Pre-checking them creates medico-legal risk. Drug orders that are calculated from patient data are the system's clinical output and should remain checked.

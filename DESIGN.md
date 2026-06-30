@@ -35,6 +35,7 @@
 
 | Component | Role / Target | States & Props |
 |---|---|---|
+| **Portal Card** | Compact name-only card linking to each Standing Order. Center-aligned, icon + title only. | `.hover` (Blue border + lift), Default (Light gray border). `padding: 18px 20px`, `min-width: 280px`, `gap: 16px`. |
 | **Fibrinolytic / Drug Card** | Card layout to select drugs. | `.selected` (Red border + light red BG), `.hover` (Muted red border), Default (Light gray border) |
 | **Print Order Grid** | 5-column grid mapping to hospital medical chart layout. | `grid-template-columns: 2fr 1fr 3fr 1fr 3fr;` |
 | **Dose Summary Banner** | Large visual badge displaying computed dose on screen. | `#screen-dose` or `#screen-grace`. Light yellow/red backgrounds. |
@@ -55,3 +56,4 @@
 - **Page Break Control:** `page-break-inside: avoid` applied to order grids and sticker boxes to prevent text orphans.
 - **No-Print Classes:** Screen-only controls, forms, banners, and buttons are hidden using `display: none !important` during print layout formatting.
 - **Manual Fill Support:** When printing blank orders, checkboxes are rendered as unchecked (`☐`), and calculated fields/patient variables are replaced with standard dotted lines (`....................`) to allow clear manual entries.
+- **Lab/IV/O2 Hygiene:** Lab investigations, IV fluids, oxygen, monitoring, and non-drug continuation orders always render as ☐ in print output. Only drug-related orders auto-check (☑) based on input data.

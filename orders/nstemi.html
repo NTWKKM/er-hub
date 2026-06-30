@@ -435,19 +435,19 @@
                 <div class="grid-cell">
                     <strong>Labs &amp; Investigations:</strong>
                     <ul class="order-list">
-                        <li>☑ CBC, PT, PTT, INR</li>
-                        <li>☑ BUN, Cr, E'lyte, Ca, Mg, P</li>
-                        <li>☑ Anti-HIV</li>
-                        <li id="p-troponin-lab">☑ hs-troponin I Hr.0 and 3</li>
-                        <li>☑ CXR</li>
-                        <li>☑ EKG 12 leads</li>
+                        <li>☐ CBC, PT, PTT, INR</li>
+                        <li>☐ BUN, Cr, E'lyte, Ca, Mg, P</li>
+                        <li>☐ Anti-HIV</li>
+                        <li id="p-troponin-lab">☐ hs-troponin I Hr.0 and 3</li>
+                        <li>☐ CXR</li>
+                        <li>☐ EKG 12 leads</li>
                     </ul>
 
                     <div class="divider"></div>
                     <strong>IV / O2:</strong>
                     <ul class="order-list">
-                        <li>☑ NSS 500 ml IV 40 ml/hr Lt. arm (non-AVF)</li>
-                        <li>☑ O2 canula 3 L if O2sat &lt; 90%</li>
+                        <li>☐ NSS 500 ml IV 40 ml/hr Lt. arm (non-AVF)</li>
+                        <li>☐ O2 canula 3 L if O2sat &lt; 90%</li>
                     </ul>
 
                     <div class="divider"></div>
@@ -465,11 +465,11 @@
                     <div class="divider"></div>
                     <strong>Others:</strong>
                     <ul class="order-list">
-                        <li>☑ Standby Echo (IPD case)</li>
-                        <li>☑ Standby CAG</li>
-                        <li>☑ พรุ่งนี้ FBS, lipid profile</li>
-                        <li>☑ Consult cardiac rehab</li>
-                        <li>☑ Consult เลิกบุหรี่ (ถ้ายังสูบ)</li>
+                        <li>☐ Standby Echo (IPD case)</li>
+                        <li>☐ Standby CAG</li>
+                        <li>☐ พรุ่งนี้ FBS, lipid profile</li>
+                        <li>☐ Consult cardiac rehab</li>
+                        <li>☐ Consult เลิกบุหรี่ (ถ้ายังสูบ)</li>
                     </ul>
                     <br>
                     ลงชื่อแพทย์ (ER/ward) <span class="dotted-line"></span>
@@ -768,8 +768,8 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-h3').textContent = ED_COMPONENTS.fmtTime(h3t);
         $('p-rphch-note').textContent = fromRpc ? '(เจาะจาก รพช. แล้ว — ไม่ต้องเจาะซ้ำ)' : '';
         $('p-troponin-lab').innerHTML = fromRpc
-            ? '☑ hs-troponin I Hr.0 and 3<br><small style="color:#888;">(เจาะจาก รพช. แล้ว — ไม่ต้องซ้ำ)</small>'
-            : '☑ hs-troponin I Hr.0 and 3';
+            ? '☐ hs-troponin I Hr.0 and 3<br><small style="color:#888;">(เจาะจาก รพช. แล้ว — ไม่ต้องซ้ำ)</small>'
+            : '☐ hs-troponin I Hr.0 and 3';
 
         $('p-dt-1').innerHTML = dtStr;
         $('p-dt-2').innerHTML = dtStr;
