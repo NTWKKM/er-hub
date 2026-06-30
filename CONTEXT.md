@@ -57,10 +57,10 @@
 - **Decision:** All lab investigations, IV fluids, oxygen orders, monitoring instructions, and non-drug continuation orders render as unchecked (☐) in print output regardless of whether patient data has been entered. Only drug-related orders (ASA, Clopidogrel, Fentanyl, Midazolam, Heparin dosing, Antivenom dosing, Antibiotics) auto-check (☑) based on input data.
 - **Rationale:** Investigations and supportive care must be explicitly ordered by the attending physician. Pre-checking them creates medico-legal risk. Drug orders that are calculated from patient data are the system's clinical output and should remain checked.
 
-### ADR-07: Status Badge Removal and Minimal Logo
+### ADR-07: Status Badge Removal and Hospital Logo
 - **Context:** Portal cards displayed status badges ("ใช้งานจริง (Production)" / "อัปเดตใหม่ (New)") and the header used an emoji (🏥) as a logo. The badges added visual noise without clinical utility; the emoji lacked professional branding.
-- **Decision:** Remove all status badges from portal cards. Replace the emoji with a minimal inline SVG logo (52×52, circle + medical cross, white on blue gradient). Place logo and title on the same flex row.
-- **Rationale:** ER staff do not need production/new labels — all protocols in the hub are production-ready. A clean medical-cross logo conveys clinical authority without relying on platform-dependent emoji rendering.
+- **Decision:** Remove all status badges from portal cards. Replace the emoji with the official Maharat Nakhon Ratchasima Hospital logo (`docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`, 52×52). Place logo and title on the same flex row. Remove the Thai subtitle line for a cleaner header.
+- **Rationale:** ER staff do not need production/new labels — all protocols in the hub are production-ready. The hospital's official logo conveys clinical authority and institutional identity without relying on platform-dependent emoji rendering.
 
 ### ADR-08: A4 Print Standardization
 - **Context:** Print output across the 7 order pages was inconsistent — no explicit `@page` directive, `body { display: flex }` from `base.css` broke print flow, the 5-column grid had `min-width: 900px` exceeding A4 width (210mm ≈ 794px), and font sizes varied per page.

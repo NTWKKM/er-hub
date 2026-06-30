@@ -36,7 +36,7 @@
 | Component | Role / Target | States & Props |
 |---|---|---|
 | **Portal Card** | Compact name-only card linking to each Standing Order. Center-aligned, icon + title + print-blank button only. No status badges. | `.hover` (Blue border + lift), Default (Light gray border). `padding: 18px 20px`, `min-width: 280px`, `gap: 16px`. |
-| **Portal Header** | Flex row: minimal SVG medical-cross logo (52×52, circle + cross) inline with title and subtitle. | `display: flex; align-items: center; gap: 18px;` Blue gradient background. |
+| **Portal Header** | Flex row: Maharat Nakhon Ratchasima Hospital logo (52×52, `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`) inline with title. No subtitle. | `display: flex; align-items: center; gap: 18px;` Blue gradient background. |
 | **Fibrinolytic / Drug Card** | Card layout to select drugs. | `.selected` (Red border + light red BG), `.hover` (Muted red border), Default (Light gray border) |
 | **Print Order Grid** | 5-column grid mapping to hospital medical chart layout. | `grid-template-columns: 2fr 1fr 3fr 1fr 3fr;` |
 | **Dose Summary Banner** | Large visual badge displaying computed dose on screen. | `#screen-dose` or `#screen-grace`. Light yellow/red backgrounds. |

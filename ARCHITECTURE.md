@@ -4,7 +4,7 @@
 
 | Component | Role | Dependencies |
 |---|---|---|
-| `Hub (index.html)` | Application portal listing all ER Standing Orders and calculators. Compact name-only cards with direct print-blank buttons. Header features a minimal SVG medical-cross logo inline with the title. No status badges (production/new removed per ADR-07). Direct entry point. | None |
+| `Hub (index.html)` | Application portal listing all ER Standing Orders and calculators. Compact name-only cards with direct print-blank buttons. Header features the Maharat Nakhon Ratchasima Hospital logo (52×52) inline with the title. No status badges (production/new removed per ADR-07). Direct entry point. | None |
 | `calc-engine.js` | Generic mathematical engine computing infusion drip rates (mL/hr) and loading doses (mL). | None |
 | `anticoag-engine.js` | Logic engine determining Heparin/LMWH doses and titration changes based on clinical indications. | None |
 | `drug-data.js` | Structured catalog of concentrations, dose limits, safety ceilings, and titration instructions for all 12 IV drugs. | None |
