@@ -39,25 +39,37 @@
         }
 
         .portal-header {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: #fff;
-            padding: 40px 20px;
+            padding: 32px 20px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(30, 60, 114, 0.25);
             margin-bottom: 30px;
         }
 
-        .portal-header h1 {
-            font-size: 2.2em;
-            margin: 0;
-            font-weight: 700;
+        .portal-header svg {
+            flex-shrink: 0;
         }
 
-        .portal-header p {
-            margin: 10px 0 0 0;
-            font-size: 15px;
-            opacity: 0.9;
+        .portal-header-text {
+            text-align: left;
+        }
+
+        .portal-header-text h1 {
+            font-size: 1.8em;
+            margin: 0;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .portal-header-text p {
+            margin: 4px 0 0 0;
+            font-size: 14px;
+            opacity: 0.85;
         }
 
         .grid-section-title {
@@ -115,32 +127,11 @@
             margin: 0;
         }
 
-        .card-status {
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-        }
-
-        .status-production {
-            background: #e8f8f0;
-            color: #27ae60;
-        }
-
-        .status-new {
-            background: #eaf2ff;
-            color: #007bff;
-        }
-
         .card-footer {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             margin-top: 12px;
-            gap: 10px;
             width: 100%;
         }
 
@@ -169,8 +160,15 @@
 <div class="portal-container">
     <!-- Header -->
     <div class="portal-header">
-        <h1>🏥 MNRH-ED Standing Order &amp; Drip Hub</h1>
-        <p>ศูนย์รวมเครื่องมือคำนวณและผลิตใบสั่งแพทย์ (Standing Orders) ประจำแผนกอุบัติเหตุและฉุกเฉิน</p>
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="26" cy="26" r="25" stroke="white" stroke-width="2" fill="none"/>
+            <rect x="22" y="10" width="8" height="32" rx="2" fill="white"/>
+            <rect x="10" y="22" width="32" height="8" rx="2" fill="white"/>
+        </svg>
+        <div class="portal-header-text">
+            <h1>MNRH-ED Standing Order Hub</h1>
+            <p>ศูนย์รวมเครื่องมือคำนวณและผลิตใบสั่งแพทย์ (Standing Orders) ประจำแผนกอุบัติเหตุและฉุกเฉิน</p>
+        </div>
     </div>
 
     <!-- Standing Orders Section -->
@@ -182,7 +180,6 @@
                 <h4 class="card-title">rt-PA Stroke FAST TRACK</h4>
             </div>
             <div class="card-footer">
-                <span class="card-status status-production">ใช้งานจริง (Production)</span>
                 <button class="btn-card-print-blank" data-order="rtpa" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('rtpa')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
             </div>
         </a>
@@ -194,7 +191,6 @@
                 <h4 class="card-title">STEMI Standing Order</h4>
             </div>
             <div class="card-footer">
-                <span class="card-status status-production">ใช้งานจริง (Production)</span>
                 <button class="btn-card-print-blank" data-order="stemi" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('stemi')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
             </div>
         </a>
@@ -206,7 +202,6 @@
                 <h4 class="card-title">NSTEMI Standing Order</h4>
             </div>
             <div class="card-footer">
-                <span class="card-status status-production">ใช้งานจริง (Production)</span>
                 <button class="btn-card-print-blank" data-order="nstemi" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('nstemi')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
             </div>
         </a>
@@ -218,7 +213,6 @@
                 <h4 class="card-title">Massive PE Fibrinolysis</h4>
             </div>
             <div class="card-footer">
-                <span class="card-status status-new">อัปเดตใหม่ (New)</span>
                 <button class="btn-card-print-blank" data-order="pe" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('pe')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
             </div>
         </a>
@@ -230,7 +224,6 @@
                 <h4 class="card-title">Heparin Standalone Protocol</h4>
             </div>
             <div class="card-footer">
-                <span class="card-status status-new">อัปเดตใหม่ (New)</span>
                 <button class="btn-card-print-blank" data-order="heparin" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('heparin')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
             </div>
         </a>
@@ -242,7 +235,6 @@
                 <h4 class="card-title">Antivenom Standing Order</h4>
             </div>
             <div class="card-footer">
-                <span class="card-status status-new">อัปเดตใหม่ (New)</span>
                 <button class="btn-card-print-blank" data-order="antivenom" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('antivenom')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
             </div>
         </a>
@@ -254,7 +246,6 @@
                 <h4 class="card-title">Post-Intubation Sedation</h4>
             </div>
             <div class="card-footer">
-                <span class="card-status status-new">อัปเดตใหม่ (New)</span>
                 <button class="btn-card-print-blank" data-order="sedation" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('sedation')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
             </div>
         </a>
@@ -269,7 +260,6 @@
                 <span class="card-icon">🧪</span>
                 <h4 class="card-title">IV Infusion Drip Calculator</h4>
             </div>
-            <span class="card-status status-new">เครื่องมือแพทย์ (Tool)</span>
         </a>
     </div>
 </div>
