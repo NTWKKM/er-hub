@@ -186,6 +186,33 @@
             background: #eaf2ff;
             color: #007bff;
         }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        .btn-card-print-blank {
+            background: #fff;
+            border: 1px solid #2a5298;
+            color: #2a5298;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .btn-card-print-blank:hover {
+            background: #2a5298;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -216,7 +243,10 @@
                 <h4 class="card-title">rt-PA Stroke FAST TRACK</h4>
                 <p class="card-desc">ใบประเมินเกณฑ์ Inclusion/Exclusion, หนังสือแสดงความยินยอม และใบสั่งยาคำนวณ Dose rt-PA (Alteplase) ของคนไข้</p>
             </div>
-            <span class="card-status status-production">ใช้งานจริง (Production)</span>
+            <div class="card-footer">
+                <span class="card-status status-production">ใช้งานจริง (Production)</span>
+                <button class="btn-card-print-blank" data-order="rtpa" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('rtpa')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
+            </div>
         </a>
 
         <!-- STEMI -->
@@ -226,7 +256,10 @@
                 <h4 class="card-title">STEMI Standing Order</h4>
                 <p class="card-desc">คำนวณขนาดและสั่งใช้ยา Tenecteplase (TNK) หรือ Streptokinase (SK) พร้อมใบ Doctor Order และ Progress Note มาตรฐาน</p>
             </div>
-            <span class="card-status status-production">ใช้งานจริง (Production)</span>
+            <div class="card-footer">
+                <span class="card-status status-production">ใช้งานจริง (Production)</span>
+                <button class="btn-card-print-blank" data-order="stemi" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('stemi')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
+            </div>
         </a>
 
         <!-- NSTEMI -->
@@ -236,7 +269,10 @@
                 <h4 class="card-title">NSTEMI Standing Order</h4>
                 <p class="card-desc">ประเมินระดับความเสี่ยงด้วยระบบ GRACE Score คาดการณ์เวลาเจาะ Troponin H0/H1/H3 และให้ยาป้องกันการแข็งตัวของเลือดตาม eGFR</p>
             </div>
-            <span class="card-status status-production">ใช้งานจริง (Production)</span>
+            <div class="card-footer">
+                <span class="card-status status-production">ใช้งานจริง (Production)</span>
+                <button class="btn-card-print-blank" data-order="nstemi" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('nstemi')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
+            </div>
         </a>
 
         <!-- Massive PE -->
@@ -246,7 +282,10 @@
                 <h4 class="card-title">Massive PE Fibrinolysis</h4>
                 <p class="card-desc">ประเมินข้อบ่งชี้คัดกรองภาวะลิ่มเลือดอุดกั้นในปอดรุนแรง และคำนวณสูตรยาละลายลิ่มเลือด (SK/rt-PA) ทั้ง 4 Regimens</p>
             </div>
-            <span class="card-status status-new">อัปเดตใหม่ (New)</span>
+            <div class="card-footer">
+                <span class="card-status status-new">อัปเดตใหม่ (New)</span>
+                <button class="btn-card-print-blank" data-order="pe" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('pe')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
+            </div>
         </a>
 
         <!-- Heparin Standalone -->
@@ -256,7 +295,10 @@
                 <h4 class="card-title">Heparin Standalone Protocol</h4>
                 <p class="card-desc">ประเมินคัดกรองภาวะเลือดออกง่าย 12 ประการ คำนวณขนาด Dose เริ่มต้น 4 กลุ่มโรค และเครื่องมือปรับอัตราการหยดยาด้วย aPTT ratio</p>
             </div>
-            <span class="card-status status-new">อัปเดตใหม่ (New)</span>
+            <div class="card-footer">
+                <span class="card-status status-new">อัปเดตใหม่ (New)</span>
+                <button class="btn-card-print-blank" data-order="heparin" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('heparin')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
+            </div>
         </a>
 
         <!-- Antivenom -->
@@ -266,7 +308,10 @@
                 <h4 class="card-title">Antivenom Standing Order</h4>
                 <p class="card-desc">คัดกรองประเมินข้อบ่งชี้รับเซรุ่มแก้พิษงู จำแนกปริมาณขวดยาและเวลาบริหารตามกลุ่มพิษประสาท/ระบบโลหิต 8 ชนิดงู</p>
             </div>
-            <span class="card-status status-new">อัปเดตใหม่ (New)</span>
+            <div class="card-footer">
+                <span class="card-status status-new">อัปเดตใหม่ (New)</span>
+                <button class="btn-card-print-blank" data-order="antivenom" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('antivenom')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
+            </div>
         </a>
 
         <!-- Sedation -->
@@ -276,7 +321,10 @@
                 <h4 class="card-title">Post-Intubation Sedation</h4>
                 <p class="card-desc">ใบประเมินและสั่งยาสำหรับความระงับความรู้สึกหลังใส่ท่อช่วยหายใจ (Fentanyl + Midazolam drip) คำนวณอัตราหยดตรงสัมพันธ์กับน้ำหนักตัว</p>
             </div>
-            <span class="card-status status-new">อัปเดตใหม่ (New)</span>
+            <div class="card-footer">
+                <span class="card-status status-new">อัปเดตใหม่ (New)</span>
+                <button class="btn-card-print-blank" data-order="sedation" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('sedation')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
+            </div>
         </a>
     </div>
 
@@ -294,6 +342,25 @@
         </a>
     </div>
 </div>
+
+<script>
+function printBlankOrder(orderName) {
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = `orders/${orderName}.html?print-blank-direct=true`;
+    iframe.onload = () => {
+        // Give the iframe time to render, then trigger print
+        setTimeout(() => {
+            iframe.contentWindow.print();
+        }, 500);
+    };
+    document.body.appendChild(iframe);
+    // Clean up after print dialog closes
+    setTimeout(() => {
+        document.body.removeChild(iframe);
+    }, 60000);
+}
+</script>
 
 </body>
 </html>

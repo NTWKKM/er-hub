@@ -148,7 +148,7 @@
             </div>
 
             <button type="submit" class="btn btn-calculate">🧮 ตรวจสอบและสร้างใบสั่งยา</button>
-            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ พิมพ์ใบสั่งยาเปล่า (Print Blank Order)</button>
+            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
             <button type="button" id="clear-btn" class="btn btn-clear">🗑️ ล้างข้อมูล (Clear)</button>
         </form>
     </div>
@@ -273,6 +273,12 @@
 <script src="../shared/components.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Auto-run print-blank-direct from home page portal
+    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
+        document.getElementById('print-blank-btn').click();
+        setTimeout(() => window.print(), 500);
+        return;
+    }
     const $ = id => document.getElementById(id);
 
     // Dynamic class card selections
@@ -422,9 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('results-container').classList.remove('hidden');
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
-        setTimeout(() => {
-            window.print();
-        }, 300);
+        // Preview only — print triggered by user or ?print-blank-direct=true
     });
 
     ED_COMPONENTS.setupCommonActions();
