@@ -1,4 +1,6 @@
 /* ===== Print Constraints (A4 Layout) ===== */
+
+/* ── Screen-only: print area styling ── */
 #print-area {
     font-size: 11px;
     line-height: 1.4;
@@ -142,88 +144,282 @@
     box-sizing: border-box;
 }
 
-/* Print Overrides */
+/* ═══════════════════════════════════════════
+   PRINT OVERRIDES — A4 (210mm × 297mm)
+   ═══════════════════════════════════════════ */
 @media print {
-    body, html {
-        margin: 0;
-        padding: 0;
-        width: 210mm;
-        background: #fff;
-        color: #000;
+    @page {
+        size: A4;
+        margin: 8mm 10mm 10mm 10mm;
     }
-    
+
+    /* ── Global resets ── */
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        background: #fff !important;
+        color: #000 !important;
+        display: block !important;
+        font-size: 10pt;
+    }
+
+    /* ── Hide screen-only elements ── */
     .form-container,
     .summary-banner,
     .grace-summary,
     .results-container > h3,
     .btn-print,
     .btn-clear,
+    .btn-calculate,
     #print-btn,
+    #print-blank-btn,
+    #clear-btn,
     header,
-    nav {
+    nav,
+    .header,
+    form {
         display: none !important;
     }
-    
+
+    /* ── Container: full-width, no chrome ── */
     .container {
-        box-shadow: none;
-        max-width: 100%;
-        border-radius: 0;
-        padding: 0;
-        margin: 0;
-        background: #fff;
+        box-shadow: none !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: #fff !important;
     }
-    
+
+    /* ── Results area ── */
     .results-container {
-        margin: 0;
-        padding: 4mm;
-        border-top: none;
-        background: #fff;
+        margin: 0 !important;
+        padding: 0 !important;
+        border-top: none !important;
+        background: #fff !important;
     }
-    
+
+    .results-container.hidden {
+        display: block !important;
+    }
+
+    /* ── Print area ── */
     #print-area {
-        border: none;
+        border: none !important;
         font-size: 9pt;
-        line-height: 1.3;
-        overflow: visible;
+        line-height: 1.35;
+        overflow: visible !important;
     }
-    
+
+    /* ── 5-col grid: fit A4 width ── */
     .order-grid-5col {
-        min-width: auto;
+        min-width: auto !important;
+        width: 100% !important;
         border: 1px solid #000;
         page-break-inside: avoid;
+        font-size: 8.5pt;
     }
-    
-    .grid-cell, .grid-header {
-        padding: 3px;
-        border-right: 1px solid #000;
-        border-bottom: 1px solid #000;
+
+    .grid-header {
+        padding: 4px 3px;
+        font-size: 8pt;
+        line-height: 1.2;
+        background-color: #e9ecef !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
-    
-    .order-grid-5col .grid-header:first-child { 
-        font-size: 8pt; 
-        line-height: 1.1;
-        padding-top: 5px;
-        padding-bottom: 5px;
+
+    .grid-cell {
+        padding: 3px 4px;
+        font-size: 8pt;
+        line-height: 1.3;
     }
-    
+
+    .grid-cell:nth-child(5n+2),
+    .grid-cell:nth-child(5n+4) {
+        font-size: 8pt;
+    }
+
+    /* ── Print header ── */
+    .print-header h4 {
+        font-size: 12pt;
+        margin-bottom: 2px;
+    }
+
+    .print-header small {
+        font-size: 8pt;
+    }
+
+    /* ── Order content ── */
+    .order-list {
+        padding-left: 12px;
+    }
+
+    .order-list li {
+        margin-bottom: 1px;
+        line-height: 1.3;
+    }
+
+    .highlight {
+        color: #000 !important;
+        font-weight: bold;
+    }
+
+    .divider {
+        border-top: 1px solid #000;
+        margin: 3px 0;
+    }
+
+    .dotted-line {
+        border-bottom: 1px dotted #000;
+    }
+
+    /* ── Fib/AC boxes ── */
+    .fib-order-box, .ac-opt {
+        font-size: 8pt;
+        padding: 4px 6px;
+    }
+
     .fib-order-box.chosen, .ac-opt.recommended {
         border: 2px solid #000 !important;
         background: #f4f4f4 !important;
     }
-    
+
+    .ac-opt.na {
+        font-size: 7.5pt;
+    }
+
+    .monitor-alert {
+        font-size: 7.5pt;
+        padding: 3px 5px;
+        background: #f9f9f9 !important;
+        border-left: 3px solid #000 !important;
+    }
+
+    /* ── Sticker box ── */
     .sticker-area {
         width: 58mm;
         height: 20mm;
         font-size: 8pt;
         border: 1px dashed #000 !important;
     }
-    
+
     .sticker-box-container {
         page-break-inside: avoid;
     }
 
-    /* Keep table styling standard */
+    /* ── TNK reference table ── */
+    .tnk-table {
+        font-size: 7.5pt;
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .tnk-table td, .tnk-table th {
+        border: 1px solid #000;
+        padding: 2px 4px;
+    }
+
     .tnk-table tr.active-row {
         background: #ddd !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* ── Stroke-specific pages ── */
+    .stroke-page {
+        display: block !important;
+        page-break-before: always;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box;
+    }
+
+    .stroke-table {
+        font-size: 8pt;
+        width: 100%;
+    }
+
+    .stroke-table td, .stroke-table th {
+        padding: 2px 4px;
+    }
+
+    .stroke-checklist {
+        font-size: 8.5pt;
+        line-height: 1.3;
+    }
+
+    .stroke-checklist li::before {
+        font-size: 8.5pt;
+    }
+
+    .stroke-section-title {
+        font-size: 9pt;
+        margin-top: 3px;
+        padding-top: 3px;
+    }
+
+    .stroke-page-header h4 {
+        font-size: 12pt;
+    }
+
+    .stroke-page-header p {
+        font-size: 10pt;
+    }
+
+    .consent-text {
+        font-size: 9.5pt;
+        line-height: 1.5;
+    }
+
+    .sig-grid {
+        font-size: 9pt;
+    }
+
+    .stroke-footnote {
+        font-size: 7pt;
+        line-height: 1.3;
+    }
+
+    .stroke-sticker {
+        border: 1px solid #000 !important;
+    }
+
+    .p3-table {
+        font-size: 9pt;
+    }
+
+    /* ── NSTEMI-specific ── */
+    .sub-section {
+        font-size: 8pt;
+    }
+
+    .killip-group,
+    .killip-group-vertical {
+        display: none !important;
+    }
+
+    /* ── General print hygiene ── */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Prevent orphans */
+    .grid-cell, .fib-order-box, .ac-opt, .sticker-box-container {
+        page-break-inside: avoid;
+    }
+
+    /* Ensure black text on white */
+    .grid-cell, .grid-header, .print-header, .order-list, .fib-order-box, .ac-opt {
+        color: #000 !important;
+        background: #fff !important;
+    }
+
+    .grid-header {
+        background-color: #e9ecef !important;
     }
 }

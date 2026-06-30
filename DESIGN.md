@@ -53,8 +53,11 @@
 - **Form Validation:** Visual alerts (`alert()`) and dynamic warning banners prevent incorrect ranges (e.g., weights outside 30-200 kg).
 
 ### Printing Constraints (A4 Layout)
-- **Fixed Width Canvas:** Print container forced to `210mm` (A4 standard width) under `@media print` rules.
-- **Page Break Control:** `page-break-inside: avoid` applied to order grids and sticker boxes to prevent text orphans.
-- **No-Print Classes:** Screen-only controls, forms, banners, and buttons are hidden using `display: none !important` during print layout formatting.
-- **Manual Fill Support:** When printing blank orders, checkboxes are rendered as unchecked (`☐`), and calculated fields/patient variables are replaced with standard dotted lines (`....................`) to allow clear manual entries.
-- **Lab/IV/O2 Hygiene:** Lab investigations, IV fluids, oxygen, monitoring, and non-drug continuation orders always render as ☐ in print output. Only drug-related orders auto-check (☑) based on input data.
+- **Page Size:** `@page { size: A4; margin: 8mm 10mm 10mm 10mm }` — printable area ~190mm × 279mm.
+- **Body Reset:** `body { display: block !important }` overrides screen `display: flex` for proper print flow.
+- **5-Column Grid:** `min-width: auto; width: 100%; font-size: 8pt` — fits within A4 width. Screen retains `min-width: 900px` for readability.
+- **Page Break Control:** `page-break-inside: avoid` applied to order grids, sticker boxes, and fib/AC cards. Stroke multi-page documents use `page-break-before: always`.
+- **No-Print Classes:** Screen-only controls, forms, banners, and buttons hidden via `display: none !important`.
+- **Color:** All print output forced to black-on-white with `-webkit-print-color-adjust: exact`. Grid headers retain light gray background for structure.
+- **Manual Fill Support:** When printing blank orders, checkboxes render as ☐, calculated fields replaced with dotted lines.
+- **Lab/IV/O2 Hygiene:** Lab investigations, IV fluids, oxygen, monitoring, and non-drug continuation orders always render as ☐ in print. Only drug-related orders auto-check (☑).
