@@ -30,6 +30,31 @@
         }
         .killip-group label:hover { background: #fff5f5; border-color: #c0392b; }
 
+        .killip-group-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .killip-group-vertical label {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13.5px;
+        }
+        .killip-group-vertical label:hover {
+            background: #fff5f5;
+            border-color: #c0392b;
+        }
+        .killip-group-vertical input[type="radio"] {
+            margin-top: 3px;
+        }
+
         .grace-summary {
             background: #fff5f5;
             border: 2px solid #c0392b;
@@ -130,14 +155,6 @@
                     <h3>1. ข้อมูลผู้ป่วย</h3>
 
                     <div class="inline-input-group">
-                        <label for="dept">Department:</label>
-                        <input type="text" id="dept" placeholder="เช่น Emergency">
-                    </div>
-                    <div class="inline-input-group">
-                        <label for="ward">Ward:</label>
-                        <input type="text" id="ward" placeholder="เช่น Ward 5">
-                    </div>
-                    <div class="inline-input-group">
                         <label for="hn">HN:</label>
                         <input type="text" id="hn" placeholder="กรอก HN">
                     </div>
@@ -220,15 +237,31 @@
 
                     <div>
                         <strong style="font-size:14px;">Killip Class:</strong>
-                        <div class="killip-group">
-                            <label><input type="radio" name="killip" value="1" checked>
-                                <span>I <small style="color:#888;">(+0)</small></span></label>
-                            <label><input type="radio" name="killip" value="2">
-                                <span>II <small style="color:#888;">(+20)</small></span></label>
-                            <label><input type="radio" name="killip" value="3">
-                                <span>III <small style="color:#888;">(+39)</small></span></label>
-                            <label><input type="radio" name="killip" value="4">
-                                <span>IV <small style="color:#888;">(+59)</small></span></label>
+                        <div class="killip-group-vertical">
+                            <label>
+                                <input type="radio" name="killip" value="1" checked>
+                                <div>
+                                    <strong>Class I <small style="color:#888;">(+0)</small></strong> — ไม่มีภาวะหัวใจล้มเหลว (No HF)
+                                </div>
+                            </label>
+                            <label>
+                                <input type="radio" name="killip" value="2">
+                                <div>
+                                    <strong>Class II <small style="color:#888;">(+20)</small></strong> — ฟังปอดมี crepitation &lt; 1/2 ปอด หรือมีเสียง S3 gallop
+                                </div>
+                            </label>
+                            <label>
+                                <input type="radio" name="killip" value="3">
+                                <div>
+                                    <strong>Class III <small style="color:#888;">(+39)</small></strong> — ภาวะน้ำท่วมปอดเฉียบพลัน (Frank pulmonary edema, crepitation &gt; 1/2 ปอด)
+                                </div>
+                            </label>
+                            <label>
+                                <input type="radio" name="killip" value="4">
+                                <div>
+                                    <strong>Class IV <small style="color:#888;">(+59)</small></strong> — ช็อกจากการทำงานของหัวใจล้มเหลว (Cardiogenic shock, SBP &lt; 90 mmHg)
+                                </div>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -286,6 +319,9 @@
 
             <button type="submit" class="btn btn-calculate">
                 🧮 คำนวณ GRACE Score และสร้างใบสั่งยา
+            </button>
+            <button type="button" id="print-blank-btn" class="btn btn-print">
+                🖨️ พิมพ์ใบสั่งยาเปล่า (Print Blank Order)
             </button>
             <button type="button" id="clear-btn" class="btn btn-clear">
                 🗑️ ล้างข้อมูล (Clear)
@@ -588,8 +624,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('nstemi-form').addEventListener('submit', e => {
         e.preventDefault();
 
-        const dept    = $('dept').value.trim() || '...';
-        const ward    = $('ward').value.trim() || '...';
         const hn      = $('hn').value.trim() || '...';
         const weight  = parseFloat($('weight').value);
         const age     = parseFloat($('age').value);
@@ -696,7 +730,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('screen-h3').textContent = ED_COMPONENTS.fmtTime(h3t).replace(' น.', '');
 
         /* ══ UPDATE PRINT AREA ══ */
-        ED_COMPONENTS.injectPrintHeader('print-header-container', dept, ward);
+        ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
 
         $('p-hn').textContent    = hn;
@@ -757,6 +791,65 @@ document.addEventListener('DOMContentLoaded', () => {
         $('grace-breakdown-body').innerHTML =
             '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
         $('hn').focus();
+    });
+
+    $('print-blank-btn').addEventListener('click', () => {
+        ED_COMPONENTS.injectPrintHeader('print-header-container');
+        ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
+
+        $('p-hn').textContent    = '....................';
+        $('p-weight').textContent = '....................';
+        $('p-egfr').textContent  = '....................';
+        $('p-age').textContent   = '....................';
+        $('p-hr').textContent    = '....................';
+        $('p-sbp').textContent   = '....................';
+        $('p-cr').textContent    = '....................';
+        $('p-asa').innerHTML     = '....................';
+        $('p-killip').textContent = '....................';
+        $('p-grace').textContent  = '....................';
+        $('p-bin-flags').innerHTML = '';
+
+        $('p-strat').innerHTML =
+            `○ Very high risk (coro &lt; 2h)<br>
+             ○ High risk (coro &lt; 24h)<br>
+             ○ Non-high risk (selective coro)`;
+
+        $('p-h0').textContent = '....................';
+        $('p-h1').textContent = '....................';
+        $('p-h3').textContent = '....................';
+        $('p-rphch-note').textContent = '';
+        $('p-troponin-lab').innerHTML = '☐ hs-troponin I Hr.0 and 3';
+
+        const blankDt = 'วันที่ .................... เวลา ....................';
+        $('p-dt-1').innerHTML = blankDt;
+        $('p-dt-2').innerHTML = blankDt;
+        ED_COMPONENTS.updateGeneratedTime('p-generated', null);
+
+        $('p-asa-stat').innerHTML = '☐ ASA (300) 1 tab chew stat';
+        $('p-clopi-stat').innerHTML = '☐ Clopidogrel GPO (75) <strong>4 tabs</strong> PO stat';
+        $('p-asa-cont').innerHTML = '☐ ASA (81) 1×1 pc';
+
+        $('p-anticoag').innerHTML = `
+        <div class="ac-opt">
+            <strong>☐ Fondaparinux</strong> &nbsp;<small>(Preferred)</small><br>
+            2.5 mg SC OD × 5 Days
+        </div>
+        <div class="ac-opt">
+            <strong>☐ Enoxaparin SC</strong><br>
+            <strong>.................... mg</strong> SC q ............ hr × 5 Days<br>
+            <span style="font-size:9px;color:#666;">(น้ำหนัก ............ kg, eGFR ............ ml/min)</span>
+        </div>
+        <div class="ac-opt">
+            <strong>☐ Heparin IV</strong> &nbsp;<small>(กรณี GFR &lt; 15)</small><br>
+            Bolus <strong>.................... u</strong> IV bolus then IV drip <strong>.................... u/hr</strong> = ............ ml/hr
+        </div>`;
+
+        $('results-container').classList.remove('hidden');
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        setTimeout(() => {
+            window.print();
+        }, 300);
     });
 
     ED_COMPONENTS.setupCommonActions();

@@ -47,3 +47,4 @@ graph TD
 - **W-01: Absolute SK Contraindication:** Users selecting Streptokinase (SK) who flag a prior SK administration within 6 months are permanently blocked from generating the order. They must use Tenecteplase (TNK).
 - **W-02: Individualized Dosing Bypass:** For Heparin and Antivenom protocols, matching any pre-defined clinical risk factors (e.g., active bleeding, platelete count < 50,000) disables automatic calculations, forcing user consultation with the attending staff.
 - **W-03: Max Dose Ceilings:** The calculation engine automatically caps values at the clinical upper limit (e.g., Fentanyl drip maxed at 500 mcg/hr, rt-PA maxed at 90mg or 50mg based on regimen) to prevent accidental overdosage.
+- **W-04: Print Blank Order Bypass:** Users can print empty orders directly via the "Print Blank Order" button. This bypasses all screen validation constraints and outputs standard checklists with empty dotted lines for manual clinical entries.

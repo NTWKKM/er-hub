@@ -54,3 +54,4 @@
 - **Fixed Width Canvas:** Print container forced to `210mm` (A4 standard width) under `@media print` rules.
 - **Page Break Control:** `page-break-inside: avoid` applied to order grids and sticker boxes to prevent text orphans.
 - **No-Print Classes:** Screen-only controls, forms, banners, and buttons are hidden using `display: none !important` during print layout formatting.
+- **Manual Fill Support:** When printing blank orders, checkboxes are rendered as unchecked (`☐`), and calculated fields/patient variables are replaced with standard dotted lines (`....................`) to allow clear manual entries.

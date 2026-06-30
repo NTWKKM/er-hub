@@ -54,14 +54,7 @@
                 <div class="input-column">
                     <h3>1. ข้อมูลผู้ป่วย</h3>
                     
-                    <div class="inline-input-group">
-                        <label for="dept">Department:</label>
-                        <input type="text" id="dept" placeholder="เช่น Emergency">
-                    </div>
-                    <div class="inline-input-group">
-                        <label for="ward">Ward:</label>
-                        <input type="text" id="ward" placeholder="เช่น ER">
-                    </div>
+
                     <div class="inline-input-group">
                         <label for="hn">HN:</label>
                         <input type="text" id="hn" required placeholder="กรอก HN">
@@ -146,6 +139,7 @@
             </div>
 
             <button type="submit" class="btn btn-calculate">🧮 ตรวจสอบและสร้างใบสั่งเซรุ่ม</button>
+            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ พิมพ์ใบสั่งยาเปล่า (Print Blank Order)</button>
             <button type="button" id="clear-btn" class="btn btn-clear">🗑️ ล้างข้อมูล (Clear)</button>
         </form>
     </div>
@@ -289,8 +283,6 @@ document.addEventListener('DOMContentLoaded', () => {
     $('antivenom-form').addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const dept = $('dept').value.trim() || '...';
-        const ward = $('ward').value.trim() || '...';
         const hn = $('hn').value.trim() || '...';
         const tetanus = $('tetanus-select').value;
         const horseAllergy = document.querySelector('input[name="horse-allergy"]:checked').value === 'yes';
@@ -370,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('screen-allergy-alert').style.display = horseAllergy ? 'inline-block' : 'none';
 
         // Update Print Area
-        ED_COMPONENTS.injectPrintHeader('print-header-container', dept, ward);
+        ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
 
         $('p-hn').textContent = hn;
@@ -403,6 +395,33 @@ document.addEventListener('DOMContentLoaded', () => {
         $('box-neuro').classList.remove('selected');
         $('results-container').classList.add('hidden');
         $('hn').focus();
+    });
+
+    $('print-blank-btn').addEventListener('click', () => {
+        ED_COMPONENTS.injectPrintHeader('print-header-container');
+        ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
+
+        $('p-hn').textContent = '....................';
+        $('p-tetanus').textContent = '............................................................';
+        $('p-horse-allergy').innerHTML = 'No';
+        
+        $('p-snake-name').textContent = '........................................';
+        $('p-venom-type').textContent = '........................................';
+
+        $('p-antivenom-order-box').innerHTML = `☐ <strong>เซรุ่มแก้พิษงู .................... ขนาดเริ่มต้น .................... ขวด ใน NSS 100 mL IV drip in ............ min</strong>`;
+        $('p-obs-neuro').style.display = 'list-item';
+
+        const blankDt = 'วันที่ .................... เวลา ....................';
+        $('p-dt-1').innerHTML = blankDt;
+        $('p-dt-2').innerHTML = blankDt;
+        ED_COMPONENTS.updateGeneratedTime('p-generated', null);
+
+        $('results-container').classList.remove('hidden');
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        setTimeout(() => {
+            window.print();
+        }, 300);
     });
 
     ED_COMPONENTS.setupCommonActions();

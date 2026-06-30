@@ -41,3 +41,8 @@
 - **Context:** Overwriting `index.html` with the new ER-Hub portal might disrupt clinical staff accessing the rt-PA Stroke page directly via old links or QR codes.
 - **Decision:** Use `index.html` as the ER-Hub portal, but implement a prominent visual link at the header and automatic query routing (e.g., checking if the incoming path has a query or hash for stroke, or placing a clear rt-PA badge at the top page fold).
 - **Rationale:** Minimizes disruption to emergency pathways while adopting a cleaner hierarchical codebase layout.
+
+### ADR-04: Manual Input Streamlining and Blank Orders
+- **Context:** Emergency Room clinical workflow requires maximum speed. Manually typing department and ward details on screen adds friction. Attending staff sometimes need to print blank order templates immediately for manual checkout.
+- **Decision:** Remove `Department` and `Ward` screen input fields. Default the printed header to blank dotted lines for manual entry. Introduce a "Print Blank Order" button on all forms that bypasses validation and triggers `window.print()` with an empty order template.
+- **Rationale:** Reduces on-screen data-entry overhead and provides a fallback paper workflow for high-velocity emergencies.

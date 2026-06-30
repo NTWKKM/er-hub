@@ -63,14 +63,7 @@
                 <div class="input-column">
                     <h3>1. ข้อมูลผู้ป่วยและข้อบ่งใช้</h3>
                     
-                    <div class="inline-input-group">
-                        <label for="dept">Department:</label>
-                        <input type="text" id="dept" placeholder="เช่น Emergency">
-                    </div>
-                    <div class="inline-input-group">
-                        <label for="ward">Ward:</label>
-                        <input type="text" id="ward" placeholder="เช่น ICU">
-                    </div>
+
                     <div class="inline-input-group">
                         <label for="hn">HN:</label>
                         <input type="text" id="hn" required placeholder="กรอก HN">
@@ -155,6 +148,7 @@
             </div>
 
             <button type="submit" class="btn btn-calculate">🧮 ตรวจสอบและสร้างใบสั่งยา</button>
+            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ พิมพ์ใบสั่งยาเปล่า (Print Blank Order)</button>
             <button type="button" id="clear-btn" class="btn btn-clear">🗑️ ล้างข้อมูล (Clear)</button>
         </form>
     </div>
@@ -294,8 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
     $('pe-form').addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const dept = $('dept').value.trim() || '...';
-        const ward = $('ward').value.trim() || '...';
         const hn = $('hn').value.trim() || '...';
         const weight = parseFloat($('weight').value);
         const riskType = document.querySelector('input[name="pe-risk"]:checked').value;
@@ -349,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Update Print Area
-        ED_COMPONENTS.injectPrintHeader('print-header-container', dept, ward);
+        ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
 
         $('p-hn').textContent = hn;
@@ -391,6 +383,48 @@ document.addEventListener('DOMContentLoaded', () => {
         $('card-sk-a').querySelector('input').checked = true;
         $('results-container').classList.add('hidden');
         $('hn').focus();
+    });
+
+    $('print-blank-btn').addEventListener('click', () => {
+        ED_COMPONENTS.injectPrintHeader('print-header-container');
+        ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
+
+        $('p-hn').textContent = '....................';
+        $('p-weight').textContent = '....................';
+        $('p-indication').textContent = '........................................';
+        
+        $('p-abs-status').innerHTML = 'No';
+        $('p-rel-status').innerHTML = 'No';
+        $('p-prior-sk-status').innerHTML = 'No';
+
+        $('print-btn').style.display = 'inline-block';
+        $('screen-warning-note').style.display = 'none';
+
+        $('p-box-sk-a').className = 'fib-order-box';
+        $('p-box-sk-a').querySelector('strong').previousSibling.textContent = '☐ ';
+
+        $('p-box-sk-b').className = 'fib-order-box';
+        $('p-box-sk-b').querySelector('strong').previousSibling.textContent = '☐ ';
+        $('p-sk-expiry').textContent = '....................';
+
+        $('p-box-rtpa-a').className = 'fib-order-box';
+        $('p-box-rtpa-a').querySelector('strong').previousSibling.textContent = '☐ ';
+
+        $('p-box-rtpa-b').className = 'fib-order-box';
+        $('p-box-rtpa-b').querySelector('strong').previousSibling.textContent = '☐ ';
+        $('p-rtpa-b-dose').textContent = '....................';
+
+        const blankDt = 'วันที่ .................... เวลา ....................';
+        $('p-dt-1').innerHTML = blankDt;
+        $('p-dt-2').innerHTML = blankDt;
+        ED_COMPONENTS.updateGeneratedTime('p-generated', null);
+
+        $('results-container').classList.remove('hidden');
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        setTimeout(() => {
+            window.print();
+        }, 300);
     });
 
     ED_COMPONENTS.setupCommonActions();

@@ -30,7 +30,7 @@ const ED_COMPONENTS = {
     /**
      * Inject print header at specified container.
      */
-    injectPrintHeader: function(elementId, dept = '...', ward = '...') {
+    injectPrintHeader: function(elementId, dept = '....................', ward = '....................') {
         const el = document.getElementById(elementId);
         if (!el) return;
         

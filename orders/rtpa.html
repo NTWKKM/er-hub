@@ -227,14 +227,7 @@
                 <div class="input-column">
                     <h3>1. ข้อมูลผู้ป่วย</h3>
                     
-                    <div class="inline-input-group">
-                        <label for="dept">Department:</label>
-                        <input type="text" id="dept" placeholder="เช่น Emergency">
-                    </div>
-                    <div class="inline-input-group">
-                        <label for="ward">Ward:</label>
-                        <input type="text" id="ward" placeholder="เช่น Stroke Unit">
-                    </div>
+
                     <div class="inline-input-group">
                         <label for="hn">HN:</label>
                         <input type="text" id="hn" required placeholder="กรอก HN">
@@ -268,6 +261,7 @@
             </div>
             
             <button type="submit" class="btn btn-calculate">คำนวณและสร้างใบสั่งยา</button>
+            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ พิมพ์ใบสั่งยาเปล่า (Print Blank Order)</button>
             <button type="button" id="clear-btn" class="btn btn-clear">ล้างข้อมูล (Clear)</button>
         </form>
     </div>
@@ -678,9 +672,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const hn = hnInput.value.trim() || '...';
         const weight = parseFloat(weightInput.value);
-        const selectedDose = parseFloat(selectedDoseInput.value); 
-        const dept = document.getElementById('dept').value.trim() || '...';
-        const ward = document.getElementById('ward').value.trim() || '...';
+        const selectedDose = parseFloat(selectedDoseInput.value);
 
         if (isNaN(weight) || weight <= 0) {
             alert('กรุณากรอกน้ำหนักให้ถูกต้อง'); 
@@ -720,7 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('drip-dose').textContent = dripDose.toFixed(2);
         
         // Use shared components for header & sticker & date-time
-        ED_COMPONENTS.injectPrintHeader('print-header-container', dept, ward);
+        ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
         
         const useTime = document.getElementById('use-current-time').checked;
@@ -747,6 +739,34 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedDoseInput.value = "0.9";
         resultsContainer.classList.add('hidden');
         hnInput.focus();
+    });
+
+    document.getElementById('print-blank-btn').addEventListener('click', () => {
+        ED_COMPONENTS.injectPrintHeader('print-header-container');
+        ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
+
+        document.getElementById('result-hn').textContent = '....................';
+        document.getElementById('result-weight').textContent = '....................';
+        document.getElementById('result-regimen').textContent = '0.9 หรือ 0.6';
+
+        document.getElementById('total-dose').textContent = '....................';
+        document.getElementById('push-percent').textContent = '..........';
+        document.getElementById('push-dose').textContent = '....................';
+        document.getElementById('drip-percent').textContent = '..........';
+        document.getElementById('drip-dose').textContent = '....................';
+
+        const blankDt = 'วันที่ .................... เวลา ....................';
+        document.getElementById('order-date').innerHTML = blankDt;
+        document.getElementById('order-date-cont').innerHTML = blankDt;
+
+        ED_COMPONENTS.updateGeneratedTime('p-generated', null);
+
+        resultsContainer.classList.remove('hidden');
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        setTimeout(() => {
+            window.print();
+        }, 300);
     });
 
     ED_COMPONENTS.setupCommonActions();

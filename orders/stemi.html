@@ -33,14 +33,6 @@
                     <h3>1. ข้อมูลผู้ป่วย</h3>
 
                     <div class="inline-input-group">
-                        <label for="dept">Department:</label>
-                        <input type="text" id="dept" placeholder="เช่น Emergency">
-                    </div>
-                    <div class="inline-input-group">
-                        <label for="ward">Ward:</label>
-                        <input type="text" id="ward" placeholder="เช่น CCU">
-                    </div>
-                    <div class="inline-input-group">
                         <label for="hn">HN:</label>
                         <input type="text" id="hn" placeholder="กรอก HN">
                     </div>
@@ -111,6 +103,9 @@
 
             <button type="submit" class="btn btn-calculate">
                 🧮 คำนวณขนาดยาและสร้างใบสั่งยา
+            </button>
+            <button type="button" id="print-blank-btn" class="btn btn-print">
+                🖨️ พิมพ์ใบสั่งยาเปล่า (Print Blank Order)
             </button>
             <button type="button" id="clear-btn" class="btn btn-clear">
                 🗑️ ล้างข้อมูล (Clear)
@@ -264,8 +259,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('stemi-form').addEventListener('submit', e => {
         e.preventDefault();
 
-        const dept     = $('dept').value.trim() || '...';
-        const ward     = $('ward').value.trim() || '...';
         const hn       = $('hn').value.trim() || '...';
         const weight   = parseFloat($('weight').value);
         const age      = parseFloat($('age').value);
@@ -300,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('screen-elderly-note').style.display = tnk.elderly ? 'inline-block' : 'none';
 
         /* ══ PRINT AREA ══ */
-        ED_COMPONENTS.injectPrintHeader('print-header-container', dept, ward);
+        ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
         
         $('p-hn').textContent     = hn;
@@ -344,6 +337,40 @@ document.addEventListener('DOMContentLoaded', () => {
         $('results-container').classList.add('hidden');
         updateFibCards();
         $('hn').focus();
+    });
+
+    $('print-blank-btn').addEventListener('click', () => {
+        ED_COMPONENTS.injectPrintHeader('print-header-container');
+        ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
+        
+        $('p-hn').textContent     = '....................';
+        $('p-weight').textContent = '....................';
+        $('p-age').textContent    = '....................';
+        $('p-asa').innerHTML      = '....................';
+        $('p-tnk-table').innerHTML = buildTNKTableHTML(-1);
+
+        $('p-asa-stat').innerHTML = '☐ ASA 300 mg 1 เม็ด เคี้ยวและกลืน stat';
+        $('p-clopi-stat').innerHTML = '☐ Clopidogrel (75mg) <strong>............ เม็ด</strong> stat <small style="color:#888;">(อายุ ≤75 ปี = 4 เม็ด, อายุ >75 ปี = 1 เม็ด)</small>';
+
+        $('p-fib-tnk-box').className = 'fib-order-box';
+        $('p-fib-tnk-box').innerHTML = '☐ Tenecteplase (TNK) <strong>............ mg (............ ml)</strong> IV bolus in 10 second';
+
+        $('p-fib-sk-box').className = 'fib-order-box';
+        $('p-fib-sk-box').innerHTML = `☐ <strong>Streptokinase 1.5 MU (1 ขวด) dilute in NSS 100 ml IV drip in 60 min</strong><br>
+           ☐ 0.9% NSS 20 cc IV flush หลัง Streptokinase หมด<br>
+           <small style="color:#c0392b;">⚠️ ห้ามบริหารยาซ้ำภายในเวลา 6 เดือน</small>`;
+
+        const blankDt = 'วันที่ .................... เวลา ....................';
+        $('p-dt-1').innerHTML = blankDt;
+        $('p-dt-2').innerHTML = blankDt;
+        ED_COMPONENTS.updateGeneratedTime('p-generated', null);
+
+        $('results-container').classList.remove('hidden');
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        setTimeout(() => {
+            window.print();
+        }, 300);
     });
 
     ED_COMPONENTS.setupCommonActions();
