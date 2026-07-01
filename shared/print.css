@@ -150,14 +150,14 @@
 @media print {
     @page {
         size: A4 portrait;
-        margin: 14mm 10mm 12mm 10mm;
+        margin: 0;
     }
 
     /* ── Global resets ── */
     html, body {
         margin: 0 !important;
         padding: 0 !important;
-        width: 100% !important;
+        width: 210mm !important;
         background: #fff !important;
         color: #000 !important;
         display: block !important;
@@ -196,7 +196,7 @@
     /* ── Results area ── */
     .results-container {
         margin: 0 !important;
-        padding: 0 !important;
+        padding: 5mm !important;
         border-top: none !important;
         background: #fff !important;
     }
@@ -209,7 +209,7 @@
     #print-area {
         border: none !important;
         font-size: 9pt;
-        line-height: 1.35;
+        line-height: 1.3;
         overflow: visible !important;
     }
 
@@ -218,21 +218,26 @@
         min-width: auto !important;
         width: 100% !important;
         border: 1px solid #000;
-        page-break-inside: auto;
+        page-break-inside: avoid;
         font-size: 8.5pt;
     }
 
     .grid-header {
-        padding: 4px 3px;
+        padding: 3px;
         font-size: 8pt;
-        line-height: 1.2;
+        line-height: 1.1;
         background-color: #e9ecef !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
+    .order-grid-5col .grid-header:first-child {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
     .grid-cell {
-        padding: 3px 4px;
+        padding: 3px;
         font-size: 8pt;
         line-height: 1.3;
     }
@@ -258,7 +263,7 @@
     }
 
     .order-list li {
-        margin-bottom: 1px;
+        margin-bottom: 3px;
         line-height: 1.3;
     }
 
@@ -300,10 +305,11 @@
 
     /* ── Sticker box ── */
     .sticker-area {
-        width: 58mm;
-        height: 35mm;
+        width: 70mm;
+        height: 25mm;
         font-size: 8pt;
         border: 1px dashed #000 !important;
+        padding: 10px;
     }
 
     .sticker-box-container {
@@ -332,9 +338,9 @@
     .stroke-page {
         display: block !important;
         page-break-before: always;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
+        width: 195mm;
+        margin: 0 auto;
+        padding: 3mm 0;
         box-sizing: border-box;
     }
 

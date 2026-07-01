@@ -47,7 +47,7 @@
 | **Fibrinolytic / Drug Card** | Card layout to select drugs. | `.selected` (Red border + light red BG), `.hover` (Muted red border), Default (Light gray border) |
 | **Print Order Grid** | 5-column grid mapping to hospital medical chart layout. | `grid-template-columns: 2fr 1fr 3fr 1fr 3fr;` |
 | **Dose Summary Banner** | Large visual badge displaying computed dose on screen. | `#screen-dose` or `#screen-grace`. Light yellow/red backgrounds. |
-| **Patient Sticker Box** | Standardized dashed bounding box mimicking paper patient label stickers. | Screen: `width: 200px; height: 65px;` Print: `width: 58mm; height: 35mm;` |
+| **Patient Sticker Box** | Standardized dashed bounding box mimicking paper patient label stickers. | Screen: `width: 200px; height: 65px;` Print: `width: 70mm; height: 25mm;` |
 | **Titration Assistant Card** | Dynamic lookup display showing next titration step. | Shows action, rate change, and next recheck alert. |
 
 ---
@@ -60,11 +60,14 @@
 - **Form Validation:** Visual alerts (`alert()`) and dynamic warning banners prevent incorrect ranges (e.g., weights outside 30-200 kg).
 
 ### Printing Constraints (A4 Layout)
-- **Page Size:** `@page { size: A4 portrait; margin: 14mm 10mm 12mm 10mm }` — printable area ~190mm × 271mm.
-- **Body Reset:** `body { display: block !important }` overrides screen `display: flex` for proper print flow.
-- **5-Column Grid:** `min-width: auto; width: 100%; font-size: 8pt` — fits within A4 width. Screen retains `min-width: 900px` for readability.
-- **Page Break Control:** `page-break-inside: auto` on order grids (allows flow across pages). `page-break-inside: avoid` on individual grid cells, fib/AC cards, and sticker boxes. Stroke multi-page documents use `page-break-before: always`.
-- **Sticker Box:** Print dimensions `58mm × 35mm` (matching original paper forms). Screen size `200px × 65px`.
+- **Page Size:** `@page { size: A4 portrait; margin: 0 }` — content uses full A4 area (210mm × 297mm). Results container padding `5mm` provides the printable margin.
+- **Body Reset:** `body { width: 210mm; display: block !important }` overrides screen `display: flex` for proper print flow.
+- **5-Column Grid:** `min-width: auto; width: 100%; font-size: 8pt; page-break-inside: avoid` — fits within A4 width and stays on one page. Screen retains `min-width: 900px` for readability.
+- **Grid Header:** `padding: 3px; font-size: 8pt; line-height: 1.1`. First-child header (Progress Note) gets `padding-top/bottom: 5px` for visual balance.
+- **Grid Cell:** `padding: 3px; font-size: 8pt; line-height: 1.3`. Order list items: `margin-bottom: 3px; line-height: 1.3`.
+- **Page Break Control:** `page-break-inside: avoid` on order grid (prevents splitting). `page-break-inside: avoid` on individual grid cells, fib/AC cards, and sticker boxes. Stroke multi-page documents use `page-break-before: always`.
+- **Stroke Pages:** `width: 195mm; margin: 0 auto; padding: 3mm 0` — matches original rtpamnrh.vercel.app layout for A4 fit.
+- **Sticker Box:** Print dimensions `70mm × 25mm` (matching original paper forms). Screen size `200px × 65px`.
 - **No-Print Classes:** Screen-only controls, forms, banners, buttons, top nav, and floating print bar hidden via `display: none !important`.
 - **Color:** All print output forced to black-on-white with `-webkit-print-color-adjust: exact`. Grid headers retain light gray background for structure.
 - **Manual Fill Support:** When printing blank orders, checkboxes render as ☐, calculated fields replaced with dotted lines. All hardcoded ☑ items are explicitly reset to ☐.
