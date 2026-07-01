@@ -4,19 +4,30 @@
 
 | Component | Role | Dependencies |
 |---|---|---|
-| `Hub (index.html)` | Application portal listing all ER Standing Orders and calculators in a single 3-column grid. Cards have color-coded left borders per medical category (Cardiac #c0392b, Pulmonary #2980b9, Neurology #8e44ad, Anticoagulation #16a085, Toxicology #d35400, Procedural #27ae60, Tools #2c3e50). No section titles, no emoji icons, no print-blank buttons (removed per ADR-09). Stroke FAST TRACK is first card. Portal header (logo + title card) removed — nav bar replaces it. Tablet (600–900px) → 2 columns, mobile (<600px) → 1 column. Backward-compatible redirect for legacy rTPA URLs. | None |
-| `calc-engine.js` | Generic mathematical engine computing infusion drip rates (mL/hr) and loading doses (mL). | None |
-| `anticoag-engine.js` | Logic engine determining Heparin/LMWH doses and titration changes based on clinical indications. | None |
-| `drug-data.js` | Structured catalog of concentrations, dose limits, safety ceilings, and titration instructions for all 12 IV drugs. | None |
-| `components.js` | Renders common UI elements: patient info blocks, sticker boxes (HN set via `textContent` for XSS safety), date-time inputs, sticky top navigation bar (`injectNavBar` — accepts optional `homeHref` and `logoSrc` for path/logo flexibility, auto-detects title from `document.title`, sets `role="navigation"`, adds `aria-label` to title), floating print action bar (`showFloatBar`/`hideFloatBar`). Float bar uses text-only labels (no emoji per ADR-09). | None |
-| `print-bootstrap.js` | Shared print/page lifecycle: `handlePrintBlankDirect()` (URL param detection for HTML blank print), `handlePrintBlankDirectPdf(path)` (URL param detection → redirect to source PDF), `openBlankPdf(path)` (opens source PDF in new tab — user presses print manually, no cross-tab `.print()` per ADR-09), `showResults()` (unhide + float bar + scroll), `clearResults(formId, extraFn)` (reset + hide + focus), `getDateTimeHTML(useTime, date)`, `getBlankDateTimeHTML()`. 5 of 7 order pages use the PDF pathway (ADR-17); rtpa/nstemi keep HTML blank print. | `components.js` |
-| `blank-print-engine.js` | Declarative blank-print reset engine. Each order page registers a manifest of reset rules (`{ id, value }` for textContent, `{ id, html }` for innerHTML, `{ id, className }` for class override, `{ id, style }` for style props, `{ selector, checked }` for checkboxes). `apply()` executes all rules. Used by rtpa.html and nstemi.html only (ADR-17 — 5 other pages now open source PDFs instead). Fixes the ADR-10 bug class at the root — adding a new protocol page is now a manifest array, not a hand-written reset block. | None |
-| `form-validate.js` | Non-blocking form validation — replaces `alert()` calls across all order pages. `fail(inputId, msg)` highlights field + inline message. `warn(msg)` shows clinical warning banner. `range(inputId, min, max, msg)` and `min(inputId, minVal, msg)` for numeric validation. `clearAll()` resets all errors. Uses existing `.field-error` CSS + new `.inline-error-msg` and `.clinical-warning` classes. | `components.js` |
-| `orders/*.html` | Specialized clinical worksheets (rt-PA, STEMI, NSTEMI, PE, Antivenom, Heparin, Sedation). All 7 files use `ED_PRINT_BOOTSTRAP` for page lifecycle and `ED_VALIDATE` for non-blocking validation. Zero `alert()` calls. 5 pages (stemi, pe, heparin, antivenom, sedation) use `ED_PRINT_BOOTSTRAP.openBlankPdf()` to open source PDFs from `docs/` in a new tab (ADR-17). 2 pages (rtpa, nstemi) keep `ED_BLANK_PRINT` for HTML blank-print (no source PDF). Page-specific JS reduced to: form submit handler (clinical logic) + event listeners for protocol-specific UI. | `shared/base.css`, `shared/print.css`, `shared/calc-engine.js` or `shared/anticoag-engine.js`, `shared/components.js`, `shared/print-bootstrap.js`, `shared/form-validate.js` (rtpa/nstemi also load `shared/blank-print-engine.js`) |
-| `tools/drip-calculator.html` | IV infusion drip rate calculator for 12 high-alert drugs. Loads `components.js` and uses `injectNavBar()` with hospital logo for nav consistency. No print flow (no `print.css`). | `shared/base.css`, `shared/calc-engine.js`, `shared/drug-data.js`, `shared/components.js` |
-| `index.html` | Portal hub with nav bar (`injectNavBar('index.html', logoPath)`). 3-column card grid (no card descriptions — removed per ADR-05), backward-compat redirect. Registers service worker for offline PWA support. Body uses inline `display: block` override. | `shared/base.css`, `shared/components.js`, `service-worker.js`, `manifest.json` |
-| `service-worker.js` | PWA offline cache. Network-first for navigation, cache-first for assets. Caches all HTML/CSS/JS + 3 shared behavior modules + logo PNG + 5 source PDFs + Google Fonts. `CACHE_VERSION` bumped to `er-hub-v2` (ADR-17). Enables full offline access during ED wifi outages. | None |
-| `manifest.json` | PWA manifest. App name, theme color, favicon reference. Enables installable app + offline. | `favicon.svg` |
+| `app/layout.tsx` | Root layout. Sarabun font (Google Fonts), ThemeProvider (next-themes, dark default + light toggle, `attribute="data-theme"`). `suppressHydrationWarning` on `<html>` to prevent FOUC. | `next-themes`, `globals.css` |
+| `app/page.tsx` | Home page. DashboardLayout wrapper with welcome card. | `DashboardLayout` |
+| `app/globals.css` | Design system. Dark default + light theme tokens via `:root[data-theme='light']`. Single accent #5E6AD2. Sidebar, card, slider, dose-result, sticker-box, clinical-warning, field-error, print styles. | None |
+| `components/DashboardLayout.tsx` | Layout wrapper: Sidebar + ThemeToggle + main content area. | `Sidebar`, `ThemeToggle` |
+| `components/Sidebar.tsx` | Flat sidebar nav (8 items, ordered by clinical urgency: Stroke first). Hospital logo in header (28px). Active item highlighted with accent border. | `next/link`, `next/navigation` |
+| `components/ThemeToggle.tsx` | Dark/light toggle button. Uses `next-themes` `useTheme()`. Mounted check to prevent hydration mismatch. | `next-themes` |
+| `components/SliderInput.tsx` | Labeled range slider with realtime value display. Used for weight (continuous 0.1 step) and age (stepped 1 step). | None |
+| `components/DoseResultCard.tsx` | Number + context display: label, value, unit, context (formula), ceiling (range/max). Accent border + accent-bg. | None |
+| `components/PatientInfoForm.tsx` | Patient info card: HN text input, eGFR text input (optional), weight slider (30-150, 0.1 step), age slider (18-120, 1 step). | `SliderInput` |
+| `components/StickerBox.tsx` | Dashed patient sticker box for print area. Shows HN. | None |
+| `components/DripCalculator.tsx` | IV infusion drip calculator. Drug selector (12 drugs), preparation selector, weight + dose sliders, realtime drip rate + bolus volume via calcDripRate/calcBolusVolume. DoseResultCard for results. Dual-units display for Esmolol. | `lib/drug-data`, `lib/calc-engine`, `SliderInput`, `DoseResultCard` |
+| `lib/calc-engine.ts` | TypeScript port of calcDripRate() and calcBolusVolume(). Pure functions, fully typed. | None |
+| `lib/anticoag-engine.ts` | TypeScript port of calcAnticoag(), calcHeparinInitialDose(), getHeparinTitration(), HEPARIN_STANDALONE_PROTOCOLS. Pure functions, fully typed. | None |
+| `lib/drug-data.ts` | TypeScript port of EMERGENCY_DRUG_DATA (12 drugs). Interfaces: EmergencyDrug, DrugPreparation, DoseRange. Clinical data unchanged from original. | None |
+| `lib/form-validate.ts` | React hook `useFormValidation()`. State-based: fail(), clear(), range(), min(), warn(), clearWarn(), clearAll(). Replaces DOM-manipulation validation with reactive pattern. | None |
+| `app/orders/rtpa/page.tsx` | rt-PA Stroke FAST TRACK page. HTML blank print (window.print). | `DashboardLayout`, `RtpaOrder` |
+| `app/orders/stemi/page.tsx` | STEMI Standing Order page. PDF pathway (opens source PDF in new tab). | `DashboardLayout`, `StemiOrder` |
+| `app/orders/nstemi/page.tsx` | NSTEMI Standing Order page. HTML blank print. Uses calcAnticoag for anticoagulant recommendation. | `DashboardLayout`, `NstemiOrder` |
+| `app/orders/pe/page.tsx` | Massive PE Fibrinolysis page. PDF pathway. | `DashboardLayout`, `PeOrder` |
+| `app/orders/heparin/page.tsx` | Heparin Protocol page. PDF pathway. Uses calcHeparinInitialDose + getHeparinTitration. Titration assistant. | `DashboardLayout`, `HeparinOrder` |
+| `app/orders/antivenom/page.tsx` | Antivenom Standing Order page. PDF pathway. Snake type selector, indication checkboxes, antibiotic toggle. | `DashboardLayout`, `AntivenomOrder` |
+| `app/orders/sedation/page.tsx` | Post-Intubation Sedation page. PDF pathway. Fentanyl + Midazolam dual-drug calculator. | `DashboardLayout`, `SedationOrder` |
+| `app/tools/drip-calculator/page.tsx` | IV Infusion Drip Calculator page. Realtime sliders, 12 drugs. | `DashboardLayout`, `DripCalculator` |
+| `.github/workflows/deploy.yml` | GitHub Actions: build (npm ci + next build + vitest) → deploy to GitHub Pages via actions/deploy-pages@v4. | `out/` directory |
 
 ---
 
@@ -24,39 +35,42 @@
 
 ```mermaid
 graph TD
-    A[User Form Inputs] -->|Weight/Age/Clinical Flags| B(UI Input Sanitizer)
-    B -->|Sanitized Variables| C{Clinical Calculator}
-    C -->|Calculates Drip Rate & Dose| D[shared/calc-engine.js]
-    C -->|Calculates Anticoagulant Dose| E[shared/anticoag-engine.js]
-    D -->|Dose Values| F(Print Renderer)
-    E -->|Dose Values| F
-    F -->|CSS Media Print Formatting| G[A4 Paper / Hospital Record PDF]
+    A[User Slider/Input] -->|Weight/Age/eGFR| B[React State useState]
+    B -->|Realtime Values| C{Clinical Calculator}
+    C -->|Drip Rate| D[lib/calc-engine.ts]
+    C -->|Anticoagulant Dose| E[lib/anticoag-engine.ts]
+    C -->|Drug Lookup| F[lib/drug-data.ts]
+    D -->|Computed Values| G[DoseResultCard]
+    E -->|Recommendation| G
+    F -->|Drug Info| H[DripCalculator]
+    G -->|Screen Display| I[User reads dose]
+    I -->|Print button| J[window.print or PDF open]
 ```
 
-1. **Input Collection (`Src`):** User inputs patient variables (HN, age, weight, eGFR) and selects drug/indication options in the active worksheet.
-2. **Clinical Processing (`Transform`):** Sanitized inputs are processed by `shared/calc-engine.js` or `shared/anticoag-engine.js` referencing data structures in `shared/drug-data.js`.
-3. **Print Output (`Dest`):** Output values are written directly to target print containers in the DOM, then converted into an official A4 medical order sheet via the browser print driver using `shared/print.css`.
+1. **Input (`Src`):** User adjusts sliders (weight, age, dose) and text inputs (HN, eGFR) in React client components. State updates trigger realtime recalculation via `useMemo`.
+2. **Clinical Processing (`Transform`):** Input values passed to `lib/calc-engine.ts` (drip rates, bolus volumes) or `lib/anticoag-engine.ts` (heparin/enoxaparin/fondaparinux dosing, titration). `lib/drug-data.ts` provides drug catalog (concentrations, dose ranges, safety warnings).
+3. **Display (`Dest`):** Computed values rendered in `DoseResultCard` (value + unit + context + ceiling). Print via `window.print()` (HTML blank) or `window.open()` (source PDF in new tab).
 
 ---
 
-## 3. Offline Decisions
+## 3. Offline & Deployment
 
-| Entity | Conflict Resolution | Sync Strategy |
-|---|---|---|
-| `Patient Form State` | Client-only state. Form resets immediately on navigation or tab close. | No server sync. Strictly offline-first. |
-| `Calculation Engine` | Pure functional operations. Standard math guarantees deterministic outcomes. | Stored as local `.js` scripts. Loaded from disk. |
-| `PWA Assets Cache` | Service worker (`service-worker.js`) registered on index.html. Network-first for navigation, cache-first for static assets. Caches all HTML/CSS/JS + Google Fonts for offline access. | Assets cached in browser via Cache API. Cache version bumped on deploy. |
+| Entity | Strategy |
+|---|---|
+| **Static Export** | `output: 'export'` in `next.config.ts` → `out/` directory with static HTML/CSS/JS. `basePath: '/er-hub'` for GitHub Pages subpath. `trailingSlash: true` for clean URLs. |
+| **PWA** | Removed. No service worker, no manifest.json. (Previously had offline cache for ED wifi outages — dropped per rewrite scope.) |
+| **GitHub Actions** | `.github/workflows/deploy.yml`: npm ci → next build → vitest → upload `out/` as Pages artifact → deploy-pages@v4. Triggers on push to main. |
+| **Print Pathways** | Two pathways (preserved from ADR-17): (1) PDF pathway (stemi, pe, heparin, antivenom, sedation) — opens source PDF from `public/docs/` in new tab via `window.open()`. (2) HTML blank print (rtpa, nstemi) — `window.print()` on rendered blank template. |
 
 ---
 
 ## 4. Clinical & System Warnings
 
-- **W-01: Absolute SK Contraindication:** Users selecting Streptokinase (SK) who flag a prior SK administration within 6 months are permanently blocked from generating the order. They must use Tenecteplase (TNK).
-- **W-02: Individualized Dosing Bypass:** For Heparin and Antivenom protocols, matching any pre-defined clinical risk factors (e.g., active bleeding, platelet count < 50,000) disables automatic calculations, forcing user consultation with the attending staff.
-- **W-03: Max Dose Ceilings:** The calculation engine automatically caps values at the clinical upper limit (e.g., Fentanyl drip maxed at 500 mcg/hr, rt-PA maxed at 90mg or 50mg based on regimen) to prevent accidental overdosage.
-- **W-04: Print Blank Order Bypass:** Two pathways (ADR-17): (1) 5 pages (stemi, pe, heparin, antivenom, sedation) open the source PDF from `docs/` in a new browser tab via `ED_PRINT_BOOTSTRAP.openBlankPdf(path)` — the clinician presses print manually in the native PDF viewer (no cross-tab `.print()` per ADR-09). (2) 2 pages (rtpa, nstemi) render a blank HTML template on-screen via `ED_BLANK_PRINT.apply()` — clinician prints via the green print button or floating action bar. Both pathways bypass all screen validation. The home portal no longer has print-blank buttons (removed per ADR-09). `?print-blank-direct=true` URL param works for both: PDF pages redirect to the PDF, HTML pages trigger blank print.
-- **W-05: Lab/IV/O2 Hygiene:** Lab investigations, IV fluids, oxygen, monitoring, and non-drug continuation orders are always rendered as unchecked (☐) in the print output — even when patient data has been entered. Only drug-related orders (ASA, Clopidogrel, Fentanyl, Midazolam, Heparin dosing, Antivenom dosing, Antibiotics) auto-check (☑) based on input data. This prevents accidental pre-checking of investigations that must be ordered by the attending physician.
-- **W-06: A4 Print Fit:** All order pages use `@page { size: A4 portrait; margin: 0 }` with `body { width: 210mm; display: block !important }` to override the screen flex layout. Results container uses `padding: 5mm` for print margins. The 5-column order grid drops `min-width: 900px` in print, uses `font-size: 8pt`, and `page-break-inside: avoid` to keep the grid intact on one page. Stroke-specific pages (rt-PA) use `width: 195mm; margin: 0 auto; padding: 3mm 0` with `page-break-before: always` for multi-page documents — matching the original rtpamnrh.vercel.app layout. Sticker box: 60mm × 20mm (compact, matching stroke page sticker dimensions). The sticky top navigation bar is hidden in print across all 7 order pages via `nav`, `.top-nav`, and `a[href*="index.html"]` selectors in `@media print`. rt-PA order grid includes `10em` spacer divs before doctor signature lines (ลงชื่อแพทย์ ER/MED and ลงชื่อแพทย์ MED) to fill the A4 page height. Portal header padding reduced to `16px 20px` (was `32px 20px`), logo to `64px` (was `88px`), margin-bottom to `16px` (was `30px`) for a compact header.
-- **W-07: Hardcoded Checkbox Reset on Blank Print:** All non-dynamic ☑ items (medications, monitoring instructions, diet orders) in the results area are tagged with IDs and explicitly reset to ☐ when printing a blank order. This prevents pre-checked medications (Clopidogrel, Ativan, Atorvastatin, Augmentin, etc.) from appearing on blank orders intended for new patients. Affected files: rtpa (10 items), nstemi (12 items) — the 2 pages that still use HTML blank-print. The 5 PDF-pathway pages (stemi, pe, heparin, antivenom, sedation) no longer use `ED_BLANK_PRINT` (ADR-17). Antivenom antibiotic toggle (F3 fix, ADR-17): `p-augmentin` and `p-cipro-clinda` now toggle based on penicillin-allergy radio input — no longer both hardcoded ☑.
-- **W-08: Use-Current-Time Checkbox:** All 5 order files with the `use-current-time` checkbox (pe, heparin, antivenom, nstemi, rtpa) wire it to the date/time generation logic — when unchecked, date/time fields render as dotted lines instead of the current time.
-- **W-09: Iframe Print Cleanup (Deprecated):** The home portal's `printBlankOrder()` function was removed (ADR-13). ADR-09 eliminated all portal print-blank buttons, making the function dead code. The `afterprint` + 5-minute timeout pattern is documented for historical reference only.
+- **W-01: SK Contraindication:** STEMI + PE pages block SK order generation if prior SK within 6 months is checked. Clinical warning shown, no order generated.
+- **W-02: Individualized Dosing:** Heparin page — if any bleeding risk checkbox is checked, individualized dosing warning displayed instead of auto-calculated dose.
+- **W-03: Max Dose Ceilings:** calc-engine and anticoag-engine enforce clinical max doses (e.g., Heparin bolus caps, rt-PA max 90mg/50mg, Fentanyl max 500 mcg/hr). DoseResultCard shows ceiling value.
+- **W-04: Antivenom Indication Gate:** At least 1 indication checkbox must be checked before antivenom order can be generated. Warning shown if none checked.
+- **W-05: Antibiotic Allergy Toggle:** Antivenom page — penicillin allergy radio toggles between Augmentin (default) and Ciprofloxacin+Clindamycin (allergy alternative).
+- **W-06: Krait Auto-Indication:** Antivenom page — selecting Malayan krait or Banded krait auto-checks the "krait bite" indication (give antivenom immediately, don't wait for weakness).
+- **W-07: TNK Age Dose Reduction:** STEMI page — age ≥ 75 halves TNK dose. Clopidogrel: age ≤ 75 → 4 tabs, age > 75 → 1 tab.
+- **W-08: Print Layout:** `@media print` in globals.css hides sidebar, theme toggle, and `.no-print` elements. `@page { size: A4 portrait; margin: 0 }` for hospital record format.

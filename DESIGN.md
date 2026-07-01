@@ -2,78 +2,78 @@
 
 ## 1. Design Tokens
 
-### Color Palette
-- **Background:** `#f0f2f5` (Light neutral gray for screen background)
-- **Container Background:** `#ffffff` (Card background)
-- **Primary Text:** `#333333` (Charcoal gray)
-- **Border Neutral:** `#cccccc` / `#dee2e6` (Light borders)
-- **Card Selection Active:** `#ffeaa7` (High alert highlight / selected state background)
+### Color Palette (Dark Default)
+- **Background Primary:** `#0d1117` (GitHub dark)
+- **Background Secondary:** `#161b22` (Card/sidebar bg)
+- **Background Tertiary:** `#21262d` (Input/hover bg)
+- **Border:** `#30363d`
+- **Border Active:** `#5E6AD2` (Accent)
+- **Text Primary:** `#e6edf3`
+- **Text Secondary:** `#8b949e`
+- **Text Muted:** `#6e7681`
+- **Accent:** `#5E6AD2` (Indigo — single accent for all active states)
+- **Accent Hover:** `#7c84e0`
+- **Accent BG:** `rgba(94, 106, 210, 0.12)`
+- **Danger:** `#f85149`
+- **Warning:** `#d29922`
+- **Success:** `#3fb950`
 
-#### Module Specific Accents
-- **Stroke (rt-PA):** Primary `#007bff` | Hover `#0056b3` | BG Highlight `#e6f0ff`
-- **STEMI / NSTEMI / PE / Antivenom / Heparin / Sedation:** Primary `#c0392b` | Hover `#a93226` | BG Highlight `#fff5f5`
-- **Success / Print:** Primary `#28a745` | Hover `#218838`
-- **Neutral / Clear:** Primary `#7f8c8d` | Hover `#626c6d`
+### Light Theme (`:root[data-theme='light']`)
+- **Background Primary:** `#f0f2f5`
+- **Background Secondary:** `#ffffff`
+- **Background Tertiary:** `#f6f8fa`
+- **Border:** `#d0d7de`
+- **Text Primary:** `#1f2328`
+- **Text Secondary:** `#656d76`
+- **Danger:** `#cf222e`
+- **Warning:** `#bf8700`
+- **Success:** `#1a7f37`
 
 ### Typography
-- **Primary Font Family:** `'Sarabun', sans-serif` (Imported from Google Fonts)
-- **Font Sizes:**
-  - Page Heading (`h1`): `1.5em` (24px)
-  - Section Heading (`h3`): `1.2em` (18px)
-  - Input/Form Text: `15px`
-  - Print Cells: `10.5px` (Optimized for space)
-  - Print Headers: `16px`
+- **Font Family:** `'Sarabun', sans-serif` (Google Fonts, weights 400/500/600/700)
+- **Dose Result Value:** 32px bold accent color
+- **Card Header:** 16px bold
+- **Input/Form Text:** 15px
+- **Slider Label:** 13px secondary, slider value 13px accent bold
+- **Dose Result Label:** 12px uppercase secondary
 
-### Breakpoints & Layout
-- **Container Max-Width:** `1100px` (order pages), `1200px` (portal)
-- **Form Grid Gaps:** `20px` (STEMI/NSTEMI), `30px` (Stroke)
-- **Responsive Breakpoints:**
-  - `≤900px`: Columns stack vertically, inline-input labels go full-width
-  - `≤899px` (tablet): Inline inputs stack vertically, buttons 44px min-height
-  - `≤599px` (mobile): Single-column portal grid, compact padding, horizontal scroll hint for order grid, flag labels stack
-- **Touch Targets:** Buttons min-height 44px on mobile
+### Layout
+- **Sidebar Width:** 240px (sticky, full height)
+- **Main Content:** max-width 1200px, padding 24px 32px
+- **Card:** padding 20px, border-radius 8px, margin-bottom 16px
+- **Grid:** `1fr 1fr` gap 16px for patient info form
+- **Theme Toggle:** absolute top-right (16px/24px from edges)
 
 ---
 
-## 2. UI Components & States
+## 2. UI Components
 
-| Component | Role / Target | States & Props |
+| Component | Role | States |
 |---|---|---|
-| **Portal Card** | Category-grouped card in single 3-column grid. Color-coded left border per category. No section titles, no emoji, no print-blank button, no card descriptions (removed per ADR-05). Stroke FAST TRACK is first card. Card title 17px bold for easy visibility. | `.hover` (Lift + shadow), Default (Light gray border + 4px category color left border). `padding: 18px 20px`, `gap: 16px`. Grid: `repeat(3, 1fr)` desktop, `repeat(2, 1fr)` tablet (600–900px), `1fr` mobile (<600px). |
-| **Portal Header** | Removed. Nav bar replaces the portal header. Logo and title card deleted from `index.html`. | N/A |
-| **Top Navigation Bar** | Sticky full-width bar injected by `ED_COMPONENTS.injectNavBar()`. Auto-detects page title from `document.title` (strips after `—`). Optional hospital logo (28px height) passed via `logoSrc` parameter — now shown on all 9 pages (portal + 7 orders + drip calculator, ADR-17 reverses ADR-14 Q3). Present on all 9 pages. "Home" text link (no icon) + title text. Negative margins (`-20px` top/left/right) escape `body { padding: 20px }` for flush-to-top, full-width display on order pages. `aria-label` on both Home link and title span. | Blue gradient (`#1e3c72 → #2a5298`), `position: sticky; top: 0; z-index: 100`. `width: calc(100% + 40px)`, negative margins to escape body padding. `Home` link + `.nav-title`. Hidden in print via `nav`, `.top-nav`, `a[href*="index.html"]` selectors in `@media print`. |
-| **Floating Print Action Bar** | Fixed bottom bar shown after generate/blank, hidden on clear. Text-only labels (no emoji, per ADR-09 consistency). | Green (#27ae60) bar with "พิมพ์ทันที" and "ดู Order" buttons. `position: fixed; bottom: 0; z-index: 1000`. Hidden in print via `@media print`. |
-| **Field Error State** | Red border highlight for empty/invalid required fields. | `.field-error` class: `border-color: #c0392b; box-shadow: 0 0 5px rgba(192,57,43,0.4)`. |
-| **Fibrinolytic / Drug Card** | Card layout to select drugs. | `.selected` (Red border + light red BG), `.hover` (Muted red border), Default (Light gray border) |
-| **Print Order Grid** | 5-column grid mapping to hospital medical chart layout. | `grid-template-columns: 2fr 1fr 3fr 1fr 3fr;` |
-| **Dose Summary Banner** | Large visual badge displaying computed dose on screen. | `#screen-dose` or `#screen-grace`. Light yellow/red backgrounds. |
-| **Patient Sticker Box** | Standardized dashed bounding box mimicking paper patient label stickers. | Screen: `width: 200px; height: 65px;` Print: `width: 60mm; height: 20mm;` |
-| **Titration Assistant Card** | Dynamic lookup display showing next titration step. | Shows action, rate change, and next recheck alert. |
+| **Sidebar** | Flat list of 8 nav items. Hospital logo (28px) + "MNRH-ED" header. Active item: accent bg + accent left border + bold. | `.active` (accent border-left 3px + accent-bg), `:hover` (bg-hover + text-primary) |
+| **ThemeToggle** | Dark/light switch button. Top-right of main content. | Dark: "☀ Light", Light: "🌙 Dark" |
+| **Card** | Container for form sections and results. | Default: bg-secondary + 1px border + 8px radius |
+| **SliderInput** | Range slider with label + realtime value display. Label left, value right (accent color). | `:focus` — accent border + accent-bg box-shadow |
+| **DoseResultCard** | Computed dose display: label (uppercase 12px), value (32px accent), unit (16px secondary), context (13px muted), ceiling (12px warning). | Default: accent-bg + accent border + 8px radius |
+| **PatientInfoForm** | HN text input, eGFR text input (optional), weight slider (30-150, 0.1 step), age slider (18-120, 1 step). | Standard input states |
+| **StickerBox** | Dashed border box for patient sticker in print area. | 2px dashed border, min 200px × 65px |
+| **Clinical Warning** | Non-blocking safety banner. | warning bg (10% opacity) + warning border + warning text |
+| **Field Error** | Red border + box-shadow on invalid inputs. | `.field-error` class via useFormValidation |
 
 ---
 
-## 3. Accessibility & Printing Constraints
+## 3. Accessibility & Print
 
-### Accessibility (Screen)
-- **Favicon:** SVG medical cross icon (`favicon.svg`) on all 9 pages for tab identification.
-- **ARIA Landmarks:** `role="navigation"` on the sticky nav bar. `aria-label="Home"` on the Home link.
-- **Live Regions:** `aria-live="polite"` on dose summary banners and stroke results container — screen readers announce computed doses without interrupting workflow.
-- **Focus Indicators:** Interactive inputs feature a clear outline focus state (`border-color: #c0392b` or `#007bff` with `box-shadow` glow).
-- **Contrasts:** Minimum contrast ratio of 4.5:1 maintained for clinical text labels.
-- **Form Validation:** Non-blocking validation via `ED_VALIDATE` (`shared/form-validate.js`). Inline `.field-error` + `.inline-error-msg` for field-level errors. `.clinical-warning` banner for safety alerts (SK contraindication, absolute CI). Zero `alert()` calls in the codebase.
+### Accessibility
+- **ARIA:** `role="navigation"` on sidebar, `aria-live="polite"` on dose result containers
+- **Focus:** Accent border-color + accent-bg box-shadow on input focus
+- **Contrast:** Minimum 4.5:1 for clinical text (dark theme: #e6edf3 on #0d1117 = 15:1)
+- **Forms:** Non-blocking validation via useFormValidation (inline errors, clinical warnings — zero alert() calls)
 
-### Printing Constraints (A4 Layout)
-- **Page Size:** `@page { size: A4 portrait; margin: 0 }` — content uses full A4 area (210mm × 297mm). Results container padding `5mm` provides the printable margin.
-- **Body Reset:** `body { width: 210mm; display: block !important }` overrides screen `display: flex; flex-direction: column` for proper print flow.
-- **5-Column Grid:** `min-width: auto; width: 100%; font-size: 8pt; page-break-inside: avoid` — fits within A4 width and stays on one page. Screen retains `min-width: 900px` for readability.
-- **Grid Header:** `padding: 3px; font-size: 8pt; line-height: 1.1`. First-child header (Progress Note) gets `padding-top/bottom: 5px` for visual balance.
-- **Grid Cell:** `padding: 3px; font-size: 8pt; line-height: 1.3`. Order list items: `margin-bottom: 3px; line-height: 1.3`.
-- **Page Break Control:** `page-break-inside: avoid` on order grid (prevents splitting). `page-break-inside: avoid` on individual grid cells, fib/AC cards, and sticker boxes. Stroke multi-page documents use `page-break-before: always`.
-- **Stroke Pages:** `width: 195mm; margin: 0 auto; padding: 3mm 0` — matches original rtpamnrh.vercel.app layout for A4 fit.
-- **Sticker Box:** Print dimensions `60mm × 20mm` (compact, matching stroke page sticker size). Screen size `200px × 65px`.
-- **Back Link Hidden:** The sticky top navigation bar is hidden in print via `nav`, `.top-nav`, and `a[href*="index.html"]` selectors in `@media print`.
-- **Signature Spacers:** rt-PA order grid uses `<div style="height:10em">` spacers before doctor signature lines (ลงชื่อแพทย์ ER/MED, ลงชื่อแพทย์ MED) to fill A4 page height and prevent a top-heavy table. Tuned from 5em (too little) and 15em (overflow to 5 pages) to 10em (exactly 4 pages).
-- **No-Print Classes:** Screen-only controls, forms, banners, buttons, top nav, and floating print bar hidden via `display: none !important`.
-- **Color:** All print output forced to black-on-white with `-webkit-print-color-adjust: exact`. Grid headers retain light gray background for structure.
-- **Manual Fill Support:** When printing blank orders, checkboxes render as ☐, calculated fields replaced with dotted lines. All hardcoded ☑ items are explicitly reset to ☐.
-- **Lab/IV/O2 Hygiene:** Lab investigations, IV fluids, oxygen, monitoring, and non-drug continuation orders always render as ☐ in print. Only drug-related orders auto-check (☑).
+### Print (A4 Layout)
+- **Page Size:** `@page { size: A4 portrait; margin: 0 }`
+- **Hidden Elements:** `.sidebar`, `.theme-toggle`, `.no-print` → `display: none !important`
+- **Main Content:** padding 0, max-width none
+- **Body:** white background, black text
+- **HTML Blank Print:** rtpa, nstemi use `window.print()` on rendered template
+- **PDF Pathway:** stemi, pe, heparin, antivenom, sedation open source PDF from `public/docs/` in new tab via `window.open()`
