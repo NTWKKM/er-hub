@@ -95,11 +95,11 @@ export default function PeOrder() {
   }, [validation]);
 
   const handlePrintOrder = useCallback(() => {
-    window.open('/docs/STEMI-PE/PE-Massive-merged.pdf', '_blank');
+    window.print();
   }, []);
 
   const handlePrintBlank = useCallback(() => {
-    window.open('/docs/STEMI-PE/PE-Massive-merged.pdf', '_blank');
+    window.open('/er-hub/docs/STEMI-PE/PE-Massive-merged.pdf', '_blank');
   }, []);
 
   const toggleAbsCI = (id: string) => {
@@ -261,103 +261,102 @@ export default function PeOrder() {
 
         {/* Column 3: Regimen Selection */}
         <h3>3. เลือกสูตรการบริหารยาละลายลิ่มเลือด (Fibrinolytic Regimen)</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
-          <div
-            className={`pe-regimen-card${regimen === 'sk_a' ? ' selected' : ''}`}
-            onClick={() => setRegimen('sk_a')}
-            style={{
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              padding: '10px',
-              cursor: 'pointer',
-              background: regimen === 'sk_a' ? '#fff5f5' : 'transparent',
-              borderColor: regimen === 'sk_a' ? 'var(--cardiac-primary, #c0392b)' : '#ddd',
-              borderWidth: regimen === 'sk_a' ? '2px' : '1px',
-            }}
-          >
-            <input
-              type="radio"
-              name="pe-regimen"
-              value="sk_a"
-              checked={regimen === 'sk_a'}
-              onChange={() => setRegimen('sk_a')}
-            />{' '}
-            <strong>Streptokinase (SK) Regimen A: 1.5 MU IV drip in 120 min</strong>
-            <small style={{ display: 'block', color: '#666', marginTop: '4px' }}>1.5 MU dilute in NSS 100 mL IV drip ใน 120 นาที</small>
-          </div>
+        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+          <legend className="sr-only">เลือกสูตร Fibrinolytic Regimen</legend>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+            <label
+              className={`pe-regimen-card${regimen === 'sk_a' ? ' selected' : ''}`}
+              style={{
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                padding: '10px',
+                cursor: 'pointer',
+                background: regimen === 'sk_a' ? '#fff5f5' : 'transparent',
+                borderColor: regimen === 'sk_a' ? 'var(--cardiac-primary, #c0392b)' : '#ddd',
+                borderWidth: regimen === 'sk_a' ? '2px' : '1px',
+              }}
+            >
+              <input
+                type="radio"
+                name="pe-regimen"
+                value="sk_a"
+                checked={regimen === 'sk_a'}
+                onChange={() => setRegimen('sk_a')}
+              />{' '}
+              <strong>Streptokinase (SK) Regimen A: 1.5 MU IV drip in 120 min</strong>
+              <small style={{ display: 'block', color: '#666', marginTop: '4px' }}>1.5 MU dilute in NSS 100 mL IV drip ใน 120 นาที</small>
+            </label>
 
-          <div
-            className={`pe-regimen-card${regimen === 'sk_b' ? ' selected' : ''}`}
-            onClick={() => setRegimen('sk_b')}
-            style={{
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              padding: '10px',
-              cursor: 'pointer',
-              background: regimen === 'sk_b' ? '#fff5f5' : 'transparent',
-              borderColor: regimen === 'sk_b' ? 'var(--cardiac-primary, #c0392b)' : '#ddd',
-              borderWidth: regimen === 'sk_b' ? '2px' : '1px',
-            }}
-          >
-            <input
-              type="radio"
-              name="pe-regimen"
-              value="sk_b"
-              checked={regimen === 'sk_b'}
-              onChange={() => setRegimen('sk_b')}
-            />{' '}
-            <strong>Streptokinase (SK) Regimen B: Syringe Pump (Loading + Infusion)</strong>
-            <small style={{ display: 'block', color: '#666', marginTop: '4px' }}>Load 250,000 U in NSS 100 mL IV drip in 30 min → then maintenance 100,000 U/hr (4 mL/hr of 25,000 U/mL conc) via syringe pump (หมดอายุ 8 ชม. หลังผสม)</small>
-          </div>
+            <label
+              className={`pe-regimen-card${regimen === 'sk_b' ? ' selected' : ''}`}
+              style={{
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                padding: '10px',
+                cursor: 'pointer',
+                background: regimen === 'sk_b' ? '#fff5f5' : 'transparent',
+                borderColor: regimen === 'sk_b' ? 'var(--cardiac-primary, #c0392b)' : '#ddd',
+                borderWidth: regimen === 'sk_b' ? '2px' : '1px',
+              }}
+            >
+              <input
+                type="radio"
+                name="pe-regimen"
+                value="sk_b"
+                checked={regimen === 'sk_b'}
+                onChange={() => setRegimen('sk_b')}
+              />{' '}
+              <strong>Streptokinase (SK) Regimen B: Syringe Pump (Loading + Infusion)</strong>
+              <small style={{ display: 'block', color: '#666', marginTop: '4px' }}>Load 250,000 U in NSS 100 mL IV drip in 30 min → then maintenance 100,000 U/hr (4 mL/hr of 25,000 U/mL conc) via syringe pump (หมดอายุ 8 ชม. หลังผสม)</small>
+            </label>
 
-          <div
-            className={`pe-regimen-card${regimen === 'rtpa_a' ? ' selected' : ''}`}
-            onClick={() => setRegimen('rtpa_a')}
-            style={{
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              padding: '10px',
-              cursor: 'pointer',
-              background: regimen === 'rtpa_a' ? '#fff5f5' : 'transparent',
-              borderColor: regimen === 'rtpa_a' ? 'var(--cardiac-primary, #c0392b)' : '#ddd',
-              borderWidth: regimen === 'rtpa_a' ? '2px' : '1px',
-            }}
-          >
-            <input
-              type="radio"
-              name="pe-regimen"
-              value="rtpa_a"
-              checked={regimen === 'rtpa_a'}
-              onChange={() => setRegimen('rtpa_a')}
-            />{' '}
-            <strong>rt-PA Regimen A: 100 mg IV drip in 120 min</strong>
-            <small style={{ display: 'block', color: '#666', marginTop: '4px' }}>rt-PA 100 mg IV drip ใน 120 นาที</small>
-          </div>
+            <label
+              className={`pe-regimen-card${regimen === 'rtpa_a' ? ' selected' : ''}`}
+              style={{
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                padding: '10px',
+                cursor: 'pointer',
+                background: regimen === 'rtpa_a' ? '#fff5f5' : 'transparent',
+                borderColor: regimen === 'rtpa_a' ? 'var(--cardiac-primary, #c0392b)' : '#ddd',
+                borderWidth: regimen === 'rtpa_a' ? '2px' : '1px',
+              }}
+            >
+              <input
+                type="radio"
+                name="pe-regimen"
+                value="rtpa_a"
+                checked={regimen === 'rtpa_a'}
+                onChange={() => setRegimen('rtpa_a')}
+              />{' '}
+              <strong>rt-PA Regimen A: 100 mg IV drip in 120 min</strong>
+              <small style={{ display: 'block', color: '#666', marginTop: '4px' }}>rt-PA 100 mg IV drip ใน 120 นาที</small>
+            </label>
 
-          <div
-            className={`pe-regimen-card${regimen === 'rtpa_b' ? ' selected' : ''}`}
-            onClick={() => setRegimen('rtpa_b')}
-            style={{
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              padding: '10px',
-              cursor: 'pointer',
-              background: regimen === 'rtpa_b' ? '#fff5f5' : 'transparent',
-              borderColor: regimen === 'rtpa_b' ? 'var(--cardiac-primary, #c0392b)' : '#ddd',
-              borderWidth: regimen === 'rtpa_b' ? '2px' : '1px',
-            }}
-          >
-            <input
-              type="radio"
-              name="pe-regimen"
-              value="rtpa_b"
-              checked={regimen === 'rtpa_b'}
-              onChange={() => setRegimen('rtpa_b')}
-            />{' '}
-            <strong>rt-PA Regimen B: Fast Drip 0.6 mg/kg (Max 50 mg) in 15 min</strong>
-            <small style={{ display: 'block', color: '#666', marginTop: '4px' }}>คำนวณตามน้ำหนักจริงของคนไข้ x 0.6 mg/kg (ห้ามเกิน 50 mg) drip ใน 15 นาที</small>
+            <label
+              className={`pe-regimen-card${regimen === 'rtpa_b' ? ' selected' : ''}`}
+              style={{
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                padding: '10px',
+                cursor: 'pointer',
+                background: regimen === 'rtpa_b' ? '#fff5f5' : 'transparent',
+                borderColor: regimen === 'rtpa_b' ? 'var(--cardiac-primary, #c0392b)' : '#ddd',
+                borderWidth: regimen === 'rtpa_b' ? '2px' : '1px',
+              }}
+            >
+              <input
+                type="radio"
+                name="pe-regimen"
+                value="rtpa_b"
+                checked={regimen === 'rtpa_b'}
+                onChange={() => setRegimen('rtpa_b')}
+              />{' '}
+              <strong>rt-PA Regimen B: Fast Drip 0.6 mg/kg (Max 50 mg) in 15 min</strong>
+              <small style={{ display: 'block', color: '#666', marginTop: '4px' }}>คำนวณตามน้ำหนักจริงของคนไข้ x 0.6 mg/kg (ห้ามเกิน 50 mg) drip ใน 15 นาที</small>
+            </label>
           </div>
-        </div>
+        </fieldset>
 
         <div style={{ marginTop: '20px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <button type="submit" className="btn btn-calculate">

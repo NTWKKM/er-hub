@@ -57,7 +57,7 @@ describe('AntivenomOrder', () => {
     expect(screen.getByText(/กรุณาเลือกข้อบ่งใช้/i)).toBeInTheDocument();
   });
 
-  it('generates order when indication is checked', () => {
+  it('generates order showing snake-specific antivenom when indication is checked', () => {
     render(<AntivenomOrder />);
     // Check first indication
     const checkboxes = screen.getAllByRole('checkbox');
@@ -65,21 +65,26 @@ describe('AntivenomOrder', () => {
     // Submit
     const submitBtn = screen.getByRole('button', { name: /ตรวจสอบและสร้างใบสั่งเซรุ่ม/i });
     fireEvent.click(submitBtn);
-    // Should show antivenom result
-    expect(screen.getAllByText(/Antivenom/i).length).toBeGreaterThan(0);
+    // Should show the selected snake's screenLabel (Green pit viper default) — appears in dropdown + results
+    expect(screen.getAllByText(/งูเขียวหางไหม้/i).length).toBeGreaterThan(0);
+    // Should show antivenom administration section
+    expect(screen.getByText(/Antivenom Administration/i)).toBeInTheDocument();
   });
 
-  it('clears form when clear button is clicked', () => {
+  it('clears form and hides results when clear button is clicked', () => {
     render(<AntivenomOrder />);
     // Check indication and submit
     const checkboxes = screen.getAllByRole('checkbox');
     fireEvent.click(checkboxes[0]);
     const submitBtn = screen.getByRole('button', { name: /ตรวจสอบและสร้างใบสั่งเซรุ่ม/i });
     fireEvent.click(submitBtn);
-    expect(screen.getAllByText(/Antivenom/i).length).toBeGreaterThan(0);
+    // Verify results shown
+    expect(screen.getByText(/Antivenom Administration/i)).toBeInTheDocument();
     // Clear
     const clearBtn = screen.getByRole('button', { name: /ล้างข้อมูล/i });
     fireEvent.click(clearBtn);
+    // Results should be gone
+    expect(screen.queryByText(/Antivenom Administration/i)).not.toBeInTheDocument();
     // Warning should be cleared
     expect(screen.queryByText(/กรุณาเลือกข้อบ่งใช้/i)).not.toBeInTheDocument();
   });

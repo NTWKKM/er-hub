@@ -9,6 +9,8 @@ export interface DripRateParams {
   doseUnit: string;
   weightKg: number;
   concentration: number;
+  isWeightBased?: boolean;
+  isPerMinute?: boolean;
 }
 
 export interface BolusVolumeParams {
@@ -21,14 +23,18 @@ export interface BolusVolumeParams {
 /**
  * Calculates IV infusion drip rate in mL/hr.
  * 
+ * Uses typed flags (isWeightBased, isPerMinute) when available, falls back to
+ * doseUnit string parsing for backward compatibility.
+ * 
  * @param params - Drip rate calculation parameters
  * @returns Calculated drip rate in mL/hr
  */
-export function calcDripRate({ doseValue, doseUnit, weightKg, concentration }: DripRateParams): number {
+export function calcDripRate({ doseValue, doseUnit, weightKg, concentration, isWeightBased, isPerMinute }: DripRateParams): number {
   if (!doseValue || doseValue <= 0 || !concentration || concentration <= 0) return 0;
   
-  const perKg = doseUnit.includes('/kg/');
-  const perMin = doseUnit.endsWith('/min');
+  // Use typed flags if provided, otherwise fall back to string parsing
+  const perKg = isWeightBased ?? doseUnit.includes('/kg/');
+  const perMin = isPerMinute ?? doseUnit.endsWith('/min');
   
   // 1. Calculate amount of drug required per hour
   const amountPerHour = doseValue * (perKg ? weightKg : 1) * (perMin ? 60 : 1);

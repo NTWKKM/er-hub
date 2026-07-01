@@ -33,6 +33,16 @@ describe('EMERGENCY_DRUG_DATA', () => {
     }
   })
 
+  it('doseRange invariants: default within min/max, step > 0', () => {
+    for (const drug of EMERGENCY_DRUG_DATA) {
+      const { min, max, step, default: defaultVal } = drug.doseRange
+      expect(step).toBeGreaterThan(0)
+      expect(defaultVal).toBeGreaterThanOrEqual(min)
+      expect(defaultVal).toBeLessThanOrEqual(max)
+      expect(min).toBeLessThan(max)
+    }
+  })
+
   it('each preparation has label and concentration', () => {
     for (const drug of EMERGENCY_DRUG_DATA) {
       for (const prep of drug.preparations) {

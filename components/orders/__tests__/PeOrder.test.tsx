@@ -15,15 +15,14 @@ describe('PeOrder', () => {
 
   it('renders PE risk type radio buttons', () => {
     render(<PeOrder />);
-    // At least 2 radio buttons for risk type
     const radios = screen.getAllByRole('radio');
-    expect(radios.length).toBeGreaterThanOrEqual(4); // risk type + regimen radios
+    expect(radios.length).toBeGreaterThanOrEqual(4);
   });
 
   it('renders absolute contraindication checkboxes', () => {
     render(<PeOrder />);
     const checkboxes = screen.getAllByRole('checkbox');
-    expect(checkboxes.length).toBeGreaterThanOrEqual(6); // abs CI + rel CI + prior SK
+    expect(checkboxes.length).toBeGreaterThanOrEqual(6);
   });
 
   it('renders calculate button', () => {
@@ -41,16 +40,16 @@ describe('PeOrder', () => {
     expect(screen.getByRole('button', { name: /PDF|พิมพ์/i })).toBeInTheDocument();
   });
 
-  it('blocks when absolute contraindication is checked', () => {
+  it('blocks order with absolute contraindication banner after calculate', () => {
     render(<PeOrder />);
     // Check the first absolute CI checkbox
     const checkboxes = screen.getAllByRole('checkbox');
-    fireEvent.click(checkboxes[0]); // First abs CI
+    fireEvent.click(checkboxes[0]);
     // Click calculate
     const calcButton = screen.getByRole('button', { name: /คำนวณ|สร้างใบสั่งยา|ตรวจสอบ/i });
     fireEvent.click(calcButton);
-    // Should show warning about absolute contraindication
-    expect(screen.getByText(/ข้อห้ามเด็ดขาด|Exclusion Criteria/i)).toBeInTheDocument();
+    // Should show the block banner with "มีข้อห้ามใช้เด็ดขาด!"
+    expect(screen.getByText(/มีข้อห้ามใช้เด็ดขาด/i)).toBeInTheDocument();
   });
 
   it('clears form when clear button is clicked', () => {
@@ -62,5 +61,15 @@ describe('PeOrder', () => {
     const clearButton = screen.getByRole('button', { name: /ล้าง/i });
     fireEvent.click(clearButton);
     expect(hnInput).toHaveValue('');
+  });
+
+  it('generates order without block when no contraindication is checked', () => {
+    render(<PeOrder />);
+    const calcButton = screen.getByRole('button', { name: /คำนวณ|สร้างใบสั่งยา|ตรวจสอบ/i });
+    fireEvent.click(calcButton);
+    // Should NOT show block banner
+    expect(screen.queryByText(/มีข้อห้ามใช้เด็ดขาด/i)).not.toBeInTheDocument();
+    // Should show results section
+    expect(screen.getByText(/ตรวจสอบและพิมพ์ใบสั่งยา/i)).toBeInTheDocument();
   });
 });

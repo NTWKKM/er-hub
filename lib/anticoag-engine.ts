@@ -95,7 +95,12 @@ export const HEPARIN_STANDALONE_PROTOCOLS: HeparinProtocols = {
  * @param egfr - Patient's eGFR in mL/min
  * @returns Recommendation details
  */
-export function calcAnticoag(weight: number, age: number, egfr: number): CalcAnticoagResult {
+export function calcAnticoag(weight: number, age: number, egfr: number): CalcAnticoagResult | null {
+  // Fail-closed validation: reject invalid inputs before any dose math
+  if (!Number.isFinite(weight) || weight <= 0) return null;
+  if (!Number.isFinite(age) || age < 0) return null;
+  if (!Number.isFinite(egfr) || egfr < 0) return null;
+
   const r: CalcAnticoagResult = { egfr } as CalcAnticoagResult;
 
   if (egfr < 15) {
@@ -138,11 +143,11 @@ export function calcAnticoag(weight: number, age: number, egfr: number): CalcAnt
  * @returns Dosing output or null for invalid input
  */
 export function calcHeparinInitialDose(
-  protocolKey: keyof HeparinProtocols,
+  protocolKey: string,
   weight: number,
   concentration: number
 ): CalcHeparinInitialDoseResult | null {
-  const proto = HEPARIN_STANDALONE_PROTOCOLS[protocolKey];
+  const proto = (HEPARIN_STANDALONE_PROTOCOLS as unknown as Record<string, HeparinProtocol>)[protocolKey];
   if (!proto || !weight || weight <= 0 || !concentration || concentration <= 0) {
     return null;
   }

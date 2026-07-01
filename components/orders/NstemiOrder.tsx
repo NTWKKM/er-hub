@@ -19,6 +19,7 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
   const [egfr, setEgfr] = useState('');
   const [asaAllergy, setAsaAllergy] = useState<'yes' | 'no'>('no');
   const [calculated, setCalculated] = useState(false);
+  const [anticoagResult, setAnticoagResult] = useState<ReturnType<typeof calcAnticoag> | null>(null);
 
   const handleCalculate = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +39,7 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
       return;
     }
 
+    setAnticoagResult(calcAnticoag(weight, age, egfrNum));
     setCalculated(true);
   }, [egfr, weight, age, validation]);
 
@@ -48,6 +50,7 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
     setEgfr('');
     setAsaAllergy('no');
     setCalculated(false);
+    setAnticoagResult(null);
     validation.clearAll();
   }, [validation]);
 
@@ -58,8 +61,6 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
   const handlePrintBlank = useCallback(() => {
     window.print();
   }, []);
-
-  const anticoagResult = calculated ? calcAnticoag(weight, age, parseFloat(egfr) || 0) : null;
 
   const getAnticoagLabel = () => {
     if (!anticoagResult) return '';
@@ -93,6 +94,7 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
           onAgeChange={setAge}
           onEgfrChange={setEgfr}
           showEgfr={true}
+          maxWeight={200}
         />
 
         {validation.getError('egfr') && (
@@ -184,6 +186,12 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
 
           <h3>Anticoagulant Recommendation</h3>
 
+          {asaAllergy === 'yes' && (
+            <div style={{ background: '#f5cdcd', border: '1px solid #c0392b', borderRadius: '6px', padding: '12px', marginBottom: '16px', color: '#c0392b', fontWeight: 'bold' }}>
+              ⚠️ ASA ALLERGY — ห้ามให้ ASA (Aspirin) ในผู้ป่วยรายนี้ ใช้ Clopidogrel monotherapy
+            </div>
+          )}
+
           {anticoagResult.rec === 'heparin' && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '20px' }}>
               <DoseResultCard
@@ -236,6 +244,23 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
               />
             </div>
           )}
+
+          <div style={{ marginTop: '16px', padding: '12px', background: '#f8f9fa', borderRadius: '6px' }}>
+            <strong>Antiplatelet Order:</strong>
+            <ul className="order-list" style={{ marginTop: '8px', paddingLeft: '20px' }}>
+              {asaAllergy === 'yes' ? (
+                <li>
+                  <strong style={{ color: '#c0392b' }}>⚠️ ASA ALLERGY — ห้ามให้ ASA</strong><br />
+                  ☑ <strong>Clopidogrel (75mg) 4 เม็ด stat</strong> (monotherapy — ASA contraindicated)
+                </li>
+              ) : (
+                <>
+                  <li>☑ <strong>ASA 300 mg</strong> 1 เม็ด เคี้ยวและกลืน stat</li>
+                  <li>☑ <strong>Clopidogrel (75mg) 4 เม็ด</strong> stat <small style={{ color: '#888' }}>({age <= 75 ? 'อายุ ≤75 ปี' : 'อายุ >75 ปี — ลด loading dose → 1 เม็ด'})</small></li>
+                </>
+              )}
+            </ul>
+          </div>
 
           <div style={{ marginTop: '20px' }}>
             <button type="button" className="btn btn-print" onClick={handlePrintOrder}>

@@ -75,6 +75,7 @@ export default function HeparinOrder() {
 
     if (isNaN(ratio) || ratio <= 0 || isNaN(rateMl) || rateMl < 0) {
       validation.warn('กรุณากรอก aPTT Ratio และอัตราการหยดเดิมให้ถูกต้อง');
+      setTitrationResult(null);
       return;
     }
     validation.clearWarn();
@@ -398,7 +399,7 @@ export default function HeparinOrder() {
 
                 {!hasAnyRisk && doseResult && (
                   <div id="p-hep-calculation-box" className="fib-order-box chosen">
-                    ☑ <strong>Heparin 10,000 units + NSS 100 mL</strong> ({concentration} units/mL)
+                    ☑ <strong>Heparin {concentration === 100 ? '10,000 units + NSS 100 mL' : '5,000 units + NSS 100 mL'}</strong> ({concentration} units/mL)
                     <br />
                     - IV bolus <strong><span id="p-bolus-dose">{doseResult.bolus}</span> units</strong> ({protocolObj.bolusPerKg} units/kg)
                     <br />

@@ -60,11 +60,10 @@ export default function AntivenomOrder() {
 
   const handleNeuroSnakeChange = (value: string) => {
     setNeuroSnake(value);
-    if (value === 'malayan_krait' || value === 'banded_krait') {
-      const newInd = [...neuroIndications];
-      newInd[3] = true; // Auto-check krait bite indication
-      setNeuroIndications(newInd);
-    }
+    const newInd = [...neuroIndications];
+    // Auto-check krait bite indication for krait species; explicitly uncheck for non-krait
+    newInd[3] = (value === 'malayan_krait' || value === 'banded_krait');
+    setNeuroIndications(newInd);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -114,20 +113,20 @@ export default function AntivenomOrder() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div>
               <div className="input-group">
-                <label>HN</label>
-                <input type="text" value={hn} onChange={(e) => setHn(e.target.value)} placeholder="กรอก HN" />
+                <label htmlFor="antivenom-hn">HN</label>
+                <input id="antivenom-hn" type="text" value={hn} onChange={(e) => setHn(e.target.value)} placeholder="กรอก HN" />
               </div>
               <SliderInput label="น้ำหนัก (kg)" min={30} max={200} step={0.1} value={weight} onChange={setWeight} unit="kg" />
             </div>
             <div>
               <div className="input-group">
-                <label>ประวัติวัคซีนบาดทะยัก</label>
-                <select value={tetanus} onChange={(e) => setTetanus(e.target.value)}>
+                <label htmlFor="tetanus-select">ประวัติวัคซีนบาดทะยัก</label>
+                <select id="tetanus-select" value={tetanus} onChange={(e) => setTetanus(e.target.value)}>
                   {TETANUS_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </div>
-              <div className="input-group">
-                <label>ประวัติแพ้เซรุ่มจากม้า</label>
+              <fieldset className="input-group" style={{ border: 'none', padding: 0, margin: 0 }}>
+                <legend style={{ fontSize: '14px', marginBottom: '4px' }}>ประวัติแพ้เซรุ่มจากม้า</legend>
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <label style={{ fontSize: '14px', cursor: 'pointer' }}>
                     <input type="radio" name="horse-allergy" value="no" checked={horseAllergy === 'no'} onChange={() => setHorseAllergy('no')} /> ไม่มีประวัติแพ้
@@ -137,11 +136,11 @@ export default function AntivenomOrder() {
                   </label>
                 </div>
                 {horseAllergy === 'yes' && (
-                  <input type="text" value={horseAllergyDetail} onChange={(e) => setHorseAllergyDetail(e.target.value)} placeholder="ระบุอาการแพ้" style={{ marginTop: '8px' }} />
+                  <input id="horse-allergy-detail" type="text" value={horseAllergyDetail} onChange={(e) => setHorseAllergyDetail(e.target.value)} placeholder="ระบุอาการแพ้" style={{ marginTop: '8px' }} aria-label="ระบุอาการแพ้เซรุ่มจากม้า" />
                 )}
-              </div>
-              <div className="input-group">
-                <label>ประวัติแพ้ยา Penicillin</label>
+              </fieldset>
+              <fieldset className="input-group" style={{ border: 'none', padding: 0, margin: 0, marginTop: '8px' }}>
+                <legend style={{ fontSize: '14px', marginBottom: '4px' }}>ประวัติแพ้ยา Penicillin</legend>
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <label style={{ fontSize: '14px', cursor: 'pointer' }}>
                     <input type="radio" name="penicillin-allergy" value="no" checked={penicillinAllergy === 'no'} onChange={() => setPenicillinAllergy('no')} /> ไม่มีประวัติแพ้
@@ -150,28 +149,31 @@ export default function AntivenomOrder() {
                     <input type="radio" name="penicillin-allergy" value="yes" checked={penicillinAllergy === 'yes'} onChange={() => setPenicillinAllergy('yes')} /> มีประวัติแพ้ ⚠️
                   </label>
                 </div>
-              </div>
+              </fieldset>
             </div>
           </div>
 
           <div style={{ marginTop: '16px' }}>
             <h4 style={{ fontSize: '15px', marginBottom: '12px' }}>คัดกรองกลุ่มพิษงูและเกณฑ์การให้เซรุ่ม (Indications)</h4>
-            <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
-              <label style={{ fontSize: '14px', cursor: 'pointer', fontWeight: 'bold' }}>
-                <input type="radio" name="snake-type" value="hematotoxin" checked={snakeType === 'hematotoxin'} onChange={() => setSnakeType('hematotoxin')} /> 🩸 กลุ่มพิษต่อระบบโลหิต (Hematotoxin)
-              </label>
-              <label style={{ fontSize: '14px', cursor: 'pointer', fontWeight: 'bold' }}>
-                <input type="radio" name="snake-type" value="neurotoxin" checked={snakeType === 'neurotoxin'} onChange={() => setSnakeType('neurotoxin')} /> ⚡ กลุ่มพิษต่อระบบประสาท (Neurotoxin)
-              </label>
-            </div>
+            <fieldset style={{ border: 'none', padding: 0, margin: '0 0 12px 0' }}>
+              <legend className="sr-only">คลุมพิษงู</legend>
+              <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
+                <label style={{ fontSize: '14px', cursor: 'pointer', fontWeight: 'bold' }}>
+                  <input type="radio" name="snake-type" value="hematotoxin" checked={snakeType === 'hematotoxin'} onChange={() => setSnakeType('hematotoxin')} /> 🩸 กลุ่มพิษต่อระบบโลหิต (Hematotoxin)
+                </label>
+                <label style={{ fontSize: '14px', cursor: 'pointer', fontWeight: 'bold' }}>
+                  <input type="radio" name="snake-type" value="neurotoxin" checked={snakeType === 'neurotoxin'} onChange={() => setSnakeType('neurotoxin')} /> ⚡ กลุ่มพิษต่อระบบประสาท (Neurotoxin)
+                </label>
+              </div>
+            </fieldset>
             <div className="input-group">
-              <label>เลือกชนิดงู</label>
+              <label htmlFor="snake-select">เลือกชนิดงู</label>
               {snakeType === 'hematotoxin' ? (
-                <select value={hematoSnake} onChange={(e) => setHematoSnake(e.target.value)}>
+                <select id="snake-select" value={hematoSnake} onChange={(e) => setHematoSnake(e.target.value)}>
                   {HEMATO_SNAKES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                 </select>
               ) : (
-                <select value={neuroSnake} onChange={(e) => handleNeuroSnakeChange(e.target.value)}>
+                <select id="snake-select" value={neuroSnake} onChange={(e) => handleNeuroSnakeChange(e.target.value)}>
                   {NEURO_SNAKES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                 </select>
               )}

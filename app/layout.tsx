@@ -1,6 +1,14 @@
 import type { Metadata } from 'next';
+import { Sarabun } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import './globals.css';
+
+const sarabun = Sarabun({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['thai', 'latin'],
+  display: 'swap',
+  variable: '--font-sarabun',
+});
 
 export const metadata: Metadata = {
   title: 'MNRH-ED Standing Order Hub',
@@ -9,13 +17,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="th" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      </head>
-      <body>
+    <html lang="th" suppressHydrationWarning className={sarabun.variable}>
+      <body className={sarabun.className}>
         <ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem={false}>
           {children}
         </ThemeProvider>

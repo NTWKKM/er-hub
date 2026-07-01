@@ -37,11 +37,11 @@ export default function SedationOrder() {
   }, [validation]);
 
   const handlePrintOrder = useCallback(() => {
-    window.open('/docs/sedation/fen.pdf', '_blank');
+    window.print();
   }, []);
 
   const handlePrintBlank = useCallback(() => {
-    window.open('/docs/sedation/fen.pdf', '_blank');
+    window.open('/er-hub/docs/sedation/fen.pdf', '_blank');
   }, []);
 
   // Calculate drip rates using calcDripRate

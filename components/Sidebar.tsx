@@ -20,7 +20,7 @@ export default function Sidebar() {
   return (
     <nav className="sidebar">
       <div className="sidebar-header">
-        <img src="/er-hub/logo.png" alt="MNRH" />
+        <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/logo.png`} alt="MNRH" />
         <h2>MNRH-ED</h2>
         <p>Standing Order Hub</p>
       </div>

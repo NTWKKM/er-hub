@@ -38,6 +38,9 @@ export default function StemiOrder() {
   const handleCalculate = useCallback((e: React.FormEvent) => {
     e.preventDefault();
 
+    // Clear any prior warning before re-validation
+    validation.clearWarn();
+
     // Validate weight (30-200 kg)
     if (!validation.range('weight', weight, 30, 200, 'กรุณากรอกน้ำหนัก (30–200 kg)')) return;
     // Validate age (>= 18)
@@ -52,13 +55,14 @@ export default function StemiOrder() {
     const tnk = calcTNK(weight, age);
     const clopiTabs = age <= 75 ? 4 : 1; // rule: age <=75 -> 4 tabs, >75 -> 1 tab
 
-    // Store calculated values for display
+    // Store calculated values for display (including bracketIdx for TNK table highlighting)
     setCalculatedDose({
       fibrinolytic,
       tnkMg: tnk.mg,
       tnkMl: tnk.ml,
       clopiTabs,
       elderly: tnk.elderly,
+      bracketIdx: tnk.bracketIdx,
     });
 
     setShowResults(true);
@@ -70,6 +74,7 @@ export default function StemiOrder() {
     tnkMl: number;
     clopiTabs: number;
     elderly: boolean;
+    bracketIdx: number;
   } | null>(null);
 
   const handleClear = useCallback(() => {
@@ -271,7 +276,7 @@ export default function StemiOrder() {
                   <tbody>
                     <tr><th>น้ำหนัก (kg)</th><th>TNK (mg)</th><th>TNK (ml)</th></tr>
                     {TNK_TABLE.map((b, i) => (
-                      <tr key={i} className={calculatedDose.fibrinolytic === 'tnk' ? 'active-row' : ''}>
+                      <tr key={i} className={calculatedDose.fibrinolytic === 'tnk' && i === calculatedDose.bracketIdx ? 'active-row' : ''}>
                         <td>{b.label}</td><td>{b.mg}</td><td>{b.mg / 5}</td>
                       </tr>
                     ))}

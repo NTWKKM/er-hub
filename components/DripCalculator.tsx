@@ -17,8 +17,8 @@ export default function DripCalculator() {
   const concentration = preparation.concentration;
 
   const dripRate = useMemo(() => {
-    return calcDripRate({ doseValue: dose, doseUnit: drug.doseUnit, weightKg: weight, concentration });
-  }, [dose, drug.doseUnit, weight, concentration]);
+    return calcDripRate({ doseValue: dose, doseUnit: drug.doseUnit, weightKg: weight, concentration, isWeightBased: drug.isWeightBased, isPerMinute: drug.doseUnit.endsWith('/min') });
+  }, [dose, drug.doseUnit, drug.isWeightBased, weight, concentration]);
 
   const bolusVolume = useMemo(() => {
     return calcBolusVolume({ doseValue: dose, perKg: drug.isWeightBased, weightKg: weight, concentration });
@@ -29,8 +29,8 @@ export default function DripCalculator() {
       <div className="card">
         <h3 className="card-header">IV Infusion Drip Calculator</h3>
         <div className="input-group">
-          <label>ยา</label>
-          <select value={selectedDrugId} onChange={(e) => {
+          <label htmlFor="drug-select">ยา</label>
+          <select id="drug-select" value={selectedDrugId} onChange={(e) => {
             setSelectedDrugId(e.target.value);
             setPrepIndex(0);
             const d = EMERGENCY_DRUG_DATA.find(d => d.id === e.target.value)!;
@@ -42,8 +42,8 @@ export default function DripCalculator() {
           </select>
         </div>
         <div className="input-group">
-          <label>สูตรผสม</label>
-          <select value={prepIndex} onChange={(e) => setPrepIndex(parseInt(e.target.value))}>
+          <label htmlFor="prep-select">สูตรผสม</label>
+          <select id="prep-select" value={prepIndex} onChange={(e) => setPrepIndex(parseInt(e.target.value))}>
             {drug.preparations.map((p, i) => (
               <option key={i} value={i}>{p.label}</option>
             ))}
@@ -69,7 +69,7 @@ export default function DripCalculator() {
         ceiling={`Range: ${drug.doseRange.min}–${drug.doseRange.max} ${drug.doseUnit}`}
       />
 
-      {drug.isWeightBased && (
+      {drug.isWeightBased && drug.hasBolus !== false && (
         <DoseResultCard
           label="Bolus Volume"
           value={bolusVolume.toFixed(2)}

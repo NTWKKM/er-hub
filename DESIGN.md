@@ -30,7 +30,7 @@
 - **Success:** `#1a7f37`
 
 ### Typography
-- **Font Family:** `'Sarabun', sans-serif` (Google Fonts, weights 400/500/600/700)
+- **Font Family:** `var(--font-sarabun), 'Sarabun', sans-serif` (loaded via `next/font/google`, self-hosted, weights 400/500/600/700)
 - **Dose Result Value:** 32px bold accent color
 - **Card Header:** 16px bold
 - **Input/Form Text:** 15px
@@ -44,18 +44,21 @@
 - **Grid:** `1fr 1fr` gap 16px for patient info form
 - **Theme Toggle:** absolute top-right (16px/24px from edges)
 
+### Utility Classes
+- **`.sr-only`:** Screen-reader-only text for accessible fieldset legends (position absolute, 1px clip, overflow hidden)
+
 ---
 
 ## 2. UI Components
 
 | Component | Role | States |
 |---|---|---|
-| **Sidebar** | Flat list of 8 nav items. Hospital logo (28px) + "MNRH-ED" header. Active item: accent bg + accent left border + bold. | `.active` (accent border-left 3px + accent-bg), `:hover` (bg-hover + text-primary) |
-| **ThemeToggle** | Dark/light switch button. Top-right of main content. | Dark: "☀ Light", Light: "🌙 Dark" |
+| **Sidebar** | Flat list of 8 nav items. Hospital logo (28px, path from `NEXT_PUBLIC_BASE_PATH`) + "MNRH-ED" header. Active item: accent bg + accent left border + bold. | `.active` (accent border-left 3px + accent-bg), `:hover` (bg-hover + text-primary) |
+| **ThemeToggle** | Dark/light switch button (`type="button"`). Top-right of main content. | Dark: "☀ Light", Light: "🌙 Dark" |
 | **Card** | Container for form sections and results. | Default: bg-secondary + 1px border + 8px radius |
-| **SliderInput** | Range slider with label + realtime value display. Label left, value right (accent color). | `:focus` — accent border + accent-bg box-shadow |
+| **SliderInput** | Range slider with label + realtime value display. Label left, value right (accent color). Auto-generated `id` from label text, label associated via `htmlFor`. | `:focus` — accent border + accent-bg box-shadow |
 | **DoseResultCard** | Computed dose display: label (uppercase 12px), value (32px accent), unit (16px secondary), context (13px muted), ceiling (12px warning). | Default: accent-bg + accent border + 8px radius |
-| **PatientInfoForm** | HN text input, eGFR text input (optional), weight slider (30-150, 0.1 step), age slider (18-120, 1 step). | Standard input states |
+| **PatientInfoForm** | HN text input (`htmlFor/id`), eGFR text input (optional, `htmlFor/id`), weight slider (configurable `maxWeight`, default 150, 0.1 step), age slider (18-120, 1 step). | Standard input states |
 | **StickerBox** | Dashed border box for patient sticker in print area. | 2px dashed border, min 200px × 65px |
 | **Clinical Warning** | Non-blocking safety banner. | warning bg (10% opacity) + warning border + warning text |
 | **Field Error** | Red border + box-shadow on invalid inputs. | `.field-error` class via useFormValidation |
@@ -66,14 +69,18 @@
 
 ### Accessibility
 - **ARIA:** `role="navigation"` on sidebar, `aria-live="polite"` on dose result containers
+- **Label associations:** All form controls (select, input, range) have explicit `htmlFor/id` pairing or label-wrapping. Radio groups wrapped in `<fieldset>/<legend>` (AntivenomOrder, PeOrder, AntivenomOrder snake-type).
+- **Screen reader text:** `.sr-only` class for fieldset legends that should not be visually rendered
 - **Focus:** Accent border-color + accent-bg box-shadow on input focus
 - **Contrast:** Minimum 4.5:1 for clinical text (dark theme: #e6edf3 on #0d1117 = 15:1)
-- **Forms:** Non-blocking validation via useFormValidation (inline errors, clinical warnings — zero alert() calls)
+- **Forms:** Non-blocking validation via useFormValidation (inline errors, clinical warnings — zero alert() calls). `registerRef()` API for focus-on-error behavior.
+- **Button safety:** ThemeToggle uses `type="button"` to prevent accidental form submission
 
 ### Print (A4 Layout)
 - **Page Size:** `@page { size: A4 portrait; margin: 0 }`
 - **Hidden Elements:** `.sidebar`, `.theme-toggle`, `.no-print` → `display: none !important`
 - **Main Content:** padding 0, max-width none
 - **Body:** white background, black text
-- **HTML Blank Print:** rtpa, nstemi use `window.print()` on rendered template
-- **PDF Pathway:** stemi, pe, heparin, antivenom, sedation open source PDF from `public/docs/` in new tab via `window.open()`
+- **Generated Order Print:** rtpa, nstemi, pe, sedation use `window.print()` on rendered order markup
+- **HTML Blank Print:** rtpa, nstemi use `window.print()` on rendered blank template
+- **PDF Pathway:** stemi, heparin, antivenom open source PDF from `public/docs/` in new tab via `window.open()`

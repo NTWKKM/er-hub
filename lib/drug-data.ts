@@ -29,6 +29,7 @@ export interface EmergencyDrug {
   titrationGuide: string
   safetyWarnings: string[]
   showDualUnits?: boolean
+  hasBolus?: boolean
 }
 
 export const EMERGENCY_DRUG_DATA: EmergencyDrug[] = [

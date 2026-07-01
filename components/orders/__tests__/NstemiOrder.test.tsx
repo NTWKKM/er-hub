@@ -72,4 +72,35 @@ describe('NstemiOrder', () => {
     fireEvent.click(clearButton);
     expect(screen.queryByText(/Fondaparinux/i)).not.toBeInTheDocument();
   });
+
+  it('shows ASA allergy warning and clopidogrel monotherapy when allergy is yes', () => {
+    render(<NstemiOrder />);
+    // Select ASA allergy = yes
+    const yesRadio = screen.getByDisplayValue('yes');
+    fireEvent.click(yesRadio);
+    // Enter eGFR and calculate
+    const egfrInput = screen.getByPlaceholderText(/กรอก eGFR/i);
+    fireEvent.change(egfrInput, { target: { value: '75' } });
+    const calcButton = screen.getByRole('button', { name: /คำนวณ/i });
+    fireEvent.click(calcButton);
+    // Should show Antiplatelet Order section with clopidogrel monotherapy
+    expect(screen.getByText(/Antiplatelet Order/i)).toBeInTheDocument();
+    expect(screen.getByText(/Clopidogrel.*monotherapy/i)).toBeInTheDocument();
+    // Should NOT show ASA 300mg order
+    expect(screen.queryByText(/ASA 300 mg/i)).not.toBeInTheDocument();
+  });
+
+  it('shows ASA + clopidogrel dual antiplatelet when allergy is no', () => {
+    render(<NstemiOrder />);
+    // Enter eGFR and calculate (default asaAllergy = 'no')
+    const egfrInput = screen.getByPlaceholderText(/กรอก eGFR/i);
+    fireEvent.change(egfrInput, { target: { value: '75' } });
+    const calcButton = screen.getByRole('button', { name: /คำนวณ/i });
+    fireEvent.click(calcButton);
+    // Should show ASA 300mg
+    expect(screen.getByText(/ASA 300 mg/i)).toBeInTheDocument();
+    expect(screen.getByText(/Clopidogrel/i)).toBeInTheDocument();
+    // Should NOT show ASA allergy warning banner (the red ⚠️ one)
+    expect(screen.queryByText(/ห้ามให้ ASA/i)).not.toBeInTheDocument();
+  });
 });

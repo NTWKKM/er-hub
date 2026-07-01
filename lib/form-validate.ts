@@ -19,6 +19,7 @@ export interface FormValidationState {
   clearAll: () => void;
   hasError: (fieldId: string) => boolean;
   getError: (fieldId: string) => string | undefined;
+  registerRef: (fieldId: string, el: HTMLElement | null) => void;
 }
 
 export function useFormValidation(): FormValidationState {
@@ -78,6 +79,10 @@ export function useFormValidation(): FormValidationState {
     return errors[fieldId];
   }, [errors]);
 
+  const registerRef = useCallback((fieldId: string, el: HTMLElement | null) => {
+    fieldRefs.current[fieldId] = el;
+  }, []);
+
   return {
     errors,
     warning,
@@ -90,5 +95,6 @@ export function useFormValidation(): FormValidationState {
     clearAll,
     hasError,
     getError,
+    registerRef,
   };
 }

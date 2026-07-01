@@ -16,14 +16,16 @@ export default function RtpaOrder() {
   const validation = useFormValidation();
 
   // Clinical logic: rt-PA dose calculation
-  // 0.9 mg/kg regimen: max 90mg total, 15% bolus + 85% infusion over 60 min
-  // 0.6 mg/kg regimen: max 50mg total, 15% bolus + 85% infusion over 60 min
+  // Reference: AHA/ASA 2026 Guideline for the Early Management of Patients With Acute Ischemic Stroke
+  // 0.9 mg/kg regimen: max 90mg total, 10% bolus IV push over 1 min + 90% infusion over 60 min
+  // 0.6 mg/kg regimen: max 50mg total, 10% bolus IV push over 1 min + 90% infusion over 60 min
+  // Rounding: total dose at 2 decimal places, bolus truncated to 1 decimal (floor, not round), remainder goes to infusion
   const dosePerKg = doseRegimen === '0.9' ? 0.9 : 0.6;
   const maxDose = doseRegimen === '0.9' ? 90 : 50;
 
   const calculatedTotalDose = Math.min(weight * dosePerKg, maxDose);
-  const bolus = calculatedTotalDose * 0.15;
-  const infusion = calculatedTotalDose * 0.85;
+  const bolus = Math.floor(calculatedTotalDose * 0.10 * 10) / 10;
+  const infusion = parseFloat((calculatedTotalDose - bolus).toFixed(2));
   const infusionRate = infusion / 1; // mL/hr if 1mg/mL concentration
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -210,8 +212,8 @@ export default function RtpaOrder() {
                     <strong>Alteplase (dose <span id="result-regimen" className="highlight">{doseRegimen}</span> mg/kg)</strong>
                     <ul style={{ paddingLeft: '15px' }}>
                       <li>Total dose = <span id="total-dose" className="highlight">{calculatedTotalDose.toFixed(2)}</span> mg</li>
-                      <li>- <span id="push-percent" className="highlight">15</span>% of total dose = <span id="push-dose" className="highlight">{bolus.toFixed(1)}</span> mg IV push in 1 min</li>
-                      <li>- <span id="drip-percent" className="highlight">85</span>% of total dose = <span id="drip-dose" className="highlight">{infusion.toFixed(2)}</span> mg IV drip in 60 min</li>
+                      <li>- <span id="push-percent" className="highlight">10</span>% of total dose = <span id="push-dose" className="highlight">{bolus.toFixed(1)}</span> mg IV push in 1 min</li>
+                      <li>- Remaining <span id="drip-percent" className="highlight">90</span>% of total dose = <span id="drip-dose" className="highlight">{infusion.toFixed(2)}</span> mg IV drip in 60 min</li>
                     </ul>
                   </li>
                   <li>หลังให้ rt-PA if SBP &gt; 180 or DBP &gt; 105 mmHg notify แพทย์ทันที</li>
