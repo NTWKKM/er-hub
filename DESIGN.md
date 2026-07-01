@@ -39,9 +39,8 @@
 
 | Component | Role / Target | States & Props |
 |---|---|---|
-| **Portal Card** | Category-grouped card linking to each Standing Order. Left-aligned, title + Thai description. Color-coded left border per category. No emoji, no print-blank button. | `.hover` (Lift + shadow), Default (Light gray border + 4px category color left border). `padding: 18px 20px`, `min-width: 280px`, `gap: 16px`. |
-| **Portal Header** | Flex row: hospital logo (88×88, `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`) inline with title + Thai subtitle. | `display: flex; align-items: center; gap: 18px;` Blue gradient background. `drop-shadow` on logo. |
-| **Category Section Title** | Group header for each medical specialty category with color-coded left border. | `font-size: 1.2em; font-weight: bold; padding-left: 10px;` 7 categories: Cardiac (#c0392b), Pulmonary (#2980b9), Neurology (#8e44ad), Anticoagulation (#16a085), Toxicology (#d35400), Procedural (#27ae60), Tools (#2c3e50). |
+| **Portal Card** | Category-grouped card in single 3-column grid. Color-coded left border per category. No section titles, no emoji, no print-blank button. Stroke FAST TRACK is first card. | `.hover` (Lift + shadow), Default (Light gray border + 4px category color left border). `padding: 18px 20px`, `gap: 16px`. Grid: `repeat(3, 1fr)` desktop, `repeat(2, 1fr)` tablet (600–900px), `1fr` mobile (<600px). |
+| **Portal Header** | Flex row: hospital logo (88×88, `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`) inline with title only. No Thai subtitle. | `display: flex; align-items: center; gap: 18px;` Blue gradient background. `drop-shadow` on logo. |
 | **Top Navigation Bar** | Back link injected by `ED_COMPONENTS.injectTopNav()`. | `← กลับหน้าหลัก` link, `#2a5298`, `font-size: 14px`, `font-weight: bold`. Hidden in print. |
 | **Floating Print Action Bar** | Fixed bottom bar shown after generate/blank, hidden on clear. | Green (#27ae60) bar with "พิมพ์ทันที" and "ดู Order" buttons. `position: fixed; bottom: 0; z-index: 1000`. Hidden in print via `@media print`. |
 | **Field Error State** | Red border highlight for empty/invalid required fields. | `.field-error` class: `border-color: #c0392b; box-shadow: 0 0 5px rgba(192,57,43,0.4)`. |
