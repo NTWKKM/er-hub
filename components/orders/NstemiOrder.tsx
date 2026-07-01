@@ -259,7 +259,7 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
               {asaAllergy === 'yes' ? (
                 <li>
                   <strong style={{ color: '#c0392b' }}>⚠️ ASA ALLERGY — ห้ามให้ ASA</strong><br />
-                  ☑ <strong>Clopidogrel (75mg) 4 เม็ด stat</strong> (monotherapy — ASA contraindicated)
+                  ☑ <strong>Clopidogrel (75mg) {age <= 75 ? '4' : '1'} เม็ด stat</strong> (monotherapy — ASA contraindicated) {age > 75 && <small style={{ color: '#888' }}>(อายุ &gt;75 ปี — ลด loading dose)</small>}
                 </li>
               ) : (
                 <>

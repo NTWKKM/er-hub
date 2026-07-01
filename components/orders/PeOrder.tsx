@@ -99,7 +99,8 @@ export default function PeOrder() {
   }, []);
 
   const handlePrintBlank = useCallback(() => {
-    window.open('/er-hub/docs/STEMI-PE/PE-Massive-merged.pdf', '_blank');
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+    window.open(`${basePath}/docs/STEMI-PE/PE-Massive-merged.pdf`, '_blank');
   }, []);
 
   const toggleAbsCI = (id: string) => {

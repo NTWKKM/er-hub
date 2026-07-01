@@ -248,7 +248,7 @@ export default function StemiOrder() {
                 <div className="dose-label">ยาที่เลือก / ขนาดยา</div>
                 <div className="dose-num">
                   {calculatedDose.fibrinolytic === 'tnk'
-                    ? `TNK ${calculatedDose.tnkMg} mg (${calculatedDose.tnkMl} ml) — Max 50 mg`
+                    ? `TNK ${calculatedDose.tnkMg} mg (${calculatedDose.tnkMl} ml) — Max ${calculatedDose.elderly ? 25 : 50} mg`
                     : `SK 1.5 MU (60 min drip) — Max 1.5 MU`}
                 </div>
               </div>

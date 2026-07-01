@@ -248,8 +248,8 @@ export default function RtpaOrder() {
                     <strong>Alteplase (dose <span id="result-regimen" className="highlight">{submittedOrder.doseRegimen}</span> mg/kg, Max {submittedOrder.doseRegimen === '0.9' ? 90 : 50} mg)</strong>
                     <ul style={{ paddingLeft: '15px' }}>
                       <li>Total dose = <span id="total-dose" className="highlight">{submittedOrder.totalDose.toFixed(2)}</span> mg (Max {submittedOrder.doseRegimen === '0.9' ? 90 : 50} mg)</li>
-                      <li>- <span id="push-percent" className="highlight">10</span>% of total dose = <span id="push-dose" className="highlight">{submittedOrder.bolus.toFixed(1)}</span> mg IV push in 1 min</li>
-                      <li>- Remaining <span id="drip-percent" className="highlight">90</span>% of total dose = <span id="drip-dose" className="highlight">{submittedOrder.infusion.toFixed(2)}</span> mg IV drip in 60 min</li>
+                      <li>- <span id="push-percent" className="highlight">10</span>% of total dose = <span id="push-dose" className="highlight">{submittedOrder.bolus.toFixed(1)}</span> mg IV push in 1 min (Max {submittedOrder.doseRegimen === '0.9' ? 9.0 : 5.0} mg)</li>
+                      <li>- Remaining <span id="drip-percent" className="highlight">90</span>% of total dose = <span id="drip-dose" className="highlight">{submittedOrder.infusion.toFixed(2)}</span> mg IV drip in 60 min (Max {submittedOrder.doseRegimen === '0.9' ? 81.0 : 45.0} mg)</li>
                     </ul>
                   </li>
                   <li>หลังให้ rt-PA if SBP &gt; 180 or DBP &gt; 105 mmHg notify แพทย์ทันที</li>

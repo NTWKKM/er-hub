@@ -54,6 +54,8 @@ export default function HeparinOrder() {
   };
 
   const calculateDose = () => {
+    setShowResults(false);
+
     if (!hn.trim()) {
       validation.fail('hn', 'กรุณากรอก HN');
       return;
