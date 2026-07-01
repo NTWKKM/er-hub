@@ -91,14 +91,19 @@ const ED_COMPONENTS = {
     },
 
     /**
-     * Inject a top navigation bar with back link.
+     * Inject a sticky top navigation bar with home link and auto-detected title.
      */
-    injectTopNav: function() {
-        const nav = document.createElement('div');
-        nav.style.cssText = 'padding:8px 0;margin-bottom:4px;';
-        nav.innerHTML = '<a href="../index.html" style="text-decoration:none;color:#2a5298;font-size:14px;font-weight:bold;">← กลับหน้าหลัก</a>';
-        const container = document.querySelector('.container');
-        if (container) container.insertBefore(nav, container.firstChild);
+    injectNavBar: function() {
+        const title = (document.title || '').split('—')[0].trim();
+        const nav = document.createElement('nav');
+        nav.className = 'top-nav';
+        nav.innerHTML = `
+            <a href="../index.html" class="nav-home" aria-label="กลับหน้าหลัก">
+                <span class="nav-home-icon">🏠</span><span>หน้าหลัก</span>
+            </a>
+            ${title ? `<span class="nav-title">${title}</span>` : ''}
+        `;
+        document.body.insertBefore(nav, document.body.firstChild);
     },
 
     /**

@@ -57,17 +57,6 @@
             font-size: 14px;
         }
 
-        .back-link {
-            display: inline-block;
-            margin-bottom: 15px;
-            color: #27ae60;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        
         .unit-label-small {
             font-size: 13px;
             color: #666;
@@ -78,8 +67,6 @@
 <body class="theme-neutral">
 <div class="container">
     <div class="form-container">
-        <a href="../index.html" class="back-link">← กลับหน้าหลัก Portal</a>
-        
         <div class="header">
             <h1>🧪 IV Infusion Drip Calculator</h1>
             <p style="margin:4px 0;color:#666;font-size:14px;">
@@ -168,10 +155,12 @@
     </div>
 </div>
 
+<script src="../shared/components.js"></script>
 <script src="../shared/calc-engine.js"></script>
 <script src="../shared/drug-data.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    ED_COMPONENTS.injectNavBar();
     const $ = id => document.getElementById(id);
     
     const drugSelect = $('drug-select');
