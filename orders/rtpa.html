@@ -655,6 +655,7 @@
 <script src="../shared/components.js"></script>
 <script src="../shared/print-bootstrap.js"></script>
 <script src="../shared/blank-print-engine.js"></script>
+<script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('rtpa-form');
@@ -693,7 +694,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedDose = parseFloat(selectedDoseInput.value);
 
         if (isNaN(weight) || weight <= 0) {
-            alert('กรุณากรอกน้ำหนักให้ถูกต้อง'); 
+            ED_VALIDATE.fail('weight', 'กรุณากรอกน้ำหนักให้ถูกต้อง');
             return;
         }
 
@@ -752,6 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('clear-btn').addEventListener('click', () => {
+        ED_VALIDATE.clearAll();
         ED_PRINT_BOOTSTRAP.clearResults('rtpa-form', () => {
             doseButtons.forEach(btn => btn.classList.remove('active'));
             document.querySelector('.dose-button[data-dose="0.9"]').classList.add('active');

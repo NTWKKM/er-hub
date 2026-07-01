@@ -248,6 +248,7 @@
 <script src="../shared/components.js"></script>
 <script src="../shared/print-bootstrap.js"></script>
 <script src="../shared/blank-print-engine.js"></script>
+<script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
@@ -318,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (indicationCount === 0) {
-            alert('⚠️ กรุณาเลือกข้อบ่งใช้ (Indication) อย่างน้อย 1 ข้อ ก่อนคำนวณและสั่งใช้เซรุ่มต้านพิษงู');
+            ED_VALIDATE.warn('⚠️ กรุณาเลือกข้อบ่งใช้ (Indication) อย่างน้อย 1 ข้อ ก่อนคำนวณและสั่งใช้เซรุ่มต้านพิษงู');
             return;
         }
 
@@ -410,6 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     $('clear-btn').addEventListener('click', () => {
         ED_PRINT_BOOTSTRAP.clearResults('antivenom-form', () => {
+            ED_VALIDATE.clearAll();
             $('horse-allergy-detail').style.display = 'none';
             $('block-hemato-ind').style.display = 'block';
             $('block-neuro-ind').style.display = 'none';

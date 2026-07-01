@@ -220,6 +220,7 @@
 <script src="../shared/components.js"></script>
 <script src="../shared/print-bootstrap.js"></script>
 <script src="../shared/blank-print-engine.js"></script>
+<script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
@@ -290,17 +291,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const fib      = document.querySelector('input[name="fibrinolytic"]:checked').value;
         const priorSK  = $('prior-sk').checked;
 
-        if (isNaN(weight) || weight < 30 || weight > 200) {
-            alert('กรุณากรอกน้ำหนัก (30–200 kg)'); return;
-        }
-        if (isNaN(age) || age < 18) {
-            alert('กรุณากรอกอายุ (≥ 18 ปี)'); return;
-        }
+        if (!ED_VALIDATE.range('weight', 30, 200, 'กรุณากรอกน้ำหนัก (30–200 kg)')) return;
+        if (!ED_VALIDATE.min('age', 18, 'กรุณากรอกอายุ (≥ 18 ปี)')) return;
 
         // HARD STOP: SK repeat within 6 months (absolute contraindication)
         if (fib === 'sk' && priorSK) {
-            alert('⚠️ ห้ามให้ Streptokinase ซ้ำภายในเวลา 6 เดือน\n\nผู้ป่วยรายนี้เคยได้รับ SK มาก่อน — ระบบไม่สามารถสร้างคำสั่งยา SK ได้\nกรุณาเปลี่ยนไปเลือก Tenecteplase (TNK) แทน');
-            return;
+            ED_VALIDATE.warn('⚠️ ห้ามให้ Streptokinase ซ้ำภายในเวลา 6 เดือน — ผู้ป่วยรายนี้เคยได้รับ SK มาก่อน กรุณาเปลี่ยนไปเลือก Tenecteplase (TNK) แทน'); return;
         }
 
         const tnk = calcTNK(weight, age);
@@ -356,6 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('clear-btn').addEventListener('click', () => {
+        ED_VALIDATE.clearAll();
         ED_PRINT_BOOTSTRAP.clearResults('stemi-form', updateFibCards);
     });
 

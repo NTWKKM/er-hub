@@ -270,6 +270,7 @@
 <script src="../shared/anticoag-engine.js"></script>
 <script src="../shared/print-bootstrap.js"></script>
 <script src="../shared/blank-print-engine.js"></script>
+<script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
@@ -311,11 +312,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasRisk = [...riskCheckboxes].some(c => c.checked);
 
         if (isNaN(weight) || weight < 30 || weight > 200) {
-            $('weight').classList.add('field-error');
-            alert('กรุณากรอกน้ำหนักให้ถูกต้อง (30-200 kg)');
+            ED_VALIDATE.fail('weight', 'กรุณากรอกน้ำหนักให้ถูกต้อง (30-200 kg)');
             return;
         }
-        $('weight').classList.remove('field-error');
 
         const now = new Date();
         const useTime = $('use-current-time').checked;
@@ -375,9 +374,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const conc = parseInt($('concentration-select').value);
 
         if (isNaN(ratio) || ratio <= 0 || isNaN(rateMl) || rateMl < 0) {
-            alert('กรุณากรอก aPTT Ratio และอัตราการหยดเดิมให้ถูกต้อง');
+            ED_VALIDATE.warn('กรุณากรอก aPTT Ratio และอัตราการหยดเดิมให้ถูกต้อง');
             return;
         }
+        ED_VALIDATE.clearWarn();
 
         // Convert current mL/hr rate back to units/hr for calculations
         const currentRateUnits = rateMl * conc;
@@ -398,6 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('clear-btn').addEventListener('click', () => {
+        ED_VALIDATE.clearAll();
         ED_PRINT_BOOTSTRAP.clearResults('heparin-form', () => {
             $('danger-ci-box').classList.add('hidden');
             $('titration-result').classList.add('hidden');

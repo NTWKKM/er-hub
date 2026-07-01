@@ -524,6 +524,7 @@
 <script src="../shared/anticoag-engine.js"></script>
 <script src="../shared/print-bootstrap.js"></script>
 <script src="../shared/blank-print-engine.js"></script>
+<script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
@@ -693,20 +694,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const fromRpc = $('troponin-from-rphch').checked;
 
         if (isNaN(weight) || weight < 30 || weight > 200) {
-            $('weight').classList.add('field-error');
-            alert('กรุณากรอกน้ำหนัก (30–200 kg)'); return;
+            ED_VALIDATE.fail('weight', 'กรุณากรอกน้ำหนัก (30–200 kg)'); return;
         }
-        $('weight').classList.remove('field-error');
         if (isNaN(age) || age < 18) {
-            $('age').classList.add('field-error');
-            alert('กรุณากรอกอายุ (≥ 18 ปี)'); return;
+            ED_VALIDATE.fail('age', 'กรุณากรอกอายุ (≥ 18 ปี)'); return;
         }
-        $('age').classList.remove('field-error');
         if (isNaN(egfr) || egfr < 0) {
-            $('egfr').classList.add('field-error');
-            alert('กรุณากรอก eGFR'); return;
+            ED_VALIDATE.fail('egfr', 'กรุณากรอก eGFR'); return;
         }
-        $('egfr').classList.remove('field-error');
 
         const hasGraceVars = !isNaN(hr) && !isNaN(sbp) && !isNaN(cr);
 
@@ -848,6 +843,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('clear-btn').addEventListener('click', () => {
+        ED_VALIDATE.clearAll();
         ED_PRINT_BOOTSTRAP.clearResults('nstemi-form', () => {
             $('grace-breakdown-body').innerHTML =
                 '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';

@@ -60,7 +60,7 @@
 - **Live Regions:** `aria-live="polite"` on dose summary banners and stroke results container — screen readers announce computed doses without interrupting workflow.
 - **Focus Indicators:** Interactive inputs feature a clear outline focus state (`border-color: #c0392b` or `#007bff` with `box-shadow` glow).
 - **Contrasts:** Minimum contrast ratio of 4.5:1 maintained for clinical text labels.
-- **Form Validation:** Visual warnings (inline `.field-error` class for empty/invalid required fields) and dynamic warning banners prevent incorrect ranges (e.g., weights outside 30-200 kg). `alert()` calls remain on all order pages pending Phase 3 migration to non-blocking validation.
+- **Form Validation:** Non-blocking validation via `ED_VALIDATE` (`shared/form-validate.js`). Inline `.field-error` + `.inline-error-msg` for field-level errors. `.clinical-warning` banner for safety alerts (SK contraindication, absolute CI). Zero `alert()` calls in the codebase.
 
 ### Printing Constraints (A4 Layout)
 - **Page Size:** `@page { size: A4 portrait; margin: 0 }` — content uses full A4 area (210mm × 297mm). Results container padding `5mm` provides the printable margin.
