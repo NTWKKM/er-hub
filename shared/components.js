@@ -98,7 +98,10 @@ const ED_COMPONENTS = {
         const title = (document.title || '').split('—')[0].trim();
         const nav = document.createElement('nav');
         nav.className = 'top-nav';
-        nav.innerHTML = `${title ? `<span class="nav-title">${title}</span>` : ''}`;
+        nav.innerHTML = `
+            <a href="${href}" class="nav-home" aria-label="Home">Home</a>
+            ${title ? `<span class="nav-title">${title}</span>` : ''}
+        `;
         document.body.insertBefore(nav, document.body.firstChild);
     },
 
