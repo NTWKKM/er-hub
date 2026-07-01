@@ -55,10 +55,13 @@ const ED_COMPONENTS = {
                 <div class="sticker-area">
                     <strong>ติดสติ๊กเกอร์ผู้ป่วย</strong>
                     <small>(Patient Sticker)</small>
-                    <span id="sticker-hn-text" style="font-weight: bold; font-size: 11px; margin-top: 4px;">HN: ${hn}</span>
+                    <span id="sticker-hn-text" style="font-weight: bold; font-size: 11px; margin-top: 4px;"></span>
                 </div>
             </div>
         `;
+        // HN set via textContent — prevents XSS from user-entered patient identifiers
+        const hnEl = document.getElementById('sticker-hn-text');
+        if (hnEl) hnEl.textContent = 'HN: ' + hn;
     },
 
     /**
@@ -98,6 +101,7 @@ const ED_COMPONENTS = {
         const title = (document.title || '').split('—')[0].trim();
         const nav = document.createElement('nav');
         nav.className = 'top-nav';
+        nav.setAttribute('role', 'navigation');
         nav.innerHTML = `
             <a href="${href}" class="nav-home" aria-label="Home">Home</a>
             ${title ? `<span class="nav-title">${title}</span>` : ''}
@@ -114,7 +118,7 @@ const ED_COMPONENTS = {
             bar = document.createElement('div');
             bar.id = 'float-print-bar';
             bar.className = 'float-print-bar';
-            bar.innerHTML = '✅ Order พร้อมแล้ว &nbsp; <button class="btn-print-now" onclick="window.print()">🖨️ พิมพ์ทันที</button> <button class="btn-view-order" onclick="document.getElementById(\'results-container\').scrollIntoView({behavior:\'smooth\'})">👁️ ดู Order</button>';
+            bar.innerHTML = 'Order พร้อมแล้ว &nbsp; <button class="btn-print-now" onclick="window.print()">พิมพ์ทันที</button> <button class="btn-view-order" onclick="document.getElementById(\'results-container\').scrollIntoView({behavior:\'smooth\'})">ดู Order</button>';
             document.body.appendChild(bar);
         }
         bar.style.display = 'flex';

@@ -42,7 +42,7 @@
 | **Portal Card** | Category-grouped card in single 3-column grid. Color-coded left border per category. No section titles, no emoji, no print-blank button. Stroke FAST TRACK is first card. | `.hover` (Lift + shadow), Default (Light gray border + 4px category color left border). `padding: 18px 20px`, `gap: 16px`. Grid: `repeat(3, 1fr)` desktop, `repeat(2, 1fr)` tablet (600–900px), `1fr` mobile (<600px). |
 | **Portal Header** | Removed. Nav bar replaces the portal header. Logo and title card deleted from `index.html`. | N/A |
 | **Top Navigation Bar** | Sticky full-width bar injected by `ED_COMPONENTS.injectNavBar()`. Auto-detects page title from `document.title` (strips after `—`). Present on all 9 pages (portal + 7 orders + drip calculator). "Home" text link (no icon) + title text. Negative margins (`-20px` top/left/right) escape `body { padding: 20px }` for flush-to-top, full-width display on order pages. | Blue gradient (`#1e3c72 → #2a5298`), `position: sticky; top: 0; z-index: 100`. `width: calc(100% + 40px)`, negative margins to escape body padding. `Home` link + `.nav-title`. Hidden in print via `nav`, `.top-nav`, `a[href*="index.html"]` selectors in `@media print`. |
-| **Floating Print Action Bar** | Fixed bottom bar shown after generate/blank, hidden on clear. | Green (#27ae60) bar with "พิมพ์ทันที" and "ดู Order" buttons. `position: fixed; bottom: 0; z-index: 1000`. Hidden in print via `@media print`. |
+| **Floating Print Action Bar** | Fixed bottom bar shown after generate/blank, hidden on clear. Text-only labels (no emoji, per ADR-09 consistency). | Green (#27ae60) bar with "พิมพ์ทันที" and "ดู Order" buttons. `position: fixed; bottom: 0; z-index: 1000`. Hidden in print via `@media print`. |
 | **Field Error State** | Red border highlight for empty/invalid required fields. | `.field-error` class: `border-color: #c0392b; box-shadow: 0 0 5px rgba(192,57,43,0.4)`. |
 | **Fibrinolytic / Drug Card** | Card layout to select drugs. | `.selected` (Red border + light red BG), `.hover` (Muted red border), Default (Light gray border) |
 | **Print Order Grid** | 5-column grid mapping to hospital medical chart layout. | `grid-template-columns: 2fr 1fr 3fr 1fr 3fr;` |
@@ -55,9 +55,12 @@
 ## 3. Accessibility & Printing Constraints
 
 ### Accessibility (Screen)
+- **Favicon:** SVG medical cross icon (`favicon.svg`) on all 9 pages for tab identification.
+- **ARIA Landmarks:** `role="navigation"` on the sticky nav bar. `aria-label="Home"` on the Home link.
+- **Live Regions:** `aria-live="polite"` on dose summary banners and stroke results container — screen readers announce computed doses without interrupting workflow.
 - **Focus Indicators:** Interactive inputs feature a clear outline focus state (`border-color: #c0392b` or `#007bff` with `box-shadow` glow).
 - **Contrasts:** Minimum contrast ratio of 4.5:1 maintained for clinical text labels.
-- **Form Validation:** Visual alerts (`alert()`) and dynamic warning banners prevent incorrect ranges (e.g., weights outside 30-200 kg).
+- **Form Validation:** Visual warnings (inline `.field-error` class for empty/invalid required fields) and dynamic warning banners prevent incorrect ranges (e.g., weights outside 30-200 kg). `alert()` calls remain on all order pages pending Phase 3 migration to non-blocking validation.
 
 ### Printing Constraints (A4 Layout)
 - **Page Size:** `@page { size: A4 portrait; margin: 0 }` — content uses full A4 area (210mm × 297mm). Results container padding `5mm` provides the printable margin.

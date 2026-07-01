@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MNRH-ED Standing Order Hub — Maharat Nakhon Ratchasima Hospital</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
@@ -36,48 +37,6 @@
             margin: 40px auto;
             padding: 0 20px;
             box-sizing: border-box;
-        }
-
-        .portal-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: #fff;
-            padding: 16px 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.25);
-            margin-bottom: 16px;
-        }
-
-        .portal-header svg {
-            flex-shrink: 0;
-        }
-
-        .portal-header-text {
-            text-align: left;
-        }
-
-        .portal-header-text h1 {
-            font-size: 1.8em;
-            margin: 0;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .portal-header-text p {
-            margin: 4px 0 0 0;
-            font-size: 14px;
-            opacity: 0.85;
-        }
-
-        .portal-logo {
-            width: 64px;
-            height: 64px;
-            object-fit: contain;
-            flex-shrink: 0;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
 
         .portal-grid {
@@ -135,12 +94,7 @@
 
         @media (max-width: 599px) {
             .portal-container { margin: 16px auto; padding: 0 12px; }
-            .portal-header { padding: 20px 16px; gap: 12px; flex-direction: row; }
-            .portal-logo { width: 64px; height: 64px; }
-            .portal-header-text h1 { font-size: 1.3em; }
-            .portal-header-text p { font-size: 11px; }
             .portal-grid { grid-template-columns: 1fr; gap: 10px; }
-            .portal-header-text p { display: none; }
             .portal-card { padding: 14px 16px; }
         }
     </style>
@@ -196,27 +150,6 @@
 <script src="shared/components.js"></script>
 <script>
 ED_COMPONENTS.injectNavBar('index.html');
-</script>
-
-<script>
-function printBlankOrder(orderName) {
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = `orders/${orderName}.html?print-blank-direct=true`;
-    iframe.onload = () => {
-        try {
-            iframe.contentWindow.addEventListener('afterprint', () => {
-                setTimeout(() => {
-                    if (document.body.contains(iframe)) document.body.removeChild(iframe);
-                }, 500);
-            });
-        } catch (e) { }
-    };
-    document.body.appendChild(iframe);
-    setTimeout(() => {
-        if (document.body.contains(iframe)) document.body.removeChild(iframe);
-    }, 300000);
-}
 </script>
 
 </body>

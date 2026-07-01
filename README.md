@@ -39,3 +39,11 @@ GitHub Pages at **NTWKKM/er-hub**. Push to `main` → live. No CI build needed.
 - **ADR-12:** Sticky nav bar (`injectNavBar`) — auto-detects page title from `document.title`, hidden in print
 
 See `ARCHITECTURE.md`, `DESIGN.md`, and `CONTEXT.md` for full specifications and ADR history.
+
+## Testing
+
+```bash
+npm test
+```
+
+Runs 61 unit tests via Node's built-in `node:test` (zero dependencies). Covers `calc-engine.js` (drip rate + bolus volume), `anticoag-engine.js` (heparin dosing + titration + NSTEMI anticoag), `drug-data.js` (12-drug catalog validation), and `components.js` (date/time formatting). Tests are dev-only — they never ship to the browser and don't affect the ADR-01 no-build-step constraint.
