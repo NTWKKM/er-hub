@@ -178,7 +178,9 @@
     header,
     nav,
     .header,
-    form {
+    form,
+    .top-nav,
+    a[href*="index.html"] {
         display: none !important;
     }
 
@@ -305,11 +307,11 @@
 
     /* ── Sticker box ── */
     .sticker-area {
-        width: 70mm;
-        height: 25mm;
+        width: 60mm;
+        height: 20mm;
         font-size: 8pt;
         border: 1px dashed #000 !important;
-        padding: 10px;
+        padding: 5px;
     }
 
     .sticker-box-container {
