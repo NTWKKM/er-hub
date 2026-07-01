@@ -38,8 +38,10 @@ export default function StemiOrder() {
   const handleCalculate = useCallback((e: React.FormEvent) => {
     e.preventDefault();
 
-    // Clear any prior warning before re-validation
+    // Clear prior results + warning before re-validation
     validation.clearWarn();
+    setCalculatedDose(null);
+    setShowResults(false);
 
     // Validate weight (30-200 kg)
     if (!validation.range('weight', weight, 30, 200, 'กรุณากรอกน้ำหนัก (30–200 kg)')) return;
@@ -55,14 +57,14 @@ export default function StemiOrder() {
     const tnk = calcTNK(weight, age);
     const clopiTabs = age <= 75 ? 4 : 1; // rule: age <=75 -> 4 tabs, >75 -> 1 tab
 
-    // Store calculated values for display (including bracketIdx for TNK table highlighting)
+    // Store calculated values — TNK-specific fields only for TNK orders
     setCalculatedDose({
       fibrinolytic,
       tnkMg: tnk.mg,
       tnkMl: tnk.ml,
       clopiTabs,
-      elderly: tnk.elderly,
-      bracketIdx: tnk.bracketIdx,
+      elderly: fibrinolytic === 'tnk' ? tnk.elderly : false,
+      bracketIdx: fibrinolytic === 'tnk' ? tnk.bracketIdx : -1,
     });
 
     setShowResults(true);
@@ -121,6 +123,7 @@ export default function StemiOrder() {
               onHnChange={setHn}
               onEgfrChange={() => {}}
               showEgfr={false}
+              registerRef={validation.registerRef}
             />
 
             <div style={{ marginTop: '14px' }}>

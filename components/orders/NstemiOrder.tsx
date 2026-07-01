@@ -25,8 +25,9 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
     e.preventDefault();
     validation.clearAll();
 
-    const egfrNum = parseFloat(egfr);
-    if (isNaN(egfrNum) || egfrNum < 0) {
+    const egfrText = egfr.trim();
+    const egfrNum = Number(egfrText);
+    if (egfrText === '' || !Number.isFinite(egfrNum) || egfrNum < 0) {
       validation.fail('egfr', 'กรุณากรอก eGFR');
       return;
     }
@@ -95,6 +96,7 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
           onEgfrChange={setEgfr}
           showEgfr={true}
           maxWeight={200}
+          registerRef={validation.registerRef}
         />
 
         {validation.getError('egfr') && (
@@ -256,7 +258,7 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
               ) : (
                 <>
                   <li>☑ <strong>ASA 300 mg</strong> 1 เม็ด เคี้ยวและกลืน stat</li>
-                  <li>☑ <strong>Clopidogrel (75mg) 4 เม็ด</strong> stat <small style={{ color: '#888' }}>({age <= 75 ? 'อายุ ≤75 ปี' : 'อายุ >75 ปี — ลด loading dose → 1 เม็ด'})</small></li>
+                  <li>☑ <strong>Clopidogrel (75mg) {age <= 75 ? '4' : '1'} เม็ด</strong> stat <small style={{ color: '#888' }}>({age <= 75 ? 'อายุ ≤75 ปี' : 'อายุ >75 ปี — ลด loading dose → 1 เม็ด'})</small></li>
                 </>
               )}
             </ul>

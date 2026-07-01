@@ -88,4 +88,24 @@ describe('AntivenomOrder', () => {
     // Warning should be cleared
     expect(screen.queryByText(/กรุณาเลือกข้อบ่งใช้/i)).not.toBeInTheDocument();
   });
+
+  it('auto-checks krait indication when selecting krait species, then unchecks when switching away', () => {
+    render(<AntivenomOrder />);
+    // Switch to Neurotoxin path
+    const neuroRadio = screen.getByDisplayValue('neurotoxin');
+    fireEvent.click(neuroRadio);
+    // Select krait species (Malayan Krait)
+    const snakeSelect = screen.getByLabelText(/เลือกชนิดงู/i);
+    fireEvent.change(snakeSelect, { target: { value: 'malayan_krait' } });
+    // The krait indication checkbox (index 3 in NEURO_INDICATIONS) should be auto-checked
+    const checkboxes = screen.getAllByRole('checkbox');
+    // Filter to indication checkboxes (not radio buttons or other checkboxes)
+    // In Neurotoxin mode there are exactly 4 indication checkboxes (NEURO_INDICATIONS has 4 items)
+    // The last checkbox is the krait indication
+    expect(checkboxes[checkboxes.length - 1]).toBeChecked();
+    // Now switch to a non-krait species (Cobra)
+    fireEvent.change(snakeSelect, { target: { value: 'cobra' } });
+    // The krait indication checkbox should now be automatically unchecked
+    expect(checkboxes[checkboxes.length - 1]).not.toBeChecked();
+  });
 });

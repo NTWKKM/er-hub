@@ -184,6 +184,7 @@ export default function PeOrder() {
                 step={0.1}
                 value={weight}
                 onChange={(e) => setWeight(parseFloat(e.target.value))}
+                ref={(el) => validation.registerRef('weight', el)}
               />
             </div>
 

@@ -42,6 +42,9 @@ const NEURO_INDICATIONS = [
   'ประวัติโดนงูทับสมิงคลา หรือ งูสามเหลี่ยมกัดจริง (ให้เซรุ่มทันทีไม่ต้องรอกล้ามเนื้ออ่อนแรง)',
 ];
 
+// Named index for krait auto-indication — guards against array reordering
+const KRAIT_INDICATION_INDEX = 3;
+
 export default function AntivenomOrder() {
   const validation = useFormValidation();
   const [hn, setHn] = useState('');
@@ -62,7 +65,7 @@ export default function AntivenomOrder() {
     setNeuroSnake(value);
     const newInd = [...neuroIndications];
     // Auto-check krait bite indication for krait species; explicitly uncheck for non-krait
-    newInd[3] = (value === 'malayan_krait' || value === 'banded_krait');
+    newInd[KRAIT_INDICATION_INDEX] = (value === 'malayan_krait' || value === 'banded_krait');
     setNeuroIndications(newInd);
   };
 

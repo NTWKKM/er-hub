@@ -13,6 +13,19 @@ export default function RtpaOrder() {
   const [doseRegimen, setDoseRegimen] = useState<'0.9' | '0.6'>('0.9');
   const [showResults, setShowResults] = useState(false);
 
+  // Submitted snapshot — printable order frozen at validation time
+  interface SubmittedRtpaOrder {
+    hn: string;
+    weight: number;
+    doseRegimen: '0.9' | '0.6';
+    totalDose: number;
+    bolus: number;
+    infusion: number;
+    dateStr: string;
+    timeStr: string;
+  }
+  const [submittedOrder, setSubmittedOrder] = useState<SubmittedRtpaOrder | null>(null);
+
   const validation = useFormValidation();
 
   // Clinical logic: rt-PA dose calculation
@@ -26,7 +39,6 @@ export default function RtpaOrder() {
   const calculatedTotalDose = Math.min(weight * dosePerKg, maxDose);
   const bolus = Math.floor(calculatedTotalDose * 0.10 * 10) / 10;
   const infusion = parseFloat((calculatedTotalDose - bolus).toFixed(2));
-  const infusionRate = infusion / 1; // mL/hr if 1mg/mL concentration
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,10 +55,28 @@ export default function RtpaOrder() {
     }
     validation.clear('weight');
 
+    // Snapshot the validated order
+    const now = new Date();
+    const dateStr = useCurrentTime ? now.toLocaleDateString('th-TH') : '...';
+    const timeStr = useCurrentTime ? now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) : '...';
+    setSubmittedOrder({
+      hn: hn.trim(),
+      weight,
+      doseRegimen,
+      totalDose: calculatedTotalDose,
+      bolus,
+      infusion,
+      dateStr,
+      timeStr,
+    });
     setShowResults(true);
   };
 
   const handlePrint = () => {
+    window.print();
+  };
+
+  const handlePrintBlank = () => {
     window.print();
   };
 
@@ -56,12 +86,9 @@ export default function RtpaOrder() {
     setUseCurrentTime(true);
     setDoseRegimen('0.9');
     setShowResults(false);
+    setSubmittedOrder(null);
     validation.clearAll();
   };
-
-  const now = new Date();
-  const dateStr = useCurrentTime ? now.toLocaleDateString('th-TH') : '...';
-  const timeStr = useCurrentTime ? now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) : '...';
 
   return (
     <div className="order-page">
@@ -88,6 +115,7 @@ export default function RtpaOrder() {
                   onChange={(e) => setHn(e.target.value)}
                   required
                   placeholder="กรอก HN"
+                  ref={(el) => validation.registerRef('hn', el)}
                 />
               </div>
 
@@ -99,6 +127,8 @@ export default function RtpaOrder() {
                 value={weight}
                 onChange={setWeight}
                 unit="kg"
+                registerRef={validation.registerRef}
+                fieldId="weight"
               />
 
               <div className="checkbox-time-group">
@@ -150,7 +180,7 @@ export default function RtpaOrder() {
             type="button"
             id="print-blank-btn"
             className="btn btn-print"
-            onClick={handlePrint}
+            onClick={handlePrintBlank}
           >
             🖨️ ใบสั่งยาเปล่า (Blank Order)
           </button>
@@ -165,8 +195,8 @@ export default function RtpaOrder() {
         </form>
       </div>
 
-      {/* Results Section */}
-      {showResults && (
+      {/* Results Section — renders from submitted snapshot, not live form state */}
+      {showResults && submittedOrder && (
         <div id="results-container" className="results-container" aria-live="polite">
           <h3>3. ตรวจสอบและพิมพ์ใบสั่งยา</h3>
 
@@ -179,7 +209,7 @@ export default function RtpaOrder() {
               </div>
             </div>
 
-            <StickerBox hn={hn || '....................'} />
+            <StickerBox hn={submittedOrder.hn || '....................'} />
 
             <div className="order-grid-5col">
               <div className="grid-header">
@@ -193,27 +223,27 @@ export default function RtpaOrder() {
               <div className="grid-header">Order for Continuation</div>
 
               <div className="grid-cell">
-                <strong>HN: <span id="result-hn" className="highlight">{hn || '...'}</span></strong>
+                <strong>HN: <span id="result-hn" className="highlight">{submittedOrder.hn || '...'}</span></strong>
                 <br />
-                น้ำหนัก <strong id="result-weight" className="highlight">{weight.toFixed(2)}</strong> Kg
+                น้ำหนัก <strong id="result-weight" className="highlight">{submittedOrder.weight.toFixed(2)}</strong> Kg
                 <br />
                 <br />
                 ลงชื่อเภสัช: <span className="dotted-line"></span>
               </div>
               <div className="grid-cell" id="order-date">
-                {dateStr}
+                {submittedOrder.dateStr}
                 <br />
-                {timeStr}
+                {submittedOrder.timeStr}
               </div>
               <div className="grid-cell">
                 <ul className="order-list">
                   <li>ก่อนให้ rt-PA if SBP ≥ 185 or DBP ≥ 110 mmHg notify แพทย์ทันที</li>
                   <li>
-                    <strong>Alteplase (dose <span id="result-regimen" className="highlight">{doseRegimen}</span> mg/kg)</strong>
+                    <strong>Alteplase (dose <span id="result-regimen" className="highlight">{submittedOrder.doseRegimen}</span> mg/kg)</strong>
                     <ul style={{ paddingLeft: '15px' }}>
-                      <li>Total dose = <span id="total-dose" className="highlight">{calculatedTotalDose.toFixed(2)}</span> mg</li>
-                      <li>- <span id="push-percent" className="highlight">10</span>% of total dose = <span id="push-dose" className="highlight">{bolus.toFixed(1)}</span> mg IV push in 1 min</li>
-                      <li>- Remaining <span id="drip-percent" className="highlight">90</span>% of total dose = <span id="drip-dose" className="highlight">{infusion.toFixed(2)}</span> mg IV drip in 60 min</li>
+                      <li>Total dose = <span id="total-dose" className="highlight">{submittedOrder.totalDose.toFixed(2)}</span> mg</li>
+                      <li>- <span id="push-percent" className="highlight">10</span>% of total dose = <span id="push-dose" className="highlight">{submittedOrder.bolus.toFixed(1)}</span> mg IV push in 1 min</li>
+                      <li>- Remaining <span id="drip-percent" className="highlight">90</span>% of total dose = <span id="drip-dose" className="highlight">{submittedOrder.infusion.toFixed(2)}</span> mg IV drip in 60 min</li>
                     </ul>
                   </li>
                   <li>หลังให้ rt-PA if SBP &gt; 180 or DBP &gt; 105 mmHg notify แพทย์ทันที</li>
@@ -233,9 +263,9 @@ export default function RtpaOrder() {
                 ลงชื่อแพทย์(ER/MED) <span className="dotted-line"></span>
               </div>
               <div className="grid-cell" id="order-date-cont">
-                {dateStr}
+                {submittedOrder.dateStr}
                 <br />
-                {timeStr}
+                {submittedOrder.timeStr}
               </div>
               <div className="grid-cell">
                 <ul className="order-list">

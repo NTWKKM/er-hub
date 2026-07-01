@@ -103,4 +103,21 @@ describe('NstemiOrder', () => {
     // Should NOT show ASA allergy warning banner (the red ⚠️ one)
     expect(screen.queryByText(/ห้ามให้ ASA/i)).not.toBeInTheDocument();
   });
+
+  it('shows reduced clopidogrel dose (1 เม็ด) for age > 75', () => {
+    render(<NstemiOrder />);
+    // Set age above 75 via the age slider (second slider)
+    const ageSlider = screen.getAllByRole('slider')[1]; // age is the second slider
+    fireEvent.change(ageSlider, { target: { value: '80' } });
+    // Enter eGFR and calculate
+    const egfrInput = screen.getByPlaceholderText(/กรอก eGFR/i);
+    fireEvent.change(egfrInput, { target: { value: '75' } });
+    const calcButton = screen.getByRole('button', { name: /คำนวณ/i });
+    fireEvent.click(calcButton);
+    // Should show Antiplatelet Order section
+    expect(screen.getByText(/Antiplatelet Order/i)).toBeInTheDocument();
+    // Should show clopidogrel with 1 เม็ด (elderly dose), not 4 เม็ด
+    expect(screen.getByText(/Clopidogrel.*1 เม็ด/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Clopidogrel.*4 เม็ด/i)).not.toBeInTheDocument();
+  });
 });

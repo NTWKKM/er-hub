@@ -147,10 +147,16 @@ export function calcHeparinInitialDose(
   weight: number,
   concentration: number
 ): CalcHeparinInitialDoseResult | null {
-  const proto = (HEPARIN_STANDALONE_PROTOCOLS as unknown as Record<string, HeparinProtocol>)[protocolKey];
-  if (!proto || !weight || weight <= 0 || !concentration || concentration <= 0) {
+  // Fail-closed: validate protocolKey is an own property (not __proto__, constructor, etc.)
+  if (!Object.prototype.hasOwnProperty.call(HEPARIN_STANDALONE_PROTOCOLS, protocolKey)) {
     return null;
   }
+  // Fail-closed: require finite positive numbers
+  if (!Number.isFinite(weight) || weight <= 0 || !Number.isFinite(concentration) || concentration <= 0) {
+    return null;
+  }
+
+  const proto = (HEPARIN_STANDALONE_PROTOCOLS as unknown as Record<string, HeparinProtocol>)[protocolKey];
 
   const bolus = Math.min(Math.round(weight * proto.bolusPerKg), proto.maxBolus);
   const infusion = Math.min(Math.round(weight * proto.infPerKg), proto.maxInf);

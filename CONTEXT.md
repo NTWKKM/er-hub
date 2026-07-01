@@ -87,3 +87,23 @@ ADRs 01–17 document decisions made during the original vanilla HTML/CSS/JS imp
   - **Sidebar:** Logo path from `NEXT_PUBLIC_BASE_PATH` (not hardcoded).
   - **Tests:** 145 → 157 tests. Interaction tests added for DripCalculator, RtpaOrder dose regression, AntivenomOrder flow, PeOrder blocking, NstemiOrder ASA allergy, drug-data invariants.
 - **Rationale:** Clinical safety bugs could cause patient harm. Accessibility fixes ensure screen reader compatibility. Test enhancement catches regressions in dose calculations.
+
+### ADR-20: PR#1 Review Round 2 Fixes (2026-07-01)
+
+- **Context:** CodeRabbitAI second review pass identified 15 additional issues across clinical safety, bugs, accessibility, and test coverage.
+- **Decision:** Fix 14 of 15 findings (1 skipped: `hasBolus` fail-open — see rationale below).
+- **Key changes:**
+  - **NstemiOrder clopidogrel dose text:** Was always "4 เม็ด" even for age >75. Now derives from `age <= 75 ? '4' : '1'` matching the inline note.
+  - **NstemiOrder eGFR validation:** `parseFloat('75abc')` accepted malformed input. Replaced with `trim()` + `Number.isFinite()` strict check.
+  - **StemiOrder stale state:** `setCalculatedDose(null)` + `setShowResults(false)` added before validation early-returns to prevent stale order data.
+  - **StemiOrder TNK-only fields:** `elderly` and `bracketIdx` only stored for TNK orders; SK uses `false`/`-1`. Prevents SK orders from showing "ลดขนาด TNK 50%" note.
+  - **calcHeparinInitialDose guards:** Added `Object.prototype.hasOwnProperty` check for protocolKey (blocks prototype pollution) and `Number.isFinite` validation (not falsy checks).
+  - **RtpaOrder submitted snapshot:** Results render from `submittedOrder` state frozen at validation time, not live form inputs. Prevents post-submit edits from altering printable order.
+  - **RtpaOrder blank button:** Separated `handlePrintBlank` from `handlePrint` for independent behavior.
+  - **PatientInfoForm maxWeight:** Default changed from 150 → 200 to match STEMI validation range.
+  - **registerRef wiring:** PatientInfoForm, SliderInput, RtpaOrder, HeparinOrder, PeOrder wired `validation.registerRef(fieldId, el)` to DOM inputs.
+  - **AntivenomOrder krait constant:** Magic number `3` replaced with `KRAIT_INDICATION_INDEX` named constant.
+  - **globals.css sr-only:** `clip: rect(0,0,0,0)` → `clip-path: inset(50%)` (modern pattern).
+  - **Tests:** 157 → 159 tests. Rewrote DripCalculator reset test (proper non-default state → drug switch → verify reset). Added NstemiOrder age >75 clopidogrel regression test. Added AntivenomOrder krait auto-toggle regression test.
+- **Skipped (#15 hasBolus fail-open):** The `hasBolus !== false` gate is technically fail-open, but all 12 weight-based drugs benefit from showing bolus volume (which is the current dose × weight ÷ concentration, not a separate bolus dose). Making it opt-in would require adding `hasBolus: true` to every weight-based drug — noise without behavior change. No drug is mislabeled.
+- **Rationale:** Clinical safety fixes prevent incorrect dosing (clopidogrel, eGFR, heparin). Submitted snapshot prevents silent order changes after validation. registerRef wiring enables focus-on-error accessibility.

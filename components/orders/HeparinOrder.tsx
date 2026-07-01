@@ -147,6 +147,7 @@ export default function HeparinOrder() {
                   onChange={(e) => setHn(e.target.value)}
                   required
                   placeholder="กรอก HN"
+                  ref={(el) => validation.registerRef('hn', el)}
                 />
               </div>
 
@@ -158,6 +159,8 @@ export default function HeparinOrder() {
                 value={weight}
                 onChange={setWeight}
                 unit="kg"
+                registerRef={validation.registerRef}
+                fieldId="weight"
               />
 
               <div style={{ marginTop: '14px', padding: '10px', background: '#f8f9fa', borderRadius: '6px' }}>

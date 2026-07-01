@@ -59,13 +59,14 @@ npm run dev          # http://localhost:3000/er-hub
 npm run build         # outputs to out/
 
 # Run tests
-npm test              # 157 tests via vitest
+npm test              # 159 tests via vitest
 ```
 
 ## Key Design Decisions
 
 - **ADR-18:** Next.js 15 rewrite — TypeScript, App Router, static export, dark mode data-heavy UI
 - **ADR-19:** PR#1 review fixes — clinical bugs, accessibility, test enhancement (145 → 157 tests)
+- **ADR-20:** PR#1 review round 2 — clinical safety, submitted snapshot, registerRef wiring, test enhancement (157 → 159 tests)
 - **Dark default + light toggle** via `next-themes` (not dark-only — user preference for toggle)
 - **Sarabun font** via `next/font/google` (self-hosted, no external requests — Thai-optimized, single font)
 - **Single accent** #5E6AD2 (no category color borders — minimal UI)
@@ -87,7 +88,7 @@ See `ARCHITECTURE.md`, `DESIGN.md`, and `CONTEXT.md` for full specifications and
 npm test
 ```
 
-157 tests via vitest (jsdom environment). Covers:
+159 tests via vitest (jsdom environment). Covers:
 - `calc-engine.ts` — drip rate + bolus volume (14 tests)
 - `anticoag-engine.ts` — heparin dosing + titration + NSTEMI anticoag + fail-closed validation (27 tests)
 - `drug-data.ts` — 12-drug catalog validation + doseRange invariants (11 tests)

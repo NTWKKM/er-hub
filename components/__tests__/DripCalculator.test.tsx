@@ -20,14 +20,35 @@ describe('DripCalculator', () => {
     expect(screen.getByText('คำแนะนำการปรับยา')).toBeInTheDocument();
   });
 
-  it('changes drug and resets prepIndex + dose', () => {
+  it('changes drug and resets prepIndex + dose to defaults', () => {
     render(<DripCalculator />);
     const drugSelect = document.getElementById('drug-select') as HTMLSelectElement;
-    // Change to Norepinephrine (index 1)
+    const prepSelect = document.getElementById('prep-select') as HTMLSelectElement;
+
+    // Step 1: Switch to dopamine (has 2 preparations) and change prepIndex + dose
+    fireEvent.change(drugSelect, { target: { value: 'dopamine' } });
+    expect(drugSelect.value).toBe('dopamine');
+    // Dopamine default dose is 5 — verify we're in dopamine state via drip rate
+    // dripRate = (5 * 70 * 60) / 1000 = 21.00 mL/hr
+    expect(screen.getAllByText(/21\.00/).length).toBeGreaterThan(0);
+    // Move to non-default prep (index 1 = 2000 mcg/mL)
+    fireEvent.change(prepSelect, { target: { value: '1' } });
+    expect(prepSelect.value).toBe('1');
+    // Change dose away from default (5 → 10)
+    const doseSlider = screen.getAllByRole('slider')[1]; // Second slider is dose
+    fireEvent.change(doseSlider, { target: { value: '10' } });
+
+    // Step 2: Switch to a different drug (norepinephrine) — should reset prepIndex to 0 and dose to default
     fireEvent.change(drugSelect, { target: { value: 'norepinephrine' } });
     expect(drugSelect.value).toBe('norepinephrine');
-    // The dose display should show 0.1 (norepinephrine default) — may appear in multiple spans
-    expect(screen.getAllByText(/0\.1/).length).toBeGreaterThan(0);
+    // prepIndex should reset to 0 (norepinephrine default prep)
+    expect(prepSelect.value).toBe('0');
+    // Norepinephrine default dose is 0.1 — dripRate = (0.1 * 70 * 60) / 40 = 10.50 mL/hr
+    // Dose should reset from 10 to 0.1, verify the reset happened
+    expect(screen.getAllByText(/10\.50/).length).toBeGreaterThan(0);
+    // The dose slider value should show 0.1, not 10
+    const doseDisplay = screen.getAllByRole('slider')[1] as HTMLInputElement;
+    expect(doseDisplay.value).toBe('0.1');
   });
 
   it('updates drip rate when weight changes', () => {
