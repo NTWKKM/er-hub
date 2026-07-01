@@ -224,8 +224,9 @@ export default function PeOrder() {
                 🔴 Absolute Exclusion Criteria (ข้อห้ามเด็ดขาด)
               </div>
               {ABSOLUTE_CI.map((ci) => (
-                <label key={ci.id} className="flag-label" style={{ display: 'block', marginBottom: '4px' }}>
+                <label key={ci.id} htmlFor={`abs-ci-${ci.id}`} className="flag-label" style={{ display: 'block', marginBottom: '4px' }}>
                   <input
+                    id={`abs-ci-${ci.id}`}
                     type="checkbox"
                     checked={absCI.has(ci.id)}
                     onChange={() => toggleAbsCI(ci.id)}
@@ -233,7 +234,7 @@ export default function PeOrder() {
                   {ci.label}
                 </label>
               ))}
-              <label className="flag-label" style={{ display: 'block', marginTop: '8px' }}>
+              <label htmlFor="prior-sk" className="flag-label" style={{ display: 'block', marginTop: '8px' }}>
                 <input
                   type="checkbox"
                   id="prior-sk"
@@ -249,8 +250,9 @@ export default function PeOrder() {
                 🟡 Relative Contraindications (ข้อควรระวัง)
               </div>
               {RELATIVE_CI.map((ci) => (
-                <label key={ci.id} className="flag-label" style={{ display: 'block', marginBottom: '4px' }}>
+                <label key={ci.id} htmlFor={`rel-ci-${ci.id}`} className="flag-label" style={{ display: 'block', marginBottom: '4px' }}>
                   <input
+                    id={`rel-ci-${ci.id}`}
                     type="checkbox"
                     checked={relCI.has(ci.id)}
                     onChange={() => toggleRelCI(ci.id)}
@@ -268,6 +270,7 @@ export default function PeOrder() {
           <legend className="sr-only">เลือกสูตร Fibrinolytic Regimen</legend>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
             <label
+              htmlFor="pe-regimen-sk-a"
               className={`pe-regimen-card${regimen === 'sk_a' ? ' selected' : ''}`}
               style={{
                 border: '1px solid #ddd',
@@ -280,6 +283,7 @@ export default function PeOrder() {
               }}
             >
               <input
+                id="pe-regimen-sk-a"
                 type="radio"
                 name="pe-regimen"
                 value="sk_a"
@@ -291,6 +295,7 @@ export default function PeOrder() {
             </label>
 
             <label
+              htmlFor="pe-regimen-sk-b"
               className={`pe-regimen-card${regimen === 'sk_b' ? ' selected' : ''}`}
               style={{
                 border: '1px solid #ddd',
@@ -303,6 +308,7 @@ export default function PeOrder() {
               }}
             >
               <input
+                id="pe-regimen-sk-b"
                 type="radio"
                 name="pe-regimen"
                 value="sk_b"
@@ -314,6 +320,7 @@ export default function PeOrder() {
             </label>
 
             <label
+              htmlFor="pe-regimen-rtpa-a"
               className={`pe-regimen-card${regimen === 'rtpa_a' ? ' selected' : ''}`}
               style={{
                 border: '1px solid #ddd',
@@ -326,6 +333,7 @@ export default function PeOrder() {
               }}
             >
               <input
+                id="pe-regimen-rtpa-a"
                 type="radio"
                 name="pe-regimen"
                 value="rtpa_a"
@@ -337,6 +345,7 @@ export default function PeOrder() {
             </label>
 
             <label
+              htmlFor="pe-regimen-rtpa-b"
               className={`pe-regimen-card${regimen === 'rtpa_b' ? ' selected' : ''}`}
               style={{
                 border: '1px solid #ddd',
@@ -349,6 +358,7 @@ export default function PeOrder() {
               }}
             >
               <input
+                id="pe-regimen-rtpa-b"
                 type="radio"
                 name="pe-regimen"
                 value="rtpa_b"

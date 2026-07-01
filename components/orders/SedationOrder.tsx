@@ -41,7 +41,8 @@ export default function SedationOrder() {
   }, []);
 
   const handlePrintBlank = useCallback(() => {
-    window.open('/er-hub/docs/sedation/fen.pdf', '_blank');
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+    window.open(`${basePath}/docs/sedation/fen.pdf`, '_blank');
   }, []);
 
   // Calculate drip rates using calcDripRate
@@ -103,7 +104,14 @@ export default function SedationOrder() {
               value={weight}
               onChange={setWeight}
               unit="kg"
+              registerRef={validation.registerRef}
+              fieldId="weight"
             />
+            {validation.getError('weight') && (
+              <div style={{ color: '#dc3545', fontSize: '13px', marginTop: '4px' }}>
+                {validation.getError('weight')}
+              </div>
+            )}
           </div>
 
           {/* Column 2: Initial Targets */}
@@ -278,6 +286,7 @@ export default function SedationOrder() {
                 value={midRate.toFixed(1)}
                 unit="mL/hr"
                 context={`Dose: ${midDose.toFixed(2)} mg/kg/hr`}
+                ceiling="Max: 0.2 mg/kg/hr"
               />
             </div>
 

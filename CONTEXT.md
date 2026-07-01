@@ -111,7 +111,7 @@ ADRs 01–17 document decisions made during the original vanilla HTML/CSS/JS imp
 ### ADR-21: PR#1 Review Round 2 Residual Fixes (2026-07-01)
 
 - **Context:** CodeRabbitAI round 2 review had 11 findings. 8 were already fixed in commit `9c83c96` (ADR-20). 3 remained valid for this commit: stale state on validation fail (NstemiOrder, RtpaOrder), HeparinOrder accessibility + base-path + emoji, PeOrder accessibility + emoji, AGENTS.md PHI wording, CONTEXT.md PDF count.
-- **Decision:** Fix all 8 remaining valid findings. Skip 2 (test already exists, RtpaOrder blank-print mode out of scope). 1 invalid (RtpaOrder blank-print reprints completed results — design decision, same pattern as all order pages).
+- **Decision:** Fix all 3 remaining valid findings. Skip 2 (test already exists, RtpaOrder blank-print mode out of scope). 1 invalid (RtpaOrder blank-print reprints completed results — design decision, same pattern as all order pages).
 - **Key changes:**
   - **AGENTS.md:** "zero PHI" → "no PHI stored or transmitted" with explicit HN sensitivity guidance.
   - **NstemiOrder:** `handleCalculate` now clears `calculated`/`anticoagResult` before validation to prevent stale recommendations. Decorative emoji removed from all buttons.

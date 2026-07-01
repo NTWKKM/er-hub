@@ -15,7 +15,7 @@ describe('StemiOrder', () => {
 
   it('renders fibrinolytic choice section', () => {
     render(<StemiOrder />);
-    expect(screen.getByText(/เลือกยาละลายลิ่มเลือด/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: /เลือกยาละลายลิ่มเลือด/i })).toBeInTheDocument();
   });
 
   it('has TNK selected by default', () => {

@@ -199,8 +199,9 @@ export default function HeparinOrder() {
               </div>
 
               <div style={{ marginTop: '10px' }}>
-                <label className="flag-label" style={{ fontWeight: 'normal' }}>
+                <label htmlFor="use-current-time" className="flag-label" style={{ fontWeight: 'normal' }}>
                   <input
+                    id="use-current-time"
                     type="checkbox"
                     checked={useCurrentTime}
                     onChange={(e) => setUseCurrentTime(e.target.checked)}
@@ -217,17 +218,21 @@ export default function HeparinOrder() {
                 * หากมีข้อบ่งชี้หรือความเสี่ยงแม้แต่วข้อเดียว ระบบจะจำกัดการคำนวณอัตโนมัติ (บังคับสั่งปรับยาเฉพาะราย)
               </div>
               <div style={{ maxHeight: '250px', overflowY: 'auto', border: '1px solid #ddd', padding: '10px', borderRadius: '4px', background: '#fdfdfd' }}>
-                {BLEEDING_RISK_FACTORS.map((factor) => (
-                  <label key={factor} className="flag-label">
-                    <input
-                      type="checkbox"
-                      className="risk-ci"
-                      checked={!!bleedingRisks[factor]}
-                      onChange={() => handleRiskToggle(factor)}
-                    />
-                    {factor}
-                  </label>
-                ))}
+                {BLEEDING_RISK_FACTORS.map((factor) => {
+                  const factorId = `risk-${factor.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`;
+                  return (
+                    <label key={factor} htmlFor={factorId} className="flag-label">
+                      <input
+                        id={factorId}
+                        type="checkbox"
+                        className="risk-ci"
+                        checked={!!bleedingRisks[factor]}
+                        onChange={() => handleRiskToggle(factor)}
+                      />
+                      {factor}
+                    </label>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -335,8 +340,8 @@ export default function HeparinOrder() {
                   {hasAnyRisk
                     ? 'Individualized dosing required (สั่งแพทย์เฉพาะราย)'
                     : doseResult
-                    ? `Bolus: ${doseResult.bolus} units | Infusion: ${doseResult.infusion} units/hr (${doseResult.dripRate} mL/hr)`
-                    : '--'}
+                      ? `Bolus: ${doseResult.bolus} units (Max ${protocolObj.maxBolus} units) | Infusion: ${doseResult.infusion} units/hr (Max ${protocolObj.maxInf} units/hr) — ${doseResult.dripRate} mL/hr`
+                      : '--'}
                 </div>
               </div>
             </div>
@@ -405,9 +410,9 @@ export default function HeparinOrder() {
                   <div id="p-hep-calculation-box" className="fib-order-box chosen">
                     ☑ <strong>Heparin {concentration === 100 ? '10,000 units + NSS 100 mL' : '5,000 units + NSS 100 mL'}</strong> ({concentration} units/mL)
                     <br />
-                    - IV bolus <strong><span id="p-bolus-dose">{doseResult.bolus}</span> units</strong> ({protocolObj.bolusPerKg} units/kg)
+                    - IV bolus <strong><span id="p-bolus-dose">{doseResult.bolus}</span> units</strong> ({protocolObj.bolusPerKg} units/kg, Max {protocolObj.maxBolus} units)
                     <br />
-                    - IV drip <strong><span id="p-inf-dose">{doseResult.infusion}</span> units/hr</strong> = <strong><span id="p-inf-rate">{doseResult.dripRate}</span> mL/hr</strong> ({protocolObj.infPerKg} units/kg/hr)
+                    - IV drip <strong><span id="p-inf-dose">{doseResult.infusion}</span> units/hr</strong> = <strong><span id="p-inf-rate">{doseResult.dripRate}</span> mL/hr</strong> ({protocolObj.infPerKg} units/kg/hr, Max {protocolObj.maxInf} units/hr)
                     <br />
                     - flushing with 0.9% NSS 20 cc after infusion stopped
                   </div>

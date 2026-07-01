@@ -117,11 +117,12 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
           </div>
         )}
 
-        <div className="card" style={{ marginTop: '16px' }}>
-          <h3 className="card-header">ASA Allergy</h3>
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-            <label style={{ cursor: 'pointer', fontSize: '14px' }}>
+        <fieldset className="card" style={{ marginTop: '16px', border: 'none', padding: 0 }}>
+          <legend className="card-header" style={{ fontSize: '14px', fontWeight: 'bold' }}>ASA Allergy</legend>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', padding: '0 12px 12px' }}>
+            <label htmlFor="asa-allergy-no" style={{ cursor: 'pointer', fontSize: '14px' }}>
               <input
+                id="asa-allergy-no"
                 type="radio"
                 name="asa-allergy"
                 value="no"
@@ -130,8 +131,9 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
               />{' '}
               ไม่มี
             </label>
-            <label style={{ cursor: 'pointer', fontSize: '14px' }}>
+            <label htmlFor="asa-allergy-yes" style={{ cursor: 'pointer', fontSize: '14px' }}>
               <input
+                id="asa-allergy-yes"
                 type="radio"
                 name="asa-allergy"
                 value="yes"
@@ -141,7 +143,7 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
               มี ⚠️
             </label>
           </div>
-        </div>
+        </fieldset>
 
         <div style={{ marginTop: '20px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <button type="submit" className="btn btn-calculate">
@@ -228,6 +230,7 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
                 value={anticoagResult.enoxDose || 0}
                 unit="mg"
                 context={anticoagResult.enoxNote}
+                ceiling="Max 100 mg"
               />
               <DoseResultCard
                 label="Route"
@@ -245,6 +248,7 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
                 value="2.5"
                 unit="mg"
                 context="SC OD × 5 Days (Preferred)"
+                ceiling="Max 2.5 mg"
               />
             </div>
           )}

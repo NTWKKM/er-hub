@@ -92,7 +92,8 @@ export default function StemiOrder() {
   }, [validation]);
 
   const handlePrintPDF = useCallback(() => {
-    window.open('/er-hub/docs/STEMI-PE/STEMI new 26-4doc.pdf', '_blank');
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+    window.open(`${basePath}/docs/STEMI-PE/STEMI new 26-4doc.pdf`, '_blank');
   }, []);
 
   return (
@@ -121,15 +122,16 @@ export default function StemiOrder() {
               onWeightChange={setWeight}
               onAgeChange={setAge}
               onHnChange={setHn}
-              onEgfrChange={() => {}}
+              onEgfrChange={() => { }}
               showEgfr={false}
               registerRef={validation.registerRef}
             />
 
-            <div style={{ marginTop: '14px' }}>
-              <strong style={{ fontSize: '14px' }}>ASA Allergy:</strong>
-              <label style={{ marginLeft: '10px', cursor: 'pointer', fontSize: '14px' }}>
+            <fieldset style={{ marginTop: '14px', border: 'none', padding: 0 }}>
+              <legend style={{ fontSize: '14px', fontWeight: 'bold' }}>ASA Allergy:</legend>
+              <label htmlFor="stemi-asa-no" style={{ marginLeft: '10px', cursor: 'pointer', fontSize: '14px' }}>
                 <input
+                  id="stemi-asa-no"
                   type="radio"
                   name="asa-allergy"
                   value="no"
@@ -138,8 +140,9 @@ export default function StemiOrder() {
                 />{' '}
                 ไม่มี
               </label>
-              <label style={{ marginLeft: '10px', cursor: 'pointer', fontSize: '14px' }}>
+              <label htmlFor="stemi-asa-yes" style={{ marginLeft: '10px', cursor: 'pointer', fontSize: '14px' }}>
                 <input
+                  id="stemi-asa-yes"
                   type="radio"
                   name="asa-allergy"
                   value="yes"
@@ -148,16 +151,18 @@ export default function StemiOrder() {
                 />{' '}
                 มี ⚠️
               </label>
-            </div>
+            </fieldset>
           </div>
 
           {/* COLUMN 2: Fibrinolytic Choice */}
           <div className="input-column">
             <h3>2. เลือกยาละลายลิ่มเลือด</h3>
 
-            <div className="fib-choice-group">
-              <label className={`fib-card ${fibrinolytic === 'tnk' ? 'selected' : ''}`} id="card-tnk">
+            <fieldset className="fib-choice-group" style={{ border: 'none', padding: 0, margin: 0 }}>
+              <legend className="sr-only">เลือกยาละลายลิ่มเลือด</legend>
+              <label htmlFor="stemi-fib-tnk" className={`fib-card ${fibrinolytic === 'tnk' ? 'selected' : ''}`}>
                 <input
+                  id="stemi-fib-tnk"
                   type="radio"
                   name="fibrinolytic"
                   value="tnk"
@@ -167,8 +172,9 @@ export default function StemiOrder() {
                 <strong>Tenecteplase (TNK)</strong>
                 <small>IV bolus 10 วินาที — คำนวณตามน้ำหนัก+อายุ</small>
               </label>
-              <label className={`fib-card ${fibrinolytic === 'sk' ? 'selected' : ''}`} id="card-sk">
+              <label htmlFor="stemi-fib-sk" className={`fib-card ${fibrinolytic === 'sk' ? 'selected' : ''}`}>
                 <input
+                  id="stemi-fib-sk"
                   type="radio"
                   name="fibrinolytic"
                   value="sk"
@@ -178,11 +184,11 @@ export default function StemiOrder() {
                 <strong>Streptokinase (SK)</strong>
                 <small>1.5 MU IV drip 60 นาที — ห้ามให้ซ้ำใน 6 เดือน</small>
               </label>
-            </div>
+            </fieldset>
 
             {fibrinolytic === 'sk' && (
               <div style={{ marginTop: '12px' }}>
-                <label className="flag-label" style={{ fontWeight: 'bold' }}>
+                <label htmlFor="prior-sk" className="flag-label" style={{ fontWeight: 'bold' }}>
                   <input
                     type="checkbox"
                     id="prior-sk"
@@ -242,12 +248,12 @@ export default function StemiOrder() {
                 <div className="dose-label">ยาที่เลือก / ขนาดยา</div>
                 <div className="dose-num">
                   {calculatedDose.fibrinolytic === 'tnk'
-                    ? `TNK ${calculatedDose.tnkMg} mg (${calculatedDose.tnkMl} ml)`
-                    : `SK 1.5 MU (60 min drip)`}
+                    ? `TNK ${calculatedDose.tnkMg} mg (${calculatedDose.tnkMl} ml) — Max 50 mg`
+                    : `SK 1.5 MU (60 min drip) — Max 1.5 MU`}
                 </div>
               </div>
             </div>
-            <div className="note-pill">Clopidogrel: {calculatedDose.clopiTabs} เม็ด stat</div>
+            <div className="note-pill">Clopidogrel: {calculatedDose.clopiTabs} เม็ด stat (Max 4 tabs)</div>
             {calculatedDose.elderly && (
               <div className="note-pill" style={{ display: 'inline-block' }}>อายุ ≥75 ปี — ลดขนาด TNK 50%</div>
             )}

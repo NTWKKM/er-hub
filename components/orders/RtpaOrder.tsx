@@ -134,8 +134,9 @@ export default function RtpaOrder() {
               />
 
               <div className="checkbox-time-group">
-                <label className="flag-label" style={{ fontWeight: 'normal' }}>
+                <label htmlFor="use-current-time" className="flag-label" style={{ fontWeight: 'normal' }}>
                   <input
+                    id="use-current-time"
                     type="checkbox"
                     checked={useCurrentTime}
                     onChange={(e) => setUseCurrentTime(e.target.checked)}
@@ -148,9 +149,11 @@ export default function RtpaOrder() {
             {/* Right Column */}
             <div className="input-column">
               <h3>2. เลือกขนาดยา (Dosage Regimen)</h3>
-              <div className="button-dose-group">
+              <fieldset className="button-dose-group" style={{ border: 'none', padding: 0, margin: 0 }}>
+                <legend className="sr-only">Dose Regimen</legend>
                 <label className={`dose-button ${doseRegimen === '0.9' ? 'active' : ''}`}>
                   <input
+                    id="dose-regimen-09"
                     type="radio"
                     name="doseRegimen"
                     value="0.9"
@@ -162,6 +165,7 @@ export default function RtpaOrder() {
                 </label>
                 <label className={`dose-button ${doseRegimen === '0.6' ? 'active' : ''}`}>
                   <input
+                    id="dose-regimen-06"
                     type="radio"
                     name="doseRegimen"
                     value="0.6"
@@ -171,7 +175,7 @@ export default function RtpaOrder() {
                   />
                   Alternative Dose: 0.6 mg/kg (Max 50 mg)
                 </label>
-              </div>
+              </fieldset>
             </div>
           </div>
 
@@ -241,9 +245,9 @@ export default function RtpaOrder() {
                 <ul className="order-list">
                   <li>ก่อนให้ rt-PA if SBP ≥ 185 or DBP ≥ 110 mmHg notify แพทย์ทันที</li>
                   <li>
-                    <strong>Alteplase (dose <span id="result-regimen" className="highlight">{submittedOrder.doseRegimen}</span> mg/kg)</strong>
+                    <strong>Alteplase (dose <span id="result-regimen" className="highlight">{submittedOrder.doseRegimen}</span> mg/kg, Max {submittedOrder.doseRegimen === '0.9' ? 90 : 50} mg)</strong>
                     <ul style={{ paddingLeft: '15px' }}>
-                      <li>Total dose = <span id="total-dose" className="highlight">{submittedOrder.totalDose.toFixed(2)}</span> mg</li>
+                      <li>Total dose = <span id="total-dose" className="highlight">{submittedOrder.totalDose.toFixed(2)}</span> mg (Max {submittedOrder.doseRegimen === '0.9' ? 90 : 50} mg)</li>
                       <li>- <span id="push-percent" className="highlight">10</span>% of total dose = <span id="push-dose" className="highlight">{submittedOrder.bolus.toFixed(1)}</span> mg IV push in 1 min</li>
                       <li>- Remaining <span id="drip-percent" className="highlight">90</span>% of total dose = <span id="drip-dose" className="highlight">{submittedOrder.infusion.toFixed(2)}</span> mg IV drip in 60 min</li>
                     </ul>
