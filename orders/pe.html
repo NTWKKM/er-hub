@@ -273,12 +273,6 @@
 <script src="../shared/components.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Auto-run print-blank-direct from home page portal
-    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
-        document.getElementById('print-blank-btn').click();
-        setTimeout(() => window.print(), 500);
-        return;
-    }
     const $ = id => document.getElementById(id);
 
     // Dynamic class card selections
@@ -305,9 +299,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const priorSK = $('prior-sk').checked;
 
         if (isNaN(weight) || weight < 30 || weight > 200) {
+            $('weight').classList.add('field-error');
             alert('กรุณากรอกน้ำหนักให้ถูกต้อง (30-200 kg)');
             return;
         }
+        $('weight').classList.remove('field-error');
 
         // HARD STOP: Absolute CI checked or SK selected while having prior SK history
         if (absCIChecked) {
@@ -330,6 +326,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const now = new Date();
         const expiryDate = new Date(now.getTime() + 8 * 3600 * 1000);
         const expiryStr = ED_COMPONENTS.fmtTime(expiryDate).replace(' น.', '');
+        const useTime = $('use-current-time').checked;
+        const dateStr = useTime ? ED_COMPONENTS.fmtDate(now) : '....................';
+        const timeStr = useTime ? ED_COMPONENTS.fmtTime(now) : '....................';
+        const dtStr = `${dateStr}<br>${timeStr}`;
 
         // Update Screen
         let regimenLabel = '';
@@ -373,12 +373,12 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-box-rtpa-b').querySelector('strong').previousSibling.textContent = regimen === 'rtpa_b' ? '☑ ' : '☐ ';
         $('p-rtpa-b-dose').textContent = rtpaDoseVal.toFixed(1);
 
-        const dtStr = `${ED_COMPONENTS.fmtDate(now)}<br>${ED_COMPONENTS.fmtTime(now)}`;
         $('p-dt-1').innerHTML = dtStr;
         $('p-dt-2').innerHTML = dtStr;
         ED_COMPONENTS.updateGeneratedTime('p-generated', now);
 
         $('results-container').classList.remove('hidden');
+        ED_COMPONENTS.showFloatBar();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     });
 
@@ -388,6 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('card-sk-a').classList.add('selected');
         $('card-sk-a').querySelector('input').checked = true;
         $('results-container').classList.add('hidden');
+        ED_COMPONENTS.hideFloatBar();
         $('hn').focus();
     });
 
@@ -399,9 +400,9 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-weight').textContent = '....................';
         $('p-indication').textContent = '........................................';
         
-        $('p-abs-status').innerHTML = 'No';
-        $('p-rel-status').innerHTML = 'No';
-        $('p-prior-sk-status').innerHTML = 'No';
+        $('p-abs-status').innerHTML = '....................';
+        $('p-rel-status').innerHTML = '....................';
+        $('p-prior-sk-status').innerHTML = '....................';
 
         $('print-btn').style.display = 'inline-block';
         $('screen-warning-note').style.display = 'none';
@@ -426,11 +427,20 @@ document.addEventListener('DOMContentLoaded', () => {
         ED_COMPONENTS.updateGeneratedTime('p-generated', null);
 
         $('results-container').classList.remove('hidden');
+        ED_COMPONENTS.showFloatBar();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
         // Preview only — print triggered by user or ?print-blank-direct=true
     });
 
+    // Auto-run print-blank-direct from home page portal
+    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
+        $('print-blank-btn').click();
+        window.print();
+        return;
+    }
+
+    ED_COMPONENTS.injectTopNav();
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

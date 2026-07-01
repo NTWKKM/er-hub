@@ -226,9 +226,9 @@
                     <div class="divider"></div>
                     <strong>Standard Antibiotic:</strong>
                     <ul class="order-list" style="font-size:9px;">
-                        <li>☑ Augmentin 1.2 g IV q 8 hr OR Augmentin (1g) 1x2 po pc</li>
-                        <li>☑ Paracetamol (500) 1-2 tab po prn q 4-6 hr</li>
-                        <li>☑ Penicillin allergy alternative: Ciprofloxacin (500) 1x2 po pc + Clindamycin (300) 1x3 po pc</li>
+                        <li id="p-augmentin">☑ Augmentin 1.2 g IV q 8 hr OR Augmentin (1g) 1x2 po pc</li>
+                        <li id="p-paracetamol">☑ Paracetamol (500) 1-2 tab po prn q 4-6 hr</li>
+                        <li id="p-cipro-clinda">☑ Penicillin allergy alternative: Ciprofloxacin (500) 1x2 po pc + Clindamycin (300) 1x3 po pc</li>
                     </ul>
                     <div class="divider"></div>
                     ลงชื่อแพทย์ (ward): <span class="dotted-line"></span><br>
@@ -247,12 +247,6 @@
 <script src="../shared/components.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Auto-run print-blank-direct from home page portal
-    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
-        document.getElementById('print-blank-btn').click();
-        setTimeout(() => window.print(), 500);
-        return;
-    }
     const $ = id => document.getElementById(id);
 
     // Horse allergy text box toggle
@@ -384,11 +378,15 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-obs-neuro').style.display = snakeType === 'neurotoxin' ? 'list-item' : 'none';
 
         const now = new Date();
-        const dtStr = `${ED_COMPONENTS.fmtDate(now)}<br>${ED_COMPONENTS.fmtTime(now)}`;
+        const useTime = $('use-current-time').checked;
+        const dateStr = useTime ? ED_COMPONENTS.fmtDate(now) : '....................';
+        const timeStr = useTime ? ED_COMPONENTS.fmtTime(now) : '....................';
+        const dtStr = `${dateStr}<br>${timeStr}`;
         $('p-dt-1').innerHTML = dtStr;
         $('p-dt-2').innerHTML = dtStr;
 
         $('results-container').classList.remove('hidden');
+        ED_COMPONENTS.showFloatBar();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     });
 
@@ -400,6 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('box-hemato').classList.add('selected');
         $('box-neuro').classList.remove('selected');
         $('results-container').classList.add('hidden');
+        ED_COMPONENTS.hideFloatBar();
         $('hn').focus();
     });
 
@@ -414,8 +413,13 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-snake-name').textContent = '........................................';
         $('p-venom-type').textContent = '........................................';
 
+        $('p-antivenom-order-box').className = 'fib-order-box';
         $('p-antivenom-order-box').innerHTML = `☐ <strong>เซรุ่มแก้พิษงู .................... ขนาดเริ่มต้น .................... ขวด ใน NSS 100 mL IV drip in ............ min</strong>`;
-        $('p-obs-neuro').style.display = 'list-item';
+        $('p-obs-neuro').style.display = 'none';
+
+        $('p-augmentin').innerHTML = '☐ Augmentin 1.2 g IV q 8 hr OR Augmentin (1g) 1x2 po pc';
+        $('p-paracetamol').innerHTML = '☐ Paracetamol (500) 1-2 tab po prn q 4-6 hr';
+        $('p-cipro-clinda').innerHTML = '☐ Penicillin allergy alternative: Ciprofloxacin (500) 1x2 po pc + Clindamycin (300) 1x3 po pc';
 
         const blankDt = 'วันที่ .................... เวลา ....................';
         $('p-dt-1').innerHTML = blankDt;
@@ -423,11 +427,20 @@ document.addEventListener('DOMContentLoaded', () => {
         ED_COMPONENTS.updateGeneratedTime('p-generated', null);
 
         $('results-container').classList.remove('hidden');
+        ED_COMPONENTS.showFloatBar();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
         // Preview only — print triggered by user or ?print-blank-direct=true
     });
 
+    // Auto-run print-blank-direct from home page portal
+    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
+        $('print-blank-btn').click();
+        window.print();
+        return;
+    }
+
+    ED_COMPONENTS.injectTopNav();
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

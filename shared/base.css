@@ -251,6 +251,52 @@ input[type="checkbox"] {
 
 .hidden { display: none !important; }
 
+.field-error {
+    border-color: #c0392b !important;
+    box-shadow: 0 0 5px rgba(192, 57, 43, 0.4) !important;
+}
+
+/* Floating print action bar */
+.float-print-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #27ae60;
+    color: #fff;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+}
+
+.float-print-bar button {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: 'Sarabun', sans-serif;
+}
+
+.float-print-bar .btn-print-now {
+    background: #fff;
+    color: #27ae60;
+}
+
+.float-print-bar .btn-view-order {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+}
+
+@media print {
+    .float-print-bar { display: none !important; }
+}
+
 /* ===== Results Screen Layout ===== */
 .results-container {
     padding: 0 30px 30px;
@@ -327,5 +373,67 @@ input[type="checkbox"] {
     .inline-input-group label {
         width: 110px;
         text-align: left;
+    }
+}
+
+/* Tablet: 600–899px */
+@media (max-width: 899px) {
+    .inline-input-group {
+        flex-direction: column;
+        gap: 4px;
+    }
+    .inline-input-group label {
+        width: auto;
+        text-align: left;
+        padding-right: 0;
+    }
+    .btn {
+        min-height: 44px;
+        font-size: 15px;
+    }
+}
+
+/* Mobile: ≤599px */
+@media (max-width: 599px) {
+    body {
+        padding: 8px;
+    }
+    .form-container {
+        padding: 12px;
+        border-radius: 8px;
+    }
+    .header h1 {
+        font-size: 1.2em;
+    }
+    .section-header {
+        font-size: 14px;
+    }
+
+    .results-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .results-container::before {
+        content: '← เลื่อนดู order ทั้งหมด →';
+        display: block;
+        text-align: center;
+        font-size: 11px;
+        color: #888;
+        padding: 4px 0;
+    }
+
+    /* Flag checkboxes: stack vertically */
+    .flag-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .flag-label {
+        font-size: 13px;
+    }
+
+    /* Fib choice buttons: full width */
+    .fib-choice-group {
+        flex-direction: column;
     }
 }

@@ -72,14 +72,21 @@
             opacity: 0.85;
         }
 
+        .portal-logo {
+            width: 88px;
+            height: 88px;
+            object-fit: contain;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
         .grid-section-title {
-            font-size: 1.35em;
+            font-size: 1.2em;
             font-weight: bold;
             color: #2c3e50;
-            margin-bottom: 15px;
-            border-left: 5px solid #2a5298;
+            margin-bottom: 12px;
             padding-left: 10px;
-            margin-top: 30px;
+            margin-top: 28px;
         }
 
         .portal-grid {
@@ -91,6 +98,7 @@
         .portal-card {
             background: #fff;
             border: 1px solid #dee2e6;
+            border-left-width: 4px;
             border-radius: 8px;
             padding: 18px 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -99,59 +107,54 @@
             color: inherit;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
-            justify-content: space-between;
+            justify-content: center;
         }
 
         .portal-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            border-color: #2a5298;
-        }
-
-        .card-header-block {
-            margin-bottom: 0;
-        }
-
-        .card-icon {
-            font-size: 1.8em;
-            margin-bottom: 6px;
-            display: inline-block;
         }
 
         .card-title {
             font-size: 15px;
             font-weight: bold;
-            color: #1e3c72;
+            margin: 0 0 4px 0;
+        }
+
+        .card-desc {
+            font-size: 12.5px;
+            color: #666;
             margin: 0;
+            line-height: 1.4;
         }
 
-        .card-footer {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 12px;
-            width: 100%;
-        }
+        /* Category border colors */
+        .cat-cardiac   { border-left-color: #c0392b; }
+        .cat-pulmonary { border-left-color: #2980b9; }
+        .cat-neuro     { border-left-color: #8e44ad; }
+        .cat-anticoag  { border-left-color: #16a085; }
+        .cat-tox       { border-left-color: #d35400; }
+        .cat-procedural{ border-left-color: #27ae60; }
+        .cat-tools     { border-left-color: #2c3e50; }
 
-        .btn-card-print-blank {
-            background: #fff;
-            border: 1px solid #2a5298;
-            color: #2a5298;
-            padding: 5px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-            font-family: 'Sarabun', sans-serif;
-        }
+        /* Category title colors */
+        .title-cardiac    { border-left: 5px solid #c0392b; }
+        .title-pulmonary   { border-left: 5px solid #2980b9; }
+        .title-neuro       { border-left: 5px solid #8e44ad; }
+        .title-anticoag    { border-left: 5px solid #16a085; }
+        .title-tox         { border-left: 5px solid #d35400; }
+        .title-procedural  { border-left: 5px solid #27ae60; }
+        .title-tools       { border-left: 5px solid #2c3e50; }
 
-        .btn-card-print-blank:hover {
-            background: #2a5298;
-            color: #fff;
+        /* Mobile responsive for portal */
+        @media (max-width: 599px) {
+            .portal-container { margin: 16px auto; padding: 0 12px; }
+            .portal-header { padding: 20px 16px; gap: 12px; flex-direction: row; }
+            .portal-logo { width: 64px; height: 64px; }
+            .portal-header-text h1 { font-size: 1.3em; }
+            .portal-header-text p { font-size: 11px; }
+            .portal-grid { grid-template-columns: 1fr; gap: 10px; }
+            .portal-card { padding: 14px 16px; }
         }
     </style>
 </head>
@@ -160,101 +163,77 @@
 <div class="portal-container">
     <!-- Header -->
     <div class="portal-header">
-        <img src="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="Maharat Nakhon Ratchasima Hospital" width="52" height="52" style="flex-shrink: 0; object-fit: contain;">
+        <img src="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="Maharat Nakhon Ratchasima Hospital" class="portal-logo">
         <div class="portal-header-text">
             <h1>MNRH-ED Standing Order Hub</h1>
+            <p>แผนกฉุกเฉิน โรงพยาบาลมหาราชนครราชสีมา</p>
         </div>
     </div>
 
-    <!-- Standing Orders Section -->
+    <!-- CARDIAC -->
+    <div class="grid-section-title title-cardiac">CARDIAC / หัวใจ &amp; หลอดเลือด</div>
     <div class="portal-grid">
-        <!-- rt-PA Stroke -->
-        <a href="orders/rtpa.html" class="portal-card">
-            <div class="card-header-block">
-                <span class="card-icon">🧠</span>
-                <h4 class="card-title">rt-PA Stroke FAST TRACK</h4>
-            </div>
-            <div class="card-footer">
-                <button class="btn-card-print-blank" data-order="rtpa" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('rtpa')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
-            </div>
+        <a href="orders/stemi.html" class="portal-card cat-cardiac">
+            <h4 class="card-title">STEMI Standing Order</h4>
+            <p class="card-desc">แนวทางการรักษากล้ามเนื้อหัวใจตายเฉียบพลัน</p>
         </a>
-
-        <!-- STEMI -->
-        <a href="orders/stemi.html" class="portal-card">
-            <div class="card-header-block">
-                <span class="card-icon">🫀</span>
-                <h4 class="card-title">STEMI Standing Order</h4>
-            </div>
-            <div class="card-footer">
-                <button class="btn-card-print-blank" data-order="stemi" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('stemi')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
-            </div>
+        <a href="orders/nstemi.html" class="portal-card cat-cardiac">
+            <h4 class="card-title">NSTEMI Standing Order</h4>
+            <p class="card-desc">แนวทางการรักษา NSTEMI + GRACE Score + Anticoag</p>
         </a>
+    </div>
 
-        <!-- NSTEMI -->
-        <a href="orders/nstemi.html" class="portal-card">
-            <div class="card-header-block">
-                <span class="card-icon">🩸</span>
-                <h4 class="card-title">NSTEMI Standing Order</h4>
-            </div>
-            <div class="card-footer">
-                <button class="btn-card-print-blank" data-order="nstemi" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('nstemi')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
-            </div>
+    <!-- PULMONARY -->
+    <div class="grid-section-title title-pulmonary">PULMONARY / ปอด</div>
+    <div class="portal-grid">
+        <a href="orders/pe.html" class="portal-card cat-pulmonary">
+            <h4 class="card-title">Massive PE Fibrinolysis</h4>
+            <p class="card-desc">แนวทางการละลายลิ่มเลือดในผู้ป่วย PE รุนแรง</p>
         </a>
+    </div>
 
-        <!-- Massive PE -->
-        <a href="orders/pe.html" class="portal-card">
-            <div class="card-header-block">
-                <span class="card-icon">🫁</span>
-                <h4 class="card-title">Massive PE Fibrinolysis</h4>
-            </div>
-            <div class="card-footer">
-                <button class="btn-card-print-blank" data-order="pe" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('pe')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
-            </div>
+    <!-- NEUROLOGY -->
+    <div class="grid-section-title title-neuro">NEUROLOGY / ระบบประสาท</div>
+    <div class="portal-grid">
+        <a href="orders/rtpa.html" class="portal-card cat-neuro">
+            <h4 class="card-title">rt-PA Stroke FAST TRACK</h4>
+            <p class="card-desc">แนวทางการให้ยาละลายลิ่มเลือดในผู้ป่วย Stroke</p>
         </a>
+    </div>
 
-        <!-- Heparin Standalone -->
-        <a href="orders/heparin.html" class="portal-card">
-            <div class="card-header-block">
-                <span class="card-icon">💊</span>
-                <h4 class="card-title">Heparin Standalone Protocol</h4>
-            </div>
-            <div class="card-footer">
-                <button class="btn-card-print-blank" data-order="heparin" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('heparin')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
-            </div>
+    <!-- ANTICOAGULATION -->
+    <div class="grid-section-title title-anticoag">ANTICOAGULATION</div>
+    <div class="portal-grid">
+        <a href="orders/heparin.html" class="portal-card cat-anticoag">
+            <h4 class="card-title">Heparin Protocol</h4>
+            <p class="card-desc">แนวทางการให้ Heparin + aPTT Titration</p>
         </a>
+    </div>
 
-        <!-- Antivenom -->
-        <a href="orders/antivenom.html" class="portal-card">
-            <div class="card-header-block">
-                <span class="card-icon">🐍</span>
-                <h4 class="card-title">Antivenom Standing Order</h4>
-            </div>
-            <div class="card-footer">
-                <button class="btn-card-print-blank" data-order="antivenom" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('antivenom')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
-            </div>
+    <!-- TOXICOLOGY -->
+    <div class="grid-section-title title-tox">TOXICOLOGY / พิษวิทยา</div>
+    <div class="portal-grid">
+        <a href="orders/antivenom.html" class="portal-card cat-tox">
+            <h4 class="card-title">Antivenom Standing Order</h4>
+            <p class="card-desc">แนวทางการให้เซรุ่มต้านพิษงู</p>
         </a>
+    </div>
 
-        <!-- Sedation -->
-        <a href="orders/sedation.html" class="portal-card">
-            <div class="card-header-block">
-                <span class="card-icon">🌬️</span>
-                <h4 class="card-title">Post-Intubation Sedation</h4>
-            </div>
-            <div class="card-footer">
-                <button class="btn-card-print-blank" data-order="sedation" onclick="event.preventDefault(); event.stopPropagation(); printBlankOrder('sedation')">🖨️ พิมพ์ใบสั่งยาเปล่า</button>
-            </div>
+    <!-- PROCEDURAL -->
+    <div class="grid-section-title title-procedural">PROCEDURAL</div>
+    <div class="portal-grid">
+        <a href="orders/sedation.html" class="portal-card cat-procedural">
+            <h4 class="card-title">Post-Intubation Sedation</h4>
+            <p class="card-desc">แนวทางการให้ยา Fentanyl + Midazolam drip</p>
         </a>
     </div>
 
     <!-- Central Tools Section -->
-    <div class="grid-section-title">🛠️ เครื่องมือกลาง (Reference Tools)</div>
+    <div class="grid-section-title title-tools">เครื่องมือกลาง (Reference Tools)</div>
     <div class="portal-grid">
-        <!-- IV Drip Calculator -->
-        <a href="tools/drip-calculator.html" class="portal-card">
-            <div class="card-header-block">
-                <span class="card-icon">🧪</span>
-                <h4 class="card-title">IV Infusion Drip Calculator</h4>
-            </div>
+        <a href="tools/drip-calculator.html" class="portal-card cat-tools">
+            <h4 class="card-title">IV Infusion Drip Calculator</h4>
+            <p class="card-desc">เครื่องคำนวณอัตราการหยดยา IV</p>
         </a>
     </div>
 </div>
@@ -265,16 +244,18 @@ function printBlankOrder(orderName) {
     iframe.style.display = 'none';
     iframe.src = `orders/${orderName}.html?print-blank-direct=true`;
     iframe.onload = () => {
-        // Give the iframe time to render, then trigger print
-        setTimeout(() => {
-            iframe.contentWindow.print();
-        }, 500);
+        try {
+            iframe.contentWindow.addEventListener('afterprint', () => {
+                setTimeout(() => {
+                    if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                }, 500);
+            });
+        } catch (e) { }
     };
     document.body.appendChild(iframe);
-    // Clean up after print dialog closes
     setTimeout(() => {
-        document.body.removeChild(iframe);
-    }, 60000);
+        if (document.body.contains(iframe)) document.body.removeChild(iframe);
+    }, 300000);
 }
 </script>
 

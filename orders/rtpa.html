@@ -652,12 +652,6 @@
 <script src="../shared/components.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Auto-run print-blank-direct from home page portal
-    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
-        document.getElementById('print-blank-btn').click();
-        setTimeout(() => window.print(), 500);
-        return;
-    }
     const form = document.getElementById('rtpa-form');
     const resultsContainer = document.getElementById('results-container');
     const hnInput = document.getElementById('hn');
@@ -735,6 +729,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('order-date-cont').innerHTML = `${dateStr}<br>${timeStr}`;
         
         resultsContainer.classList.remove('hidden');
+        ED_COMPONENTS.showFloatBar();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     });
 
@@ -744,6 +739,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.dose-button[data-dose="0.9"]').classList.add('active');
         selectedDoseInput.value = "0.9";
         resultsContainer.classList.add('hidden');
+        ED_COMPONENTS.hideFloatBar();
         hnInput.focus();
     });
 
@@ -768,11 +764,20 @@ document.addEventListener('DOMContentLoaded', () => {
         ED_COMPONENTS.updateGeneratedTime('p-generated', null);
 
         resultsContainer.classList.remove('hidden');
+        ED_COMPONENTS.showFloatBar();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
         // Preview only — print triggered by user or ?print-blank-direct=true
     });
 
+    // Auto-run print-blank-direct from home page portal
+    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
+        document.getElementById('print-blank-btn').click();
+        window.print();
+        return;
+    }
+
+    ED_COMPONENTS.injectTopNav();
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

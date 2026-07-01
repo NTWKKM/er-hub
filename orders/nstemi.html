@@ -455,7 +455,7 @@
                     <ul class="order-list">
                         <li id="p-asa-stat">☑ ASA (300) 1 tab chew stat</li>
                         <li id="p-clopi-stat">☑ Clopidogrel GPO (75) 4 tabs PO stat</li>
-                        <li>☑ ISDN (5) 1 tab SL prn chest pain</li>
+                        <li id="p-isdn-stat">☑ ISDN (5) 1 tab SL prn chest pain</li>
                     </ul>
 
                     <div class="divider"></div>
@@ -482,20 +482,20 @@
                 <div class="grid-cell">
                     <strong>General:</strong>
                     <ul class="order-list">
-                        <li>☑ Regular diet</li>
-                        <li>☑ Record V/S, I/O</li>
+                        <li id="p-regular-diet">☑ Regular diet</li>
+                        <li id="p-record-vs">☑ Record V/S, I/O</li>
                     </ul>
 
                     <div class="divider"></div>
                     <strong>Medications:</strong>
                     <ul class="order-list">
                         <li id="p-asa-cont">☑ ASA (81) 1×1 pc</li>
-                        <li>☑ Clopidogrel GPO (75) 1×1 pc</li>
-                        <li>☑ Omeprazole (20) 1×1 ac</li>
-                        <li>☑ Atorvastatin (40) 1×1 hs</li>
-                        <li>☑ Senokot 2×1 hs</li>
-                        <li>☑ Ativan (0.5) 1×1 hs</li>
-                        <li>☑ ISDN (5) 1 tab SL prn chest pain</li>
+                        <li id="p-clopi-cont">☑ Clopidogrel GPO (75) 1×1 pc</li>
+                        <li id="p-omeprazole">☑ Omeprazole (20) 1×1 ac</li>
+                        <li id="p-atorva">☑ Atorvastatin (40) 1×1 hs</li>
+                        <li id="p-senokot">☑ Senokot 2×1 hs</li>
+                        <li id="p-ativan">☑ Ativan (0.5) 1×1 hs</li>
+                        <li id="p-isdn-cont">☑ ISDN (5) 1 tab SL prn chest pain</li>
                     </ul>
 
                     <div class="divider"></div>
@@ -523,13 +523,6 @@
 <script src="../shared/anticoag-engine.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Auto-run print-blank-direct from home page portal
-    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
-        document.getElementById('print-blank-btn').click();
-        setTimeout(() => window.print(), 500);
-        return;
-    }
-
     const $ = id => document.getElementById(id);
 
     function lookupPts(val, table) {
@@ -647,14 +640,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const fromRpc = $('troponin-from-rphch').checked;
 
         if (isNaN(weight) || weight < 30 || weight > 200) {
+            $('weight').classList.add('field-error');
             alert('กรุณากรอกน้ำหนัก (30–200 kg)'); return;
         }
+        $('weight').classList.remove('field-error');
         if (isNaN(age) || age < 18) {
+            $('age').classList.add('field-error');
             alert('กรุณากรอกอายุ (≥ 18 ปี)'); return;
         }
+        $('age').classList.remove('field-error');
         if (isNaN(egfr) || egfr < 0) {
+            $('egfr').classList.add('field-error');
             alert('กรุณากรอก eGFR'); return;
         }
+        $('egfr').classList.remove('field-error');
 
         const hasGraceVars = !isNaN(hr) && !isNaN(sbp) && !isNaN(cr);
 
@@ -676,9 +675,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const ac = calcAnticoag(weight, age, egfr);
 
         const now = new Date();
+        const useTime = $('use-current-time').checked;
         const h1t = new Date(now.getTime() + 3600000);
         const h3t = new Date(now.getTime() + 10800000);
-        const dtStr = `${ED_COMPONENTS.fmtDate(now)}<br>${ED_COMPONENTS.fmtTime(now)}`;
+        const dateStr = useTime ? ED_COMPONENTS.fmtDate(now) : '....................';
+        const timeStr = useTime ? ED_COMPONENTS.fmtTime(now) : '....................';
+        const dtStr = `${dateStr}<br>${timeStr}`;
 
         /* ══ UPDATE SCREEN BANNER ══ */
         $('screen-grace').textContent = graceScore !== null ? graceScore : 'N/A';
@@ -788,12 +790,14 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-anticoag').innerHTML = buildAnticoagPrintHTML(ac);
 
         $('results-container').classList.remove('hidden');
+        ED_COMPONENTS.showFloatBar();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     });
 
     $('clear-btn').addEventListener('click', () => {
         document.getElementById('nstemi-form').reset();
         $('results-container').classList.add('hidden');
+        ED_COMPONENTS.hideFloatBar();
         $('grace-breakdown-body').innerHTML =
             '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
         $('hn').focus();
@@ -833,7 +837,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         $('p-asa-stat').innerHTML = '☐ ASA (300) 1 tab chew stat';
         $('p-clopi-stat').innerHTML = '☐ Clopidogrel GPO (75) <strong>4 tabs</strong> PO stat';
+        $('p-isdn-stat').innerHTML = '☐ ISDN (5) 1 tab SL prn chest pain';
         $('p-asa-cont').innerHTML = '☐ ASA (81) 1×1 pc';
+        $('p-clopi-cont').innerHTML = '☐ Clopidogrel GPO (75) 1×1 pc';
+        $('p-omeprazole').innerHTML = '☐ Omeprazole (20) 1×1 ac';
+        $('p-atorva').innerHTML = '☐ Atorvastatin (40) 1×1 hs';
+        $('p-senokot').innerHTML = '☐ Senokot 2×1 hs';
+        $('p-ativan').innerHTML = '☐ Ativan (0.5) 1×1 hs';
+        $('p-isdn-cont').innerHTML = '☐ ISDN (5) 1 tab SL prn chest pain';
+        $('p-regular-diet').innerHTML = '☐ Regular diet';
+        $('p-record-vs').innerHTML = '☐ Record V/S, I/O';
 
         $('p-anticoag').innerHTML = `
         <div class="ac-opt">
@@ -851,11 +864,20 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>`;
 
         $('results-container').classList.remove('hidden');
+        ED_COMPONENTS.showFloatBar();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
         // Preview only — print triggered by user or ?print-blank-direct=true
     });
 
+    // Auto-run print-blank-direct from home page portal
+    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
+        $('print-blank-btn').click();
+        window.print();
+        return;
+    }
+
+    ED_COMPONENTS.injectTopNav();
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

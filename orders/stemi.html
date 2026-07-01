@@ -177,8 +177,8 @@
                     <strong>Monitoring:</strong>
                     <ul class="order-list">
                         <li id="p-ecg-note">☑ Repeat ECG หลังได้ยา 60 นาที</li>
-                        <li>☑ Record vital sign q 15 min</li>
-                        <li>☑ Observe ภาวะเลือดออกผิดปกติ, อาการซึม, หายใจลำบาก, ผื่น, คัน</li>
+                        <li id="p-vs-note">☑ Record vital sign q 15 min</li>
+                        <li id="p-bleed-note">☑ Observe ภาวะเลือดออกผิดปกติ, อาการซึม, หายใจลำบาก, ผื่น, คัน</li>
                     </ul>
                     <div class="monitor-alert">
                         ⚠️ If SBP &gt; 180 mmHg, DBP &gt; 105 mmHg, SBP &lt; 90 mmHg, or HR &lt; 50 → <strong>please notify แพทย์ทันที</strong>
@@ -219,13 +219,6 @@
 <script src="../shared/components.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Auto-run print-blank-direct from home page portal
-    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
-        document.getElementById('print-blank-btn').click();
-        setTimeout(() => window.print(), 500);
-        return;
-    }
-
     const $ = id => document.getElementById(id);
 
     const TNK_TABLE = [
@@ -335,12 +328,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ED_COMPONENTS.updateGeneratedTime('p-generated', now);
 
         $('results-container').classList.remove('hidden');
+        ED_COMPONENTS.showFloatBar();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     });
 
     $('clear-btn').addEventListener('click', () => {
         document.getElementById('stemi-form').reset();
         $('results-container').classList.add('hidden');
+        ED_COMPONENTS.hideFloatBar();
         updateFibCards();
         $('hn').focus();
     });
@@ -366,17 +361,30 @@ document.addEventListener('DOMContentLoaded', () => {
            ☐ 0.9% NSS 20 cc IV flush หลัง Streptokinase หมด<br>
            <small style="color:#c0392b;">⚠️ ห้ามบริหารยาซ้ำภายในเวลา 6 เดือน</small>`;
 
+        $('p-ecg-note').innerHTML = '☐ Repeat ECG หลังได้ยา 60 นาที';
+        $('p-vs-note').innerHTML = '☐ Record vital sign q 15 min';
+        $('p-bleed-note').innerHTML = '☐ Observe ภาวะเลือดออกผิดปกติ, อาการซึม, หายใจลำบาก, ผื่น, คัน';
+
         const blankDt = 'วันที่ .................... เวลา ....................';
         $('p-dt-1').innerHTML = blankDt;
         $('p-dt-2').innerHTML = blankDt;
         ED_COMPONENTS.updateGeneratedTime('p-generated', null);
 
         $('results-container').classList.remove('hidden');
+        ED_COMPONENTS.showFloatBar();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
         // Preview only — print triggered by user or ?print-blank-direct=true
     });
 
+    // Auto-run print-blank-direct from home page portal
+    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
+        $('print-blank-btn').click();
+        window.print();
+        return;
+    }
+
+    ED_COMPONENTS.injectTopNav();
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

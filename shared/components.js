@@ -88,6 +88,40 @@ const ED_COMPONENTS = {
         if (printBtn) {
             printBtn.addEventListener('click', () => window.print());
         }
+    },
+
+    /**
+     * Inject a top navigation bar with back link.
+     */
+    injectTopNav: function() {
+        const nav = document.createElement('div');
+        nav.style.cssText = 'padding:8px 0;margin-bottom:4px;';
+        nav.innerHTML = '<a href="../index.html" style="text-decoration:none;color:#2a5298;font-size:14px;font-weight:bold;">← กลับหน้าหลัก</a>';
+        const container = document.querySelector('.container');
+        if (container) container.insertBefore(nav, container.firstChild);
+    },
+
+    /**
+     * Show floating print action bar.
+     */
+    showFloatBar: function() {
+        let bar = document.getElementById('float-print-bar');
+        if (!bar) {
+            bar = document.createElement('div');
+            bar.id = 'float-print-bar';
+            bar.className = 'float-print-bar';
+            bar.innerHTML = '✅ Order พร้อมแล้ว &nbsp; <button class="btn-print-now" onclick="window.print()">🖨️ พิมพ์ทันที</button> <button class="btn-view-order" onclick="document.getElementById(\'results-container\').scrollIntoView({behavior:\'smooth\'})">👁️ ดู Order</button>';
+            document.body.appendChild(bar);
+        }
+        bar.style.display = 'flex';
+    },
+
+    /**
+     * Hide floating print action bar.
+     */
+    hideFloatBar: function() {
+        const bar = document.getElementById('float-print-bar');
+        if (bar) bar.style.display = 'none';
     }
 };
 

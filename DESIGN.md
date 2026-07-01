@@ -25,9 +25,13 @@
   - Print Headers: `16px`
 
 ### Breakpoints & Layout
-- **Container Max-Width:** `1100px`
+- **Container Max-Width:** `1100px` (order pages), `1200px` (portal)
 - **Form Grid Gaps:** `20px` (STEMI/NSTEMI), `30px` (Stroke)
-- **Mobile Responsive Breakpoint:** `900px` (or `768px` in stroke fast track). Below this, columns stack vertically.
+- **Responsive Breakpoints:**
+  - `≤900px`: Columns stack vertically, inline-input labels go full-width
+  - `≤899px` (tablet): Inline inputs stack vertically, buttons 44px min-height
+  - `≤599px` (mobile): Single-column portal grid, compact padding, horizontal scroll hint for order grid, flag labels stack
+- **Touch Targets:** Buttons min-height 44px on mobile
 
 ---
 
@@ -35,12 +39,16 @@
 
 | Component | Role / Target | States & Props |
 |---|---|---|
-| **Portal Card** | Compact name-only card linking to each Standing Order. Center-aligned, icon + title + print-blank button only. No status badges. | `.hover` (Blue border + lift), Default (Light gray border). `padding: 18px 20px`, `min-width: 280px`, `gap: 16px`. |
-| **Portal Header** | Flex row: Maharat Nakhon Ratchasima Hospital logo (52×52, `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`) inline with title. No subtitle. | `display: flex; align-items: center; gap: 18px;` Blue gradient background. |
+| **Portal Card** | Category-grouped card linking to each Standing Order. Left-aligned, title + Thai description. Color-coded left border per category. No emoji, no print-blank button. | `.hover` (Lift + shadow), Default (Light gray border + 4px category color left border). `padding: 18px 20px`, `min-width: 280px`, `gap: 16px`. |
+| **Portal Header** | Flex row: hospital logo (88×88, `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`) inline with title + Thai subtitle. | `display: flex; align-items: center; gap: 18px;` Blue gradient background. `drop-shadow` on logo. |
+| **Category Section Title** | Group header for each medical specialty category with color-coded left border. | `font-size: 1.2em; font-weight: bold; padding-left: 10px;` 7 categories: Cardiac (#c0392b), Pulmonary (#2980b9), Neurology (#8e44ad), Anticoagulation (#16a085), Toxicology (#d35400), Procedural (#27ae60), Tools (#2c3e50). |
+| **Top Navigation Bar** | Back link injected by `ED_COMPONENTS.injectTopNav()`. | `← กลับหน้าหลัก` link, `#2a5298`, `font-size: 14px`, `font-weight: bold`. Hidden in print. |
+| **Floating Print Action Bar** | Fixed bottom bar shown after generate/blank, hidden on clear. | Green (#27ae60) bar with "พิมพ์ทันที" and "ดู Order" buttons. `position: fixed; bottom: 0; z-index: 1000`. Hidden in print via `@media print`. |
+| **Field Error State** | Red border highlight for empty/invalid required fields. | `.field-error` class: `border-color: #c0392b; box-shadow: 0 0 5px rgba(192,57,43,0.4)`. |
 | **Fibrinolytic / Drug Card** | Card layout to select drugs. | `.selected` (Red border + light red BG), `.hover` (Muted red border), Default (Light gray border) |
 | **Print Order Grid** | 5-column grid mapping to hospital medical chart layout. | `grid-template-columns: 2fr 1fr 3fr 1fr 3fr;` |
 | **Dose Summary Banner** | Large visual badge displaying computed dose on screen. | `#screen-dose` or `#screen-grace`. Light yellow/red backgrounds. |
-| **Patient Sticker Box** | Standardized dashed bounding box mimicking paper patient label stickers. | `width: 200px; height: 65px; border: 1px dashed #999;` |
+| **Patient Sticker Box** | Standardized dashed bounding box mimicking paper patient label stickers. | Screen: `width: 200px; height: 65px;` Print: `width: 58mm; height: 35mm;` |
 | **Titration Assistant Card** | Dynamic lookup display showing next titration step. | Shows action, rate change, and next recheck alert. |
 
 ---
@@ -53,11 +61,12 @@
 - **Form Validation:** Visual alerts (`alert()`) and dynamic warning banners prevent incorrect ranges (e.g., weights outside 30-200 kg).
 
 ### Printing Constraints (A4 Layout)
-- **Page Size:** `@page { size: A4; margin: 8mm 10mm 10mm 10mm }` — printable area ~190mm × 279mm.
+- **Page Size:** `@page { size: A4 portrait; margin: 14mm 10mm 12mm 10mm }` — printable area ~190mm × 271mm.
 - **Body Reset:** `body { display: block !important }` overrides screen `display: flex` for proper print flow.
 - **5-Column Grid:** `min-width: auto; width: 100%; font-size: 8pt` — fits within A4 width. Screen retains `min-width: 900px` for readability.
-- **Page Break Control:** `page-break-inside: avoid` applied to order grids, sticker boxes, and fib/AC cards. Stroke multi-page documents use `page-break-before: always`.
-- **No-Print Classes:** Screen-only controls, forms, banners, and buttons hidden via `display: none !important`.
+- **Page Break Control:** `page-break-inside: auto` on order grids (allows flow across pages). `page-break-inside: avoid` on individual grid cells, fib/AC cards, and sticker boxes. Stroke multi-page documents use `page-break-before: always`.
+- **Sticker Box:** Print dimensions `58mm × 35mm` (matching original paper forms). Screen size `200px × 65px`.
+- **No-Print Classes:** Screen-only controls, forms, banners, buttons, top nav, and floating print bar hidden via `display: none !important`.
 - **Color:** All print output forced to black-on-white with `-webkit-print-color-adjust: exact`. Grid headers retain light gray background for structure.
-- **Manual Fill Support:** When printing blank orders, checkboxes render as ☐, calculated fields replaced with dotted lines.
+- **Manual Fill Support:** When printing blank orders, checkboxes render as ☐, calculated fields replaced with dotted lines. All hardcoded ☑ items are explicitly reset to ☐.
 - **Lab/IV/O2 Hygiene:** Lab investigations, IV fluids, oxygen, monitoring, and non-drug continuation orders always render as ☐ in print. Only drug-related orders auto-check (☑).

@@ -151,17 +151,17 @@
                 <div class="grid-cell">
                     <strong>Analgesic drug:</strong>
                     <ul class="order-list">
-                        <li>☑ Fentanyl <strong>25 - 50 mcg</strong> IV bolus stat prn pain</li>
+                        <li id="p-fen-bolus">☑ Fentanyl <strong>25 - 50 mcg</strong> IV bolus stat prn pain</li>
                     </ul>
                     
                     <div class="divider"></div>
                     <strong>Continuous Drip:</strong>
-                    <div class="fib-order-box chosen" style="border-color:#28a745; background:#fafffa;">
+                    <div class="fib-order-box chosen" id="p-fen-drip-box" style="border-color:#28a745; background:#fafffa;">
                         ☑ <strong>Fentanyl 500 mcg + NSS/5%DW 100 mL</strong> (5 mcg/mL)<br>
                         IV drip <strong><span id="p-fen-rate" class="highlight">--</span> mL/hr</strong> (<span id="p-fen-target">--</span> mcg/kg/hr)
                     </div>
 
-                    <div class="fib-order-box chosen" style="border-color:#28a745; background:#fafffa; margin-top:8px;">
+                    <div class="fib-order-box chosen" id="p-mid-drip-box" style="border-color:#28a745; background:#fafffa; margin-top:8px;">
                         ☑ <strong>Midazolam 100 mg + NSS/5%DW 100 mL</strong> (1 mg/mL)<br>
                         IV drip <strong><span id="p-mid-rate" class="highlight">--</span> mL/hr</strong> (<span id="p-mid-target">--</span> mg/kg/hr)
                     </div>
@@ -200,12 +200,6 @@
 <script src="../shared/calc-engine.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Auto-run print-blank-direct from home page portal
-    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
-        document.getElementById('print-blank-btn').click();
-        setTimeout(() => window.print(), 500);
-        return;
-    }
     const $ = id => document.getElementById(id);
 
     $('sedation-form').addEventListener('submit', (e) => {
@@ -262,12 +256,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ED_COMPONENTS.updateGeneratedTime('p-generated', now);
 
         $('results-container').classList.remove('hidden');
+        ED_COMPONENTS.showFloatBar();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     });
 
     $('clear-btn').addEventListener('click', () => {
         document.getElementById('sedation-form').reset();
         $('results-container').classList.add('hidden');
+        ED_COMPONENTS.hideFloatBar();
         $('hn').focus();
     });
 
@@ -280,6 +276,10 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-fen-dose').textContent = '....................';
         $('p-mid-dose').textContent = '....................';
 
+        $('p-fen-bolus').innerHTML = '☐ Fentanyl <strong>25 - 50 mcg</strong> IV bolus stat prn pain';
+        $('p-fen-drip-box').className = 'fib-order-box';
+        $('p-mid-drip-box').className = 'fib-order-box';
+
         $('p-fen-rate').textContent = '....................';
         $('p-fen-target').textContent = '....................';
         $('p-mid-rate').textContent = '....................';
@@ -291,11 +291,20 @@ document.addEventListener('DOMContentLoaded', () => {
         ED_COMPONENTS.updateGeneratedTime('p-generated', null);
 
         $('results-container').classList.remove('hidden');
+        ED_COMPONENTS.showFloatBar();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
         // Preview only — print triggered by user or ?print-blank-direct=true
     });
 
+    // Auto-run print-blank-direct from home page portal
+    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
+        $('print-blank-btn').click();
+        window.print();
+        return;
+    }
+
+    ED_COMPONENTS.injectTopNav();
     ED_COMPONENTS.setupCommonActions();
 });
 </script>
