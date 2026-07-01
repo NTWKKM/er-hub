@@ -93,13 +93,14 @@ const ED_COMPONENTS = {
     /**
      * Inject a sticky top navigation bar with home link and auto-detected title.
      */
-    injectNavBar: function() {
+    injectNavBar: function(homeHref) {
+        const href = homeHref || '../index.html';
         const title = (document.title || '').split('—')[0].trim();
         const nav = document.createElement('nav');
         nav.className = 'top-nav';
         nav.innerHTML = `
-            <a href="../index.html" class="nav-home" aria-label="กลับหน้าหลัก">
-                <span class="nav-home-icon">🏠</span><span>หน้าหลัก</span>
+            <a href="${href}" class="nav-home" aria-label="Home">
+                <span class="nav-home-icon">🏠</span><span>Home</span>
             </a>
             ${title ? `<span class="nav-title">${title}</span>` : ''}
         `;

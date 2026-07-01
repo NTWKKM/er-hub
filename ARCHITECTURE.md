@@ -8,8 +8,10 @@
 | `calc-engine.js` | Generic mathematical engine computing infusion drip rates (mL/hr) and loading doses (mL). | None |
 | `anticoag-engine.js` | Logic engine determining Heparin/LMWH doses and titration changes based on clinical indications. | None |
 | `drug-data.js` | Structured catalog of concentrations, dose limits, safety ceilings, and titration instructions for all 12 IV drugs. | None |
-| `components.js` | Renders common UI elements: patient info blocks, sticker boxes, date-time inputs, sticky top navigation bar (`injectNavBar`), floating print action bar (`showFloatBar`/`hideFloatBar`). | None |
+| `components.js` | Renders common UI elements: patient info blocks, sticker boxes, date-time inputs, sticky top navigation bar (`injectNavBar` — accepts optional `homeHref` for path flexibility, auto-detects title from `document.title`), floating print action bar (`showFloatBar`/`hideFloatBar`). | None |
 | `orders/*.html` | Specialized clinical worksheets (rt-PA, STEMI, NSTEMI, PE, Antivenom, Heparin, Sedation) displaying forms and generating print layouts. All 7 files share a unified DOMContentLoaded pattern: listener registration → `print-blank-direct` check at end (not early-return). | `shared/base.css`, `shared/print.css`, `shared/calc-engine.js`, `shared/components.js` |
+| `tools/drip-calculator.html` | IV infusion drip rate calculator for 12 high-alert drugs. Now loads `components.js` and uses `injectNavBar()` for nav consistency. No print flow (no `print.css`). | `shared/base.css`, `shared/calc-engine.js`, `shared/drug-data.js`, `shared/components.js` |
+| `index.html` | Portal hub with nav bar (`injectNavBar('index.html')`). 3-column card grid, backward-compat redirect. Body uses inline `display: block` override. | `shared/base.css`, `shared/components.js` |
 
 ---
 
