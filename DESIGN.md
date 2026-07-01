@@ -40,7 +40,7 @@
 | Component | Role / Target | States & Props |
 |---|---|---|
 | **Portal Card** | Category-grouped card in single 3-column grid. Color-coded left border per category. No section titles, no emoji, no print-blank button. Stroke FAST TRACK is first card. | `.hover` (Lift + shadow), Default (Light gray border + 4px category color left border). `padding: 18px 20px`, `gap: 16px`. Grid: `repeat(3, 1fr)` desktop, `repeat(2, 1fr)` tablet (600–900px), `1fr` mobile (<600px). |
-| **Portal Header** | Flex row: hospital logo (88×88, `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`) inline with title only. No Thai subtitle. | `display: flex; align-items: center; gap: 18px;` Blue gradient background. `drop-shadow` on logo. |
+| **Portal Header** | Flex row: hospital logo (64×64, `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`) inline with title only. No Thai subtitle. Compact padding `16px 20px`, margin-bottom `16px`. | `display: flex; align-items: center; gap: 16px;` Blue gradient background. `drop-shadow` on logo. |
 | **Top Navigation Bar** | Back link injected by `ED_COMPONENTS.injectTopNav()`. | `← กลับหน้าหลัก` link, `#2a5298`, `font-size: 14px`, `font-weight: bold`. Hidden in print. |
 | **Floating Print Action Bar** | Fixed bottom bar shown after generate/blank, hidden on clear. | Green (#27ae60) bar with "พิมพ์ทันที" and "ดู Order" buttons. `position: fixed; bottom: 0; z-index: 1000`. Hidden in print via `@media print`. |
 | **Field Error State** | Red border highlight for empty/invalid required fields. | `.field-error` class: `border-color: #c0392b; box-shadow: 0 0 5px rgba(192,57,43,0.4)`. |
@@ -69,7 +69,7 @@
 - **Stroke Pages:** `width: 195mm; margin: 0 auto; padding: 3mm 0` — matches original rtpamnrh.vercel.app layout for A4 fit.
 - **Sticker Box:** Print dimensions `60mm × 20mm` (compact, matching stroke page sticker size). Screen size `200px × 65px`.
 - **Back Link Hidden:** The "← กลับหน้าหลัก" navigation link is hidden in print via `.top-nav` and `a[href*="index.html"]` selectors in `@media print`.
-- **Signature Spacers:** rt-PA order grid uses `<div style="height:5em">` spacers before doctor signature lines (ลงชื่อแพทย์ ER/MED, ลงชื่อแพทย์ MED) to fill A4 page height and prevent a top-heavy table.
+- **Signature Spacers:** rt-PA order grid uses `<div style="height:10em">` spacers before doctor signature lines (ลงชื่อแพทย์ ER/MED, ลงชื่อแพทย์ MED) to fill A4 page height and prevent a top-heavy table. Tuned from 5em (too little) and 15em (overflow to 5 pages) to 10em (exactly 4 pages).
 - **No-Print Classes:** Screen-only controls, forms, banners, buttons, top nav, and floating print bar hidden via `display: none !important`.
 - **Color:** All print output forced to black-on-white with `-webkit-print-color-adjust: exact`. Grid headers retain light gray background for structure.
 - **Manual Fill Support:** When printing blank orders, checkboxes render as ☐, calculated fields replaced with dotted lines. All hardcoded ☑ items are explicitly reset to ☐.
