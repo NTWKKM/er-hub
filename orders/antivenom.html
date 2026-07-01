@@ -246,9 +246,28 @@
 </div>
 
 <script src="../shared/components.js"></script>
+<script src="../shared/print-bootstrap.js"></script>
+<script src="../shared/blank-print-engine.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
+
+    // Register blank-print manifest
+    ED_BLANK_PRINT.register([
+        { id: 'p-hn', value: '....................' },
+        { id: 'p-tetanus', value: '............................................................' },
+        { id: 'p-horse-allergy', html: 'No' },
+        { id: 'p-snake-name', value: '........................................' },
+        { id: 'p-venom-type', value: '........................................' },
+        { id: 'p-antivenom-order-box', className: 'fib-order-box' },
+        { id: 'p-antivenom-order-box', html: '☐ <strong>เซรุ่มแก้พิษงู .................... ขนาดเริ่มต้น .................... ขวด ใน NSS 100 mL IV drip in ............ min</strong>' },
+        { id: 'p-obs-neuro', style: { display: 'none' } },
+        { id: 'p-augmentin', html: '☐ Augmentin 1.2 g IV q 8 hr OR Augmentin (1g) 1x2 po pc' },
+        { id: 'p-paracetamol', html: '☐ Paracetamol (500) 1-2 tab po prn q 4-6 hr' },
+        { id: 'p-cipro-clinda', html: '☐ Penicillin allergy alternative: Ciprofloxacin (500) 1x2 po pc + Clindamycin (300) 1x3 po pc' },
+        { id: 'p-dt-1', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
+        { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
+    ]);
 
     // Horse allergy text box toggle
     const allergyRadios = document.querySelectorAll('input[name="horse-allergy"]');
@@ -386,60 +405,29 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-dt-1').innerHTML = dtStr;
         $('p-dt-2').innerHTML = dtStr;
 
-        $('results-container').classList.remove('hidden');
-        ED_COMPONENTS.showFloatBar();
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        ED_PRINT_BOOTSTRAP.showResults();
     });
 
     $('clear-btn').addEventListener('click', () => {
-        document.getElementById('antivenom-form').reset();
-        $('horse-allergy-detail').style.display = 'none';
-        $('block-hemato-ind').style.display = 'block';
-        $('block-neuro-ind').style.display = 'none';
-        $('box-hemato').classList.add('selected');
-        $('box-neuro').classList.remove('selected');
-        $('results-container').classList.add('hidden');
-        ED_COMPONENTS.hideFloatBar();
-        $('hn').focus();
+        ED_PRINT_BOOTSTRAP.clearResults('antivenom-form', () => {
+            $('horse-allergy-detail').style.display = 'none';
+            $('block-hemato-ind').style.display = 'block';
+            $('block-neuro-ind').style.display = 'none';
+            $('box-hemato').classList.add('selected');
+            $('box-neuro').classList.remove('selected');
+        });
     });
 
     $('print-blank-btn').addEventListener('click', () => {
         ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-
-        $('p-hn').textContent = '....................';
-        $('p-tetanus').textContent = '............................................................';
-        $('p-horse-allergy').innerHTML = 'No';
-        
-        $('p-snake-name').textContent = '........................................';
-        $('p-venom-type').textContent = '........................................';
-
-        $('p-antivenom-order-box').className = 'fib-order-box';
-        $('p-antivenom-order-box').innerHTML = `☐ <strong>เซรุ่มแก้พิษงู .................... ขนาดเริ่มต้น .................... ขวด ใน NSS 100 mL IV drip in ............ min</strong>`;
-        $('p-obs-neuro').style.display = 'none';
-
-        $('p-augmentin').innerHTML = '☐ Augmentin 1.2 g IV q 8 hr OR Augmentin (1g) 1x2 po pc';
-        $('p-paracetamol').innerHTML = '☐ Paracetamol (500) 1-2 tab po prn q 4-6 hr';
-        $('p-cipro-clinda').innerHTML = '☐ Penicillin allergy alternative: Ciprofloxacin (500) 1x2 po pc + Clindamycin (300) 1x3 po pc';
-
-        const blankDt = 'วันที่ .................... เวลา ....................';
-        $('p-dt-1').innerHTML = blankDt;
-        $('p-dt-2').innerHTML = blankDt;
         ED_COMPONENTS.updateGeneratedTime('p-generated', null);
-
-        $('results-container').classList.remove('hidden');
-        ED_COMPONENTS.showFloatBar();
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-
-        // Preview only — print triggered by user or ?print-blank-direct=true
+        ED_BLANK_PRINT.apply();
+        ED_PRINT_BOOTSTRAP.showResults();
     });
 
     // Auto-run print-blank-direct from home page portal
-    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
-        $('print-blank-btn').click();
-        window.print();
-        return;
-    }
+    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
 
     ED_COMPONENTS.injectNavBar();
     ED_COMPONENTS.setupCommonActions();

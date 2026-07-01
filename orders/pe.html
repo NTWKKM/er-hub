@@ -272,9 +272,31 @@
 </div>
 
 <script src="../shared/components.js"></script>
+<script src="../shared/print-bootstrap.js"></script>
+<script src="../shared/blank-print-engine.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
+
+    // Register blank-print manifest
+    ED_BLANK_PRINT.register([
+        { id: 'p-hn', value: '....................' },
+        { id: 'p-weight', value: '....................' },
+        { id: 'p-indication', value: '....................' },
+        { id: 'p-abs-status', html: '....................' },
+        { id: 'p-rel-status', html: '....................' },
+        { id: 'p-prior-sk-status', html: '....................' },
+        { id: 'print-btn', style: { display: 'inline-block' } },
+        { id: 'screen-warning-note', style: { display: 'none' } },
+        { id: 'p-box-sk-a', className: 'fib-order-box' },
+        { id: 'p-box-sk-b', className: 'fib-order-box' },
+        { id: 'p-box-rtpa-a', className: 'fib-order-box' },
+        { id: 'p-box-rtpa-b', className: 'fib-order-box' },
+        { id: 'p-sk-expiry', value: '....................' },
+        { id: 'p-rtpa-b-dose', value: '....................' },
+        { id: 'p-dt-1', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
+        { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
+    ]);
 
     // Dynamic class card selections
     const regimenCards = document.querySelectorAll('.pe-regimen-card');
@@ -379,67 +401,30 @@ document.addEventListener('DOMContentLoaded', () => {
         ED_COMPONENTS.updateGeneratedTime('p-generated', now);
 
         $('results-container').classList.remove('hidden');
-        ED_COMPONENTS.showFloatBar();
+        ED_PRINT_BOOTSTRAP.showResults();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     });
 
     $('clear-btn').addEventListener('click', () => {
-        document.getElementById('pe-form').reset();
-        regimenCards.forEach(c => c.classList.remove('selected'));
-        $('card-sk-a').classList.add('selected');
-        $('card-sk-a').querySelector('input').checked = true;
-        $('results-container').classList.add('hidden');
-        ED_COMPONENTS.hideFloatBar();
-        $('hn').focus();
+        ED_PRINT_BOOTSTRAP.clearResults('pe-form', () => { regimenCards.forEach(c => c.classList.remove('selected')); $('card-sk-a').classList.add('selected'); $('card-sk-a').querySelector('input').checked = true; });
     });
 
     $('print-blank-btn').addEventListener('click', () => {
         ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-
-        $('p-hn').textContent = '....................';
-        $('p-weight').textContent = '....................';
-        $('p-indication').textContent = '........................................';
-        
-        $('p-abs-status').innerHTML = '....................';
-        $('p-rel-status').innerHTML = '....................';
-        $('p-prior-sk-status').innerHTML = '....................';
-
-        $('print-btn').style.display = 'inline-block';
-        $('screen-warning-note').style.display = 'none';
-
-        $('p-box-sk-a').className = 'fib-order-box';
-        $('p-box-sk-a').querySelector('strong').previousSibling.textContent = '☐ ';
-
-        $('p-box-sk-b').className = 'fib-order-box';
-        $('p-box-sk-b').querySelector('strong').previousSibling.textContent = '☐ ';
-        $('p-sk-expiry').textContent = '....................';
-
-        $('p-box-rtpa-a').className = 'fib-order-box';
-        $('p-box-rtpa-a').querySelector('strong').previousSibling.textContent = '☐ ';
-
-        $('p-box-rtpa-b').className = 'fib-order-box';
-        $('p-box-rtpa-b').querySelector('strong').previousSibling.textContent = '☐ ';
-        $('p-rtpa-b-dose').textContent = '....................';
-
-        const blankDt = 'วันที่ .................... เวลา ....................';
-        $('p-dt-1').innerHTML = blankDt;
-        $('p-dt-2').innerHTML = blankDt;
         ED_COMPONENTS.updateGeneratedTime('p-generated', null);
-
-        $('results-container').classList.remove('hidden');
-        ED_COMPONENTS.showFloatBar();
+        ED_BLANK_PRINT.apply();
+        // Manual reset for regimen checkbox text (not handled declaratively)
+        $('p-box-sk-a').querySelector('strong').previousSibling.textContent = '☐ ';
+        $('p-box-sk-b').querySelector('strong').previousSibling.textContent = '☐ ';
+        $('p-box-rtpa-a').querySelector('strong').previousSibling.textContent = '☐ ';
+        $('p-box-rtpa-b').querySelector('strong').previousSibling.textContent = '☐ ';
+        ED_PRINT_BOOTSTRAP.showResults();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-
-        // Preview only — print triggered by user or ?print-blank-direct=true
     });
 
     // Auto-run print-blank-direct from home page portal
-    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
-        $('print-blank-btn').click();
-        window.print();
-        return;
-    }
+    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
 
     ED_COMPONENTS.injectNavBar();
     ED_COMPONENTS.setupCommonActions();

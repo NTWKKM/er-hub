@@ -653,6 +653,8 @@
 </div>
 
 <script src="../shared/components.js"></script>
+<script src="../shared/print-bootstrap.js"></script>
+<script src="../shared/blank-print-engine.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('rtpa-form');
@@ -661,6 +663,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const weightInput = document.getElementById('weight');
     const doseButtons = document.querySelectorAll('.dose-button');
     const selectedDoseInput = document.getElementById('selected-dose-value');
+
+    ED_BLANK_PRINT.register([
+        { id: 'result-hn', value: '....................' },
+        { id: 'result-weight', value: '....................' },
+        { id: 'result-regimen', value: '0.9 หรือ 0.6' },
+        { id: 'total-dose', value: '....................' },
+        { id: 'push-percent', value: '..........' },
+        { id: 'push-dose', value: '....................' },
+        { id: 'drip-percent', value: '..........' },
+        { id: 'drip-dose', value: '....................' },
+        { id: 'order-date', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
+        { id: 'order-date-cont', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
+    ]);
 
     // Handle Dosage Button Clicks
     doseButtons.forEach(button => {
@@ -737,48 +752,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('clear-btn').addEventListener('click', () => {
-        form.reset();
-        doseButtons.forEach(btn => btn.classList.remove('active'));
-        document.querySelector('.dose-button[data-dose="0.9"]').classList.add('active');
-        selectedDoseInput.value = "0.9";
-        resultsContainer.classList.add('hidden');
-        ED_COMPONENTS.hideFloatBar();
-        hnInput.focus();
+        ED_PRINT_BOOTSTRAP.clearResults('rtpa-form', () => {
+            doseButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.dose-button[data-dose="0.9"]').classList.add('active');
+            selectedDoseInput.value = "0.9";
+        });
     });
 
     document.getElementById('print-blank-btn').addEventListener('click', () => {
         ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-
-        document.getElementById('result-hn').textContent = '....................';
-        document.getElementById('result-weight').textContent = '....................';
-        document.getElementById('result-regimen').textContent = '0.9 หรือ 0.6';
-
-        document.getElementById('total-dose').textContent = '....................';
-        document.getElementById('push-percent').textContent = '..........';
-        document.getElementById('push-dose').textContent = '....................';
-        document.getElementById('drip-percent').textContent = '..........';
-        document.getElementById('drip-dose').textContent = '....................';
-
-        const blankDt = 'วันที่ .................... เวลา ....................';
-        document.getElementById('order-date').innerHTML = blankDt;
-        document.getElementById('order-date-cont').innerHTML = blankDt;
-
         ED_COMPONENTS.updateGeneratedTime('p-generated', null);
-
-        resultsContainer.classList.remove('hidden');
-        ED_COMPONENTS.showFloatBar();
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-
-        // Preview only — print triggered by user or ?print-blank-direct=true
+        ED_BLANK_PRINT.apply();
+        ED_PRINT_BOOTSTRAP.showResults();
     });
 
     // Auto-run print-blank-direct from home page portal
-    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
-        document.getElementById('print-blank-btn').click();
-        window.print();
-        return;
-    }
+    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => document.getElementById('print-blank-btn').click())) return;
 
     ED_COMPONENTS.injectNavBar();
     ED_COMPONENTS.setupCommonActions();

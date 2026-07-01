@@ -199,9 +199,28 @@
 
 <script src="../shared/components.js"></script>
 <script src="../shared/calc-engine.js"></script>
+<script src="../shared/print-bootstrap.js"></script>
+<script src="../shared/blank-print-engine.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
+
+    // Register blank-print manifest (declarative — fixes ADR-10 bug class at root)
+    ED_BLANK_PRINT.register([
+        { id: 'p-hn', value: '....................' },
+        { id: 'p-weight', value: '....................' },
+        { id: 'p-fen-dose', value: '....................' },
+        { id: 'p-mid-dose', value: '....................' },
+        { id: 'p-fen-bolus', html: '☐ Fentanyl <strong>25 - 50 mcg</strong> IV bolus stat prn pain' },
+        { id: 'p-fen-drip-box', className: 'fib-order-box' },
+        { id: 'p-mid-drip-box', className: 'fib-order-box' },
+        { id: 'p-fen-rate', value: '....................' },
+        { id: 'p-fen-target', value: '....................' },
+        { id: 'p-mid-rate', value: '....................' },
+        { id: 'p-mid-target', value: '....................' },
+        { id: 'p-dt-1', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
+        { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
+    ]);
 
     $('sedation-form').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -216,21 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Fentanyl: conc = 5.0 mcg/mL, unit = mcg/kg/hr
-        const fenRate = calcDripRate({
-            doseValue: fenDose,
-            doseUnit: 'mcg/kg/hr',
-            weightKg: weight,
-            concentration: 5.0
-        });
-
-        // Midazolam: conc = 1.0 mg/mL, unit = mg/kg/hr
-        const midRate = calcDripRate({
-            doseValue: midDose,
-            doseUnit: 'mg/kg/hr',
-            weightKg: weight,
-            concentration: 1.0
-        });
+        const fenRate = calcDripRate({ doseValue: fenDose, doseUnit: 'mcg/kg/hr', weightKg: weight, concentration: 5.0 });
+        const midRate = calcDripRate({ doseValue: midDose, doseUnit: 'mg/kg/hr', weightKg: weight, concentration: 1.0 });
 
         // Update Screen
         $('screen-fen-rate').textContent = `${fenRate.toFixed(1)} mL/hr`;
@@ -244,7 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-weight').textContent = weight.toFixed(1);
         $('p-fen-dose').textContent = fenDose.toFixed(1);
         $('p-mid-dose').textContent = midDose.toFixed(2);
-
         $('p-fen-rate').textContent = fenRate.toFixed(1);
         $('p-fen-target').textContent = fenDose.toFixed(1);
         $('p-mid-rate').textContent = midRate.toFixed(1);
@@ -256,54 +261,23 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-dt-2').innerHTML = dtStr;
         ED_COMPONENTS.updateGeneratedTime('p-generated', now);
 
-        $('results-container').classList.remove('hidden');
-        ED_COMPONENTS.showFloatBar();
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        ED_PRINT_BOOTSTRAP.showResults();
     });
 
     $('clear-btn').addEventListener('click', () => {
-        document.getElementById('sedation-form').reset();
-        $('results-container').classList.add('hidden');
-        ED_COMPONENTS.hideFloatBar();
-        $('hn').focus();
+        ED_PRINT_BOOTSTRAP.clearResults('sedation-form');
     });
 
     $('print-blank-btn').addEventListener('click', () => {
         ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-
-        $('p-hn').textContent = '....................';
-        $('p-weight').textContent = '....................';
-        $('p-fen-dose').textContent = '....................';
-        $('p-mid-dose').textContent = '....................';
-
-        $('p-fen-bolus').innerHTML = '☐ Fentanyl <strong>25 - 50 mcg</strong> IV bolus stat prn pain';
-        $('p-fen-drip-box').className = 'fib-order-box';
-        $('p-mid-drip-box').className = 'fib-order-box';
-
-        $('p-fen-rate').textContent = '....................';
-        $('p-fen-target').textContent = '....................';
-        $('p-mid-rate').textContent = '....................';
-        $('p-mid-target').textContent = '....................';
-
-        const blankDt = 'วันที่ .................... เวลา ....................';
-        $('p-dt-1').innerHTML = blankDt;
-        $('p-dt-2').innerHTML = blankDt;
         ED_COMPONENTS.updateGeneratedTime('p-generated', null);
-
-        $('results-container').classList.remove('hidden');
-        ED_COMPONENTS.showFloatBar();
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-
-        // Preview only — print triggered by user or ?print-blank-direct=true
+        ED_BLANK_PRINT.apply();
+        ED_PRINT_BOOTSTRAP.showResults();
     });
 
     // Auto-run print-blank-direct from home page portal
-    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
-        $('print-blank-btn').click();
-        window.print();
-        return;
-    }
+    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
 
     ED_COMPONENTS.injectNavBar();
     ED_COMPONENTS.setupCommonActions();

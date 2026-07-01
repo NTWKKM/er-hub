@@ -218,6 +218,8 @@
 </div><!-- end .container -->
 
 <script src="../shared/components.js"></script>
+<script src="../shared/print-bootstrap.js"></script>
+<script src="../shared/blank-print-engine.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
@@ -247,6 +249,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const fibRadios = document.querySelectorAll('input[name="fibrinolytic"]');
+
+    // Register blank-print manifest (declarative — fixes ADR-10 bug class at root)
+    ED_BLANK_PRINT.register([
+        { id: 'p-hn', value: '....................' },
+        { id: 'p-weight', value: '....................' },
+        { id: 'p-age', value: '....................' },
+        { id: 'p-asa', html: '....................' },
+        { id: 'p-tnk-table', html: buildTNKTableHTML(-1) },
+        { id: 'p-asa-stat', html: '☐ ASA 300 mg 1 เม็ด เคี้ยวและกลืน stat' },
+        { id: 'p-clopi-stat', html: '☐ Clopidogrel (75mg) <strong>............ เม็ด</strong> stat <small style="color:#888;">(อายุ ≤75 ปี = 4 เม็ด, อายุ >75 ปี = 1 เม็ด)</small>' },
+        { id: 'p-fib-tnk-box', className: 'fib-order-box' },
+        { id: 'p-fib-tnk-box', html: '☐ Tenecteplase (TNK) <strong>............ mg (............ ml)</strong> IV bolus in 10 second' },
+        { id: 'p-fib-sk-box', className: 'fib-order-box' },
+        { id: 'p-fib-sk-box', html: '☐ <strong>Streptokinase 1.5 MU (1 ขวด) dilute in NSS 100 ml IV drip in 60 min</strong><br>\n           ☐ 0.9% NSS 20 cc IV flush หลัง Streptokinase หมด<br>\n           <small style="color:#c0392b;">⚠️ ห้ามบริหารยาซ้ำภายในเวลา 6 เดือน</small>' },
+        { id: 'p-ecg-note', html: '☐ Repeat ECG หลังได้ยา 60 นาที' },
+        { id: 'p-vs-note', html: '☐ Record vital sign q 15 min' },
+        { id: 'p-bleed-note', html: '☐ Observe ภาวะเลือดออกผิดปกติ, อาการซึม, หายใจลำบาก, ผื่น, คัน' },
+        { id: 'p-dt-1', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
+        { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
+        { id: 'p-generated', value: '--' },
+    ]);
+
     function updateFibCards() {
         const val = document.querySelector('input[name="fibrinolytic"]:checked').value;
         $('card-tnk').classList.toggle('selected', val === 'tnk');
@@ -328,62 +352,23 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-dt-2').innerHTML = dtStr;
         ED_COMPONENTS.updateGeneratedTime('p-generated', now);
 
-        $('results-container').classList.remove('hidden');
-        ED_COMPONENTS.showFloatBar();
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        ED_PRINT_BOOTSTRAP.showResults();
     });
 
     $('clear-btn').addEventListener('click', () => {
-        document.getElementById('stemi-form').reset();
-        $('results-container').classList.add('hidden');
-        ED_COMPONENTS.hideFloatBar();
-        updateFibCards();
-        $('hn').focus();
+        ED_PRINT_BOOTSTRAP.clearResults('stemi-form', updateFibCards);
     });
 
     $('print-blank-btn').addEventListener('click', () => {
         ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-        
-        $('p-hn').textContent     = '....................';
-        $('p-weight').textContent = '....................';
-        $('p-age').textContent    = '....................';
-        $('p-asa').innerHTML      = '....................';
-        $('p-tnk-table').innerHTML = buildTNKTableHTML(-1);
-
-        $('p-asa-stat').innerHTML = '☐ ASA 300 mg 1 เม็ด เคี้ยวและกลืน stat';
-        $('p-clopi-stat').innerHTML = '☐ Clopidogrel (75mg) <strong>............ เม็ด</strong> stat <small style="color:#888;">(อายุ ≤75 ปี = 4 เม็ด, อายุ >75 ปี = 1 เม็ด)</small>';
-
-        $('p-fib-tnk-box').className = 'fib-order-box';
-        $('p-fib-tnk-box').innerHTML = '☐ Tenecteplase (TNK) <strong>............ mg (............ ml)</strong> IV bolus in 10 second';
-
-        $('p-fib-sk-box').className = 'fib-order-box';
-        $('p-fib-sk-box').innerHTML = `☐ <strong>Streptokinase 1.5 MU (1 ขวด) dilute in NSS 100 ml IV drip in 60 min</strong><br>
-           ☐ 0.9% NSS 20 cc IV flush หลัง Streptokinase หมด<br>
-           <small style="color:#c0392b;">⚠️ ห้ามบริหารยาซ้ำภายในเวลา 6 เดือน</small>`;
-
-        $('p-ecg-note').innerHTML = '☐ Repeat ECG หลังได้ยา 60 นาที';
-        $('p-vs-note').innerHTML = '☐ Record vital sign q 15 min';
-        $('p-bleed-note').innerHTML = '☐ Observe ภาวะเลือดออกผิดปกติ, อาการซึม, หายใจลำบาก, ผื่น, คัน';
-
-        const blankDt = 'วันที่ .................... เวลา ....................';
-        $('p-dt-1').innerHTML = blankDt;
-        $('p-dt-2').innerHTML = blankDt;
         ED_COMPONENTS.updateGeneratedTime('p-generated', null);
-
-        $('results-container').classList.remove('hidden');
-        ED_COMPONENTS.showFloatBar();
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-
-        // Preview only — print triggered by user or ?print-blank-direct=true
+        ED_BLANK_PRINT.apply();
+        ED_PRINT_BOOTSTRAP.showResults();
     });
 
     // Auto-run print-blank-direct from home page portal
-    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
-        $('print-blank-btn').click();
-        window.print();
-        return;
-    }
+    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
 
     ED_COMPONENTS.injectNavBar();
     ED_COMPONENTS.setupCommonActions();

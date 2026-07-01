@@ -522,9 +522,61 @@
 
 <script src="../shared/components.js"></script>
 <script src="../shared/anticoag-engine.js"></script>
+<script src="../shared/print-bootstrap.js"></script>
+<script src="../shared/blank-print-engine.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
+
+    ED_BLANK_PRINT.register([
+        { id: 'p-hn', value: '....................' },
+        { id: 'p-weight', value: '....................' },
+        { id: 'p-egfr', value: '....................' },
+        { id: 'p-age', value: '....................' },
+        { id: 'p-hr', value: '....................' },
+        { id: 'p-sbp', value: '....................' },
+        { id: 'p-cr', value: '....................' },
+        { id: 'p-asa', html: '....................' },
+        { id: 'p-killip', value: '....................' },
+        { id: 'p-grace', value: '....................' },
+        { id: 'p-bin-flags', html: '' },
+        { id: 'p-strat', html: `○ Very high risk (coro &lt; 2h)<br>\
+             ○ High risk (coro &lt; 24h)<br>\
+             ○ Non-high risk (selective coro)` },
+        { id: 'p-h0', value: '....................' },
+        { id: 'p-h1', value: '....................' },
+        { id: 'p-h3', value: '....................' },
+        { id: 'p-rphch-note', value: '' },
+        { id: 'p-troponin-lab', html: '☐ hs-troponin I Hr.0 and 3' },
+        { id: 'p-asa-stat', html: '☐ ASA (300) 1 tab chew stat' },
+        { id: 'p-clopi-stat', html: '☐ Clopidogrel GPO (75) <strong>4 tabs</strong> PO stat' },
+        { id: 'p-isdn-stat', html: '☐ ISDN (5) 1 tab SL prn chest pain' },
+        { id: 'p-asa-cont', html: '☐ ASA (81) 1×1 pc' },
+        { id: 'p-clopi-cont', html: '☐ Clopidogrel GPO (75) 1×1 pc' },
+        { id: 'p-omeprazole', html: '☐ Omeprazole (20) 1×1 ac' },
+        { id: 'p-atorva', html: '☐ Atorvastatin (40) 1×1 hs' },
+        { id: 'p-senokot', html: '☐ Senokot 2×1 hs' },
+        { id: 'p-ativan', html: '☐ Ativan (0.5) 1×1 hs' },
+        { id: 'p-isdn-cont', html: '☐ ISDN (5) 1 tab SL prn chest pain' },
+        { id: 'p-regular-diet', html: '☐ Regular diet' },
+        { id: 'p-record-vs', html: '☐ Record V/S, I/O' },
+        { id: 'p-anticoag', html: `\
+        <div class="ac-opt">\
+            <strong>☐ Fondaparinux</strong> &nbsp;<small>(Preferred)</small><br>\
+            2.5 mg SC OD × 5 Days\
+        </div>\
+        <div class="ac-opt">\
+            <strong>☐ Enoxaparin SC</strong><br>\
+            <strong>.................... mg</strong> SC q ............ hr × 5 Days<br>\
+            <span style="font-size:9px;color:#666;">(น้ำหนัก ............ kg, eGFR ............ ml/min)</span>\
+        </div>\
+        <div class="ac-opt">\
+            <strong>☐ Heparin IV</strong> &nbsp;<small>(กรณี GFR &lt; 15)</small><br>\
+            Bolus <strong>.................... u</strong> IV bolus then IV drip <strong>.................... u/hr</strong> = ............ ml/hr\
+        </div>` },
+        { id: 'p-dt-1', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
+        { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
+    ]);
 
     function lookupPts(val, table) {
         for (const [threshold, pts] of table) {
@@ -796,87 +848,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('clear-btn').addEventListener('click', () => {
-        document.getElementById('nstemi-form').reset();
-        $('results-container').classList.add('hidden');
-        ED_COMPONENTS.hideFloatBar();
-        $('grace-breakdown-body').innerHTML =
-            '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
-        $('hn').focus();
+        ED_PRINT_BOOTSTRAP.clearResults('nstemi-form', () => {
+            $('grace-breakdown-body').innerHTML =
+                '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
+        });
     });
 
     $('print-blank-btn').addEventListener('click', () => {
         ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-
-        $('p-hn').textContent    = '....................';
-        $('p-weight').textContent = '....................';
-        $('p-egfr').textContent  = '....................';
-        $('p-age').textContent   = '....................';
-        $('p-hr').textContent    = '....................';
-        $('p-sbp').textContent   = '....................';
-        $('p-cr').textContent    = '....................';
-        $('p-asa').innerHTML     = '....................';
-        $('p-killip').textContent = '....................';
-        $('p-grace').textContent  = '....................';
-        $('p-bin-flags').innerHTML = '';
-
-        $('p-strat').innerHTML =
-            `○ Very high risk (coro &lt; 2h)<br>
-             ○ High risk (coro &lt; 24h)<br>
-             ○ Non-high risk (selective coro)`;
-
-        $('p-h0').textContent = '....................';
-        $('p-h1').textContent = '....................';
-        $('p-h3').textContent = '....................';
-        $('p-rphch-note').textContent = '';
-        $('p-troponin-lab').innerHTML = '☐ hs-troponin I Hr.0 and 3';
-
-        const blankDt = 'วันที่ .................... เวลา ....................';
-        $('p-dt-1').innerHTML = blankDt;
-        $('p-dt-2').innerHTML = blankDt;
         ED_COMPONENTS.updateGeneratedTime('p-generated', null);
-
-        $('p-asa-stat').innerHTML = '☐ ASA (300) 1 tab chew stat';
-        $('p-clopi-stat').innerHTML = '☐ Clopidogrel GPO (75) <strong>4 tabs</strong> PO stat';
-        $('p-isdn-stat').innerHTML = '☐ ISDN (5) 1 tab SL prn chest pain';
-        $('p-asa-cont').innerHTML = '☐ ASA (81) 1×1 pc';
-        $('p-clopi-cont').innerHTML = '☐ Clopidogrel GPO (75) 1×1 pc';
-        $('p-omeprazole').innerHTML = '☐ Omeprazole (20) 1×1 ac';
-        $('p-atorva').innerHTML = '☐ Atorvastatin (40) 1×1 hs';
-        $('p-senokot').innerHTML = '☐ Senokot 2×1 hs';
-        $('p-ativan').innerHTML = '☐ Ativan (0.5) 1×1 hs';
-        $('p-isdn-cont').innerHTML = '☐ ISDN (5) 1 tab SL prn chest pain';
-        $('p-regular-diet').innerHTML = '☐ Regular diet';
-        $('p-record-vs').innerHTML = '☐ Record V/S, I/O';
-
-        $('p-anticoag').innerHTML = `
-        <div class="ac-opt">
-            <strong>☐ Fondaparinux</strong> &nbsp;<small>(Preferred)</small><br>
-            2.5 mg SC OD × 5 Days
-        </div>
-        <div class="ac-opt">
-            <strong>☐ Enoxaparin SC</strong><br>
-            <strong>.................... mg</strong> SC q ............ hr × 5 Days<br>
-            <span style="font-size:9px;color:#666;">(น้ำหนัก ............ kg, eGFR ............ ml/min)</span>
-        </div>
-        <div class="ac-opt">
-            <strong>☐ Heparin IV</strong> &nbsp;<small>(กรณี GFR &lt; 15)</small><br>
-            Bolus <strong>.................... u</strong> IV bolus then IV drip <strong>.................... u/hr</strong> = ............ ml/hr
-        </div>`;
-
-        $('results-container').classList.remove('hidden');
-        ED_COMPONENTS.showFloatBar();
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-
-        // Preview only — print triggered by user or ?print-blank-direct=true
+        ED_BLANK_PRINT.apply();
+        ED_PRINT_BOOTSTRAP.showResults();
     });
 
     // Auto-run print-blank-direct from home page portal
-    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
-        $('print-blank-btn').click();
-        window.print();
-        return;
-    }
+    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
 
     ED_COMPONENTS.injectNavBar();
     ED_COMPONENTS.setupCommonActions();

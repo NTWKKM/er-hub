@@ -24,7 +24,9 @@ index.html                  ← Portal hub (3-column card grid, 8 modules, SW re
 │   ├── components.js       ← UI component injection (sticky nav + logo, print header, sticker box, float bar)
 │   ├── calc-engine.js      ← Drip rate calculation engine
 │   ├── anticoag-engine.js  ← Heparin/LMWH dose logic
-│   └── drug-data.js        ← 12-drug catalog (concentrations, dose limits, safety warnings)
+│   ├── drug-data.js        ← 12-drug catalog (concentrations, dose limits, safety warnings)
+│   ├── print-bootstrap.js  ← Shared page lifecycle (show/clear/print-blank-direct)
+│   └── blank-print-engine.js ← Declarative blank-print reset (ADR-10 bug class fix)
 ├── tests/                  ← Unit tests (node:test, zero deps)
 │   ├── calc-engine.test.js
 │   ├── anticoag-engine.test.js
