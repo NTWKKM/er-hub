@@ -8,10 +8,12 @@
 | `calc-engine.js` | Generic mathematical engine computing infusion drip rates (mL/hr) and loading doses (mL). | None |
 | `anticoag-engine.js` | Logic engine determining Heparin/LMWH doses and titration changes based on clinical indications. | None |
 | `drug-data.js` | Structured catalog of concentrations, dose limits, safety ceilings, and titration instructions for all 12 IV drugs. | None |
-| `components.js` | Renders common UI elements: patient info blocks, sticker boxes (HN set via `textContent` for XSS safety), date-time inputs, sticky top navigation bar (`injectNavBar` — accepts optional `homeHref` for path flexibility, auto-detects title from `document.title`, sets `role="navigation"`), floating print action bar (`showFloatBar`/`hideFloatBar`). Float bar uses text-only labels (no emoji per ADR-09). | None |
+| `components.js` | Renders common UI elements: patient info blocks, sticker boxes (HN set via `textContent` for XSS safety), date-time inputs, sticky top navigation bar (`injectNavBar` — accepts optional `homeHref` and `logoSrc` for path/logo flexibility, auto-detects title from `document.title`, sets `role="navigation"`, adds `aria-label` to title), floating print action bar (`showFloatBar`/`hideFloatBar`). Float bar uses text-only labels (no emoji per ADR-09). | None |
 | `orders/*.html` | Specialized clinical worksheets (rt-PA, STEMI, NSTEMI, PE, Antivenom, Heparin, Sedation) displaying forms and generating print layouts. All 7 files share a unified DOMContentLoaded pattern: listener registration → `print-blank-direct` check at end (not early-return). | `shared/base.css`, `shared/print.css`, `shared/calc-engine.js`, `shared/components.js` |
 | `tools/drip-calculator.html` | IV infusion drip rate calculator for 12 high-alert drugs. Now loads `components.js` and uses `injectNavBar()` for nav consistency. No print flow (no `print.css`). | `shared/base.css`, `shared/calc-engine.js`, `shared/drug-data.js`, `shared/components.js` |
-| `index.html` | Portal hub with nav bar (`injectNavBar('index.html')`). 3-column card grid, backward-compat redirect. Body uses inline `display: block` override. | `shared/base.css`, `shared/components.js` |
+| `index.html` | Portal hub with nav bar (`injectNavBar('index.html', logoPath)`). 3-column card grid (no card descriptions — removed per ADR-05), backward-compat redirect. Registers service worker for offline PWA support. Body uses inline `display: block` override. | `shared/base.css`, `shared/components.js`, `service-worker.js`, `manifest.json` |
+| `service-worker.js` | PWA offline cache. Network-first for navigation, cache-first for assets. Caches all HTML/CSS/JS + Google Fonts. Enables full offline access during ED wifi outages. | None |
+| `manifest.json` | PWA manifest. App name, theme color, favicon reference. Enables installable app + offline. | `favicon.svg` |
 
 ---
 
@@ -40,7 +42,7 @@ graph TD
 |---|---|---|
 | `Patient Form State` | Client-only state. Form resets immediately on navigation or tab close. | No server sync. Strictly offline-first. |
 | `Calculation Engine` | Pure functional operations. Standard math guarantees deterministic outcomes. | Stored as local `.js` scripts. Loaded from disk. |
-| `PWA Assets Cache` | Not implemented. ARCHITECTURE.md previously claimed a service worker; this was documentation drift (ADR-13). | N/A — no service worker exists. |
+| `PWA Assets Cache` | Service worker (`service-worker.js`) registered on index.html. Network-first for navigation, cache-first for static assets. Caches all HTML/CSS/JS + Google Fonts for offline access. | Assets cached in browser via Cache API. Cache version bumped on deploy. |
 
 ---
 

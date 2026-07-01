@@ -1,0 +1,17 @@
+{
+  "name": "MNRH-ED Standing Order Hub",
+  "short_name": "ER Hub",
+  "description": "Emergency Department clinical standing order system for Maharat Nakhon Ratchasima Hospital",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f0f2f5",
+  "theme_color": "#1e3c72",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

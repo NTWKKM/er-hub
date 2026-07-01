@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MNRH-ED Standing Order Hub — Maharat Nakhon Ratchasima Hospital</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e3c72">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
@@ -66,16 +68,10 @@
         }
 
         .card-title {
-            font-size: 15px;
+            font-size: 17px;
             font-weight: bold;
-            margin: 0 0 4px 0;
-        }
-
-        .card-desc {
-            font-size: 12.5px;
-            color: #666;
             margin: 0;
-            line-height: 1.4;
+            line-height: 1.3;
         }
 
         /* Category border colors */
@@ -108,48 +104,43 @@
         <!-- STROKE FAST TRACK (first) -->
         <a href="orders/rtpa.html" class="portal-card cat-neuro">
             <h4 class="card-title">rt-PA Stroke FAST TRACK</h4>
-            <p class="card-desc">แนวทางการให้ยาละลายลิ่มเลือดในผู้ป่วย Stroke</p>
         </a>
         <!-- CARDIAC -->
         <a href="orders/stemi.html" class="portal-card cat-cardiac">
             <h4 class="card-title">STEMI Standing Order</h4>
-            <p class="card-desc">แนวทางการรักษากล้ามเนื้อหัวใจตายเฉียบพลัน</p>
         </a>
         <a href="orders/nstemi.html" class="portal-card cat-cardiac">
             <h4 class="card-title">NSTEMI Standing Order</h4>
-            <p class="card-desc">แนวทางการรักษา NSTEMI + GRACE Score + Anticoag</p>
         </a>
         <!-- PULMONARY -->
         <a href="orders/pe.html" class="portal-card cat-pulmonary">
             <h4 class="card-title">Massive PE Fibrinolysis</h4>
-            <p class="card-desc">แนวทางการละลายลิ่มเลือดในผู้ป่วย PE รุนแรง</p>
         </a>
         <!-- ANTICOAGULATION -->
         <a href="orders/heparin.html" class="portal-card cat-anticoag">
             <h4 class="card-title">Heparin Protocol</h4>
-            <p class="card-desc">แนวทางการให้ Heparin + aPTT Titration</p>
         </a>
         <!-- TOXICOLOGY -->
         <a href="orders/antivenom.html" class="portal-card cat-tox">
             <h4 class="card-title">Antivenom Standing Order</h4>
-            <p class="card-desc">แนวทางการให้เซรุ่มต้านพิษงู</p>
         </a>
         <!-- PROCEDURAL -->
         <a href="orders/sedation.html" class="portal-card cat-procedural">
             <h4 class="card-title">Post-Intubation Sedation</h4>
-            <p class="card-desc">แนวทางการให้ยา Fentanyl + Midazolam drip</p>
         </a>
         <!-- TOOLS -->
         <a href="tools/drip-calculator.html" class="portal-card cat-tools">
             <h4 class="card-title">IV Infusion Drip Calculator</h4>
-            <p class="card-desc">เครื่องคำนวณอัตราการหยดยา IV</p>
         </a>
     </div>
 </div>
 
 <script src="shared/components.js"></script>
 <script>
-ED_COMPONENTS.injectNavBar('index.html');
+ED_COMPONENTS.injectNavBar('index.html', 'docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js').catch(function(e) { console.warn('SW registration failed:', e); });
+}
 </script>
 
 </body>

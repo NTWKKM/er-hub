@@ -235,10 +235,17 @@ input[type="checkbox"] {
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     padding: 10px 20px;
     box-sizing: border-box;
+}
+
+.nav-logo {
+    height: 28px;
+    width: auto;
+    flex-shrink: 0;
+    border-radius: 4px;
 }
 
 .nav-home {

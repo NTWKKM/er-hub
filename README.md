@@ -7,7 +7,7 @@ Emergency Department clinical standing order system for **Maharat Nakhon Ratchas
 **Static multi-page site** (vanilla HTML/CSS/JS, no framework, no bundler):
 
 ```
-index.html                  ← Portal hub (3-column card grid, 8 modules)
+index.html                  ← Portal hub (3-column card grid, 8 modules, SW registration)
 ├── orders/
 │   ├── rtpa.html           ← rt-PA Stroke FAST TRACK
 │   ├── stemi.html          ← STEMI Standing Order
@@ -18,13 +18,21 @@ index.html                  ← Portal hub (3-column card grid, 8 modules)
 │   └── sedation.html       ← Post-Intubation Sedation
 ├── tools/
 │   └── drip-calculator.html ← IV Infusion Drip Calculator (12 HAD drugs)
-└── shared/
-    ├── base.css            ← Design system, variables, responsive layout
-    ├── print.css           ← A4 print constraints (@page, grid, font sizes)
-    ├── components.js       ← UI component injection (sticky nav, print header, sticker box, float bar)
-    ├── calc-engine.js      ← Drip rate calculation engine
-    ├── anticoag-engine.js  ← Heparin/LMWH dose logic
-    └── drug-data.js        ← 12-drug catalog (concentrations, dose limits, safety warnings)
+├── shared/
+│   ├── base.css            ← Design system, variables, responsive layout
+│   ├── print.css           ← A4 print constraints (@page, grid, font sizes)
+│   ├── components.js       ← UI component injection (sticky nav + logo, print header, sticker box, float bar)
+│   ├── calc-engine.js      ← Drip rate calculation engine
+│   ├── anticoag-engine.js  ← Heparin/LMWH dose logic
+│   └── drug-data.js        ← 12-drug catalog (concentrations, dose limits, safety warnings)
+├── tests/                  ← Unit tests (node:test, zero deps)
+│   ├── calc-engine.test.js
+│   ├── anticoag-engine.test.js
+│   ├── drug-data.test.js
+│   └── components.test.js
+├── service-worker.js       ← PWA offline cache (network-first nav, cache-first assets)
+├── manifest.json           ← PWA manifest (installable app)
+└── favicon.svg             ← Medical cross icon (all 9 pages)
 ```
 
 ## Deployment

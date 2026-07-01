@@ -96,15 +96,17 @@ const ED_COMPONENTS = {
     /**
      * Inject a sticky top navigation bar with home link and auto-detected title.
      */
-    injectNavBar: function(homeHref) {
+    injectNavBar: function(homeHref, logoSrc) {
         const href = homeHref || '../index.html';
         const title = (document.title || '').split('—')[0].trim();
         const nav = document.createElement('nav');
         nav.className = 'top-nav';
         nav.setAttribute('role', 'navigation');
+        const logoHTML = logoSrc ? `<img src="${logoSrc}" class="nav-logo" alt="Maharat Nakhon Ratchasima Hospital">` : '';
         nav.innerHTML = `
+            ${logoHTML}
             <a href="${href}" class="nav-home" aria-label="Home">Home</a>
-            ${title ? `<span class="nav-title">${title}</span>` : ''}
+            ${title ? `<span class="nav-title" aria-label="${title}">${title}</span>` : ''}
         `;
         document.body.insertBefore(nav, document.body.firstChild);
     },
