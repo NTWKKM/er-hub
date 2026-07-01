@@ -106,7 +106,7 @@
                 🧮 คำนวณขนาดยาและสร้างใบสั่งยา
             </button>
             <button type="button" id="print-blank-btn" class="btn btn-print">
-                🖨️ ใบสั่งยาเปล่า (Blank Order)
+                🖨️ ใบสั่งยาเปล่า (PDF)
             </button>
             <button type="button" id="clear-btn" class="btn btn-clear">
                 🗑️ ล้างข้อมูล (Clear)
@@ -219,7 +219,6 @@
 
 <script src="../shared/components.js"></script>
 <script src="../shared/print-bootstrap.js"></script>
-<script src="../shared/blank-print-engine.js"></script>
 <script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -250,27 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const fibRadios = document.querySelectorAll('input[name="fibrinolytic"]');
-
-    // Register blank-print manifest (declarative — fixes ADR-10 bug class at root)
-    ED_BLANK_PRINT.register([
-        { id: 'p-hn', value: '....................' },
-        { id: 'p-weight', value: '....................' },
-        { id: 'p-age', value: '....................' },
-        { id: 'p-asa', html: '....................' },
-        { id: 'p-tnk-table', html: buildTNKTableHTML(-1) },
-        { id: 'p-asa-stat', html: '☐ ASA 300 mg 1 เม็ด เคี้ยวและกลืน stat' },
-        { id: 'p-clopi-stat', html: '☐ Clopidogrel (75mg) <strong>............ เม็ด</strong> stat <small style="color:#888;">(อายุ ≤75 ปี = 4 เม็ด, อายุ >75 ปี = 1 เม็ด)</small>' },
-        { id: 'p-fib-tnk-box', className: 'fib-order-box' },
-        { id: 'p-fib-tnk-box', html: '☐ Tenecteplase (TNK) <strong>............ mg (............ ml)</strong> IV bolus in 10 second' },
-        { id: 'p-fib-sk-box', className: 'fib-order-box' },
-        { id: 'p-fib-sk-box', html: '☐ <strong>Streptokinase 1.5 MU (1 ขวด) dilute in NSS 100 ml IV drip in 60 min</strong><br>\n           ☐ 0.9% NSS 20 cc IV flush หลัง Streptokinase หมด<br>\n           <small style="color:#c0392b;">⚠️ ห้ามบริหารยาซ้ำภายในเวลา 6 เดือน</small>' },
-        { id: 'p-ecg-note', html: '☐ Repeat ECG หลังได้ยา 60 นาที' },
-        { id: 'p-vs-note', html: '☐ Record vital sign q 15 min' },
-        { id: 'p-bleed-note', html: '☐ Observe ภาวะเลือดออกผิดปกติ, อาการซึม, หายใจลำบาก, ผื่น, คัน' },
-        { id: 'p-dt-1', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
-        { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
-        { id: 'p-generated', value: '--' },
-    ]);
 
     function updateFibCards() {
         const val = document.querySelector('input[name="fibrinolytic"]:checked').value;
@@ -357,17 +335,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('print-blank-btn').addEventListener('click', () => {
-        ED_COMPONENTS.injectPrintHeader('print-header-container');
-        ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-        ED_COMPONENTS.updateGeneratedTime('p-generated', null);
-        ED_BLANK_PRINT.apply();
-        ED_PRINT_BOOTSTRAP.showResults();
+        ED_PRINT_BOOTSTRAP.openBlankPdf('../docs/STEMI-PE/STEMI new 26-4doc.pdf');
     });
 
-    // Auto-run print-blank-direct from home page portal
-    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
+    // Auto-run print-blank-direct from home page portal (redirect to PDF)
+    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirectPdf('../docs/STEMI-PE/STEMI new 26-4doc.pdf')) return;
 
-    ED_COMPONENTS.injectNavBar();
+    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

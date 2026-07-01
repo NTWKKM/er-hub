@@ -97,7 +97,7 @@
             </div>
 
             <button type="submit" class="btn btn-calculate">🧮 คำนวณขนาดยาและสร้างใบสั่งยา</button>
-            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
+            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (PDF)</button>
             <button type="button" id="clear-btn" class="btn btn-clear">🗑️ ล้างข้อมูล (Clear)</button>
         </form>
     </div>
@@ -200,28 +200,10 @@
 <script src="../shared/components.js"></script>
 <script src="../shared/calc-engine.js"></script>
 <script src="../shared/print-bootstrap.js"></script>
-<script src="../shared/blank-print-engine.js"></script>
 <script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
-
-    // Register blank-print manifest (declarative — fixes ADR-10 bug class at root)
-    ED_BLANK_PRINT.register([
-        { id: 'p-hn', value: '....................' },
-        { id: 'p-weight', value: '....................' },
-        { id: 'p-fen-dose', value: '....................' },
-        { id: 'p-mid-dose', value: '....................' },
-        { id: 'p-fen-bolus', html: '☐ Fentanyl <strong>25 - 50 mcg</strong> IV bolus stat prn pain' },
-        { id: 'p-fen-drip-box', className: 'fib-order-box' },
-        { id: 'p-mid-drip-box', className: 'fib-order-box' },
-        { id: 'p-fen-rate', value: '....................' },
-        { id: 'p-fen-target', value: '....................' },
-        { id: 'p-mid-rate', value: '....................' },
-        { id: 'p-mid-target', value: '....................' },
-        { id: 'p-dt-1', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
-        { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
-    ]);
 
     $('sedation-form').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -271,17 +253,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('print-blank-btn').addEventListener('click', () => {
-        ED_COMPONENTS.injectPrintHeader('print-header-container');
-        ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-        ED_COMPONENTS.updateGeneratedTime('p-generated', null);
-        ED_BLANK_PRINT.apply();
-        ED_PRINT_BOOTSTRAP.showResults();
+        ED_PRINT_BOOTSTRAP.openBlankPdf('../docs/order Sedation-Fen-dormicum/fen.pdf');
     });
 
-    // Auto-run print-blank-direct from home page portal
-    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
+    // Auto-run print-blank-direct from home page portal (redirect to PDF)
+    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirectPdf('../docs/order Sedation-Fen-dormicum/fen.pdf')) return;
 
-    ED_COMPONENTS.injectNavBar();
+    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

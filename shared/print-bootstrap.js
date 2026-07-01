@@ -21,6 +21,29 @@ const ED_PRINT_BOOTSTRAP = {
     },
 
     /**
+     * Checks for ?print-blank-direct=true URL param and redirects to PDF.
+     * Used by order pages whose blank template is a PDF in docs/.
+     * @param {string} pdfPath - relative path to PDF (e.g. '../docs/STEMI-PE/STEMI new 26-4doc.pdf')
+     * @returns {boolean} true if print-blank-direct was triggered (caller should return)
+     */
+    handlePrintBlankDirectPdf(pdfPath) {
+        if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
+            window.location.href = encodeURI(pdfPath);
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Open a blank-order PDF in a new browser tab.
+     * Browser native PDF viewer handles display; user presses print manually.
+     * @param {string} pdfPath - relative path to PDF (e.g. '../docs/STEMI-PE/STEMI new 26-4doc.pdf')
+     */
+    openBlankPdf(pdfPath) {
+        window.open(encodeURI(pdfPath), '_blank');
+    },
+
+    /**
      * Show results container, float bar, and scroll to bottom.
      * Called after both generate and blank-print.
      */

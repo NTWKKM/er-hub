@@ -129,7 +129,7 @@
             </div>
 
             <button type="submit" class="btn btn-calculate">🧮 ตรวจสอบและสร้างใบสั่งยาเริ่มต้น</button>
-            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
+            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (PDF)</button>
             <button type="button" id="clear-btn" class="btn btn-clear">🗑️ ล้างข้อมูล (Clear)</button>
         </form>
 
@@ -269,28 +269,10 @@
 <script src="../shared/components.js"></script>
 <script src="../shared/anticoag-engine.js"></script>
 <script src="../shared/print-bootstrap.js"></script>
-<script src="../shared/blank-print-engine.js"></script>
 <script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
-
-    ED_BLANK_PRINT.register([
-        { id: 'p-hn', value: '....................' },
-        { id: 'p-weight', value: '....................' },
-        { id: 'p-indication', value: '........................................' },
-        { id: 'p-risk-status', value: '....................' },
-        { id: 'p-risk-blocked-note', value: '' },
-        { id: 'p-hep-calculation-box', className: 'fib-order-box' },
-        { id: 'p-hep-calculation-box', html: '\
-            ☐ <strong>Heparin 10,000 units + NSS 100 mL</strong> (100 units/mL)<br>\
-            - IV bolus <strong>.................... units</strong> (.......... units/kg)<br>\
-            - IV drip <strong>.................... units/hr</strong> = <strong>.................... mL/hr</strong> (.......... units/kg/hr)<br>\
-            - flushing with 0.9% NSS 20 cc after infusion stopped' },
-        { id: 'p-individualized-box', className: 'fib-order-box hidden' },
-        { id: 'p-dt-1', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
-        { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
-    ]);
 
     // Initial load handler for bleeding risk constraints check
     const riskCheckboxes = document.querySelectorAll('.risk-ci');
@@ -406,17 +388,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('print-blank-btn').addEventListener('click', () => {
-        ED_COMPONENTS.injectPrintHeader('print-header-container');
-        ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-        ED_COMPONENTS.updateGeneratedTime('p-generated', null);
-        ED_BLANK_PRINT.apply();
-        ED_PRINT_BOOTSTRAP.showResults();
+        ED_PRINT_BOOTSTRAP.openBlankPdf('../docs/High alert drug ER/Heparin.pdf');
     });
 
-    // Auto-run print-blank-direct from home page portal
-    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
+    // Auto-run print-blank-direct from home page portal (redirect to PDF)
+    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirectPdf('../docs/High alert drug ER/Heparin.pdf')) return;
 
-    ED_COMPONENTS.injectNavBar();
+    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

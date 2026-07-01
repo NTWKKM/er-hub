@@ -149,7 +149,7 @@
             </div>
 
             <button type="submit" class="btn btn-calculate">🧮 ตรวจสอบและสร้างใบสั่งยา</button>
-            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
+            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (PDF)</button>
             <button type="button" id="clear-btn" class="btn btn-clear">🗑️ ล้างข้อมูล (Clear)</button>
         </form>
     </div>
@@ -273,31 +273,10 @@
 
 <script src="../shared/components.js"></script>
 <script src="../shared/print-bootstrap.js"></script>
-<script src="../shared/blank-print-engine.js"></script>
 <script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
-
-    // Register blank-print manifest
-    ED_BLANK_PRINT.register([
-        { id: 'p-hn', value: '....................' },
-        { id: 'p-weight', value: '....................' },
-        { id: 'p-indication', value: '....................' },
-        { id: 'p-abs-status', html: '....................' },
-        { id: 'p-rel-status', html: '....................' },
-        { id: 'p-prior-sk-status', html: '....................' },
-        { id: 'print-btn', style: { display: 'inline-block' } },
-        { id: 'screen-warning-note', style: { display: 'none' } },
-        { id: 'p-box-sk-a', className: 'fib-order-box' },
-        { id: 'p-box-sk-b', className: 'fib-order-box' },
-        { id: 'p-box-rtpa-a', className: 'fib-order-box' },
-        { id: 'p-box-rtpa-b', className: 'fib-order-box' },
-        { id: 'p-sk-expiry', value: '....................' },
-        { id: 'p-rtpa-b-dose', value: '....................' },
-        { id: 'p-dt-1', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
-        { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
-    ]);
 
     // Dynamic class card selections
     const regimenCards = document.querySelectorAll('.pe-regimen-card');
@@ -408,23 +387,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('print-blank-btn').addEventListener('click', () => {
-        ED_COMPONENTS.injectPrintHeader('print-header-container');
-        ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-        ED_COMPONENTS.updateGeneratedTime('p-generated', null);
-        ED_BLANK_PRINT.apply();
-        // Manual reset for regimen checkbox text (not handled declaratively)
-        $('p-box-sk-a').querySelector('strong').previousSibling.textContent = '☐ ';
-        $('p-box-sk-b').querySelector('strong').previousSibling.textContent = '☐ ';
-        $('p-box-rtpa-a').querySelector('strong').previousSibling.textContent = '☐ ';
-        $('p-box-rtpa-b').querySelector('strong').previousSibling.textContent = '☐ ';
-        ED_PRINT_BOOTSTRAP.showResults();
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        ED_PRINT_BOOTSTRAP.openBlankPdf('../docs/STEMI-PE/PE-Massive-merged.pdf');
     });
 
-    // Auto-run print-blank-direct from home page portal
-    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
+    // Auto-run print-blank-direct from home page portal (redirect to PDF)
+    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirectPdf('../docs/STEMI-PE/PE-Massive-merged.pdf')) return;
 
-    ED_COMPONENTS.injectNavBar();
+    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

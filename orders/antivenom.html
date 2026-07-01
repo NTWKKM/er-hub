@@ -77,6 +77,12 @@
                         <input type="text" id="horse-allergy-detail" placeholder="ระบุอาการแพ้" style="width:100%; margin-top:5px; font-size:13px; display:none;">
                     </div>
 
+                    <div style="margin-top:10px; padding:10px; background:#f8f9fa; border-radius:6px;">
+                        <strong style="font-size:13.5px; display:block; margin-bottom:6px;">ประวัติแพ้ยา Penicillin:</strong>
+                        <label style="cursor:pointer; font-size:13.5px;"><input type="radio" name="penicillin-allergy" value="no" checked> ไม่มีประวัติแพ้</label>
+                        <label style="cursor:pointer; font-size:13.5px; margin-left:15px;"><input type="radio" name="penicillin-allergy" value="yes"> มีประวัติแพ้ ⚠️</label>
+                    </div>
+
                     <div style="margin-top:12px;">
                         <label class="flag-label" style="font-weight: normal;">
                             <input type="checkbox" id="use-current-time" checked>
@@ -140,7 +146,7 @@
             </div>
 
             <button type="submit" class="btn btn-calculate">🧮 ตรวจสอบและสร้างใบสั่งเซรุ่ม</button>
-            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
+            <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (PDF)</button>
             <button type="button" id="clear-btn" class="btn btn-clear">🗑️ ล้างข้อมูล (Clear)</button>
         </form>
     </div>
@@ -247,28 +253,10 @@
 
 <script src="../shared/components.js"></script>
 <script src="../shared/print-bootstrap.js"></script>
-<script src="../shared/blank-print-engine.js"></script>
 <script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
-
-    // Register blank-print manifest
-    ED_BLANK_PRINT.register([
-        { id: 'p-hn', value: '....................' },
-        { id: 'p-tetanus', value: '............................................................' },
-        { id: 'p-horse-allergy', html: 'No' },
-        { id: 'p-snake-name', value: '........................................' },
-        { id: 'p-venom-type', value: '........................................' },
-        { id: 'p-antivenom-order-box', className: 'fib-order-box' },
-        { id: 'p-antivenom-order-box', html: '☐ <strong>เซรุ่มแก้พิษงู .................... ขนาดเริ่มต้น .................... ขวด ใน NSS 100 mL IV drip in ............ min</strong>' },
-        { id: 'p-obs-neuro', style: { display: 'none' } },
-        { id: 'p-augmentin', html: '☐ Augmentin 1.2 g IV q 8 hr OR Augmentin (1g) 1x2 po pc' },
-        { id: 'p-paracetamol', html: '☐ Paracetamol (500) 1-2 tab po prn q 4-6 hr' },
-        { id: 'p-cipro-clinda', html: '☐ Penicillin allergy alternative: Ciprofloxacin (500) 1x2 po pc + Clindamycin (300) 1x3 po pc' },
-        { id: 'p-dt-1', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
-        { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
-    ]);
 
     // Horse allergy text box toggle
     const allergyRadios = document.querySelectorAll('input[name="horse-allergy"]');
@@ -308,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tetanus = $('tetanus-select').value;
         const horseAllergy = document.querySelector('input[name="horse-allergy"]:checked').value === 'yes';
         const allergyDetail = $('horse-allergy-detail').value.trim();
+        const penicillinAllergy = document.querySelector('input[name="penicillin-allergy"]:checked').value === 'yes';
         const snakeType = document.querySelector('input[name="snake-type"]:checked').value;
 
         // Perform Indication Checklist verification
@@ -398,6 +387,15 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-antivenom-order-box').innerHTML = `☑ <strong>${antivenomText}</strong>`;
         $('p-obs-neuro').style.display = snakeType === 'neurotoxin' ? 'list-item' : 'none';
 
+        // Antibiotic toggle based on penicillin allergy (F3 fix — ADR-17)
+        if (penicillinAllergy) {
+            $('p-augmentin').innerHTML = '☐ Augmentin 1.2 g IV q 8 hr OR Augmentin (1g) 1x2 po pc <small style="color:#999;">— ไม่ได้เลือก (Penicillin allergy)</small>';
+            $('p-cipro-clinda').innerHTML = '☑ <strong>Penicillin allergy alternative: Ciprofloxacin (500) 1x2 po pc + Clindamycin (300) 1x3 po pc</strong>';
+        } else {
+            $('p-augmentin').innerHTML = '☑ <strong>Augmentin 1.2 g IV q 8 hr OR Augmentin (1g) 1x2 po pc</strong>';
+            $('p-cipro-clinda').innerHTML = '☐ Penicillin allergy alternative: Ciprofloxacin (500) 1x2 po pc + Clindamycin (300) 1x3 po pc <small style="color:#999;">— ไม่ได้เลือก</small>';
+        }
+
         const now = new Date();
         const useTime = $('use-current-time').checked;
         const dateStr = useTime ? ED_COMPONENTS.fmtDate(now) : '....................';
@@ -421,17 +419,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('print-blank-btn').addEventListener('click', () => {
-        ED_COMPONENTS.injectPrintHeader('print-header-container');
-        ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-        ED_COMPONENTS.updateGeneratedTime('p-generated', null);
-        ED_BLANK_PRINT.apply();
-        ED_PRINT_BOOTSTRAP.showResults();
+        ED_PRINT_BOOTSTRAP.openBlankPdf('../docs/Toxico/Standing order for Antivenom update.pdf');
     });
 
-    // Auto-run print-blank-direct from home page portal
-    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
+    // Auto-run print-blank-direct from home page portal (redirect to PDF)
+    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirectPdf('../docs/Toxico/Standing order for Antivenom update.pdf')) return;
 
-    ED_COMPONENTS.injectNavBar();
+    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

@@ -1,6 +1,6 @@
 // service-worker.js — Offline PWA cache for ER Standing Order Hub
 // Caches all static assets for offline access (ED wifi outages during stroke workup)
-const CACHE_VERSION = 'er-hub-v1';
+const CACHE_VERSION = 'er-hub-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -19,6 +19,15 @@ const ASSETS = [
   './shared/calc-engine.js',
   './shared/anticoag-engine.js',
   './shared/drug-data.js',
+  './shared/print-bootstrap.js',
+  './shared/blank-print-engine.js',
+  './shared/form-validate.js',
+  './docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
+  './docs/STEMI-PE/STEMI new 26-4doc.pdf',
+  './docs/STEMI-PE/PE-Massive-merged.pdf',
+  './docs/High alert drug ER/Heparin.pdf',
+  './docs/Toxico/Standing order for Antivenom update.pdf',
+  './docs/order Sedation-Fen-dormicum/fen.pdf',
   'https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap'
 ];
 
