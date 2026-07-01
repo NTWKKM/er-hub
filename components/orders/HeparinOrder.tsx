@@ -90,7 +90,8 @@ export default function HeparinOrder() {
   };
 
   const handlePrintBlank = () => {
-    window.open('/docs/HAD/Heparin.pdf', '_blank');
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+    window.open(`${basePath}/docs/HAD/Heparin.pdf`, '_blank');
   };
 
   const handleReset = () => {
@@ -164,9 +165,9 @@ export default function HeparinOrder() {
               />
 
               <div style={{ marginTop: '14px', padding: '10px', background: '#f8f9fa', borderRadius: '6px' }}>
-                <strong style={{ fontSize: '13.5px', display: 'block', marginBottom: '6px' }}>
+                <label htmlFor="protocol-select" style={{ fontSize: '13.5px', display: 'block', marginBottom: '6px', fontWeight: 'bold' }}>
                   เลือกข้อบ่งชี้ (Indication):
-                </strong>
+                </label>
                 <select
                   id="protocol-select"
                   value={protocol}
@@ -182,9 +183,9 @@ export default function HeparinOrder() {
               </div>
 
               <div style={{ marginTop: '10px', padding: '10px', background: '#f8f9fa', borderRadius: '6px' }}>
-                <strong style={{ fontSize: '13.5px', display: 'block', marginBottom: '6px' }}>
+                <label htmlFor="concentration-select" style={{ fontSize: '13.5px', display: 'block', marginBottom: '6px', fontWeight: 'bold' }}>
                   ความเข้มข้นของการเจือจาง:
-                </strong>
+                </label>
                 <select
                   id="concentration-select"
                   value={concentration}
@@ -242,10 +243,10 @@ export default function HeparinOrder() {
           )}
 
           <button type="button" onClick={calculateDose} className="btn btn-calculate">
-            🧮 ตรวจสอบและสร้างใบสั่งยาเริ่มต้น
+            ตรวจสอบและสร้างใบสั่งยาเริ่มต้น
           </button>
           <button type="button" id="print-blank-btn" className="btn btn-print" onClick={handlePrintBlank}>
-            🖨️ ใบสั่งยาเปล่า (PDF)
+            ใบสั่งยาเปล่า (PDF)
           </button>
           <button type="button" id="clear-btn" className="btn btn-clear" onClick={handleReset}>
             ล้างข้อมูล (Clear)
@@ -292,7 +293,7 @@ export default function HeparinOrder() {
               onClick={handleTitrate}
               style={{ background: '#e67e22', width: 'auto', marginTop: '0', padding: '9px 18px' }}
             >
-              🔄 คำนวณการปรับยา
+              คำนวณการปรับยา
             </button>
           </div>
 
@@ -475,7 +476,7 @@ export default function HeparinOrder() {
           </div>
 
           <button id="print-btn" className="btn btn-print" onClick={handlePrint}>
-            🖨️ พิมพ์ Order (Print Order)
+            พิมพ์ Order (Print Order)
           </button>
         </div>
       )}

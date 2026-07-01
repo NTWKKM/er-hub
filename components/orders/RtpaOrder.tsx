@@ -42,6 +42,8 @@ export default function RtpaOrder() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setShowResults(false);
+    setSubmittedOrder(null);
 
     if (!hn.trim()) {
       validation.fail('hn', 'กรุณากรอก HN');
@@ -182,7 +184,7 @@ export default function RtpaOrder() {
             className="btn btn-print"
             onClick={handlePrintBlank}
           >
-            🖨️ ใบสั่งยาเปล่า (Blank Order)
+            ใบสั่งยาเปล่า (Blank Order)
           </button>
           <button
             type="button"
@@ -315,7 +317,7 @@ export default function RtpaOrder() {
           </div>
 
           <button id="print-btn" className="btn btn-print" onClick={handlePrint}>
-            🖨️ พิมพ์ใบสั่งยา (Print Order)
+            พิมพ์ใบสั่งยา (Print Order)
           </button>
         </div>
       )}

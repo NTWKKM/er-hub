@@ -24,6 +24,8 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
   const handleCalculate = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     validation.clearAll();
+    setCalculated(false);
+    setAnticoagResult(null);
 
     const egfrText = egfr.trim();
     const egfrNum = Number(egfrText);
@@ -143,13 +145,13 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
 
         <div style={{ marginTop: '20px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <button type="submit" className="btn btn-calculate">
-            🧮 คำนวณและสร้างใบสั่งยา
+            คำนวณและสร้างใบสั่งยา
           </button>
           <button type="button" className="btn btn-print" onClick={handlePrintBlank}>
-            🖨️ ใบสั่งยาเปล่า (Blank Order)
+            ใบสั่งยาเปล่า (Blank Order)
           </button>
           <button type="button" className="btn btn-clear" onClick={handleClear}>
-            🗑️ ล้างข้อมูล (Clear)
+            ล้างข้อมูล (Clear)
           </button>
         </div>
       </form>
@@ -266,7 +268,7 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
 
           <div style={{ marginTop: '20px' }}>
             <button type="button" className="btn btn-print" onClick={handlePrintOrder}>
-              🖨️ พิมพ์ Order
+              พิมพ์ Order
             </button>
           </div>
         </div>

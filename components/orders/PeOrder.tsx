@@ -188,11 +188,12 @@ export default function PeOrder() {
               />
             </div>
 
-            <div style={{ marginTop: '14px', padding: '10px', background: '#f8f9fa', borderRadius: '6px' }}>
-              <strong style={{ fontSize: '14.5px' }}>ข้อบ่งใช้ทางคลินิก (Indication):</strong>
-              <label className="flag-label" style={{ marginTop: '6px', display: 'block' }}>
+            <fieldset style={{ marginTop: '14px', padding: '10px', background: '#f8f9fa', borderRadius: '6px', border: 'none' }}>
+              <legend style={{ fontSize: '14.5px', fontWeight: 'bold', padding: 0 }}>ข้อบ่งใช้ทางคลินิก (Indication):</legend>
+              <label className="flag-label" style={{ marginTop: '6px', display: 'block' }} htmlFor="pe-risk-high">
                 <input
                   type="radio"
+                  id="pe-risk-high"
                   name="pe-risk"
                   value="high"
                   checked={riskType === 'high'}
@@ -200,9 +201,10 @@ export default function PeOrder() {
                 />{' '}
                 High-risk PE (Hemodynamic instability)
               </label>
-              <label className="flag-label" style={{ display: 'block' }}>
+              <label className="flag-label" style={{ display: 'block' }} htmlFor="pe-risk-intermediate">
                 <input
                   type="radio"
+                  id="pe-risk-intermediate"
                   name="pe-risk"
                   value="intermediate-high"
                   checked={riskType === 'intermediate-high'}
@@ -210,7 +212,7 @@ export default function PeOrder() {
                 />{' '}
                 Intermediate-to-high risk PE (RV dysfunction + Troponin positive)
               </label>
-            </div>
+            </fieldset>
           </div>
 
           {/* Column 2: Contraindications Check */}
@@ -361,13 +363,13 @@ export default function PeOrder() {
 
         <div style={{ marginTop: '20px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <button type="submit" className="btn btn-calculate">
-            🧮 ตรวจสอบและสร้างใบสั่งยา
+            ตรวจสอบและสร้างใบสั่งยา
           </button>
           <button type="button" className="btn btn-print" onClick={handlePrintBlank}>
-            🖨️ ใบสั่งยาเปล่า (PDF)
+            ใบสั่งยาเปล่า (PDF)
           </button>
           <button type="button" className="btn btn-clear" onClick={handleClear}>
-            🗑️ ล้างข้อมูล (Clear)
+            ล้างข้อมูล (Clear)
           </button>
         </div>
       </form>
@@ -517,7 +519,7 @@ export default function PeOrder() {
               disabled={isBlocked}
               style={{ opacity: isBlocked ? 0.5 : 1, cursor: isBlocked ? 'not-allowed' : 'pointer' }}
             >
-              🖨️ พิมพ์ Order (PDF)
+              พิมพ์ Order (PDF)
             </button>
           </div>
         </div>

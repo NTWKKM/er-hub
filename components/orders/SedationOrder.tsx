@@ -171,13 +171,13 @@ export default function SedationOrder() {
 
         <div style={{ marginTop: '20px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <button type="submit" className="btn btn-calculate">
-            🧮 คำนวณขนาดยาและสร้างใบสั่งยา
+            คำนวณขนาดยาและสร้างใบสั่งยา
           </button>
           <button type="button" className="btn btn-print" onClick={handlePrintBlank}>
-            🖨️ ใบสั่งยาเปล่า (PDF)
+            ใบสั่งยาเปล่า (PDF)
           </button>
           <button type="button" className="btn btn-clear" onClick={handleClear}>
-            🗑️ ล้างข้อมูล (Clear)
+            ล้างข้อมูล (Clear)
           </button>
         </div>
       </form>
@@ -317,7 +317,7 @@ export default function SedationOrder() {
               className="btn btn-print"
               onClick={handlePrintOrder}
             >
-              🖨️ พิมพ์ Order (PDF)
+              พิมพ์ Order (PDF)
             </button>
           </div>
         </div>

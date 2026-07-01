@@ -6,7 +6,7 @@
 
 **MNRH-ED Standing Order Hub** — clinical standing order reference for emergency department. 8 order pages + IV drip calculator. Realtime dose calculation from patient weight/age/eGFR.
 
-**Domain:** Clinical — zero PHI. Medical English in UI/logs/comments. Patient identifiers are HN only.
+**Domain:** Clinical — no PHI stored or transmitted. Medical English in UI/logs/comments. HN (hospital number) is the only patient identifier used in the UI and should be treated as sensitive patient-identifying data — never log HN to console, error trackers, or external services.
 
 ## Tech Stack
 

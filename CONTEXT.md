@@ -46,7 +46,7 @@ ADRs 01–17 document decisions made during the original vanilla HTML/CSS/JS imp
 - **ADR-09: No Emoji in UI** — Partially relaxed in Next.js rewrite. Emoji removed from nav and buttons per user preference (minimal UI), but clinical warning indicators (⚠️) retained for safety.
 - **ADR-10: Blank Print Manifest** — Replaced by React state-based reset (useFormValidation.clearAll + component state reset). No more DOM-manipulation reset rules.
 - **ADR-16: Non-blocking Validation** — Carried forward as `useFormValidation` hook. Zero `alert()` calls. Now includes `registerRef()` API for focus-on-error.
-- **ADR-17: PDF Pathway** — Evolved. 4 pages open source PDFs (stemi, heparin, antivenom), 3 pages use `window.print()` on generated order markup (rtpa, pe, sedation), 2 pages use `window.print()` on blank template (rtpa, nstemi).
+- **ADR-17: PDF Pathway** — Evolved. 3 pages open source PDFs (stemi, heparin, antivenom), 3 pages use `window.print()` on generated order markup (rtpa, pe, sedation), 2 pages use `window.print()` on blank template (rtpa, nstemi).
 
 ### ADR-18: Next.js Rewrite (2026-07-01)
 
@@ -107,3 +107,17 @@ ADRs 01–17 document decisions made during the original vanilla HTML/CSS/JS imp
   - **Tests:** 157 → 159 tests. Rewrote DripCalculator reset test (proper non-default state → drug switch → verify reset). Added NstemiOrder age >75 clopidogrel regression test. Added AntivenomOrder krait auto-toggle regression test.
 - **Skipped (#15 hasBolus fail-open):** The `hasBolus !== false` gate is technically fail-open, but all 12 weight-based drugs benefit from showing bolus volume (which is the current dose × weight ÷ concentration, not a separate bolus dose). Making it opt-in would require adding `hasBolus: true` to every weight-based drug — noise without behavior change. No drug is mislabeled.
 - **Rationale:** Clinical safety fixes prevent incorrect dosing (clopidogrel, eGFR, heparin). Submitted snapshot prevents silent order changes after validation. registerRef wiring enables focus-on-error accessibility.
+
+### ADR-21: PR#1 Review Round 2 Residual Fixes (2026-07-01)
+
+- **Context:** CodeRabbitAI round 2 review had 11 findings. 8 were already fixed in commit `9c83c96` (ADR-20). 3 remained valid for this commit: stale state on validation fail (NstemiOrder, RtpaOrder), HeparinOrder accessibility + base-path + emoji, PeOrder accessibility + emoji, AGENTS.md PHI wording, CONTEXT.md PDF count.
+- **Decision:** Fix all 8 remaining valid findings. Skip 2 (test already exists, RtpaOrder blank-print mode out of scope). 1 invalid (RtpaOrder blank-print reprints completed results — design decision, same pattern as all order pages).
+- **Key changes:**
+  - **AGENTS.md:** "zero PHI" → "no PHI stored or transmitted" with explicit HN sensitivity guidance.
+  - **NstemiOrder:** `handleCalculate` now clears `calculated`/`anticoagResult` before validation to prevent stale recommendations. Decorative emoji removed from all buttons.
+  - **RtpaOrder:** `handleSubmit` now clears `showResults`/`submittedOrder` before validation to prevent stale order snapshot. Decorative emoji removed from all buttons.
+  - **HeparinOrder:** `<strong>` → `<label htmlFor>` for protocol-select and concentration-select (accessibility). Decorative emoji removed from all buttons (🧮🖨️🔄). `handlePrintBlank` PDF URL now uses `NEXT_PUBLIC_BASE_PATH` prefix.
+  - **PeOrder:** Indication radio group wrapped in `<fieldset>/<legend>` with explicit `htmlFor/id` pairs. Decorative emoji removed from all buttons (🧮🖨️🗑️).
+  - **SedationOrder + StemiOrder:** Decorative emoji removed from all buttons for full AGENTS.md §11 compliance across all order pages.
+  - **CONTEXT.md:** ADR-17 PDF count corrected from "4 pages" to "3 pages" (stemi, heparin, antivenom).
+- **Rationale:** Stale state after validation failure could mislead clinicians with outdated dose recommendations. Accessibility fixes ensure screen reader compatibility. Base-path fix prevents 404 on GitHub Pages deployment. Full emoji cleanup ensures consistent minimal clinical UI across all order pages.

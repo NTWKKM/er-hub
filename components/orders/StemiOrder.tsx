@@ -222,13 +222,13 @@ export default function StemiOrder() {
 
         <div style={{ marginTop: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button type="submit" className="btn btn-calculate">
-            🧮 คำนวณขนาดยาและสร้างใบสั่งยา
+            คำนวณขนาดยาและสร้างใบสั่งยา
           </button>
           <button type="button" onClick={handlePrintPDF} className="btn btn-print">
-            🖨️ พิมพ์ Order (PDF)
+            พิมพ์ Order (PDF)
           </button>
           <button type="button" onClick={handleClear} className="btn btn-clear">
-            🗑️ ล้างข้อมูล
+            ล้างข้อมูล
           </button>
         </div>
       </form>

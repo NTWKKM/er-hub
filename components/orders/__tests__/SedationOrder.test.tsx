@@ -56,7 +56,7 @@ describe('SedationOrder', () => {
     render(<SedationOrder />);
     
     // Click calculate button
-    const calcButton = screen.getByText('🧮 คำนวณขนาดยาและสร้างใบสั่งยา');
+    const calcButton = screen.getByText('คำนวณขนาดยาและสร้างใบสั่งยา');
     fireEvent.click(calcButton);
 
     // Should show results
@@ -69,7 +69,7 @@ describe('SedationOrder', () => {
     
     // Default: weight=70, fenDose=1.0, concentration=5
     // fenRate = (1.0 * 70) / 5 = 14.0 mL/hr
-    const calcButton = screen.getByText('🧮 คำนวณขนาดยาและสร้างใบสั่งยา');
+    const calcButton = screen.getByText('คำนวณขนาดยาและสร้างใบสั่งยา');
     fireEvent.click(calcButton);
 
     // The value appears in multiple places, use query that finds at least one
@@ -81,7 +81,7 @@ describe('SedationOrder', () => {
     
     // Default: weight=70, midDose=0.05, concentration=1
     // midRate = (0.05 * 70) / 1 = 3.5 mL/hr
-    const calcButton = screen.getByText('🧮 คำนวณขนาดยาและสร้างใบสั่งยา');
+    const calcButton = screen.getByText('คำนวณขนาดยาและสร้างใบสั่งยา');
     fireEvent.click(calcButton);
 
     expect(screen.getAllByText('3.5 mL/hr').length).toBeGreaterThan(0);
@@ -90,7 +90,7 @@ describe('SedationOrder', () => {
   it('shows Fentanyl ceiling warning (Max: 500 mcg/hr)', () => {
     render(<SedationOrder />);
     
-    const calcButton = screen.getByText('🧮 คำนวณขนาดยาและสร้างใบสั่งยา');
+    const calcButton = screen.getByText('คำนวณขนาดยาและสร้างใบสั่งยา');
     fireEvent.click(calcButton);
 
     expect(screen.getByText('Max: 500 mcg/hr')).toBeInTheDocument();
@@ -108,7 +108,7 @@ describe('SedationOrder', () => {
     const fenSlider = screen.getAllByRole('slider')[1];
     fireEvent.change(fenSlider, { target: { value: '6' } });
 
-    const calcButton = screen.getByText('🧮 คำนวณขนาดยาและสร้างใบสั่งยา');
+    const calcButton = screen.getByText('คำนวณขนาดยาและสร้างใบสั่งยา');
     fireEvent.click(calcButton);
 
     expect(screen.getByText(/Safety Warning: Fentanyl total dose.*exceeds maximum/)).toBeInTheDocument();
@@ -122,11 +122,11 @@ describe('SedationOrder', () => {
     fireEvent.change(hnInput, { target: { value: '12345' } });
 
     // Click calculate first
-    const calcButton = screen.getByText('🧮 คำนวณขนาดยาและสร้างใบสั่งยา');
+    const calcButton = screen.getByText('คำนวณขนาดยาและสร้างใบสั่งยา');
     fireEvent.click(calcButton);
 
     // Click clear
-    const clearButton = screen.getByText('🗑️ ล้างข้อมูล (Clear)');
+    const clearButton = screen.getByText('ล้างข้อมูล (Clear)');
     fireEvent.click(clearButton);
 
     // HN should be cleared
@@ -135,13 +135,13 @@ describe('SedationOrder', () => {
 
   it('has print blank PDF button', () => {
     render(<SedationOrder />);
-    expect(screen.getByText('🖨️ ใบสั่งยาเปล่า (PDF)')).toBeInTheDocument();
+    expect(screen.getByText('ใบสั่งยาเปล่า (PDF)')).toBeInTheDocument();
   });
 
   it('shows sedation plan after calculation', () => {
     render(<SedationOrder />);
     
-    const calcButton = screen.getByText('🧮 คำนวณขนาดยาและสร้างใบสั่งยา');
+    const calcButton = screen.getByText('คำนวณขนาดยาและสร้างใบสั่งยา');
     fireEvent.click(calcButton);
 
     expect(screen.getByText('Sedation Plan:')).toBeInTheDocument();
@@ -152,7 +152,7 @@ describe('SedationOrder', () => {
   it('shows Continuous Drip section after calculation', () => {
     render(<SedationOrder />);
     
-    const calcButton = screen.getByText('🧮 คำนวณขนาดยาและสร้างใบสั่งยา');
+    const calcButton = screen.getByText('คำนวณขนาดยาและสร้างใบสั่งยา');
     fireEvent.click(calcButton);
 
     expect(screen.getByText('Continuous Drip:')).toBeInTheDocument();
@@ -163,7 +163,7 @@ describe('SedationOrder', () => {
   it('shows safety monitoring section after calculation', () => {
     render(<SedationOrder />);
     
-    const calcButton = screen.getByText('🧮 คำนวณขนาดยาและสร้างใบสั่งยา');
+    const calcButton = screen.getByText('คำนวณขนาดยาและสร้างใบสั่งยา');
     fireEvent.click(calcButton);
 
     expect(screen.getByText('Safety Monitoring:')).toBeInTheDocument();
