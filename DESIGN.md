@@ -27,6 +27,7 @@
 ### Breakpoints & Layout
 - **Container Max-Width:** `1100px` (order pages), `1200px` (portal)
 - **Form Grid Gaps:** `20px` (STEMI/NSTEMI), `30px` (Stroke)
+- **NSTEMI 2-Row Input Layout:** Patient Info (`.patient-section`) is a full-width top row with fields wrapping horizontally (`.patient-fields` flex-wrap, `flex: 1 1 300px` per field; ASA block `1 1 300px`; H0 block `1 1 100%`). Below it, a 3-column `.input-layout` row holds: (1) GRACE Score Variables, (2) Killip Class, (3) Risk Stratification. Killip Class is its own column (separated from GRACE, ADR-18).
 - **Responsive Breakpoints:**
   - `≤900px`: Columns stack vertically, inline-input labels go full-width
   - `≤899px` (tablet): Inline inputs stack vertically, buttons 44px min-height

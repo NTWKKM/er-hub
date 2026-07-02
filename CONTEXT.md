@@ -27,6 +27,11 @@
 
 ## 3. Architectural Decision Records (ADRs)
 
+### ADR-18: NSTEMI Input Layout — 2-Row Reflow
+- **Context:** The NSTEMI page (`orders/nstemi.html`) laid out its data-input section as a single 3-column flex row: (1) Patient Info, (2) GRACE Score Variables + Killip Class stacked together, (3) Risk Stratification. The Patient Info column was cramped and the GRACE column was overloaded (score variables + binary flags + a 4-option vertical Killip radio group all stacked).
+- **Decision:** Reflowed to 2 rows. Row 1 (`.patient-section`, full width): Patient Info with fields wrapping horizontally via `.patient-fields` (`flex: 1 1 300px` per field, ASA block `1 1 300px`, H0 block `1 1 100%`). Row 2 (`.input-layout`, 3 columns): (1) GRACE Score Variables (HR/SBP/Creatinine + binary flags), (2) Killip Class (promoted to its own column — was previously stacked under GRACE), (3) Risk Stratification. All new CSS is page-local in nstemi.html's `<style>` block — shared `base.css` untouched to avoid affecting the other 7 order pages. `.input-layout` and `.input-column` classes reused as-is.
+- **Rationale:** Patient Info as a full-width top row uses horizontal space efficiently (4 numeric fields + ASA + H0 wrap instead of stacking in a narrow column). Separating Killip Class into its own column balances the three-column row — GRACE variables no longer share a column with a tall radio group. Layout-only change: no clinical logic, GRACE calculation, element IDs, or print geometry touched. All 124 tests pass. Verified via browser rendering.
+
 ### ADR-01: Hub-and-Spoke Migration with Vanilla Stack
 - **Context:** Individual standing orders (`stroke`, `stemi`, `nstemi`) suffer from duplicate CSS classes and calculation loops.
 - **Decision:** Keep the Vanilla HTML/CSS/JS stack (no compile/bundler steps) to preserve offline access and GitHub Pages compatibility. Migrate duplicate logic into a `shared/` folder structure.

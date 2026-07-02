@@ -124,6 +124,18 @@
         .pts-pos  { color: #c0392b; text-align: right; }
         .pts-zero { color: #bbb;    text-align: right; }
 
+        /* ===== 2-row input layout ===== */
+        .patient-section { margin-bottom: 20px; }
+        .patient-fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 24px;
+            align-items: flex-start;
+        }
+        .patient-fields .inline-input-group { flex: 1 1 300px; margin-bottom: 11px; }
+        .patient-fields .asa-block { flex: 1 1 300px; }
+        .patient-fields .h0-block  { flex: 1 1 100%; }
+
         @media (max-width: 900px) {
             .grace-summary { flex-direction: column; }
         }
@@ -149,12 +161,10 @@
         </div>
 
         <form id="nstemi-form">
-            <div class="input-layout">
-
-                <!-- COLUMN 1 : Patient Info -->
-                <div class="input-column">
-                    <h3>1. ข้อมูลผู้ป่วย</h3>
-
+            <!-- ROW 1 : Patient Info (full width) -->
+            <div class="patient-section">
+                <h3>1. ข้อมูลผู้ป่วย</h3>
+                <div class="patient-fields">
                     <div class="inline-input-group">
                         <label for="hn">HN:</label>
                         <input type="text" id="hn" placeholder="กรอก HN">
@@ -175,7 +185,7 @@
                                required placeholder="เช่น 75">
                     </div>
 
-                    <div style="margin-bottom:14px;">
+                    <div class="asa-block" style="margin-bottom:14px;">
                         <strong style="font-size:14px;">ASA Allergy:</strong>
                         <label style="margin-left:10px;cursor:pointer;font-size:14px;">
                             <input type="radio" name="asa-allergy" value="no" checked> ไม่มี
@@ -185,23 +195,27 @@
                         </label>
                     </div>
 
-                    <div style="padding:10px;background:#f8f9fa;border-radius:6px;font-size:14px;">
+                    <div class="h0-block" style="padding:10px;background:#f8f9fa;border-radius:6px;font-size:14px;">
                         <strong>⏱️ เวลาแรกรับ (H0):</strong>
-                        <div style="margin-top:6px;">
+                        <div style="margin-top:6px;display:flex;gap:24px;flex-wrap:wrap;">
                             <label class="flag-label">
                                 <input type="checkbox" id="use-current-time" checked>
                                 ใช้เวลาปัจจุบันอัตโนมัติ
                             </label>
                             <label class="flag-label">
                                 <input type="checkbox" id="troponin-from-rphch">
-                                เจาะ Troponin จาก รพช. แล้ว<br>
+                                เจาะ Troponin จาก รพช. แล้ว
                                 <small style="color:#888;">(ไม่ต้องเจาะซ้ำ)</small>
                             </label>
                         </div>
                     </div>
                 </div>
+            </div><!-- end .patient-section -->
 
-                <!-- COLUMN 2 : GRACE Variables -->
+            <!-- ROW 2 : 3 columns -->
+            <div class="input-layout">
+
+                <!-- COLUMN 1 : GRACE Variables -->
                 <div class="input-column">
                     <h3>2. GRACE Score Variables</h3>
 
@@ -235,9 +249,12 @@
                             <span>🧪 Elevated cardiac markers <strong>(+14)</strong></span>
                         </label>
                     </div>
+                </div>
 
+                <!-- COLUMN 2 : Killip Class -->
+                <div class="input-column">
+                    <h3>Killip Class:</h3>
                     <div>
-                        <strong style="font-size:14px;">Killip Class:</strong>
                         <div class="killip-group-vertical">
                             <label>
                                 <input type="radio" name="killip" value="1" checked>
