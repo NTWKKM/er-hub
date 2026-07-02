@@ -7,7 +7,7 @@
 | **rt-PA (Alteplase)** | Recombinant tissue plasminogen activator. High-alert thrombolytic drug used for stroke and pulmonary embolism. Dosing: 10% bolus (truncated to 1 decimal, floor) + remainder as infusion over 60 min. Reference: AHA/ASA 2026 Guideline. |
 | **Tenecteplase (TNK)** | Third-generation thrombolytic agent. Weight-dose bracketed; requires 50% dose reduction if age ≥ 75 in STEMI. Weight bracket index stored for table highlighting. |
 | **Streptokinase (SK)** | Thrombolytic agent with absolute repeat contraindication within 6 months due to neutralizing antibody risk. |
-| **GRACE Score** | Global Registry of Acute Coronary Events risk score, used to stratify NSTEMI patients into Very High, High, and Muted risk. |
+| **GRACE Score** | Global Registry of Acute Coronary Events risk score, used to stratify NSTEMI patients into High, Intermediate, and Low risk. |
 | **aPTT Ratio** | Activated partial thromboplastin time ratio, used for titration of intravenous Heparin drip. |
 | **Hematotoxin** | Snake venom causing systemic bleeding and coagulopathy (e.g., Green Pit Viper, Russell's Viper, Malayan Pit Viper). |
 | **Neurotoxin** | Snake venom causing respiratory muscle paralysis (e.g., Cobra, King Cobra, Krait). Krait species auto-check indication; non-krait explicitly unchecks. |
@@ -114,8 +114,8 @@ ADRs 01–17 document decisions made during the original vanilla HTML/CSS/JS imp
 
 ### ADR-21: PR#1 Review Round 2 Residual Fixes (2026-07-01)
 
-- **Context:** CodeRabbitAI round 2 review had 14 findings. 8 were already fixed in commit `9c83c96` (ADR-20). Of the remaining 6: 3 valid (stale state on validation fail, HeparinOrder accessibility + base-path + emoji, PeOrder accessibility + emoji), 2 skipped (test already exists, RtpaOrder blank-print mode out of scope), 1 invalid (RtpaOrder blank-print reprints completed results — design decision). Additional items addressed: AGENTS.md PHI wording, CONTEXT.md PDF count.
-- **Decision:** Fix all 3 valid findings. Skip 2. 1 invalid (design decision, same pattern as all order pages).
+- **Context:** CodeRabbitAI round 2 review had 14 findings. 8 were already fixed in commit `9c83c96` (ADR-20). Of the remaining 6: 3 valid (stale state on validation fail, HeparinOrder accessibility + base-path + emoji, PeOrder accessibility + emoji), 2 skipped (test already exists, RtpaOrder blank-print mode out of scope), 1 already resolved (RtpaOrder blank-print — ADR-20 had already changed `handlePrintBlank` to clear results before printing, so the reviewer's concern was stale). Additional items addressed: AGENTS.md PHI wording, CONTEXT.md PDF count.
+- **Decision:** Fix all 3 valid findings. Skip 2. 1 already resolved by ADR-20.
 - **Key changes:**
   - **AGENTS.md:** "zero PHI" → "no PHI stored or transmitted" with explicit HN sensitivity guidance.
   - **NstemiOrder:** `handleCalculate` now clears `calculated`/`anticoagResult` before validation to prevent stale recommendations. Decorative emoji removed from all buttons.

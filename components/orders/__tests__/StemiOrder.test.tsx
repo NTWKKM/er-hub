@@ -1,8 +1,13 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import StemiOrder from '../StemiOrder';
 
 describe('StemiOrder', () => {
+  beforeEach(() => {
+    // Mock window.print for print-order tests
+    vi.spyOn(window, 'print').mockImplementation(() => { });
+  });
+
   it('renders STEMI form header', () => {
     render(<StemiOrder />);
     expect(screen.getByText(/STEMI Standing Order Generator/i)).toBeInTheDocument();
@@ -61,8 +66,18 @@ describe('StemiOrder', () => {
     expect(screen.queryByText(/ตรวจสอบและพิมพ์ใบสั่งยา/i)).not.toBeInTheDocument();
   });
 
-  it('has print PDF button', () => {
+  it('has blank print button (PDF reference)', () => {
     render(<StemiOrder />);
-    expect(screen.getByRole('button', { name: /พิมพ์ Order/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /ใบสั่งยาเปล่า/i })).toBeInTheDocument();
+  });
+
+  it('calls window.print when print order button is clicked after calculation', () => {
+    render(<StemiOrder />);
+    const submitBtn = screen.getByRole('button', { name: /คำนวณขนาดยา/i });
+    fireEvent.click(submitBtn);
+    // After calculation, the print order button appears
+    const printBtn = screen.getByRole('button', { name: /พิมพ์ใบสั่งยา/i });
+    fireEvent.click(printBtn);
+    expect(window.print).toHaveBeenCalledTimes(1);
   });
 });

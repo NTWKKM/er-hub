@@ -92,8 +92,12 @@ export default function StemiOrder() {
     setCalculatedDose(null);
   }, [validation]);
 
-  const handlePrintPDF = useCallback(() => {
+  const handlePrintBlank = useCallback(() => {
     window.open(resolveDocUrl('/docs/STEMI-PE/STEMI new 26-4doc.pdf'), '_blank');
+  }, []);
+
+  const handlePrintOrder = useCallback(() => {
+    window.print();
   }, []);
 
   return (
@@ -230,8 +234,8 @@ export default function StemiOrder() {
           <button type="submit" className="btn btn-calculate">
             คำนวณขนาดยาและสร้างใบสั่งยา
           </button>
-          <button type="button" onClick={handlePrintPDF} className="btn btn-print">
-            พิมพ์ Order (PDF)
+          <button type="button" onClick={handlePrintBlank} className="btn btn-print">
+            ใบสั่งยาเปล่า (PDF)
           </button>
           <button type="button" onClick={handleClear} className="btn btn-clear">
             ล้างข้อมูล
@@ -370,8 +374,13 @@ export default function StemiOrder() {
               </div>
             </div>
           </div>
+
+          <button type="button" className="btn btn-print" onClick={handlePrintOrder}>
+            พิมพ์ใบสั่งยา (Print Order)
+          </button>
         </div>
       )}
     </div>
   );
 }
+
