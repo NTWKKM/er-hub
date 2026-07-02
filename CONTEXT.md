@@ -46,7 +46,7 @@ ADRs 01–17 document decisions made during the original vanilla HTML/CSS/JS imp
 - **ADR-09: No Emoji in UI** — Partially relaxed in Next.js rewrite. Emoji removed from nav and buttons per user preference (minimal UI), but clinical warning indicators (⚠️) retained for safety.
 - **ADR-10: Blank Print Manifest** — Replaced by React state-based reset (useFormValidation.clearAll + component state reset). No more DOM-manipulation reset rules.
 - **ADR-16: Non-blocking Validation** — Carried forward as `useFormValidation` hook. Zero `alert()` calls. Now includes `registerRef()` API for focus-on-error.
-- **ADR-17: PDF Pathway** — Evolved. 3 pages open source PDFs (stemi, heparin, antivenom), 3 pages use `window.print()` on generated order markup (rtpa, pe, sedation), 2 pages use `window.print()` on blank template (rtpa, nstemi).
+- **ADR-17: PDF Pathway** — Evolved. 3 pages open source PDFs (stemi, heparin, antivenom), 4 pages use `window.print()` on generated order markup (stemi, rtpa, pe, sedation), 2 pages use `window.print()` on blank template (rtpa, nstemi).
 
 ### ADR-18: Next.js Rewrite (2026-07-01)
 
@@ -60,7 +60,7 @@ ADRs 01–17 document decisions made during the original vanilla HTML/CSS/JS imp
   - Single accent color (#5E6AD2 indigo — no category color borders)
   - Number + context dose display (value + unit + formula + ceiling)
   - Mixed slider types: continuous (weight 0.1 step), stepped (age 1 step), text input (HN, eGFR)
-  - Print pathways: PDF blank (stemi, heparin, antivenom) + generated order print (rtpa, pe, sedation) + HTML blank (rtpa, nstemi)
+  - Print pathways: PDF blank (stemi, heparin, antivenom) + generated order print (stemi, rtpa, pe, sedation) + HTML blank (rtpa, nstemi)
   - PWA removed (no service worker, no manifest)
   - Backward compatibility redirect removed (no legacy URL support)
   - Fresh vitest tests (not ported from node:test)
