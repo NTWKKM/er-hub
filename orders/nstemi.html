@@ -12,6 +12,38 @@
     <link rel="stylesheet" href="../shared/print.css">
     <style>
         /* Specific NSTEMI style additions */
+        .patient-fields {
+            display: flex;
+            gap: 12px;
+            flex-wrap: nowrap;
+            align-items: flex-end;
+        }
+        .patient-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1 1 0;
+            min-width: 0;
+        }
+        .patient-field label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            white-space: nowrap;
+        }
+        .patient-field input[type="text"],
+        .patient-field input[type="number"],
+        .patient-field select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .patient-field input {
+            max-width: 120px;
+        }
         .sub-section {
             font-weight: bold;
             font-size: 13px;
@@ -150,63 +182,78 @@
 
     <!-- ══════════════ FORM ══════════════ -->
     <div class="form-container">
-        <div class="header">
-            <h1>🫀 NSTEMI Standing Order Generator</h1>
-            <p style="margin:4px 0;color:#666;font-size:14px;">
-                Maharat Nakhon Ratchasima Hospital — Emergency Department
-            </p>
-            <small style="color:#aaa;">
-                Guideline: ESC 2023 NSTEMI Guidelines &nbsp;|&nbsp; Version 1.2.0
-            </small>
-        </div>
-
         <form id="nstemi-form">
-            <!-- ROW 1 : Patient Info (full width) -->
+            <!-- ROW 1 : Patient Info (single-line) -->
             <div class="patient-section">
                 <h3>1. ข้อมูลผู้ป่วย</h3>
                 <div class="patient-fields">
-                    <div class="inline-input-group">
+                    <div class="patient-field">
                         <label for="hn">HN:</label>
-                        <input type="text" id="hn" placeholder="กรอก HN">
+                        <input type="text" id="hn" placeholder="HN">
                     </div>
-                    <div class="inline-input-group">
+                    <div class="patient-field">
                         <label for="weight">น้ำหนัก (kg):</label>
                         <input type="number" id="weight" step="0.1" min="30" max="200"
-                               required placeholder="เช่น 65.0">
+                               required placeholder="65.0">
                     </div>
-                    <div class="inline-input-group">
+                    <div class="patient-field">
                         <label for="age">อายุ (ปี):</label>
                         <input type="number" id="age" min="18" max="120"
-                               required placeholder="เช่น 58">
+                               required placeholder="58">
                     </div>
-                    <div class="inline-input-group">
-                        <label for="egfr">eGFR (ml/min):</label>
-                        <input type="number" id="egfr" min="0" max="200"
-                               required placeholder="เช่น 75">
+                    <div class="patient-field">
+                        <label>Sex:</label>
+                        <label class="gender-radio"><input type="radio" name="sex" value="male"> ชาย</label>
+                        <label class="gender-radio"><input type="radio" name="sex" value="female"> หญิง</label>
                     </div>
-
-                    <div class="asa-block" style="margin-bottom:14px;">
-                        <strong style="font-size:14px;">ASA Allergy:</strong>
-                        <label style="margin-left:10px;cursor:pointer;font-size:14px;">
-                            <input type="radio" name="asa-allergy" value="no" checked> ไม่มี
+                    <div class="patient-field">
+                        <label for="creatinine">Cr (mg/dL):</label>
+                        <input type="number" id="creatinine" step="0.01" min="0.1" max="20"
+                               required placeholder="0.95">
+                    </div>
+                    <div class="patient-field asa-field">
+                        <label>ASA Allergy:</label>
+                        <label class="gender-radio"><input type="radio" name="asa-allergy" value="no" checked> ไม่มี</label>
+                        <label class="gender-radio"><input type="radio" name="asa-allergy" value="yes"> มี ⚠️</label>
+                    </div>
+                </div>
+                <div style="margin-top:10px;padding:10px;background:#f8f9fa;border-radius:6px;">
+                    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+                        <strong style="font-size:13px;">eGFR:</strong>
+                        <span id="screen-egfr" style="font-size:15px;font-weight:bold;color:#c0392b;">--</span>
+                        <small style="color:#999;">ml/min/1.73m² (CKD-EPI 2021)</small>
+                        <label class="flag-label" style="margin-left:auto;">
+                            <input type="checkbox" id="troponin-from-rphch">
+                            เจาะ Troponin จาก รพช. แล้ว
+                            <small style="color:#888;">(ไม่ต้องเจาะซ้ำ)</small>
                         </label>
-                        <label style="margin-left:10px;cursor:pointer;font-size:14px;">
-                            <input type="radio" name="asa-allergy" value="yes"> มี ⚠️
-                        </label>
                     </div>
-
-                    <div class="h0-block" style="padding:10px;background:#f8f9fa;border-radius:6px;font-size:14px;">
-                        <strong>⏱️ เวลาแรกรับ (H0):</strong>
-                        <div style="margin-top:6px;display:flex;gap:24px;flex-wrap:wrap;">
-                            <label class="flag-label">
-                                <input type="checkbox" id="use-current-time" checked>
-                                ใช้เวลาปัจจุบันอัตโนมัติ
-                            </label>
-                            <label class="flag-label">
-                                <input type="checkbox" id="troponin-from-rphch">
-                                เจาะ Troponin จาก รพช. แล้ว
-                                <small style="color:#888;">(ไม่ต้องเจาะซ้ำ)</small>
-                            </label>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                        <div class="inline-input-group">
+                            <label for="troponin-h0">Troponin H0 (ng/L):</label>
+                            <input type="number" id="troponin-h0" step="0.1" placeholder="ค่าที่เจาะ 0 hr">
+                        </div>
+                        <div class="inline-input-group">
+                            <label for="troponin-h1">Troponin H1 (ng/L):</label>
+                            <input type="number" id="troponin-h1" step="0.1" placeholder="ค่าที่เจาะ 1 hr">
+                        </div>
+                        <div class="inline-input-group">
+                            <label for="troponin-h3">Troponin H3 (ng/L):</label>
+                            <input type="number" id="troponin-h3" step="0.1" placeholder="ค่าที่เจาะ 3 hr">
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
+                        <div class="inline-input-group">
+                            <label for="trop-time-h0">H0 เวลา:</label>
+                            <input type="text" id="trop-time-h0" placeholder="HH:MM">
+                        </div>
+                        <div class="inline-input-group">
+                            <label for="trop-time-h1">H1 เวลา:</label>
+                            <input type="text" id="trop-time-h1" placeholder="HH:MM">
+                        </div>
+                        <div class="inline-input-group">
+                            <label for="trop-time-h3">H3 เวลา:</label>
+                            <input type="text" id="trop-time-h3" placeholder="HH:MM">
                         </div>
                     </div>
                 </div>
@@ -230,9 +277,9 @@
                                placeholder="เช่น 130">
                     </div>
                     <div class="inline-input-group">
-                        <label for="creatinine">Creatinine (mg/dL):</label>
-                        <input type="number" id="creatinine" step="0.01" min="0.1" max="20"
-                               placeholder="เช่น 0.95">
+                        <label for="grace-creatinine">Creatinine (mg/dL):</label>
+                        <input type="number" id="grace-creatinine" step="0.01" min="0.1" max="20"
+                               placeholder="0.95">
                     </div>
 
                     <div style="margin:12px 0 10px;">
@@ -436,10 +483,7 @@
 
                     <div class="divider"></div>
                     <strong>hs-Troponin I:</strong><br>
-                    H0: <span id="p-h0">--</span>
-                    &nbsp;&nbsp;H1: <span id="p-h1">--</span><br>
-                    H3: <span id="p-h3">--</span>
-                    &nbsp;&nbsp;% rising: <span class="dotted-line" style="min-width:28px;"></span><br>
+                    <span id="p-troponin-values">(ไม่ได้กรอก)</span><br>
                     <span id="p-rphch-note" style="font-size:9.5px;color:#666;"></span>
 
                     <div class="divider"></div>
@@ -505,6 +549,38 @@
                     </ul>
 
                     <div class="divider"></div>
+                    <strong>Anticoagulation:</strong>
+                    <div style="margin-top:8px;">
+                        <div style="margin-bottom:8px;">
+                            <label style="cursor:pointer;">
+                                <input type="radio" name="anticoag-choice" value="fonda">
+                                <strong>☐ Fondaparinux 2.5 mg SC OD × 5 Days</strong>
+                                <div style="margin-left:20px; font-size:0.9em; color:#666;" id="ac-fonda-hint">
+                                    (Preferred — eGFR --)
+                                </div>
+                            </label>
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            <label style="cursor:pointer;">
+                                <input type="radio" name="anticoag-choice" value="enox">
+                                <strong id="ac-enox-text">☐ Enoxaparin -- mg SC q12h × 5 Days</strong>
+                                <div style="margin-left:20px; font-size:0.9em; color:#666;" id="ac-enox-hint">
+                                    (1 mg/kg — age &lt;75, eGFR ≥30)
+                                </div>
+                            </label>
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            <label style="cursor:pointer;">
+                                <input type="radio" name="anticoag-choice" value="hep">
+                                <strong>☐ Heparin drip (anti-Xa monitoring)</strong>
+                                <div style="margin-left:20px; font-size:0.9em; color:#666;" id="ac-hep-hint">
+                                    (eGFR &lt;15 หรือ CrCl &lt;30 mL/min)
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
                     <strong>Medications:</strong>
                     <ul class="order-list">
                         <li id="p-asa-cont">☑ ASA (81) 1×1 pc</li>
@@ -545,6 +621,31 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
+
+    // Real-time eGFR → update Anticoag hints (Task C)
+    function updateAcHints() {
+        const egfrLive = parseFloat($('screen-egfr').textContent);
+        const weight = parseFloat($('weight').value) || 0;
+        const age = parseFloat($('age').value) || 0;
+        
+        if (!isNaN(egfrLive) && weight > 0 && age > 0) {
+            const enoxDose = Math.round(weight * 1.0);
+            $('ac-fonda-hint').textContent = `(Preferred — eGFR ${egfrLive.toFixed(1)})`;
+            $('ac-enox-text').textContent = `☐ Enoxaparin ${enoxDose} mg SC q12h × 5 Days`;
+            $('ac-enox-hint').textContent = `(1 mg/kg — age ${age}, eGFR ${egfrLive.toFixed(1)})`;
+            $('ac-hep-hint').textContent = `(eGFR <15 หรือ CrCl <30 mL/min — current eGFR: ${egfrLive.toFixed(1)})`;
+        } else {
+            $('ac-fonda-hint').textContent = '(eGFR ไม่ได้คำนวณ)';
+            $('ac-enox-text').textContent = '☐ Enoxaparin -- mg SC q12h × 5 Days';
+            $('ac-enox-hint').textContent = '(กรอกน้ำหนัก/อายุ/เพศ/Cr เพื่อดูขนาด)';
+            $('ac-hep-hint').textContent = '(eGFR <15 หรือ CrCl <30 mL/min)';
+        }
+    }
+
+    $('weight').addEventListener('input', updateAcHints);
+    $('age').addEventListener('input', updateAcHints);
+    document.querySelectorAll('input[name="sex"]').forEach(r => r.addEventListener('change', updateAcHints));
+    $('creatinine').addEventListener('input', updateAcHints);
 
     ED_BLANK_PRINT.register([
         { id: 'p-hn', value: '....................' },
@@ -620,6 +721,45 @@ document.addEventListener('DOMContentLoaded', () => {
         [2.0, 13], [4.0, 21], [Infinity, 28]
     ];
     const KILLIP_PTS = { '1': 0, '2': 20, '3': 39, '4': 59 };
+
+    // CKD-EPI 2021 Creatinine equation (race-free)
+    function calcEGFR_CKD_EPI_2021(creatinine, age, sex) {
+        const kappa = (sex === 'female') ? 0.7 : 0.9;
+        const alpha = (sex === 'female') ? -0.241 : -0.302;
+        const minCrK = Math.min(creatinine / kappa, 1);
+        const maxCrK = Math.max(creatinine / kappa, 1);
+        const egfr = 142 * Math.pow(minCrK, alpha) * Math.pow(maxCrK, -1.200) * 
+                     Math.pow(0.9938, age);
+        return (sex === 'female') ? egfr * 1.012 : egfr;
+    }
+
+    // Two-way Cr sync
+    const patientCr = $('creatinine');
+    const graceCr = $('grace-creatinine');
+    patientCr.addEventListener('input', () => {
+        if (document.activeElement === patientCr) graceCr.value = patientCr.value;
+    });
+    graceCr.addEventListener('input', () => {
+        if (document.activeElement === graceCr) patientCr.value = graceCr.value;
+    });
+
+    // Live eGFR display
+    const ageInput = $('age');
+    const sexRadios = document.querySelectorAll('input[name="sex"]');
+    function updateLiveEGFR() {
+        const cr = parseFloat(patientCr.value);
+        const age = parseFloat(ageInput.value);
+        const sex = document.querySelector('input[name="sex"]:checked')?.value;
+        if (!isNaN(cr) && !isNaN(age) && sex) {
+            const egfr = calcEGFR_CKD_EPI_2021(cr, age, sex);
+            $('screen-egfr').textContent = egfr.toFixed(1);
+        } else {
+            $('screen-egfr').textContent = '--';
+        }
+    }
+    patientCr.addEventListener('input', updateLiveEGFR);
+    ageInput.addEventListener('input', updateLiveEGFR);
+    sexRadios.forEach(r => r.addEventListener('change', updateLiveEGFR));
 
     function calcGRACE({ age, hr, sbp, cr, cardArr, stDev, elevMk, killip }) {
         const ageP = lookupPts(age, AGE_TBL);
@@ -697,10 +837,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const hn      = $('hn').value.trim() || '...';
         const weight  = parseFloat($('weight').value);
         const age     = parseFloat($('age').value);
-        const egfr    = parseFloat($('egfr').value);
+        const cr      = parseFloat($('creatinine').value);
         const hr      = parseFloat($('hr').value);
         const sbp     = parseFloat($('sbp').value);
-        const cr      = parseFloat($('creatinine').value);
+        const sex     = document.querySelector('input[name="sex"]:checked')?.value;
         const asaAlrg = document.querySelector('input[name="asa-allergy"]:checked').value === 'yes';
         const cardArr = $('cardiac-arrest').checked;
         const stDev   = $('st-deviation').checked;
@@ -716,8 +856,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isNaN(age) || age < 18) {
             ED_VALIDATE.fail('age', 'กรุณากรอกอายุ (≥ 18 ปี)'); return;
         }
-        if (isNaN(egfr) || egfr < 0) {
-            ED_VALIDATE.fail('egfr', 'กรุณากรอก eGFR'); return;
+
+        // eGFR: derived from CKD-EPI 2021 (requires Cr + age + sex)
+        const egfr = (!isNaN(cr) && !isNaN(age) && sex)
+            ? calcEGFR_CKD_EPI_2021(cr, age, sex)
+            : null;
+        const egfrForCalc = egfr !== null ? Math.round(egfr) : 90; // default 90 for anticoag calc if eGFR missing
+
+        // Troponin values (ng/L) + manual timing (HH:MM)
+        const tropValH0 = parseFloat($('troponin-h0').value);
+        const tropValH1 = parseFloat($('troponin-h1').value);
+        const tropValH3 = parseFloat($('troponin-h3').value);
+        const troponinTimeH0 = $('trop-time-h0').value.trim();
+        const troponinTimeH1 = $('trop-time-h1').value.trim();
+        const troponinTimeH3 = $('trop-time-h3').value.trim();
+
+        // Calculate % rising from H0
+        let risingH1 = null, risingH3 = null;
+        if (!isNaN(tropValH0) && tropValH0 > 0) {
+            if (!isNaN(tropValH1)) risingH1 = ((tropValH1 - tropValH0) / tropValH0 * 100).toFixed(1);
+            if (!isNaN(tropValH3)) risingH3 = ((tropValH3 - tropValH0) / tropValH0 * 100).toFixed(1);
         }
 
         const hasGraceVars = !isNaN(hr) && !isNaN(sbp) && !isNaN(cr);
@@ -736,15 +894,14 @@ document.addEventListener('DOMContentLoaded', () => {
             ? riskLevel(graceScore, anyVH, anyH1)
             : (anyVH ? 'very-high' : anyH1 ? 'high' : 'non-high');
 
-        // Shared engine call
-        const ac = calcAnticoag(weight, age, egfr);
+        // Shared engine call (use derived eGFR or default 90)
+        const ac = calcAnticoag(weight, age, egfrForCalc);
 
         const now = new Date();
-        const useTime = $('use-current-time').checked;
         const h1t = new Date(now.getTime() + 3600000);
         const h3t = new Date(now.getTime() + 10800000);
-        const dateStr = useTime ? ED_COMPONENTS.fmtDate(now) : '....................';
-        const timeStr = useTime ? ED_COMPONENTS.fmtTime(now) : '....................';
+        const dateStr = '....................';
+        const timeStr = '....................';
         const dtStr = `${dateStr}<br>${timeStr}`;
 
         /* ══ UPDATE SCREEN BANNER ══ */
@@ -798,9 +955,9 @@ document.addEventListener('DOMContentLoaded', () => {
             : `Heparin IV — Bolus ${ac.hepBolus}u → ${ac.hepInf}u/hr`;
         $('screen-anticoag').textContent = acLabel;
 
-        $('screen-h0').textContent = ED_COMPONENTS.fmtTime(now).replace(' น.', '');
-        $('screen-h1').textContent = ED_COMPONENTS.fmtTime(h1t).replace(' น.', '');
-        $('screen-h3').textContent = ED_COMPONENTS.fmtTime(h3t).replace(' น.', '');
+        $('screen-h0').textContent = troponinTimeH0 || '--.--';
+        $('screen-h1').textContent = troponinTimeH1 || '--.--';
+        $('screen-h3').textContent = troponinTimeH3 || '--.--';
 
         /* ══ UPDATE PRINT AREA ══ */
         ED_COMPONENTS.injectPrintHeader('print-header-container');
@@ -830,9 +987,24 @@ document.addEventListener('DOMContentLoaded', () => {
              ${bul('high')}      High risk (coro &lt; 24h)<br>
              ${bul('non-high')}  Non-high risk (selective coro)`;
 
-        $('p-h0').textContent = ED_COMPONENTS.fmtTime(now);
-        $('p-h1').textContent = ED_COMPONENTS.fmtTime(h1t);
-        $('p-h3').textContent = ED_COMPONENTS.fmtTime(h3t);
+        $('p-h0').textContent = troponinTimeH0 || '...';
+        $('p-h1').textContent = troponinTimeH1 || '...';
+        $('p-h3').textContent = troponinTimeH3 || '...';
+        
+        // Troponin values + %rising display in print
+        const tropDisplay = [];
+        if (!isNaN(tropValH0)) tropDisplay.push(`H0: ${tropValH0}${troponinTimeH0 ? ' ('+troponinTimeH0+')' : ''}`);
+        if (!isNaN(tropValH1)) {
+            let h1Line = `H1: ${tropValH1}${troponinTimeH1 ? ' ('+troponinTimeH1+')' : ''}`;
+            if (risingH1 !== null) h1Line += ` → +${risingH1}%`;
+            tropDisplay.push(h1Line);
+        }
+        if (!isNaN(tropValH3)) {
+            let h3Line = `H3: ${tropValH3}${troponinTimeH3 ? ' ('+troponinTimeH3+')' : ''}`;
+            if (risingH3 !== null) h3Line += ` → +${risingH3}%`;
+            tropDisplay.push(h3Line);
+        }
+        $('p-troponin-values').innerHTML = tropDisplay.join('<br>') || '(ไม่ได้กรอก)';
         $('p-rphch-note').textContent = fromRpc ? '(เจาะจาก รพช. แล้ว — ไม่ต้องเจาะซ้ำ)' : '';
         $('p-troponin-lab').innerHTML = fromRpc
             ? '☐ hs-troponin I Hr.0 and 3<br><small style="color:#888;">(เจาะจาก รพช. แล้ว — ไม่ต้องซ้ำ)</small>'
@@ -878,7 +1050,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-run print-blank-direct from home page portal
     if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
 
-    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
+    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
+        'NSTEMI Standing Order — MNRH-ED Guideline: ESC 2023 NSTEMI Guidelines &nbsp;|&nbsp; Anticoag: 2025 ACC/AHA ACS &nbsp;|&nbsp; eGFR: CKD-EPI 2021 &nbsp;|&nbsp; Version 2.0.0');
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

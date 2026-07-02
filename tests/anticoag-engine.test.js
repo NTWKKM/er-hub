@@ -1,6 +1,34 @@
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
-const { calcAnticoag, calcHeparinInitialDose, getHeparinTitration, HEPARIN_STANDALONE_PROTOCOLS } = require('../shared/anticoag-engine.js');
+const { calcAnticoag, calcEGFR_CKDEPI2021, calcHeparinInitialDose, getHeparinTitration, HEPARIN_STANDALONE_PROTOCOLS } = require('../shared/anticoag-engine.js');
+
+describe('calcEGFR_CKDEPI2021', () => {
+  test('male, age 60, Scr 1.0 → formula-exact 86', () => {
+    assert.equal(calcEGFR_CKDEPI2021(1.0, 60, 'male'), 86);
+  });
+
+  test('female applies 1.012 factor + lower kappa (age 60, Scr 1.0 → 64)', () => {
+    assert.equal(calcEGFR_CKDEPI2021(1.0, 60, 'female'), 64);
+  });
+
+  test('elderly male with high Scr (age 80, Scr 1.5 → 47)', () => {
+    assert.equal(calcEGFR_CKDEPI2021(1.5, 80, 'male'), 47);
+  });
+
+  test('returns null when Scr invalid', () => {
+    assert.equal(calcEGFR_CKDEPI2021(0, 60, 'male'), null);
+    assert.equal(calcEGFR_CKDEPI2021(-1, 60, 'male'), null);
+  });
+
+  test('returns null when sex missing/invalid (gender optional upstream)', () => {
+    assert.equal(calcEGFR_CKDEPI2021(1.0, 60, ''), null);
+    assert.equal(calcEGFR_CKDEPI2021(1.0, 60, 'x'), null);
+  });
+
+  test('returns null when age invalid', () => {
+    assert.equal(calcEGFR_CKDEPI2021(1.0, 0, 'male'), null);
+  });
+});
 
 describe('calcAnticoag', () => {
   test('eGFR < 15 → heparin recommendation with bolus/infusion', () => {
@@ -21,25 +49,25 @@ describe('calcAnticoag', () => {
     assert.equal(r.rec, 'enoxaparin');
   });
 
-  test('enoxaparin: eGFR < 30 → 1 mg/kg regardless of age', () => {
+  test('enoxaparin: eGFR < 30 → 1 mg/kg q24h (2025 ACC/AHA)', () => {
     const r = calcAnticoag(70, 80, 25);
     assert.equal(r.enoxDose, 70);  // 70 * 1.0 = 70
     assert.equal(r.enoxRoute, 'SC q24h');
-    assert.match(r.enoxNote, /GFR 15–29/);
+    assert.match(r.enoxNote, /GFR < 30/);
   });
 
-  test('enoxaparin: age ≥ 75, eGFR ≥ 30 → 0.75 mg/kg', () => {
+  test('enoxaparin: eGFR ≥ 30 → 1 mg/kg q12h regardless of age (age ≥ 75)', () => {
     const r = calcAnticoag(70, 80, 50);
-    assert.equal(r.enoxDose, Math.round(70 * 0.75));  // 53
-    assert.equal(r.enoxRoute, 'SC q12h (no bolus)');
-    assert.match(r.enoxNote, /Age ≥75/);
+    assert.equal(r.enoxDose, 70);  // 70 * 1.0 = 70 (ไม่ใช้ 0.75 เพราะ age-based cut เป็นของ STEMI+fibrinolytic)
+    assert.equal(r.enoxRoute, 'SC q12h');
+    assert.match(r.enoxNote, /GFR ≥ 30/);
   });
 
-  test('enoxaparin: age < 75, eGFR ≥ 30 → 1 mg/kg', () => {
+  test('enoxaparin: eGFR ≥ 30 → 1 mg/kg q12h (age < 75)', () => {
     const r = calcAnticoag(70, 60, 50);
     assert.equal(r.enoxDose, 70);  // 70 * 1.0 = 70
     assert.equal(r.enoxRoute, 'SC q12h');
-    assert.match(r.enoxNote, /Age <75/);
+    assert.match(r.enoxNote, /GFR ≥ 30/);
   });
 
   test('heparin bolus ceiling: weight 100kg → capped at 4000', () => {
