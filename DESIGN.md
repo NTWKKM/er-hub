@@ -27,7 +27,7 @@
 ### Breakpoints & Layout
 - **Container Max-Width:** `1100px` (order pages), `1200px` (portal)
 - **Form Grid Gaps:** `20px` (STEMI/NSTEMI), `30px` (Stroke)
-- **NSTEMI 2-Row Input Layout:** Patient Info (`.patient-section`) is a full-width top row with fields wrapping horizontally (`.patient-fields` flex-wrap, `flex: 1 1 300px` per field; ASA block `1 1 300px`; H0 block `1 1 100%`). Below it, a 3-column `.input-layout` row holds: (1) GRACE Score Variables, (2) Killip Class, (3) Risk Stratification. Killip Class is its own column (separated from GRACE, ADR-18).
+- **NSTEMI Single-Line Input Layout:** Patient Info (`.patient-section`) is a full-width top row with fields in a single-line flexbox (`.patient-fields` nowrap) containing: HN, Age, Weight(kg), Sex(M/F radio), Creatinine(mg/dL). Live eGFR badge derived via CKD-EPI 2021 from Cr+age+sex. Below it, a 3-column `.input-layout` row holds: (1) GRACE Score Variables (HR/SBP/Creatinine synced from patient info + binary flags), (2) Killip Class (promoted to its own column — was previously stacked under GRACE), (3) Risk Stratification. Troponin kinetics section: 3-column grid for H0/H1/H3 values (ng/L) + manual time inputs (HH:MM). Continuation column has 3 anticoagulant options (Fondaparinux/Enoxaparin/Heparin) with doctor-select radio. Killip Class is its own column (separated from GRACE, ADR-18).
 - **Responsive Breakpoints:**
   - `≤900px`: Columns stack vertically, inline-input labels go full-width
   - `≤899px` (tablet): Inline inputs stack vertically, buttons 44px min-height
