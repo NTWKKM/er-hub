@@ -5,6 +5,7 @@ import SliderInput from '@/components/SliderInput';
 import DoseResultCard from '@/components/DoseResultCard';
 import StickerBox from '@/components/StickerBox';
 import { useFormValidation } from '@/lib/form-validate';
+import { resolveDocUrl } from '@/lib/doc-utils';
 import {
   calcHeparinInitialDose,
   getHeparinTitration,
@@ -92,8 +93,7 @@ export default function HeparinOrder() {
   };
 
   const handlePrintBlank = () => {
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-    window.open(`${basePath}/docs/HAD/Heparin.pdf`, '_blank');
+    window.open(resolveDocUrl('/docs/HAD/Heparin.pdf'), '_blank');
   };
 
   const handleReset = () => {

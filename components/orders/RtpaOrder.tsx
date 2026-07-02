@@ -79,7 +79,10 @@ export default function RtpaOrder() {
   };
 
   const handlePrintBlank = () => {
-    window.print();
+    // Clear results before print so blank order shows an empty template
+    setShowResults(false);
+    setSubmittedOrder(null);
+    setTimeout(() => window.print(), 0);
   };
 
   const handleReset = () => {
@@ -151,7 +154,7 @@ export default function RtpaOrder() {
               <h3>2. เลือกขนาดยา (Dosage Regimen)</h3>
               <fieldset className="button-dose-group" style={{ border: 'none', padding: 0, margin: 0 }}>
                 <legend className="sr-only">Dose Regimen</legend>
-                <label className={`dose-button ${doseRegimen === '0.9' ? 'active' : ''}`}>
+                <label htmlFor="dose-regimen-09" className={`dose-button ${doseRegimen === '0.9' ? 'active' : ''}`}>
                   <input
                     id="dose-regimen-09"
                     type="radio"
@@ -163,7 +166,7 @@ export default function RtpaOrder() {
                   />
                   Standard Dose: 0.9 mg/kg (Max 90 mg)
                 </label>
-                <label className={`dose-button ${doseRegimen === '0.6' ? 'active' : ''}`}>
+                <label htmlFor="dose-regimen-06" className={`dose-button ${doseRegimen === '0.6' ? 'active' : ''}`}>
                   <input
                     id="dose-regimen-06"
                     type="radio"

@@ -99,7 +99,11 @@ ADRs 01–17 document decisions made during the original vanilla HTML/CSS/JS imp
   - **StemiOrder TNK-only fields:** `elderly` and `bracketIdx` only stored for TNK orders; SK uses `false`/`-1`. Prevents SK orders from showing "ลดขนาด TNK 50%" note.
   - **calcHeparinInitialDose guards:** Added `Object.prototype.hasOwnProperty` check for protocolKey (blocks prototype pollution) and `Number.isFinite` validation (not falsy checks).
   - **RtpaOrder submitted snapshot:** Results render from `submittedOrder` state frozen at validation time, not live form inputs. Prevents post-submit edits from altering printable order.
-  - **RtpaOrder blank button:** Separated `handlePrintBlank` from `handlePrint` for independent behavior.
+  - **RtpaOrder blank button:** `handlePrintBlank` now clears `showResults`/`submittedOrder` before `window.print()` so blank order prints an empty template, not the last computed snapshot.
+  - **NstemiOrder blank button:** `handlePrintBlank` now clears `calculated`/`anticoagResult` before `window.print()` to prevent reprinting computed results as a blank order.
+  - **Centralized doc URL helper:** Added `lib/doc-utils.ts` with `resolveDocUrl()` used by SedationOrder, PeOrder, HeparinOrder, and StemiOrder for consistent `NEXT_PUBLIC_BASE_PATH` handling.
+  - **PeOrder CI accessibility:** Absolute/Relative CI checkbox groups now use `<fieldset>/<legend>` instead of plain `<div>` for screen reader group announcement.
+  - **RtpaOrder radio label association:** Dose-regimen radio labels now use explicit `htmlFor`/`id` pairs matching the existing fieldset/legend structure.
   - **PatientInfoForm maxWeight:** Default changed from 150 → 200 to match STEMI validation range.
   - **registerRef wiring:** PatientInfoForm, SliderInput, RtpaOrder, HeparinOrder, PeOrder wired `validation.registerRef(fieldId, el)` to DOM inputs.
   - **AntivenomOrder krait constant:** Magic number `3` replaced with `KRAIT_INDICATION_INDEX` named constant.

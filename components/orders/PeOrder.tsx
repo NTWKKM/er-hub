@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import SliderInput from '../SliderInput';
 import DoseResultCard from '../DoseResultCard';
 import { useFormValidation } from '../../lib/form-validate';
+import { resolveDocUrl } from '../../lib/doc-utils';
 
 type PeRiskType = 'high' | 'intermediate-high';
 type PeRegimen = 'sk_a' | 'sk_b' | 'rtpa_a' | 'rtpa_b';
@@ -99,8 +100,7 @@ export default function PeOrder() {
   }, []);
 
   const handlePrintBlank = useCallback(() => {
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-    window.open(`${basePath}/docs/STEMI-PE/PE-Massive-merged.pdf`, '_blank');
+    window.open(resolveDocUrl('/docs/STEMI-PE/PE-Massive-merged.pdf'), '_blank');
   }, []);
 
   const toggleAbsCI = (id: string) => {
@@ -220,10 +220,10 @@ export default function PeOrder() {
           <div className="input-column" style={{ flex: '1', minWidth: '300px' }}>
             <h3>2. ประเมินข้อห้ามใช้ยาละลายลิ่มเลือด</h3>
 
-            <div className="checklist-group" style={{ marginBottom: '12px' }}>
-              <div className="checklist-title" style={{ background: '#f5cdcd', color: '#c0392b', padding: '4px 8px', borderRadius: '4px', marginBottom: '8px', fontWeight: 'bold' }}>
+            <fieldset className="checklist-group" style={{ marginBottom: '12px', border: 'none', padding: 0 }}>
+              <legend style={{ background: '#f5cdcd', color: '#c0392b', padding: '4px 8px', borderRadius: '4px', marginBottom: '8px', fontWeight: 'bold' }}>
                 🔴 Absolute Exclusion Criteria (ข้อห้ามเด็ดขาด)
-              </div>
+              </legend>
               {ABSOLUTE_CI.map((ci) => (
                 <label key={ci.id} htmlFor={`abs-ci-${ci.id}`} className="flag-label" style={{ display: 'block', marginBottom: '4px' }}>
                   <input
@@ -244,12 +244,12 @@ export default function PeOrder() {
                 />{' '}
                 เคยได้รับ Streptokinase มาก่อน ภายใน 6 เดือนที่ผ่านไป? <small style={{ color: '#d35400' }}>(ห้ามใช้ SK)</small>
               </label>
-            </div>
+            </fieldset>
 
-            <div className="checklist-group">
-              <div className="checklist-title" style={{ background: '#ffeaa7', padding: '4px 8px', borderRadius: '4px', marginBottom: '8px', fontWeight: 'bold' }}>
+            <fieldset className="checklist-group" style={{ border: 'none', padding: 0, margin: 0 }}>
+              <legend style={{ background: '#ffeaa7', padding: '4px 8px', borderRadius: '4px', marginBottom: '8px', fontWeight: 'bold' }}>
                 🟡 Relative Contraindications (ข้อควรระวัง)
-              </div>
+              </legend>
               {RELATIVE_CI.map((ci) => (
                 <label key={ci.id} htmlFor={`rel-ci-${ci.id}`} className="flag-label" style={{ display: 'block', marginBottom: '4px' }}>
                   <input
@@ -261,7 +261,7 @@ export default function PeOrder() {
                   {ci.label}
                 </label>
               ))}
-            </div>
+            </fieldset>
           </div>
         </div>
 

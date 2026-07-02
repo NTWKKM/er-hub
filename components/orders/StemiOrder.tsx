@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import PatientInfoForm from '../PatientInfoForm';
 import DoseResultCard from '../DoseResultCard';
 import { useFormValidation } from '../../lib/form-validate';
+import { resolveDocUrl } from '../../lib/doc-utils';
 
 type FibrinolyticType = 'tnk' | 'sk';
 
@@ -92,8 +93,7 @@ export default function StemiOrder() {
   }, [validation]);
 
   const handlePrintPDF = useCallback(() => {
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-    window.open(`${basePath}/docs/STEMI-PE/STEMI new 26-4doc.pdf`, '_blank');
+    window.open(resolveDocUrl('/docs/STEMI-PE/STEMI new 26-4doc.pdf'), '_blank');
   }, []);
 
   return (

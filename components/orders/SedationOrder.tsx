@@ -5,6 +5,7 @@ import SliderInput from '../SliderInput';
 import DoseResultCard from '../DoseResultCard';
 import { useFormValidation } from '../../lib/form-validate';
 import { calcDripRate } from '../../lib/calc-engine';
+import { resolveDocUrl } from '../../lib/doc-utils';
 
 export default function SedationOrder() {
   const validation = useFormValidation();
@@ -41,8 +42,7 @@ export default function SedationOrder() {
   }, []);
 
   const handlePrintBlank = useCallback(() => {
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-    window.open(`${basePath}/docs/sedation/fen.pdf`, '_blank');
+    window.open(resolveDocUrl('/docs/sedation/fen.pdf'), '_blank');
   }, []);
 
   // Calculate drip rates using calcDripRate

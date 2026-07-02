@@ -62,7 +62,11 @@ export default function NstemiOrder({ initialHn = '' }: NstemiOrderProps) {
   }, []);
 
   const handlePrintBlank = useCallback(() => {
-    window.print();
+    // Clear calculated state so blank order doesn't reprint patient-specific results
+    setCalculated(false);
+    setAnticoagResult(null);
+    // Use setTimeout to ensure React state update flushes before print
+    setTimeout(() => window.print(), 0);
   }, []);
 
   const getAnticoagLabel = () => {
