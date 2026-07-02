@@ -96,9 +96,15 @@ const ED_COMPONENTS = {
     /**
      * Inject a sticky top navigation bar with home link and auto-detected title.
      */
-    injectNavBar: function(homeHref, logoSrc) {
+    injectNavBar: function(homeHref, logoSrc, pageTitle) {
         const href = homeHref || '../index.html';
-        const title = (document.title || '').split('—')[0].trim();
+        // pageTitle can be: undefined (auto-detect from document.title), empty string (suppress), or explicit string
+        let title;
+        if (pageTitle === undefined) {
+            title = (document.title || '').split('—')[0].trim();
+        } else {
+            title = pageTitle;
+        }
         const nav = document.createElement('nav');
         nav.className = 'top-nav';
         nav.setAttribute('role', 'navigation');

@@ -27,6 +27,14 @@
 
     <style>
         body {
+            /* index.html builds its own layout via .portal-container, so body
+               itself carries no padding — but --page-pad must still be set to 0
+               here, since shared/base.css's .top-nav breakout math (used by
+               injectNavBar) reads this var to compute how far to negative-margin
+               itself flush. Leaving this at the default 20px (as in base.css)
+               caused the nav to overflow 20px past the viewport on each side,
+               specifically on this page. */
+            --page-pad: 0px;
             background-color: #f4f6f8;
             margin: 0;
             padding: 0;
@@ -137,7 +145,7 @@
 
 <script src="shared/components.js"></script>
 <script>
-ED_COMPONENTS.injectNavBar('index.html', 'docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
+ED_COMPONENTS.injectNavBar('index.html', 'docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png', '');
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js').catch(function(e) { console.warn('SW registration failed:', e); });
 }

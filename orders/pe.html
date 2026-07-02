@@ -304,15 +304,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!ED_VALIDATE.range('weight', 30, 200, 'กรุณากรอกน้ำหนักให้ถูกต้อง (30-200 kg)')) return;
 
         // HARD STOP: Absolute CI checked or SK selected while having prior SK history
+        // These branches must halt the handler entirely (return) — a screen banner
+        // and a hidden print button do NOT stop native browser printing (Ctrl+P),
+        // so the order must never be calculated/populated for these cases at all.
         ED_VALIDATE.clearWarn();
         if (absCIChecked) {
             ED_VALIDATE.warn('⚠️ ผู้ป่วยมีข้อห้ามเด็ดขาด (Absolute Exclusion Criteria) ในการให้ยาละลายลิ่มเลือด ห้ามทำรายการต่อ!');
             $('screen-warning-note').style.display = 'inline-block';
             $('print-btn').style.display = 'none'; // Lock print button
+            $('results-container').classList.add('hidden'); // Retract any previously-generated order
+            return;
         } else if ((regimen === 'sk_a' || regimen === 'sk_b') && priorSK) {
             ED_VALIDATE.warn('⚠️ ผู้ป่วยเคยได้รับ Streptokinase มาก่อนภายใน 6 เดือน ห้ามใช้ยา SK ซ้ำเด็ดขาด! กรุณาเลือก rt-PA แทน');
             $('screen-warning-note').style.display = 'inline-block';
             $('print-btn').style.display = 'none'; // Lock print
+            $('results-container').classList.add('hidden');
+            return;
         } else {
             $('screen-warning-note').style.display = 'none';
             $('print-btn').style.display = 'inline-block'; // Unlock print
