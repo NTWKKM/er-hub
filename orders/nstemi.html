@@ -527,20 +527,20 @@
                 <!-- Col 1: Progress Note -->
                 <div class="grid-cell">
                     <strong>NSTEMI</strong><br>
-                    HN: <span class="highlight" id="p-hn">--</span><br>
-                    น้ำหนัก (kg): <strong class="highlight" id="p-weight">--</strong><br>
-                    eGFR (ml/min): <strong class="highlight" id="p-egfr">--</strong><br>
-                    ASA Allergy: <span id="p-asa">No</span>
+                    <span style="white-space: nowrap;">HN: <span class="highlight" id="p-hn">--</span></span><br>
+                    <span style="white-space: nowrap;">น้ำหนัก (kg): <strong class="highlight" id="p-weight">--</strong></span><br>
+                    <span style="white-space: nowrap;">eGFR (ml/min): <strong class="highlight" id="p-egfr">--</strong></span><br>
+                    <span style="white-space: nowrap;">ASA Allergy: <span id="p-asa">No</span></span>
 
                     <div class="divider"></div>
                     <strong>GRACE Variables</strong><br>
-                    Age: <span id="p-age">--</span>
-                    &nbsp;|&nbsp; HR (bpm): <span id="p-hr">--</span><br>
-                    SBP (mmHg): <span id="p-sbp">--</span>
-                    &nbsp;|&nbsp; Cr (mg/dL): <span id="p-cr">--</span><br>
+                    <span style="white-space: nowrap;">Age: <span id="p-age">--</span></span>
+                    &nbsp;|&nbsp; <span style="white-space: nowrap;">HR (bpm): <span id="p-hr">--</span></span><br>
+                    <span style="white-space: nowrap;">SBP (mmHg): <span id="p-sbp">--</span></span>
+                    &nbsp;|&nbsp; <span style="white-space: nowrap;">Cr (mg/dL): <span id="p-cr">--</span></span><br>
                     <span id="p-bin-flags" style="font-size:10px;line-height:1.7;"></span>
-                    Killip: Class <span id="p-killip">I</span><br>
-                    <strong>GRACE Score: <span class="highlight" id="p-grace">--</span></strong>
+                    <span style="white-space: nowrap;">Killip: Class <span id="p-killip">I</span></span><br>
+                    <span style="white-space: nowrap;"><strong>GRACE Score: <span class="highlight" id="p-grace">--</span></strong></span>
 
                     <div class="divider"></div>
                     <strong>Clinical Stratification:</strong><br>
@@ -855,16 +855,16 @@ document.addEventListener('DOMContentLoaded', () => {
     $('creatinine').addEventListener('input', updateAcHints);
 
     ED_BLANK_PRINT.register([
-        { id: 'p-hn', value: '....................' },
-        { id: 'p-weight', value: '....................' },
-        { id: 'p-egfr', value: '....................' },
-        { id: 'p-age', value: '....................' },
-        { id: 'p-hr', value: '....................' },
-        { id: 'p-sbp', value: '....................' },
-        { id: 'p-cr', value: '....................' },
-        { id: 'p-asa', html: '....................' },
-        { id: 'p-killip', value: '....................' },
-        { id: 'p-grace', value: '....................' },
+        { id: 'p-hn', value: '............' },
+        { id: 'p-weight', value: '........' },
+        { id: 'p-egfr', value: '........' },
+        { id: 'p-age', value: '......' },
+        { id: 'p-hr', value: '......' },
+        { id: 'p-sbp', value: '......' },
+        { id: 'p-cr', value: '......' },
+        { id: 'p-asa', html: '........' },
+        { id: 'p-killip', value: '......' },
+        { id: 'p-grace', value: '......' },
         { id: 'p-bin-flags', html: '' },
         { id: 'p-strat', html: `○ Very high risk (coro &lt; 2h)<br>\
              ○ High risk (coro &lt; 24h)<br>\
