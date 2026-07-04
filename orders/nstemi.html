@@ -71,21 +71,48 @@
         }
         .killip-group-vertical label {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 8px;
-            padding: 8px 12px;
+            padding: 6px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 13.5px;
+            font-size: 13px;
         }
         .killip-group-vertical label:hover {
             background: #fff5f5;
             border-color: #c0392b;
         }
         .killip-group-vertical input[type="radio"] {
-            margin-top: 3px;
+            margin: 0;
+        }
+
+        /* Risk stratification chips */
+        .risk-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .risk-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 11.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .risk-chip:hover {
+            border-color: #c0392b;
+            background: #fff5f5;
+        }
+        .risk-chip input {
+            margin: 0;
         }
 
         .grace-summary {
@@ -211,6 +238,12 @@
                         <input type="number" id="creatinine" step="0.01" min="0.1" max="20"
                                required placeholder="0.95">
                     </div>
+                    <div class="patient-field" style="max-width: 140px; margin-left: 10px;">
+                        <label style="font-weight: bold; color: #c0392b;">eGFR:</label>
+                        <div style="padding: 6px 8px; font-weight: bold; color: #c0392b; font-size: 14px; background: #fff5f5; border: 1px solid #fab1a0; border-radius: 4px; text-align: center;">
+                            <span id="screen-egfr">--</span> <small style="font-size: 10px; font-weight: normal; color: #777;">mL/min</small>
+                        </div>
+                    </div>
                     <div class="patient-field asa-field">
                         <label>ASA Allergy:</label>
                         <label class="gender-radio"><input type="radio" name="asa-allergy" value="no" checked> ไม่มี</label>
@@ -219,41 +252,24 @@
                 </div>
                 <div style="margin-top:10px;padding:10px;background:#f8f9fa;border-radius:6px;">
                     <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
-                        <strong style="font-size:13px;">eGFR:</strong>
-                        <span id="screen-egfr" style="font-size:15px;font-weight:bold;color:#c0392b;">--</span>
-                        <small style="color:#999;">ml/min/1.73m² (CKD-EPI 2021)</small>
-                        <label class="flag-label" style="margin-left:auto;">
+                        <strong style="font-size:13px;">🧪 hs-Troponin I (ng/L)</strong>
+                        <label class="flag-label" style="margin-left:auto; font-weight:normal; display:flex; align-items:center; gap:4px; font-size:12px; cursor:pointer;">
                             <input type="checkbox" id="troponin-from-rphch">
-                            เจาะ Troponin จาก รพช. แล้ว
-                            <small style="color:#888;">(ไม่ต้องเจาะซ้ำ)</small>
+                            เจาะ Troponin จาก รพช. แล้ว <small style="color:#888;">(ไม่ต้องเจาะซ้ำ)</small>
                         </label>
                     </div>
                     <div style="display:flex;gap:12px;flex-wrap:wrap;">
                         <div class="inline-input-group">
-                            <label for="troponin-h0">Troponin H0 (ng/L):</label>
+                            <label for="troponin-h0">Troponin H0 (แรกรับ):</label>
                             <input type="number" id="troponin-h0" step="0.1" placeholder="ค่าที่เจาะ 0 hr">
                         </div>
                         <div class="inline-input-group">
-                            <label for="troponin-h1">Troponin H1 (ng/L):</label>
+                            <label for="troponin-h1">Troponin H1 (+1h):</label>
                             <input type="number" id="troponin-h1" step="0.1" placeholder="ค่าที่เจาะ 1 hr">
                         </div>
                         <div class="inline-input-group">
-                            <label for="troponin-h3">Troponin H3 (ng/L):</label>
+                            <label for="troponin-h3">Troponin H3 (+3h):</label>
                             <input type="number" id="troponin-h3" step="0.1" placeholder="ค่าที่เจาะ 3 hr">
-                        </div>
-                    </div>
-                    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
-                        <div class="inline-input-group">
-                            <label for="trop-time-h0">H0 เวลา:</label>
-                            <input type="text" id="trop-time-h0" placeholder="HH:MM">
-                        </div>
-                        <div class="inline-input-group">
-                            <label for="trop-time-h1">H1 เวลา:</label>
-                            <input type="text" id="trop-time-h1" placeholder="HH:MM">
-                        </div>
-                        <div class="inline-input-group">
-                            <label for="trop-time-h3">H3 เวลา:</label>
-                            <input type="text" id="trop-time-h3" placeholder="HH:MM">
                         </div>
                     </div>
                 </div>
@@ -276,11 +292,7 @@
                         <input type="number" id="sbp" min="40" max="300"
                                placeholder="เช่น 130">
                     </div>
-                    <div class="inline-input-group">
-                        <label for="grace-creatinine">Creatinine (mg/dL):</label>
-                        <input type="number" id="grace-creatinine" step="0.01" min="0.1" max="20"
-                               placeholder="0.95">
-                    </div>
+
 
                     <div style="margin:12px 0 10px;">
                         <label class="flag-label">
@@ -303,29 +315,21 @@
                     <h3>Killip Class:</h3>
                     <div>
                         <div class="killip-group-vertical">
-                            <label>
+                            <label title="ไม่มีภาวะหัวใจล้มเหลว (No HF)">
                                 <input type="radio" name="killip" value="1" checked>
-                                <div>
-                                    <strong>Class I <small style="color:#888;">(+0)</small></strong> — ไม่มีภาวะหัวใจล้มเหลว (No HF)
-                                </div>
+                                <span><strong>Class I</strong> <small style="color:#888;">(+0)</small> — No HF</span>
                             </label>
-                            <label>
+                            <label title="ฟังปอดมี crepitation < 1/2 ปอด หรือมีเสียง S3 gallop">
                                 <input type="radio" name="killip" value="2">
-                                <div>
-                                    <strong>Class II <small style="color:#888;">(+20)</small></strong> — ฟังปอดมี crepitation &lt; 1/2 ปอด หรือมีเสียง S3 gallop
-                                </div>
+                                <span><strong>Class II</strong> <small style="color:#888;">(+20)</small> — Mild HF</span>
                             </label>
-                            <label>
+                            <label title="ภาวะน้ำท่วมปอดเฉียบพลัน (Frank pulmonary edema, crepitation > 1/2 ปอด)">
                                 <input type="radio" name="killip" value="3">
-                                <div>
-                                    <strong>Class III <small style="color:#888;">(+39)</small></strong> — ภาวะน้ำท่วมปอดเฉียบพลัน (Frank pulmonary edema, crepitation &gt; 1/2 ปอด)
-                                </div>
+                                <span><strong>Class III</strong> <small style="color:#888;">(+39)</small> — Pulm Edema</span>
                             </label>
-                            <label>
+                            <label title="ช็อกจากการทำงานของหัวใจล้มเหลว (Cardiogenic shock, SBP < 90 mmHg)">
                                 <input type="radio" name="killip" value="4">
-                                <div>
-                                    <strong>Class IV <small style="color:#888;">(+59)</small></strong> — ช็อกจากการทำงานของหัวใจล้มเหลว (Cardiogenic shock, SBP &lt; 90 mmHg)
-                                </div>
+                                <span><strong>Class IV</strong> <small style="color:#888;">(+59)</small> — Cardiogenic Shock</span>
                             </label>
                         </div>
                     </div>
@@ -338,46 +342,50 @@
                     <div class="sub-section sub-vh">
                         ⚡ Very High Risk (H0) → coro &lt; 2h
                     </div>
-                    <label class="flag-label">
-                        <input type="checkbox" class="vh-flag">
-                        Hemodynamic instability / cardiogenic shock
-                    </label>
-                    <label class="flag-label">
-                        <input type="checkbox" class="vh-flag">
-                        Recurrent / refractory chest pain
-                    </label>
-                    <label class="flag-label">
-                        <input type="checkbox" class="vh-flag">
-                        Life-threatening arrhythmias
-                    </label>
-                    <label class="flag-label">
-                        <input type="checkbox" class="vh-flag">
-                        Mechanical complications of MI
-                    </label>
-                    <label class="flag-label">
-                        <input type="checkbox" class="vh-flag">
-                        Acute heart failure related to ACS
-                    </label>
-                    <label class="flag-label">
-                        <input type="checkbox" class="vh-flag">
-                        Recurrent dynamic ST-T changes
-                    </label>
+                    <div class="risk-chips">
+                        <label class="risk-chip">
+                            <input type="checkbox" class="vh-flag">
+                            Hemodynamic instability / shock
+                        </label>
+                        <label class="risk-chip">
+                            <input type="checkbox" class="vh-flag">
+                            Recurrent / refractory chest pain
+                        </label>
+                        <label class="risk-chip">
+                            <input type="checkbox" class="vh-flag">
+                            Life-threatening arrhythmias
+                        </label>
+                        <label class="risk-chip">
+                            <input type="checkbox" class="vh-flag">
+                            Mechanical complications of MI
+                        </label>
+                        <label class="risk-chip">
+                            <input type="checkbox" class="vh-flag">
+                            Acute HF related to ACS
+                        </label>
+                        <label class="risk-chip">
+                            <input type="checkbox" class="vh-flag">
+                            Recurrent dynamic ST-T changes
+                        </label>
+                    </div>
 
                     <div class="sub-section sub-h1" style="margin-top:14px;">
                         🔴 High Risk (H1) → coro &lt; 24h
                     </div>
-                    <label class="flag-label">
-                        <input type="checkbox" class="h1-flag">
-                        Troponin &gt; 99th percentile URL
-                    </label>
-                    <label class="flag-label">
-                        <input type="checkbox" class="h1-flag">
-                        Dynamic ST-T changes
-                    </label>
-                    <label class="flag-label">
-                        <input type="checkbox" class="h1-flag">
-                        Transient ST elevation
-                    </label>
+                    <div class="risk-chips">
+                        <label class="risk-chip">
+                            <input type="checkbox" class="h1-flag">
+                            Troponin &gt; 99th percentile URL
+                        </label>
+                        <label class="risk-chip">
+                            <input type="checkbox" class="h1-flag">
+                            Dynamic ST-T changes
+                        </label>
+                        <label class="risk-chip">
+                            <input type="checkbox" class="h1-flag">
+                            Transient ST elevation
+                        </label>
+                    </div>
                 </div>
 
             </div><!-- end .input-layout -->
@@ -597,7 +605,7 @@
                     เลขว. <span class="dotted-line" style="min-width:45px;"></span>
                     <br><br>
                     <small style="color:#777;font-size:9px;">
-                        Version: 1.2.0 | ESC 2023 NSTEMI Guidelines<br>
+                        Version: 2.1.0 | ESC 2023 NSTEMI Guidelines<br>
                         Generated: <span id="p-generated">--</span>
                     </small>
                 </div>
@@ -630,10 +638,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!isNaN(egfrLive) && weight > 0 && age > 0) {
             const enoxDose = Math.round(weight * 1.0);
-            $('ac-fonda-hint').textContent = `(Preferred — eGFR ${egfrLive.toFixed(1)})`;
+            $('ac-fonda-hint').textContent = `(Preferred — eGFR ${egfrLive.toFixed(2)})`;
             $('ac-enox-text').textContent = `☐ Enoxaparin ${enoxDose} mg SC q12h × 5 Days`;
-            $('ac-enox-hint').textContent = `(1 mg/kg — age ${age}, eGFR ${egfrLive.toFixed(1)})`;
-            $('ac-hep-hint').textContent = `(eGFR <15 หรือ CrCl <30 mL/min — current eGFR: ${egfrLive.toFixed(1)})`;
+            $('ac-enox-hint').textContent = `(1 mg/kg — age ${age}, eGFR ${egfrLive.toFixed(2)})`;
+            $('ac-hep-hint').textContent = `(eGFR <15 หรือ CrCl <30 mL/min — current eGFR: ${egfrLive.toFixed(2)})`;
         } else {
             $('ac-fonda-hint').textContent = '(eGFR ไม่ได้คำนวณ)';
             $('ac-enox-text').textContent = '☐ Enoxaparin -- mg SC q12h × 5 Days';
@@ -662,9 +670,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'p-strat', html: `○ Very high risk (coro &lt; 2h)<br>\
              ○ High risk (coro &lt; 24h)<br>\
              ○ Non-high risk (selective coro)` },
-        { id: 'p-h0', value: '....................' },
-        { id: 'p-h1', value: '....................' },
-        { id: 'p-h3', value: '....................' },
         { id: 'p-rphch-note', value: '' },
         { id: 'p-troponin-lab', html: '☐ hs-troponin I Hr.0 and 3' },
         { id: 'p-asa-stat', html: '☐ ASA (300) 1 tab chew stat' },
@@ -733,15 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return (sex === 'female') ? egfr * 1.012 : egfr;
     }
 
-    // Two-way Cr sync
     const patientCr = $('creatinine');
-    const graceCr = $('grace-creatinine');
-    patientCr.addEventListener('input', () => {
-        if (document.activeElement === patientCr) graceCr.value = patientCr.value;
-    });
-    graceCr.addEventListener('input', () => {
-        if (document.activeElement === graceCr) patientCr.value = graceCr.value;
-    });
 
     // Live eGFR display
     const ageInput = $('age');
@@ -752,7 +749,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sex = document.querySelector('input[name="sex"]:checked')?.value;
         if (!isNaN(cr) && !isNaN(age) && sex) {
             const egfr = calcEGFR_CKD_EPI_2021(cr, age, sex);
-            $('screen-egfr').textContent = egfr.toFixed(1);
+            $('screen-egfr').textContent = egfr.toFixed(2);
         } else {
             $('screen-egfr').textContent = '--';
         }
@@ -863,13 +860,10 @@ document.addEventListener('DOMContentLoaded', () => {
             : null;
         const egfrForCalc = egfr !== null ? Math.round(egfr) : 90; // default 90 for anticoag calc if eGFR missing
 
-        // Troponin values (ng/L) + manual timing (HH:MM)
+        // Troponin values (ng/L)
         const tropValH0 = parseFloat($('troponin-h0').value);
         const tropValH1 = parseFloat($('troponin-h1').value);
         const tropValH3 = parseFloat($('troponin-h3').value);
-        const troponinTimeH0 = $('trop-time-h0').value.trim();
-        const troponinTimeH1 = $('trop-time-h1').value.trim();
-        const troponinTimeH3 = $('trop-time-h3').value.trim();
 
         // Calculate % rising from H0
         let risingH1 = null, risingH3 = null;
@@ -955,17 +949,13 @@ document.addEventListener('DOMContentLoaded', () => {
             : `Heparin IV — Bolus ${ac.hepBolus}u → ${ac.hepInf}u/hr`;
         $('screen-anticoag').textContent = acLabel;
 
-        $('screen-h0').textContent = troponinTimeH0 || '--.--';
-        $('screen-h1').textContent = troponinTimeH1 || '--.--';
-        $('screen-h3').textContent = troponinTimeH3 || '--.--';
-
         /* ══ UPDATE PRINT AREA ══ */
         ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
 
         $('p-hn').textContent    = hn;
         $('p-weight').textContent = weight.toFixed(1);
-        $('p-egfr').textContent  = egfr;
+        $('p-egfr').textContent  = egfr !== null ? egfr.toFixed(2) : '___';
         $('p-age').textContent   = age;
         $('p-hr').textContent    = hasGraceVars ? hr : '___';
         $('p-sbp').textContent   = hasGraceVars ? sbp : '___';
@@ -987,20 +977,16 @@ document.addEventListener('DOMContentLoaded', () => {
              ${bul('high')}      High risk (coro &lt; 24h)<br>
              ${bul('non-high')}  Non-high risk (selective coro)`;
 
-        $('p-h0').textContent = troponinTimeH0 || '...';
-        $('p-h1').textContent = troponinTimeH1 || '...';
-        $('p-h3').textContent = troponinTimeH3 || '...';
-        
         // Troponin values + %rising display in print
         const tropDisplay = [];
-        if (!isNaN(tropValH0)) tropDisplay.push(`H0: ${tropValH0}${troponinTimeH0 ? ' ('+troponinTimeH0+')' : ''}`);
+        if (!isNaN(tropValH0)) tropDisplay.push(`H0: ${tropValH0}`);
         if (!isNaN(tropValH1)) {
-            let h1Line = `H1: ${tropValH1}${troponinTimeH1 ? ' ('+troponinTimeH1+')' : ''}`;
+            let h1Line = `H1: ${tropValH1}`;
             if (risingH1 !== null) h1Line += ` → +${risingH1}%`;
             tropDisplay.push(h1Line);
         }
         if (!isNaN(tropValH3)) {
-            let h3Line = `H3: ${tropValH3}${troponinTimeH3 ? ' ('+troponinTimeH3+')' : ''}`;
+            let h3Line = `H3: ${tropValH3}`;
             if (risingH3 !== null) h3Line += ` → +${risingH3}%`;
             tropDisplay.push(h3Line);
         }
@@ -1026,9 +1012,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         $('p-anticoag').innerHTML = buildAnticoagPrintHTML(ac);
 
-        $('results-container').classList.remove('hidden');
-        ED_COMPONENTS.showFloatBar();
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        ED_PRINT_BOOTSTRAP.showResults();
     });
 
     $('clear-btn').addEventListener('click', () => {
@@ -1050,8 +1034,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-run print-blank-direct from home page portal
     if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
 
+    // Show blank order preview by default on page load (no query param needed)
+    $('print-blank-btn').click();
+
     ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
-        'NSTEMI Standing Order — MNRH-ED Guideline: ESC 2023 NSTEMI Guidelines &nbsp;|&nbsp; Anticoag: 2025 ACC/AHA ACS &nbsp;|&nbsp; eGFR: CKD-EPI 2021 &nbsp;|&nbsp; Version 2.0.0');
+        'NSTEMI Standing Order — MNRH-ED Guideline: ESC 2023 NSTEMI Guidelines &nbsp;|&nbsp; Anticoag: 2025 ACC/AHA ACS &nbsp;|&nbsp; eGFR: CKD-EPI 2021 &nbsp;|&nbsp; Version 2.1.0');
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

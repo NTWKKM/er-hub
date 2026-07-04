@@ -764,7 +764,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('print-blank-btn').addEventListener('click', () => {
         ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-        ED_COMPONENTS.updateGeneratedTime('p-generated', null);
         ED_BLANK_PRINT.apply();
         ED_PRINT_BOOTSTRAP.showResults();
     });

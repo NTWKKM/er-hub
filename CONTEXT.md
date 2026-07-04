@@ -165,3 +165,15 @@
   8. **U4 — Favicon:** Added `favicon.svg` (medical cross icon, red #c0392b on white) to all 9 pages. Helps clinicians identify tabs when 5+ order pages are open across shifts.
   9. **C1 — Accessibility:** Added `role="navigation"` to the sticky nav bar (via `setAttribute` in `injectNavBar()`). Added `aria-live="polite"` to dose summary banners on all 7 order pages and the stroke results container. Screen readers now announce computed doses without interrupting workflow.
 - **Rationale:** The XSS fix closes a real security gap — user-entered HN could execute arbitrary HTML in the page context. The test foundation provides a safety net for future refactoring (Phase 2 shared-behavior extraction) without adding build dependencies. Dead code/CSS removal reduces maintenance surface. Documentation corrections ensure the governance docs match reality. Accessibility improvements bring the codebase closer to its stated design principles without changing visual output or print behavior. No clinical dose logic, safety ceilings, or print geometry were modified.
+
+### ADR-21: NSTEMI Standing Order v2.1 — Simplification, Safe eGFR Formatting, and Regression Guards (2026-07-04)
+- **Context:** Following the NSTEMI v2.0 overhaul, an audit identified dead references in Javascript (`p-h0`, `p-h1`, `p-h3` were missing from DOM) causing runtime crashes upon form submission. Manual troponin times and duplicate creatinine inputs added unnecessary input friction. eGFR formatting was inconsistent and lacked null guards.
+- **Decision:**
+  1. Removed manual troponin timing inputs (`#trop-time-h0`/`1`/`3`) and the screen timing badges. Simplified the printed troponin display to a clean list of static values.
+  2. Deleted the dead `p-h0`/`p-h1`/`p-h3` print references and screen timing updates in JavaScript.
+  3. Removed the duplicate `#grace-creatinine` input and two-way sync, referencing the demographics `#creatinine` field directly.
+  4. Repositioned `#screen-egfr` directly next to Creatinine, and moved the `troponin-from-rphch` checkbox to the troponin header.
+  5. Standardised eGFR formatting to 2 decimal places with null checks (`egfr !== null ? egfr.toFixed(2) : '___'`).
+  6. Implemented automatic blank print layout display on page load.
+  7. Created `tests/id-integrity-guard.test.js` to ensure DOM and query ID consistency, and bumped service worker `CACHE_VERSION` to `er-hub-v3`.
+- **Rationale:** Reduces layout complexity and clinician data-entry overhead. Safe-guarding formatting and static reference checks prevents future regression crashes.

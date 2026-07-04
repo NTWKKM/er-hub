@@ -64,6 +64,7 @@ graph TD
 - **W-11: PE Hard-Stop Doesn't Stop Fix (2026-07-02, Phase 1 — BUG-02):** Added `return;` statement immediately after both `ED_VALIDATE.warn()` calls (lines 316 & 322) in `pe.html` for absolute-CI and SK-repeat checks. Also retracts stale order on re-submission via `classList.add('hidden')` on results-container. Prevents clinician from accidentally printing contraindicated PE standing order via Ctrl+P despite print-button being visually locked. New structural regression guard: `tests/order-safety-guard.test.js` (30 tests) scans all order files for this hard-stop pattern and asserts `return;` follows `warn()` within 4 lines.
 - **W-12: injectNavBar pageTitle Parameter (2026-07-02, Phase 3 — BUG-04):** Extended `injectNavBar()` signature to accept optional third parameter `pageTitle`. Can be `undefined` (auto-detect from `document.title`), empty string `''` (suppress title, show only logo + "Home"), or explicit string (override title). `index.html` passes `''` → homepage shows only logo + Home link, no redundant "MNRH-ED Standing Order Hub" title. Eliminates visual redundancy on the portal page.
 - **W-13: SW Precache Robustness + Retry Logic (2026-07-02, Phase 3 — BUG-05):** Replaced `cache.addAll(ASSETS)` with custom `fetchWithRetry()` helper (2 retry attempts, 100ms exponential backoff) + `Promise.allSettled()` precache loop. Individual asset fetch failures no longer block the entire install event. Failed assets logged as warnings but don't prevent SW activation. Next fetch will auto-retry missing assets. Resilient to transient network issues during offline access cache setup. Bumped `CACHE_VERSION` from `er-hub-v1` to `er-hub-v2`.
+- **W-14: NSTEMI Dead ID Reference Safety (2026-07-04):** All elements queried in standing order handlers must be statically validated against DOM declarations. The ID integrity guard regression suite enforces that no queried IDs in `$()` or registry manifests are missing in the HTML source, ensuring zero runtime TypeErrors on execution.
 
 
 ---
@@ -114,3 +115,40 @@ graph TD
 **Tests:** All 130 tests pass (6 new CKD-EPI tests + 8 updated anticoag tests). No regressions.
 
 **Consequences:** Older NSTEMI orders printed with v1.x will have different enoxaparin dosing than v2.0 for patients age ≥75 (was 0.75 mg/kg, now 1 mg/kg q24h if renal impairment). This is clinically correct per 2025 guideline.
+
+---
+
+### ADR-20: NSTEMI Standing Order v2.1 — Simplification, Safe eGFR Formatting, and Regression Guards (2026-07-04)
+
+**Context:**
+A post-implementation audit of NSTEMI standing order page (v2.0) revealed:
+1. Dead DOM element references (`p-h0`, `p-h1`, `p-h3`) left from previous versions caused a Javascript `TypeError` upon calculation execution, preventing result generation and float bar display.
+2. Troponin timing inputs (`trop-time-h0`/`1`/`3`) were redundant as the draws are logged in the EMR rather than the standalone sheet.
+3. eGFR formatting was inconsistent (some places 1 decimal, some unformatted raw floats) and lacked null guards.
+4. Two-way creatinine sync caused input friction, and the blank order template preview had to be manually toggled.
+
+**Decision:**
+1. **DOM & JS Cleanup:**
+   - Deleted dead `p-h0`/`p-h1`/`p-h3` print references and screen timing update lines from Javascript.
+   - Removed manual troponin timing inputs `#trop-time-h0`/`1`/`3` and `.troponin-times` DOM block.
+   - Simplified printed troponin section `#p-troponin-values` to display only static results (e.g. `H0: 12`, `H1: 15 → +25.0%`).
+   - Removed the duplicate `#grace-creatinine` input and two-way sync logic, routing calculations directly from `#creatinine`.
+2. **eGFR Badge Repositioning:**
+   - Moved the screen eGFR badge `#screen-egfr` directly next to the Creatinine input in the patient demographics row.
+   - Relocated the `#troponin-from-rphch` checkbox to the header of the Troponin section.
+3. **eGFR Safe Formatting:**
+   - Standardised all eGFR outputs to 2 decimal places (`.toFixed(2)`).
+   - Safe-guarded printed output: `egfr !== null ? egfr.toFixed(2) : '___'` to prevent null crashes on form resets.
+4. **Blank-First UX:**
+   - Auto-trigger the blank print layout by clicking `print-blank-btn` on page load.
+5. **Precache Robustness & Testing:**
+   - Bumped `CACHE_VERSION` to `er-hub-v3` in `service-worker.js`.
+   - Created `tests/id-integrity-guard.test.js` to parse all forms and verify query ID existence in the DOM, preventing dead reference crashes.
+   - Bumped NSTEMI version to `2.1.0`.
+
+**Rationale:**
+Manual troponin draw times and duplicate creatinine fields added layout complexity without clinical benefit. Separating the calculated eGFR badge next to the creatinine input visually links the input and derived outputs. Safe-guarding formatting and removing dead DOM references prevents runtime TypeErrors. Auto-triggering the blank print preview ensures clinicians see the standing order layout immediately. Bumping SW cache versions ensures quick client updates. The ID integrity guard prevents future dead reference regressions across the suite.
+
+**Tests:**
+All 138 tests pass, including the new regression guard testing all 8 interactive files.
+
