@@ -276,6 +276,10 @@ input[type="checkbox"] {
     padding-left: 16px;
 }
 
+.nav-title-short {
+    display: none;
+}
+
 /* ===== Buttons ===== */
 .btn {
     width: 100%;
@@ -447,6 +451,18 @@ input[type="checkbox"] {
     .inline-input-group label {
         width: 110px;
         text-align: left;
+    }
+    .nav-title-full {
+        display: none;
+    }
+    .nav-title-short {
+        display: inline;
+    }
+}
+
+@media (max-width: 768px) {
+    .top-nav {
+        padding: 0 16px;
     }
 }
 

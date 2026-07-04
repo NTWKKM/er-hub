@@ -289,6 +289,9 @@
   3. **Reordered List**: Swapped NSTEMI and STEMI so NSTEMI is 2nd (02) and STEMI is 3rd (03).
   4. **Standardized Navigation Titles**: Normalised `injectNavBar` parameter usage across all 7 standing order pages to explicitly include the page title, clinical guideline, and release version (matching NSTEMI's layout).
   5. **Clinical Visual Indicator (Signal Orange)**: Documented that the **Signal Orange** `#d84315` dot is reserved strictly for time-critical visual status flags (rt-PA, STEMI, Massive PE) to direct clinician attention instantly to time-critical emergency pathways (door-to-needle/door-to-balloon times) in a busy ED.
-  6. **Caching**: Bumped service worker `CACHE_VERSION` to `er-hub-v13`.
-- **Rationale:** Restoring the blue navigation bar retains brand consistency. Increasing the logo size elevates professional institutional identity. The Signal Orange dot serves a crucial clinical triage role, highlighting time-critical pathways while keeping the dashboard clean.
+  6. **Caching & Updates**: Bumped service worker `CACHE_VERSION` to `er-hub-v14` to clear client-side static caches, and added `reg.update()` inside `index.html` to trigger immediate update checking on every page load.
+  7. **Responsive Title Truncation**: Parsed page titles in `injectNavBar` (via name replacements and regex match) to generate full and short titles (e.g., `NSTEMI V2.1.1` instead of the full guideline block), and added responsive toggling classes (`.nav-title-full` / `.nav-title-short`) that toggle at `900px` (tablet/mobile) to prevent nav bar text wrapping.
+  8. **Mobile Alignment Synchronization**: Added a media query for max-width 768px in `shared/base.css` to reduce `.top-nav` padding to `0 16px` globally, matching the mobile logo offset of `index.html`.
+  9. **Nav Right Metadata Date**: Shortened the homepage's nav-right metadata string to `v13 · Updated 26-07-04` to fit mobile viewports.
+- **Rationale:** Restoring the blue navigation bar retains brand consistency. Increasing the logo size elevates professional institutional identity. The Signal Orange dot serves a crucial clinical triage role, highlighting time-critical pathways while keeping the dashboard clean. Responsive titles and synchronized padding prevent multi-line wrapping and layout offsets on actual mobile devices.
 

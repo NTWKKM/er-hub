@@ -96,6 +96,40 @@ const ED_COMPONENTS = {
     /**
      * Inject a sticky top navigation bar with home link and auto-detected title.
      */
+    parseTitle: function(title) {
+        let titleFull = title;
+        let titleShort = title;
+        
+        if (title && title.includes('—')) {
+            const parts = title.split('—');
+            const namePart = parts[0].trim();
+            const detailPart = parts[1].trim();
+            
+            let coreName = namePart
+                .replace('Standing Order', '')
+                .replace('Generator', '')
+                .replace('Protocol', '')
+                .replace('FAST TRACK', '')
+                .replace('Fibrinolysis', '')
+                .replace('Post-Intubation', '')
+                .replace(/\s+/g, ' ')
+                .trim();
+                
+            if (coreName === 'IV Infusion Drip Calculator') {
+                coreName = 'Drip Calc';
+            }
+            
+            let versionStr = '';
+            const verMatch = detailPart.match(/Version\s*(\d+\.\d+(\.\d+)?)/i);
+            if (verMatch) {
+                versionStr = `V${verMatch[1]}`;
+            }
+            
+            titleShort = `${coreName} ${versionStr}`.trim();
+        }
+        return { titleFull, titleShort };
+    },
+
     injectNavBar: function(homeHref, logoSrc, pageTitle) {
         const href = homeHref || '../index.html';
         // pageTitle can be: undefined (auto-detect from document.title), empty string (suppress), or explicit string
@@ -105,14 +139,32 @@ const ED_COMPONENTS = {
         } else {
             title = pageTitle;
         }
+        
+        const parsed = this.parseTitle(title);
+        const titleFull = parsed.titleFull;
+        const titleShort = parsed.titleShort;
+        
         const nav = document.createElement('nav');
         nav.className = 'top-nav';
         nav.setAttribute('role', 'navigation');
         const logoHTML = logoSrc ? `<img src="${logoSrc}" class="nav-logo" alt="Maharat Nakhon Ratchasima Hospital">` : '';
+        
+        let titleHTML = '';
+        if (title) {
+            if (titleFull !== titleShort) {
+                titleHTML = `
+                    <span class="nav-title nav-title-full" aria-label="${titleFull}">${titleFull}</span>
+                    <span class="nav-title nav-title-short" aria-label="${titleShort}">${titleShort}</span>
+                `;
+            } else {
+                titleHTML = `<span class="nav-title" aria-label="${title}">${title}</span>`;
+            }
+        }
+        
         nav.innerHTML = `
             ${logoHTML}
             <a href="${href}" class="nav-home" aria-label="Home">Home</a>
-            ${title ? `<span class="nav-title" aria-label="${title}">${title}</span>` : ''}
+            ${titleHTML}
         `;
         document.body.insertBefore(nav, document.body.firstChild);
     },

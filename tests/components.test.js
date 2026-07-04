@@ -29,3 +29,61 @@ describe('ED_COMPONENTS.fmtTime', () => {
     assert.equal(ED_COMPONENTS.fmtTime(null), '...');
   });
 });
+
+describe('ED_COMPONENTS.parseTitle', () => {
+  test('correctly parses and truncates NSTEMI title', () => {
+    const title = 'NSTEMI Standing Order — MNRH-ED Guideline: ESC 2023 NSTEMI Guidelines | Anticoag: 2025 ACC/AHA ACS | eGFR: CKD-EPI 2021 | Version 2.1.1';
+    const parsed = ED_COMPONENTS.parseTitle(title);
+    assert.equal(parsed.titleFull, title);
+    assert.equal(parsed.titleShort, 'NSTEMI V2.1.1');
+  });
+
+  test('correctly parses and truncates rt-PA Stroke title', () => {
+    const title = 'rt-PA Stroke FAST TRACK — MNRH-ED Guideline: Thai Stroke Society 2020 | Version 2.0';
+    const parsed = ED_COMPONENTS.parseTitle(title);
+    assert.equal(parsed.titleShort, 'rt-PA Stroke V2.0');
+  });
+
+  test('correctly parses and truncates STEMI title', () => {
+    const title = 'STEMI Standing Order — MNRH-ED Guideline: Thai ACS 2020 (rev. Dec 2022) | Version 1.0';
+    const parsed = ED_COMPONENTS.parseTitle(title);
+    assert.equal(parsed.titleShort, 'STEMI V1.0');
+  });
+
+  test('correctly parses and truncates Massive PE title', () => {
+    const title = 'Massive PE Fibrinolysis — MNRH-ED Guideline: ESC 2019 PE Guidelines (rev. Dec 2022) | Version 1.0';
+    const parsed = ED_COMPONENTS.parseTitle(title);
+    assert.equal(parsed.titleShort, 'Massive PE V1.0');
+  });
+
+  test('correctly parses and truncates Heparin title', () => {
+    const title = 'Heparin Protocol — MNRH-ED Guideline: Siriraj Heparin Guideline (Modified) | Version 1.0';
+    const parsed = ED_COMPONENTS.parseTitle(title);
+    assert.equal(parsed.titleShort, 'Heparin V1.0');
+  });
+
+  test('correctly parses and truncates Antivenom title', () => {
+    const title = 'Antivenom Standing Order — MNRH-ED Guideline: MNRH Antivenom Guideline | Version 1.0';
+    const parsed = ED_COMPONENTS.parseTitle(title);
+    assert.equal(parsed.titleShort, 'Antivenom V1.0');
+  });
+
+  test('correctly parses and truncates Sedation title', () => {
+    const title = 'Post-Intubation Sedation — MNRH-ED Guideline: ER Standing Order for Sedation | Version 1.0';
+    const parsed = ED_COMPONENTS.parseTitle(title);
+    assert.equal(parsed.titleShort, 'Sedation V1.0');
+  });
+
+  test('correctly parses and truncates Drip Calculator title', () => {
+    const title = 'IV Infusion Drip Calculator — MNRH-ED Clinical Tool | Version 1.0';
+    const parsed = ED_COMPONENTS.parseTitle(title);
+    assert.equal(parsed.titleShort, 'Drip Calc V1.0');
+  });
+
+  test('returns original title if no em-dash is present', () => {
+    const title = 'Some Other Title';
+    const parsed = ED_COMPONENTS.parseTitle(title);
+    assert.equal(parsed.titleFull, title);
+    assert.equal(parsed.titleShort, title);
+  });
+});
