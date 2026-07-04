@@ -242,3 +242,31 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 **Rationale:** Removing the calculate gate eliminates a cognitive step under time pressure. The standing order preview updating in real-time lets clinicians verify accuracy as they type, reducing transcription errors. The submit-to-print conversion preserves the existing button label without confusing the user while changing its purpose to the correct final action.
 
 **Tests:** 138/138 pass post-change (DOM ID integrity guard confirmed).
+
+---
+
+### ADR-26: NSTEMI v2.1.1 Audit Remediation (2026-07-04)
+
+**Context:** A post-merge audit of `orders/nstemi.html` (post-ADR-20 / v2.1) identified four findings, two of which had patient-safety implications. Documented in `PLAN-nstemi-v2.1.1-audit.md`.
+
+**Decision — Finding 1 (Dead DOM):**
+- Removed `.troponin-times` HTML block (`#screen-h0/h1/h3`) and its five CSS rules. The block was permanently frozen at `--:--` with no JS writer — dead weight from the pre-v2.0 design. ADR-20 claimed removal; this closes the gap.
+
+**Decision — Finding 2 (Blank-first UX):**
+- On cold page load (no `?print-blank-direct` URL param), `$('print-blank-btn').click()` is now called before `calculateAndRender()`. Implements the blank-first behaviour that ADR-20 documented as shipped but never implemented.
+
+**Decision — Finding 3 (Anticoag contradiction — patient safety):**
+1. **Cutoff corrected: 20 → 30.** `shared/anticoag-engine.js` `calcAnticoag()` now uses `egfr >= 30` for Fondaparinux recommendation, consistent with ADR-19 and the `CI: CrCl <30` label text. The old 20-cutoff caused the engine to auto-select Fondaparinux for eGFR 20–29 while simultaneously displaying a red contraindication for that range.
+2. **Auto-select removed.** `calculateAndRender()` no longer pre-checks any anticoagulant radio button. Clinician selection is fully manual.
+3. **CI disable + recommendation badge.** `updateAcHints()` now calls `_applyAcState()` which: marks Fondaparinux `ac-disabled` when eGFR < 30; marks Enoxaparin `ac-disabled` when eGFR < 15; shows `⛔ CI` badge on disabled options; shows `✅ แนะนำ` badge on the recommended option.
+4. **Safety override (two-click).** First click on a CI option enters `ac-override-pending` state (orange dashed outline + warning); second click grants selection and shows `⚠️ Override — ใช้นอก guideline`.
+5. **Enox frequency** auto-set by eGFR (q12h if ≥30, q24h if <30) — informational pre-fill only, not auto-selection.
+
+**Decision — Finding 4 (print-btn missing listener):**
+- `$('print-btn').addEventListener('click', () => window.print())` added. The button is outside `<form id="nstemi-form">` so the form's submit handler never fired when clicked.
+
+**Test Gap Note:** `tests/id-integrity-guard.test.js` does not catch orphaned DOM elements or clinical-logic consistency bugs. A same-source consistency test for `calcAnticoag()` output vs. hint-label thresholds is a recommended next step.
+
+**Evidence Base:** ADR-19 (cutoff = 30); OASIS-5 trial; 2025 ACC/AHA NSTE-ACS Guidelines; ESC 2023 NSTE-ACS Guidelines.
+
+**Tests:** 138/138 pass post-change.

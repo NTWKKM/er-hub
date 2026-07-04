@@ -49,10 +49,10 @@ function calcAnticoag(weight, age, egfr) {
         r.hepBolus = Math.min(Math.round(weight * 60), 4000);
         r.hepInf = Math.min(Math.round(weight * 12), 1000);
         r.hepRate = (r.hepInf / 100).toFixed(1); // Default standard conc: 100 u/mL
-    } else if (egfr >= 20) {
+    } else if (egfr >= 30) {
         r.rec = 'fondaparinux';
     } else {
-        r.rec = 'enoxaparin'; // GFR 15-19: fondaparinux CI
+        r.rec = 'enoxaparin'; // GFR 15-29: fondaparinux CI (CrCl <30 per label)
     }
 
     // Enoxaparin dose (computed regardless, for display) — 2025 ACC/AHA NSTEMI

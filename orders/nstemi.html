@@ -133,15 +133,29 @@
             margin-top: 8px;
         }
 
-        .troponin-times {
-            display: flex; gap: 16px; align-items: center;
-            padding: 10px 16px;
-            background: #ecf0f1; border-radius: 8px; margin-top: 8px;
+
+        /* ── Anticoag option states ── */
+        .ac-radio-label {
+            cursor: pointer; display: flex; align-items: flex-start;
+            gap: 6px; margin: 0; border-radius: 4px; padding: 4px 2px;
+            transition: background 0.15s;
         }
-        .t-box { text-align: center; }
-        .t-lbl { font-size: 11px; color: #7f8c8d; font-weight: bold; }
-        .t-val { font-size: 1.3em; font-weight: bold; color: #2c3e50; }
-        .t-arr { color: #ccc; font-size: 1.3em; }
+        .ac-radio-label:hover { background: #fff5f5; }
+        .ac-radio-label.ac-disabled {
+            opacity: 0.45; cursor: not-allowed;
+        }
+        .ac-radio-label.ac-disabled input[type="radio"] { cursor: not-allowed; }
+        .ac-radio-label.ac-override-pending {
+            outline: 2px dashed #e67e22;
+            background: #fff8f0;
+        }
+        .ac-badge {
+            display: inline-block; font-size: 9px; font-weight: bold;
+            padding: 1px 5px; border-radius: 3px; vertical-align: middle; margin-left: 4px;
+        }
+        .ac-badge-rec  { background: #d5f5e3; color: #1e8449; }
+        .ac-badge-ci   { background: #fadbd8; color: #c0392b; }
+        .ac-badge-warn { background: #fef9e7; color: #9a7d0a; border: 1px solid #f0ca4d; }
 
         .grace-breakdown {
             font-size: 12px;
@@ -406,19 +420,23 @@
                     <strong style="font-size:11px;color:#555;display:block;margin-bottom:8px;">💊 Anticoagulant Selection</strong>
                     <div style="font-size:12px; display: flex; flex-direction: column; gap: 8px;">
                         <div>
-                            <label style="cursor:pointer; display: flex; align-items: flex-start; gap: 6px; margin: 0;">
-                                <input type="radio" name="anticoag-choice" value="fonda" style="margin-top:2px;">
+                            <label id="ac-label-fonda" class="ac-radio-label" style="margin: 0;">
+                                <input type="radio" id="ac-radio-fonda" name="anticoag-choice" value="fonda" style="margin-top:2px;">
                                 <div>
                                     <strong style="color:#c0392b;">Fondaparinux 2.5 mg SC OD</strong>
+                                    <span id="ac-badge-fonda" class="ac-badge" style="display:none;"></span>
                                     <div style="font-size:10px; color:#666; margin-top:2px;" id="ac-fonda-hint">(Preferred — eGFR --)</div>
+                                    <div id="ac-fonda-ci-msg" style="display:none; font-size:10px; color:#c0392b; margin-top:2px; font-weight:bold;"></div>
+                                    <div id="ac-fonda-override-msg" style="display:none; font-size:10px; color:#e67e22; margin-top:2px;"></div>
                                 </div>
                             </label>
                         </div>
                         <div style="border-top: 1px solid #eee; padding-top: 6px;">
-                            <label style="cursor:pointer; display: flex; align-items: flex-start; gap: 6px; margin: 0;">
-                                <input type="radio" name="anticoag-choice" value="enox" style="margin-top:2px;">
+                            <label id="ac-label-enox" class="ac-radio-label" style="margin: 0;">
+                                <input type="radio" id="ac-radio-enox" name="anticoag-choice" value="enox" style="margin-top:2px;">
                                 <div>
                                     <strong id="ac-enox-text" style="color:#c0392b;">Enoxaparin -- mg SC</strong>
+                                    <span id="ac-badge-enox" class="ac-badge" style="display:none;"></span>
                                     <div style="font-size:10px; color:#666; margin-top:2px;" id="ac-enox-hint">
                                         (1 mg/kg — GFR &lt; 30 → once daily)
                                     </div>
@@ -434,10 +452,11 @@
                             </label>
                         </div>
                         <div style="border-top: 1px solid #eee; padding-top: 6px;">
-                            <label style="cursor:pointer; display: flex; align-items: flex-start; gap: 6px; margin: 0;">
-                                <input type="radio" name="anticoag-choice" value="hep" style="margin-top:2px;">
+                            <label id="ac-label-hep" class="ac-radio-label" style="margin: 0;">
+                                <input type="radio" id="ac-radio-hep" name="anticoag-choice" value="hep" style="margin-top:2px;">
                                 <div>
                                     <strong style="color:#c0392b;">Heparin IV drip</strong>
+                                    <span id="ac-badge-hep" class="ac-badge" style="display:none;"></span>
                                     <div style="font-size:10px; color:#666; margin-top:2px;" id="ac-hep-hint">(eGFR &lt;15 หรือ CrCl &lt;30 mL/min)</div>
                                 </div>
                             </label>
@@ -447,22 +466,6 @@
                 
                 <div>
                     <div style="font-size: 11px; font-weight: bold; color: #7f8c8d; margin-bottom: 6px;">💊 Calculated Recommendation: <span id="screen-anticoag" style="color: #333;">--</span></div>
-                    <div class="troponin-times">
-                        <div class="t-box">
-                            <div class="t-lbl">H0 (แรกรับ)</div>
-                            <div class="t-val" id="screen-h0">--:--</div>
-                        </div>
-                        <span class="t-arr">→</span>
-                        <div class="t-box">
-                            <div class="t-lbl">H1 (+1h)</div>
-                            <div class="t-val" id="screen-h1">--:--</div>
-                        </div>
-                        <span class="t-arr">→</span>
-                        <div class="t-box">
-                            <div class="t-lbl">H3 (+3h)</div>
-                            <div class="t-val" id="screen-h3">--:--</div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div><!-- end .grace-summary -->
@@ -719,10 +722,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateAcHints() {
-        const egfrLive = parseFloat($('screen-egfr').textContent);
+        const egfrRaw = $('screen-egfr').textContent.trim();
+        const egfrLive = egfrRaw !== '--' ? parseFloat(egfrRaw) : null;
         const weight = parseFloat($('weight').value) || 0;
-        
-        if (!isNaN(egfrLive) && weight > 0) {
+
+        // ── Compute CI and recommendation states (cutoff = 30 per ADR-19 / label)
+        const egfrKnown = egfrLive !== null && !isNaN(egfrLive);
+        const fondaCI   = egfrKnown && egfrLive < 30;  // CrCl <30 = label CI
+        const enoxCI    = egfrKnown && egfrLive < 15;  // eGFR <15 = not recommended
+        const recFonda  = egfrKnown && egfrLive >= 30;
+        const recEnox   = egfrKnown && egfrLive >= 15 && egfrLive < 30;
+        const recHep    = egfrKnown && egfrLive < 15;
+
+        // ── Hint text ──
+        if (egfrKnown && weight > 0) {
             const enoxDose = Math.round(weight * 1.0);
             $('ac-fonda-hint').innerHTML = `(Preferred — eGFR ${egfrLive.toFixed(2)})<br><span style="color:#c0392b;">(CI: CrCl &lt;30 mL/min — ถ้าทำ PCI ต้องเสริม UFH bolus)</span>`;
             $('ac-enox-text').textContent = `Enoxaparin ${enoxDose} mg SC`;
@@ -734,7 +747,55 @@ document.addEventListener('DOMContentLoaded', () => {
             $('ac-enox-hint').innerHTML = '(1 mg/kg = -- mg — GFR &lt; 30 → once daily)<br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)';
             $('ac-hep-hint').textContent = '(eGFR <15 หรือ CrCl <30 mL/min)';
         }
+
+        // ── Apply disable + badge logic ──
+        _applyAcState('fonda', fondaCI, recFonda,
+            egfrKnown ? `⚠️ CI: eGFR ${egfrLive.toFixed(0)} < 30 — กดอีกครั้งเพื่อ override` : null);
+        _applyAcState('enox',  enoxCI,  recEnox,
+            egfrKnown ? `⚠️ CI: eGFR ${egfrLive.toFixed(0)} < 15 — กดอีกครั้งเพื่อ override` : null);
+        _applyAcState('hep',   false,   recHep, null);
+
         updateAnticoagOutput();
+    }
+
+    /**
+     * Set disabled visual state + badges for one anticoag option.
+     * Safety-override: first click on a CI option shows pending warning;
+     * second click (when label has ac-override-pending) allows selection.
+     */
+    function _applyAcState(drug, isCI, isRec, ciMsg) {
+        const radio  = $(`ac-radio-${drug}`);
+        const label  = $(`ac-label-${drug}`);
+        const badge  = $(`ac-badge-${drug}`);
+        const ciDiv  = drug === 'fonda' ? $('ac-fonda-ci-msg') : null;
+        const ovrDiv = drug === 'fonda' ? $('ac-fonda-override-msg') : null;
+        if (!radio || !label || !badge) return;
+
+        if (isCI) {
+            // Uncheck if currently selected and NOT in override-pending
+            if (radio.checked && !label.classList.contains('ac-override-pending')) {
+                radio.checked = false;
+            }
+            label.classList.add('ac-disabled');
+            label.classList.remove('ac-override-pending');
+            // Show CI badge
+            badge.textContent = '⛔ CI';
+            badge.className = 'ac-badge ac-badge-ci';
+            badge.style.display = 'inline-block';
+            if (ciDiv) { ciDiv.textContent = ciMsg || ''; ciDiv.style.display = ciMsg ? 'block' : 'none'; }
+            if (ovrDiv) ovrDiv.style.display = 'none';
+        } else {
+            label.classList.remove('ac-disabled', 'ac-override-pending');
+            if (ciDiv) ciDiv.style.display = 'none';
+            if (ovrDiv) ovrDiv.style.display = 'none';
+            if (isRec) {
+                badge.textContent = '✅ แนะนำ';
+                badge.className = 'ac-badge ac-badge-rec';
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
     }
 
     $('weight').addEventListener('input', updateAcHints);
@@ -989,16 +1050,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
         }
 
-        // Auto-select recommended anticoagulant (only when eGFR is available)
+        // No auto-select: user chooses; CIs are enforced by updateAcHints() / _applyAcState()
+        // Enox frequency is still auto-set when eGFR is available
         if (egfr !== null) {
-            let recAc = egfrForCalc < 15 ? 'hep' : egfrForCalc >= 20 ? 'fonda' : 'enox';
-            const radToCheck = document.querySelector(`input[name="anticoag-choice"][value="${recAc}"]`);
-            if (radToCheck && !radToCheck.checked) radToCheck.checked = true;
-            if (recAc === 'enox') {
-                const freqVal = (egfrForCalc < 30) ? 'q24h' : 'q12h';
-                const freqRad = document.querySelector(`input[name="enox-freq"][value="${freqVal}"]`);
-                if (freqRad && !freqRad.checked) freqRad.checked = true;
-            }
+            const freqVal = (egfrForCalc < 30) ? 'q24h' : 'q12h';
+            const freqRad = document.querySelector(`input[name="enox-freq"][value="${freqVal}"]`);
+            if (freqRad && !freqRad.checked) freqRad.checked = true;
         }
 
         updateAcHints();
@@ -1085,6 +1142,39 @@ document.addEventListener('DOMContentLoaded', () => {
         window.print();
     });
 
+    // ── print-btn (outside form): wire up window.print()
+    $('print-btn').addEventListener('click', () => window.print());
+
+    // ── Safety override for CI anticoag options: second-click confirms ──
+    document.querySelectorAll('input[name="anticoag-choice"]').forEach(radio => {
+        radio.addEventListener('click', function(e) {
+            const label = this.closest('label');
+            if (!label) return;
+            if (label.classList.contains('ac-disabled')) {
+                e.preventDefault();
+                if (!label.classList.contains('ac-override-pending')) {
+                    // First click: enter override-pending state and warn
+                    label.classList.add('ac-override-pending');
+                    const ovrDiv = label.querySelector('#ac-fonda-override-msg');
+                    if (ovrDiv) {
+                        ovrDiv.textContent = '⚠️ กดอีกครั้งเพื่อยืนยัน override (ข้าม CI)';
+                        ovrDiv.style.display = 'block';
+                    }
+                } else {
+                    // Second click: allow selection, remove pending
+                    label.classList.remove('ac-disabled', 'ac-override-pending');
+                    this.checked = true;
+                    const ovrDiv = label.querySelector('#ac-fonda-override-msg');
+                    if (ovrDiv) {
+                        ovrDiv.textContent = '⚠️ Override — ใช้นอก guideline';
+                        ovrDiv.style.display = 'block';
+                    }
+                    updateAnticoagOutput();
+                }
+            }
+        });
+    });
+
     $('clear-btn').addEventListener('click', () => {
         ED_VALIDATE.clearAll();
         ED_PRINT_BOOTSTRAP.clearResults('nstemi-form', () => {
@@ -1102,14 +1192,17 @@ document.addEventListener('DOMContentLoaded', () => {
         ED_BLANK_PRINT.apply();
     });
 
-    // Auto-run print-blank-direct from home page portal
-    if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
+    // Auto-run print-blank-direct from home page portal OR auto-blank on cold load
+    const didPrintBlankDirect = ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click());
+    if (!didPrintBlankDirect) {
+        $('print-blank-btn').click(); // blank-first: show blank template immediately
+    }
 
     // Initial render on page load (real-time preview, no button press needed)
     calculateAndRender();
 
     ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
-        'NSTEMI Standing Order — MNRH-ED Guideline: ESC 2023 NSTEMI Guidelines &nbsp;|&nbsp; Anticoag: 2025 ACC/AHA ACS &nbsp;|&nbsp; eGFR: CKD-EPI 2021 &nbsp;|&nbsp; Version 2.1.0');
+        'NSTEMI Standing Order — MNRH-ED Guideline: ESC 2023 NSTEMI Guidelines &nbsp;|&nbsp; Anticoag: 2025 ACC/AHA ACS &nbsp;|&nbsp; eGFR: CKD-EPI 2021 &nbsp;|&nbsp; Version 2.1.1');
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

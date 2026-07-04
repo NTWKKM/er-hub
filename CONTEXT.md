@@ -186,18 +186,17 @@
   9. **C1 — Accessibility:** Added `role="navigation"` to the sticky nav bar (via `setAttribute` in `injectNavBar()`). Added `aria-live="polite"` to dose summary banners on all 7 order pages and the stroke results container. Screen readers now announce computed doses without interrupting workflow.
 - **Rationale:** The XSS fix closes a real security gap — user-entered HN could execute arbitrary HTML in the page context. The test foundation provides a safety net for future refactoring (Phase 2 shared-behavior extraction) without adding build dependencies. Dead code/CSS removal reduces maintenance surface. Documentation corrections ensure the governance docs match reality. Accessibility improvements bring the codebase closer to its stated design principles without changing visual output or print behavior. No clinical dose logic, safety ceilings, or print geometry were modified.
 
-### ADR-21: NSTEMI Standing Order v2.1 — Simplification, Safe eGFR Formatting, and Regression Guards (2026-07-04)
+### ADR-26: NSTEMI v2.1.1 Audit Remediation (2026-07-04)
 
-- **Context:** Following the NSTEMI v2.0 overhaul, an audit identified dead references in Javascript (`p-h0`, `p-h1`, `p-h3` were missing from DOM) causing runtime crashes upon form submission. Manual troponin times and duplicate creatinine inputs added unnecessary input friction. eGFR formatting was inconsistent and lacked null guards.
+- **Context:** A post-merge audit of `orders/nstemi.html` (post-ADR-20 / v2.1) identified critical gaps: (1) Dead `.troponin-times` DOM block, (2) Missing blank-first cold load implementation, (3) Patient-safety contradiction where Fondaparinux was auto-selected below eGFR < 30 despite showing a red contraindication warning, and (4) The print button had no event listener.
 - **Decision:**
-  1. Removed manual troponin timing inputs (`#trop-time-h0`/`1`/`3`) and the screen timing badges. Simplified the printed troponin display to a clean list of static values. Renamed print Column 1 header to "Progress note" and removed the pharmacist signature block ("ลงชื่อเภสัช:").
-  2. Deleted the dead `p-h0`/`p-h1`/`p-h3` print references and screen timing updates in JavaScript.
-  3. Retained the duplicate `#grace-creatinine` input and two-way sync to prevent input friction.
-  4. Repositioned `#screen-egfr` directly next to Creatinine, moved the `troponin-from-rphch` checkbox to the troponin header, reverted Risk Stratification to the original vertical layout, moved interactive anticoagulant choice radios to the screen results container with Enoxaparin frequency selection and GFR-only hint text (excluding age adjust text), and relocated printed anticoagulant output (`#p-anticoag`) from print Column 3 to print Column 5.
-  5. Standardised eGFR formatting to 2 decimal places with null checks (`egfr !== null ? egfr.toFixed(2) : '___'`).
-  6. Implemented automatic blank print layout display on page load.
-  7. Created `tests/id-integrity-guard.test.js` to ensure DOM and query ID consistency, and bumped service worker `CACHE_VERSION` to `er-hub-v3`.
-- **Rationale:** Reduces layout complexity and clinician data-entry overhead. Safe-guarding formatting and static reference checks prevents future regression crashes.
+  1. **Finding 1 (Dead DOM):** Removed `.troponin-times` block (`#screen-h0/h1/h3`) and 5 unused CSS rules.
+  2. **Finding 2 (Blank-first UX):** Auto-trigger `print-blank-btn.click()` on cold load before initial rendering.
+  3. **Finding 3 (Anticoag contradiction):** Sync recommendation cutoff in `shared/anticoag-engine.js` `calcAnticoag()` from `egfr >= 20` to `egfr >= 30` (matching ADR-19). Removed auto-select entirely (no checked option on calc). Added eGFR-bound `ac-disabled` state (opacity 0.45, cursor not-allowed), red `⛔ CI` badge, and green `✅ แนะนำ` badge via `updateAcHints()`. Implemented a 2-click safety override (first click enters pending status with orange outline + warning; second click checks option and sets override label).
+  4. **Finding 4 (Print Order):** Added `print-btn` click event listener to run `window.print()`.
+  5. **SW Cache:** Bumped `CACHE_VERSION` in `service-worker.js` to `er-hub-v11`.
+- **Rationale:** Ensures alignment with ADR-19 and patient safety regarding Fondaparinux renal excretion limitations (CrCl <30 mL/min). Transitioning to manual select with clinical badges preserves physician choice while highlighting guidelines. Wire up missing print event listeners to resolve immediate UX regressions.
+- **Test Impact:** 138/138 tests pass. Verified exact alignment between eGFR thresholds and on-screen messages.
 
 ### ADR-22: Homepage Design Optimization & Local CSS Scoping (2026-07-04)
 
