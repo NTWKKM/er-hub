@@ -169,10 +169,10 @@
 ### ADR-21: NSTEMI Standing Order v2.1 — Simplification, Safe eGFR Formatting, and Regression Guards (2026-07-04)
 - **Context:** Following the NSTEMI v2.0 overhaul, an audit identified dead references in Javascript (`p-h0`, `p-h1`, `p-h3` were missing from DOM) causing runtime crashes upon form submission. Manual troponin times and duplicate creatinine inputs added unnecessary input friction. eGFR formatting was inconsistent and lacked null guards.
 - **Decision:**
-  1. Removed manual troponin timing inputs (`#trop-time-h0`/`1`/`3`) and the screen timing badges. Simplified the printed troponin display to a clean list of static values.
+  1. Removed manual troponin timing inputs (`#trop-time-h0`/`1`/`3`) and the screen timing badges. Simplified the printed troponin display to a clean list of static values. Renamed print Column 1 header to "Progress note" and removed the pharmacist signature block ("ลงชื่อเภสัช:").
   2. Deleted the dead `p-h0`/`p-h1`/`p-h3` print references and screen timing updates in JavaScript.
   3. Retained the duplicate `#grace-creatinine` input and two-way sync to prevent input friction.
-  4. Repositioned `#screen-egfr` directly next to Creatinine, moved the `troponin-from-rphch` checkbox to the troponin header, and reverted Risk Stratification to the original vertical layout.
+  4. Repositioned `#screen-egfr` directly next to Creatinine, moved the `troponin-from-rphch` checkbox to the troponin header, reverted Risk Stratification to the original vertical layout, moved interactive anticoagulant choice radios to the screen results container with Enoxaparin frequency selection, and relocated printed anticoagulant output (`#p-anticoag`) from print Column 3 to print Column 5.
   5. Standardised eGFR formatting to 2 decimal places with null checks (`egfr !== null ? egfr.toFixed(2) : '___'`).
   6. Implemented automatic blank print layout display on page load.
   7. Created `tests/id-integrity-guard.test.js` to ensure DOM and query ID consistency, and bumped service worker `CACHE_VERSION` to `er-hub-v3`.
