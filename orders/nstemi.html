@@ -420,7 +420,7 @@
                                 <div>
                                     <strong id="ac-enox-text" style="color:#c0392b;">Enoxaparin -- mg SC</strong>
                                     <div style="font-size:10px; color:#666; margin-top:2px;" id="ac-enox-hint">
-                                        (1 mg/kg — age &lt;75, eGFR ≥30) หรือ eGFR &lt; 30 → once daily
+                                        (1 mg/kg — GFR &lt; 30 → once daily)
                                     </div>
                                     <div id="enox-frequency-container" style="display: none; margin-top: 6px; padding-left: 4px; gap: 12px;">
                                         <label style="cursor:pointer; display: inline-flex; align-items: center; gap: 4px; margin: 0; font-weight: normal;">
@@ -720,12 +720,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const enoxDose = Math.round(weight * 1.0);
             $('ac-fonda-hint').textContent = `(Preferred — eGFR ${egfrLive.toFixed(2)})`;
             $('ac-enox-text').textContent = `Enoxaparin ${enoxDose} mg SC`;
-            $('ac-enox-hint').textContent = `(1 mg/kg — age ${parseFloat($('age').value) || 0}, eGFR ${egfrLive.toFixed(2)})`;
+            $('ac-enox-hint').textContent = '(1 mg/kg — GFR < 30 → once daily)';
             $('ac-hep-hint').textContent = `(eGFR <15 หรือ CrCl <30 mL/min — current eGFR: ${egfrLive.toFixed(2)})`;
         } else {
             $('ac-fonda-hint').textContent = '(eGFR ไม่ได้คำนวณ)';
             $('ac-enox-text').textContent = 'Enoxaparin -- mg SC';
-            $('ac-enox-hint').textContent = '(กรอกน้ำหนัก/อายุ/เพศ/Cr เพื่อดูขนาด)';
+            $('ac-enox-hint').textContent = '(1 mg/kg — GFR < 30 → once daily)';
             $('ac-hep-hint').textContent = '(eGFR <15 หรือ CrCl <30 mL/min)';
         }
         updateAnticoagOutput();
