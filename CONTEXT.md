@@ -278,7 +278,9 @@
   6. **Continuation Column Signature:** Synced Column 5's doctor signature block with Column 3's format, leaving it as a single bottom-aligned line `ลงชื่อแพทย์ (ER/ward) <span class="dotted-line"></span>` for ER/ward unification.
   7. **Line Wrapping & Others:** Wrapped `NSS 500 ml IV 40 ml/hr` and `Lt. arm (non-AVF)` into two lines. Wrapped the Fondaparinux PCI warning into two lines: Line 1 `(CI: CrCl <30 mL/min)` and Line 2 `(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)`. Added `☐ Admit` (bolded and 11pt) as the 6th option under `Others:`.
   8. **Caching & Version:** Bumped version in `orders/nstemi.html` to `2.1.1` and `service-worker.js` `CACHE_VERSION` to `er-hub-v12`.
+  9. **GRACE Variables List Layout:** Removed the vertical bar `|` dividers from the GRACE variables. Structured each parameter (Age, HR, SBP, Cr, Killip, and GRACE Score) on its own separate line in the HTML, aligning the live preview and the print layouts perfectly.
 - **Rationale:** Scale-up matches clinical readability expectations. Flexbox alignment dynamically pushes signature lines to the bottom edge, using a simple blank container rather than dotted lines to avoid print settings background issues and keep the worksheet uncluttered.
+
 
 
 
