@@ -252,3 +252,33 @@
   6. Graceful degradation: missing fields render `--`, auto-select fires only when eGFR is computable.
 - **Rationale:** Removing the calculate gate eliminates cognitive overhead during time-critical resuscitation. Real-time preview lets clinicians verify the order as they type. Submit-to-print preserves existing button labels while assigning the correct final action.
 
+---
+
+### ADR-27: NSTEMI v2.1.2 Re-Audit Minimal Design (2026-07-04)
+
+- **Context:** The second-pass audit of NSTEMI standing orders (`PLAN-nstemi-v2.1.1-reaudit-minimal-design.md`) identified three issues: (1) split threshold for Fondaparinux between screen logic (30) and print logic (20); (2) override-confirmation warning messages hardcoded to Fondaparinux, leaving Enoxaparin without safety messaging; (3) Heparin hints containing an obsolete reference to `CrCl <30 mL/min`.
+- **Decision:**
+  1. **Renal Cutoff Constants:** Hoisted cutoffs to unified constants (`FONDA_MIN_EGFR = 30` and `ENOX_MIN_EGFR = 15`) at the top of the script block.
+  2. **Generified Override UI:** Added `#ac-enox-ci-msg` and `#ac-enox-override-msg`. Updated `_applyAcState` to perform dynamic ID lookup and click-handlers to check safety messages dynamically for both drugs.
+  3. **Heparin Hint Tidy:** Removed the `หรือ CrCl <30 mL/min` reference, keeping Heparin labels to `(eGFR <15 mL/min)` consistently.
+  4. **Regression Guard:** Added `tests/nstemi-thresholds.test.js` to assert constants are used and check for hardcoded threshold literals.
+- **Rationale:** Centralizing cutoffs in constants avoids split-logic bugs. Generifying the warning handlers prevents safety bypasses on overridden enoxaparin dosing.
+
+---
+
+### ADR-28: NSTEMI Print Layout A4 Optimization (2026-07-04)
+
+- **Context:** The NSTEMI standing order printed output had excessive blank whitespace when rendered on a standard A4 page. Clinicians required the layout to fill the page cleanly and look professional, with space to write custom additional orders, while strictly fitting on a single page to prevent medical record split errors.
+- **Decision:**
+  1. **Moderate Typography Scale:** Scaled up the grid font size slightly to `9.5pt` and cells to `9pt` (with `line-height: 1.45;` and `margin-bottom: 4px` for list items) to fill the empty space safely without causing the 1-page document to overflow onto page 2.
+  2. **Flexbox-Driven Spacing & Bottom Signature Block:** Enabled Flexbox inside the column grid cells (`display: flex; flex-direction: column; height: 100%;`) and wrapped the doctor signature blocks in `.print-signature-block` with `margin-top: auto;` to anchor them flush to the bottom of the grid row.
+  3. **Clean Blank Space:** Inserted a flexible spacer container `.order-blank-space` (`flex-grow: 1; min-height: 20px;`) right before the signature blocks. Left it as clean blank space (no dotted lines) per user request to allow manual additions.
+  4. **Column 1 Unit Formatting:** Standardized all unit labels (`น้ำหนัก (kg)`, `eGFR (ml/min)`, `HR (bpm)`, `SBP (mmHg)`, `Cr (mg/dL)`) in parentheses immediately following the headers, removing trailing unit suffixes.
+  5. **Version Block Relocation:** Moved the version string to the bottom of Column 1 (Progress Note) and removed the `Generated: ...` date string entirely to clean up the margins.
+  6. **Continuation Column Signature:** Synced Column 5's doctor signature block with Column 3's format, leaving it as a single bottom-aligned line `ลงชื่อแพทย์ (ER/ward) <span class="dotted-line"></span>` for ER/ward unification.
+  7. **Line Wrapping & Others:** Wrapped `NSS 500 ml IV 40 ml/hr` and `Lt. arm (non-AVF)` into two lines. Wrapped the Fondaparinux PCI warning into two lines: Line 1 `(CI: CrCl <30 mL/min)` and Line 2 `(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)`. Added `☐ Admit` (bolded and 11pt) as the 6th option under `Others:`.
+  8. **Caching & Version:** Bumped version in `orders/nstemi.html` to `2.1.1` and `service-worker.js` `CACHE_VERSION` to `er-hub-v12`.
+- **Rationale:** Scale-up matches clinical readability expectations. Flexbox alignment dynamically pushes signature lines to the bottom edge, using a simple blank container rather than dotted lines to avoid print settings background issues and keep the worksheet uncluttered.
+
+
+

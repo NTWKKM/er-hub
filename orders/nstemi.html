@@ -189,6 +189,43 @@
 
         @media print {
             .grace-summary { display: none !important; }
+
+            /* A4 print layout optimization */
+            html, body {
+                height: 297mm !important;
+                box-sizing: border-box;
+            }
+            #print-area {
+                height: 285mm;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                box-sizing: border-box;
+            }
+            .order-grid-5col {
+                flex-grow: 1;
+                height: calc(100% - 30mm);
+                grid-template-rows: auto 1fr;
+                font-size: 9.5pt !important;
+            }
+            .grid-cell {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                box-sizing: border-box;
+                font-size: 9pt !important;
+                line-height: 1.45 !important;
+            }
+            .order-list li {
+                margin-bottom: 4px;
+            }
+            .order-blank-space {
+                flex-grow: 1;
+                min-height: 20px;
+            }
+            .print-signature-block {
+                margin-top: auto;
+            }
         }
     </style>
 </head>
@@ -491,16 +528,16 @@
                 <div class="grid-cell">
                     <strong>NSTEMI</strong><br>
                     HN: <span class="highlight" id="p-hn">--</span><br>
-                    น้ำหนัก: <strong class="highlight" id="p-weight">--</strong> kg<br>
-                    eGFR: <strong class="highlight" id="p-egfr">--</strong> ml/min<br>
+                    น้ำหนัก (kg): <strong class="highlight" id="p-weight">--</strong><br>
+                    eGFR (ml/min): <strong class="highlight" id="p-egfr">--</strong><br>
                     ASA Allergy: <span id="p-asa">No</span>
 
                     <div class="divider"></div>
                     <strong>GRACE Variables</strong><br>
                     Age: <span id="p-age">--</span>
-                    &nbsp;|&nbsp; HR: <span id="p-hr">--</span> bpm<br>
-                    SBP: <span id="p-sbp">--</span> mmHg
-                    &nbsp;|&nbsp; Cr: <span id="p-cr">--</span> mg/dL<br>
+                    &nbsp;|&nbsp; HR (bpm): <span id="p-hr">--</span><br>
+                    SBP (mmHg): <span id="p-sbp">--</span>
+                    &nbsp;|&nbsp; Cr (mg/dL): <span id="p-cr">--</span><br>
                     <span id="p-bin-flags" style="font-size:10px;line-height:1.7;"></span>
                     Killip: Class <span id="p-killip">I</span><br>
                     <strong>GRACE Score: <span class="highlight" id="p-grace">--</span></strong>
@@ -513,6 +550,14 @@
                     <strong>hs-Troponin I:</strong><br>
                     <span id="p-troponin-values">(ไม่ได้กรอก)</span><br>
                     <span id="p-rphch-note" style="font-size:9.5px;color:#666;"></span>
+
+                    <div class="order-blank-space"></div>
+
+                    <div class="print-signature-block">
+                        <small style="color:#777;font-size:9px;">
+                            Version: 2.1.1 | ESC 2023 NSTEMI Guidelines
+                        </small>
+                    </div>
                 </div>
 
                 <!-- Col 2: Date/Time -->
@@ -533,7 +578,7 @@
                     <div class="divider"></div>
                     <strong>IV / O2:</strong>
                     <ul class="order-list">
-                        <li>☐ NSS 500 ml IV 40 ml/hr Lt. arm (non-AVF)</li>
+                        <li>☐ NSS 500 ml IV 40 ml/hr<br><span style="padding-left: 20px;">(Lt. arm (non-AVF))</span></li>
                         <li>☐ O2 canula 3 L if O2sat &lt; 90%</li>
                     </ul>
 
@@ -554,9 +599,14 @@
                         <li>☐ พรุ่งนี้ FBS, lipid profile</li>
                         <li>☐ Consult cardiac rehab</li>
                         <li>☐ Consult เลิกบุหรี่ (ถ้ายังสูบ)</li>
+                        <li style="font-size: 11pt; font-weight: bold; margin-top: 6px;">☐ Admit</li>
                     </ul>
-                    <br>
-                    ลงชื่อแพทย์ (ER/ward) <span class="dotted-line"></span>
+                    
+                    <div class="order-blank-space"></div>
+
+                    <div class="print-signature-block">
+                        ลงชื่อแพทย์ (ER/ward) <span class="dotted-line"></span>
+                    </div>
                 </div>
 
                 <!-- Col 4: Date/Time -->
@@ -586,14 +636,11 @@
                         <li id="p-isdn-cont">☑ ISDN (5) 1 tab SL prn chest pain</li>
                     </ul>
 
-                    <div class="divider"></div>
-                    ลงชื่อแพทย์ (ward) <span class="dotted-line"></span><br>
-                    เลขว. <span class="dotted-line" style="min-width:45px;"></span>
-                    <br><br>
-                    <small style="color:#777;font-size:9px;">
-                        Version: 2.1.0 | ESC 2023 NSTEMI Guidelines<br>
-                        Generated: <span id="p-generated">--</span>
-                    </small>
+                    <div class="order-blank-space"></div>
+
+                    <div class="print-signature-block">
+                        ลงชื่อแพทย์ (ER/ward) <span class="dotted-line"></span>
+                    </div>
                 </div>
             </div><!-- end .order-grid-5col -->
 
@@ -634,7 +681,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <strong>${chk('fonda')} Fondaparinux</strong>
             ${fondaNA ? `&nbsp;<span style="color:#c0392b;font-size:9px;">⚠️ GFR&lt;${FONDA_MIN_EGFR} — ห้ามให้</span>` : '&nbsp;<small>(Preferred)</small>'}<br>
             2.5 mg SC OD × 5 Days<br>
-            <span style="font-size:9px;color:#666;">(CI: CrCl &lt;${FONDA_MIN_EGFR} mL/min — ถ้าทำ PCI ต้องเสริม UFH bolus)</span>
+            <span style="font-size:9px;color:#666;">(CI: CrCl &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>
         </div>`;
 
         // Enoxaparin
@@ -741,12 +788,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // ── Hint text ──
         if (egfrKnown && weight > 0) {
             const enoxDose = Math.round(weight * 1.0);
-            $('ac-fonda-hint').innerHTML = `(Preferred — eGFR ${egfrLive.toFixed(2)})<br><span style="color:#c0392b;">(CI: CrCl &lt;${FONDA_MIN_EGFR} mL/min — ถ้าทำ PCI ต้องเสริม UFH bolus)</span>`;
+            $('ac-fonda-hint').innerHTML = `(Preferred — eGFR ${egfrLive.toFixed(2)})<br><span style="color:#c0392b;">(CI: CrCl &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = `Enoxaparin ${enoxDose} mg SC`;
             $('ac-enox-hint').innerHTML = `(1 mg/kg = ${enoxDose} mg — GFR &lt; ${FONDA_MIN_EGFR} → once daily)<br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
         } else {
-            $('ac-fonda-hint').innerHTML = `(Preferred — eGFR --)<br><span style="color:#c0392b;">(CI: CrCl &lt;${FONDA_MIN_EGFR} mL/min — ถ้าทำ PCI ต้องเสริม UFH bolus)</span>`;
+            $('ac-fonda-hint').innerHTML = `(Preferred — eGFR --)<br><span style="color:#c0392b;">(CI: CrCl &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = 'Enoxaparin -- mg SC';
             $('ac-enox-hint').innerHTML = `(1 mg/kg = -- mg — GFR &lt; ${FONDA_MIN_EGFR} → once daily)<br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
@@ -840,7 +887,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="ac-opt">\
             <strong>☐ Fondaparinux</strong> &nbsp;<small>(Preferred)</small><br>\
             2.5 mg SC OD × 5 Days<br>\
-            <span style="font-size:9px;color:#666;">(CI: CrCl &lt;30 mL/min — ถ้าทำ PCI ต้องเสริม UFH bolus)</span>\
+            <span style="font-size:9px;color:#666;">(CI: CrCl &lt;30 mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>\
         </div>\
         <div class="ac-opt">\
             <strong>☐ Enoxaparin</strong> &nbsp;<strong>☐ 0.4 ml</strong> &nbsp;<strong>☐ 0.6 ml</strong><br>\
@@ -1114,7 +1161,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const dtStr = '....................<br>....................';
         $('p-dt-1').innerHTML = dtStr;
         $('p-dt-2').innerHTML = dtStr;
-        ED_COMPONENTS.updateGeneratedTime('p-generated', now);
 
         $('p-asa-stat').innerHTML = asaAlrg
             ? '<strong style="color:red;">⚠️ ASA ALLERGY — ห้ามให้ ASA</strong>'
@@ -1192,7 +1238,6 @@ document.addEventListener('DOMContentLoaded', () => {
     $('print-blank-btn').addEventListener('click', () => {
         ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
-        ED_COMPONENTS.updateGeneratedTime('p-generated', null);
         ED_BLANK_PRINT.apply();
     });
 
