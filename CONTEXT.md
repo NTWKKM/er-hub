@@ -280,7 +280,15 @@
   8. **Caching & Version:** Bumped version in `orders/nstemi.html` to `2.1.1` and `service-worker.js` `CACHE_VERSION` to `er-hub-v12`.
   9. **GRACE Variables List Layout:** Removed the vertical bar `|` dividers from the GRACE variables. Structured each parameter (Age, HR, SBP, Cr, Killip, and GRACE Score) on its own separate line in the HTML, aligning the live preview and the print layouts perfectly.
 - **Rationale:** Scale-up matches clinical readability expectations. Flexbox alignment dynamically pushes signature lines to the bottom edge, using a simple blank container rather than dotted lines to avoid print settings background issues and keep the worksheet uncluttered.
+### ADR-29: Braun Redesign & Navigation Refinement (2026-07-04)
 
-
-
+- **Context:** Refactoring the portal homepage (`index.html`) to the Braun × Mid-Century Modern layout required visual refinement to maintain clinical utility. The initial redesign used an off-white navigation bar that lacked visual distinction, a "Standing Orders" section title that added vertical height, and STEMI ahead of NSTEMI in the list. Additionally, standing order navigation titles were inconsistent.
+- **Decision:**
+  1. **Nav Blue Background & Icon Size**: Reverted the `.top-nav` background on `index.html` back to the original blue gradient (`linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)`) with white text, and increased the `.nav-logo` icon height to `38px` globally to restore branding prominence.
+  2. **Removed "Standing Orders" Eyebrow**: Removed the section header and its bottom underline from `index.html` to simplify the interface and let the order rows start directly beneath the navigation bar.
+  3. **Reordered List**: Swapped NSTEMI and STEMI so NSTEMI is 2nd (02) and STEMI is 3rd (03).
+  4. **Standardized Navigation Titles**: Normalised `injectNavBar` parameter usage across all 7 standing order pages to explicitly include the page title, clinical guideline, and release version (matching NSTEMI's layout).
+  5. **Clinical Visual Indicator (Signal Orange)**: Documented that the **Signal Orange** `#d84315` dot is reserved strictly for time-critical visual status flags (rt-PA, STEMI, Massive PE) to direct clinician attention instantly to time-critical emergency pathways (door-to-needle/door-to-balloon times) in a busy ED.
+  6. **Caching**: Bumped service worker `CACHE_VERSION` to `er-hub-v13`.
+- **Rationale:** Restoring the blue navigation bar retains brand consistency. Increasing the logo size elevates professional institutional identity. The Signal Orange dot serves a crucial clinical triage role, highlighting time-critical pathways while keeping the dashboard clean.
 

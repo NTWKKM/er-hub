@@ -39,15 +39,7 @@
 
     <!-- ══════════════ FORM ══════════════ -->
     <div class="form-container">
-        <div class="header">
-            <h1>🌬️ Post-Intubation Sedation Generator</h1>
-            <p style="margin:4px 0;color:#666;font-size:14px;">
-                Emergency Department — Maharat Nakhon Ratchasima Hospital
-            </p>
-            <small style="color:#aaa;">
-                Guideline: ER Standing Order for Sedation (Fentanyl + Midazolam) | Update 22/04/2026
-            </small>
-        </div>
+
 
         <form id="sedation-form">
             <div class="input-layout">
@@ -259,7 +251,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-run print-blank-direct from home page portal (redirect to PDF)
     if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirectPdf('../docs/order Sedation-Fen-dormicum/fen.pdf')) return;
 
-    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
+    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
+        'Post-Intubation Sedation — MNRH-ED Guideline: ER Standing Order for Sedation &nbsp;|&nbsp; Version 1.0');
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

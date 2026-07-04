@@ -68,15 +68,7 @@
 <body class="theme-neutral">
 <div class="container">
     <div class="form-container">
-        <div class="header">
-            <h1>🧪 IV Infusion Drip Calculator</h1>
-            <p style="margin:4px 0;color:#666;font-size:14px;">
-                Emergency Department — Maharat Nakhon Ratchasima Hospital
-            </p>
-            <small style="color:#aaa;">
-                เครื่องมือคำนวณอัตราการหยดยาทางหลอดเลือดดำ (mL/hr) สำหรับยากลุ่ม HAD ทั้ง 12 ชนิด
-            </small>
-        </div>
+
 
         <form id="calc-form">
             <div class="input-layout">
@@ -162,7 +154,8 @@
 <script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
+    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
+        'IV Infusion Drip Calculator — MNRH-ED Clinical Tool &nbsp;|&nbsp; Version 1.0');
     const $ = id => document.getElementById(id);
     
     const drugSelect = $('drug-select');

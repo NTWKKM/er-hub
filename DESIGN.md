@@ -4,39 +4,44 @@
 
 ### Color Palette
 
-- **Background:** `#f0f2f5` (Clinical order sheets screen background) | Radial gradient `#f8fafc` to `#e2e8f0` (Portal homepage background)
-- **Container Background:** `#ffffff` (Card background)
-- **Primary Text:** `#333333` (Charcoal gray)
-- **Border Neutral:** `#cccccc` / `#dee2e6` (Light borders)
-- **Card Selection Active:** `#ffeaa7` (High alert highlight / selected state background)
+- **Background:** `#f0f2f5` (Clinical order sheets screen background) | Warm off-white `#f4f2ec` (Portal homepage background / Paper)
+- **Container Background:** `#ffffff` (Card background / worksheets)
+- **Primary Text / Ink:** `#1a1a1a` (Primary text on portal, solid rules)
+- **Secondary Text / Graphite:** `#4a4a4a` (Secondary metadata, status badges, and arrows)
+- **Border / Rule:** `#d8d4c8` (Subtle hairline dividers on portal)
+- **Signal Orange:** `#d84315` (Reserved ONLY for time-critical visual status dots on portal: rt-PA, STEMI, Massive PE. Acts as a high-visibility clinical triage marker to draw the physician's attention instantly to time-sensitive emergency pathways, meeting WCAG graphical element 3:1 contrast requirements).
 
-#### Module Specific Accents
-
-- **Stroke (rt-PA):** Primary `#007bff` | Hover `#0056b3` | BG Highlight `#e6f0ff`
-- **STEMI / NSTEMI / PE / Antivenom / Heparin / Sedation:** Primary `#c0392b` | Hover `#a93226` | BG Highlight `#fff5f5`
-- **Success / Print:** Primary `#28a745` | Hover `#218838`
-- **Neutral / Clear:** Primary `#7f8c8d` | Hover `#626c6d`
+#### Module Specific Accents (Muted Text-Only Categories)
+- **Neurology:** Ochre `#b8873a`
+- **Cardiac / Pulmonary:** Slate `#3a5566`
+- **Anticoagulation / Procedural:** Olive `#5a6b3b`
+- **Toxicology:** Brick `#8a3a2a`
+- **Clinical Tools / Calculator:** Graphite `#4a4a4a`
 
 ### Typography
 
-- **Primary Font Family:** `'Sarabun', sans-serif` (Imported from Google Fonts)
+- **Primary Font Family:** `'Sarabun', sans-serif` (Worksheet pages fallback for Thai rendering) | `"Inter Tight"`, `"Neue Haas Grotesk"`, sans-serif (Primary portal typography and navigation titles)
 - **Font Sizes:**
   - Page Heading (`h1`): `1.5em` (24px)
   - Section Heading (`h3`): `1.2em` (18px)
   - Input/Form Text: `15px`
   - Print Cells: `10.5px` (Optimized for space)
   - Print Headers: `16px`
+  - Portal Scale: `12px` (badges/eyebrows), `14px` (category/metadata/numbers), `16px` (titles/headers), `32px` (brand display)
 
 ### Breakpoints & Layout
 
-- **Container Max-Width:** `1100px` (order pages), `1200px` (portal)
+- **Container Max-Width:** `1100px` (order pages), `1120px` (portal Swiss grid)
 - **Form Grid Gaps:** `20px` (STEMI/NSTEMI), `30px` (Stroke)
+- **Portal List Layout:** Semantic ordered lists (`<ol class="order-list">`) of rows (`.order-row`) with `min-height: 56px` and padding (`12px 16px`) for optimal touch targets. Visual separation via 1px hairline rules without drop shadows or card elevations.
 - **NSTEMI Compact Input Layout:** Patient Info (`.patient-section`) is a full-width top row with fields in a single-line flexbox (`.patient-fields`) containing: HN, Age, Weight(kg), Sex(M/F radio), Creatinine(mg/dL), and a red eGFR badge derived live via CKD-EPI 2021. Below it, a 3-column `.input-layout` row holds: (1) GRACE Score Variables (HR/SBP/Creatinine from patient info + binary flags), (2) Killip Class (compacted single-line radio labels with hover descriptions), (3) Risk Stratification (vertical checkbox list with standard labels). Troponin values block holds H0, H1, H3 values with no manual draw times. Anticoagulant selection is placed in the screen results box, allowing the physician to select choices (with Enoxaparin supporting q12h vs OD sub-selections). To ensure patient safety, options that are contraindicated (Fondaparinux at eGFR < 30, Enoxaparin at eGFR < 15) are styled as disabled (opacity 0.45, cursor not-allowed) and marked with a red `⛔ CI` badge, while the recommended option gets a green `✅ แนะนำ` badge. Pre-selection is entirely manual (no auto-checking). Clinicians can bypass the CI warning via a two-click safety override (first click prompts for validation with an orange dashed border, second click checks the radio and shows an override status). Choosing an option dynamically updates the print area's Continuation column to show checkboxes for 0.4 ml vs 0.6 ml pre-filled syringes (line 1) and q12h vs OD frequency (line 2, indented 5 spaces) with a 2-line clinical guidance note detailing the calculated dose and package equivalence (0.4 ml = 40 mg, 0.6 ml = 60 mg).
 - **Responsive Breakpoints:**
   - `≤900px`: Columns stack vertically, inline-input labels go full-width
   - `≤899px` (tablet): Inline inputs stack vertically, buttons 44px min-height
+  - `≤768px`: Portal top navigation layout padding and typography adjustments
+  - `≤640px`: Portal rows stack category badges vertically above protocol titles to conserve horizontal space
   - `≤599px` (mobile): Single-column portal grid, compact padding, horizontal scroll hint for order grid, flag labels stack
-- **Touch Targets:** Buttons min-height 44px on mobile
+- **Touch Targets:** Buttons/rows min-height 44px on mobile
 
 ---
 
@@ -44,9 +49,9 @@
 
 | Component | Role / Target | States & Props |
 |---|---|---|
-| **Portal Card** | Category-grouped glassmorphic card in single 3-column grid. Branded vertical left border (5px) and matching uppercase category tag. No section titles, no emoji, no print-blank button, no card descriptions. Stroke FAST TRACK is first card. Card title 17px bold. Features staggered fade-in entrance animations. | `.hover` (Lift `translateY(-4px)`, color-matched box-shadow glow, vertically centered chevron indicator `→`, and subtle radial bg glow). Default: background `rgba(255,255,255,0.85)` with `12px` border-radius and `backdrop-filter: blur(12px)`. `padding: 16px 20px` with `padding-right: 38px`, `min-height: 80px`. Grid: `repeat(3, 1fr)` desktop, `repeat(2, 1fr)` tablet (600–900px) with gap `12px`, `1fr` mobile (<599px) with `padding: 12px 16px` and `min-height: 70px`. |
-| **Portal Header** | Removed. Nav bar replaces the portal header. Logo and title card deleted from `index.html`. | N/A |
-| **Top Navigation Bar** | Sticky full-width bar injected by `ED_COMPONENTS.injectNavBar()`. Auto-detects page title from `document.title` (strips after `—`). Optional hospital logo (28px height) passed via `logoSrc` parameter — now shown on all 9 pages (portal + 7 orders + drip calculator, ADR-17 reverses ADR-14 Q3). Present on all 9 pages. "Home" text link (no icon) + title text. Negative margins (`-20px` top/left/right) escape `body { padding: 20px }` for flush-to-top, full-width display on order pages. `aria-label` on both Home link and title span. | Blue gradient (`#1e3c72 → #2a5298`), `position: sticky; top: 0; z-index: 100`. `width: calc(100% + 40px)`, negative margins to escape body padding. `Home` link + `.nav-title`. Hidden in print via `nav`, `.top-nav`, `a[href*="index.html"]` selectors in `@media print`. |
+| **Portal List Row** | Braun-restrained row in a vertical ordered list. Restrained layout with no drop shadows, no lifts, and flat linear color transitions on hover. Category tag is text-only. Numbers are aligned via `font-variant-numeric: tabular-nums`. Monospace badges (`ACTIVE` / `PROTOTYPE`) represent release states. | `.hover` (Background transitions flatly to `#ece9df` in `120ms linear`, right arrow `→` shifts horizontally). Active keyboard focus ring renders as a `2px` solid ink border with a `2px` offset (`outline: 2px solid var(--ink); outline-offset: 2px;`). |
+| **Form Headers / In-page Titles** | Removed. All in-page headers, guidelines, and dividers are deleted from all 7 standing order pages and the drip calculator. Sticky nav bar serves as the single source of truth. | N/A |
+| **Top Navigation Bar** | Sticky full-width bar injected by `ED_COMPONENTS.injectNavBar()`. Auto-detects page title from `document.title` (strips after `—`) unless explicitly overridden. Shows MNRH logo (38px height) on all pages. "Home" link + title text. Normalised standing order nav titles to include the page title, clinical guideline, and release version format. | Blue gradient (`#1e3c72 → #2a5298`), `position: sticky; top: 0; z-index: 100`. `width: calc(100% + 40px)`, negative margins to escape body padding. Hidden in print via `@media print`. |
 | **Floating Print Action Bar** | Fixed bottom bar shown after generate/blank, hidden on clear. Text-only labels (no emoji, per ADR-09 consistency). | Green (#27ae60) bar with "พิมพ์ทันที" and "ดู Order" buttons. `position: fixed; bottom: 0; z-index: 1000`. Hidden in print via `@media print`. |
 | **Field Error State** | Red border highlight for empty/invalid required fields. | `.field-error` class: `border-color: #c0392b; box-shadow: 0 0 5px rgba(192,57,43,0.4)`. |
 | **Fibrinolytic / Drug Card** | Card layout to select drugs. | `.selected` (Red border + light red BG), `.hover` (Muted red border), Default (Light gray border) |

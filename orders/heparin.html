@@ -47,15 +47,7 @@
 
     <!-- ══════════════ FORM ══════════════ -->
     <div class="form-container">
-        <div class="header">
-            <h1>🩸 Heparin Standing Order Generator &amp; Titration Assistant</h1>
-            <p style="margin:4px 0;color:#666;font-size:14px;">
-                Emergency Department — Maharat Nakhon Ratchasima Hospital
-            </p>
-            <small style="color:#aaa;">
-                Guideline: Siriraj Guideline for Adult Patients with Heparin Administration (Modified)
-            </small>
-        </div>
+
 
         <form id="heparin-form">
             <div class="input-layout">
@@ -394,7 +386,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-run print-blank-direct from home page portal (redirect to PDF)
     if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirectPdf('../docs/High alert drug ER/Heparin.pdf')) return;
 
-    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
+    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
+        'Heparin Protocol — MNRH-ED Guideline: Siriraj Heparin Guideline (Modified) &nbsp;|&nbsp; Version 1.0');
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

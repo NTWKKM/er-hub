@@ -38,6 +38,8 @@ body {
     align-items: center;
     padding: var(--page-pad);
     margin: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .container {
@@ -247,7 +249,7 @@ input[type="checkbox"] {
 }
 
 .nav-logo {
-    height: 28px;
+    height: 38px;
     width: auto;
     flex-shrink: 0;
     border-radius: 4px;

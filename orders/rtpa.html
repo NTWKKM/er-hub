@@ -215,12 +215,7 @@
 
     <!-- ══════════════ FORM ══════════════ -->
     <div class="form-container">
-        <div class="header">
-            <h1>🧠 rt-PA Stroke FAST TRACK (Standing Order)</h1>
-            <p style="margin:4px 0;color:#666;font-size:14px;">
-                Maharat Nakhon Ratchasima Hospital — Emergency Department
-            </p>
-        </div>
+
         
         <form id="rtpa-form">
             <div class="input-layout">
@@ -771,7 +766,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-run print-blank-direct from home page portal
     if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => document.getElementById('print-blank-btn').click())) return;
 
-    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
+    ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
+        'rt-PA Stroke FAST TRACK — MNRH-ED Guideline: Thai Stroke Society 2020 &nbsp;|&nbsp; Version 2.0');
     ED_COMPONENTS.setupCommonActions();
 });
 </script>

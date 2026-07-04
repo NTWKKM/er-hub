@@ -6,10 +6,10 @@
     <title>MNRH-ED Standing Order Hub — Maharat Nakhon Ratchasima Hospital</title>
     <link rel="icon" type="image/png" href="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1e3c72">
+    <meta name="theme-color" content="#f4f2ec">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="shared/base.css">
     
     <script>
@@ -26,258 +26,394 @@
     </script>
 
     <style>
+        :root {
+            --paper: #f4f2ec;
+            --ink: #1a1a1a;
+            --graphite: #4a4a4a;
+            --rule: #d8d4c8;
+            --signal-orange: #d84315;
+            
+            /* Muted categories (text only) */
+            --cat-neuro: #b8873a;     /* Ochre */
+            --cat-cardiac: #3a5566;   /* Slate */
+            --cat-pulmonary: #3a5566; /* Slate */
+            --cat-anticoag: #5a6b3b;  /* Olive */
+            --cat-tox: #8a3a2a;       /* Brick */
+            --cat-procedural: #5a6b3b;/* Olive */
+            --cat-tools: #4a4a4a;     /* Graphite */
+
+            --font-ui: "Inter Tight", "Neue Haas Grotesk", sans-serif;
+        }
+
         body {
-            /* index.html builds its own layout via .portal-container, so body
-               itself carries no padding — but --page-pad must still be set to 0
-               here, since shared/base.css's .top-nav breakout math (used by
-               injectNavBar) reads this var to compute how far to negative-margin
-               itself flush. Leaving this at the default 20px (as in base.css)
-               caused the nav to overflow 20px past the viewport on each side,
-               specifically on this page. */
             --page-pad: 0px;
-            background: radial-gradient(circle at top right, #f8fafc 0%, #f1f5f9 60%, #e2e8f0 100%);
+            background-color: var(--paper);
+            color: var(--ink);
+            font-family: "Inter Tight", "Neue Haas Grotesk", "Sarabun", sans-serif;
             margin: 0;
             padding: 0;
             display: block;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .portal-container {
             width: 100%;
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 24px;
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 48px 24px;
             box-sizing: border-box;
         }
 
-        .portal-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+        /* Sticky top nav override to match Braun theme */
+        .top-nav {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+            height: 64px;
+            box-sizing: border-box;
+            padding: 0 24px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            margin-bottom: 32px !important;
+            width: 100% !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .nav-center {
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-align: center;
+            flex: 1;
+            font-family: var(--font-ui);
+        }
+
+        .nav-right {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: right;
+            flex: 1;
+            font-family: var(--font-ui);
+        }
+
+        .list-section {
+            margin-bottom: 48px;
+        }
+
+        .section-eyebrow {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--ink);
+            margin: 0 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--ink);
+            font-family: var(--font-ui);
+        }
+
+        .order-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            border-top: 1px solid var(--rule);
+        }
+
+        .order-item-wrap {
+            margin: 0;
+            padding: 0;
+        }
+
+        .order-row {
+            display: flex;
+            align-items: center;
+            min-height: 56px;
+            box-sizing: border-box;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: var(--ink);
+            border-bottom: 1px solid var(--rule);
+            background-color: transparent;
+            transition: background-color 120ms linear;
+        }
+
+        .order-row:hover {
+            background-color: #ece9df;
+        }
+
+        .order-row:focus {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        .order-num {
+            font-variant-numeric: tabular-nums;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--graphite);
+            width: 48px;
+            flex-shrink: 0;
+            font-family: var(--font-ui);
+        }
+
+        .order-main-info {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
             gap: 16px;
         }
 
-        .portal-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            border-left: 5px solid var(--cat-color);
-            border-radius: 12px;
-            padding: 16px 20px;
-            padding-right: 38px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            min-height: 80px;
-            opacity: 0;
-            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .portal-card:hover {
-            transform: translateY(-4px);
-            background: #ffffff;
-            border-color: rgba(var(--cat-color-rgb), 0.3);
-            box-shadow: 0 10px 18px -8px rgba(var(--cat-color-rgb), 0.2), 0 4px 15px 0px rgba(0, 0, 0, 0.02);
-        }
-
-        /* Category Brand Custom Properties */
-        .cat-neuro {
-            --cat-color: #8e44ad;
-            --cat-color-rgb: 142, 68, 173;
-            --cat-color-bg: #f5ebfc;
-        }
-        .cat-cardiac {
-            --cat-color: #c0392b;
-            --cat-color-rgb: 192, 57, 43;
-            --cat-color-bg: #fff5f5;
-        }
-        .cat-pulmonary {
-            --cat-color: #2980b9;
-            --cat-color-rgb: 41, 128, 185;
-            --cat-color-bg: #edf7fd;
-        }
-        .cat-anticoag {
-            --cat-color: #16a085;
-            --cat-color-rgb: 22, 160, 133;
-            --cat-color-bg: #e8f8f5;
-        }
-        .cat-tox {
-            --cat-color: #d35400;
-            --cat-color-rgb: 211, 84, 0;
-            --cat-color-bg: #fdf5e2;
-        }
-        .cat-procedural {
-            --cat-color: #27ae60;
-            --cat-color-rgb: 39, 174, 96;
-            --cat-color-bg: #eafaf1;
-        }
-        .cat-tools {
-            --cat-color: #2c3e50;
-            --cat-color-rgb: 44, 62, 80;
-            --cat-color-bg: #f2f4f4;
-        }
-
-        .card-category {
-            font-size: 11px;
+        .order-category {
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--cat-color);
-            background: var(--cat-color-bg);
-            padding: 3px 6px;
-            border-radius: 6px;
-            margin-bottom: 6px;
-            display: inline-block;
-            position: relative;
-            z-index: 2;
+            width: 140px;
+            flex-shrink: 0;
+            font-family: var(--font-ui);
         }
 
-        .card-title {
-            font-size: 17px;
-            font-weight: bold;
-            margin: 0;
-            line-height: 1.35;
-            color: #1e293b;
-            transition: color 0.3s ease;
-            position: relative;
-            z-index: 2;
+        .order-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--ink);
+            flex-grow: 1;
         }
 
-        .portal-card:hover .card-title {
-            color: var(--cat-color);
+        .order-status {
+            font-family: monospace;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: var(--graphite);
+            margin-right: 12px;
+            flex-shrink: 0;
         }
 
-        /* Card interactive decorations */
-        .portal-card::before {
-            content: "→";
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%) translateX(-10px);
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--cat-color);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 2;
+        .signal-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 16px;
+            flex-shrink: 0;
+            background-color: transparent;
         }
 
-        .portal-card:hover::before {
-            opacity: 1;
-            transform: translateY(-50%) translateX(0);
+        .signal-dot.time-critical {
+            background-color: var(--signal-orange);
         }
 
-        .portal-card::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at bottom right, rgba(var(--cat-color-rgb), 0.08), transparent 60%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            z-index: 1;
-            pointer-events: none;
+        .order-arrow {
+            font-size: 14px;
+            color: var(--graphite);
+            flex-shrink: 0;
+            transition: transform 120ms linear;
         }
 
-        .portal-card:hover::after {
-            opacity: 1;
+        .order-row:hover .order-arrow {
+            transform: translateX(4px);
         }
 
-        /* Entrance Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
+        .portal-footer {
+            font-size: 12px;
+            color: var(--graphite);
+            text-align: center;
+            padding: 32px 24px;
+            margin-top: 48px;
+            border-top: 1px solid var(--rule);
+            font-family: var(--font-ui);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 0 16px !important;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            .nav-center {
+                font-size: 14px;
+                letter-spacing: 0.1em;
+            }
+            .nav-right {
+                font-size: 11px;
+            }
+            .portal-container {
+                padding: 24px 16px;
             }
         }
 
-        .portal-card:nth-child(1) { animation-delay: 40ms; }
-        .portal-card:nth-child(2) { animation-delay: 80ms; }
-        .portal-card:nth-child(3) { animation-delay: 120ms; }
-        .portal-card:nth-child(4) { animation-delay: 160ms; }
-        .portal-card:nth-child(5) { animation-delay: 200ms; }
-        .portal-card:nth-child(6) { animation-delay: 240ms; }
-        .portal-card:nth-child(7) { animation-delay: 280ms; }
-        .portal-card:nth-child(8) { animation-delay: 320ms; }
-
-        /* Tablet responsive */
-        @media (max-width: 900px) and (min-width: 600px) {
-            .portal-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .portal-container { margin: 20px auto; }
-        }
-
-        @media (max-width: 599px) {
-            .portal-container { margin: 15px auto; padding: 0 16px; }
-            .portal-grid { grid-template-columns: 1fr; gap: 10px; }
-            .portal-card { padding: 12px 16px; padding-right: 32px; min-height: 70px; }
-            .portal-card::before { right: 12px; }
+        @media (max-width: 640px) {
+            .order-row {
+                padding: 12px 8px;
+            }
+            .order-main-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .order-category {
+                width: auto;
+                font-size: 11px;
+            }
+            .order-title {
+                font-size: 14px;
+            }
+            .order-num {
+                width: 32px;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="portal-container">
-    <!-- Header removed — nav bar replaces portal header -->
-
-    <div class="portal-grid">
-        <!-- STROKE FAST TRACK (first) -->
-        <a href="orders/rtpa.html" class="portal-card cat-neuro">
-            <span class="card-category">Neurology</span>
-            <h4 class="card-title">rt-PA Stroke FAST TRACK</h4>
-        </a>
-        <!-- CARDIAC -->
-        <a href="orders/stemi.html" class="portal-card cat-cardiac">
-            <span class="card-category">Cardiac</span>
-            <h4 class="card-title">STEMI Standing Order</h4>
-        </a>
-        <a href="orders/nstemi.html" class="portal-card cat-cardiac">
-            <span class="card-category">Cardiac</span>
-            <h4 class="card-title">NSTEMI Standing Order</h4>
-        </a>
-        <!-- PULMONARY -->
-        <a href="orders/pe.html" class="portal-card cat-pulmonary">
-            <span class="card-category">Pulmonary</span>
-            <h4 class="card-title">Massive PE Fibrinolysis</h4>
-        </a>
-        <!-- ANTICOAGULATION -->
-        <a href="orders/heparin.html" class="portal-card cat-anticoag">
-            <span class="card-category">Anticoagulation</span>
-            <h4 class="card-title">Heparin Protocol</h4>
-        </a>
-        <!-- TOXICOLOGY -->
-        <a href="orders/antivenom.html" class="portal-card cat-tox">
-            <span class="card-category">Toxicology</span>
-            <h4 class="card-title">Antivenom Standing Order</h4>
-        </a>
-        <!-- PROCEDURAL -->
-        <a href="orders/sedation.html" class="portal-card cat-procedural">
-            <span class="card-category">Procedural</span>
-            <h4 class="card-title">Post-Intubation Sedation</h4>
-        </a>
-        <!-- TOOLS -->
-        <a href="tools/drip-calculator.html" class="portal-card cat-tools">
-            <span class="card-category">Clinical Tool</span>
-            <h4 class="card-title">IV Infusion Drip Calculator</h4>
-        </a>
+    <div class="list-section">
+        <ol class="order-list">
+            <!-- Neurology rt-PA -->
+            <li class="order-item-wrap">
+                <a href="orders/rtpa.html" class="order-row">
+                    <span class="order-num">01</span>
+                    <div class="order-main-info">
+                        <span class="order-category cat-neuro">Neurology</span>
+                        <span class="order-title">rt-PA Stroke FAST TRACK</span>
+                    </div>
+                    <span class="order-status">ACTIVE</span>
+                    <span class="signal-dot time-critical"></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>
+            <!-- Cardiac NSTEMI -->
+            <li class="order-item-wrap">
+                <a href="orders/nstemi.html" class="order-row">
+                    <span class="order-num">02</span>
+                    <div class="order-main-info">
+                        <span class="order-category cat-cardiac">Cardiac</span>
+                        <span class="order-title">NSTEMI Standing Order</span>
+                    </div>
+                    <span class="order-status">ACTIVE</span>
+                    <span class="signal-dot"></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>
+            <!-- Cardiac STEMI -->
+            <li class="order-item-wrap">
+                <a href="orders/stemi.html" class="order-row">
+                    <span class="order-num">03</span>
+                    <div class="order-main-info">
+                        <span class="order-category cat-cardiac">Cardiac</span>
+                        <span class="order-title">STEMI Standing Order</span>
+                    </div>
+                    <span class="order-status">PROTOTYPE</span>
+                    <span class="signal-dot time-critical"></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>
+            <!-- Pulmonary PE -->
+            <li class="order-item-wrap">
+                <a href="orders/pe.html" class="order-row">
+                    <span class="order-num">04</span>
+                    <div class="order-main-info">
+                        <span class="order-category cat-pulmonary">Pulmonary</span>
+                        <span class="order-title">Massive PE Fibrinolysis</span>
+                    </div>
+                    <span class="order-status">PROTOTYPE</span>
+                    <span class="signal-dot time-critical"></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>
+            <!-- Anticoag Heparin -->
+            <li class="order-item-wrap">
+                <a href="orders/heparin.html" class="order-row">
+                    <span class="order-num">05</span>
+                    <div class="order-main-info">
+                        <span class="order-category cat-anticoag">Anticoag.</span>
+                        <span class="order-title">Heparin Protocol</span>
+                    </div>
+                    <span class="order-status">PROTOTYPE</span>
+                    <span class="signal-dot"></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>
+            <!-- Tox Antivenom -->
+            <li class="order-item-wrap">
+                <a href="orders/antivenom.html" class="order-row">
+                    <span class="order-num">06</span>
+                    <div class="order-main-info">
+                        <span class="order-category cat-tox">Toxicology</span>
+                        <span class="order-title">Antivenom Standing Order</span>
+                    </div>
+                    <span class="order-status">PROTOTYPE</span>
+                    <span class="signal-dot"></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>
+            <!-- Procedural Sedation -->
+            <li class="order-item-wrap">
+                <a href="orders/sedation.html" class="order-row">
+                    <span class="order-num">07</span>
+                    <div class="order-main-info">
+                        <span class="order-category cat-procedural">Procedural</span>
+                        <span class="order-title">Post-Intubation Sedation</span>
+                    </div>
+                    <span class="order-status">PROTOTYPE</span>
+                    <span class="signal-dot"></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>
+        </ol>
     </div>
+
+    <div class="list-section">
+        <h3 class="section-eyebrow">Clinical Tools</h3>
+        <ol class="order-list">
+            <!-- Drip Calculator -->
+            <li class="order-item-wrap">
+                <a href="tools/drip-calculator.html" class="order-row">
+                    <span class="order-num">T1</span>
+                    <div class="order-main-info">
+                        <span class="order-category cat-tools">Calculator</span>
+                        <span class="order-title">IV Infusion Drip Calculator</span>
+                    </div>
+                    <span class="order-status">PROTOTYPE</span>
+                    <span class="signal-dot"></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>
+        </ol>
+    </div>
+
+    <footer class="portal-footer">
+        Maharat Nakhon Ratchasima Hospital · Emergency Department
+    </footer>
 </div>
 
 <script src="shared/components.js"></script>
 <script>
 ED_COMPONENTS.injectNavBar('index.html', 'docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png', '');
+// Custom script override post-injection to fit the Braun header layout
+const nav = document.querySelector('.top-nav');
+if (nav) {
+    nav.innerHTML = `
+        <div class="nav-left">
+            <img src="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" style="height: 38px; width: auto; display: block;">
+        </div>
+        <div class="nav-center">MNRH-ED HUB</div>
+        <div class="nav-right">v13 · Updated 2026-07-04</div>
+    `;
+}
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js').catch(function(e) { console.warn('SW registration failed:', e); });
 }
