@@ -325,8 +325,8 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 1. **Mobile Responsive Layout (`@media (max-width: 600px)`):** Added to `orders/nstemi.html` `<style>` block:
    - `.patient-fields` switches from `flex` → `display: grid; grid-template-columns: 1fr 1fr` — 2-column auto-wrapping grid.
    - `.patient-field input` → `max-width: none; width: 100%` (removes the 120px cap that caused overflow).
-   - Added semantic `egfr-field` class to the eGFR display field; in mobile breakpoint, `grid-column: span 2` gives it its own full-width row. CSS selector uses `.patient-field.egfr-field` (not brittle inline-style attribute selector).
-   - `.patient-field.asa-field` → `grid-column: span 2` (ASA Allergy spans full row, wraps radios inline).
+   - Added semantic `egfr-field` class to the eGFR display field; in mobile breakpoint, `grid-column: 1` (col-left, same column as HN/Age/Cr). CSS selector uses `.patient-field.egfr-field` (not brittle inline-style attribute selector).
+   - `.patient-field.asa-field` → `grid-column: 2` (col-right, same column as Weight/Sex — not spanning full row).
    - Troponin header checkbox `margin-left: auto` reset to 0 — wraps below the title instead of overflowing right.
    - Troponin H0/H1/H3 inputs (`inline-input-group`) → `flex-direction: column; width: 100%` — stack vertically on mobile.
 2. **Button Logic:**
@@ -338,4 +338,23 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 **Evidence Base:** User QA session (2026-07-04). ESC citation format convention.
 
 **Tests:** 139/139 pass (no logic changes — layout and UX only).
+
+---
+
+### ADR-32: NSTEMI Mobile UX — Column-Correct Grid Placement, Gender Radio Fix, GRACE Short Labels (2026-07-04)
+
+**Context:** Post-ADR-31 screen QA on a 390px viewport identified three residual issues:
+1. `egfr-field` (6th DOM child, even) was placed in col-2 by the `nth-child(even) { grid-column: 2 }` rule — wrong; clinically it belongs with HN / Age / Cr in col-1 (all numeric patient identifiers / lab values).
+2. `asa-field` (7th DOM child, odd) was placed in col-1 by `nth-child(odd) { grid-column: 1 }` — wrong; it belongs with Weight / Sex in col-2.
+3. GRACE Score Variables section (`Heart Rate (bpm)`, `SBP (mmHg)`, `Creatinine (mg/dL)`) labels were too long to share a line with the input on narrow viewports, forcing a stacked layout.
+
+**Decision:**
+1. **Grid Column Correction (`orders/nstemi.html`):** Removed dead `order` properties (not meaningful in CSS Grid). Replaced `grid-column: span 2` with explicit `grid-column: 1` on `.patient-field.egfr-field` and `grid-column: 2` on `.patient-field.asa-field`. Base rule `nth-child(odd) { grid-column: 1 }` / `nth-child(even) { grid-column: 2 }` handles the five standard fields; class overrides handle the two exceptions. Result: col-1 = HN / Age / Cr / eGFR, col-2 = Weight / Sex / ASA Allergy.
+2. **Gender Radio Overflow Fix:** `.patient-field .gender-radio` set to `font-size: 13px; white-space: nowrap` inside the `@media (max-width: 600px)` block, preventing the radio labels from breaking out of the grid cell.
+3. **GRACE Short Labels:** Added dual `<span class="grace-label-full">` / `<span class="grace-label-short">` pairs inside each GRACE row label. `grace-label-full` (e.g., `Heart Rate (bpm):`) shown at ≥601px; `grace-label-short` (e.g., `HR:`, `SBP:`, `Cr:`) shown at ≤600px. `.grace-inline-row` sets `flex-direction: row` on mobile so label and input stay on one line.
+4. **Nav Short Title Aliases (`shared/components.js`):** `parseTitle()` now strips residual `Order` word (regex `\bOrder\b`) so `Sedation Order → Sedation`, and aliases `rt-PA Dose Calculator → rt-PA Calc`.
+
+**Rationale:** The explicit `grid-column` class overrides are more robust than relying solely on `nth-child` parity — they are immune to DOM reordering. Dual span approach for GRACE labels avoids JavaScript and keeps the label element semantically tied to its input. Short nav title aliases eliminate the last two labels that were still too long on narrow viewports.
+
+**Tests:** 139/139 pass (CSS and label changes only — no JS logic changed).
 

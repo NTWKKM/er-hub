@@ -189,11 +189,12 @@
 
         /* ── Mobile: data-input section ── */
         @media (max-width: 600px) {
-            /* Patient info row: 2-column grid instead of single flex row */
+            /* Patient info row: 2-column grid */
             .patient-fields {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 8px 12px;
+                align-items: start;
             }
 
             /* Remove the fixed max-width on inputs so they fill their cell */
@@ -202,20 +203,30 @@
                 width: 100%;
             }
 
-            /* eGFR display: span full width */
+            /*
+             * DOM order: 1=HN 2=Weight 3=Age 4=Sex 5=Cr 6=eGFR 7=ASA
+             * Default: odd→col1, even→col2
+             * Override: eGFR(6th,even)→col1; ASA(7th,odd)→col2
+             */
+            .patient-fields > .patient-field:nth-child(odd)  { grid-column: 1; }
+            .patient-fields > .patient-field:nth-child(even) { grid-column: 2; }
             .patient-field.egfr-field {
+                grid-column: 1;
                 max-width: none !important;
                 margin-left: 0 !important;
-                grid-column: span 2;
             }
-
-            /* ASA Allergy: span full width */
             .patient-field.asa-field {
-                grid-column: span 2;
+                grid-column: 2;
                 display: flex;
                 flex-wrap: wrap;
-                align-items: center;
-                gap: 8px;
+                align-items: flex-start;
+                gap: 4px 8px;
+            }
+
+            /* Sex radio: constrain inside cell */
+            .patient-field .gender-radio {
+                font-size: 13px;
+                white-space: nowrap;
             }
 
             /* Troponin header row: allow checkbox to wrap below title */
@@ -238,6 +249,31 @@
                 width: 100%;
                 flex: none;
             }
+
+            /* GRACE Score: short labels + inline layout */
+            .grace-label-full  { display: none; }
+            .grace-label-short { display: inline; }
+            /* Make each GRACE row horizontal: label left, input right */
+            .grace-inline-row {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+            }
+            .grace-inline-row label {
+                white-space: nowrap;
+                min-width: 36px;
+                width: auto !important;
+            }
+            .grace-inline-row input {
+                flex: 1;
+                min-width: 0;
+            }
+        }
+
+        @media (min-width: 601px) {
+            .grace-label-short { display: none; }
+            .grace-label-full  { display: inline; }
         }
 
         @media print {
@@ -360,18 +396,18 @@
                 <div class="input-column">
                     <h3>2. GRACE Score Variables</h3>
 
-                    <div class="inline-input-group">
-                        <label for="hr">Heart Rate (bpm):</label>
+                    <div class="inline-input-group grace-inline-row">
+                        <label for="hr"><span class="grace-label-full">Heart Rate (bpm):</span><span class="grace-label-short">HR:</span></label>
                         <input type="number" id="hr" min="20" max="300"
                                placeholder="เช่น 88">
                     </div>
-                    <div class="inline-input-group">
-                        <label for="sbp">SBP (mmHg):</label>
+                    <div class="inline-input-group grace-inline-row">
+                        <label for="sbp"><span class="grace-label-full">SBP (mmHg):</span><span class="grace-label-short">SBP:</span></label>
                         <input type="number" id="sbp" min="40" max="300"
                                placeholder="เช่น 130">
                     </div>
-                    <div class="inline-input-group">
-                        <label for="grace-creatinine">Creatinine (mg/dL):</label>
+                    <div class="inline-input-group grace-inline-row">
+                        <label for="grace-creatinine"><span class="grace-label-full">Creatinine (mg/dL):</span><span class="grace-label-short">Cr:</span></label>
                         <input type="number" id="grace-creatinine" step="0.01" min="0.1" max="20"
                                placeholder="0.95">
                     </div>

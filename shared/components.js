@@ -112,11 +112,14 @@ const ED_COMPONENTS = {
                 .replace('FAST TRACK', '')
                 .replace('Fibrinolysis', '')
                 .replace('Post-Intubation', '')
+                .replace(/\bOrder\b/g, '')
                 .replace(/\s+/g, ' ')
                 .trim();
                 
             if (coreName === 'IV Infusion Drip Calculator') {
                 coreName = 'Drip Calc';
+            } else if (coreName === 'rt-PA Dose Calculator') {
+                coreName = 'rt-PA Calc';
             }
             
             let versionStr = '';
