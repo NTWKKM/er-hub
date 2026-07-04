@@ -209,3 +209,16 @@
   4. **PWA Version Bump:** Bumped the service worker `CACHE_VERSION` to `er-hub-v6` to force immediate client browser updates.
   5. **Favicon Replacement:** Replaced `favicon.svg` with the hospital logo PNG (`docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`) as the favicon across all 9 pages, updated `manifest.json` icons, and removed `favicon.svg` from the cache list.
 - **Rationale:** Scoping styles locally inside `index.html` satisfies the surgical modification rule by completely isolating the homepage visual design, guaranteeing zero regression risk for the clinical order sheets. Branded category labels and interactive chevrons organize the grid without relying on sections or platform-specific emojis. Staggered animations make the interface feel responsive and modern. Using the official hospital logo as the favicon provides unified branding and consistent tab identification. Compact card sizing increases information density and usability on high-pressure ED terminals.
+
+### ADR-23: Enoxaparin Continue Order Checkbox Options (2026-07-04)
+
+- **Context:** Thailand clinical settings support Enoxaparin in pre-filled syringe sizes (0.4 ml [40 mg] and 0.6 ml [60 mg]). The NSTEMI continue order printed layout used manual blank lines, which required manual completion and did not guide clinical selection based on pre-packaged stock sizes.
+- **Decision:**
+  1. **Print Layout Update:** Replaced blank lines in continue order (`p-anticoag`) with specific checkboxes: `☐ Enoxaparin SC  ☐ 0.4 ml  ☐ 0.6 ml  SC  ☐ q 12 hr  ☐ OD  × 5 Days`.
+  2. **Auto-Checking Dosing Logic:** Added live calculation rules in `orders/nstemi.html`:
+     - If patient weight >= 50 kg (dose >= 50 mg), check the `0.6 ml` box.
+     - If patient weight < 50 kg (dose < 50 mg), check the `0.4 ml` box.
+     - Frequency checkboxes (`q 12 hr` vs `OD`) are checked automatically matching the selected frequency on the screen.
+  3. **Refined Guidance Note:** Added a clarification note explaining the syringe size equivalent doses: `(1 mg/kg = [Dose] mg — GFR < 30 → once daily; 0.4 ml = 40 mg, 0.6 ml = 60 mg)`.
+- **Rationale:** The updated layout reduces error-prone manual writing on printed forms. Auto-selecting the nearest pre-filled syringe package based on the standard 50 kg weight cutoff ensures seamless stock usage and clinically safe dosing references.
+
