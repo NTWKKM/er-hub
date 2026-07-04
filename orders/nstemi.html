@@ -644,8 +644,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             html += `
             <div class="ac-opt ${enoxRec ? 'recommended' : ''}">
-                <strong>${chkEnox} Enoxaparin SC</strong> &nbsp;<strong>${chk40} 0.4 ml</strong> &nbsp;<strong>${chk60} 0.6 ml</strong> &nbsp;SC &nbsp;<strong>${chkQ12} q 12 hr</strong> &nbsp;<strong>${chkOD} OD</strong> × 5 Days<br>
-                <span style="font-size:9px;color:#666;">(1 mg/kg = ${weight > 0 ? enoxDose + ' mg' : '............ mg'} — GFR &lt; 30 → once daily; 0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>
+                <strong>${chkEnox} Enoxaparin SC</strong> &nbsp;<strong>${chk40} 0.4 ml</strong> &nbsp;<strong>${chk60} 0.6 ml</strong><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>${chkQ12} q 12 hr</strong> &nbsp;<strong>${chkOD} OD</strong> × 5 Days<br>
+                <span style="font-size:9px;color:#666;">(1 mg/kg = ${weight > 0 ? enoxDose + ' mg' : '............ mg'} — GFR &lt; 30 → once daily)<br>
+                (0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>
             </div>`;
         } else {
             html += `
@@ -774,8 +776,10 @@ document.addEventListener('DOMContentLoaded', () => {
             2.5 mg SC OD × 5 Days\
         </div>\
         <div class="ac-opt">\
-            <strong>☐ Enoxaparin SC</strong> &nbsp;<strong>☐ 0.4 ml</strong> &nbsp;<strong>☐ 0.6 ml</strong> &nbsp;SC &nbsp;<strong>☐ q 12 hr</strong> &nbsp;<strong>☐ OD</strong> × 5 Days<br>\
-            <span style="font-size:9px;color:#666;">(1 mg/kg = ............ mg — GFR &lt; 30 → once daily; 0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>\
+            <strong>☐ Enoxaparin SC</strong> &nbsp;<strong>☐ 0.4 ml</strong> &nbsp;<strong>☐ 0.6 ml</strong><br>\
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>☐ q 12 hr</strong> &nbsp;<strong>☐ OD</strong> × 5 Days<br>\
+            <span style="font-size:9px;color:#666;">(1 mg/kg = ............ mg — GFR &lt; 30 → once daily)<br>\
+            (0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>\
         </div>\
         <div class="ac-opt">\
             <strong>☐ Heparin IV</strong> &nbsp;<small>(กรณี GFR &lt; 15)</small><br>\
