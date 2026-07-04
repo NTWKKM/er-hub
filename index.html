@@ -27,7 +27,7 @@
 
     <style>
         :root {
-            --paper: #f4f2ec;
+            --paper: #ebe7df;
             --ink: #1a1a1a;
             --graphite: #4a4a4a;
             --rule: #d8d4c8;
@@ -95,7 +95,7 @@
             font-size: 16px;
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            color: #ffffff;
+            color: #F0EDE5;
             text-align: center;
             flex: 1;
             font-family: var(--font-ui);
@@ -103,7 +103,7 @@
 
         .nav-right {
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
+            color: #F0EDE5;
             text-align: right;
             flex: 1;
             font-family: var(--font-ui);
@@ -142,16 +142,27 @@
             align-items: center;
             min-height: 56px;
             box-sizing: border-box;
-            padding: 12px 16px;
+            padding: 12px 16px 12px 12px;
             text-decoration: none;
             color: var(--ink);
             border-bottom: 1px solid var(--rule);
+            border-left: 4px solid transparent;
             background-color: transparent;
-            transition: background-color 120ms linear;
+            transition: background-color 120ms linear, border-left-color 120ms linear, color 120ms linear;
         }
 
         .order-row:hover {
-            background-color: #ece9df;
+            background-color: #49628d;
+            border-left-color: #F0EDE5;
+            color: #F0EDE5;
+        }
+
+        .order-row:hover .order-num,
+        .order-row:hover .order-category,
+        .order-row:hover .order-title,
+        .order-row:hover .order-status,
+        .order-row:hover .order-arrow {
+            color: #F0EDE5;
         }
 
         .order-row:focus {
@@ -186,6 +197,14 @@
             flex-shrink: 0;
             font-family: var(--font-ui);
         }
+
+        .cat-neuro     { color: var(--cat-neuro); }
+        .cat-cardiac   { color: var(--cat-cardiac); }
+        .cat-pulmonary { color: var(--cat-pulmonary); }
+        .cat-anticoag  { color: var(--cat-anticoag); }
+        .cat-tox       { color: var(--cat-tox); }
+        .cat-procedural{ color: var(--cat-procedural); }
+        .cat-tools     { color: var(--cat-tools); }
 
         .order-title {
             font-size: 16px;
