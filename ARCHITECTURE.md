@@ -125,17 +125,18 @@ A post-implementation audit of NSTEMI standing order page (v2.0) revealed:
 1. Dead DOM element references (`p-h0`, `p-h1`, `p-h3`) left from previous versions caused a Javascript `TypeError` upon calculation execution, preventing result generation and float bar display.
 2. Troponin timing inputs (`trop-time-h0`/`1`/`3`) were redundant as the draws are logged in the EMR rather than the standalone sheet.
 3. eGFR formatting was inconsistent (some places 1 decimal, some unformatted raw floats) and lacked null guards.
-4. Two-way creatinine sync caused input friction, and the blank order template preview had to be manually toggled.
+4. The blank order template preview had to be manually toggled.
 
 **Decision:**
 1. **DOM & JS Cleanup:**
    - Deleted dead `p-h0`/`p-h1`/`p-h3` print references and screen timing update lines from Javascript.
    - Removed manual troponin timing inputs `#trop-time-h0`/`1`/`3` and `.troponin-times` DOM block.
    - Simplified printed troponin section `#p-troponin-values` to display only static results (e.g. `H0: 12`, `H1: 15 → +25.0%`).
-   - Removed the duplicate `#grace-creatinine` input and two-way sync logic, routing calculations directly from `#creatinine`.
-2. **eGFR Badge Repositioning:**
+   - Retained the duplicate `#grace-creatinine` input and implemented two-way sync with `#creatinine` to prevent data entry friction.
+2. **eGFR Badge & Layout Repositioning:**
    - Moved the screen eGFR badge `#screen-egfr` directly next to the Creatinine input in the patient demographics row.
    - Relocated the `#troponin-from-rphch` checkbox to the header of the Troponin section.
+   - Reverted Risk Stratification back to the original vertical list layout using standard labels.
 3. **eGFR Safe Formatting:**
    - Standardised all eGFR outputs to 2 decimal places (`.toFixed(2)`).
    - Safe-guarded printed output: `egfr !== null ? egfr.toFixed(2) : '___'` to prevent null crashes on form resets.
@@ -147,7 +148,7 @@ A post-implementation audit of NSTEMI standing order page (v2.0) revealed:
    - Bumped NSTEMI version to `2.1.0`.
 
 **Rationale:**
-Manual troponin draw times and duplicate creatinine fields added layout complexity without clinical benefit. Separating the calculated eGFR badge next to the creatinine input visually links the input and derived outputs. Safe-guarding formatting and removing dead DOM references prevents runtime TypeErrors. Auto-triggering the blank print preview ensures clinicians see the standing order layout immediately. Bumping SW cache versions ensures quick client updates. The ID integrity guard prevents future dead reference regressions across the suite.
+Manual troponin draw times added layout complexity without clinical benefit. Two-way creatinine sync is retained to maintain consistent data entry between demographic and GRACE variables. Reverting Risk Stratification to the original vertical layout keeps layout styling consistent with other order sheets. Separating the calculated eGFR badge next to the creatinine input visually links the input and derived outputs. Safe-guarding formatting and removing dead DOM references prevents runtime TypeErrors. Auto-triggering the blank print preview ensures clinicians see the standing order layout immediately. Bumping SW cache versions ensures quick client updates. The ID integrity guard prevents future dead reference regressions across the suite.
 
 **Tests:**
 All 138 tests pass, including the new regression guard testing all 8 interactive files.
