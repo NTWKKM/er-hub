@@ -187,6 +187,59 @@
             .grace-summary { flex-direction: column; }
         }
 
+        /* ── Mobile: data-input section ── */
+        @media (max-width: 600px) {
+            /* Patient info row: 2-column grid instead of single flex row */
+            .patient-fields {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px 12px;
+            }
+
+            /* Remove the fixed max-width on inputs so they fill their cell */
+            .patient-field input {
+                max-width: none;
+                width: 100%;
+            }
+
+            /* eGFR display: span full width */
+            .patient-field.egfr-field {
+                max-width: none !important;
+                margin-left: 0 !important;
+                grid-column: span 2;
+            }
+
+            /* ASA Allergy: span full width */
+            .patient-field.asa-field {
+                grid-column: span 2;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 8px;
+            }
+
+            /* Troponin header row: allow checkbox to wrap below title */
+            .patient-section > div[style*="background:#f8f9fa"] > div:first-child {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .patient-section > div[style*="background:#f8f9fa"] > div:first-child .flag-label {
+                margin-left: 0 !important;
+            }
+
+            /* Troponin inputs: stack vertically, full width */
+            .patient-section > div[style*="background:#f8f9fa"] > div:last-child {
+                flex-direction: column;
+            }
+            .patient-section > div[style*="background:#f8f9fa"] .inline-input-group {
+                width: 100%;
+            }
+            .patient-section > div[style*="background:#f8f9fa"] .inline-input-group input {
+                width: 100%;
+                flex: none;
+            }
+        }
+
         @media print {
             .grace-summary { display: none !important; }
 
@@ -263,7 +316,7 @@
                         <input type="number" id="creatinine" step="0.01" min="0.1" max="20"
                                required placeholder="0.95">
                     </div>
-                    <div class="patient-field" style="max-width: 140px; margin-left: 10px;">
+                    <div class="patient-field egfr-field" style="max-width: 140px; margin-left: 10px;">
                         <label style="font-weight: bold; color: #c0392b;">eGFR:</label>
                         <div style="padding: 6px 8px; font-weight: bold; color: #c0392b; font-size: 14px; background: #fff5f5; border: 1px solid #fab1a0; border-radius: 4px; text-align: center;">
                             <span id="screen-egfr">--</span> <small style="font-size: 10px; font-weight: normal; color: #777;">mL/min</small>
@@ -412,8 +465,8 @@
 
             </div><!-- end .input-layout -->
 
-            <button type="button" class="btn btn-calculate" onclick="window.print()">
-                🧮 คำนวณ GRACE Score และสร้างใบสั่งยา
+            <button type="button" id="create-order-btn" class="btn btn-calculate">
+                🖨️ สร้างใบสั่งยา
             </button>
             <button type="button" id="print-blank-btn" class="btn btn-print">
                 🖨️ ใบสั่งยาเปล่า (Blank Order)
@@ -555,7 +608,9 @@
 
                     <div class="print-signature-block">
                         <small style="color:#777;font-size:9px;">
-                            Version: 2.1.1 | ESC 2023 NSTEMI Guidelines
+                            Version: 2.1.1<br>
+                            2025 ACC/AHA ACS<br>
+                            2023 ESC NSTEMI Guideline
                         </small>
                     </div>
                 </div>
@@ -1192,8 +1247,8 @@ document.addEventListener('DOMContentLoaded', () => {
         window.print();
     });
 
-    // ── print-btn (outside form): wire up window.print()
-    $('print-btn').addEventListener('click', () => window.print());
+    // ── create-order-btn: print (setupCommonActions already wires print-btn)
+    $('create-order-btn').addEventListener('click', () => window.print());
 
     // ── Safety override for CI anticoag options: second-click confirms ──
     document.querySelectorAll('input[name="anticoag-choice"]').forEach(radio => {
@@ -1226,13 +1281,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('clear-btn').addEventListener('click', () => {
+        // Reset form fields and validation styles
+        const form = document.getElementById('nstemi-form');
+        if (form) form.reset();
         ED_VALIDATE.clearAll();
-        ED_PRINT_BOOTSTRAP.clearResults('nstemi-form', () => {
-            $('grace-breakdown-body').innerHTML =
-                '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
-            updateLiveEGFR();
-            calculateAndRender();
-        });
+        // Reset GRACE breakdown hint
+        $('grace-breakdown-body').innerHTML =
+            '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
+        updateLiveEGFR();
+        // Re-apply blank template so print preview resets to a clean blank order
+        $('print-blank-btn').click();
+        // Focus HN for immediate re-entry
+        const hn = document.getElementById('hn');
+        if (hn) hn.focus();
     });
 
     $('print-blank-btn').addEventListener('click', () => {

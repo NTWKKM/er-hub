@@ -311,4 +311,31 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 
 **Tests:** 139/139 pass.
 
+---
+
+### ADR-29: NSTEMI v2.1.1 UX Polish — Mobile Layout, Button Logic & Version Text (2026-07-04)
+
+**Context:** Three UX defects discovered during post-ADR-28 screen review:
+1. The data-input section (`.patient-fields`) was unreadable on mobile viewports (≤600px) — all 7 patient fields crammed into a single flex row causing overflow and misalignment.
+2. The top form button was labelled "🧮 คำนวณ GRACE Score และสร้างใบสั่งยา" but its sole function was `window.print()`. Additionally, the `print-btn` inside `#results-container` had **two** `click → window.print()` listeners wired: one in `setupCommonActions()` (`components.js`) and a duplicate in `nstemi.html` — causing two consecutive print dialogs on every press.
+3. The "ล้างข้อมูล" (Clear) button called `ED_PRINT_BOOTSTRAP.clearResults()` which hides `#results-container`, making the blank print preview disappear — unexpected blank-page UX that didn't match the "reset to fresh load" expectation.
+4. The print signature version block used `ESC 2023 NSTEMI Guideline` (wrong citation order per standard ESC format).
+
+**Decision:**
+1. **Mobile Responsive Layout (`@media (max-width: 600px)`):** Added to `orders/nstemi.html` `<style>` block:
+   - `.patient-fields` switches from `flex` → `display: grid; grid-template-columns: 1fr 1fr` — 2-column auto-wrapping grid.
+   - `.patient-field input` → `max-width: none; width: 100%` (removes the 120px cap that caused overflow).
+   - Added semantic `egfr-field` class to the eGFR display field; in mobile breakpoint, `grid-column: span 2` gives it its own full-width row. CSS selector uses `.patient-field.egfr-field` (not brittle inline-style attribute selector).
+   - `.patient-field.asa-field` → `grid-column: span 2` (ASA Allergy spans full row, wraps radios inline).
+   - Troponin header checkbox `margin-left: auto` reset to 0 — wraps below the title instead of overflowing right.
+   - Troponin H0/H1/H3 inputs (`inline-input-group`) → `flex-direction: column; width: 100%` — stack vertically on mobile.
+2. **Button Logic:**
+   - Renamed top-form button to `id="create-order-btn"`, label → **"🖨️ สร้างใบสั่งยา"** (reflects its sole function: trigger print). Removed `onclick="window.print()"` inline attribute; listener added in JS.
+   - Removed the duplicate `$('print-btn').addEventListener('click', () => window.print())` in `nstemi.html` — `setupCommonActions()` in `components.js` is the sole owner. Resolves double-print-dialog bug.
+3. **Clear Button Behaviour:** Replaced `ED_PRINT_BOOTSTRAP.clearResults()` (which hides `#results-container`) with a direct sequence: `form.reset()` → `ED_VALIDATE.clearAll()` → reset GRACE breakdown HTML → `updateLiveEGFR()` → `$('print-blank-btn').click()`. This restores the blank print preview immediately after clear, matching a cold-load experience without hiding the preview area.
+4. **Version Text:** `print-signature-block` updated from 1 line (`Version: 2.1.1 | ESC 2023 NSTEMI Guidelines`) to 3 lines: `Version: 2.1.1` / `2025 ACC/AHA ACS` / `2023 ESC NSTEMI Guideline` (year-first ESC citation order).
+
+**Evidence Base:** User QA session (2026-07-04). ESC citation format convention.
+
+**Tests:** 139/139 pass (no logic changes — layout and UX only).
 

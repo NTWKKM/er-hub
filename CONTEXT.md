@@ -295,6 +295,16 @@
   9. **Nav Right Metadata Date**: Shortened the homepage's nav-right metadata string to `v13 · Updated 26-07-04` to fit mobile viewports.
 - **Rationale:** Restoring the blue navigation bar retains brand consistency. Increasing the logo size elevates professional institutional identity. The Signal Orange dot serves a crucial clinical triage role, highlighting time-critical pathways while keeping the dashboard clean. Responsive titles and synchronized padding prevent multi-line wrapping and layout offsets on actual mobile devices.
 
+### ADR-31: NSTEMI v2.1.1 UX Polish — Mobile Layout, Button Logic & Version Text (2026-07-04)
+
+- **Context:** Three UX defects discovered during post-ADR-28 screen QA: (1) `.patient-fields` 7-field row overflowed and misaligned on mobile (≤600px); (2) top-form button label misrepresented its print-only function, and `print-btn` had duplicate `window.print()` listeners causing a double print dialog; (3) Clear button hid `#results-container` via `clearResults()` instead of resetting the blank preview; (4) print signature used wrong ESC citation word order.
+- **Decision:**
+  1. **Mobile Responsive Layout:** `@media (max-width: 600px)` added to `nstemi.html` `<style>` block. `.patient-fields` switches to `display: grid; grid-template-columns: 1fr 1fr`. eGFR field gets `egfr-field` class + `grid-column: span 2`. ASA Allergy spans full width. Troponin inputs stack vertically.
+  2. **Button Logic:** Top-form button renamed `id="create-order-btn"`, label → **"🖨️ สร้างใบสั่งยา"**, `onclick` removed, listener in JS only. Duplicate `print-btn` click listener removed; `setupCommonActions()` is sole owner.
+  3. **Clear Behaviour:** `ED_PRINT_BOOTSTRAP.clearResults()` replaced by `form.reset()` + `ED_VALIDATE.clearAll()` + GRACE breakdown reset + `print-blank-btn.click()` — restores blank preview without hiding results container.
+  4. **Version Text:** `print-signature-block` changed to 3 lines: `Version: 2.1.1` / `2025 ACC/AHA ACS` / `2023 ESC NSTEMI Guideline` (year-first citation order).
+- **Rationale:** 2-column grid uses CSS Grid over Flexbox hack for cleaner responsive wrapping. Removing the inline `onclick` keeps all event wiring in JS, preventing future accidental duplicate handlers. Preserving the results container on clear matches the blank-first page-load UX and reduces clinician disorientation.
+
 ### ADR-30: Portal Hover Refinement, Nav Braun White & Background Warmth (2026-07-04)
 
 - **Context:** Post-redesign review identified three visual gaps: (1) the order-row hover state used a warm grey (`#ece9df`) that lacked interactive clarity and contrast, providing no directional standout for the physician scanning the list quickly. (2) The navigation bar text was pure white (`#fff`) on a blue gradient, which is technically correct but misses the warmer ivory tone established by the Braun palette. (3) The portal homepage background (`#f4f2ec`) was not visually distinct enough from the warm white default of the browser.
