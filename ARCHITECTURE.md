@@ -270,3 +270,22 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 **Evidence Base:** ADR-19 (cutoff = 30); OASIS-5 trial; 2025 ACC/AHA NSTE-ACS Guidelines; ESC 2023 NSTE-ACS Guidelines.
 
 **Tests:** 138/138 pass post-change.
+
+---
+
+### ADR-27: NSTEMI v2.1.2 Re-Audit Minimal Design (2026-07-04)
+
+**Context:** The second-pass audit of NSTEMI standing orders (`PLAN-nstemi-v2.1.1-reaudit-minimal-design.md`) identified three issues:
+1. A split threshold for Fondaparinux between the screen logic (cutoff at 30) and the print logic (cutoff at 20) due to independent, disagreeing inline implementations.
+2. The override-confirmation warning messages were hardcoded to Fondaparinux, leaving Enoxaparin without safety messaging when overridden.
+3. Heparin hint text and print labels contained an obsolete reference to `CrCl <30 mL/min` that did not match the recommendation logic.
+
+The duplicate Creatinine field two-way sync was explicitly retained per user request.
+
+**Decision:**
+1. **Renal Cutoff Constants:** Hoisted cutoffs to unified constants block (`FONDA_MIN_EGFR = 30` and `ENOX_MIN_EGFR = 15`) at the top of `orders/nstemi.html` script. Used these constants throughout the file (screen checks, print output, enoxaparin frequency selection, and labels).
+2. **Generified Override UI:** Added `#ac-enox-ci-msg` and `#ac-enox-override-msg` elements. Updated `_applyAcState` to perform dynamic ID lookup (`ac-${drug}-ci-msg` / `ac-${drug}-override-msg`). Updated the click handler to query `[id$="-override-msg"]` within the selected label to make safety override warning messages function dynamically for both drugs.
+3. **Heparin Hint Tidy:** Removed the `หรือ CrCl <30 mL/min` reference, updating Heparin labels to `(eGFR <15 mL/min)` consistently.
+4. **Regression Guard:** Added a new test suite (`tests/nstemi-thresholds.test.js`) asserting constants are used and checking for hardcoded threshold literals.
+
+**Tests:** 139/139 pass.
