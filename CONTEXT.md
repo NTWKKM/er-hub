@@ -28,11 +28,13 @@
 ## 3. Architectural Decision Records (ADRs)
 
 ### ADR-18: NSTEMI Input Layout — 2-Row Reflow
+
 - **Context:** The NSTEMI page (`orders/nstemi.html`) laid out its data-input section as a single 3-column flex row: (1) Patient Info, (2) GRACE Score Variables + Killip Class stacked together, (3) Risk Stratification. The Patient Info column was cramped and the GRACE column was overloaded (score variables + binary flags + a 4-option vertical Killip radio group all stacked).
 - **Decision:** Reflowed to 2 rows. Row 1 (`.patient-section`, full width): Patient Info with fields wrapping horizontally via `.patient-fields` (`flex: 1 1 300px` per field, ASA block `1 1 300px`, H0 block `1 1 100%`). Row 2 (`.input-layout`, 3 columns): (1) GRACE Score Variables (HR/SBP/Creatinine + binary flags), (2) Killip Class (promoted to its own column — was previously stacked under GRACE), (3) Risk Stratification. All new CSS is page-local in nstemi.html's `<style>` block — shared `base.css` untouched to avoid affecting the other 7 order pages. `.input-layout` and `.input-column` classes reused as-is.
 - **Rationale:** Patient Info as a full-width top row uses horizontal space efficiently (4 numeric fields + ASA + H0 wrap instead of stacking in a narrow column). Separating Killip Class into its own column balances the three-column row — GRACE variables no longer share a column with a tall radio group. Layout-only change: no clinical logic, GRACE calculation, element IDs, or print geometry touched. All 124 tests pass. Verified via browser rendering.
 
 ### ADR-20: NSTEMI v2.0 UI Overhaul — 2025 ACC/AHA Guidelines + CKD-EPI 2021 eGFR
+
 - **Context:** NSTEMI face (v1.x) had 5 structural issues: (1) eGFR was manual input instead of derived value — should calculate from creatinine using CKD-EPI 2021 equation; (2) Patient info scattered across multiple rows, wasting vertical space; (3) Anticoagulant dosing used old ESC guidelines (Fonda first-line) instead of 2025 ACC/AHA (age ≥75 → 0.75 mg/kg enox only); (4) Troponin timing was manual HH:MM inputs, not synced to H0 auto-checkbox; (5) Cr input appeared in 2 places without two-way sync.
 - **Decision:** Complete UI overhaul:
   1. **Header removal:** Deleted `.form-header` (hospital logo, page title, 2025 ACC/AHA guideline text, version info) and `<hr>` divider. NAV title remains as single source of truth.
@@ -46,68 +48,81 @@
 - **Test impact:** All 130 tests pass. Added 6 CKD-EPI verification tests (cross-validated with MDCalc calculator). Updated 8 anticoag tests to match 2025 ACC/AHA logic. No regressions.
 
 ### ADR-01: Hub-and-Spoke Migration with Vanilla Stack
+
 - **Context:** Individual standing orders (`stroke`, `stemi`, `nstemi`) suffer from duplicate CSS classes and calculation loops.
 - **Decision:** Keep the Vanilla HTML/CSS/JS stack (no compile/bundler steps) to preserve offline access and GitHub Pages compatibility. Migrate duplicate logic into a `shared/` folder structure.
 - **Rationale:** A compilation build pipeline (e.g. Vite, Webpack) adds build dependencies that rot over time. Vanilla assets allow immediate hot-swaps and direct filesystem launches in ER terminals.
 
 ### ADR-02: Esmolol Unit Preservation
+
 - **Context:** The hospital reference chart records Esmolol maintenance as `0.05–0.3 mg/kg/min`. Normal clinical literature uses `50–300 mcg/kg/min`.
 - **Decision:** Preserve the label `mg/kg/min` in UI calculations to maintain 100% alignment with paper reference charts, but add a text tip indicating that `0.05–0.3 mg/kg/min` is mathematically equivalent to `50–300 mcg/kg/min`.
 - **Rationale:** Matching the chart ensures clinical staff do not encounter discrepancy friction between their physical reference guides and screen inputs.
 
 ### ADR-03: Backward-Compatible Root URL
+
 - **Context:** Overwriting `index.html` with the new ER-Hub portal might disrupt clinical staff accessing the rt-PA Stroke page directly via old links or QR codes.
 - **Decision:** Use `index.html` as the ER-Hub portal with a JS redirect script that detects old query/hash parameters (`order=rtpa`, `hn=`, `weight=`) and auto-redirects to `orders/rtpa.html`. The rt-PA card remains the first card in the portal grid for discoverability.
 - **Rationale:** Minimizes disruption to emergency pathways while adopting a cleaner hierarchical codebase layout. The JS redirect handles all legacy URL patterns without requiring a visible banner.
 
 ### ADR-04: Manual Input Streamlining and Blank Orders
+
 - **Context:** Emergency Room clinical workflow requires maximum speed. Manually typing department and ward details on screen adds friction. Attending staff sometimes need to print blank order templates immediately for manual checkout.
 - **Decision:** Remove `Department` and `Ward` screen input fields. Default the printed header to blank dotted lines for manual entry. Introduce a "Print Blank Order" button on all forms that bypasses validation and triggers `window.print()` with an empty order template.
 - **Rationale:** Reduces on-screen data-entry overhead and provides a fallback paper workflow for high-velocity emergencies.
 
 ### ADR-05: Portal Card Simplification
+
 - **Context:** The original portal displayed detailed Thai descriptions on each card, a yellow alert banner for rt-PA Stroke redirect, and a section title "📄 รายการ Standing Orders สำหรับผู้ป่วยฉุกเฉิน". This created visual clutter and duplicated information already conveyed by the card titles.
 - **Decision:** Remove all card descriptions, the yellow alert banner, and the section title. Cards display only icon + name + print-blank button. Cards are center-aligned with reduced padding (18px 20px) and tighter grid (280px min, 16px gap).
 - **Rationale:** ER staff already know what each protocol does from the name alone. Compact cards increase scan density and reduce cognitive load during high-pressure situations.
 
 ### ADR-06: Lab/IV/O2 Print Hygiene
+
 - **Context:** Previous print output auto-checked (☑) lab investigations, IV fluids, oxygen, monitoring, and non-drug continuation orders when patient data was entered. This created a clinical risk: pre-checked orders could be misinterpreted as physician-approved.
 - **Decision:** All lab investigations, IV fluids, oxygen orders, monitoring instructions, and non-drug continuation orders render as unchecked (☐) in print output regardless of whether patient data has been entered. Only drug-related orders (ASA, Clopidogrel, Fentanyl, Midazolam, Heparin dosing, Antivenom dosing, Antibiotics) auto-check (☑) based on input data.
 - **Rationale:** Investigations and supportive care must be explicitly ordered by the attending physician. Pre-checking them creates medico-legal risk. Drug orders that are calculated from patient data are the system's clinical output and should remain checked.
 
 ### ADR-07: Status Badge Removal and Hospital Logo
+
 - **Context:** Portal cards displayed status badges ("ใช้งานจริง (Production)" / "อัปเดตใหม่ (New)") and the header used an emoji (🏥) as a logo. The badges added visual noise without clinical utility; the emoji lacked professional branding.
 - **Decision:** Remove all status badges from portal cards. Replace the emoji with the official Maharat Nakhon Ratchasima Hospital logo (`docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`, 52×52). Place logo and title on the same flex row. Remove the Thai subtitle line for a cleaner header.
 - **Rationale:** ER staff do not need production/new labels — all protocols in the hub are production-ready. The hospital's official logo conveys clinical authority and institutional identity without relying on platform-dependent emoji rendering.
 
 ### ADR-08: A4 Print Standardization
+
 - **Context:** Print output across the 7 order pages was inconsistent — no explicit `@page` directive, `body { display: flex }` from `base.css` broke print flow, the 5-column grid had `min-width: 900px` exceeding A4 width (210mm ≈ 794px), and font sizes varied per page.
 - **Decision:** Centralize all print rules in `shared/print.css` with `@page { size: A4; margin: 0 }`. Override `body { width: 210mm; display: block !important }` in print. Results container uses `padding: 5mm` for printable margins. Set grid to `min-width: auto; width: 100%; font-size: 8pt; page-break-inside: avoid`. Unify all print font sizes (grid 8pt, headers 8pt, lists 8pt, fib boxes 8pt). Force black-on-white with `print-color-adjust: exact`. Stroke multi-page documents use `width: 195mm; margin: 0 auto; padding: 3mm 0` with `page-break-before: always`.
 - **Rationale:** A single shared print stylesheet ensures all 7 order pages produce consistent, properly-sized A4 output. The `@page` directive gives the browser explicit paper dimensions. Overriding the screen flex layout prevents content from being squeezed into a centered column during print. Zero `@page` margin with `5mm` results-container padding maximizes printable area while keeping content off the paper edge.
 - **Update (2026-07-01):** `@page` margin set to `0` with `results-container padding: 5mm` for full A4 area utilization. Stroke pages aligned to original rtpamnrh.vercel.app: `width: 195mm; margin: 0 auto; padding: 3mm 0` (was `width: 100%` with `!important`). Body width set to `210mm` (was `100%`). Sticker box print dimensions changed from `58mm × 35mm` to `60mm × 20mm` to match stroke page sticker size. Grid `page-break-inside` changed from `auto` to `avoid` to prevent splitting. Grid header `line-height` reduced from `1.2` to `1.1` with first-child `padding: 5px` for visual balance. Order list `margin-bottom` increased from `1px` to `3px`. Print area `line-height` reduced from `1.35` to `1.3`. Grid cell padding standardized to `3px` (was `3px 4px`). Back-navigation link hidden in print across all 7 order pages via `.top-nav` and `a[href*="index.html"]` selectors. rt-PA order grid adds `10em` spacer divs before doctor signature lines (tuned: 5em too little, 15em overflowed to 5 pages, 10em = exactly 4 pages). Portal header compacted: padding `32px→16px`, logo `88px→64px`, margin-bottom `30px→16px`, gap `18px→16px`. PDF output verified: 4 pages A4 (210×297mm) — no overflow pages, no back link, vs original's 5 pages US Letter with 2 near-empty overflow pages.
 
 ### ADR-09: Portal Redesign — Category Groups, No Emoji, No Print-Blank Buttons
+
 - **Context:** The original portal displayed flat grid of 7 cards with emoji icons (🧠🫀🩸🫁💊🐍🌬️) and "พิมพ์ใบสั่งยาเปล่า" buttons on each card. The emoji icons relied on platform-dependent rendering and the print-blank buttons triggered a double-print race condition (BUG-01): the iframe's `contentWindow.print()` and the child page's own `window.print()` fired simultaneously, producing two print dialogs with empty content. The early-return pattern in all 7 order files prevented event listener registration, so the `.click()` call on `print-blank-btn` was a no-op.
 - **Decision:** (1) Remove all emoji from portal cards. Group cards by medical category with color-coded left borders: Cardiac (#c0392b), Pulmonary (#2980b9), Neurology (#8e44ad), Anticoagulation (#16a085), Toxicology (#d35400), Procedural (#27ae60). (2) Remove print-blank buttons from all portal cards — blank printing is accessed from within each order page's own button. (3) Fix the double-print race: move `print-blank-direct` check to the END of `DOMContentLoaded` (after all listeners are registered), call `window.print()` once (no setTimeout), and remove `iframe.contentWindow.print()` from the parent. (4) Enlarge logo from 52×52 to 88×88 with drop-shadow. (5) Add Thai subtitle to portal header.
 - **Rationale:** Emoji rendering varies across OS/browsers and can appear unprofessional in a clinical setting. Category groupings improve scannability for ER staff. The print-blank button removal eliminates the race condition at the source — the child page now handles its own print, and the parent only manages iframe lifecycle via `afterprint` event. The 88px logo (native res 379×262) is within safe upscaling zone.
 
 ### ADR-10: Blank Print Clinical Safety — Hardcoded Checkbox Reset
+
 - **Context:** When printing blank orders, hardcoded ☑ items (medications like Clopidogrel, Atorvastatin, Ativan, Augmentin) remained pre-checked because the blank print handlers only reset dynamic `id`-tagged elements, missing static HTML items without IDs. A blank order printed for a new patient could arrive with medications already checked, risking the clinician countersigning without crossing them out.
 - **Decision:** Tag all non-dynamic ☑ items with unique IDs in the HTML and add explicit resets in each file's blank print handler. Affected: nstemi (12 items including ISDN, Regular diet, Record V/S, Clopidogrel, Omeprazole, Atorvastatin, Senokot, Ativan), antivenom (3 antibiotics + antivenom box `chosen` class removal), sedation (Fentanyl bolus + 2 drip box `chosen` class removal), stemi (3 monitoring items). Also fix: pe.html `p-abs-status` blank dots (was hardcoded "No"), antivenom `p-obs-neuro` display:none on blank (was unconditionally shown).
 - **Rationale:** Blank orders are templates for manual clinical entry. Any pre-checked medication creates medico-legal risk if the clinician doesn't notice and countersigns without crossing it out. The fix ensures all ☑ items are explicitly unchecked (☐) when printing blank, matching the paper form's blank state.
 
 ### ADR-12: Sticky Nav Bar — injectNavBar Replaces injectTopNav
+
 - **Context:** The previous back-link (`injectTopNav`) was a plain text link `← กลับหน้าหลัก` injected into `.container` with inline styles. It was inconsistent: `tools/drip-calculator.html` had its own separate hardcoded `.back-link` (green-themed, different CSS), and 7 order files used the JS-injected version. No page title was shown in the nav.
 - **Decision:** Replace `injectTopNav()` with `injectNavBar()`. The method injects a `<nav class="top-nav">` sticky bar at `document.body` firstChild (full-width). Auto-detects the page title from `document.title` (strips after `—`). "Home" text link (no icon) + title text. Blue gradient (`#1e3c72 → #2a5298`). `body` changed from `display: flex; justify-content: center` to `display: flex; flex-direction: column; align-items: center`. Nav added to `index.html` (portal) for visual unity across all 9 pages. Portal header (logo + title card) removed from `index.html` — nav bar replaces it. `drip-calculator.html` cleaned up: removed hardcoded `.back-link`, added `components.js` + `injectNavBar()`. No `print.css` changes needed.
 - **Rationale:** A sticky full-width nav bar improves navigation UX in clinical settings where users scroll through long order forms. Auto-detecting the title from `document.title` (which is already maintained per-page) eliminates 8 hardcoded strings. Using existing `.top-nav` class means zero `print.css` changes. The `flex-direction: column` body change is the minimal CSS fix to stack nav above content — `index.html` overrides body display to `block` in its own inline styles, so the portal is unaffected.
 
 ### ADR-11: Portal Single-Grid Layout — Remove Section Titles, 3-Column, Stroke First
+
 - **Context:** The portal used separate `grid-section-title` headers (CARDIAC / หัวใจ & หลอดเลือด, PULMONARY / ปอด, NEUROLOGY / ระบบประสาท, etc.) each followed by its own `portal-grid` container. This fragmented the layout into 7 separate grids with uneven row counts, wasted vertical space on repeated headers, and made the page visually noisy. The Thai subtitle "แผนกฉุกเฉิน โรงพยาบาลมหาราชนครราชสีมา" under the H1 also added redundant information already conveyed by the hospital logo.
 - **Decision:** (1) Remove all 7 section title divs and their associated `.grid-section-title` / `.title-*` CSS classes. (2) Merge all 8 cards into a single `portal-grid` with fixed `grid-template-columns: repeat(3, 1fr)`. (3) Move Stroke FAST TRACK to first position (was under NEUROLOGY section, 3rd group). (4) Remove the Thai subtitle `<p>` from portal header. (5) Add tablet breakpoint: `@media (max-width: 900px) and (min-width: 600px)` → 2 columns. Mobile (<600px) retains 1 column. (6) Category identity is preserved via the existing color-coded left border classes (`cat-cardiac`, `cat-neuro`, etc.) — no section titles needed.
 - **Rationale:** A single unified grid with 3 columns produces a clean, dense card wall that ER staff can scan in one glance. Stroke FAST TRACK as the first card reflects its clinical priority as the highest-acuity time-sensitive protocol. Removing section titles eliminates 7 header rows of vertical noise. The hospital logo already provides institutional identity, making the Thai subtitle redundant. Fixed 3-column layout ensures consistent card sizing without `auto-fill` fragmentation.
 - **Update (2026-07-01):** Card descriptions (`<p class="card-desc">`) removed from all 8 portal cards per the original ADR-05 decision. Card title font size increased from 15px to 17px for improved visibility without the description text. ADR-05 now fully in effect.
 
 ### ADR-14: PWA Offline Support, Nav Logo, Card Simplification, ARIA Polish
+
 - **Context:** Five open decisions from the ADR-13 audit required user input. All five were resolved:
   1. ER terminals launch HTML files directly from filesystem (`file://`) — ES modules remain blocked (CORS under `file://`), plain `<script src>` globals stay.
   2. Offline PWA access is genuinely needed (ED wifi outages during stroke workup).
@@ -123,6 +138,7 @@
 - **Rationale:** The `file://` workflow confirms ADR-01's constraint is still load-bearing — ES modules cannot be used. The service worker provides genuine clinical value: during a stroke workup, ED wifi dropping must not prevent access to the rt-PA protocol. The hospital logo in the nav bar restores institutional identity (ADR-07's intent) without the visual weight of the removed portal header. Removing card descriptions simplifies the portal to title-only cards, matching ADR-05's original decision and the user's preference for larger, more visible titles. The ARIA label on the title span completes the accessibility improvements started in ADR-13.
 
 ### ADR-15: Shared Behavior Extraction — print-bootstrap.js + blank-print-engine.js
+
 - **Context:** ADR-10 documented that hardcoded-checkbox leaks on blank print had to be patched across 4 files individually because the reset logic was copy-pasted, not shared. The audit (v2, finding A1) identified ~1,308 lines of near-identical inline JS duplicated across 7 order pages, with no shared mechanism for blank-print resets or page lifecycle (show/clear/print-blank-direct).
 - **Decision:** Extract shared *behavior*, not shared *markup*. Each protocol page keeps its own HTML/print layout (clinically distinct documents), but the duplicated JS plumbing moves into two new shared modules:
   1. **`shared/print-bootstrap.js` (ED_PRINT_BOOTSTRAP):** Handles the identical page lifecycle pattern across all 7 order pages: `handlePrintBlankDirect(fn)` (URL param check — replaces the 4-line `new URLSearchParams` block), `showResults()` (unhide + float bar + scroll — replaces 3 lines), `clearResults(formId, extraFn)` (form reset + hide + focus — replaces 4-6 lines), `getDateTimeHTML(useTime, date)` and `getBlankDateTimeHTML()` (date/time string generation).
@@ -131,12 +147,14 @@
 - **Rationale:** The ADR-10 incident proved that duplicated reset logic is not a theoretical concern — it caused real medico-legal risk (pre-checked medications on blank orders). The declarative manifest approach means: (1) a new page declares its reset rules once, (2) the engine applies them correctly every time, (3) adding a new field to a protocol is a one-line manifest entry, not a new reset statement that can be forgotten, (4) the engine is testable in isolation. This is the same principle as the existing `calc-engine.js` — extract the repeated logic, test it once, reuse everywhere.
 
 ### ADR-16: Non-Blocking Validation — form-validate.js Replaces alert()
+
 - **Context:** All 7 order pages and the drip calculator used native `alert()` for form validation (15 total calls). In a time-critical ED workflow, `alert()` steals focus, blocks the thread, can't be styled, and forces the clinician to dismiss a modal before continuing. The existing `.field-error` CSS class was the right pattern for inline validation but was only used on 2 pages (pe, heparin, nstemi) and never for safety warnings.
 - **Decision:** Created `shared/form-validate.js` (ED_VALIDATE) with: `fail(inputId, msg)` — adds `.field-error` to input + inserts `.inline-error-msg` message below the field + focuses the input; `warn(msg)` — inserts `.clinical-warning` banner below the form header for non-blocking safety alerts (SK contraindication, absolute CI, missing indications); `range(inputId, min, max, msg)` and `min(inputId, minVal, msg)` — convenience wrappers for numeric validation; `clearAll()` — resets all errors, called by clear button. Added `.inline-error-msg` and `.clinical-warning` CSS to `base.css`. Migrated all 15 `alert()` calls across 8 files (7 orders + drip calculator). Zero `alert()` calls remain.
 - **Migration:** Weight validation (7 calls) → `ED_VALIDATE.fail('weight', msg)` or `ED_VALIDATE.range()`. Age validation (2 calls) → `ED_VALIDATE.min('age', 18, msg)`. eGFR validation (1 call) → `ED_VALIDATE.min('egfr', 0, msg)`. aPTT/rate validation (1 call) → `ED_VALIDATE.warn()`. Indication count (1 call) → `ED_VALIDATE.warn()`. Clinical safety HARD STOPs (3 calls: stemi SK-repeat, pe abs-CI, pe SK-repeat) → `ED_VALIDATE.warn()` — non-blocking banner that still blocks order generation via `return`.
 - **Rationale:** Native `alert()` is a workflow interruption in a clinical setting — a clinician entering a weight for a stroke patient shouldn't have their focus stolen by a modal dialog. The inline `.field-error` + `.inline-error-msg` pattern keeps the clinician in the form, shows the error at the point of entry, and doesn't require a dismiss action. Clinical safety warnings (SK contraindication, absolute CI) use `.clinical-warning` banners — visible and persistent but non-blocking. The clinician can still read the warning and correct the input without dismissing a modal first.
 
 ### ADR-17: PDF Blank-Order Pathway, Nav Logo on All Pages, Antivenom Antibiotic Fix, SW Precache Update
+
 - **Context:** Three issues identified in a post-ADR-16 audit:
   1. **F2 — Blank print never opens source PDFs:** All 7 order pages used `ED_BLANK_PRINT.apply()` + `window.print()` to generate blank templates from HTML. The original source PDFs in `docs/` were never used, even though 5 of 7 modules have corresponding PDFs with more complete formatting.
   2. **F3 — Antivenom antibiotic bug:** In `antivenom.html`, `p-augmentin` (standard) and `p-cipro-clinda` (penicillin-allergy alternative) were both hardcoded as `☑` in static HTML and both reset to `☐` on blank-print. No penicillin allergy input existed — two mutually exclusive regimens were never toggled by actual input.
@@ -149,10 +167,12 @@
 - **Rationale:** Opening source PDFs gives clinicians the exact hospital-formatted document for manual printing — more faithful than HTML reconstruction. The manual-print approach (user presses print in the PDF viewer) avoids the cross-tab print race condition documented in ADR-09. The antivenom antibiotic fix closes a real clinical bug — two mutually exclusive antibiotic regimens were both checked by default with no input to distinguish them. The SW precache update ensures the PWA's offline-first promise (ADR-14) actually holds for all assets added since ADR-15.
 
 ### Phase 5 — Config-Driven Order Engine (Deferred)
+
 - **Decision:** Phase 5 (generalizing the `drip-calculator.html` / `EMERGENCY_DRUG_DATA` config-driven pattern to the 7 order forms) is **deferred indefinitely**.
 - **Rationale:** (1) Phase 2 already solved the structural problem — blank-print resets are declarative via `ED_BLANK_PRINT`, the ADR-10 bug class is eliminated. (2) Each protocol page is clinically distinct with different form layouts, multi-step workflows (GRACE → risk → anticoag → print), and protocol-specific safety gates — forcing them into a config schema adds abstraction complexity without reducing clinical code. (3) Risk/reward is wrong — a config-driven renderer is a ~500-line shared module that all pages depend on; any bug breaks all 7 protocols. The current approach (shared lifecycle + declarative manifests + page-specific clinical logic) isolates risk per page. (4) The drip calculator works fundamentally differently — one form, one calculation, one output — while order pages have multi-section forms and protocol-specific logic that doesn't generalize cleanly.
 
 ### ADR-13: Security Fix, Dead Code Removal, Test Foundation, Accessibility
+
 - **Context:** A deep audit (v2) of the codebase at commit `55e7a7f` identified a critical XSS vulnerability, dead code/CSS, zero test coverage despite module.exports scaffolding, documentation/reality drift (PWA claim), and near-zero ARIA coverage. The emoji inconsistency noted in ADR-09 was also found to extend beyond portal cards to the floating print bar and drip calculator button.
 - **Decision:**
   1. **S1 (Critical) — XSS Fix:** `injectStickerBox()` in `components.js` previously set HN (user-entered patient identifier) via `innerHTML` template interpolation, creating an XSS vector. Fixed by building the DOM structure via `innerHTML` first, then setting HN via `textContent` on the `#sticker-hn-text` element. All other patient-identifier writes already used `textContent` — this closes the last gap.
@@ -167,6 +187,7 @@
 - **Rationale:** The XSS fix closes a real security gap — user-entered HN could execute arbitrary HTML in the page context. The test foundation provides a safety net for future refactoring (Phase 2 shared-behavior extraction) without adding build dependencies. Dead code/CSS removal reduces maintenance surface. Documentation corrections ensure the governance docs match reality. Accessibility improvements bring the codebase closer to its stated design principles without changing visual output or print behavior. No clinical dose logic, safety ceilings, or print geometry were modified.
 
 ### ADR-21: NSTEMI Standing Order v2.1 — Simplification, Safe eGFR Formatting, and Regression Guards (2026-07-04)
+
 - **Context:** Following the NSTEMI v2.0 overhaul, an audit identified dead references in Javascript (`p-h0`, `p-h1`, `p-h3` were missing from DOM) causing runtime crashes upon form submission. Manual troponin times and duplicate creatinine inputs added unnecessary input friction. eGFR formatting was inconsistent and lacked null guards.
 - **Decision:**
   1. Removed manual troponin timing inputs (`#trop-time-h0`/`1`/`3`) and the screen timing badges. Simplified the printed troponin display to a clean list of static values. Renamed print Column 1 header to "Progress note" and removed the pharmacist signature block ("ลงชื่อเภสัช:").
@@ -179,6 +200,7 @@
 - **Rationale:** Reduces layout complexity and clinician data-entry overhead. Safe-guarding formatting and static reference checks prevents future regression crashes.
 
 ### ADR-22: Homepage Design Optimization & Local CSS Scoping (2026-07-04)
+
 - **Context:** The portal homepage (`index.html`) visually felt outdated and flat compared to modern web design standards. The user requested a visual optimization using `/modern-web-guidance` to create a premium clinical dashboard.
 - **Decision:**
   1. **Visual Overhaul:** Optimized the layout with a subtle radial gradient background (`#f8fafc` to `#e2e8f0`), glassmorphic portal cards (soft blur, semi-transparent borders, premium drop shadows, `12px` border-radius), and uppercase text tags (e.g., "NEUROLOGY", "CARDIAC") corresponding to the color-coded categories. Tuned card dimensions to be more compact (padding: `16px 20px`, min-height: `80px`, grid gap: `16px`) for an ultra-sleek layout.

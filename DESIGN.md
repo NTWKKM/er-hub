@@ -3,6 +3,7 @@
 ## 1. Design Tokens
 
 ### Color Palette
+
 - **Background:** `#f0f2f5` (Clinical order sheets screen background) | Radial gradient `#f8fafc` to `#e2e8f0` (Portal homepage background)
 - **Container Background:** `#ffffff` (Card background)
 - **Primary Text:** `#333333` (Charcoal gray)
@@ -10,12 +11,14 @@
 - **Card Selection Active:** `#ffeaa7` (High alert highlight / selected state background)
 
 #### Module Specific Accents
+
 - **Stroke (rt-PA):** Primary `#007bff` | Hover `#0056b3` | BG Highlight `#e6f0ff`
 - **STEMI / NSTEMI / PE / Antivenom / Heparin / Sedation:** Primary `#c0392b` | Hover `#a93226` | BG Highlight `#fff5f5`
 - **Success / Print:** Primary `#28a745` | Hover `#218838`
 - **Neutral / Clear:** Primary `#7f8c8d` | Hover `#626c6d`
 
 ### Typography
+
 - **Primary Font Family:** `'Sarabun', sans-serif` (Imported from Google Fonts)
 - **Font Sizes:**
   - Page Heading (`h1`): `1.5em` (24px)
@@ -25,6 +28,7 @@
   - Print Headers: `16px`
 
 ### Breakpoints & Layout
+
 - **Container Max-Width:** `1100px` (order pages), `1200px` (portal)
 - **Form Grid Gaps:** `20px` (STEMI/NSTEMI), `30px` (Stroke)
 - **NSTEMI Compact Input Layout:** Patient Info (`.patient-section`) is a full-width top row with fields in a single-line flexbox (`.patient-fields`) containing: HN, Age, Weight(kg), Sex(M/F radio), Creatinine(mg/dL), and a red eGFR badge derived live via CKD-EPI 2021. Below it, a 3-column `.input-layout` row holds: (1) GRACE Score Variables (HR/SBP/Creatinine from patient info + binary flags), (2) Killip Class (compacted single-line radio labels with hover descriptions), (3) Risk Stratification (vertical checkbox list with standard labels). Troponin values block holds H0, H1, H3 values with no manual draw times. Anticoagulant selection is placed in the screen results box, allowing the physician to select choices (with Enoxaparin supporting q12h vs OD sub-selections and GFR-only hint "(1 mg/kg — GFR < 30 → once daily)"), which dynamically updates the print area's Continuation column.
@@ -56,6 +60,7 @@
 ## 3. Accessibility & Printing Constraints
 
 ### Accessibility (Screen)
+
 - **Favicon:** Hospital logo PNG (`docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`) on all 9 pages for tab identification.
 - **ARIA Landmarks:** `role="navigation"` on the sticky nav bar. `aria-label="Home"` on the Home link.
 - **Live Regions:** `aria-live="polite"` on dose summary banners and stroke results container — screen readers announce computed doses without interrupting workflow.
@@ -64,6 +69,7 @@
 - **Form Validation:** Non-blocking validation via `ED_VALIDATE` (`shared/form-validate.js`). Inline `.field-error` + `.inline-error-msg` for field-level errors. `.clinical-warning` banner for safety alerts (SK contraindication, absolute CI). Zero `alert()` calls in the codebase.
 
 ### Printing Constraints (A4 Layout)
+
 - **Page Size:** `@page { size: A4 portrait; margin: 0 }` — content uses full A4 area (210mm × 297mm). Results container padding `5mm` provides the printable margin.
 - **Body Reset:** `body { width: 210mm; display: block !important }` overrides screen `display: flex; flex-direction: column` for proper print flow.
 - **5-Column Grid:** `min-width: auto; width: 100%; font-size: 8pt; page-break-inside: avoid` — fits within A4 width and stays on one page. Screen retains `min-width: 900px` for readability.
