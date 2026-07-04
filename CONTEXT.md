@@ -238,3 +238,18 @@
   4. Applied to both `getSelectedAnticoagPrintHTML()` (dynamic) and `p-anticoag` blank template.
 - **Evidence Base:** 2025 ACC/AHA NSTE-ACS Guidelines; ESC 2023 NSTE-ACS Guidelines (CrCl <30 absolute CI; UFH bolus at PCI for Fondaparinux-treated patients).
 - **Rationale:** On-sheet CI reminders prevent prescribing errors at the point of care without external reference lookup during high-acuity resuscitation.
+
+---
+
+### ADR-25: Real-time GRACE Calculation & Always-Visible Print Preview (2026-07-04)
+
+- **Context:** The NSTEMI form previously required pressing a "Calculate" button before any GRACE score, anticoagulant recommendation, or print preview was visible. This created unnecessary friction in time-critical ED scenarios.
+- **Decision:**
+  1. Extracted all calculation logic into `calculateAndRender()` — fires on every input/radio/checkbox change.
+  2. `#results-container` is always visible from page load (removed `class="hidden"`).
+  3. Submit button (`type=button`, `onclick=window.print()`) — prints the order sheet only; `@media print` already hides the form/nav.
+  4. `form.submit` listener retained but only calls `window.print()`.
+  5. Anticoag hints in `updateAcHints()` now show: Fondaparinux 2-line (eGFR + CI/PCI note in red), Enoxaparin 2-line (dose + syringe ref), Heparin plain threshold.
+  6. Graceful degradation: missing fields render `--`, auto-select fires only when eGFR is computable.
+- **Rationale:** Removing the calculate gate eliminates cognitive overhead during time-critical resuscitation. Real-time preview lets clinicians verify the order as they type. Submit-to-print preserves existing button labels while assigning the correct final action.
+

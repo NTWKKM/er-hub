@@ -218,3 +218,27 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 **Evidence Base:** 2025 ACC/AHA NSTE-ACS Guidelines; ESC 2023 NSTE-ACS Guidelines.
 
 **Tests:** 138/138 pass post-change (DOM ID integrity guard confirmed).
+
+---
+
+### ADR-25: Real-time GRACE Calculation & Always-Visible Print Preview (2026-07-04)
+
+**Context:** Previously, the NSTEMI order form required the clinician to press a "Calculate" button before the GRACE score, anticoagulant recommendation, and print preview were rendered. This created friction during time-critical resuscitations and required two steps to see the standing order layout.
+
+**Decision:**
+  1. **`calculateAndRender()` extracted:** The entire calculation + DOM update block was moved out of the `form.submit` event handler into a standalone `calculateAndRender()` function called on every input/radio/checkbox change event.
+  2. **Real-time wiring:** All form inputs are wired via `addEventListener('input'/'change', calculateAndRender)`:
+     - Text/number inputs: `hn`, `weight`, `age`, `creatinine`, `hr`, `sbp`, `troponin-h0/h1/h3`
+     - Radio groups: `sex`, `asa-allergy`, `killip`, `anticoag-choice`, `enox-freq`
+     - Checkboxes: `.vh-flag`, `.h1-flag`, `#cardiac-arrest`, `#st-deviation`, `#elevated-markers`, `#troponin-from-rphch`
+  3. **Always-visible results panel:** `class="hidden"` removed from `#results-container`; panel is visible immediately on page load.
+  4. **Submit button → Print:** Changed `type="submit"` to `type="button" onclick="window.print()"`. The `form.submit` listener now only calls `window.print()`. `@media print` CSS already hides the form and nav, so only the order sheet is printed.
+  5. **Graceful degradation:** Missing inputs render as `--` instead of causing crashes. Auto-select of anticoagulant only fires when eGFR is computable, preventing overwrite of manual selection.
+  6. **Anticoag hint improvements in `updateAcHints()`:**
+     - Fondaparinux: 2-line hint `(Preferred — eGFR xx)` + `(CI: CrCl <30 — PCI requires UFH bolus)` in red
+     - Enoxaparin: `(1 mg/kg = xx mg — GFR < 30 → once daily)` + `(0.4 ml = 40 mg, 0.6 ml = 60 mg)`
+     - Heparin: plain `(eGFR <15 หรือ CrCl <30 mL/min)` — no eGFR value suffix
+
+**Rationale:** Removing the calculate gate eliminates a cognitive step under time pressure. The standing order preview updating in real-time lets clinicians verify accuracy as they type, reducing transcription errors. The submit-to-print conversion preserves the existing button label without confusing the user while changing its purpose to the correct final action.
+
+**Tests:** 138/138 pass post-change (DOM ID integrity guard confirmed).
