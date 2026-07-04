@@ -266,6 +266,11 @@
                         <input type="number" id="sbp" min="40" max="300"
                                placeholder="เช่น 130">
                     </div>
+                    <div class="inline-input-group">
+                        <label for="grace-creatinine">Creatinine (mg/dL):</label>
+                        <input type="number" id="grace-creatinine" step="0.01" min="0.1" max="20"
+                               placeholder="0.95">
+                    </div>
 
 
                     <div style="margin:12px 0 10px;">
@@ -705,6 +710,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const patientCr = $('creatinine');
+    const graceCr = $('grace-creatinine');
+
+    // Two-way sync between patientCr and graceCr
+    patientCr.addEventListener('input', () => {
+        if (document.activeElement === patientCr) {
+            graceCr.value = patientCr.value;
+        }
+    });
+    graceCr.addEventListener('input', () => {
+        if (document.activeElement === graceCr) {
+            patientCr.value = graceCr.value;
+            patientCr.dispatchEvent(new Event('input'));
+        }
+    });
 
     // Live eGFR display
     const ageInput = $('age');
@@ -986,6 +1005,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ED_PRINT_BOOTSTRAP.clearResults('nstemi-form', () => {
             $('grace-breakdown-body').innerHTML =
                 '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
+            updateLiveEGFR();
         });
     });
 
