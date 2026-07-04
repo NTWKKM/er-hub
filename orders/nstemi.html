@@ -400,23 +400,68 @@
                 </table>
             </div>
 
-            <!-- Right: Anticoag + Timing -->
-            <div>
-                <div class="anticoag-banner">💊 Anticoagulant: <span id="screen-anticoag">--</span></div>
-                <div class="troponin-times">
-                    <div class="t-box">
-                        <div class="t-lbl">H0 (แรกรับ)</div>
-                        <div class="t-val" id="screen-h0">--:--</div>
+            <!-- Right: Anticoag Selection + Timing -->
+            <div style="flex: 1 1 320px; min-width: 280px; display: flex; flex-direction: column; gap: 12px;">
+                <div style="background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px;">
+                    <strong style="font-size:11px;color:#555;display:block;margin-bottom:8px;">💊 Anticoagulant Selection</strong>
+                    <div style="font-size:12px; display: flex; flex-direction: column; gap: 8px;">
+                        <div>
+                            <label style="cursor:pointer; display: flex; align-items: flex-start; gap: 6px; margin: 0;">
+                                <input type="radio" name="anticoag-choice" value="fonda" style="margin-top:2px;">
+                                <div>
+                                    <strong style="color:#c0392b;">Fondaparinux 2.5 mg SC OD</strong>
+                                    <div style="font-size:10px; color:#666; margin-top:2px;" id="ac-fonda-hint">(Preferred — eGFR --)</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div style="border-top: 1px solid #eee; padding-top: 6px;">
+                            <label style="cursor:pointer; display: flex; align-items: flex-start; gap: 6px; margin: 0;">
+                                <input type="radio" name="anticoag-choice" value="enox" style="margin-top:2px;">
+                                <div>
+                                    <strong id="ac-enox-text" style="color:#c0392b;">Enoxaparin -- mg SC</strong>
+                                    <div style="font-size:10px; color:#666; margin-top:2px;" id="ac-enox-hint">
+                                        (1 mg/kg — age &lt;75, eGFR ≥30) หรือ eGFR &lt; 30 → once daily
+                                    </div>
+                                    <div id="enox-frequency-container" style="display: none; margin-top: 6px; padding-left: 4px; gap: 12px;">
+                                        <label style="cursor:pointer; display: inline-flex; align-items: center; gap: 4px; margin: 0; font-weight: normal;">
+                                            <input type="radio" name="enox-freq" value="q12h" checked> q 12 hr
+                                        </label>
+                                        <label style="cursor:pointer; display: inline-flex; align-items: center; gap: 4px; margin: 0; font-weight: normal;">
+                                            <input type="radio" name="enox-freq" value="q24h"> OD (once daily)
+                                        </label>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        <div style="border-top: 1px solid #eee; padding-top: 6px;">
+                            <label style="cursor:pointer; display: flex; align-items: flex-start; gap: 6px; margin: 0;">
+                                <input type="radio" name="anticoag-choice" value="hep" style="margin-top:2px;">
+                                <div>
+                                    <strong style="color:#c0392b;">Heparin IV drip</strong>
+                                    <div style="font-size:10px; color:#666; margin-top:2px;" id="ac-hep-hint">(eGFR &lt;15 หรือ CrCl &lt;30 mL/min)</div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
-                    <span class="t-arr">→</span>
-                    <div class="t-box">
-                        <div class="t-lbl">H1 (+1h)</div>
-                        <div class="t-val" id="screen-h1">--:--</div>
-                    </div>
-                    <span class="t-arr">→</span>
-                    <div class="t-box">
-                        <div class="t-lbl">H3 (+3h)</div>
-                        <div class="t-val" id="screen-h3">--:--</div>
+                </div>
+                
+                <div>
+                    <div style="font-size: 11px; font-weight: bold; color: #7f8c8d; margin-bottom: 6px;">💊 Calculated Recommendation: <span id="screen-anticoag" style="color: #333;">--</span></div>
+                    <div class="troponin-times">
+                        <div class="t-box">
+                            <div class="t-lbl">H0 (แรกรับ)</div>
+                            <div class="t-val" id="screen-h0">--:--</div>
+                        </div>
+                        <span class="t-arr">→</span>
+                        <div class="t-box">
+                            <div class="t-lbl">H1 (+1h)</div>
+                            <div class="t-val" id="screen-h1">--:--</div>
+                        </div>
+                        <span class="t-arr">→</span>
+                        <div class="t-box">
+                            <div class="t-lbl">H3 (+3h)</div>
+                            <div class="t-val" id="screen-h3">--:--</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -430,8 +475,7 @@
 
             <div class="order-grid-5col">
                 <div class="grid-header">
-                    Progress note สหสาขาวิชาชีพ<br>
-                    <small>(บันทึก 3 วันหลัง admit และทุกครั้งที่มีการเปลี่ยนแปลง)</small>
+                    Progress note
                 </div>
                 <div class="grid-header">Date/<br>Time</div>
                 <div class="grid-header">Orders for one day</div>
@@ -464,9 +508,6 @@
                     <strong>hs-Troponin I:</strong><br>
                     <span id="p-troponin-values">(ไม่ได้กรอก)</span><br>
                     <span id="p-rphch-note" style="font-size:9.5px;color:#666;"></span>
-
-                    <div class="divider"></div>
-                    ลงชื่อเภสัช: <span class="dotted-line"></span>
                 </div>
 
                 <!-- Col 2: Date/Time -->
@@ -499,9 +540,6 @@
                         <li id="p-isdn-stat">☑ ISDN (5) 1 tab SL prn chest pain</li>
                     </ul>
 
-                    <div class="divider"></div>
-                    <strong>Anticoagulation:</strong>
-                    <div id="p-anticoag" style="margin-top:4px;"></div>
 
                     <div class="divider"></div>
                     <strong>Others:</strong>
@@ -529,35 +567,7 @@
 
                     <div class="divider"></div>
                     <strong>Anticoagulation:</strong>
-                    <div style="margin-top:8px;">
-                        <div style="margin-bottom:8px;">
-                            <label style="cursor:pointer;">
-                                <input type="radio" name="anticoag-choice" value="fonda">
-                                <strong>☐ Fondaparinux 2.5 mg SC OD × 5 Days</strong>
-                                <div style="margin-left:20px; font-size:0.9em; color:#666;" id="ac-fonda-hint">
-                                    (Preferred — eGFR --)
-                                </div>
-                            </label>
-                        </div>
-                        <div style="margin-bottom:8px;">
-                            <label style="cursor:pointer;">
-                                <input type="radio" name="anticoag-choice" value="enox">
-                                <strong id="ac-enox-text">☐ Enoxaparin -- mg SC q12h × 5 Days</strong>
-                                <div style="margin-left:20px; font-size:0.9em; color:#666;" id="ac-enox-hint">
-                                    (1 mg/kg — age &lt;75, eGFR ≥30)
-                                </div>
-                            </label>
-                        </div>
-                        <div style="margin-bottom:8px;">
-                            <label style="cursor:pointer;">
-                                <input type="radio" name="anticoag-choice" value="hep">
-                                <strong>☐ Heparin drip (anti-Xa monitoring)</strong>
-                                <div style="margin-left:20px; font-size:0.9em; color:#666;" id="ac-hep-hint">
-                                    (eGFR &lt;15 หรือ CrCl &lt;30 mL/min)
-                                </div>
-                            </label>
-                        </div>
-                    </div>
+                    <div id="p-anticoag" style="margin-top:4px;"></div>
 
                     <div class="divider"></div>
                     <strong>Medications:</strong>
@@ -602,23 +612,123 @@ document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
 
     // Real-time eGFR → update Anticoag hints (Task C)
+    function getSelectedAnticoagPrintHTML() {
+        const choice = document.querySelector('input[name="anticoag-choice"]:checked')?.value;
+        const weight = parseFloat($('weight').value) || 0;
+        const egfrLive = parseFloat($('screen-egfr').textContent) || null;
+        
+        const chk = val => (choice === val) ? '☑' : '☐';
+        
+        // Fondaparinux
+        const fondaRec = choice === 'fonda';
+        const fondaNA  = egfrLive !== null && egfrLive < 20;
+        let html = `
+        <div class="ac-opt ${fondaRec ? 'recommended' : ''} ${fondaNA ? 'na' : ''}">
+            <strong>${chk('fonda')} Fondaparinux</strong>
+            ${fondaNA ? '&nbsp;<span style="color:#c0392b;font-size:9px;">⚠️ GFR&lt;20 — ห้ามให้</span>' : '&nbsp;<small>(Preferred)</small>'}<br>
+            2.5 mg SC OD × 5 Days
+        </div>`;
+
+        // Enoxaparin
+        const enoxRec = choice === 'enox';
+        const enoxNA  = egfrLive !== null && egfrLive < 15;
+        if (!enoxNA) {
+            const enoxDose = Math.round(weight * 1.0);
+            const freq = document.querySelector('input[name="enox-freq"]:checked')?.value || 'q12h';
+            const routeStr = freq === 'q12h' ? 'SC q12h' : 'SC q24h';
+            const noteStr = freq === 'q12h' ? '1 mg/kg — GFR ≥ 30' : '1 mg/kg — GFR < 30 → once daily';
+            
+            html += `
+            <div class="ac-opt ${enoxRec ? 'recommended' : ''}">
+                <strong>${chk('enox')} Enoxaparin SC</strong><br>
+                <strong>${enoxDose} mg</strong> ${routeStr} × 5 Days<br>
+                <span style="font-size:9px;color:#666;">(${noteStr})</span>
+            </div>`;
+        } else {
+            html += `
+            <div class="ac-opt na">
+                <strong>☐ Enoxaparin SC</strong>
+                &nbsp;<span style="font-size:9px;color:#c0392b;">⚠️ GFR&lt;15 — ไม่แนะนำ</span>
+            </div>`;
+        }
+
+        // Heparin IV
+        const hepRec = choice === 'hep';
+        let hepBody = '';
+        if (hepRec) {
+            const hepBolus = Math.min(Math.round(weight * 60), 4000);
+            const hepInf = Math.min(Math.round(weight * 12), 1000);
+            const hepRate = (hepInf / 100).toFixed(1);
+            hepBody = `<strong>${hepBolus} u</strong> (60u/kg) IV bolus<br>
+                       then Heparin 10,000u + NSS 100ml<br>
+                       IV drip <strong>${hepInf} u/hr</strong> (12u/kg/hr) = ${hepRate} ml/hr<br>
+                       MAX 1,000 u/hr × 2 Days`;
+        } else {
+            hepBody = '<span style="font-size:9px;">(กรณี GFR &lt; 15 เท่านั้น)</span>';
+        }
+        
+        html += `
+        <div class="ac-opt ${hepRec ? 'recommended' : 'na'}">
+            <strong>${chk('hep')} Heparin IV</strong>
+            &nbsp;<small>(กรณี GFR &lt; 15)</small><br>
+            ${hepBody}
+        </div>`;
+
+        return html;
+    }
+
+    function getSelectedAnticoagScreenLabel() {
+        const choice = document.querySelector('input[name="anticoag-choice"]:checked')?.value;
+        const weight = parseFloat($('weight').value) || 0;
+        if (!choice) return '--';
+        
+        if (choice === 'fonda') {
+            return 'Fondaparinux 2.5 mg SC OD × 5d';
+        }
+        if (choice === 'enox') {
+            const enoxDose = Math.round(weight * 1.0);
+            const freq = document.querySelector('input[name="enox-freq"]:checked')?.value || 'q12h';
+            const routeStr = freq === 'q12h' ? 'SC q12h' : 'SC q24h';
+            return `Enoxaparin ${enoxDose} mg ${routeStr} × 5d`;
+        }
+        if (choice === 'hep') {
+            const hepBolus = Math.min(Math.round(weight * 60), 4000);
+            const hepInf = Math.min(Math.round(weight * 12), 1000);
+            return `Heparin IV — Bolus ${hepBolus}u → ${hepInf}u/hr`;
+        }
+        return '--';
+    }
+
+    function updateAnticoagOutput() {
+        const choice = document.querySelector('input[name="anticoag-choice"]:checked')?.value;
+        const freqContainer = $('enox-frequency-container');
+        if (freqContainer) {
+            freqContainer.style.display = (choice === 'enox') ? 'flex' : 'none';
+        }
+        $('screen-anticoag').textContent = getSelectedAnticoagScreenLabel();
+        const pAnticoag = $('p-anticoag');
+        if (pAnticoag) {
+            pAnticoag.innerHTML = getSelectedAnticoagPrintHTML();
+        }
+    }
+
     function updateAcHints() {
         const egfrLive = parseFloat($('screen-egfr').textContent);
         const weight = parseFloat($('weight').value) || 0;
-        const age = parseFloat($('age').value) || 0;
         
-        if (!isNaN(egfrLive) && weight > 0 && age > 0) {
+        if (!isNaN(egfrLive) && weight > 0) {
             const enoxDose = Math.round(weight * 1.0);
             $('ac-fonda-hint').textContent = `(Preferred — eGFR ${egfrLive.toFixed(2)})`;
-            $('ac-enox-text').textContent = `☐ Enoxaparin ${enoxDose} mg SC q12h × 5 Days`;
-            $('ac-enox-hint').textContent = `(1 mg/kg — age ${age}, eGFR ${egfrLive.toFixed(2)})`;
+            $('ac-enox-text').textContent = `Enoxaparin ${enoxDose} mg SC`;
+            $('ac-enox-hint').textContent = `(1 mg/kg — age ${parseFloat($('age').value) || 0}, eGFR ${egfrLive.toFixed(2)})`;
             $('ac-hep-hint').textContent = `(eGFR <15 หรือ CrCl <30 mL/min — current eGFR: ${egfrLive.toFixed(2)})`;
         } else {
             $('ac-fonda-hint').textContent = '(eGFR ไม่ได้คำนวณ)';
-            $('ac-enox-text').textContent = '☐ Enoxaparin -- mg SC q12h × 5 Days';
+            $('ac-enox-text').textContent = 'Enoxaparin -- mg SC';
             $('ac-enox-hint').textContent = '(กรอกน้ำหนัก/อายุ/เพศ/Cr เพื่อดูขนาด)';
             $('ac-hep-hint').textContent = '(eGFR <15 หรือ CrCl <30 mL/min)';
         }
+        updateAnticoagOutput();
     }
 
     $('weight').addEventListener('input', updateAcHints);
@@ -762,56 +872,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'non-high';
     }
 
-    function buildAnticoagPrintHTML(ac) {
-        const chk = ok => ok ? '☑' : '☐';
-        const { rec, egfr } = ac;
-
-        // Fondaparinux
-        const fondaRec = rec === 'fondaparinux';
-        const fondaNA  = egfr < 20;
-        let html = `
-        <div class="ac-opt ${fondaRec ? 'recommended' : ''} ${fondaNA ? 'na' : ''}">
-            <strong>${chk(fondaRec)} Fondaparinux</strong>
-            ${fondaNA ? '&nbsp;<span style="color:#c0392b;font-size:9px;">⚠️ GFR&lt;20 — ห้ามให้</span>' : '&nbsp;<small>(Preferred)</small>'}<br>
-            2.5 mg SC OD × 5 Days
-        </div>`;
-
-        // Enoxaparin
-        const enoxRec = rec === 'enoxaparin';
-        const enoxNA  = egfr < 15;
-        if (!enoxNA) {
-            html += `
-            <div class="ac-opt ${enoxRec ? 'recommended' : ''}">
-                <strong>${chk(enoxRec)} Enoxaparin SC</strong><br>
-                <strong>${ac.enoxDose} mg</strong> ${ac.enoxRoute} × 5 Days<br>
-                <span style="font-size:9px;color:#666;">(${ac.enoxNote})</span>
-            </div>`;
-        } else {
-            html += `
-            <div class="ac-opt na">
-                <strong>☐ Enoxaparin SC</strong>
-                &nbsp;<span style="font-size:9px;color:#c0392b;">⚠️ GFR&lt;15 — ไม่แนะนำ</span>
-            </div>`;
-        }
-
-        // Heparin IV
-        const hepRec = rec === 'heparin';
-        let hepBody = hepRec
-            ? `<strong>${ac.hepBolus} u</strong> (60u/kg) IV bolus<br>
-               then Heparin 10,000u + NSS 100ml<br>
-               IV drip <strong>${ac.hepInf} u/hr</strong> (12u/kg/hr) = ${ac.hepRate} ml/hr<br>
-               MAX 1,000 u/hr × 2 Days`
-            : '<span style="font-size:9px;">(กรณี GFR &lt; 15 เท่านั้น)</span>';
-
-        html += `
-        <div class="ac-opt ${hepRec ? 'recommended' : 'na'}">
-            <strong>${chk(hepRec)} Heparin IV</strong>
-            &nbsp;<small>(กรณี GFR &lt; 15)</small><br>
-            ${hepBody}
-        </div>`;
-
-        return html;
+    function buildAnticoagPrintHTML() {
+        return getSelectedAnticoagPrintHTML();
     }
+
+    document.querySelectorAll('input[name="anticoag-choice"]').forEach(r => {
+        r.addEventListener('change', updateAnticoagOutput);
+    });
+    document.querySelectorAll('input[name="enox-freq"]').forEach(r => {
+        r.addEventListener('change', updateAnticoagOutput);
+    });
 
     document.getElementById('nstemi-form').addEventListener('submit', e => {
         e.preventDefault();
@@ -927,12 +997,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
         }
 
-        const acLabel = ac.rec === 'fondaparinux'
-            ? 'Fondaparinux 2.5 mg SC OD × 5d'
-            : ac.rec === 'enoxaparin'
-            ? `Enoxaparin ${ac.enoxDose} mg ${ac.enoxRoute} × 5d`
-            : `Heparin IV — Bolus ${ac.hepBolus}u → ${ac.hepInf}u/hr`;
-        $('screen-anticoag').textContent = acLabel;
+        // Auto-select recommended anticoagulant
+        let recAc = 'fonda';
+        if (egfrForCalc < 15) {
+            recAc = 'hep';
+        } else if (egfrForCalc >= 20) {
+            recAc = 'fonda';
+        } else {
+            recAc = 'enox';
+        }
+        
+        const radToCheck = document.querySelector(`input[name="anticoag-choice"][value="${recAc}"]`);
+        if (radToCheck) radToCheck.checked = true;
+        
+        if (recAc === 'enox') {
+            const freqVal = (egfrForCalc < 30) ? 'q24h' : 'q12h';
+            const freqRad = document.querySelector(`input[name="enox-freq"][value="${freqVal}"]`);
+            if (freqRad) freqRad.checked = true;
+        }
+        
+        updateAcHints();
 
         /* ══ UPDATE PRINT AREA ══ */
         ED_COMPONENTS.injectPrintHeader('print-header-container');
@@ -994,8 +1078,6 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-asa-cont').innerHTML = asaAlrg
             ? '<strong style="color:red;">⚠️ ASA ALLERGY — ไม่ให้ ASA</strong>'
             : '☑ ASA (81) 1×1 pc';
-
-        $('p-anticoag').innerHTML = buildAnticoagPrintHTML(ac);
 
         ED_PRINT_BOOTSTRAP.showResults();
     });
