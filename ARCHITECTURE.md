@@ -138,7 +138,7 @@ A post-implementation audit of NSTEMI standing order page (v2.0) revealed:
    - Moved the screen eGFR badge `#screen-egfr` directly next to the Creatinine input in the patient demographics row.
    - Relocated the `#troponin-from-rphch` checkbox to the header of the Troponin section.
    - Reverted Risk Stratification back to the original vertical list layout using standard labels.
-   - Moved interactive anticoagulant selection radio buttons out of print preview (Column 5) and into the screen results container, adding Enoxaparin frequency q12h vs OD sub-selections.
+   - Moved interactive anticoagulant selection radio buttons out of print preview (Column 5) and into the screen results container, adding Enoxaparin frequency q12h vs OD sub-selections with GFR-only hint text "(1 mg/kg — GFR < 30 → once daily)".
    - Relocated print anticoagulant output (`#p-anticoag`) from print Column 3 (One Day Orders) to print Column 5 (Continuation).
 3. **eGFR Safe Formatting:**
    - Standardised all eGFR outputs to 2 decimal places (`.toFixed(2)`).
