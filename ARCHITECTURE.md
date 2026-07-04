@@ -358,3 +358,15 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 
 **Tests:** 139/139 pass (CSS and label changes only — no JS logic changed).
 
+
+### ADR-33: NSTEMI Sex Radio Overflow Fix — Mobile Grid Cell Containment (2026-07-04)
+
+**Context:** Post-ADR-32 screen QA on mobile viewport (≤600px) revealed that the "Sex" field (`patient-field:nth-child(4)`) radio labels "ชาย" / "หญิง" overflowed the right edge of the grid cell and clipped outside the page boundary. Root cause: `.patient-field .gender-radio` had `white-space: nowrap` which prevented line-wrapping, and the Sex field itself had no `flex-direction: column` constraint, allowing both radio rows to sit side-by-side beyond the `1fr` column width.
+
+**Decision:**
+1. **`.patient-field .gender-radio` rule updated** (inside `@media (max-width: 600px)`): Replaced `white-space: nowrap` with `white-space: normal`. Added `display: flex; align-items: center; gap: 4px; overflow: hidden` — each radio+label pair is now a flex row that wraps text and is clipped at the cell boundary.
+2. **New `.patient-fields > .patient-field:nth-child(4)` rule** (inside `@media (max-width: 600px)`): `display: flex; flex-direction: column; align-items: flex-start; overflow: hidden; min-width: 0` — Sex field container stacks its two radio labels vertically instead of horizontally, eliminating the overflow.
+
+**Rationale:** `min-width: 0` on a flex/grid child is required to allow the child to shrink below its intrinsic content size (browser default is `min-width: auto`). `overflow: hidden` clips any residual text that exceeds the cell. Stacking vertically (`flex-direction: column`) is the correct layout for two mutually exclusive binary options (ชาย / หญิง) in a narrow column.
+
+**Tests:** No logic changes — CSS layout only. 139/139 pass.

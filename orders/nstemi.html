@@ -223,10 +223,23 @@
                 gap: 4px 8px;
             }
 
-            /* Sex radio: constrain inside cell */
+            /* Sex radio: stack vertically, never overflow cell */
             .patient-field .gender-radio {
                 font-size: 13px;
-                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                white-space: normal;
+                overflow: hidden;
+            }
+
+            /* Sex field (4th child): stack radios vertically, clip to cell */
+            .patient-fields > .patient-field:nth-child(4) {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                overflow: hidden;
+                min-width: 0;
             }
 
             /* Troponin header row: allow checkbox to wrap below title */

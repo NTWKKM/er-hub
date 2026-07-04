@@ -325,3 +325,11 @@
   3. **GRACE Short Labels:** Dual `<span class="grace-label-full">` / `<span class="grace-label-short">` spans in each GRACE label. Short text: `HR:`, `SBP:`, `Cr:`. `.grace-inline-row` forces `flex-direction: row` on mobile. Toggled via `@media (max-width: 600px)` / `(min-width: 601px)` display rules.
   4. **Nav Title Aliases (`shared/components.js`):** `parseTitle()` strips residual `\bOrder\b` (Sedation Order → Sedation) and aliases `rt-PA Dose Calculator → rt-PA Calc`.
 - **Rationale:** Class overrides are DOM-order-independent. Short label spans are CSS-only and maintain semantic `<label for>` association. Nav aliases complete the short-title set so all 7 pages display correctly on narrow viewports.
+
+### ADR-33: NSTEMI Sex Radio Overflow Fix (2026-07-04)
+
+- **Context:** Mobile 600px viewport — "ชาย" / "หญิง" radio labels escaped the right edge of the `1fr` grid column due to `white-space: nowrap` and missing `flex-direction: column` on the Sex field container.
+- **Decision:**
+  1. `.patient-field .gender-radio` → `white-space: normal; display: flex; align-items: center; gap: 4px; overflow: hidden` (inside `@media (max-width: 600px)`).
+  2. `.patient-fields > .patient-field:nth-child(4)` → `display: flex; flex-direction: column; align-items: flex-start; overflow: hidden; min-width: 0` (inside same breakpoint).
+- **Rationale:** `min-width: 0` allows the flex/grid child to shrink below intrinsic size; `flex-direction: column` stacks ชาย/หญิง vertically inside the narrow column.
