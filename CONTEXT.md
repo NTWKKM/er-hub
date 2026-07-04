@@ -215,7 +215,7 @@
 - **Context:** Thailand clinical settings support Enoxaparin in pre-filled syringe sizes (0.4 ml [40 mg] and 0.6 ml [60 mg]). The NSTEMI continue order printed layout used manual blank lines, which required manual completion and did not guide clinical selection based on pre-packaged stock sizes.
 - **Decision:**
   1. **Print Layout Update:** Replaced blank lines in continue order (`p-anticoag`) with specific checkboxes formatted over 2 lines:
-     - Line 1: `☐ Enoxaparin SC  ☐ 0.4 ml  ☐ 0.6 ml`
+     - Line 1: `☐ Enoxaparin  ☐ 0.4 ml  ☐ 0.6 ml`
      - Line 2: (Indented 5 spaces) `SC  ☐ q 12 hr  ☐ OD  × 5 Days`
   2. **Auto-Checking Dosing Logic:** Added live calculation rules in `orders/nstemi.html`:
      - If patient weight >= 50 kg (dose >= 50 mg), check the `0.6 ml` box.
@@ -226,3 +226,15 @@
      - Line 2: `(0.4 ml = 40 mg, 0.6 ml = 60 mg)`
 - **Rationale:** The updated layout reduces error-prone manual writing on printed forms. Formatting the checkboxes and instructions into 2 lines respectively prevents visual clutter in the narrow continuation column print space while ensuring clear stock size guide references.
 
+---
+
+### ADR-24: Anticoagulant Guideline Hints — Fondaparinux & Heparin (2026-07-04)
+
+- **Context:** The NSTEMI continue order anticoagulant section lacked point-of-care contraindication reminders. Clinicians needed guideline-level alerts on the printed form per 2025 ACC/AHA and ESC NSTE-ACS recommendations.
+- **Decision:**
+  1. **Fondaparinux hint:** Added `(CI: CrCl <30 mL/min — ถ้าทำ PCI ต้องเสริม UFH bolus)` — covers (a) absolute renal CI and (b) catheter thrombosis risk during PCI requiring UFH bolus.
+  2. **Heparin label:** Updated from `(กรณี GFR < 15)` to `(eGFR <15 หรือ CrCl <30 mL/min)` for precision with LMWH crossover thresholds.
+  3. **Enoxaparin Line 1:** Removed redundant `SC` from `☐ Enoxaparin SC` → `☐ Enoxaparin` ("SC" already present on Line 2).
+  4. Applied to both `getSelectedAnticoagPrintHTML()` (dynamic) and `p-anticoag` blank template.
+- **Evidence Base:** 2025 ACC/AHA NSTE-ACS Guidelines; ESC 2023 NSTE-ACS Guidelines (CrCl <30 absolute CI; UFH bolus at PCI for Fondaparinux-treated patients).
+- **Rationale:** On-sheet CI reminders prevent prescribing errors at the point of care without external reference lookup during high-acuity resuscitation.

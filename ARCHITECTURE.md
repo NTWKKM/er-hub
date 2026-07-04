@@ -15,7 +15,7 @@
 | `orders/*.html` | Specialized clinical worksheets (rt-PA, STEMI, NSTEMI, PE, Antivenom, Heparin, Sedation). All 7 files use `ED_PRINT_BOOTSTRAP` for page lifecycle and `ED_VALIDATE` for non-blocking validation. Zero `alert()` calls. 5 pages (stemi, pe, heparin, antivenom, sedation) use `ED_PRINT_BOOTSTRAP.openBlankPdf()` to open source PDFs from `docs/` in a new tab (ADR-17). 2 pages (rtpa, nstemi) keep `ED_BLANK_PRINT` for HTML blank-print (no source PDF). Page-specific JS reduced to: form submit handler (clinical logic) + event listeners for protocol-specific UI. | `shared/base.css`, `shared/print.css`, `shared/calc-engine.js` or `shared/anticoag-engine.js`, `shared/components.js`, `shared/print-bootstrap.js`, `shared/form-validate.js` (rtpa/nstemi also load `shared/blank-print-engine.js`) |
 | `tools/drip-calculator.html` | IV infusion drip rate calculator for 12 high-alert drugs. Loads `components.js` and uses `injectNavBar()` with hospital logo for nav consistency. No print flow (no `print.css`). | `shared/base.css`, `shared/calc-engine.js`, `shared/drug-data.js`, `shared/components.js` |
 | `index.html` | Portal hub with nav bar (`injectNavBar('index.html', logoPath)`). 3-column card grid (no card descriptions — removed per ADR-05), backward-compat redirect. Features glassmorphic portal cards with branded category tags, color-coded interactive hover glows, chevron icons, and a staggered fade-in loading animation. Registers service worker for offline PWA support. Body uses inline `display: block` override. | `shared/base.css`, `shared/components.js`, `service-worker.js`, `manifest.json` |
-| `service-worker.js` | PWA offline cache. Network-first for navigation, cache-first for assets. Caches all HTML/CSS/JS + 3 shared behavior modules + logo PNG + 5 source PDFs + Google Fonts. `CACHE_VERSION` bumped to `er-hub-v8`. Enables full offline access during ED wifi outages. | None |
+| `service-worker.js` | PWA offline cache. Network-first for navigation, cache-first for assets. Caches all HTML/CSS/JS + 3 shared behavior modules + logo PNG + 5 source PDFs + Google Fonts. `CACHE_VERSION` bumped to `er-hub-v9`. Enables full offline access during ED wifi outages. | None |
 | `manifest.json` | PWA manifest. App name, theme color, logo icon reference. Enables installable app + offline. | `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png` |
 
 ---
@@ -184,7 +184,7 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 
 **Decision:**
   1. **Print Layout Update:** Replaced blank lines in continue order (`p-anticoag`) with specific checkboxes formatted over 2 lines:
-     - Line 1: `☐ Enoxaparin SC  ☐ 0.4 ml  ☐ 0.6 ml`
+     - Line 1: `☐ Enoxaparin  ☐ 0.4 ml  ☐ 0.6 ml`
      - Line 2: (Indented 5 spaces) `SC  ☐ q 12 hr  ☐ OD  × 5 Days`
   2. **Auto-Checking Dosing Logic:** Added live calculation rules in `orders/nstemi.html`:
      - If patient weight >= 50 kg (dose >= 50 mg), check the `0.6 ml` box.
@@ -196,3 +196,25 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 
 **Rationale:** The updated layout reduces error-prone manual writing on printed forms. Formatting the checkboxes and instructions into 2 lines respectively prevents visual clutter in the narrow continuation column print space while ensuring clear stock size guide references.
 
+---
+
+### ADR-24: Anticoagulant Guideline Hints — Fondaparinux & Heparin (2026-07-04)
+
+**Context:** The continue order anticoagulant section lacked explicit contraindication reminders for Fondaparinux and Heparin. Clinicians needed on-sheet guidance per 2025 ACC/AHA and ESC NSTE-ACS guidelines at the point of order writing, without opening an external reference.
+
+**Decision:**
+  1. **Fondaparinux — Added 2-line clinical hint:**
+     - `(CI: CrCl <30 mL/min — ถ้าทำ PCI ต้องเสริม UFH bolus)`
+     - Reflects: (a) absolute contraindication at CrCl <30 mL/min due to renal accumulation and bleeding risk; (b) catheter thrombosis risk when Fondaparinux used as sole anticoagulant during PCI — guideline mandates a UFH bolus at the time of PCI.
+  2. **Heparin IV — Updated indication label:**
+     - Changed from `(กรณี GFR < 15)` → `(eGFR <15 หรือ CrCl <30 mL/min)` to clarify the two complementary thresholds used in LMWH/Fondaparinux crossover decision.
+  3. **Enoxaparin label — Removed redundant "SC" from Line 1:**
+     - `☐ Enoxaparin SC  ☐ 0.4 ml  ☐ 0.6 ml` → `☐ Enoxaparin  ☐ 0.4 ml  ☐ 0.6 ml`
+     - "SC" is already stated explicitly on Line 2 (`SC  ☐ q 12 hr  ☐ OD × 5 Days`), making it redundant on Line 1.
+  4. **Scope:** All changes applied to both dynamic print output (`getSelectedAnticoagPrintHTML()`) and blank print template (`p-anticoag` item in `ED_BLANK_PRINT`).
+
+**Rationale:** Point-of-care guideline hints reduce cognitive load and prevent prescribing errors without requiring clinicians to recall guidelines from memory during a high-acuity resuscitation. The CrCl <30 absolute CI for Fondaparinux is the most consequential prescribing boundary and warrants explicit on-sheet notation. The PCI/UFH bolus note prevents a common gap where a patient managed conservatively on Fondaparinux is transitioned to PCI without anticoagulant bridging.
+
+**Evidence Base:** 2025 ACC/AHA NSTE-ACS Guidelines; ESC 2023 NSTE-ACS Guidelines.
+
+**Tests:** 138/138 pass post-change (DOM ID integrity guard confirmed).
