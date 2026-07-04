@@ -8,10 +8,10 @@
   "theme_color": "#1e3c72",
   "icons": [
     {
-      "src": "favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png",
+      "sizes": "379x262",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

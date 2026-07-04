@@ -3,7 +3,7 @@
 ## 1. Design Tokens
 
 ### Color Palette
-- **Background:** `#f0f2f5` (Light neutral gray for screen background)
+- **Background:** `#f0f2f5` (Clinical order sheets screen background) | Radial gradient `#f8fafc` to `#e2e8f0` (Portal homepage background)
 - **Container Background:** `#ffffff` (Card background)
 - **Primary Text:** `#333333` (Charcoal gray)
 - **Border Neutral:** `#cccccc` / `#dee2e6` (Light borders)
@@ -40,7 +40,7 @@
 
 | Component | Role / Target | States & Props |
 |---|---|---|
-| **Portal Card** | Category-grouped card in single 3-column grid. Color-coded left border per category. No section titles, no emoji, no print-blank button, no card descriptions (removed per ADR-05). Stroke FAST TRACK is first card. Card title 17px bold for easy visibility. | `.hover` (Lift + shadow), Default (Light gray border + 4px category color left border). `padding: 18px 20px`, `gap: 16px`. Grid: `repeat(3, 1fr)` desktop, `repeat(2, 1fr)` tablet (600–900px), `1fr` mobile (<600px). |
+| **Portal Card** | Category-grouped glassmorphic card in single 3-column grid. Branded vertical left border (5px) and matching uppercase category tag. No section titles, no emoji, no print-blank button, no card descriptions. Stroke FAST TRACK is first card. Card title 17px bold. Features staggered fade-in entrance animations. | `.hover` (Lift `translateY(-5px)`, color-matched box-shadow glow, chevron indicator `→`, and subtle radial bg glow). Default: background `rgba(255,255,255,0.85)` with `12px` border-radius and `backdrop-filter: blur(12px)`. `padding: 24px` with `padding-right: 44px`. Grid: `repeat(3, 1fr)` desktop, `repeat(2, 1fr)` tablet (600–900px), `1fr` mobile (<599px). |
 | **Portal Header** | Removed. Nav bar replaces the portal header. Logo and title card deleted from `index.html`. | N/A |
 | **Top Navigation Bar** | Sticky full-width bar injected by `ED_COMPONENTS.injectNavBar()`. Auto-detects page title from `document.title` (strips after `—`). Optional hospital logo (28px height) passed via `logoSrc` parameter — now shown on all 9 pages (portal + 7 orders + drip calculator, ADR-17 reverses ADR-14 Q3). Present on all 9 pages. "Home" text link (no icon) + title text. Negative margins (`-20px` top/left/right) escape `body { padding: 20px }` for flush-to-top, full-width display on order pages. `aria-label` on both Home link and title span. | Blue gradient (`#1e3c72 → #2a5298`), `position: sticky; top: 0; z-index: 100`. `width: calc(100% + 40px)`, negative margins to escape body padding. `Home` link + `.nav-title`. Hidden in print via `nav`, `.top-nav`, `a[href*="index.html"]` selectors in `@media print`. |
 | **Floating Print Action Bar** | Fixed bottom bar shown after generate/blank, hidden on clear. Text-only labels (no emoji, per ADR-09 consistency). | Green (#27ae60) bar with "พิมพ์ทันที" and "ดู Order" buttons. `position: fixed; bottom: 0; z-index: 1000`. Hidden in print via `@media print`. |
@@ -56,7 +56,7 @@
 ## 3. Accessibility & Printing Constraints
 
 ### Accessibility (Screen)
-- **Favicon:** SVG medical cross icon (`favicon.svg`) on all 9 pages for tab identification.
+- **Favicon:** Hospital logo PNG (`docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`) on all 9 pages for tab identification.
 - **ARIA Landmarks:** `role="navigation"` on the sticky nav bar. `aria-label="Home"` on the Home link.
 - **Live Regions:** `aria-live="polite"` on dose summary banners and stroke results container — screen readers announce computed doses without interrupting workflow.
 - **Focus Indicators:** Interactive inputs feature a clear outline focus state (`border-color: #c0392b` or `#007bff` with `box-shadow` glow).

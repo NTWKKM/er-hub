@@ -177,3 +177,13 @@
   6. Implemented automatic blank print layout display on page load.
   7. Created `tests/id-integrity-guard.test.js` to ensure DOM and query ID consistency, and bumped service worker `CACHE_VERSION` to `er-hub-v3`.
 - **Rationale:** Reduces layout complexity and clinician data-entry overhead. Safe-guarding formatting and static reference checks prevents future regression crashes.
+
+### ADR-22: Homepage Design Optimization & Local CSS Scoping (2026-07-04)
+- **Context:** The portal homepage (`index.html`) visually felt outdated and flat compared to modern web design standards. The user requested a visual optimization using `/modern-web-guidance` to create a premium clinical dashboard.
+- **Decision:**
+  1. **Visual Overhaul:** Optimized the layout with a subtle radial gradient background (`#f8fafc` to `#e2e8f0`), glassmorphic portal cards (soft blur, semi-transparent borders, premium drop shadows, `12px` border-radius), and uppercase text tags (e.g., "NEUROLOGY", "CARDIAC") corresponding to the color-coded categories.
+  2. **Interactivity & Motion:** Added hover animations including a card vertical translation (`translateY(-5px)`), a color-matched shadow glow, a chevron arrow indicator (`→`), and a subtle radial gradient glow inside the card. Implemented a staggered load animation (`fadeInUp`) for the grid cards using CSS animation delays.
+  3. **Local Styling Scope:** Scoped all visual styles locally within the `<style>` tag of `index.html` instead of modifying `shared/base.css` to prevent any regressions or layout shifts on the other 7 clinical standing order pages.
+  4. **PWA Version Bump:** Bumped the service worker `CACHE_VERSION` to `er-hub-v5` to force immediate client browser updates.
+  5. **Favicon Replacement:** Replaced `favicon.svg` with the hospital logo PNG (`docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`) as the favicon across all 9 pages, updated `manifest.json` icons, and removed `favicon.svg` from the cache list.
+- **Rationale:** Scoping styles locally inside `index.html` satisfies the surgical modification rule by completely isolating the homepage visual design, guaranteeing zero regression risk for the clinical order sheets. Branded category labels and interactive chevrons organize the grid without relying on sections or platform-specific emojis. Staggered animations make the interface feel responsive and modern. Using the official hospital logo as the favicon provides unified branding and consistent tab identification.

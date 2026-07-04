@@ -34,8 +34,7 @@ index.html                  ← Portal hub (3-column card grid, 8 modules, SW re
 │   ├── drug-data.test.js
 │   └── components.test.js
 ├── service-worker.js       ← PWA offline cache (network-first nav, cache-first assets)
-├── manifest.json           ← PWA manifest (installable app)
-└── favicon.svg             ← Medical cross icon (all 9 pages)
+└── manifest.json           ← PWA manifest (installable app)
 ```
 
 ## Deployment

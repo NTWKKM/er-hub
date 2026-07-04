@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MNRH-ED Standing Order Hub — Maharat Nakhon Ratchasima Hospital</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3c72">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,71 +35,195 @@
                caused the nav to overflow 20px past the viewport on each side,
                specifically on this page. */
             --page-pad: 0px;
-            background-color: #f4f6f8;
+            background: radial-gradient(circle at top right, #f8fafc 0%, #f1f5f9 60%, #e2e8f0 100%);
             margin: 0;
             padding: 0;
             display: block;
+            min-height: 100vh;
         }
 
         .portal-container {
             width: 100%;
             max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
+            margin: 50px auto;
+            padding: 0 24px;
             box-sizing: border-box;
         }
 
         .portal-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
+            gap: 20px;
         }
 
         .portal-card {
-            background: #fff;
-            border: 1px solid #dee2e6;
-            border-left-width: 4px;
-            border-radius: 8px;
-            padding: 18px 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: all 0.25s ease-in-out;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-left: 5px solid var(--cat-color);
+            border-radius: 12px;
+            padding: 24px;
+            padding-right: 44px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             text-decoration: none;
             color: inherit;
             display: flex;
             flex-direction: column;
+            align-items: flex-start;
             justify-content: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 110px;
+            opacity: 0;
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .portal-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+            background: #ffffff;
+            border-color: rgba(var(--cat-color-rgb), 0.3);
+            box-shadow: 0 12px 20px -8px rgba(var(--cat-color-rgb), 0.25), 0 4px 20px 0px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Category Brand Custom Properties */
+        .cat-neuro {
+            --cat-color: #8e44ad;
+            --cat-color-rgb: 142, 68, 173;
+            --cat-color-bg: #f5ebfc;
+        }
+        .cat-cardiac {
+            --cat-color: #c0392b;
+            --cat-color-rgb: 192, 57, 43;
+            --cat-color-bg: #fff5f5;
+        }
+        .cat-pulmonary {
+            --cat-color: #2980b9;
+            --cat-color-rgb: 41, 128, 185;
+            --cat-color-bg: #edf7fd;
+        }
+        .cat-anticoag {
+            --cat-color: #16a085;
+            --cat-color-rgb: 22, 160, 133;
+            --cat-color-bg: #e8f8f5;
+        }
+        .cat-tox {
+            --cat-color: #d35400;
+            --cat-color-rgb: 211, 84, 0;
+            --cat-color-bg: #fdf5e2;
+        }
+        .cat-procedural {
+            --cat-color: #27ae60;
+            --cat-color-rgb: 39, 174, 96;
+            --cat-color-bg: #eafaf1;
+        }
+        .cat-tools {
+            --cat-color: #2c3e50;
+            --cat-color-rgb: 44, 62, 80;
+            --cat-color-bg: #f2f4f4;
+        }
+
+        .card-category {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--cat-color);
+            background: var(--cat-color-bg);
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: inline-block;
+            position: relative;
+            z-index: 2;
         }
 
         .card-title {
             font-size: 17px;
             font-weight: bold;
             margin: 0;
-            line-height: 1.3;
+            line-height: 1.4;
+            color: #1e293b;
+            transition: color 0.3s ease;
+            position: relative;
+            z-index: 2;
         }
 
-        /* Category border colors */
-        .cat-cardiac   { border-left-color: #c0392b; }
-        .cat-pulmonary { border-left-color: #2980b9; }
-        .cat-neuro     { border-left-color: #8e44ad; }
-        .cat-anticoag  { border-left-color: #16a085; }
-        .cat-tox       { border-left-color: #d35400; }
-        .cat-procedural{ border-left-color: #27ae60; }
-        .cat-tools     { border-left-color: #2c3e50; }
+        .portal-card:hover .card-title {
+            color: var(--cat-color);
+        }
+
+        /* Card interactive decorations */
+        .portal-card::before {
+            content: "→";
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--cat-color);
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 2;
+        }
+
+        .portal-card:hover::before {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .portal-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at bottom right, rgba(var(--cat-color-rgb), 0.08), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .portal-card:hover::after {
+            opacity: 1;
+        }
+
+        /* Entrance Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .portal-card:nth-child(1) { animation-delay: 40ms; }
+        .portal-card:nth-child(2) { animation-delay: 80ms; }
+        .portal-card:nth-child(3) { animation-delay: 120ms; }
+        .portal-card:nth-child(4) { animation-delay: 160ms; }
+        .portal-card:nth-child(5) { animation-delay: 200ms; }
+        .portal-card:nth-child(6) { animation-delay: 240ms; }
+        .portal-card:nth-child(7) { animation-delay: 280ms; }
+        .portal-card:nth-child(8) { animation-delay: 320ms; }
 
         /* Tablet responsive */
         @media (max-width: 900px) and (min-width: 600px) {
-            .portal-grid { grid-template-columns: repeat(2, 1fr); }
+            .portal-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+            .portal-container { margin: 30px auto; }
         }
 
         @media (max-width: 599px) {
-            .portal-container { margin: 16px auto; padding: 0 12px; }
-            .portal-grid { grid-template-columns: 1fr; gap: 10px; }
-            .portal-card { padding: 14px 16px; }
+            .portal-container { margin: 20px auto; padding: 0 16px; }
+            .portal-grid { grid-template-columns: 1fr; gap: 12px; }
+            .portal-card { padding: 20px; padding-right: 36px; min-height: 90px; }
+            .portal-card::before { right: 16px; bottom: 16px; }
         }
     </style>
 </head>
@@ -111,33 +235,41 @@
     <div class="portal-grid">
         <!-- STROKE FAST TRACK (first) -->
         <a href="orders/rtpa.html" class="portal-card cat-neuro">
+            <span class="card-category">Neurology</span>
             <h4 class="card-title">rt-PA Stroke FAST TRACK</h4>
         </a>
         <!-- CARDIAC -->
         <a href="orders/stemi.html" class="portal-card cat-cardiac">
+            <span class="card-category">Cardiac</span>
             <h4 class="card-title">STEMI Standing Order</h4>
         </a>
         <a href="orders/nstemi.html" class="portal-card cat-cardiac">
+            <span class="card-category">Cardiac</span>
             <h4 class="card-title">NSTEMI Standing Order</h4>
         </a>
         <!-- PULMONARY -->
         <a href="orders/pe.html" class="portal-card cat-pulmonary">
+            <span class="card-category">Pulmonary</span>
             <h4 class="card-title">Massive PE Fibrinolysis</h4>
         </a>
         <!-- ANTICOAGULATION -->
         <a href="orders/heparin.html" class="portal-card cat-anticoag">
+            <span class="card-category">Anticoagulation</span>
             <h4 class="card-title">Heparin Protocol</h4>
         </a>
         <!-- TOXICOLOGY -->
         <a href="orders/antivenom.html" class="portal-card cat-tox">
+            <span class="card-category">Toxicology</span>
             <h4 class="card-title">Antivenom Standing Order</h4>
         </a>
         <!-- PROCEDURAL -->
         <a href="orders/sedation.html" class="portal-card cat-procedural">
+            <span class="card-category">Procedural</span>
             <h4 class="card-title">Post-Intubation Sedation</h4>
         </a>
         <!-- TOOLS -->
         <a href="tools/drip-calculator.html" class="portal-card cat-tools">
+            <span class="card-category">Clinical Tool</span>
             <h4 class="card-title">IV Infusion Drip Calculator</h4>
         </a>
     </div>
