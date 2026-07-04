@@ -361,7 +361,7 @@
 
             </div><!-- end .input-layout -->
 
-            <button type="submit" class="btn btn-calculate">
+            <button type="button" class="btn btn-calculate" onclick="window.print()">
                 🧮 คำนวณ GRACE Score และสร้างใบสั่งยา
             </button>
             <button type="button" id="print-blank-btn" class="btn btn-print">
@@ -374,7 +374,7 @@
     </div><!-- end .form-container -->
 
     <!-- ══════════════ RESULTS ══════════════ -->
-    <div id="results-container" class="results-container hidden">
+    <div id="results-container" class="results-container">
 
         <div class="grace-summary" aria-live="polite">
             <!-- Left: Score + Risk -->
@@ -724,14 +724,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!isNaN(egfrLive) && weight > 0) {
             const enoxDose = Math.round(weight * 1.0);
-            $('ac-fonda-hint').textContent = `(Preferred — eGFR ${egfrLive.toFixed(2)})`;
+            $('ac-fonda-hint').innerHTML = `(Preferred — eGFR ${egfrLive.toFixed(2)})<br><span style="color:#c0392b;">(CI: CrCl &lt;30 mL/min — ถ้าทำ PCI ต้องเสริม UFH bolus)</span>`;
             $('ac-enox-text').textContent = `Enoxaparin ${enoxDose} mg SC`;
-            $('ac-enox-hint').textContent = '(1 mg/kg — GFR < 30 → once daily)';
-            $('ac-hep-hint').textContent = `(eGFR <15 หรือ CrCl <30 mL/min — current eGFR: ${egfrLive.toFixed(2)})`;
+            $('ac-enox-hint').innerHTML = `(1 mg/kg = ${enoxDose} mg — GFR &lt; 30 → once daily)<br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
+            $('ac-hep-hint').textContent = `(eGFR <15 หรือ CrCl <30 mL/min)`;
         } else {
-            $('ac-fonda-hint').textContent = '(eGFR ไม่ได้คำนวณ)';
+            $('ac-fonda-hint').innerHTML = '(Preferred — eGFR --)<br><span style="color:#c0392b;">(CI: CrCl &lt;30 mL/min — ถ้าทำ PCI ต้องเสริม UFH bolus)</span>';
             $('ac-enox-text').textContent = 'Enoxaparin -- mg SC';
-            $('ac-enox-hint').textContent = '(1 mg/kg — GFR < 30 → once daily)';
+            $('ac-enox-hint').innerHTML = '(1 mg/kg = -- mg — GFR &lt; 30 → once daily)<br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)';
             $('ac-hep-hint').textContent = '(eGFR <15 หรือ CrCl <30 mL/min)';
         }
         updateAnticoagOutput();
@@ -891,9 +891,9 @@ document.addEventListener('DOMContentLoaded', () => {
         r.addEventListener('change', updateAnticoagOutput);
     });
 
-    document.getElementById('nstemi-form').addEventListener('submit', e => {
-        e.preventDefault();
-
+    // ══ REAL-TIME CALCULATION ══
+    // Extracted from submit handler → called on every input change
+    function calculateAndRender() {
         const hn      = $('hn').value.trim() || '...';
         const weight  = parseFloat($('weight').value);
         const age     = parseFloat($('age').value);
@@ -901,7 +901,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hr      = parseFloat($('hr').value);
         const sbp     = parseFloat($('sbp').value);
         const sex     = document.querySelector('input[name="sex"]:checked')?.value;
-        const asaAlrg = document.querySelector('input[name="asa-allergy"]:checked').value === 'yes';
+        const asaAlrg = document.querySelector('input[name="asa-allergy"]:checked')?.value === 'yes';
         const cardArr = $('cardiac-arrest').checked;
         const stDev   = $('st-deviation').checked;
         const elevMk  = $('elevated-markers').checked;
@@ -910,34 +910,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const h1Flags = [...document.querySelectorAll('.h1-flag')].map(c => c.checked);
         const fromRpc = $('troponin-from-rphch').checked;
 
-        if (isNaN(weight) || weight < 30 || weight > 200) {
-            ED_VALIDATE.fail('weight', 'กรุณากรอกน้ำหนัก (30–200 kg)'); return;
-        }
-        if (isNaN(age) || age < 18) {
-            ED_VALIDATE.fail('age', 'กรุณากรอกอายุ (≥ 18 ปี)'); return;
-        }
+        const weightOK = !isNaN(weight) && weight >= 30 && weight <= 200;
+        const ageOK    = !isNaN(age) && age >= 18;
 
         // eGFR: derived from CKD-EPI 2021 (requires Cr + age + sex)
-        const egfr = (!isNaN(cr) && !isNaN(age) && sex)
+        const egfr = (!isNaN(cr) && ageOK && sex)
             ? calcEGFR_CKD_EPI_2021(cr, age, sex)
             : null;
-        const egfrForCalc = egfr !== null ? Math.round(egfr) : 90; // default 90 for anticoag calc if eGFR missing
+        const egfrForCalc = egfr !== null ? Math.round(egfr) : 90;
 
         // Troponin values (ng/L)
         const tropValH0 = parseFloat($('troponin-h0').value);
         const tropValH1 = parseFloat($('troponin-h1').value);
         const tropValH3 = parseFloat($('troponin-h3').value);
 
-        // Calculate % rising from H0
         let risingH1 = null, risingH3 = null;
         if (!isNaN(tropValH0) && tropValH0 > 0) {
             if (!isNaN(tropValH1)) risingH1 = ((tropValH1 - tropValH0) / tropValH0 * 100).toFixed(1);
             if (!isNaN(tropValH3)) risingH3 = ((tropValH3 - tropValH0) / tropValH0 * 100).toFixed(1);
         }
 
-        const hasGraceVars = !isNaN(hr) && !isNaN(sbp) && !isNaN(cr);
+        const hasGraceVars = ageOK && !isNaN(hr) && !isNaN(sbp) && !isNaN(cr);
 
-        // Calculate using local & shared functions
         let graceScore = null, bd = null;
         if (hasGraceVars) {
             const g    = calcGRACE({ age, hr, sbp, cr, cardArr, stDev, elevMk, killip });
@@ -951,18 +945,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ? riskLevel(graceScore, anyVH, anyH1)
             : (anyVH ? 'very-high' : anyH1 ? 'high' : 'non-high');
 
-        // Shared engine call (use derived eGFR or default 90)
-        const ac = calcAnticoag(weight, age, egfrForCalc);
-
-        const now = new Date();
-        const h1t = new Date(now.getTime() + 3600000);
-        const h3t = new Date(now.getTime() + 10800000);
-        const dateStr = '....................';
-        const timeStr = '....................';
-        const dtStr = `${dateStr}<br>${timeStr}`;
-
         /* ══ UPDATE SCREEN BANNER ══ */
-        $('screen-grace').textContent = graceScore !== null ? graceScore : 'N/A';
+        $('screen-grace').textContent = graceScore !== null ? graceScore : '--';
 
         const rb = $('screen-risk-badge');
         rb.className = 'risk-badge';
@@ -975,7 +959,7 @@ document.addEventListener('DOMContentLoaded', () => {
             rl.textContent = '🔴 HIGH RISK — coro < 24h';
         } else {
             rb.classList.add('risk-non-high');
-            rl.textContent = '🟢 NON-HIGH RISK — selective coro';
+            rl.textContent = graceScore !== null ? '🟢 NON-HIGH RISK — selective coro' : '--';
         }
 
         if (bd) {
@@ -1005,41 +989,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
         }
 
-        // Auto-select recommended anticoagulant
-        let recAc = 'fonda';
-        if (egfrForCalc < 15) {
-            recAc = 'hep';
-        } else if (egfrForCalc >= 20) {
-            recAc = 'fonda';
-        } else {
-            recAc = 'enox';
+        // Auto-select recommended anticoagulant (only when eGFR is available)
+        if (egfr !== null) {
+            let recAc = egfrForCalc < 15 ? 'hep' : egfrForCalc >= 20 ? 'fonda' : 'enox';
+            const radToCheck = document.querySelector(`input[name="anticoag-choice"][value="${recAc}"]`);
+            if (radToCheck && !radToCheck.checked) radToCheck.checked = true;
+            if (recAc === 'enox') {
+                const freqVal = (egfrForCalc < 30) ? 'q24h' : 'q12h';
+                const freqRad = document.querySelector(`input[name="enox-freq"][value="${freqVal}"]`);
+                if (freqRad && !freqRad.checked) freqRad.checked = true;
+            }
         }
-        
-        const radToCheck = document.querySelector(`input[name="anticoag-choice"][value="${recAc}"]`);
-        if (radToCheck) radToCheck.checked = true;
-        
-        if (recAc === 'enox') {
-            const freqVal = (egfrForCalc < 30) ? 'q24h' : 'q12h';
-            const freqRad = document.querySelector(`input[name="enox-freq"][value="${freqVal}"]`);
-            if (freqRad) freqRad.checked = true;
-        }
-        
+
         updateAcHints();
 
         /* ══ UPDATE PRINT AREA ══ */
         ED_COMPONENTS.injectPrintHeader('print-header-container');
         ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
 
-        $('p-hn').textContent    = hn;
-        $('p-weight').textContent = weight.toFixed(1);
-        $('p-egfr').textContent  = egfr !== null ? egfr.toFixed(2) : '___';
-        $('p-age').textContent   = age;
-        $('p-hr').textContent    = hasGraceVars ? hr : '___';
-        $('p-sbp').textContent   = hasGraceVars ? sbp : '___';
-        $('p-cr').textContent    = hasGraceVars ? cr : '___';
-        $('p-asa').innerHTML     = asaAlrg ? '<strong style="color:red;">YES ⚠️</strong>' : 'No';
+        $('p-hn').textContent     = hn !== '...' ? hn : '--';
+        $('p-weight').textContent = weightOK ? weight.toFixed(1) : '--';
+        $('p-egfr').textContent   = egfr !== null ? egfr.toFixed(2) : '--';
+        $('p-age').textContent    = ageOK ? age : '--';
+        $('p-hr').textContent     = hasGraceVars ? hr : '--';
+        $('p-sbp').textContent    = hasGraceVars ? sbp : '--';
+        $('p-cr').textContent     = hasGraceVars ? cr : '--';
+        $('p-asa').innerHTML      = asaAlrg ? '<strong style="color:red;">YES ⚠️</strong>' : 'No';
         $('p-killip').textContent = killip;
-        $('p-grace').textContent  = graceScore !== null ? graceScore : '(ไม่ได้กรอก)';
+        $('p-grace').textContent  = graceScore !== null ? graceScore : '--';
 
         const binFlagTxt = [
             cardArr ? '☑ Cardiac arrest' : null,
@@ -1054,7 +1031,6 @@ document.addEventListener('DOMContentLoaded', () => {
              ${bul('high')}      High risk (coro &lt; 24h)<br>
              ${bul('non-high')}  Non-high risk (selective coro)`;
 
-        // Troponin values + %rising display in print
         const tropDisplay = [];
         if (!isNaN(tropValH0)) tropDisplay.push(`H0: ${tropValH0}`);
         if (!isNaN(tropValH1)) {
@@ -1073,6 +1049,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ? '☐ hs-troponin I Hr.0 and 3<br><small style="color:#888;">(เจาะจาก รพช. แล้ว — ไม่ต้องซ้ำ)</small>'
             : '☐ hs-troponin I Hr.0 and 3';
 
+        const now = new Date();
+        const dtStr = '....................<br>....................';
         $('p-dt-1').innerHTML = dtStr;
         $('p-dt-2').innerHTML = dtStr;
         ED_COMPONENTS.updateGeneratedTime('p-generated', now);
@@ -1080,14 +1058,31 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-asa-stat').innerHTML = asaAlrg
             ? '<strong style="color:red;">⚠️ ASA ALLERGY — ห้ามให้ ASA</strong>'
             : '☑ ASA (300) 1 tab chew stat';
-
         $('p-clopi-stat').innerHTML = '☑ Clopidogrel GPO (75) <strong>4 tabs</strong> PO stat';
-
         $('p-asa-cont').innerHTML = asaAlrg
             ? '<strong style="color:red;">⚠️ ASA ALLERGY — ไม่ให้ ASA</strong>'
             : '☑ ASA (81) 1×1 pc';
+    }
 
-        ED_PRINT_BOOTSTRAP.showResults();
+    // Wire ALL inputs to calculateAndRender (real-time)
+    const _allInputs = [
+        'hn', 'weight', 'age', 'creatinine', 'hr', 'sbp',
+        'troponin-h0', 'troponin-h1', 'troponin-h3'
+    ];
+    _allInputs.forEach(id => $$(id)?.addEventListener('input', calculateAndRender));
+    document.querySelectorAll(
+        'input[name="sex"], input[name="asa-allergy"], input[name="killip"], ' +
+        'input[name="anticoag-choice"], input[name="enox-freq"], ' +
+        '.vh-flag, .h1-flag, #cardiac-arrest, #st-deviation, #elevated-markers, #troponin-from-rphch'
+    ).forEach(el => el.addEventListener('change', calculateAndRender));
+
+    // Helper: safe getElementById (returns null gracefully)
+    function $$(id) { return document.getElementById(id); }
+
+    // Submit button now just prints
+    document.getElementById('nstemi-form').addEventListener('submit', e => {
+        e.preventDefault();
+        window.print();
     });
 
     $('clear-btn').addEventListener('click', () => {
@@ -1096,6 +1091,7 @@ document.addEventListener('DOMContentLoaded', () => {
             $('grace-breakdown-body').innerHTML =
                 '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
             updateLiveEGFR();
+            calculateAndRender();
         });
     });
 
@@ -1104,14 +1100,13 @@ document.addEventListener('DOMContentLoaded', () => {
         ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
         ED_COMPONENTS.updateGeneratedTime('p-generated', null);
         ED_BLANK_PRINT.apply();
-        ED_PRINT_BOOTSTRAP.showResults();
     });
 
     // Auto-run print-blank-direct from home page portal
     if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click())) return;
 
-    // Show blank order preview by default on page load (no query param needed)
-    $('print-blank-btn').click();
+    // Initial render on page load (real-time preview, no button press needed)
+    calculateAndRender();
 
     ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
         'NSTEMI Standing Order — MNRH-ED Guideline: ESC 2023 NSTEMI Guidelines &nbsp;|&nbsp; Anticoag: 2025 ACC/AHA ACS &nbsp;|&nbsp; eGFR: CKD-EPI 2021 &nbsp;|&nbsp; Version 2.1.0');
