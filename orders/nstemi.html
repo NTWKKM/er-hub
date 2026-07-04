@@ -88,32 +88,6 @@
             margin: 0;
         }
 
-        /* Risk stratification chips */
-        .risk-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 6px;
-        }
-        .risk-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 11.5px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .risk-chip:hover {
-            border-color: #c0392b;
-            background: #fff5f5;
-        }
-        .risk-chip input {
-            margin: 0;
-        }
 
         .grace-summary {
             background: #fff5f5;
@@ -342,50 +316,42 @@
                     <div class="sub-section sub-vh">
                         ⚡ Very High Risk (H0) → coro &lt; 2h
                     </div>
-                    <div class="risk-chips">
-                        <label class="risk-chip">
-                            <input type="checkbox" class="vh-flag">
-                            Hemodynamic instability / shock
-                        </label>
-                        <label class="risk-chip">
-                            <input type="checkbox" class="vh-flag">
-                            Recurrent / refractory chest pain
-                        </label>
-                        <label class="risk-chip">
-                            <input type="checkbox" class="vh-flag">
-                            Life-threatening arrhythmias
-                        </label>
-                        <label class="risk-chip">
-                            <input type="checkbox" class="vh-flag">
-                            Mechanical complications of MI
-                        </label>
-                        <label class="risk-chip">
-                            <input type="checkbox" class="vh-flag">
-                            Acute HF related to ACS
-                        </label>
-                        <label class="risk-chip">
-                            <input type="checkbox" class="vh-flag">
-                            Recurrent dynamic ST-T changes
-                        </label>
-                    </div>
+                    <label class="flag-label">
+                        <input type="checkbox" class="vh-flag">
+                        Hemodynamic instability / shock
+                    </label>
+                    <label class="flag-label">
+                        <input type="checkbox" class="vh-flag">
+                        Recurrent / refractory chest pain
+                    </label>
+                    <label class="flag-label">
+                        <input type="checkbox" class="vh-flag">
+                        Life-threatening arrhythmias
+                    </label>
+                    <label class="flag-label">
+                        <input type="checkbox" class="vh-flag">
+                        Mechanical complications of MI
+                    </label>
+                    <label class="flag-label">
+                        <input type="checkbox" class="vh-flag">
+                        Acute HF related to ACS
+                    </label>
+                    <label class="flag-label">
+                        <input type="checkbox" class="vh-flag">
+                        Recurrent dynamic ST-T changes
+                    </label>
 
                     <div class="sub-section sub-h1" style="margin-top:14px;">
                         🔴 High Risk (H1) → coro &lt; 24h
                     </div>
-                    <div class="risk-chips">
-                        <label class="risk-chip">
-                            <input type="checkbox" class="h1-flag">
-                            Troponin &gt; 99th percentile URL
-                        </label>
-                        <label class="risk-chip">
-                            <input type="checkbox" class="h1-flag">
-                            Dynamic ST-T changes
-                        </label>
-                        <label class="risk-chip">
-                            <input type="checkbox" class="h1-flag">
-                            Transient ST elevation
-                        </label>
-                    </div>
+                    <label class="flag-label">
+                        <input type="checkbox" class="h1-flag">
+                        Troponin &gt; 99th percentile URL
+                    </label>
+                    <label class="flag-label">
+                        <input type="checkbox" class="h1-flag">
+                        Dynamic ST-T changes
+                    </label>
                 </div>
 
             </div><!-- end .input-layout -->
