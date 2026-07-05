@@ -368,3 +368,14 @@
   6. **Dead Code Cleanup:** Deleted unused `calcBolusVolume` function from `calc-engine.js` and removed unused category classes in `index.html`.
 - **Rationale:** Live coupled slider and number controls reduce clinical calculation latency and decrease errors. Safety color codes visual cues alert nurses instantly to high-risk doses. Toast notifications ensure that clinical protocols stay synced to the latest approved releases, preventing stale offline caches from serving outdated data.
 
+### ADR-36: Drip-Calculator Control & Layout Customizations (2026-07-05)
+
+- **Context:** The emergency medicine clinical team requested further UX updates to `tools/drip-calculator.html` to optimize emergency room cognitive load and usability: (1) change the patient weight number field to a slider range of 30–250 kg with 1 decimal place, default to 50 kg; (2) remove Thai script annotations from the drug dropdown options, and make select inputs more compact; (3) default the active selection to Norepinephrine (Levophed) 4:100; (4) add Epinephrine refractory anaphylaxis preparation (1 mg/100 mL); (5) rename the titration guide to "Recommend Guide" and give it the same visual prominence as the primary result card.
+- **Decision:**
+  1. **Weight Slider:** Replaced the numeric input field with a range slider (`<input type="range" min="30" max="250" step="0.1" value="50.0">`). Added a dynamic `#weight-val` element in the label block to display the weight value.
+  2. **Compact Dropdowns & Clean Names:** Removed the `(${drug.thaiName})` interpolation inside option population script. Constrained `#drug-select` and `#prep-select` max-width to `250px`. Pre-selected `norepinephrine` on load.
+  3. **Epinephrine Refractory Anaphylaxis:** Appended `{ label: '1 mg in NSS 100 mL (10 mcg/mL) [Refractory Anaphylaxis]', concentration: 10 }` to epinephrine preparations in `shared/drug-data.js`.
+  4. **Recommend Guide:** Changed text header to `📝 แนวทางการบริหารยา (Recommend Guide)` and rewrote `.guide-box` styles to display a full-padding border container matching the results display layout.
+- **Rationale:** Using a weight slider prevents keystroke errors and decreases entry latency on touch devices. Setting Levophed as the default dropdown option and adding the refractory anaphylaxis concentration directly targets the two most common ED continuous infusion preparations, optimizing clinical response times.
+
+

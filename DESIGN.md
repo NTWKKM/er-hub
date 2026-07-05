@@ -64,8 +64,8 @@
 | **Dose Summary Banner** | Large visual badge displaying computed dose on screen. | `#screen-dose` or `#screen-grace`. Light yellow/red backgrounds. |
 | **Patient Sticker Box** | Standardized dashed bounding box mimicking paper patient label stickers. | Screen: `width: 200px; height: 65px;` Print: `width: 60mm; height: 20mm;` |
 | **Titration Assistant Card** | Dynamic lookup display showing next titration step. | Shows action, rate change, and next recheck alert. |
-| **Coupled Dose Slider & Stepping** | Coupled range slider + number inputs with touch-friendly step buttons + datalist ticks for range guidelines. | Min, Default, and Max datalist text labels. Clamps on blur/input to enforce safety boundaries. PageUp/PageDown adjusts by 10x step, Home/End to limits. Restores weight from sessionStorage. |
-| **Drip Calculator Safety States** | Infusion pump rate readout card visual highlight based on max dose ceiling ratio. | **Safe (<60% max):** Green background (`#e8f8f0`) with green text (`#27ae60`). **Warning (60-85%):** Amber background (`#fdf5e6`) with orange text (`#d35400`). **Critical (>85%):** Red background (`#fde8e8`) with red text (`#c0392b`) and red badge warning of near max dose. |
+| **Coupled Dose Slider & Stepping** | Coupled range slider + number inputs with touch-friendly step buttons + datalist ticks for range guidelines. | Min, Default, and Max datalist text labels. Clamps on blur/input to enforce safety boundaries. PageUp/PageDown adjusts by 10x step, Home/End to limits. Patient weight is set via a range slider (30-250 kg) with a 1-decimal display (defaults to 50 kg). Restores weight from sessionStorage. |
+| **Drip Calculator Safety States** | Infusion pump rate readout card visual highlight based on max dose ceiling ratio, and custom recommend guide box. | **Safe (<60% max):** Green background (`#e8f8f0`) with green text (`#27ae60`). **Warning (60-85%):** Amber background (`#fdf5e6`) with orange text (`#d35400`). **Critical (>85%):** Red background (`#fde8e8`) with red text (`#c0392b`) and red badge warning of near max dose. **Recommend Guide:** High-prominence card styled to match pump rate results display. |
 
 
 ---
