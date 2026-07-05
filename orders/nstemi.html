@@ -590,7 +590,10 @@
             <div style="flex: 1 1 320px; min-width: 280px; display: flex; flex-direction: column; gap: 12px;">
 
                 <div id="anticoag-panel" style="background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; position: relative;">
-                    <strong style="font-size:11px;color:#555;display:block;margin-bottom:8px;">💊 Anticoagulant Selection</strong>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <strong style="font-size:11px;color:#555;margin:0;">💊 Anticoagulant Selection</strong>
+                        <button type="button" id="reset-anticoag-btn" style="font-size: 10px; padding: 2px 6px; cursor: pointer; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; border-style: solid; font-weight: bold;">ล้างตัวเลือก</button>
+                    </div>
                     <div style="font-size:12px; display: flex; flex-direction: column; gap: 8px;">
                         <div>
                             <label id="ac-label-fonda" class="ac-radio-label" style="margin: 0;">
@@ -825,20 +828,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const chk = val => (choice === val) ? '☑' : '☐';
         
         // Fondaparinux
-        const fondaRec = choice === 'fonda';
-        const fondaNA  = egfrLive !== null && egfrLive < FONDA_MIN_EGFR;
+        const fondaSelected = choice === 'fonda';
+        const fondaNA       = egfrLive !== null && egfrLive < FONDA_MIN_EGFR;
+        const fondaOvr      = fondaSelected && fondaNA;
+        const fondaRecClass = fondaSelected && !fondaOvr ? 'recommended' : '';
+        
+        let fondaWarning = '&nbsp;<small>(Preferred)</small>';
+        if (fondaOvr) {
+            fondaWarning = `&nbsp;<span style="color:#c0392b;font-weight:bold;font-size:9px;">⚠️ ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR &lt; ${FONDA_MIN_EGFR}</span>`;
+        } else if (fondaNA) {
+            fondaWarning = `&nbsp;<span style="color:#c0392b;font-size:9px;">⚠️ GFR&lt;${FONDA_MIN_EGFR} — ห้ามให้</span>`;
+        }
+        
         let html = `
-        <div class="ac-opt ${fondaRec ? 'recommended' : ''} ${fondaNA ? 'na' : ''}">
+        <div class="ac-opt ${fondaRecClass} ${fondaNA ? 'na' : ''}">
             <strong>${chk('fonda')} Fondaparinux</strong>
-            ${fondaNA ? `&nbsp;<span style="color:#c0392b;font-size:9px;">⚠️ GFR&lt;${FONDA_MIN_EGFR} — ห้ามให้</span>` : '&nbsp;<small>(Preferred)</small>'}<br>
+            ${fondaWarning}<br>
             2.5 mg SC OD × 5 Days<br>
-            <span style="font-size:9px;color:#666;">(CI: CrCl &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>
+            <span style="font-size:9px;color:#666;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>
         </div>`;
 
         // Enoxaparin
-        const enoxRec = choice === 'enox';
-        const enoxNA  = egfrLive !== null && egfrLive < ENOX_MIN_EGFR;
-        if (!enoxNA) {
+        const enoxSelected = choice === 'enox';
+        const enoxNA       = egfrLive !== null && egfrLive < ENOX_MIN_EGFR;
+        const enoxOvr      = enoxSelected && enoxNA;
+        const enoxRecClass = enoxSelected && !enoxOvr ? 'recommended' : '';
+
+        if (!enoxNA || enoxOvr) {
             const enoxDose = Math.round(weight * 1.0);
             const freq = document.querySelector('input[name="enox-freq"]:checked')?.value || 'q12h';
             
@@ -848,18 +864,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const chkQ12 = (choice === 'enox' && freq === 'q12h') ? '☑' : '☐';
             const chkOD = (choice === 'enox' && freq === 'q24h') ? '☑' : '☐';
             
+            let enoxWarning = '';
+            if (enoxOvr) {
+                enoxWarning = `&nbsp;<span style="color:#c0392b;font-weight:bold;font-size:9px;">⚠️ ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR &lt; ${ENOX_MIN_EGFR}</span>`;
+            }
+            
             html += `
-            <div class="ac-opt ${enoxRec ? 'recommended' : ''}">
-                <strong>${chkEnox} Enoxaparin</strong> &nbsp;<strong>${chk40} 0.4 ml</strong> &nbsp;<strong>${chk60} 0.6 ml</strong><br>
+            <div class="ac-opt ${enoxRecClass} ${enoxNA ? 'na' : ''}">
+                <strong>${chkEnox} Enoxaparin</strong> &nbsp;<strong>${chk40} 0.4 ml</strong> &nbsp;<strong>${chk60} 0.6 ml</strong>${enoxWarning}<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>${chkQ12} q 12 hr</strong> &nbsp;<strong>${chkOD} OD</strong> × 5 Days<br>
                 <span style="font-size:9px;color:#666;">(1 mg/kg = ${weight > 0 ? enoxDose + ' mg' : '............ mg'} — GFR &lt; ${FONDA_MIN_EGFR} → once daily)<br>
+                (CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)<br>
                 (0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>
             </div>`;
         } else {
             html += `
             <div class="ac-opt na">
                 <strong>☐ Enoxaparin</strong>
-                &nbsp;<span style="font-size:9px;color:#c0392b;">⚠️ GFR&lt;${ENOX_MIN_EGFR} — ไม่แนะนำ</span>
+                &nbsp;<span style="font-size:9px;color:#c0392b;">⚠️ GFR&lt;${ENOX_MIN_EGFR} — ไม่แนะนำ</span><br>
+                <span style="font-size:9px;color:#666;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span>
             </div>`;
         }
 
@@ -930,7 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ── Compute CI and recommendation states (cutoff = 30 per ADR-19 / label)
         const egfrKnown = egfrLive !== null && !isNaN(egfrLive);
-        const fondaCI   = egfrKnown && egfrLive < FONDA_MIN_EGFR;  // CrCl <30 = label CI
+        const fondaCI   = egfrKnown && egfrLive < FONDA_MIN_EGFR;  // eGFR <30 = label CI
         const enoxCI    = egfrKnown && egfrLive < ENOX_MIN_EGFR;  // eGFR <15 = not recommended
         const recFonda  = egfrKnown && egfrLive >= FONDA_MIN_EGFR;
         const recEnox   = egfrKnown && egfrLive >= ENOX_MIN_EGFR && egfrLive < FONDA_MIN_EGFR;
@@ -939,14 +962,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // ── Hint text ──
         if (egfrKnown && weight > 0) {
             const enoxDose = Math.round(weight * 1.0);
-            $('ac-fonda-hint').innerHTML = `(Preferred — eGFR ${egfrLive.toFixed(2)})<br><span style="color:#c0392b;">(CI: CrCl &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
+            $('ac-fonda-hint').innerHTML = `(Preferred — eGFR ${egfrLive.toFixed(2)})<br><span style="color:#c0392b;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = `Enoxaparin ${enoxDose} mg SC`;
-            $('ac-enox-hint').innerHTML = `(1 mg/kg = ${enoxDose} mg — GFR &lt; ${FONDA_MIN_EGFR} → once daily)<br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
+            $('ac-enox-hint').innerHTML = `(1 mg/kg = ${enoxDose} mg — GFR &lt; ${FONDA_MIN_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
         } else {
-            $('ac-fonda-hint').innerHTML = `(Preferred — eGFR --)<br><span style="color:#c0392b;">(CI: CrCl &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
+            $('ac-fonda-hint').innerHTML = `(Preferred — eGFR --)<br><span style="color:#c0392b;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = 'Enoxaparin -- mg SC';
-            $('ac-enox-hint').innerHTML = `(1 mg/kg = -- mg — GFR &lt; ${FONDA_MIN_EGFR} → once daily)<br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
+            $('ac-enox-hint').innerHTML = `(1 mg/kg = -- mg — GFR &lt; ${FONDA_MIN_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
         }
 
@@ -974,18 +997,35 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!radio || !label || !badge) return;
 
         if (isCI) {
-            // Uncheck if currently selected and NOT in override-pending
-            if (radio.checked && !label.classList.contains('ac-override-pending')) {
-                radio.checked = false;
+            if (radio.checked) {
+                // Overridden state! Keep it selected and enabled, show override message
+                label.classList.remove('ac-disabled', 'ac-override-pending');
+                badge.style.display = 'none';
+                if (ciDiv) ciDiv.style.display = 'none';
+                if (ovrDiv) {
+                    if (drug === 'fonda') {
+                        ovrDiv.textContent = '⚠️ ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR < 30';
+                    } else if (drug === 'enox') {
+                        ovrDiv.textContent = '⚠️ ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR < 15';
+                    } else {
+                        ovrDiv.textContent = '⚠️ Override — ใช้นอก guideline';
+                    }
+                    ovrDiv.style.display = 'block';
+                }
+            } else {
+                // Uncheck if currently selected and NOT in override-pending
+                if (radio.checked && !label.classList.contains('ac-override-pending')) {
+                    radio.checked = false;
+                }
+                label.classList.add('ac-disabled');
+                label.classList.remove('ac-override-pending');
+                // Show CI badge
+                badge.textContent = '⛔ CI';
+                badge.className = 'ac-badge ac-badge-ci';
+                badge.style.display = 'inline-block';
+                if (ciDiv) { ciDiv.textContent = ciMsg || ''; ciDiv.style.display = ciMsg ? 'block' : 'none'; }
+                if (ovrDiv) ovrDiv.style.display = 'none';
             }
-            label.classList.add('ac-disabled');
-            label.classList.remove('ac-override-pending');
-            // Show CI badge
-            badge.textContent = '⛔ CI';
-            badge.className = 'ac-badge ac-badge-ci';
-            badge.style.display = 'inline-block';
-            if (ciDiv) { ciDiv.textContent = ciMsg || ''; ciDiv.style.display = ciMsg ? 'block' : 'none'; }
-            if (ovrDiv) ovrDiv.style.display = 'none';
         } else {
             label.classList.remove('ac-disabled', 'ac-override-pending');
             if (ciDiv) ciDiv.style.display = 'none';
@@ -1035,12 +1075,13 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="ac-opt">\
             <strong>☐ Fondaparinux</strong> &nbsp;<small>(Preferred)</small><br>\
             2.5 mg SC OD × 5 Days<br>\
-            <span style="font-size:9px;color:#666;">(CI: CrCl &lt;30 mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>\
+            <span style="font-size:9px;color:#666;">(CI: eGFR &lt;30 mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>\
         </div>\
         <div class="ac-opt">\
             <strong>☐ Enoxaparin</strong> &nbsp;<strong>☐ 0.4 ml</strong> &nbsp;<strong>☐ 0.6 ml</strong><br>\
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>☐ q 12 hr</strong> &nbsp;<strong>☐ OD</strong> × 5 Days<br>\
             <span style="font-size:9px;color:#666;">(1 mg/kg = ............ mg — GFR &lt; 30 → once daily)<br>\
+            (CI: eGFR &lt;15 mL/min)<br>\
             (0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>\
         </div>\
         <div class="ac-opt">\
@@ -1352,13 +1393,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.checked = true;
                     const ovrDiv = label.querySelector('[id$="-override-msg"]');
                     if (ovrDiv) {
-                        ovrDiv.textContent = '⚠️ Override — ใช้นอก guideline';
+                        if (this.value === 'fonda') {
+                            ovrDiv.textContent = '⚠️ ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR < 30';
+                        } else if (this.value === 'enox') {
+                            ovrDiv.textContent = '⚠️ ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR < 15';
+                        } else {
+                            ovrDiv.textContent = '⚠️ Override — ใช้นอก guideline';
+                        }
                         ovrDiv.style.display = 'block';
                     }
                     updateAnticoagOutput();
                 }
             }
         });
+    });
+
+    $('reset-anticoag-btn').addEventListener('click', () => {
+        document.querySelectorAll('input[name="anticoag-choice"]').forEach(r => {
+            r.checked = false;
+            const label = r.closest('label');
+            if (label) {
+                label.classList.remove('ac-override-pending', 'ac-disabled');
+            }
+        });
+        const freqContainer = $('enox-frequency-container');
+        if (freqContainer) freqContainer.style.display = 'none';
+        updateAnticoagOutput();
+        updateAcHints();
     });
 
     $('clear-btn').addEventListener('click', () => {
