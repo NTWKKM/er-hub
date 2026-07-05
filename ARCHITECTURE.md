@@ -436,3 +436,19 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 
 **Tests:** The unit test suite asserts this logic correctly. All 145/145 tests pass.
 
+---
+
+### ADR-36: Audit Cleanup, Dead CSS Elimination & Regression Guard (2026-07-05)
+
+**Context:** Following the 2026-07-05 repository deep audit, several codebase maintenance issues were identified: (1) multiple dead/unreferenced CSS rules lingered from previous layout iterations; (2) `index.html` displayed a hardcoded service worker version string mismatching `CACHE_VERSION` in `service-worker.js`; and (3) no automated testing checks existed to verify CSS code cleanliness.
+
+**Decision:**
+1. **CSS Cleanup:** Deleted unreferenced rules `.stroke-table` in [rtpa.html](file:///Users/ntwkkm/er-hub/orders/rtpa.html), `.ac-panel-disabled`, `.ac-badge-warn`, and `.patient-fields` sub-blocks in [nstemi.html](file:///Users/ntwkkm/er-hub/orders/nstemi.html), `.calculator-card` in [drip-calculator.html](file:///Users/ntwkkm/er-hub/tools/drip-calculator.html), `.ac-opt` in [heparin.html](file:///Users/ntwkkm/er-hub/orders/heparin.html), and `.sedation-card-container` in [sedation.html](file:///Users/ntwkkm/er-hub/orders/sedation.html).
+2. **Braun Tokens & Tabular Numerals:** Moved Braun analogue color variables to [base.css](file:///Users/ntwkkm/er-hub/shared/base.css) and updated real-time screens ([nstemi.html](file:///Users/ntwkkm/er-hub/orders/nstemi.html) and [drip-calculator.html](file:///Users/ntwkkm/er-hub/tools/drip-calculator.html)) to use `font-variant-numeric: tabular-nums` to stabilize layout rendering.
+3. **PWA Version Alignments:** Synchronized version strings to `v16` and bumped `CACHE_VERSION` in [service-worker.js](file:///Users/ntwkkm/er-hub/service-worker.js) to `er-hub-v16` to clear cached assets.
+4. **Regression Guard:** Added a new test suite [dead-css-guard.test.js](file:///Users/ntwkkm/er-hub/tests/dead-css-guard.test.js) checking all worksheets and calculators for orphaned/unused CSS selector classes.
+
+**Rationale:** Removing dead code prevents code rot and confusion for future developers. Standardizing design tokens into a shared stylesheet reduces design divergence. The `dead-css-guard` test automatically captures orphaned CSS classes, preventing regressions from shipping.
+
+**Tests:** Added the regression guard suite [dead-css-guard.test.js](file:///Users/ntwkkm/er-hub/tests/dead-css-guard.test.js). All 153/153 tests pass.
+

@@ -4,6 +4,8 @@
 
 ### Color Palette
 
+*Note: Braun analogue design tokens are declared as shared custom properties under `:root` in [base.css](file:///Users/ntwkkm/er-hub/shared/base.css) to be portable across all worksheets.*
+
 - **Background:** `#f0f2f5` (Clinical order sheets screen background) | Warm grey `#ebe7df` (Portal homepage background / Paper — deepened from previous `#f4f2ec` for richer Braun surface warmth)
 - **Container Background:** `#ffffff` (Card background / worksheets)
 - **Primary Text / Ink:** `#1a1a1a` (Primary text on portal, solid rules)

@@ -93,7 +93,7 @@
             padding: 10px 18px;
             border-radius: 8px;
         }
-        .grace-num { font-size: 2.2em; font-weight: bold; color: #c0392b; }
+        .grace-num { font-size: 2.2em; font-weight: bold; color: #c0392b; font-variant-numeric: tabular-nums; }
         .grace-label { font-size: 13px; color: #555; }
 
         .risk-badge {
@@ -127,17 +127,24 @@
             background: #fff8f0;
         }
         .ac-badge {
-            display: inline-block; font-size: 9px; font-weight: bold;
-            padding: 1px 5px; border-radius: 3px; vertical-align: middle; margin-left: 4px;
+            display: inline-block;
+            font-family: monospace;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            padding: 2px 6px;
+            border-radius: 2px;
+            vertical-align: middle;
+            margin-left: 4px;
+            text-transform: uppercase;
         }
         .ac-badge-rec  { background: #d5f5e3; color: #1e8449; }
         .ac-badge-ci   { background: #fadbd8; color: #c0392b; }
-        .ac-badge-warn { background: #fef9e7; color: #9a7d0a; border: 1px solid #f0ca4d; }
 
         .grace-breakdown {
             font-size: 12px;
             background: #fff;
-            border: 1px solid #ddd;
+            border: 1px solid var(--rule);
             border-radius: 4px;
             padding: 8px 12px;
             min-width: 210px;
@@ -157,8 +164,6 @@
             align-items: flex-start;
         }
         .patient-fields .inline-input-group { flex: 1 1 300px; margin-bottom: 11px; }
-        .patient-fields .asa-block { flex: 1 1 300px; }
-        .patient-fields .h0-block  { flex: 1 1 100%; }
 
         @media (max-width: 900px) {
             .grace-summary { flex-direction: column; }
@@ -306,12 +311,7 @@
                 margin-top: auto;
             }
         }
-        /* eGFR Dosing Gating Styles */
-        .ac-panel-disabled {
-            opacity: 0.45;
-            pointer-events: none;
-            user-select: none;
-        }
+
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed !important;

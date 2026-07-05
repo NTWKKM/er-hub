@@ -9,6 +9,14 @@
     --highlight-yellow: #ffeaa7;
     --highlight-red-bg: #fff5f5;
 
+    /* Braun Analogue Material Palette & Tokens */
+    --paper: #ebe7df;
+    --ink: #1a1a1a;
+    --graphite: #4a4a4a;
+    --rule: #d8d4c8;
+    --signal-orange: #d84315;
+    --braun-white: #F0EDE5;
+
     /* Theme Accents */
     --stroke-primary: #007bff;
     --stroke-hover: #0056b3;
