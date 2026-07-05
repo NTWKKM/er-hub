@@ -487,4 +487,16 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 
 **Tests:** All 153/153 tests pass.
 
+---
 
+### ADR-40: NSTEMI DAPT Pre-treatment Loading Selection & Warnings (2026-07-05)
+
+**Context:** The NSTEMI standing order page auto-selected the DAPT loading dose (ASA 300 mg + Clopidogrel 300 mg) by default in both screen rendering and printed output. Current clinical guidelines (ESC 2023 and ACC/AHA 2025) recommend against routine pre-treatment loading of P2Y12 inhibitors in NSTEMI patients who are planned for early invasive strategy (<24 hours) to prevent bleeding risks. Clinicians requested manual control, support for multiple P2Y12 drug types (Clopidogrel, Ticagrelor, Prasugrel), dynamic guideline hints, and warning indicators.
+
+**Decision:**
+1. **DAPT Selection UI Panel:** Added an interactive "Antiplatelet Loading (DAPT)" card next to the Anticoagulant Selection card. Integrated a "ล้างตัวเลือก" button to reset antiplatelet settings.
+2. **Dynamic Clinical Recommendations:** Added logic checking patient risk (Very High/High Risk). If early invasive timeline is flagged, the panel displays a guideline alert advising holding/deferring P2Y12 loading to the Cath Lab.
+3. **Prasugrel Safety Banner:** Wired warning text if Prasugrel is selected, notifying users that Prasugrel is contraindicated in prior Stroke/TIA and must not be loaded in ER.
+4. **Dynamic Print Layout and Dosage Adjustments:** Updated the print output to list and dynamically check all antiplatelet loading/continuation options based on screen selection. Automatically calculated Prasugrel continuation dose (reduced to 5 mg if weight < 60 kg or age >= 75).
+
+**Rationale:** Restraining routine pre-treatment of P2Y12 prevents bleeding complications prior to coronary angiography. Providing clear options, warning states, and dynamic advice ensures safe and guideline-compliant care in time-critical emergency scenarios.

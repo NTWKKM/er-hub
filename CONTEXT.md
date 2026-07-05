@@ -411,6 +411,12 @@
   4. **eGFR Terminology updates:** Updated all labels and templates from `CrCl <30` to `eGFR <30` for Fondapalinux, and added `(CI: eGFR <15 mL/min)` hint for Enoxaparin.
 - **Rationale:** Reset option makes it easy to revert choices. Showing checkmark and keeping card highlights ensures the printed order is accurate and visually distinct. Transitioning all labels to eGFR aligns with standard CKD-EPI 2021 live calculations.
 
+### ADR-40: NSTEMI DAPT Pre-treatment Loading Selection & Warnings (2026-07-05)
 
-
-
+- **Context:** Guidelines (ESC 2023 / ACC/AHA 2025) recommend against routine pre-treatment loading of P2Y12 inhibitors in NSTEMI patients who are planned for early invasive strategy (<24 hours). Routine auto-selection of DAPT loading doses (ASA 300 mg + Clopidogrel 300 mg) was hardcoded in `nstemi.html`, posing clinical safety risks and violating guideline updates.
+- **Decision:**
+  1. **DAPT Selection UI:** Added an "Antiplatelet Loading (DAPT)" interactive panel with a reset option ("ล้างตัวเลือก"). Users can manually toggle Aspirin (300 mg) and select P2Y12 options (Hold/Defer, Clopidogrel 300 mg, Clopidogrel 600 mg, Ticagrelor 180 mg, or Prasugrel 60 mg).
+  2. **Dynamic Risk-Based Recommendations:** Embedded dynamic hints. For Very High/High risk patients (Planned Early Invasive), the UI advises holding/deferring P2Y12 loading to the Cath Lab. For lower risk/delayed timing patients, it suggests upstream Ticagrelor or Clopidogrel.
+  3. **Prasugrel Safety Contraindications:** Added warning banners if Prasugrel is selected, notifying clinicians that Prasugrel is contraindicated in prior TIA/stroke and should not be used as pre-treatment in ER.
+  4. **Dynamic Print Layout and Dosage Adjustments:** Updated the print output to list and dynamically check all antiplatelet loading/continuation options based on screen selection. Automatically calculated Prasugrel continuation dose (reduced to 5 mg if weight < 60 kg or age >= 75).
+- **Rationale:** Restraining routine P2Y12 pre-treatment prevents ischemic/bleeding mismatches prior to coronary angiography. Allowing manual selection and providing inline clinical decision support warnings directly targets guideline compliance and patient safety.
