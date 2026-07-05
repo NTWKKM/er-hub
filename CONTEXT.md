@@ -390,4 +390,16 @@
   4. **Regression Guard:** Added a new test suite [dead-css-guard.test.js](file:///Users/ntwkkm/er-hub/tests/dead-css-guard.test.js) checking all worksheets and calculators for orphaned/unused CSS selector classes.
 - **Rationale:** Removing dead code prevents code rot and confusion for future developers. Standardizing design tokens into a shared stylesheet reduces design divergence. The `dead-css-guard` test automatically captures orphaned CSS classes, preventing regressions from shipping.
 
+### ADR-38: Drip-Calculator Input Translating, Spacing, and Bullet Choices (2026-07-05)
+
+- **Context:** The emergency medicine team requested a series of updates to `tools/drip-calculator.html` and `index.html` to improve English localization, simplify layout headings, convert select boxes to bullet choices, and fix the concentration input display.
+- **Decision:**
+  1. **Nav Spacing:** Reduced spacing between top-nav and main list content in `index.html` by decreasing `.portal-container` padding from `48px` to `16px` and `.top-nav` margin-bottom from `32px` to `16px`.
+  2. **Remove Headers:** Deleted redundant `<h3>` grouping titles: "1. เลือกยาและข้อมูลคนไข้" and "2. กำหนดขนาดของยา (Target Dose)", removing the dividing borders to save vertical space.
+  3. **English Translation:** Translated all input section labels and placeholders to English: Patient Weight (BW), Select IV Drug, Medication Formula, Target Dose, Enter dose, and Concentration.
+  4. **Medication Formula Bullet Choice:** Replaced the dropdown select box (`#prep-select`) with a dynamic radio button layout container (`#prep-radio-container`), and registered interactive event listeners directly on radio option creations.
+  5. **Concentration Display Span:** Replaced the uneditable text input box (`#concentration-display`) with a bold text span element, modifying JavaScript `.value` mutations to `.textContent`.
+- **Rationale:** Translating data inputs to English ensures universal terminology compliance. Dynamic radio button choices for formula selection provide faster, one-click options for clinicians compared to dropdowns. Displaying post-mix concentration as simple text (instead of a disabled input box) clarifies that the value is read-only. Removing headers eliminates redundant visual anchors, making the interface more compact.
+
+
 

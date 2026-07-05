@@ -150,38 +150,34 @@
             <div class="input-layout">
                 <!-- Column 1: Patient Weight & Drug -->
                 <div class="input-column">
-                    <h3>1. เลือกยาและข้อมูลคนไข้</h3>
-                    
                     <div class="inline-input-group">
-                        <label for="weight">น้ำหนัก (BW): <span id="weight-val" style="font-weight: bold; color: #27ae60;">50.0</span> kg</label>
+                        <label for="weight">Patient Weight (BW): <span id="weight-val" style="font-weight: bold; color: #27ae60;">50.0</span> kg</label>
                         <input type="range" id="weight" min="30" max="250" step="0.1" value="50.0" style="width: 100%; cursor: pointer;">
                     </div>
 
                     <div class="inline-input-group">
-                        <label for="drug-select">เลือกยา IV:</label>
+                        <label for="drug-select">Select IV Drug:</label>
                         <select id="drug-select" required>
-                            <option value="">-- เลือกยากลุ่มเสี่ยงสูง --</option>
+                            <option value="">-- Select High-Alert Drug --</option>
                         </select>
                     </div>
 
-                    <div class="inline-input-group">
-                        <label for="prep-select">สูตรการเตรียมยา:</label>
-                        <select id="prep-select" required disabled>
-                            <option value="">-- กรุณาเลือกยาก่อน --</option>
-                        </select>
+                    <div class="inline-input-group" style="align-items: flex-start;">
+                        <label style="margin-top: 4px;">Medication Formula:</label>
+                        <div id="prep-radio-container" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1;">
+                            <span style="color:#777; font-size:14px; padding: 4px 0; display: inline-block;">-- Please select a drug first --</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Column 2: Dose & Rate -->
                 <div class="input-column">
-                    <h3>2. กำหนดขนาดของยา (Target Dose)</h3>
-                    
                     <div class="inline-input-group">
-                        <label for="dose-input">ขนาดยาที่ต้องการ:</label>
+                        <label for="dose-input">Target Dose:</label>
                         <div style="display: flex; flex-direction: column; width: 100%;">
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <button type="button" id="btn-step-down" class="btn-step" disabled aria-label="Decrease dose">–</button>
-                                <input type="number" id="dose-input" step="0.01" required disabled placeholder="ระบุขนาดยา" style="flex-grow: 1;">
+                                <input type="number" id="dose-input" step="0.01" required disabled placeholder="Enter dose" style="flex-grow: 1;">
                                 <button type="button" id="btn-step-up" class="btn-step" disabled aria-label="Increase dose">+</button>
                                 <span id="unit-display" class="unit-label-small"></span>
                             </div>
@@ -201,8 +197,8 @@
                     </div>
 
                     <div class="inline-input-group">
-                        <label>ความเข้มข้นหลังผสม:</label>
-                        <input type="text" id="concentration-display" readonly style="background:#f8f9fa;" placeholder="ความเข้มข้น">
+                        <label>Concentration:</label>
+                        <span id="concentration-display" style="padding: 9px 0; font-size: 15px; font-weight: bold; color: #333; display: inline-block; vertical-align: middle;">--</span>
                     </div>
                 </div>
             </div>
@@ -248,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
     
     const drugSelect = $('drug-select');
-    const prepSelect = $('prep-select');
+    const prepRadioContainer = $('prep-radio-container');
     const doseInput = $('dose-input');
     const doseSlider = $('dose-slider');
     const unitDisplay = $('unit-display');
@@ -295,8 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
         esmololDualDisplay.style.display = 'none';
 
         if (!drugId) {
-            prepSelect.innerHTML = '<option value="">-- กรุณาเลือกยาก่อน --</option>';
-            prepSelect.disabled = true;
+            prepRadioContainer.innerHTML = '<span style="color:#777; font-size:14px; padding: 4px 0; display: inline-block;">-- Please select a drug first --</span>';
             doseInput.disabled = true;
             doseInput.value = '';
             doseSlider.disabled = true;
@@ -304,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
             $('btn-step-down').disabled = true;
             $('btn-step-up').disabled = true;
             unitDisplay.textContent = '';
-            concDisplay.value = '';
+            concDisplay.textContent = '--';
             selectedDrug = null;
             selectedPrep = null;
             return;
@@ -312,18 +307,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
         selectedDrug = EMERGENCY_DRUG_DATA.find(d => d.id === drugId);
         
-        // Populate preparations dropdown
-        prepSelect.innerHTML = '';
+        // Populate preparations radio buttons
+        prepRadioContainer.innerHTML = '';
         selectedDrug.preparations.forEach((prep, idx) => {
-            const opt = document.createElement('option');
-            opt.value = idx;
-            opt.textContent = prep.label;
-            prepSelect.appendChild(opt);
+            const wrapper = document.createElement('label');
+            wrapper.style.display = 'flex';
+            wrapper.style.alignItems = 'center';
+            wrapper.style.gap = '8px';
+            wrapper.style.cursor = 'pointer';
+            wrapper.style.fontWeight = 'normal';
+            wrapper.style.fontSize = '14px';
+            wrapper.style.padding = '4px 0';
+            
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = 'prep-choice';
+            radio.value = idx;
+            if (idx === selectedDrug.defaultPreparationIndex) {
+                radio.checked = true;
+            }
+            
+            radio.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    const idxVal = parseInt(e.target.value);
+                    selectedPrep = selectedDrug.preparations[idxVal];
+                    const concUnit = getConcentrationUnit(selectedDrug.doseUnit);
+                    concDisplay.textContent = `${selectedPrep.concentration} ${concUnit}`;
+                    triggerCalculation();
+                }
+            });
+            
+            wrapper.appendChild(radio);
+            wrapper.appendChild(document.createTextNode(prep.label));
+            prepRadioContainer.appendChild(wrapper);
         });
-        prepSelect.disabled = false;
 
         // Set default preparation
-        prepSelect.value = selectedDrug.defaultPreparationIndex;
         selectedPrep = selectedDrug.preparations[selectedDrug.defaultPreparationIndex];
 
         // Configure dose input parameters
@@ -354,20 +373,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update concentration display using dynamic unit (B1)
         const concUnit = getConcentrationUnit(selectedDrug.doseUnit);
-        concDisplay.value = `${selectedPrep.concentration} ${concUnit}`;
+        concDisplay.textContent = `${selectedPrep.concentration} ${concUnit}`;
 
-        triggerCalculation();
-    });
-
-    // Handle preparation selection change
-    prepSelect.addEventListener('change', () => {
-        if (!selectedDrug) return;
-        const idx = parseInt(prepSelect.value);
-        selectedPrep = selectedDrug.preparations[idx];
-        
-        const concUnit = getConcentrationUnit(selectedDrug.doseUnit);
-        concDisplay.value = `${selectedPrep.concentration} ${concUnit}`;
-        
         triggerCalculation();
     });
 
