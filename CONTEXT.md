@@ -403,13 +403,13 @@
 
 ### ADR-39: NSTEMI Anticoagulant Selection UX Polish & Safety Override Improvements (2026-07-05)
 
-- **Context:** Emergency room physicians identified four UX issues on the NSTEMI worksheet: (1) no way to cancel or deselect the anticoagulant option once selected; (2) override confirmed options on-screen and in print preview failed to show a checkmark (☑) and had background color fills, which might mislead physicians to think the drug is guideline-recommended; (3) override warnings were generic; and (4) the Fondaparinux option used an obsolete `CrCl <30 mL/min` label, and Enoxaparin lacked an explicit `eGFR <15 mL/min` hint.
+- **Context:** Emergency room physicians identified four UX issues on the NSTEMI worksheet: (1) no way to cancel or deselect the anticoagulant option once selected; (2) override confirmed options on-screen and in print preview failed to show a checkmark (☑); (3) override warnings were generic; and (4) the Fondaparinux option used an obsolete `CrCl <30 mL/min` label, and Enoxaparin lacked an explicit `eGFR <15 mL/min` hint.
 - **Decision:**
   1. **Reset Option:** Added a red "ล้างตัวเลือก" (Reset Option) button next to the "Anticoagulant Selection" header that clears selection and resets related outputs.
-  2. **Override Checked Bullets & Flat Cards:** Allowed checkboxes (☑) to be checked when overridden, but removed the `.recommended` class styling from the card to prevent color fill.
+  2. **Override Checked Bullets & highlights:** Allowed checkboxes (☑) to be checked when overridden, and retained the `.recommended` class styling to display normal color-fill/border highlights.
   3. **Specific Override Warnings:** Configured warning messages to show "ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR < 30" (Fondapalinux) and "ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR < 15" (Enoxaparin).
   4. **eGFR Terminology updates:** Updated all labels and templates from `CrCl <30` to `eGFR <30` for Fondapalinux, and added `(CI: eGFR <15 mL/min)` hint for Enoxaparin.
-- **Rationale:** Reset option makes it easy to revert choices. Showing checkmark but keeping box color flat ensures the printed order is accurate and safety guidelines are visible. Transitioning all labels to eGFR aligns with standard CKD-EPI 2021 live calculations.
+- **Rationale:** Reset option makes it easy to revert choices. Showing checkmark and keeping card highlights ensures the printed order is accurate and visually distinct. Transitioning all labels to eGFR aligns with standard CKD-EPI 2021 live calculations.
 
 
 

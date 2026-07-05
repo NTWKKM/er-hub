@@ -831,7 +831,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fondaSelected = choice === 'fonda';
         const fondaNA       = egfrLive !== null && egfrLive < FONDA_MIN_EGFR;
         const fondaOvr      = fondaSelected && fondaNA;
-        const fondaRecClass = fondaSelected && !fondaOvr ? 'recommended' : '';
+        const fondaRecClass = fondaSelected ? 'recommended' : '';
         
         let fondaWarning = '&nbsp;<small>(Preferred)</small>';
         if (fondaOvr) {
@@ -852,7 +852,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const enoxSelected = choice === 'enox';
         const enoxNA       = egfrLive !== null && egfrLive < ENOX_MIN_EGFR;
         const enoxOvr      = enoxSelected && enoxNA;
-        const enoxRecClass = enoxSelected && !enoxOvr ? 'recommended' : '';
+        const enoxRecClass = enoxSelected ? 'recommended' : '';
 
         if (!enoxNA || enoxOvr) {
             const enoxDose = Math.round(weight * 1.0);

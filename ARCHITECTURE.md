@@ -473,17 +473,17 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 
 **Context:** The emergency room clinicians requested four updates to the NSTEMI standing order worksheet (`orders/nstemi.html`) to improve safety override interactions, clarify contraindication limits, and enable resetting selections:
 1. Once selected, clinicians had no way to deselect or reset the anticoagulant radio group choice.
-2. The safety override confirmed state for Fondapalinux and Enoxaparin had styling bugs: it failed to keep the on-screen and print preview checkboxes checked, and it rendered the card box filled with background color, which clinicians wanted to keep unhighlighted to prevent confusion.
+2. The safety override confirmed state for Fondapalinux and Enoxaparin had styling bugs: it failed to keep the on-screen and print preview checkboxes checked.
 3. The override warning messages did not explicitly mention the guideline thresholds.
 4. Fondapalinux used an obsolete `CrCl <30 mL/min` label while eGFR was the calculated metric in use, and Enoxaparin lacked a clear `eGFR <15 mL/min` hint in its options list.
 
 **Decision:**
 1. **Reset Option:** Added a small red "ล้างตัวเลือก" (Reset Option) button next to the "Anticoagulant Selection" card header, wired to clear radio selections, hide sub-inputs, and trigger UI and print preview updates.
-2. **Checked Override Bullets & Flat Styling:** Configured the override handler to retainchecked states (`☑` / selected radio) on-screen and in print preview, but stripped the `.recommended` class from the print container so it stays flat without background color fill.
+2. **Checked Override Bullets & highlights:** Configured the override handler to retain checked states (`☑` / selected radio) on-screen and in print preview, and kept the `.recommended` class on the print container to display normal color-fill/border highlights.
 3. **Specific Override Warnings:** Replaced generic override texts with custom warnings: `"ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR < 30"` for Fondapalinux, and `"ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR < 15"` for Enoxaparin.
 4. **eGFR Terminology & Hints:** Replaced `CrCl <30` with `eGFR <30` inside the Fondapalinux hints and print templates, and added a red `(CI: eGFR <15 mL/min)` label to Enoxaparin's on-screen options and print blocks.
 
-**Rationale:** Enabling option resetting reduces workflow friction when a clinician decides to omit anticoagulants. Showing the checkmark (☑) ensures the selection is recorded in print, while avoiding card highlight prevents overriding selections from being falsely flagged as recommended guidelines. Standardizing labels around eGFR keeps terms aligned with the CKD-EPI 2021 live calculations.
+**Rationale:** Enabling option resetting reduces workflow friction when a clinician decides to omit anticoagulants. Showing the checkmark (☑) and highlights ensures the selected option is clearly marked and visually distinct on the printout. Standardizing labels around eGFR keeps terms aligned with the CKD-EPI 2021 live calculations.
 
 **Tests:** All 153/153 tests pass.
 
