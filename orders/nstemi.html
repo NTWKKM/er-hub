@@ -871,7 +871,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             html += `
             <div class="ac-opt ${enoxRecClass} ${enoxNA ? 'na' : ''}">
-                <strong>${chkEnox} Enoxaparin</strong> &nbsp;<strong>${chk40} 0.4 ml</strong> &nbsp;<strong>${chk60} 0.6 ml</strong>${enoxWarning}<br>
+                <strong>${chkEnox} Enoxaparin</strong>${enoxWarning}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${chk40} 0.4 ml</strong> &nbsp;<strong>${chk60} 0.6 ml</strong><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>${chkQ12} q 12 hr</strong> &nbsp;<strong>${chkOD} OD</strong> × 5 Days<br>
                 <span style="font-size:9px;color:#666;">(1 mg/kg = ${weight > 0 ? enoxDose + ' mg' : '............ mg'} — GFR &lt; ${FONDA_MIN_EGFR} → once daily)<br>
                 (CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)<br>
@@ -1078,7 +1079,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <span style="font-size:9px;color:#666;">(CI: eGFR &lt;30 mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>\
         </div>\
         <div class="ac-opt">\
-            <strong>☐ Enoxaparin</strong> &nbsp;<strong>☐ 0.4 ml</strong> &nbsp;<strong>☐ 0.6 ml</strong><br>\
+            <strong>☐ Enoxaparin</strong><br>\
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>☐ 0.4 ml</strong> &nbsp;<strong>☐ 0.6 ml</strong><br>\
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>☐ q 12 hr</strong> &nbsp;<strong>☐ OD</strong> × 5 Days<br>\
             <span style="font-size:9px;color:#666;">(1 mg/kg = ............ mg — GFR &lt; 30 → once daily)<br>\
             (CI: eGFR &lt;15 mL/min)<br>\
