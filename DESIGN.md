@@ -14,6 +14,7 @@
 - **Braun White:** `#F0EDE5` (Warm ivory used for all navigation bar text — `nav-home`, `nav-title`, `nav-center`, `nav-right` — and as the text/border colour of hovered portal rows. Replaces pure white `#fff` / `rgba(255,255,255,...)` across navigation elements.)
 
 #### Module Specific Accents (Muted Text-Only Categories)
+
 - **Neurology:** Ochre `#b8873a`
 - **Cardiac / Pulmonary:** Slate `#3a5566`
 - **Anticoagulation / Procedural:** Olive `#5a6b3b`
@@ -52,7 +53,7 @@
 ## 2. UI Components & States
 
 | Component | Role / Target | States & Props |
-|---|---|---|
+| --- | --- | --- |
 | **Portal List Row** | Braun-restrained row in a vertical ordered list. Restrained layout with no drop shadows, no lifts. Category tag is text-only, coloured via muted `.cat-*` tokens. Numbers are aligned via `font-variant-numeric: tabular-nums`. Monospace badges (`ACTIVE` / `PROTOTYPE`) represent release states. Left border is a `4px` sentinel (`border-left: 4px solid transparent`) in rest state that activates on hover without shifting layout (compensated by left-padding reduction from `16px` → `12px`). | **Rest:** transparent background on `#ebe7df`. **Hover:** background transitions to slate blue `#49628d` (`120ms linear`); left border-left-color transitions to Braun White `#F0EDE5` (`120ms linear`); all child text (num, category, title, status, arrow) transitions to `#F0EDE5` (`120ms linear`). Right arrow `→` shifts `4px` horizontally. **Focus:** `2px` solid ink border with `2px` offset (`outline: 2px solid var(--ink); outline-offset: 2px;`). |
 | **Form Headers / In-page Titles** | Removed. All in-page headers, guidelines, and dividers are deleted from all 7 standing order pages and the drip calculator. Sticky nav bar serves as the single source of truth. | N/A |
 | **Top Navigation Bar** | Sticky full-width bar injected by `ED_COMPONENTS.injectNavBar()`. Auto-detects page title from `document.title` (strips after `—`) unless explicitly overridden. Shows MNRH logo (38px height) on all pages. "Home" link + title text. Normalised standing order nav titles to include the page title, clinical guideline, and release version format. On viewports <=900px, dynamically parses and truncates the title (e.g. `NSTEMI V2.1.1` or `rt-PA Calc V2.0`) to prevent wrapping. Short title aliases in `parseTitle()`: strips `Standing Order`, `Protocol`, `Post-Intubation`, residual `Order` word; aliases `IV Infusion Drip Calculator → Drip Calc` and `rt-PA Dose Calculator → rt-PA Calc`. Final short titles: Antivenom / STEMI / NSTEMI / Massive PE / Heparin / Sedation / rt-PA Calc. | Blue gradient (`#1e3c72 → #2a5298`), `position: sticky; top: 0; z-index: 100`. Text colour: Braun White `#F0EDE5` (flat, warm ivory) for `.nav-home`, `.nav-title`, `.nav-center`, `.nav-right` — replacing previous pure white / rgba values. `width: calc(100% + (var(--page-pad) * 2))`, negative margins to escape body padding. Padding is `0 24px` (desktop), reduced to `0 16px` via media query at <=768px to ensure perfect horizontal alignment of the hospital logo across the portal and all order pages. Hidden in print via `@media print`. |

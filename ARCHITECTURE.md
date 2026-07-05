@@ -3,7 +3,7 @@
 ## 1. Core Components
 
 | Component | Role | Dependencies |
-|---|---|---|
+| --- | --- | --- |
 | `calc-engine.js` | Generic mathematical engine computing infusion drip rates (mL/hr) and loading doses (mL). | None |
 | `clinical-engine.js` | Shared clinical logic engine containing lookup tables and formulas for GRACE score and eGFR (CKD-EPI 2021) calculations. | None |
 | `anticoag-engine.js` | Logic engine determining Heparin/LMWH doses and titration changes based on clinical indications. | None |
@@ -16,7 +16,7 @@
 | `tools/drip-calculator.html` | IV infusion drip rate calculator for 12 high-alert drugs. Loads `components.js` and uses `injectNavBar()` with hospital logo for nav consistency. All in-page title/guideline headers are deleted. No print flow (no `print.css`). | `shared/base.css`, `shared/calc-engine.js`, `shared/drug-data.js`, `shared/components.js` |
 | `index.html` | Portal hub with custom Braun × Mid-Century Modern layout. Displays active and prototype clinical standing orders and calculators in a semantic vertical ordered list with 1px hairlines, tabular numerals, muted category styles, and signal orange indicators for time-critical actions. Implements header wordmark, hospital logo, and footer. Registers service worker for offline PWA support. Body uses custom typography and colors. | `shared/base.css`, `shared/components.js`, `service-worker.js`, `manifest.json` |
 | `service-worker.js` | PWA offline cache. Network-first for navigation, cache-first for assets. Caches all HTML/CSS/JS + 4 shared behavior modules + logo PNG + 5 source PDFs + Google Fonts (including `Inter Tight`). `CACHE_VERSION` bumped to `er-hub-v14`. Enables full offline access during ED wifi outages. | None |
-| `manifest.json` | PWA manifest. App name, theme color, logo icon reference. Enables installable app + offline. | `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png` |emovebg-preview.png` |
+| `manifest.json` | PWA manifest. App name, theme color, logo icon reference. Enables installable app + offline. | `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png` |
 
 ---
 
@@ -42,7 +42,7 @@ graph TD
 ## 3. Offline Decisions
 
 | Entity | Conflict Resolution | Sync Strategy |
-|---|---|---|
+| --- | --- | --- |
 | `Patient Form State` | Client-only state. Form resets immediately on navigation or tab close. | No server sync. Strictly offline-first. |
 | `Calculation Engine` | Pure functional operations. Standard math guarantees deterministic outcomes. | Stored as local `.js` scripts. Loaded from disk. |
 | `PWA Assets Cache` | Service worker (`service-worker.js`) registered on index.html. Network-first for navigation, cache-first for static assets. Caches all HTML/CSS/JS + Google Fonts for offline access. | Assets cached in browser via Cache API. Cache version bumped on deploy. |
@@ -67,8 +67,6 @@ graph TD
 - **W-14: NSTEMI Dead ID Reference Safety (2026-07-04):** All elements queried in standing order handlers must be statically validated against DOM declarations. The ID integrity guard regression suite enforces that no queried IDs in `$()` or registry manifests are missing in the HTML source, ensuring zero runtime TypeErrors on execution.
 - **W-15: Homepage Braun × Mid-Century Modern Redesign & SW v14 (2026-07-04):** Revamped the portal dashboard with a Braun-restrained aesthetic. Replaced the 3-column card grid with semantic vertical lists using tabular-nums ordering, hairline separators, and muted text category badges. The Signal Orange dot is reserved strictly for time-critical items. The top-nav has a blue gradient background, 38px logo height, and supports dynamic responsive title parsing inside `injectNavBar()` which splits and truncates page titles (e.g., `NSTEMI V2.1.1` instead of the full guideline block) on viewports <=900px to prevent text wrapping. Synchronized top-nav padding to `0 16px` at <=768px in base.css to ensure horizontal alignment of the logo on mobile. Shortened the homepage's nav-right update date metadata to `26-07-04`. Added `reg.update()` in `index.html` to force immediate SW update checks, and bumped `CACHE_VERSION` to `er-hub-v14`.
 - **W-16: Portal Hover Refinement, Nav Braun White & Background Warmth (2026-07-04):** Replaced the portal order-row warm-grey hover (`#ece9df`) with a slate blue hover (`#49628d` — same 218° hue as the nav gradient, lower saturation/higher lightness per Braun restraint). All hovered row text (num, category, title, status, arrow) transitions to Braun White `#F0EDE5`. A `4px` left border sentinel (`border-left: 4px solid transparent` at rest → `#F0EDE5` on hover) provides a minimal standout without layout shift — achieved by widening rest-state padding from `12px 16px` to `12px 16px 12px 12px`. Transition now covers `background-color`, `border-left-color`, and `color`. Muted category text colors (`.cat-neuro/cardiac/pulmonary/anticoag/tox/procedural/tools`) explicitly wired to CSS vars. Portal background `--paper` darkened from `#f4f2ec` → `#ebe7df` for a warmer, richer surface. Navigation text (`nav-home`, `nav-title`, `nav-center`, `nav-right`) changed from `#fff` / `rgba(255,255,255,0.85/0.7)` to flat Braun White `#F0EDE5` across `shared/base.css` (all standing order pages) and `index.html` overrides (homepage). WCAG AA verified: `#F0EDE5` on `#49628d` = **5.23:1** contrast ratio.
-
-
 
 ---
 
@@ -213,6 +211,7 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 **Context:** Thailand clinical settings support Enoxaparin in pre-filled syringe sizes (0.4 ml [40 mg] and 0.6 ml [60 mg]). The NSTEMI continue order printed layout used manual blank lines, which required manual completion and did not guide clinical selection based on pre-packaged stock sizes.
 
 **Decision:**
+
   1. **Print Layout Update:** Replaced blank lines in continue order (`p-anticoag`) with specific checkboxes formatted over 2 lines:
      - Line 1: `☐ Enoxaparin  ☐ 0.4 ml  ☐ 0.6 ml`
      - Line 2: (Indented 5 spaces) `SC  ☐ q 12 hr  ☐ OD  × 5 Days`
@@ -233,6 +232,7 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 **Context:** The continue order anticoagulant section lacked explicit contraindication reminders for Fondaparinux and Heparin. Clinicians needed on-sheet guidance per 2025 ACC/AHA and ESC NSTE-ACS guidelines at the point of order writing, without opening an external reference.
 
 **Decision:**
+
   1. **Fondaparinux — Added 2-line clinical hint:**
      - `(CI: CrCl <30 mL/min — ถ้าทำ PCI ต้องเสริม UFH bolus)`
      - Reflects: (a) absolute contraindication at CrCl <30 mL/min due to renal accumulation and bleeding risk; (b) catheter thrombosis risk when Fondaparinux used as sole anticoagulant during PCI — guideline mandates a UFH bolus at the time of PCI.
@@ -256,6 +256,7 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 **Context:** Previously, the NSTEMI order form required the clinician to press a "Calculate" button before the GRACE score, anticoagulant recommendation, and print preview were rendered. This created friction during time-critical resuscitations and required two steps to see the standing order layout.
 
 **Decision:**
+
   1. **`calculateAndRender()` extracted:** The entire calculation + DOM update block was moved out of the `form.submit` event handler into a standalone `calculateAndRender()` function called on every input/radio/checkbox change event.
   2. **Real-time wiring:** All form inputs are wired via `addEventListener('input'/'change', calculateAndRender)`:
      - Text/number inputs: `hn`, `weight`, `age`, `creatinine`, `hr`, `sbp`, `troponin-h0/h1/h3`
@@ -286,6 +287,7 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 - On cold page load (no `?print-blank-direct` URL param), `$('print-blank-btn').click()` is now called before `calculateAndRender()`. Implements the blank-first behaviour that ADR-20 documented as shipped but never implemented.
 
 **Decision — Finding 3 (Anticoag contradiction — patient safety):**
+
 1. **Cutoff corrected: 20 → 30.** `shared/anticoag-engine.js` `calcAnticoag()` now uses `egfr >= 30` for Fondaparinux recommendation, consistent with ADR-19 and the `CI: CrCl <30` label text. The old 20-cutoff caused the engine to auto-select Fondaparinux for eGFR 20–29 while simultaneously displaying a red contraindication for that range.
 2. **Auto-select removed.** `calculateAndRender()` no longer pre-checks any anticoagulant radio button. Clinician selection is fully manual.
 3. **CI disable + recommendation badge.** `updateAcHints()` now calls `_applyAcState()` which: marks Fondaparinux `ac-disabled` when eGFR < 30; marks Enoxaparin `ac-disabled` when eGFR < 15; shows `⛔ CI` badge on disabled options; shows `✅ แนะนำ` badge on the recommended option.
@@ -306,6 +308,7 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 ### ADR-27: NSTEMI v2.1.2 Re-Audit Minimal Design (2026-07-04)
 
 **Context:** The second-pass audit of NSTEMI standing orders (`PLAN-nstemi-v2.1.1-reaudit-minimal-design.md`) identified three issues:
+
 1. A split threshold for Fondaparinux between the screen logic (cutoff at 30) and the print logic (cutoff at 20) due to independent, disagreeing inline implementations.
 2. The override-confirmation warning messages were hardcoded to Fondaparinux, leaving Enoxaparin without safety messaging when overridden.
 3. Heparin hint text and print labels contained an obsolete reference to `CrCl <30 mL/min` that did not match the recommendation logic.
@@ -313,6 +316,7 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 The duplicate Creatinine field two-way sync was explicitly retained per user request.
 
 **Decision:**
+
 1. **Renal Cutoff Constants:** Hoisted cutoffs to unified constants block (`FONDA_MIN_EGFR = 30` and `ENOX_MIN_EGFR = 15`) at the top of `orders/nstemi.html` script. Used these constants throughout the file (screen checks, print output, enoxaparin frequency selection, and labels).
 2. **Generified Override UI:** Added `#ac-enox-ci-msg` and `#ac-enox-override-msg` elements. Updated `_applyAcState` to perform dynamic ID lookup (`ac-${drug}-ci-msg` / `ac-${drug}-override-msg`). Updated the click handler to query `[id$="-override-msg"]` within the selected label to make safety override warning messages function dynamically for both drugs.
 3. **Heparin Hint Tidy:** Removed the `หรือ CrCl <30 mL/min` reference, updating Heparin labels to `(eGFR <15 mL/min)` consistently.
@@ -327,6 +331,7 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 **Context:** The NSTEMI standing order printed output had excessive blank whitespace when rendered on a standard A4 page. Clinicians required the layout to fill the page cleanly and look professional, with space to write custom additional orders, while strictly fitting on a single page to prevent medical record split errors.
 
 **Decision:**
+
 1. **Moderate Typography Scale:** Scaled up the grid font size slightly to `9.5pt` and cells to `9pt` (with `line-height: 1.45;` and `margin-bottom: 4px` for list items) to fill the empty space safely without causing the 1-page document to overflow onto page 2.
 2. **Flexbox-Driven Spacing & Bottom Signature Block:** Enabled Flexbox inside the column grid cells (`display: flex; flex-direction: column; height: 100%;`) and wrapped the doctor signature blocks in `.print-signature-block` with `margin-top: auto;` to anchor them flush to the bottom of the grid row.
 3. **Clean Blank Space:** Inserted a flexible spacer container `.order-blank-space` (`flex-grow: 1; min-height: 20px;`) right before the signature blocks. Left it as clean blank space (no dotted lines) per user request to allow manual additions.
@@ -344,12 +349,14 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 ### ADR-29: NSTEMI v2.1.1 UX Polish — Mobile Layout, Button Logic & Version Text (2026-07-04)
 
 **Context:** Three UX defects discovered during post-ADR-28 screen review:
+
 1. The data-input section (`.patient-fields`) was unreadable on mobile viewports (≤600px) — all 7 patient fields crammed into a single flex row causing overflow and misalignment.
 2. The top form button was labelled "🧮 คำนวณ GRACE Score และสร้างใบสั่งยา" but its sole function was `window.print()`. Additionally, the `print-btn` inside `#results-container` had **two** `click → window.print()` listeners wired: one in `setupCommonActions()` (`components.js`) and a duplicate in `nstemi.html` — causing two consecutive print dialogs on every press.
 3. The "ล้างข้อมูล" (Clear) button called `ED_PRINT_BOOTSTRAP.clearResults()` which hides `#results-container`, making the blank print preview disappear — unexpected blank-page UX that didn't match the "reset to fresh load" expectation.
 4. The print signature version block used `ESC 2023 NSTEMI Guideline` (wrong citation order per standard ESC format).
 
 **Decision:**
+
 1. **Mobile Responsive Layout (`@media (max-width: 600px)`):** Added to `orders/nstemi.html` `<style>` block:
    - `.patient-fields` switches from `flex` → `display: grid; grid-template-columns: 1fr 1fr` — 2-column auto-wrapping grid.
    - `.patient-field input` → `max-width: none; width: 100%` (removes the 120px cap that caused overflow).
@@ -377,6 +384,7 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 3. GRACE Score Variables section (`Heart Rate (bpm)`, `SBP (mmHg)`, `Creatinine (mg/dL)`) labels were too long to share a line with the input on narrow viewports, forcing a stacked layout.
 
 **Decision:**
+
 1. **Grid Column Correction (`orders/nstemi.html`):** Removed dead `order` properties (not meaningful in CSS Grid). Replaced `grid-column: span 2` with explicit `grid-column: 1` on `.patient-field.egfr-field` and `grid-column: 2` on `.patient-field.asa-field`. Base rule `nth-child(odd) { grid-column: 1 }` / `nth-child(even) { grid-column: 2 }` handles the five standard fields; class overrides handle the two exceptions. Result: col-1 = HN / Age / Cr / eGFR, col-2 = Weight / Sex / ASA Allergy.
 2. **Gender Radio Overflow Fix:** `.patient-field .gender-radio` set to `font-size: 13px; white-space: nowrap` inside the `@media (max-width: 600px)` block, preventing the radio labels from breaking out of the grid cell.
 3. **GRACE Short Labels:** Added dual `<span class="grace-label-full">` / `<span class="grace-label-short">` pairs inside each GRACE row label. `grace-label-full` (e.g., `Heart Rate (bpm):`) shown at ≥601px; `grace-label-short` (e.g., `HR:`, `SBP:`, `Cr:`) shown at ≤600px. `.grace-inline-row` sets `flex-direction: row` on mobile so label and input stay on one line.
@@ -386,12 +394,12 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 
 **Tests:** 139/139 pass (CSS and label changes only — no JS logic changed).
 
-
 ### ADR-33: NSTEMI Sex Radio Overflow Fix — Mobile Grid Cell Containment (2026-07-04)
 
 **Context:** Post-ADR-32 screen QA on mobile viewport (≤600px) revealed that the "Sex" field (`patient-field:nth-child(4)`) radio labels "ชาย" / "หญิง" overflowed the right edge of the grid cell and clipped outside the page boundary. Root cause: `.patient-field .gender-radio` had `white-space: nowrap` which prevented line-wrapping, and the Sex field itself had no `flex-direction: column` constraint, allowing both radio rows to sit side-by-side beyond the `1fr` column width.
 
 **Decision:**
+
 1. **`.patient-field .gender-radio` rule updated** (inside `@media (max-width: 600px)`): Replaced `white-space: nowrap` with `white-space: normal`. Added `display: flex; align-items: center; gap: 4px; overflow: hidden` — each radio+label pair is now a flex row that wraps text and is clipped at the cell boundary.
 2. **New `.patient-fields > .patient-field:nth-child(4)` rule** (inside `@media (max-width: 600px)`): `display: flex; flex-direction: column; align-items: flex-start; overflow: hidden; min-width: 0` — Sex field container stacks its two radio labels vertically instead of horizontally, eliminating the overflow.
 

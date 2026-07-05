@@ -3,7 +3,7 @@
 ## 1. Domain Glossary
 
 | Term | Definition |
-|---|---|
+| --- | --- |
 | **rt-PA (Alteplase)** | Recombinant tissue plasminogen activator. High-alert thrombolytic drug used for stroke and pulmonary embolism. |
 | **Tenecteplase (TNK)** | Third-generation thrombolytic agent. Weight-dose bracketed; requires 50% dose reduction if age ≥ 75 in STEMI. |
 | **Streptokinase (SK)** | Thrombolytic agent with absolute repeat contraindication within 6 months due to neutralizing antibody risk. |
@@ -280,6 +280,7 @@
   8. **Caching & Version:** Bumped version in `orders/nstemi.html` to `2.1.1` and `service-worker.js` `CACHE_VERSION` to `er-hub-v12`.
   9. **GRACE Variables List Layout:** Removed the vertical bar `|` dividers from the GRACE variables. Structured each parameter (Age, HR, SBP, Cr, Killip, and GRACE Score) on its own separate line in the HTML, aligning the live preview and the print layouts perfectly.
 - **Rationale:** Scale-up matches clinical readability expectations. Flexbox alignment dynamically pushes signature lines to the bottom edge, using a simple blank container rather than dotted lines to avoid print settings background issues and keep the worksheet uncluttered.
+
 ### ADR-29: Braun Redesign & Navigation Refinement (2026-07-04)
 
 - **Context:** Refactoring the portal homepage (`index.html`) to the Braun × Mid-Century Modern layout required visual refinement to maintain clinical utility. The initial redesign used an off-white navigation bar that lacked visual distinction, a "Standing Orders" section title that added vertical height, and STEMI ahead of NSTEMI in the list. Additionally, standing order navigation titles were inconsistent.
