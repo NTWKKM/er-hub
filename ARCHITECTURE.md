@@ -100,9 +100,8 @@ graph TD
 
 **Decision:**
 
-1. **Phase 1 — Clinical Safety Gating:**
-   - Greyed out/disabled the anticoagulation selection panel and displayed a red warning banner (*"กรุณากรอก Cr + อายุ + เพศ เพื่อคำนวณ eGFR"*) when eGFR is null.
-   - Disabled all order generation/print action buttons until a valid eGFR is computed.
+1. **Phase 1 — Clinical Safety:**
+   - Hoisted eGFR recommendation flags and safety overrides.
    - Removed the silent `egfrForCalc = 90` fallback to prevent downstream errors.
    - Wired the print date/time generation logic to stamp the current date and time on active order generation using `ED_PRINT_BOOTSTRAP.getDateTimeHTML()`.
 
@@ -117,7 +116,7 @@ graph TD
    - Refactored and decomposed the `calculateAndRender()` monolith into isolated calculation and rendering helper functions.
    - Rewrote navigation bar generation using native browser DOM APIs instead of `innerHTML` strings to prevent potential XSS vectors.
 
-**Rationale:** Clinical safety is guaranteed by enforcing renal data entry before allowing high-alert anticoagulation choices. Performance is dramatically improved by replacing raw innerHTML string concatenation and parsing with targeted DOM element updates and static element caching. Extrapolating logic to the clinical engine prevents duplicate code and establishes a modular framework for future standing orders. Dom sanitization enforces strict security hygiene.
+**Rationale:** Clinical safety is guaranteed by safety override warnings. Print blocks and panel gates were removed to allow emergency clinicians to print blank or partially completed standing orders for manual clinical completion. Performance is dramatically improved by replacing raw innerHTML string concatenation and parsing with targeted DOM element updates and static element caching. Extrapolating logic to the clinical engine prevents duplicate code and establishes a modular framework for future standing orders. Dom sanitization enforces strict security hygiene.
 
 ---
 

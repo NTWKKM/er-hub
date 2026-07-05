@@ -588,9 +588,7 @@
 
             <!-- Right: Anticoag Selection + Timing -->
             <div style="flex: 1 1 320px; min-width: 280px; display: flex; flex-direction: column; gap: 12px;">
-                <div id="ac-gating-warning" style="display: none; background: #fadbd8; border: 1px solid #c0392b; border-radius: 4px; padding: 8px; color: #c0392b; font-weight: bold; font-size: 11px; text-align: center;">
-                    กรุณากรอก Cr + อายุ + เพศ เพื่อคำนวณ eGFR
-                </div>
+
                 <div id="anticoag-panel" style="background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; position: relative;">
                     <strong style="font-size:11px;color:#555;display:block;margin-bottom:8px;">💊 Anticoagulant Selection</strong>
                     <div style="font-size:12px; display: flex; flex-direction: column; gap: 8px;">
@@ -1275,38 +1273,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const egfr = calcEGFR();
         const egfrForCalc = egfr !== null ? Math.round(egfr) : null;
 
-        // eGFR Gating Logic
-        const hasEGFR = egfr !== null;
-        const acPanel = $('anticoag-panel');
-        const acGatingWarning = $('ac-gating-warning');
-        const createOrderBtn = $('create-order-btn');
-        const printBtn = $('print-btn');
 
-        if (acPanel && acGatingWarning) {
-            if (hasEGFR) {
-                acPanel.classList.remove('ac-panel-disabled');
-                acGatingWarning.style.display = 'none';
-                if (createOrderBtn) createOrderBtn.disabled = false;
-                if (printBtn) printBtn.disabled = false;
-            } else {
-                acPanel.classList.add('ac-panel-disabled');
-                acGatingWarning.style.display = 'block';
-                if (createOrderBtn) createOrderBtn.disabled = true;
-                if (printBtn) printBtn.disabled = true;
-
-                // Clear any checked anticoag option when disabled
-                const checkedRadio = document.querySelector('input[name="anticoag-choice"]:checked');
-                if (checkedRadio) {
-                    checkedRadio.checked = false;
-                    document.querySelectorAll('.ac-radio-label').forEach(label => {
-                        label.classList.remove('ac-override-pending');
-                        const ovrMsg = label.querySelector('[id$="-override-msg"]');
-                        if (ovrMsg) ovrMsg.style.display = 'none';
-                    });
-                    updateAnticoagOutput();
-                }
-            }
-        }
 
         // Troponin values (ng/L)
         const tropValH0 = parseFloat($('troponin-h0').value);
