@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700&family=Sarabun:wght@400;700&display=swap');
+
 /* ===== Design System & Variables ===== */
 :root {
     --bg-screen: #f0f2f5;
@@ -495,9 +497,7 @@ input[type="checkbox"] {
     .header h1 {
         font-size: 1.2em;
     }
-    .section-header {
-        font-size: 14px;
-    }
+
 
     .results-container {
         overflow-x: auto;

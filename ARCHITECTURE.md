@@ -5,16 +5,17 @@
 | Component | Role | Dependencies |
 |---|---|---|
 | `calc-engine.js` | Generic mathematical engine computing infusion drip rates (mL/hr) and loading doses (mL). | None |
+| `clinical-engine.js` | Shared clinical logic engine containing lookup tables and formulas for GRACE score and eGFR (CKD-EPI 2021) calculations. | None |
 | `anticoag-engine.js` | Logic engine determining Heparin/LMWH doses and titration changes based on clinical indications. | None |
 | `drug-data.js` | Structured catalog of concentrations, dose limits, safety ceilings, and titration instructions for all 12 IV drugs. | None |
 | `components.js` | Renders common UI elements: patient info blocks, sticker boxes (HN set via `textContent` for XSS safety), date-time inputs, sticky top navigation bar (`injectNavBar` — accepts optional `homeHref`, `logoSrc`, and `pageTitle` for path/logo/title flexibility; `pageTitle` can be `undefined` for auto-detect, empty string `''` to suppress, or explicit string to override; auto-detects remaining title from `document.title`, sets `role="navigation"`, adds `aria-label` to both Home link and title span), floating print action bar (`showFloatBar`/`hideFloatBar`). Float bar uses text-only labels (no emoji per ADR-09). Negative margin math (`width: calc(100% + var(--page-pad) * 2)`, `margin: calc(var(--page-pad) * -1)`) now reads `--page-pad` CSS var for flexible breakout from body padding (see `base.css` §2). | None |
 | `print-bootstrap.js` | Shared print/page lifecycle: `handlePrintBlankDirect()` (URL param detection for HTML blank print), `handlePrintBlankDirectPdf(path)` (URL param detection → redirect to source PDF), `openBlankPdf(path)` (opens source PDF in new tab — user presses print manually, no cross-tab `.print()` per ADR-09), `showResults()` (unhide + float bar + scroll), `clearResults(formId, extraFn)` (reset + hide + focus), `getDateTimeHTML(useTime, date)`, `getBlankDateTimeHTML()`. 5 of 7 order pages use the PDF pathway (ADR-17); rtpa/nstemi keep HTML blank print. | `components.js` |
 | `blank-print-engine.js` | Declarative blank-print reset engine. Each order page registers a manifest of reset rules (`{ id, value }` for textContent, `{ id, html }` for innerHTML, `{ id, className }` for class override, `{ id, style }` for style props, `{ selector, checked }` for checkboxes). `apply()` executes all rules. Used by rtpa.html and nstemi.html only (ADR-17 — 5 other pages now open source PDFs instead). Fixes the ADR-10 bug class at the root — adding a new protocol page is now a manifest array, not a hand-written reset block. | None |
 | `form-validate.js` | Non-blocking form validation — replaces `alert()` calls across all order pages. `fail(inputId, msg)` highlights field + inline message. `warn(msg)` shows clinical warning banner. `range(inputId, min, max, msg)` and `min(inputId, minVal, msg)` for numeric validation. `clearAll()` resets all errors. Uses existing `.field-error` CSS + new `.inline-error-msg` and `.clinical-warning` classes. | `components.js` |
-| `orders/*.html` | Specialized clinical worksheets (rt-PA, STEMI, NSTEMI, PE, Antivenom, Heparin, Sedation). All 7 files use `ED_PRINT_BOOTSTRAP` for page lifecycle and `ED_VALIDATE` for non-blocking validation. All in-page title/guideline headers and dividers are deleted; forms start directly below the sticky top nav, relying on it as the single source of truth. 5 pages (stemi, pe, heparin, antivenom, sedation) use `ED_PRINT_BOOTSTRAP.openBlankPdf()` to open source PDFs from `docs/` in a new tab (ADR-17). 2 pages (rtpa, nstemi) keep `ED_BLANK_PRINT` for HTML blank-print (no source PDF). Page-specific JS reduced to: form submit handler (clinical logic) + event listeners for protocol-specific UI. | `shared/base.css`, `shared/print.css`, `shared/calc-engine.js` or `shared/anticoag-engine.js`, `shared/components.js`, `shared/print-bootstrap.js`, `shared/form-validate.js` (rtpa/nstemi also load `shared/blank-print-engine.js`) |
+| `orders/*.html` | Specialized clinical worksheets (rt-PA, STEMI, NSTEMI, PE, Antivenom, Heparin, Sedation). All 7 files use `ED_PRINT_BOOTSTRAP` for page lifecycle and `ED_VALIDATE` for non-blocking validation. All in-page title/guideline headers and dividers are deleted; forms start directly below the sticky top nav, relying on it as the single source of truth. 5 pages (stemi, pe, heparin, antivenom, sedation) use `ED_PRINT_BOOTSTRAP.openBlankPdf()` to open source PDFs from `docs/` in a new tab (ADR-17). 2 pages (rtpa, nstemi) keep `ED_BLANK_PRINT` for HTML blank-print (no source PDF). Page-specific JS reduced to: form submit handler (clinical logic) + event listeners for protocol-specific UI. `nstemi.html` also loads `shared/clinical-engine.js`. | `shared/base.css`, `shared/print.css`, `shared/calc-engine.js` or `shared/anticoag-engine.js`, `shared/components.js`, `shared/print-bootstrap.js`, `shared/form-validate.js`, `shared/clinical-engine.js` (rtpa/nstemi also load `shared/blank-print-engine.js`) |
 | `tools/drip-calculator.html` | IV infusion drip rate calculator for 12 high-alert drugs. Loads `components.js` and uses `injectNavBar()` with hospital logo for nav consistency. All in-page title/guideline headers are deleted. No print flow (no `print.css`). | `shared/base.css`, `shared/calc-engine.js`, `shared/drug-data.js`, `shared/components.js` |
 | `index.html` | Portal hub with custom Braun × Mid-Century Modern layout. Displays active and prototype clinical standing orders and calculators in a semantic vertical ordered list with 1px hairlines, tabular numerals, muted category styles, and signal orange indicators for time-critical actions. Implements header wordmark, hospital logo, and footer. Registers service worker for offline PWA support. Body uses custom typography and colors. | `shared/base.css`, `shared/components.js`, `service-worker.js`, `manifest.json` |
-| `service-worker.js` | PWA offline cache. Network-first for navigation, cache-first for assets. Caches all HTML/CSS/JS + 3 shared behavior modules + logo PNG + 5 source PDFs + Google Fonts (including `Inter Tight`). `CACHE_VERSION` bumped to `er-hub-v14`. Enables full offline access during ED wifi outages. | None |
+| `service-worker.js` | PWA offline cache. Network-first for navigation, cache-first for assets. Caches all HTML/CSS/JS + 4 shared behavior modules + logo PNG + 5 source PDFs + Google Fonts (including `Inter Tight`). `CACHE_VERSION` bumped to `er-hub-v14`. Enables full offline access during ED wifi outages. | None |
 | `manifest.json` | PWA manifest. App name, theme color, logo icon reference. Enables installable app + offline. | `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png` |emovebg-preview.png` |
 
 ---
@@ -92,6 +93,33 @@ graph TD
      - BUG-05 (SW Precache Robustness): Replaced `cache.addAll(ASSETS)` with custom `fetchWithRetry()` helper (2 retries, 100ms exponential backoff) + `Promise.allSettled()` loop. Individual fetch failures no longer block install. Failed assets logged as warnings. Next fetch auto-retries. Bumped `CACHE_VERSION` from `er-hub-v1` to `er-hub-v2`.
 
 **Rationale:** The CSS custom property approach isolates nav layout logic from page-specific body padding, making it resilient to future pages with custom layouts. The hard-stop `return;` fix is a critical patient-safety change — it closes the risk of contraindicated orders being printable. The regression guard ensures this class of bug cannot reappear without test failure. Test coverage on shared modules provides a safety net for future refactoring. The `pageTitle` param eliminates redundant nav titles on pages where auto-detect duplicates content. The SW precache robustness ensures offline access works reliably even with transient network issues during cache setup.
+
+---
+
+### ADR-20: NSTEMI Clinical Dosing Safety & Performance Optimization (2026-07-05 Audit)
+
+**Context:** Following a comprehensive codebase audit, several clinical safety and code maintainability issues were addressed: (1) clinicians could select/print anticoagulants without providing renal data (Cr/age/sex), creating a dosing risk; (2) two separate creatinine inputs existed (#creatinine and #grace-creatinine) with a fragile event-based two-way sync; (3) rendering the GRACE breakdown table and print header/sticker box on every keystroke via innerHTML was highly inefficient; (4) duplicate alias functions and unused code existed in the worksheet logic; and (5) the navigation bar was constructed using unsanitized innerHTML values.
+
+**Decision:**
+
+1. **Phase 1 — Clinical Safety Gating:**
+   - Greyed out/disabled the anticoagulation selection panel and displayed a red warning banner (*"กรุณากรอก Cr + อายุ + เพศ เพื่อคำนวณ eGFR"*) when eGFR is null.
+   - Disabled all order generation/print action buttons until a valid eGFR is computed.
+   - Removed the silent `egfrForCalc = 90` fallback to prevent downstream errors.
+   - Wired the print date/time generation logic to stamp the current date and time on active order generation using `ED_PRINT_BOOTSTRAP.getDateTimeHTML()`.
+
+2. **Phase 2 — Dead Code Elimination:**
+   - Removed duplicate event listeners, unused CSS selectors (`.killip-group`, `.anticoag-banner`, `.section-header`), and unused CSS variables.
+   - Added support for direct `shortTitle` navigation bar configurations to bypass fragile title parser regex lookups.
+
+3. **Phase 3 — Performance & Modularization:**
+   - Synchronized creatinine inputs by maintaining separate inputs for patient info Creatinine (`#creatinine`) and GRACE Creatinine (`#grace-creatinine`) to support standalone calculations, but implementing a robust two-way input synchronization handler so they always match.
+   - Pre-rendered static table rows for the GRACE score breakdown on load and updated only the `textContent` of targeted cells in `calculateAndRender()` instead of wiping and replacing the innerHTML.
+   - Extracted all clinical lookup tables and equations into a new shared engine module: `shared/clinical-engine.js`.
+   - Refactored and decomposed the `calculateAndRender()` monolith into isolated calculation and rendering helper functions.
+   - Rewrote navigation bar generation using native browser DOM APIs instead of `innerHTML` strings to prevent potential XSS vectors.
+
+**Rationale:** Clinical safety is guaranteed by enforcing renal data entry before allowing high-alert anticoagulation choices. Performance is dramatically improved by replacing raw innerHTML string concatenation and parsing with targeted DOM element updates and static element caching. Extrapolating logic to the clinical engine prevents duplicate code and establishes a modular framework for future standing orders. Dom sanitization enforces strict security hygiene.
 
 ---
 

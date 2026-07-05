@@ -333,3 +333,25 @@
   1. `.patient-field .gender-radio` → `white-space: normal; display: flex; align-items: center; gap: 4px; overflow: hidden` (inside `@media (max-width: 600px)`).
   2. `.patient-fields > .patient-field:nth-child(4)` → `display: flex; flex-direction: column; align-items: flex-start; overflow: hidden; min-width: 0` (inside same breakpoint).
 - **Rationale:** `min-width: 0` allows the flex/grid child to shrink below intrinsic size; `flex-direction: column` stacks ชาย/หญิง vertically inside the narrow column.
+
+---
+
+### ADR-34: NSTEMI Clinical Dosing Safety & Performance Optimization (2026-07-05)
+
+- **Context:** Following a comprehensive codebase audit, several clinical safety and code maintainability issues were addressed: (1) clinicians could select/print anticoagulants without providing renal data (Cr/age/sex), creating a dosing risk; (2) two separate creatinine inputs existed (#creatinine and #grace-creatinine) which must sync with each other to support standalone GRACE calculations without loop vulnerabilities; (3) rendering the GRACE breakdown table and print header/sticker box on every keystroke via innerHTML was highly inefficient; (4) duplicate alias functions and unused code existed in the worksheet logic; and (5) the navigation bar was constructed using unsanitized innerHTML values.
+- **Decision:**
+  1. **Phase 1 — Clinical Safety Gating:**
+     - Greyed out/disabled the anticoagulation selection panel and displayed a red warning banner (*"กรุณากรอก Cr + อายุ + เพศ เพื่อคำนวณ eGFR"*) when eGFR is null.
+     - Disabled all order generation/print action buttons until a valid eGFR is computed.
+     - Removed the silent `egfrForCalc = 90` fallback to prevent downstream errors.
+     - Wired the print date/time generation logic to stamp the current date and time on active order generation using `ED_PRINT_BOOTSTRAP.getDateTimeHTML()`.
+  2. **Phase 2 — Dead Code Elimination:**
+     - Removed duplicate event listeners, unused CSS selectors (`.killip-group`, `.anticoag-banner`, `.section-header`), and unused CSS variables.
+     - Added support for direct `shortTitle` navigation bar configurations to bypass fragile title parser regex lookups.
+  3. **Phase 3 — Performance & Modularization:**
+     - Synchronized creatinine inputs by maintaining separate inputs for patient info Creatinine (`#creatinine`) and GRACE Creatinine (`#grace-creatinine`) to support standalone calculations, but implementing a robust two-way input synchronization handler so they always match.
+     - Pre-rendered static table rows for the GRACE score breakdown on load and updated only the `textContent` of targeted cells in `calculateAndRender()` instead of wiping and replacing the innerHTML.
+     - Extracted all clinical lookup tables and equations into a new shared engine module: `shared/clinical-engine.js`.
+     - Refactored and decomposed the `calculateAndRender()` monolith into isolated calculation and rendering helper functions.
+     - Rewrote navigation bar generation using native browser DOM APIs instead of `innerHTML` strings to prevent potential XSS vectors.
+- **Rationale:** Clinical safety is guaranteed by enforcing renal data entry before allowing high-alert anticoagulation choices. Performance is dramatically improved by replacing raw innerHTML string concatenation and parsing with targeted DOM element updates and static element caching. Extrapolating logic to the clinical engine prevents duplicate code and establishes a modular framework for future standing orders. Dom sanitization enforces strict security hygiene.

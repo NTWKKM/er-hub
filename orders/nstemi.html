@@ -5,19 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NSTEMI Standing Order — ED MNRH</title>
     <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="../shared/base.css">
     <link rel="stylesheet" href="../shared/print.css">
     <style>
         /* Specific NSTEMI style additions */
-        .patient-fields {
-            display: flex;
-            gap: 12px;
-            flex-wrap: nowrap;
-            align-items: flex-end;
-        }
         .patient-field {
             display: flex;
             flex-direction: column;
@@ -54,14 +46,7 @@
         .sub-vh  { background: #ffeaa7; }
         .sub-h1  { background: #fab1a0; }
 
-        .killip-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
-        .killip-group label {
-            display: flex; align-items: center; gap: 4px;
-            padding: 5px 10px;
-            border: 1px solid #ddd; border-radius: 4px;
-            cursor: pointer; transition: all 0.2s; font-size: 14px;
-        }
-        .killip-group label:hover { background: #fff5f5; border-color: #c0392b; }
+
 
         .killip-group-vertical {
             display: flex;
@@ -123,15 +108,7 @@
         .risk-high      { background: #e67e22; color: #fff; }
         .risk-non-high  { background: #27ae60; color: #fff; }
 
-        .anticoag-banner {
-            padding: 10px 16px;
-            background: #d5f4e6;
-            border-radius: 8px;
-            border-left: 4px solid #27ae60;
-            font-weight: bold;
-            font-size: 14px;
-            margin-top: 8px;
-        }
+
 
 
         /* ── Anticoag option states ── */
@@ -329,6 +306,17 @@
                 margin-top: auto;
             }
         }
+        /* eGFR Dosing Gating Styles */
+        .ac-panel-disabled {
+            opacity: 0.45;
+            pointer-events: none;
+            user-select: none;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="theme-cardiac">
@@ -421,8 +409,7 @@
                     </div>
                     <div class="inline-input-group grace-inline-row">
                         <label for="grace-creatinine"><span class="grace-label-full">Creatinine (mg/dL):</span><span class="grace-label-short">Cr:</span></label>
-                        <input type="number" id="grace-creatinine" step="0.01" min="0.1" max="20"
-                               placeholder="0.95">
+                        <input type="number" id="grace-creatinine" step="0.01" min="0.1" max="15" placeholder="Cr" style="width: 70px;">
                     </div>
 
 
@@ -548,14 +535,63 @@
                 <strong style="font-size:11px;color:#555;">Score Breakdown</strong>
                 <table style="margin-top:4px;">
                     <tbody id="grace-breakdown-body">
-                        <tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>
+                        <tr id="grace-row-age" style="display: none;">
+                            <td>Age</td>
+                            <td id="grace-val-age" style="color:#888;">--</td>
+                            <td id="grace-pts-age" class="pts-zero">+0</td>
+                        </tr>
+                        <tr id="grace-row-hr" style="display: none;">
+                            <td>Heart Rate</td>
+                            <td id="grace-val-hr" style="color:#888;">--</td>
+                            <td id="grace-pts-hr" class="pts-zero">+0</td>
+                        </tr>
+                        <tr id="grace-row-sbp" style="display: none;">
+                            <td>SBP</td>
+                            <td id="grace-val-sbp" style="color:#888;">--</td>
+                            <td id="grace-pts-sbp" class="pts-zero">+0</td>
+                        </tr>
+                        <tr id="grace-row-cr" style="display: none;">
+                            <td>Creatinine</td>
+                            <td id="grace-val-cr" style="color:#888;">--</td>
+                            <td id="grace-pts-cr" class="pts-zero">+0</td>
+                        </tr>
+                        <tr id="grace-row-killip" style="display: none;">
+                            <td>Killip</td>
+                            <td id="grace-val-killip" style="color:#888;">--</td>
+                            <td id="grace-pts-killip" class="pts-zero">+0</td>
+                        </tr>
+                        <tr id="grace-row-arrest" style="display: none;">
+                            <td>Cardiac arrest</td>
+                            <td id="grace-val-arrest" style="color:#888;">--</td>
+                            <td id="grace-pts-arrest" class="pts-zero">+0</td>
+                        </tr>
+                        <tr id="grace-row-st" style="display: none;">
+                            <td>ST deviation</td>
+                            <td id="grace-val-st" style="color:#888;">--</td>
+                            <td id="grace-pts-st" class="pts-zero">+0</td>
+                        </tr>
+                        <tr id="grace-row-markers" style="display: none;">
+                            <td>Elevated markers</td>
+                            <td id="grace-val-markers" style="color:#888;">--</td>
+                            <td id="grace-pts-markers" class="pts-zero">+0</td>
+                        </tr>
+                        <tr id="grace-row-total" class="total-row" style="display: none;">
+                            <td colspan="2"><strong>Total</strong></td>
+                            <td id="grace-pts-total" class="pts-pos"><strong>--</strong></td>
+                        </tr>
+                        <tr id="grace-row-placeholder">
+                            <td colspan="3" style="color:#bbb; text-align: center;">กรอก HR, SBP, Cr เพื่อดู breakdown</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
 
             <!-- Right: Anticoag Selection + Timing -->
             <div style="flex: 1 1 320px; min-width: 280px; display: flex; flex-direction: column; gap: 12px;">
-                <div style="background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px;">
+                <div id="ac-gating-warning" style="display: none; background: #fadbd8; border: 1px solid #c0392b; border-radius: 4px; padding: 8px; color: #c0392b; font-weight: bold; font-size: 11px; text-align: center;">
+                    กรุณากรอก Cr + อายุ + เพศ เพื่อคำนวณ eGFR
+                </div>
+                <div id="anticoag-panel" style="background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; position: relative;">
                     <strong style="font-size:11px;color:#555;display:block;margin-bottom:8px;">💊 Anticoagulant Selection</strong>
                     <div style="font-size:12px; display: flex; flex-direction: column; gap: 8px;">
                         <div>
@@ -748,7 +784,15 @@
                 </div>
             </div><!-- end .order-grid-5col -->
 
-            <div id="print-sticker-container"></div>
+            <div id="print-sticker-container">
+                <div class="sticker-box-container">
+                    <div class="sticker-area">
+                        <strong>ติดสติ๊กเกอร์ผู้ป่วย</strong>
+                        <small>(Patient Sticker)</small>
+                        <span id="sticker-hn-text" style="font-weight: bold; font-size: 11px; margin-top: 4px;"></span>
+                    </div>
+                </div>
+            </div>
         </div><!-- end #print-area -->
 
         <button id="print-btn" class="btn btn-print">
@@ -759,6 +803,7 @@
 </div><!-- end .container -->
 
 <script src="../shared/components.js"></script>
+<script src="../shared/clinical-engine.js"></script>
 <script src="../shared/anticoag-engine.js"></script>
 <script src="../shared/print-bootstrap.js"></script>
 <script src="../shared/blank-print-engine.js"></script>
@@ -768,6 +813,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const FONDA_MIN_EGFR = 30;
     const ENOX_MIN_EGFR  = 15;
     const $ = id => document.getElementById(id);
+
+    // Static DOM Injections on Load
+    ED_COMPONENTS.injectPrintHeader('print-header-container');
+    ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
 
     // Real-time eGFR → update Anticoag hints (Task C)
     function getSelectedAnticoagPrintHTML() {
@@ -953,10 +1002,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    $('weight').addEventListener('input', updateAcHints);
-    $('age').addEventListener('input', updateAcHints);
-    document.querySelectorAll('input[name="sex"]').forEach(r => r.addEventListener('change', updateAcHints));
-    $('creatinine').addEventListener('input', updateAcHints);
+
 
     ED_BLANK_PRINT.register([
         { id: 'p-hn', value: '............' },
@@ -1007,98 +1053,35 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
     ]);
 
-    function lookupPts(val, table) {
-        for (const [threshold, pts] of table) {
-            if (val < threshold) return pts;
-        }
-        return table[table.length - 1][1];
-    }
-
-    const AGE_TBL = [
-        [30, 0], [40, 8], [50, 25], [60, 41],
-        [70, 58], [80, 75], [90, 91], [Infinity, 100]
-    ];
-    const HR_TBL = [
-        [50, 0], [70, 3], [90, 9], [110, 15],
-        [150, 24], [200, 38], [Infinity, 46]
-    ];
-    const SBP_TBL = [
-        [80, 58], [100, 53], [120, 43], [140, 34],
-        [160, 24], [200, 10], [Infinity, 0]
-    ];
-    const CR_TBL = [
-        [0.4, 1], [0.8, 4], [1.2, 7], [1.6, 10],
-        [2.0, 13], [4.0, 21], [Infinity, 28]
-    ];
-    const KILLIP_PTS = { '1': 0, '2': 20, '3': 39, '4': 59 };
-
-    // CKD-EPI 2021 Creatinine equation (race-free)
-    function calcEGFR_CKD_EPI_2021(creatinine, age, sex) {
-        const kappa = (sex === 'female') ? 0.7 : 0.9;
-        const alpha = (sex === 'female') ? -0.241 : -0.302;
-        const minCrK = Math.min(creatinine / kappa, 1);
-        const maxCrK = Math.max(creatinine / kappa, 1);
-        const egfr = 142 * Math.pow(minCrK, alpha) * Math.pow(maxCrK, -1.200) * 
-                     Math.pow(0.9938, age);
-        return (sex === 'female') ? egfr * 1.012 : egfr;
-    }
-
     const patientCr = $('creatinine');
     const graceCr = $('grace-creatinine');
-
-    // Two-way sync between patientCr and graceCr
-    patientCr.addEventListener('input', () => {
-        if (document.activeElement === patientCr) {
-            graceCr.value = patientCr.value;
-        }
-    });
-    graceCr.addEventListener('input', () => {
-        if (document.activeElement === graceCr) {
-            patientCr.value = graceCr.value;
-            patientCr.dispatchEvent(new Event('input'));
-        }
-    });
-
-    // Live eGFR display
     const ageInput = $('age');
     const sexRadios = document.querySelectorAll('input[name="sex"]');
+
+    // Live eGFR display
     function updateLiveEGFR() {
         const cr = parseFloat(patientCr.value);
         const age = parseFloat(ageInput.value);
         const sex = document.querySelector('input[name="sex"]:checked')?.value;
         if (!isNaN(cr) && !isNaN(age) && sex) {
-            const egfr = calcEGFR_CKD_EPI_2021(cr, age, sex);
+            const egfr = CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021(cr, age, sex);
             $('screen-egfr').textContent = egfr.toFixed(2);
         } else {
             $('screen-egfr').textContent = '--';
         }
     }
-    patientCr.addEventListener('input', updateLiveEGFR);
+    patientCr.addEventListener('input', () => {
+        graceCr.value = patientCr.value;
+        updateLiveEGFR();
+    });
+    graceCr.addEventListener('input', () => {
+        patientCr.value = graceCr.value;
+        updateLiveEGFR();
+    });
     ageInput.addEventListener('input', updateLiveEGFR);
     sexRadios.forEach(r => r.addEventListener('change', updateLiveEGFR));
 
-    function calcGRACE({ age, hr, sbp, cr, cardArr, stDev, elevMk, killip }) {
-        const ageP = lookupPts(age, AGE_TBL);
-        const hrP  = lookupPts(hr,  HR_TBL);
-        const sbpP = lookupPts(sbp, SBP_TBL);
-        const crP  = lookupPts(cr,  CR_TBL);
-        const kilP = KILLIP_PTS[String(killip)] || 0;
-        const arrP = cardArr ? 39 : 0;
-        const stP  = stDev   ? 28 : 0;
-        const mkP  = elevMk  ? 14 : 0;
-        const score = ageP + hrP + sbpP + crP + kilP + arrP + stP + mkP;
-        return { score, bd: { ageP, hrP, sbpP, crP, kilP, arrP, stP, mkP } };
-    }
 
-    function riskLevel(graceScore, anyVH, anyH1) {
-        if (anyVH) return 'very-high';
-        if (graceScore > 140 || anyH1) return 'high';
-        return 'non-high';
-    }
-
-    function buildAnticoagPrintHTML() {
-        return getSelectedAnticoagPrintHTML();
-    }
 
     document.querySelectorAll('input[name="anticoag-choice"]').forEach(r => {
         r.addEventListener('change', updateAnticoagOutput);
@@ -1109,59 +1092,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ══ REAL-TIME CALCULATION ══
     // Extracted from submit handler → called on every input change
-    function calculateAndRender() {
-        const hn      = $('hn').value.trim() || '...';
-        const weight  = parseFloat($('weight').value);
-        const age     = parseFloat($('age').value);
-        const cr      = parseFloat($('creatinine').value);
-        const hr      = parseFloat($('hr').value);
-        const sbp     = parseFloat($('sbp').value);
-        const sex     = document.querySelector('input[name="sex"]:checked')?.value;
-        const asaAlrg = document.querySelector('input[name="asa-allergy"]:checked')?.value === 'yes';
+    // Decomposed calculateAndRender helper methods
+    function calcEGFR() {
+        const cr = parseFloat($('creatinine').value);
+        const age = parseFloat($('age').value);
+        const sex = document.querySelector('input[name="sex"]:checked')?.value;
+        const ageOK = !isNaN(age) && age >= 18;
+        return (!isNaN(cr) && ageOK && sex) ? CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021(cr, age, sex) : null;
+    }
+
+    function calcGRACEScore(cr) {
+        const age = parseFloat($('age').value);
+        const hr = parseFloat($('hr').value);
+        const sbp = parseFloat($('sbp').value);
+        const killip = document.querySelector('input[name="killip"]:checked')?.value || '1';
         const cardArr = $('cardiac-arrest').checked;
-        const stDev   = $('st-deviation').checked;
-        const elevMk  = $('elevated-markers').checked;
-        const killip  = document.querySelector('input[name="killip"]:checked')?.value || '1';
+        const stDev = $('st-deviation').checked;
+        const elevMk = $('elevated-markers').checked;
+        
+        const ageOK = !isNaN(age) && age >= 18;
+        const hasGraceVars = ageOK && !isNaN(hr) && !isNaN(sbp) && !isNaN(cr);
+        
+        if (hasGraceVars) {
+            return CLINICAL_ENGINE.calcGRACE({ age, hr, sbp, cr, cardArr, stDev, elevMk, killip });
+        }
+        return null;
+    }
+
+    function determineRiskLevel(graceScore) {
         const vhFlags = [...document.querySelectorAll('.vh-flag')].map(c => c.checked);
         const h1Flags = [...document.querySelectorAll('.h1-flag')].map(c => c.checked);
-        const fromRpc = $('troponin-from-rphch').checked;
-
-        const weightOK = !isNaN(weight) && weight >= 30 && weight <= 200;
-        const ageOK    = !isNaN(age) && age >= 18;
-
-        // eGFR: derived from CKD-EPI 2021 (requires Cr + age + sex)
-        const egfr = (!isNaN(cr) && ageOK && sex)
-            ? calcEGFR_CKD_EPI_2021(cr, age, sex)
-            : null;
-        const egfrForCalc = egfr !== null ? Math.round(egfr) : 90;
-
-        // Troponin values (ng/L)
-        const tropValH0 = parseFloat($('troponin-h0').value);
-        const tropValH1 = parseFloat($('troponin-h1').value);
-        const tropValH3 = parseFloat($('troponin-h3').value);
-
-        let risingH1 = null, risingH3 = null;
-        if (!isNaN(tropValH0) && tropValH0 > 0) {
-            if (!isNaN(tropValH1)) risingH1 = ((tropValH1 - tropValH0) / tropValH0 * 100).toFixed(1);
-            if (!isNaN(tropValH3)) risingH3 = ((tropValH3 - tropValH0) / tropValH0 * 100).toFixed(1);
-        }
-
-        const hasGraceVars = ageOK && !isNaN(hr) && !isNaN(sbp) && !isNaN(cr);
-
-        let graceScore = null, bd = null;
-        if (hasGraceVars) {
-            const g    = calcGRACE({ age, hr, sbp, cr, cardArr, stDev, elevMk, killip });
-            graceScore = g.score;
-            bd         = g.bd;
-        }
-
         const anyVH = vhFlags.some(f => f);
         const anyH1 = h1Flags.some(f => f);
-        const risk  = graceScore !== null
-            ? riskLevel(graceScore, anyVH, anyH1)
+        
+        return graceScore !== null
+            ? CLINICAL_ENGINE.riskLevel(graceScore, anyVH, anyH1)
             : (anyVH ? 'very-high' : anyH1 ? 'high' : 'non-high');
+    }
 
-        /* ══ UPDATE SCREEN BANNER ══ */
+    function updateScreenBadges(graceScore, risk, bd, age, hr, sbp, cr, killip, cardArr, stDev, elevMk) {
         $('screen-grace').textContent = graceScore !== null ? graceScore : '--';
 
         const rb = $('screen-risk-badge');
@@ -1178,46 +1147,57 @@ document.addEventListener('DOMContentLoaded', () => {
             rl.textContent = graceScore !== null ? '🟢 NON-HIGH RISK — selective coro' : '--';
         }
 
+        const rows = [
+            ['age', age + ' ปี', bd ? bd.ageP : 0],
+            ['hr', hr + ' bpm', bd ? bd.hrP : 0],
+            ['sbp', sbp + ' mmHg', bd ? bd.sbpP : 0],
+            ['cr', cr + ' mg/dL', bd ? bd.crP : 0],
+            ['killip', 'Class ' + killip, bd ? bd.kilP : 0],
+            ['arrest', cardArr ? 'Yes' : 'No', bd ? bd.arrP : 0],
+            ['st', stDev ? 'Yes' : 'No', bd ? bd.stP : 0],
+            ['markers', elevMk ? 'Yes' : 'No', bd ? bd.mkP : 0]
+        ];
+
+        const placeholder = $('grace-row-placeholder');
+        const totalRow = $('grace-row-total');
+
         if (bd) {
-            const rows = [
-                ['Age',             age + ' ปี',       bd.ageP],
-                ['Heart Rate',      hr  + ' bpm',       bd.hrP],
-                ['SBP',             sbp + ' mmHg',      bd.sbpP],
-                ['Creatinine',      cr  + ' mg/dL',     bd.crP],
-                ['Killip',          'Class ' + killip,  bd.kilP],
-                ['Cardiac arrest',  cardArr ? 'Yes':'No', bd.arrP],
-                ['ST deviation',    stDev   ? 'Yes':'No', bd.stP],
-                ['Elevated markers',elevMk  ? 'Yes':'No', bd.mkP],
-            ];
-            $('grace-breakdown-body').innerHTML = rows.map(([lbl, val, pts]) =>
-                `<tr>
-                    <td>${lbl}</td>
-                    <td style="color:#888;">${val}</td>
-                    <td class="${pts > 0 ? 'pts-pos' : 'pts-zero'}">+${pts}</td>
-                </tr>`
-            ).join('') +
-            `<tr class="total-row">
-                <td colspan="2"><strong>Total</strong></td>
-                <td class="pts-pos"><strong>${graceScore}</strong></td>
-            </tr>`;
+            if (placeholder) placeholder.style.display = 'none';
+            if (totalRow) {
+                totalRow.style.display = 'table-row';
+                $('grace-pts-total').innerHTML = `<strong>${graceScore}</strong>`;
+            }
+            rows.forEach(([id, val, pts]) => {
+                const rowEl = $(`grace-row-${id}`);
+                if (rowEl) rowEl.style.display = 'table-row';
+                const valEl = $(`grace-val-${id}`);
+                if (valEl) valEl.textContent = val;
+                const ptsEl = $(`grace-pts-${id}`);
+                if (ptsEl) {
+                    ptsEl.textContent = '+' + pts;
+                    ptsEl.className = pts > 0 ? 'pts-pos' : 'pts-zero';
+                }
+            });
         } else {
-            $('grace-breakdown-body').innerHTML =
-                '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
+            if (placeholder) placeholder.style.display = 'table-row';
+            if (totalRow) totalRow.style.display = 'none';
+            rows.forEach(([id]) => {
+                const rowEl = $(`grace-row-${id}`);
+                if (rowEl) rowEl.style.display = 'none';
+            });
+        }
+    }
+
+    function updatePrintArea(hn, weight, egfr, age, hr, sbp, cr, killip, graceScore, risk, cardArr, stDev, elevMk, tropValH0, tropValH1, tropValH3, risingH1, risingH3, fromRpc, asaAlrg, now) {
+        // Update patient sticker box HN text only
+        const stickerHn = $('sticker-hn-text');
+        if (stickerHn) {
+            stickerHn.textContent = 'HN: ' + (hn !== '...' ? hn : '....................');
         }
 
-        // No auto-select: user chooses; CIs are enforced by updateAcHints() / _applyAcState()
-        // Enox frequency is still auto-set when eGFR is available
-        if (egfr !== null) {
-            const freqVal = (egfrForCalc < FONDA_MIN_EGFR) ? 'q24h' : 'q12h';
-            const freqRad = document.querySelector(`input[name="enox-freq"][value="${freqVal}"]`);
-            if (freqRad && !freqRad.checked) freqRad.checked = true;
-        }
-
-        updateAcHints();
-
-        /* ══ UPDATE PRINT AREA ══ */
-        ED_COMPONENTS.injectPrintHeader('print-header-container');
-        ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
+        const weightOK = !isNaN(weight) && weight >= 30 && weight <= 200;
+        const ageOK = !isNaN(age) && age >= 18;
+        const hasGraceVars = ageOK && !isNaN(hr) && !isNaN(sbp) && !isNaN(cr);
 
         $('p-hn').textContent     = hn !== '...' ? hn : '--';
         $('p-weight').textContent = weightOK ? weight.toFixed(1) : '--';
@@ -1261,10 +1241,9 @@ document.addEventListener('DOMContentLoaded', () => {
             ? '☐ hs-troponin I Hr.0 and 3<br><small style="color:#888;">(เจาะจาก รพช. แล้ว — ไม่ต้องซ้ำ)</small>'
             : '☐ hs-troponin I Hr.0 and 3';
 
-        const now = new Date();
-        const dtStr = '....................<br>....................';
-        $('p-dt-1').innerHTML = dtStr;
-        $('p-dt-2').innerHTML = dtStr;
+        const dtHtml = ED_PRINT_BOOTSTRAP.getDateTimeHTML(true, now);
+        $('p-dt-1').innerHTML = dtHtml;
+        $('p-dt-2').innerHTML = dtHtml;
 
         $('p-asa-stat').innerHTML = asaAlrg
             ? '<strong style="color:red;">⚠️ ASA ALLERGY — ห้ามให้ ASA</strong>'
@@ -1275,20 +1254,106 @@ document.addEventListener('DOMContentLoaded', () => {
             : '☑ ASA (81) 1×1 pc';
     }
 
+    function calculateAndRender() {
+        const hn      = $('hn').value.trim() || '...';
+        const weight  = parseFloat($('weight').value);
+        const age     = parseFloat($('age').value);
+        const cr      = parseFloat($('creatinine').value);
+        const hr      = parseFloat($('hr').value);
+        const sbp     = parseFloat($('sbp').value);
+        const sex     = document.querySelector('input[name="sex"]:checked')?.value;
+        const asaAlrg = document.querySelector('input[name="asa-allergy"]:checked')?.value === 'yes';
+        const cardArr = $('cardiac-arrest').checked;
+        const stDev   = $('st-deviation').checked;
+        const elevMk  = $('elevated-markers').checked;
+        const killip  = document.querySelector('input[name="killip"]:checked')?.value || '1';
+        const fromRpc = $('troponin-from-rphch').checked;
+
+
+
+        // eGFR calculation
+        const egfr = calcEGFR();
+        const egfrForCalc = egfr !== null ? Math.round(egfr) : null;
+
+        // eGFR Gating Logic
+        const hasEGFR = egfr !== null;
+        const acPanel = $('anticoag-panel');
+        const acGatingWarning = $('ac-gating-warning');
+        const createOrderBtn = $('create-order-btn');
+        const printBtn = $('print-btn');
+
+        if (acPanel && acGatingWarning) {
+            if (hasEGFR) {
+                acPanel.classList.remove('ac-panel-disabled');
+                acGatingWarning.style.display = 'none';
+                if (createOrderBtn) createOrderBtn.disabled = false;
+                if (printBtn) printBtn.disabled = false;
+            } else {
+                acPanel.classList.add('ac-panel-disabled');
+                acGatingWarning.style.display = 'block';
+                if (createOrderBtn) createOrderBtn.disabled = true;
+                if (printBtn) printBtn.disabled = true;
+
+                // Clear any checked anticoag option when disabled
+                const checkedRadio = document.querySelector('input[name="anticoag-choice"]:checked');
+                if (checkedRadio) {
+                    checkedRadio.checked = false;
+                    document.querySelectorAll('.ac-radio-label').forEach(label => {
+                        label.classList.remove('ac-override-pending');
+                        const ovrMsg = label.querySelector('[id$="-override-msg"]');
+                        if (ovrMsg) ovrMsg.style.display = 'none';
+                    });
+                    updateAnticoagOutput();
+                }
+            }
+        }
+
+        // Troponin values (ng/L)
+        const tropValH0 = parseFloat($('troponin-h0').value);
+        const tropValH1 = parseFloat($('troponin-h1').value);
+        const tropValH3 = parseFloat($('troponin-h3').value);
+
+        let risingH1 = null, risingH3 = null;
+        if (!isNaN(tropValH0) && tropValH0 > 0) {
+            if (!isNaN(tropValH1)) risingH1 = ((tropValH1 - tropValH0) / tropValH0 * 100).toFixed(1);
+            if (!isNaN(tropValH3)) risingH3 = ((tropValH3 - tropValH0) / tropValH0 * 100).toFixed(1);
+        }
+
+        // GRACE scoring
+        const graceResult = calcGRACEScore(cr);
+        const graceScore = graceResult ? graceResult.score : null;
+        const bd = graceResult ? graceResult.bd : null;
+
+        // Risk level determination
+        const risk = determineRiskLevel(graceScore);
+
+        // Update UI
+        updateScreenBadges(graceScore, risk, bd, age, hr, sbp, cr, killip, cardArr, stDev, elevMk);
+
+        // Enox frequency is still auto-set when eGFR is available
+        if (egfr !== null) {
+            const freqVal = (egfrForCalc < FONDA_MIN_EGFR) ? 'q24h' : 'q12h';
+            const freqRad = document.querySelector(`input[name="enox-freq"][value="${freqVal}"]`);
+            if (freqRad && !freqRad.checked) freqRad.checked = true;
+        }
+
+        updateAcHints();
+
+        const now = new Date();
+        updatePrintArea(hn, weight, egfr, age, hr, sbp, cr, killip, graceScore, risk, cardArr, stDev, elevMk, tropValH0, tropValH1, tropValH3, risingH1, risingH3, fromRpc, asaAlrg, now);
+    }
+
     // Wire ALL inputs to calculateAndRender (real-time)
     const _allInputs = [
-        'hn', 'weight', 'age', 'creatinine', 'hr', 'sbp',
+        'hn', 'weight', 'age', 'creatinine', 'grace-creatinine', 'hr', 'sbp',
         'troponin-h0', 'troponin-h1', 'troponin-h3'
     ];
-    _allInputs.forEach(id => $$(id)?.addEventListener('input', calculateAndRender));
+    _allInputs.forEach(id => $(id)?.addEventListener('input', calculateAndRender));
     document.querySelectorAll(
         'input[name="sex"], input[name="asa-allergy"], input[name="killip"], ' +
         'input[name="anticoag-choice"], input[name="enox-freq"], ' +
         '.vh-flag, .h1-flag, #cardiac-arrest, #st-deviation, #elevated-markers, #troponin-from-rphch'
     ).forEach(el => el.addEventListener('change', calculateAndRender));
-
-    // Helper: safe getElementById (returns null gracefully)
-    function $$(id) { return document.getElementById(id); }
 
     // Submit button now just prints
     document.getElementById('nstemi-form').addEventListener('submit', e => {
@@ -1334,9 +1399,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('nstemi-form');
         if (form) form.reset();
         ED_VALIDATE.clearAll();
-        // Reset GRACE breakdown hint
-        $('grace-breakdown-body').innerHTML =
-            '<tr><td colspan="3" style="color:#bbb;">กรอก HR, SBP, Cr เพื่อดู breakdown</td></tr>';
+        
+        // Reset GRACE breakdown view
+        const placeholder = $('grace-row-placeholder');
+        if (placeholder) placeholder.style.display = 'table-row';
+        const totalRow = $('grace-row-total');
+        if (totalRow) totalRow.style.display = 'none';
+        const rows = ['age', 'hr', 'sbp', 'cr', 'killip', 'arrest', 'st', 'markers'];
+        rows.forEach(id => {
+            const rowEl = $(`grace-row-${id}`);
+            if (rowEl) rowEl.style.display = 'none';
+        });
+
+        
         updateLiveEGFR();
         // Re-apply blank template so print preview resets to a clean blank order
         $('print-blank-btn').click();
@@ -1346,8 +1421,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('print-blank-btn').addEventListener('click', () => {
-        ED_COMPONENTS.injectPrintHeader('print-header-container');
-        ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
+        // Print-header and sticker-box are already injected, apply the blank template
         ED_BLANK_PRINT.apply();
     });
 

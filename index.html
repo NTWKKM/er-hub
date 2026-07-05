@@ -7,9 +7,7 @@
     <link rel="icon" type="image/png" href="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f4f2ec">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="shared/base.css">
     
     <script>
@@ -33,14 +31,7 @@
             --rule: #d8d4c8;
             --signal-orange: #d84315;
             
-            /* Muted categories (text only) */
-            --cat-neuro: #b8873a;     /* Ochre */
-            --cat-cardiac: #3a5566;   /* Slate */
-            --cat-pulmonary: #3a5566; /* Slate */
-            --cat-anticoag: #5a6b3b;  /* Olive */
-            --cat-tox: #8a3a2a;       /* Brick */
-            --cat-procedural: #5a6b3b;/* Olive */
-            --cat-tools: #4a4a4a;     /* Graphite */
+
 
             --font-ui: "Inter Tight", "Neue Haas Grotesk", sans-serif;
         }
@@ -415,21 +406,29 @@
 
 <script src="shared/components.js"></script>
 <script>
-ED_COMPONENTS.injectNavBar('index.html', 'docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png', '');
-// Custom script override post-injection to fit the Braun header layout
-const nav = document.querySelector('.top-nav');
-if (nav) {
-    nav.innerHTML = `
-        <div class="nav-left">
-            <img src="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" style="height: 38px; width: auto; display: block;">
-        </div>
-        <div class="nav-center">MNRH-ED HUB</div>
-        <div class="nav-right">v13 · Updated 26-07-04</div>
-    `;
-}
+// Create navigation bar directly to fit the Braun header layout without redundant helper injection
+const nav = document.createElement('nav');
+nav.className = 'top-nav';
+nav.setAttribute('role', 'navigation');
+nav.innerHTML = `
+    <div class="nav-left">
+        <img src="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" style="height: 38px; width: auto; display: block;">
+    </div>
+    <div class="nav-center">MNRH-ED HUB</div>
+    <div class="nav-right">v13 · Updated 26-07-04</div>
+`;
+document.body.insertBefore(nav, document.body.firstChild);
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
-    .then(function(reg) { reg.update(); })
+    .then(function(reg) {
+      // Throttle updates: check at most once per hour to minimize network requests
+      const now = Date.now();
+      const lastCheck = parseInt(localStorage.getItem('sw-last-update-check') || '0', 10);
+      if (now - lastCheck > 60 * 60 * 1000) {
+        reg.update();
+        localStorage.setItem('sw-last-update-check', now.toString());
+      }
+    })
     .catch(function(e) { console.warn('SW registration failed:', e); });
 }
 </script>

@@ -133,7 +133,7 @@ const ED_COMPONENTS = {
         return { titleFull, titleShort };
     },
 
-    injectNavBar: function(homeHref, logoSrc, pageTitle) {
+    injectNavBar: function(homeHref, logoSrc, pageTitle, shortTitle) {
         const href = homeHref || '../index.html';
         // pageTitle can be: undefined (auto-detect from document.title), empty string (suppress), or explicit string
         let title;
@@ -143,32 +143,51 @@ const ED_COMPONENTS = {
             title = pageTitle;
         }
         
-        const parsed = this.parseTitle(title);
-        const titleFull = parsed.titleFull;
-        const titleShort = parsed.titleShort;
+        const titleFull = title;
+        const titleShort = shortTitle || this.parseTitle(title).titleShort;
         
         const nav = document.createElement('nav');
         nav.className = 'top-nav';
         nav.setAttribute('role', 'navigation');
-        const logoHTML = logoSrc ? `<img src="${logoSrc}" class="nav-logo" alt="Maharat Nakhon Ratchasima Hospital">` : '';
-        
-        let titleHTML = '';
+
+        if (logoSrc) {
+            const img = document.createElement('img');
+            img.src = logoSrc;
+            img.className = 'nav-logo';
+            img.alt = 'Maharat Nakhon Ratchasima Hospital';
+            nav.appendChild(img);
+        }
+
+        const homeLink = document.createElement('a');
+        homeLink.href = href;
+        homeLink.className = 'nav-home';
+        homeLink.setAttribute('aria-label', 'Home');
+        homeLink.textContent = 'Home';
+        nav.appendChild(homeLink);
+
         if (title) {
             if (titleFull !== titleShort) {
-                titleHTML = `
-                    <span class="nav-title nav-title-full" aria-label="${titleFull}">${titleFull}</span>
-                    <span class="nav-title nav-title-short" aria-label="${titleShort}">${titleShort}</span>
-                `;
+                const fullSpan = document.createElement('span');
+                fullSpan.className = 'nav-title nav-title-full';
+                fullSpan.setAttribute('aria-label', titleFull);
+                fullSpan.textContent = titleFull;
+
+                const shortSpan = document.createElement('span');
+                shortSpan.className = 'nav-title nav-title-short';
+                shortSpan.setAttribute('aria-label', titleShort);
+                shortSpan.textContent = titleShort;
+
+                nav.appendChild(fullSpan);
+                nav.appendChild(shortSpan);
             } else {
-                titleHTML = `<span class="nav-title" aria-label="${title}">${title}</span>`;
+                const titleSpan = document.createElement('span');
+                titleSpan.className = 'nav-title';
+                titleSpan.setAttribute('aria-label', title);
+                titleSpan.textContent = title;
+                nav.appendChild(titleSpan);
             }
         }
-        
-        nav.innerHTML = `
-            ${logoHTML}
-            <a href="${href}" class="nav-home" aria-label="Home">Home</a>
-            ${titleHTML}
-        `;
+
         document.body.insertBefore(nav, document.body.firstChild);
     },
 
