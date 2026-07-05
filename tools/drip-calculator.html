@@ -52,12 +52,15 @@
         }
 
         .guide-box {
-            background: #f4f6f7;
-            border-left: 4px solid #7f8c8d;
-            padding: 12px 16px;
-            border-radius: 4px;
+            background: #f8f9fa;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            padding: 20px;
             margin-top: 15px;
             font-size: 14px;
+        }
+        #drug-select, #prep-select {
+            max-width: 250px;
         }
 
         .unit-label-small {
@@ -154,8 +157,8 @@
                     <h3>1. เลือกยาและข้อมูลคนไข้</h3>
                     
                     <div class="inline-input-group">
-                        <label for="weight">น้ำหนัก (BW kg):</label>
-                        <input type="number" id="weight" step="0.1" min="30" max="200" required placeholder="เช่น 60.0">
+                        <label for="weight">น้ำหนัก (BW): <span id="weight-val" style="font-weight: bold; color: #27ae60;">50.0</span> kg</label>
+                        <input type="range" id="weight" min="30" max="250" step="0.1" value="50.0" style="width: 100%; cursor: pointer;">
                     </div>
 
                     <div class="inline-input-group">
@@ -222,10 +225,10 @@
                 <div class="rate-large"><span id="res-rate">--</span> mL/hr</div>
             </div>
 
-            <!-- Titration Guide -->
+            <!-- Recommend Guide -->
             <div id="guide-container" class="guide-box">
-                <strong>📝 คู่มือการปรับขนาดยา (Titration Guide):</strong>
-                <p id="guide-text" style="margin:6px 0 0 0;"></p>
+                <strong style="font-size:15px; color:#2c3e50; display:block; margin-bottom:6px;">📝 แนวทางการบริหารยา (Recommend Guide):</strong>
+                <p id="guide-text" style="margin:0; font-size:14px; font-weight:500; color:#2c3e50; line-height:1.5;"></p>
             </div>
 
             <!-- Safety Warnings -->
@@ -258,11 +261,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const esmololDualDisplay = $('esmolol-dual-display');
     const esmololAltValue = $('esmolol-alt-value');
 
-    // Restore weight from sessionStorage if available
+    // Restore weight from sessionStorage if available, defaulting to 50 kg
     const storedWeight = sessionStorage.getItem('er-hub-weight');
-    if (storedWeight) {
-        $('weight').value = storedWeight;
-    }
+    const initialWeight = storedWeight ? parseFloat(storedWeight) : 50;
+    $('weight').value = initialWeight;
+    $('weight-val').textContent = initialWeight.toFixed(1);
 
     // Derive concentration unit display dynamically using the drug's dose unit (B1)
     function getConcentrationUnit(doseUnit) {
@@ -272,11 +275,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${unit}/mL`;
     }
 
-    // Populate drug select dropdown
+    // Populate drug select dropdown (removed Thai names)
     EMERGENCY_DRUG_DATA.forEach(drug => {
         const opt = document.createElement('option');
         opt.value = drug.id;
-        opt.textContent = `${drug.name} (${drug.thaiName || ''})`;
+        opt.textContent = drug.name;
         drugSelect.appendChild(opt);
     });
 
@@ -455,6 +458,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Live calculation trigger for patient weight
     $('weight').addEventListener('input', () => {
+        const val = parseFloat($('weight').value);
+        if (!isNaN(val)) {
+            $('weight-val').textContent = val.toFixed(1);
+        }
         triggerCalculation();
     });
 
@@ -462,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const weightVal = parseFloat($('weight').value);
         const doseVal = parseFloat(doseInput.value);
 
-        if (isNaN(weightVal) || weightVal < 30 || weightVal > 200) {
+        if (isNaN(weightVal) || weightVal < 30 || weightVal > 250) {
             resultContainer.classList.add('hidden');
             return;
         }
@@ -557,6 +564,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         resultContainer.classList.remove('hidden');
     }
+
+    // Default drug: levophed (Norepinephrine)
+    drugSelect.value = 'norepinephrine';
+    drugSelect.dispatchEvent(new Event('change'));
 });
 </script>
 </body>

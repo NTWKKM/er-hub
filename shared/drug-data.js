@@ -12,7 +12,8 @@ const EMERGENCY_DRUG_DATA = [
         doseUnit: 'mcg/kg/min',
         isWeightBased: true,
         preparations: [
-            { label: '10 mg in NSS 100 mL (100 mcg/mL)', concentration: 100 }
+            { label: '10 mg in NSS 100 mL (100 mcg/mL)', concentration: 100 },
+            { label: '1 mg in NSS 100 mL (10 mcg/mL) [Refractory Anaphylaxis]', concentration: 10 }
         ],
         defaultPreparationIndex: 0,
         doseRange: { min: 0.05, max: 3.0, step: 0.01, default: 0.1 },
