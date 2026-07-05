@@ -162,9 +162,9 @@
                         </select>
                     </div>
 
-                    <div class="inline-input-group" style="align-items: flex-start;">
-                        <label style="margin-top: 4px;">Medication Formula:</label>
-                        <div id="prep-radio-container" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1;">
+                    <div class="inline-input-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+                        <label style="width: auto; text-align: left; padding-right: 0;">Medication Formula:</label>
+                        <div id="prep-radio-container" style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; width: 100%;">
                             <span style="color:#777; font-size:14px; padding: 4px 0; display: inline-block;">-- Please select a drug first --</span>
                         </div>
                     </div>
@@ -318,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
             wrapper.style.fontWeight = 'normal';
             wrapper.style.fontSize = '14px';
             wrapper.style.padding = '4px 0';
+            wrapper.style.whiteSpace = 'nowrap';
             
             const radio = document.createElement('input');
             radio.type = 'radio';
