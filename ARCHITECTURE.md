@@ -4,7 +4,7 @@
 
 | Component | Role | Dependencies |
 | --- | --- | --- |
-| `calc-engine.js` | Generic mathematical engine computing infusion drip rates (mL/hr) and loading doses (mL). | None |
+| `calc-engine.js` | Generic mathematical engine computing infusion drip rates (mL/hr). | None |
 | `clinical-engine.js` | Shared clinical logic engine containing lookup tables and formulas for GRACE score and eGFR (CKD-EPI 2021) calculations. | None |
 | `anticoag-engine.js` | Logic engine determining Heparin/LMWH doses and titration changes based on clinical indications. | None |
 | `drug-data.js` | Structured catalog of concentrations, dose limits, safety ceilings, and titration instructions for all 12 IV drugs. | None |
@@ -13,9 +13,9 @@
 | `blank-print-engine.js` | Declarative blank-print reset engine. Each order page registers a manifest of reset rules (`{ id, value }` for textContent, `{ id, html }` for innerHTML, `{ id, className }` for class override, `{ id, style }` for style props, `{ selector, checked }` for checkboxes). `apply()` executes all rules. Used by rtpa.html and nstemi.html only (ADR-17 — 5 other pages now open source PDFs instead). Fixes the ADR-10 bug class at the root — adding a new protocol page is now a manifest array, not a hand-written reset block. | None |
 | `form-validate.js` | Non-blocking form validation — replaces `alert()` calls across all order pages. `fail(inputId, msg)` highlights field + inline message. `warn(msg)` shows clinical warning banner. `range(inputId, min, max, msg)` and `min(inputId, minVal, msg)` for numeric validation. `clearAll()` resets all errors. Uses existing `.field-error` CSS + new `.inline-error-msg` and `.clinical-warning` classes. | `components.js` |
 | `orders/*.html` | Specialized clinical worksheets (rt-PA, STEMI, NSTEMI, PE, Antivenom, Heparin, Sedation). All 7 files use `ED_PRINT_BOOTSTRAP` for page lifecycle and `ED_VALIDATE` for non-blocking validation. All in-page title/guideline headers and dividers are deleted; forms start directly below the sticky top nav, relying on it as the single source of truth. 5 pages (stemi, pe, heparin, antivenom, sedation) use `ED_PRINT_BOOTSTRAP.openBlankPdf()` to open source PDFs from `docs/` in a new tab (ADR-17). 2 pages (rtpa, nstemi) keep `ED_BLANK_PRINT` for HTML blank-print (no source PDF). Page-specific JS reduced to: form submit handler (clinical logic) + event listeners for protocol-specific UI. `nstemi.html` also loads `shared/clinical-engine.js`. | `shared/base.css`, `shared/print.css`, `shared/calc-engine.js` or `shared/anticoag-engine.js`, `shared/components.js`, `shared/print-bootstrap.js`, `shared/form-validate.js`, `shared/clinical-engine.js` (rtpa/nstemi also load `shared/blank-print-engine.js`) |
-| `tools/drip-calculator.html` | IV infusion drip rate calculator for 12 high-alert drugs. Loads `components.js` and uses `injectNavBar()` with hospital logo for nav consistency. All in-page title/guideline headers are deleted. No print flow (no `print.css`). | `shared/base.css`, `shared/calc-engine.js`, `shared/drug-data.js`, `shared/components.js` |
-| `index.html` | Portal hub with custom Braun × Mid-Century Modern layout. Displays active and prototype clinical standing orders and calculators in a semantic vertical ordered list with 1px hairlines, tabular numerals, muted category styles, and signal orange indicators for time-critical actions. Implements header wordmark, hospital logo, and footer. Registers service worker for offline PWA support. Body uses custom typography and colors. | `shared/base.css`, `shared/components.js`, `service-worker.js`, `manifest.json` |
-| `service-worker.js` | PWA offline cache. Network-first for navigation, cache-first for assets. Caches all HTML/CSS/JS + 4 shared behavior modules + logo PNG + 5 source PDFs + Google Fonts (including `Inter Tight`). `CACHE_VERSION` bumped to `er-hub-v14`. Enables full offline access during ED wifi outages. | None |
+| `tools/drip-calculator.html` | IV infusion drip rate calculator for 12 high-alert drugs featuring interactive slider and number input coupling, real-time calculation, safety color categories, generalized dual units display, and sessionStorage weight persistence. | `shared/base.css`, `shared/calc-engine.js`, `shared/drug-data.js`, `shared/components.js` |
+| `index.html` | Portal hub with custom Braun × Mid-Century Modern layout. Displays active and prototype clinical standing orders and calculators in a semantic vertical ordered list with 1px hairlines, tabular numerals, muted category styles, and signal orange indicators for time-critical actions. Implements header wordmark, hospital logo, and footer. Registers service worker for offline PWA support with dynamic reload notification. Body uses custom typography and colors. | `shared/base.css`, `shared/components.js`, `service-worker.js`, `manifest.json` |
+| `service-worker.js` | PWA offline cache. Network-first for navigation, cache-first for assets. Caches all HTML/CSS/JS + 4 shared behavior modules + logo PNG + 5 source PDFs + Google Fonts (including `Inter Tight`). `CACHE_VERSION` bumped to `er-hub-v15`. Enables full offline access during ED wifi outages. | None |
 | `manifest.json` | PWA manifest. App name, theme color, logo icon reference. Enables installable app + offline. | `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png` |
 
 ---
@@ -406,3 +406,19 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 **Rationale:** `min-width: 0` on a flex/grid child is required to allow the child to shrink below its intrinsic content size (browser default is `min-width: auto`). `overflow: hidden` clips any residual text that exceeds the cell. Stacking vertically (`flex-direction: column`) is the correct layout for two mutually exclusive binary options (ชาย / หญิง) in a narrow column.
 
 **Tests:** No logic changes — CSS layout only. 139/139 pass.
+
+### ADR-34: Drip-Calculator Redesign, SW v15, and Audit Bug Fixes (2026-07-05)
+
+**Context:** The IV Infusion Drip Calculator (`tools/drip-calculator.html`) was revised to match stress-resistant, time-critical clinical needs. Additionally, security/UI bugs B1–B6 were identified and resolved, and the PWA update skipping model was integrated.
+
+**Decision:**
+1. **Coupled Controls & Dynamic calculations:** Replaced form submission with interactive `<input type="range">` slider and `<input type="number">` number inputs coupled together. Values are clamped to `doseRange` on input and update in real-time with 60ms debounce. Stepping buttons (`[-]` / `[+]`) enable fine touch adjustments.
+2. **Safety Color Zones:** Infusion pump rate readout color changes based on max ceiling proximity: `<60%` = green (`safe`), `60-85%` = amber (`warning`), `>85%` = red (`critical` with a visual warning badge).
+3. **Dynamic Concentration Units (B1) & Generalized Dual Units (B6):** Concentration labels derive the correct denominator dynamically (e.g. `mcg/mL`, `mg/mL`, `units/mL`). Drive dual-unit display from the `showDualUnits` flag coupled with `altUnit` + `altUnitFactor` in `drug-data.js`.
+4. **Nitroprusside Dose alignment (B3):** Lowered Sodium Nitroprusside's minimum and default range from 0.5 to 0.25 to sync with titration guide instructions.
+5. **Backward redirection (B4) & SW Update notifier (B5):** Broadened redirection to dynamic routing `?order=<slug>` $\rightarrow$ `orders/<slug>.html`. Implemented an update toast in `index.html` allowing skipWaiting command dispatch when service worker v15 updates.
+6. **Dead Code removal:** Removed unused `calcBolusVolume` function from `calc-engine.js` and removed unused category classes in `index.html`.
+
+**Rationale:** The slider coupling + safety zones ensure immediate legibility and rapid clinical interaction without page reloads. Skip-waiting toasts prevent serving stale guidelines cached in previous SW versions.
+
+**Tests:** Removed `calcBolusVolume` tests. Added Esmolol altUnit asserts in `tests/drug-data.test.js`. Created unit contract tests for coupled UI logic and weight storage in `tests/drip-calculator-ui.test.js`. All 145/145 tests pass.

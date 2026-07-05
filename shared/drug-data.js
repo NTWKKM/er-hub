@@ -111,7 +111,9 @@ const EMERGENCY_DRUG_DATA = [
             'หมายเหตุความปลอดภัย: อัตราการให้ยา 0.05 - 0.3 mg/kg/min เทียบเท่ากับ 50 - 300 mcg/kg/min ในมาตรฐานสากล',
             'ติดตาม BP และ HR ถี่ๆ ทุก 2-5 นาที ระวังภาวะความดันโลหิตต่ำและชีพจรช้าผิดปกติ'
         ],
-        showDualUnits: true // Custom flag to trigger dual display (mg/kg/min and mcg/kg/min) in UI
+        showDualUnits: true, // Custom flag to trigger dual display (mg/kg/min and mcg/kg/min) in UI
+        altUnit: 'mcg/kg/min',
+        altUnitFactor: 1000
     },
     {
         id: 'fentanyl',
@@ -211,7 +213,7 @@ const EMERGENCY_DRUG_DATA = [
             { label: '50 mg in D5W 250 mL (200 mcg/mL)', concentration: 200 }
         ],
         defaultPreparationIndex: 0,
-        doseRange: { min: 0.5, max: 10.0, step: 0.1, default: 0.5 },
+        doseRange: { min: 0.25, max: 10.0, step: 0.1, default: 0.25 },
         titrationGuide: 'เริ่มต้น 0.25 - 0.5 mcg/kg/min ปรับขึ้นทีละขั้นทุกๆ 3-5 นาที ตามเป้าหมายระดับความดันโลหิต',
         safetyWarnings: [
             'ขวดยาและสายให้ยาต้องได้รับการหุ้มกระดาษฟอยล์เพื่อป้องกันแสง เนื่องจากยาสลายตัวได้เมื่อโดนแสง',

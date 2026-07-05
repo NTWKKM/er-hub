@@ -13,12 +13,12 @@
     <script>
         // Backward Compatibility Redirection Logic
         // Redirects old URLs/bookmarks/QR codes that pointed to index.html with inputs or hash
-        if (
-            window.location.search.includes('order=rtpa') || 
-            window.location.hash.includes('rtpa') ||
-            window.location.search.includes('hn=') || 
-            window.location.search.includes('weight=')
-        ) {
+        const params = new URLSearchParams(window.location.search);
+        const orderSlug = params.get('order') || (window.location.hash.includes('rtpa') ? 'rtpa' : null);
+        if (orderSlug) {
+            window.location.replace('orders/' + orderSlug + '.html' + window.location.search + window.location.hash);
+        } else if (params.has('hn') || params.has('weight')) {
+            // Default to rtpa if only legacy inputs are present
             window.location.replace('orders/rtpa.html' + window.location.search + window.location.hash);
         }
     </script>
@@ -291,7 +291,7 @@
                 <a href="orders/rtpa.html" class="order-row">
                     <span class="order-num">01</span>
                     <div class="order-main-info">
-                        <span class="order-category cat-neuro">Neurology</span>
+                        <span class="order-category">Neurology</span>
                         <span class="order-title">rt-PA Stroke FAST TRACK</span>
                     </div>
                     <span class="order-status">ACTIVE</span>
@@ -304,7 +304,7 @@
                 <a href="orders/nstemi.html" class="order-row">
                     <span class="order-num">02</span>
                     <div class="order-main-info">
-                        <span class="order-category cat-cardiac">Cardiac</span>
+                        <span class="order-category">Cardiac</span>
                         <span class="order-title">NSTEMI Standing Order</span>
                     </div>
                     <span class="order-status">ACTIVE</span>
@@ -317,7 +317,7 @@
                 <a href="orders/stemi.html" class="order-row">
                     <span class="order-num">03</span>
                     <div class="order-main-info">
-                        <span class="order-category cat-cardiac">Cardiac</span>
+                        <span class="order-category">Cardiac</span>
                         <span class="order-title">STEMI Standing Order</span>
                     </div>
                     <span class="order-status">PROTOTYPE</span>
@@ -330,7 +330,7 @@
                 <a href="orders/pe.html" class="order-row">
                     <span class="order-num">04</span>
                     <div class="order-main-info">
-                        <span class="order-category cat-pulmonary">Pulmonary</span>
+                        <span class="order-category">Pulmonary</span>
                         <span class="order-title">Massive PE Fibrinolysis</span>
                     </div>
                     <span class="order-status">PROTOTYPE</span>
@@ -343,7 +343,7 @@
                 <a href="orders/heparin.html" class="order-row">
                     <span class="order-num">05</span>
                     <div class="order-main-info">
-                        <span class="order-category cat-anticoag">Anticoag.</span>
+                        <span class="order-category">Anticoag.</span>
                         <span class="order-title">Heparin Protocol</span>
                     </div>
                     <span class="order-status">PROTOTYPE</span>
@@ -356,7 +356,7 @@
                 <a href="orders/antivenom.html" class="order-row">
                     <span class="order-num">06</span>
                     <div class="order-main-info">
-                        <span class="order-category cat-tox">Toxicology</span>
+                        <span class="order-category">Toxicology</span>
                         <span class="order-title">Antivenom Standing Order</span>
                     </div>
                     <span class="order-status">PROTOTYPE</span>
@@ -369,7 +369,7 @@
                 <a href="orders/sedation.html" class="order-row">
                     <span class="order-num">07</span>
                     <div class="order-main-info">
-                        <span class="order-category cat-procedural">Procedural</span>
+                        <span class="order-category">Procedural</span>
                         <span class="order-title">Post-Intubation Sedation</span>
                     </div>
                     <span class="order-status">PROTOTYPE</span>
@@ -388,7 +388,7 @@
                 <a href="tools/drip-calculator.html" class="order-row">
                     <span class="order-num">T1</span>
                     <div class="order-main-info">
-                        <span class="order-category cat-tools">Calculator</span>
+                        <span class="order-category">Calculator</span>
                         <span class="order-title">IV Infusion Drip Calculator</span>
                     </div>
                     <span class="order-status">PROTOTYPE</span>
@@ -404,6 +404,11 @@
     </footer>
 </div>
 
+<div id="sw-update-toast" style="display:none; position:fixed; bottom:24px; right:24px; background:#1a1a1a; color:#f4f2ec; padding:16px 24px; border-radius:2px; font-family:var(--font-ui); font-size:14px; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:1000; align-items:center; gap:16px;">
+    <span>พบเวอร์ชันใหม่ (New version available)</span>
+    <button id="sw-refresh-btn" style="background:#d84315; color:#f4f2ec; border:none; padding:8px 16px; font-family:var(--font-ui); font-weight:700; font-size:12px; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; border-radius:2px;">อัปเดต (Update)</button>
+</div>
+
 <script src="shared/components.js"></script>
 <script>
 // Create navigation bar directly to fit the Braun header layout without redundant helper injection
@@ -415,19 +420,52 @@ nav.innerHTML = `
         <img src="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" style="height: 38px; width: auto; display: block;">
     </div>
     <div class="nav-center">MNRH-ED HUB</div>
-    <div class="nav-right">v13 · Updated 26-07-04</div>
+    <div class="nav-right">v14 · Updated 2026-07-05</div>
 `;
 document.body.insertBefore(nav, document.body.firstChild);
+
 if ('serviceWorker' in navigator) {
+  let refreshing = false;
+  
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
+  });
+
   navigator.serviceWorker.register('service-worker.js')
     .then(function(reg) {
-      // Throttle updates: check at most once per hour to minimize network requests
       const now = Date.now();
       const lastCheck = parseInt(localStorage.getItem('sw-last-update-check') || '0', 10);
       if (now - lastCheck > 60 * 60 * 1000) {
         reg.update();
         localStorage.setItem('sw-last-update-check', now.toString());
       }
+
+      function showUpdateToast(worker) {
+        const toast = document.getElementById('sw-update-toast');
+        const btn = document.getElementById('sw-refresh-btn');
+        if (toast && btn) {
+          toast.style.display = 'flex';
+          btn.addEventListener('click', () => {
+            worker.postMessage({ action: 'skipWaiting' });
+          });
+        }
+      }
+
+      if (reg.waiting) {
+        showUpdateToast(reg.waiting);
+      }
+
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            showUpdateToast(newWorker);
+          }
+        });
+      });
     })
     .catch(function(e) { console.warn('SW registration failed:', e); });
 }

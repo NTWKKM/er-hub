@@ -71,10 +71,19 @@ describe('EMERGENCY_DRUG_DATA specific drugs', () => {
     assert.equal(hep.preparations[1].concentration, 50);
   });
 
-  test('esmolol has showDualUnits flag', () => {
+  test('esmolol has showDualUnits flag and alt unit config', () => {
     const esm = EMERGENCY_DRUG_DATA.find(d => d.id === 'esmolol');
     assert.ok(esm);
     assert.equal(esm.showDualUnits, true);
+    assert.equal(esm.altUnit, 'mcg/kg/min');
+    assert.equal(esm.altUnitFactor, 1000);
+  });
+
+  test('nitroprusside has updated min range 0.25', () => {
+    const nip = EMERGENCY_DRUG_DATA.find(d => d.id === 'nitroprusside');
+    assert.ok(nip);
+    assert.equal(nip.doseRange.min, 0.25);
+    assert.equal(nip.doseRange.default, 0.25);
   });
 
   test('fentanyl max dose 10 mcg/kg/hr but safety ceiling 500 mcg/hr', () => {

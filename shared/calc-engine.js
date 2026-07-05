@@ -27,27 +27,9 @@ function calcDripRate({ doseValue, doseUnit, weightKg, concentration }) {
     return amountPerHour / concentration;
 }
 
-/**
- * Calculates the required volume (mL) for an IV bolus or loading dose.
- * 
- * @param {Object} params
- * @param {number} params.doseValue - Target bolus dose (e.g., 0.6, 30, 2500)
- * @param {boolean} params.perKg - Whether the dose is calculated per kilogram of body weight
- * @param {number} params.weightKg - Patient's weight in kilograms
- * @param {number} params.concentration - Mixed drug concentration (units of drug per 1 mL of solution)
- * @returns {number} - Required bolus volume in mL
- */
-function calcBolusVolume({ doseValue, perKg = true, weightKg, concentration }) {
-    if (!doseValue || doseValue <= 0 || !concentration || concentration <= 0) return 0;
-    
-    const totalAmount = doseValue * (perKg ? weightKg : 1);
-    return totalAmount / concentration;
-}
-
 // Export for Node testing environment if applicable
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        calcDripRate,
-        calcBolusVolume
+        calcDripRate
     };
 }

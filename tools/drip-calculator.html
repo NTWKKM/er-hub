@@ -32,12 +32,14 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 15px;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
         }
 
         .rate-large {
             font-size: 2.5em;
             font-weight: bold;
             color: #27ae60;
+            transition: color 0.2s ease;
         }
 
         .warning-box {
@@ -62,6 +64,82 @@
             font-size: 13px;
             color: #666;
             margin-left: 8px;
+            white-space: nowrap;
+        }
+
+        /* Step Buttons Styling */
+        .btn-step {
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            height: 38px;
+            width: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .btn-step:hover:not(:disabled) {
+            background: #cbd5e1;
+        }
+        .btn-step:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Color states for result box */
+        .result-box.safe {
+            background: #e8f8f0;
+            border-color: #2cc771;
+        }
+        .result-box.safe .rate-large {
+            color: #27ae60;
+        }
+        .result-box.amber {
+            background: #fdf5e6;
+            border-color: #f39c12;
+        }
+        .result-box.amber .rate-large {
+            color: #d35400;
+        }
+        .result-box.red {
+            background: #fde8e8;
+            border-color: #e74c3c;
+        }
+        .result-box.red .rate-large {
+            color: #c0392b;
+        }
+        .near-max-badge {
+            background: #c0392b;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 4px;
+            display: inline-block;
+        }
+        
+        /* Sticky bottom result for mobile */
+        @media (max-width: 640px) {
+            #result-container {
+                position: sticky;
+                bottom: 0;
+                background: #fff;
+                box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+                border-top: 1px solid #ddd;
+                z-index: 100;
+                margin-left: -15px;
+                margin-right: -15px;
+                padding: 10px 15px;
+            }
+            .result-box {
+                margin-top: 0;
+                padding: 10px 15px;
+            }
         }
     </style>
 </head>
@@ -69,8 +147,7 @@
 <div class="container">
     <div class="form-container">
 
-
-        <form id="calc-form">
+        <form id="calc-form" onsubmit="event.preventDefault();">
             <div class="input-layout">
                 <!-- Column 1: Patient Weight & Drug -->
                 <div class="input-column">
@@ -102,8 +179,22 @@
                     
                     <div class="inline-input-group">
                         <label for="dose-input">ขนาดยาที่ต้องการ:</label>
-                        <input type="number" id="dose-input" step="0.01" required disabled placeholder="ระบุขนาดยา">
-                        <span id="unit-display" class="unit-label-small"></span>
+                        <div style="display: flex; flex-direction: column; width: 100%;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <button type="button" id="btn-step-down" class="btn-step" disabled aria-label="Decrease dose">–</button>
+                                <input type="number" id="dose-input" step="0.01" required disabled placeholder="ระบุขนาดยา" style="flex-grow: 1;">
+                                <button type="button" id="btn-step-up" class="btn-step" disabled aria-label="Increase dose">+</button>
+                                <span id="unit-display" class="unit-label-small"></span>
+                            </div>
+                            <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px;">
+                                <input type="range" id="dose-slider" disabled style="width: 100%; cursor: pointer;" aria-label="Dose adjustment slider">
+                                <div style="display: flex; justify-content: space-between; font-size: 11px; color: #666; padding: 0 2px;">
+                                    <span id="slider-min">min</span>
+                                    <span id="slider-start">start</span>
+                                    <span id="slider-max">max</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="esmolol-dual-display" style="display:none; padding-left:150px; margin-top:-5px; margin-bottom:10px;">
@@ -116,8 +207,6 @@
                     </div>
                 </div>
             </div>
-            
-            <button type="submit" class="btn btn-calculate" style="background:#27ae60;">คำนวณอัตราการหยด (mL/hr)</button>
         </form>
 
         <!-- Calculation Result -->
@@ -128,6 +217,7 @@
                     <div style="font-size:12px; color:#666; margin-top:4px;">
                         คำนวณสำหรับน้ำหนัก <span id="res-weight">--</span> kg | ขนาดที่ต้องการ <span id="res-target">--</span>
                     </div>
+                    <div id="near-max-badge" class="near-max-badge" style="display: none;">ใกล้ถึงขนาดสูงสุด (Near max dose)</div>
                 </div>
                 <div class="rate-large"><span id="res-rate">--</span> mL/hr</div>
             </div>
@@ -161,11 +251,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const drugSelect = $('drug-select');
     const prepSelect = $('prep-select');
     const doseInput = $('dose-input');
+    const doseSlider = $('dose-slider');
     const unitDisplay = $('unit-display');
     const concDisplay = $('concentration-display');
     const resultContainer = $('result-container');
     const esmololDualDisplay = $('esmolol-dual-display');
     const esmololAltValue = $('esmolol-alt-value');
+
+    // Restore weight from sessionStorage if available
+    const storedWeight = sessionStorage.getItem('er-hub-weight');
+    if (storedWeight) {
+        $('weight').value = storedWeight;
+    }
+
+    // Derive concentration unit display dynamically using the drug's dose unit (B1)
+    function getConcentrationUnit(doseUnit) {
+        let unit = doseUnit.replace('/kg', '');
+        unit = unit.replace('/min', '');
+        unit = unit.replace('/hr', '');
+        return `${unit}/mL`;
+    }
 
     // Populate drug select dropdown
     EMERGENCY_DRUG_DATA.forEach(drug => {
@@ -177,6 +282,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let selectedDrug = null;
     let selectedPrep = null;
+    let debounceTimer = null;
+
+    function triggerCalculation() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(recalculate, 60);
+    }
 
     // Handle drug selection change
     drugSelect.addEventListener('change', () => {
@@ -189,8 +300,14 @@ document.addEventListener('DOMContentLoaded', () => {
             prepSelect.disabled = true;
             doseInput.disabled = true;
             doseInput.value = '';
+            doseSlider.disabled = true;
+            doseSlider.value = '0';
+            $('btn-step-down').disabled = true;
+            $('btn-step-up').disabled = true;
             unitDisplay.textContent = '';
             concDisplay.value = '';
+            selectedDrug = null;
+            selectedPrep = null;
             return;
         }
 
@@ -211,16 +328,36 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedPrep = selectedDrug.preparations[selectedDrug.defaultPreparationIndex];
 
         // Configure dose input parameters
+        const range = selectedDrug.doseRange;
         doseInput.disabled = false;
-        doseInput.min = selectedDrug.doseRange.min;
-        doseInput.max = selectedDrug.doseRange.max;
-        doseInput.step = selectedDrug.doseRange.step;
-        doseInput.value = selectedDrug.doseRange.default;
+        doseInput.min = range.min;
+        doseInput.max = range.max;
+        doseInput.step = range.step;
+        doseInput.value = range.default;
+
+        // Configure slider parameters
+        doseSlider.disabled = false;
+        doseSlider.min = range.min;
+        doseSlider.max = range.max;
+        doseSlider.step = range.step;
+        doseSlider.value = range.default;
+
+        // Enable step buttons
+        $('btn-step-down').disabled = false;
+        $('btn-step-up').disabled = false;
         
         unitDisplay.textContent = selectedDrug.doseUnit;
-        concDisplay.value = `${selectedPrep.concentration} units/mL`;
+        
+        // Update slider labels
+        $('slider-min').textContent = range.min;
+        $('slider-start').textContent = `${range.default} (start)`;
+        $('slider-max').textContent = range.max;
 
-        updateEsmololDualDisplay();
+        // Update concentration display using dynamic unit (B1)
+        const concUnit = getConcentrationUnit(selectedDrug.doseUnit);
+        concDisplay.value = `${selectedPrep.concentration} ${concUnit}`;
+
+        triggerCalculation();
     });
 
     // Handle preparation selection change
@@ -228,64 +365,179 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!selectedDrug) return;
         const idx = parseInt(prepSelect.value);
         selectedPrep = selectedDrug.preparations[idx];
-        concDisplay.value = `${selectedPrep.concentration} units/mL`;
-        resultContainer.classList.add('hidden');
+        
+        const concUnit = getConcentrationUnit(selectedDrug.doseUnit);
+        concDisplay.value = `${selectedPrep.concentration} ${concUnit}`;
+        
+        triggerCalculation();
     });
 
-    // Handle dose input updates (specifically for Esmolol dual units display)
+    // Coupled input synchronization
     doseInput.addEventListener('input', () => {
-        updateEsmololDualDisplay();
+        if (!selectedDrug) return;
+        let val = parseFloat(doseInput.value);
+        if (!isNaN(val)) {
+            // Apply soft clamping limits on input to respect boundaries
+            const min = selectedDrug.doseRange.min;
+            const max = selectedDrug.doseRange.max;
+            if (val < min) val = min;
+            if (val > max) val = max;
+            doseSlider.value = val;
+        }
+        triggerCalculation();
     });
 
-    function updateEsmololDualDisplay() {
-        if (selectedDrug && selectedDrug.id === 'esmolol') {
-            const val = parseFloat(doseInput.value);
-            if (!isNaN(val)) {
-                // 1 mg/kg/min = 1000 mcg/kg/min
-                const mcgVal = Math.round(val * 1000);
-                esmololAltValue.textContent = `เทียบเท่ากับ: ${mcgVal} mcg/kg/min`;
-                esmololDualDisplay.style.display = 'block';
-            } else {
-                esmololDualDisplay.style.display = 'none';
-            }
-        } else {
-            esmololDualDisplay.style.display = 'none';
+    doseSlider.addEventListener('input', () => {
+        if (!selectedDrug) return;
+        doseInput.value = doseSlider.value;
+        triggerCalculation();
+    });
+
+    // Stepping button handlers
+    $('btn-step-down').addEventListener('click', () => {
+        if (!selectedDrug) return;
+        let val = parseFloat(doseInput.value);
+        if (isNaN(val)) val = selectedDrug.doseRange.default;
+        const step = selectedDrug.doseRange.step;
+        const min = selectedDrug.doseRange.min;
+        const newVal = Math.max(min, Math.round((val - step) * 100) / 100);
+        doseInput.value = newVal;
+        doseSlider.value = newVal;
+        triggerCalculation();
+    });
+
+    $('btn-step-up').addEventListener('click', () => {
+        if (!selectedDrug) return;
+        let val = parseFloat(doseInput.value);
+        if (isNaN(val)) val = selectedDrug.doseRange.default;
+        const step = selectedDrug.doseRange.step;
+        const max = selectedDrug.doseRange.max;
+        const newVal = Math.min(max, Math.round((val + step) * 100) / 100);
+        doseInput.value = newVal;
+        doseSlider.value = newVal;
+        triggerCalculation();
+    });
+
+    // Keyboard navigation (PageUp/PageDown = 10x step, Home/End = min/max)
+    const handleKeydown = (e) => {
+        if (!selectedDrug) return;
+        const min = selectedDrug.doseRange.min;
+        const max = selectedDrug.doseRange.max;
+        const step = selectedDrug.doseRange.step;
+        let val = parseFloat(doseInput.value);
+        if (isNaN(val)) val = selectedDrug.doseRange.default;
+
+        let handled = false;
+        if (e.key === 'PageUp') {
+            val = Math.min(max, Math.round((val + step * 10) * 100) / 100);
+            handled = true;
+        } else if (e.key === 'PageDown') {
+            val = Math.max(min, Math.round((val - step * 10) * 100) / 100);
+            handled = true;
+        } else if (e.key === 'Home') {
+            val = min;
+            handled = true;
+        } else if (e.key === 'End') {
+            val = max;
+            handled = true;
         }
-    }
 
-    // Form submit / calculation
-    $('calc-form').addEventListener('submit', (e) => {
-        e.preventDefault();
+        if (handled) {
+            e.preventDefault();
+            doseInput.value = val;
+            doseSlider.value = val;
+            triggerCalculation();
+        }
+    };
 
-        const weight = parseFloat($('weight').value);
-        const dose = parseFloat(doseInput.value);
+    doseInput.addEventListener('keydown', handleKeydown);
+    doseSlider.addEventListener('keydown', handleKeydown);
 
-        if (isNaN(weight) || weight < 30 || weight > 200) {
-            ED_VALIDATE.fail('weight', 'กรุณากรอกน้ำหนักตัวคนไข้ให้ถูกต้อง (30-200 kg)');
+    // Live calculation trigger for patient weight
+    $('weight').addEventListener('input', () => {
+        triggerCalculation();
+    });
+
+    function recalculate() {
+        const weightVal = parseFloat($('weight').value);
+        const doseVal = parseFloat(doseInput.value);
+
+        if (isNaN(weightVal) || weightVal < 30 || weightVal > 200) {
+            resultContainer.classList.add('hidden');
             return;
         }
 
-        if (!selectedDrug || !selectedPrep) return;
+        // Save valid weight to sessionStorage
+        sessionStorage.setItem('er-hub-weight', weightVal.toString());
+
+        if (!selectedDrug || !selectedPrep) {
+            resultContainer.classList.add('hidden');
+            return;
+        }
+
+        // Validate dose ranges (B2)
+        let dose = doseVal;
+        if (isNaN(dose)) {
+            dose = selectedDrug.doseRange.default;
+        } else {
+            const min = selectedDrug.doseRange.min;
+            const max = selectedDrug.doseRange.max;
+            if (dose < min) dose = min;
+            if (dose > max) dose = max;
+        }
+
+        // Sync inputs
+        if (parseFloat(doseInput.value) !== dose) doseInput.value = dose;
+        if (parseFloat(doseSlider.value) !== dose) doseSlider.value = dose;
 
         // Run calculation engine
         const rate = calcDripRate({
             doseValue: dose,
             doseUnit: selectedDrug.doseUnit,
-            weightKg: weight,
+            weightKg: weightVal,
             concentration: selectedPrep.concentration
         });
 
         // Update screen display
-        $('res-weight').textContent = weight;
+        $('res-weight').textContent = weightVal;
         
-        // Esmolol special display format
-        if (selectedDrug.id === 'esmolol') {
-            $('res-target').textContent = `${dose} mg/kg/min (${Math.round(dose * 1000)} mcg/kg/min)`;
+        // Generalized dual units display formatting (B6)
+        if (selectedDrug.showDualUnits && selectedDrug.altUnit && selectedDrug.altUnitFactor) {
+            const altDose = dose * selectedDrug.altUnitFactor;
+            const altDoseFormatted = altDose % 1 === 0 ? altDose.toFixed(0) : altDose.toFixed(2);
+            $('res-target').textContent = `${dose} ${selectedDrug.doseUnit} (${altDoseFormatted} ${selectedDrug.altUnit})`;
+            
+            // Mirror on inline display
+            esmololAltValue.textContent = `เทียบเท่ากับ: ${altDoseFormatted} ${selectedDrug.altUnit}`;
+            esmololDualDisplay.style.display = 'block';
         } else {
             $('res-target').textContent = `${dose} ${selectedDrug.doseUnit}`;
+            esmololDualDisplay.style.display = 'none';
         }
         
         $('res-rate').textContent = rate.toFixed(1);
+
+        // Safety coloring based on proximity to ceiling
+        const maxDose = selectedDrug.doseRange.max;
+        const ratio = dose / maxDose;
+        const resultBox = document.querySelector('.result-box');
+        
+        // Reset classes
+        resultBox.className = 'result-box';
+        
+        // Toggle near max badge display
+        const badge = $('near-max-badge');
+
+        if (ratio < 0.6) {
+            resultBox.classList.add('safe');
+            if (badge) badge.style.display = 'none';
+        } else if (ratio <= 0.85) {
+            resultBox.classList.add('amber');
+            if (badge) badge.style.display = 'none';
+        } else {
+            resultBox.classList.add('red');
+            if (badge) badge.style.display = 'inline-block';
+        }
 
         // Render titration guide
         $('guide-text').textContent = selectedDrug.titrationGuide;
@@ -299,9 +551,12 @@ document.addEventListener('DOMContentLoaded', () => {
             warningList.appendChild(li);
         });
 
+        // Set up accessibility announcements
+        doseSlider.setAttribute('aria-valuenow', dose);
+        doseSlider.setAttribute('aria-valuetext', `${dose} ${selectedDrug.doseUnit}`);
+
         resultContainer.classList.remove('hidden');
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    });
+    }
 });
 </script>
 </body>

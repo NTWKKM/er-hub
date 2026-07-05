@@ -356,3 +356,16 @@
      - Refactored and decomposed the `calculateAndRender()` monolith into isolated calculation and rendering helper functions.
      - Rewrote navigation bar generation using native browser DOM APIs instead of `innerHTML` strings to prevent potential XSS vectors.
 - **Rationale:** Clinical safety is guaranteed by enforcing renal data entry before allowing high-alert anticoagulation choices. Performance is dramatically improved by replacing raw innerHTML string concatenation and parsing with targeted DOM element updates and static element caching. Extrapolating logic to the clinical engine prevents duplicate code and establishes a modular framework for future standing orders. Dom sanitization enforces strict security hygiene.
+
+### ADR-35: Drip-Calculator Redesign, PWA Update Notification, and Audit Bug Fixes (2026-07-05)
+
+- **Context:** Following the ER-Hub audit, several items in the codebase required resolution to meet modern clinical safety guidelines: (1) wrong concentration unit labels hardcoded as "units/mL" in `tools/drip-calculator.html` for non-heparin drugs; (2) absence of dose-range validation on submit; (3) Sodium Nitroprusside start dose titration guide mismatching its `doseRange.min`; (4) backward-compatibility redirects only covering rt-PA; (5) service-worker updates throttling silently without clinician notification; and (6) Esmolol dual-unit display logic using a hardcoded ID string instead of the generalized `showDualUnits` flag.
+- **Decision:**
+  1. **Drip Calculator Interactive Redesign:** Removed the submit button. Replaced standard inputs with coupled `<input type="range">` slider and `<input type="number">` number fields. Implemented touch-friendly step buttons `[-]` / `[+]`, datalist ticks, and keyboard navigation.
+  2. **Safety Color States:** Integrated automatic color shifts in the result box based on max dose ceiling: green (`safe`), amber (`warning`), and red (`critical` with a visual warning badge).
+  3. **Dynamic Concentration Units (B1) & Generalized Dual Units (B6):** Concentration denominators are derived dynamically from the dose unit. Esmolol dual display refactored to look at `selectedDrug.showDualUnits` and use `altUnit` + `altUnitFactor` from `drug-data.js`.
+  4. **Nitroprusside Alignment (B3) & Session Weight Persistence:** Lowered Sodium Nitroprusside `min` and `default` range in `drug-data.js` to `0.25`. Persisted client weight in `sessionStorage`.
+  5. **Dynamic Redirection (B4) & SW Update Toast (B5):** Broadened the redirect block to handle dynamic page redirection based on query params (`?order=<slug>` $\rightarrow$ `orders/<slug>.html`). Added an update notification toast in `index.html` allowing skipping the waiting phase when service worker v15 updates.
+  6. **Dead Code Cleanup:** Deleted unused `calcBolusVolume` function from `calc-engine.js` and removed unused category classes in `index.html`.
+- **Rationale:** Live coupled slider and number controls reduce clinical calculation latency and decrease errors. Safety color codes visual cues alert nurses instantly to high-risk doses. Toast notifications ensure that clinical protocols stay synced to the latest approved releases, preventing stale offline caches from serving outdated data.
+
