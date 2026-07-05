@@ -142,6 +142,9 @@ const ED_COMPONENTS = {
         } else {
             title = pageTitle;
         }
+        if (title) {
+            title = title.replace(/&nbsp;/g, '\u00A0');
+        }
         
         const titleFull = title;
         const titleShort = shortTitle || this.parseTitle(title).titleShort;
