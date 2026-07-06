@@ -817,10 +817,10 @@
                     <strong>Stat Medications:</strong>
                     <ul class="order-list order-list-plain">
                         <li id="p-asa-stat">☐ ASA (300) 1 tab chew stat</li>
-                        <li id="p-clopi300-stat">☐ Clopidogrel (75) 4 tabs PO stat (300 mg)</li>
-                        <li id="p-clopi600-stat">☐ Clopidogrel (75) 8 tabs PO stat (600 mg)</li>
-                        <li id="p-tiga-stat">☐ Ticagrelor (90) 2 tabs PO stat (180 mg)</li>
-                        <li id="p-prasa-stat">☐ Prasugrel (10) 6 tabs PO stat (60 mg) <small>— ให้ใน Cath lab เท่านั้น</small></li>
+                        <li id="p-clopi300-stat">☐ Clopidogrel (75)<br><span style="padding-left: 2em;">4 tabs PO stat (300 mg)</span></li>
+                        <li id="p-clopi600-stat">☐ Clopidogrel (75)<br><span style="padding-left: 2em;">8 tabs PO stat (600 mg)</span></li>
+                        <li id="p-tiga-stat">☐ Ticagrelor (90)<br><span style="padding-left: 2em;">2 tabs PO stat (180 mg)</span></li>
+                        <li id="p-prasa-stat">☐ Prasugrel (10) 6 tabs PO stat (60 mg)<br><span style="padding-left: 2em;">— ให้ใน Cath lab เท่านั้น</span></li>
                         <li id="p-isdn-stat">☐ ISDN (5) 1 tab SL prn chest pain</li>
                     </ul>
 
@@ -1157,10 +1157,10 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'p-rphch-note', value: '' },
         { id: 'p-troponin-lab', html: '☐ hs-troponin I Hr.0 and 3' },
         { id: 'p-asa-stat', html: '☐ ASA (300) 1 tab chew stat' },
-        { id: 'p-clopi300-stat', html: '☐ Clopidogrel (75) 4 tabs PO stat (300 mg)' },
-        { id: 'p-clopi600-stat', html: '☐ Clopidogrel (75) 8 tabs PO stat (600 mg)' },
-        { id: 'p-tiga-stat', html: '☐ Ticagrelor (90) 2 tabs PO stat (180 mg)' },
-        { id: 'p-prasa-stat', html: '☐ Prasugrel (10) 6 tabs PO stat (60 mg) <small>— ให้ใน Cath lab เท่านั้น</small>' },
+        { id: 'p-clopi300-stat', html: '☐ Clopidogrel (75)<br><span style="padding-left: 2em;">4 tabs PO stat (300 mg)</span>' },
+        { id: 'p-clopi600-stat', html: '☐ Clopidogrel (75)<br><span style="padding-left: 2em;">8 tabs PO stat (600 mg)</span>' },
+        { id: 'p-tiga-stat', html: '☐ Ticagrelor (90)<br><span style="padding-left: 2em;">2 tabs PO stat (180 mg)</span>' },
+        { id: 'p-prasa-stat', html: '☐ Prasugrel (10) 6 tabs PO stat (60 mg)<br><span style="padding-left: 2em;">— ให้ใน Cath lab เท่านั้น</span>' },
         { id: 'p-isdn-stat', html: '☐ ISDN (5) 1 tab SL prn chest pain' },
         { id: 'p-asa-cont', html: '☐ ASA (81) 1×1 pc' },
         { id: 'p-clopi-cont', html: '☐ Clopidogrel GPO (75) 1×1 pc' },
@@ -1398,10 +1398,10 @@ document.addEventListener('DOMContentLoaded', () => {
             $('p-asa-cont').innerHTML = (daptAsa ? '☑' : '☐') + ' ASA (81) 1×1 pc';
         }
 
-        $('p-clopi300-stat').innerHTML = (p2y12Val === 'clopi300' ? '☑' : '☐') + ' Clopidogrel (75) 4 tabs PO stat (300 mg)';
-        $('p-clopi600-stat').innerHTML = (p2y12Val === 'clopi600' ? '☑' : '☐') + ' Clopidogrel (75) 8 tabs PO stat (600 mg)';
-        $('p-tiga-stat').innerHTML = (p2y12Val === 'tiga180' ? '☑' : '☐') + ' Ticagrelor (90) 2 tabs PO stat (180 mg)';
-        $('p-prasa-stat').innerHTML = (p2y12Val === 'prasa60' ? '☑' : '☐') + ' Prasugrel (10) 6 tabs PO stat (60 mg) <small>— ให้ใน Cath lab เท่านั้น</small>';
+        $('p-clopi300-stat').innerHTML = (p2y12Val === 'clopi300' ? '☑' : '☐') + ' Clopidogrel (75)<br><span style="padding-left: 2em;">4 tabs PO stat (300 mg)</span>';
+        $('p-clopi600-stat').innerHTML = (p2y12Val === 'clopi600' ? '☑' : '☐') + ' Clopidogrel (75)<br><span style="padding-left: 2em;">8 tabs PO stat (600 mg)</span>';
+        $('p-tiga-stat').innerHTML = (p2y12Val === 'tiga180' ? '☑' : '☐') + ' Ticagrelor (90)<br><span style="padding-left: 2em;">2 tabs PO stat (180 mg)</span>';
+        $('p-prasa-stat').innerHTML = (p2y12Val === 'prasa60' ? '☑' : '☐') + ' Prasugrel (10) 6 tabs PO stat (60 mg)<br><span style="padding-left: 2em;">— ให้ใน Cath lab เท่านั้น</span>';
 
         $('p-clopi-cont').innerHTML = (p2y12Val === 'clopi300' || p2y12Val === 'clopi600' ? '☑' : '☐') + ' Clopidogrel GPO (75) 1×1 pc';
         $('p-tiga-cont').innerHTML = (p2y12Val === 'tiga180' ? '☑' : '☐') + ' Ticagrelor (90) 1 x 2 pc';
@@ -1617,22 +1617,27 @@ document.addEventListener('DOMContentLoaded', () => {
         
         updateLiveEGFR();
         // Re-apply blank template so print preview resets to a clean blank order
-        $('print-blank-btn').click();
+        applyBlankTemplate();
         // Focus HN for immediate re-entry
         const hn = document.getElementById('hn');
         if (hn) hn.focus();
     });
 
+    // Apply blank template without printing (used by cold-load and clear-btn)
+    function applyBlankTemplate() {
+        ED_BLANK_PRINT.apply();
+    }
+
     $('print-blank-btn').addEventListener('click', () => {
         // Print-header and sticker-box are already injected, apply the blank template
-        ED_BLANK_PRINT.apply();
+        applyBlankTemplate();
         window.print();
     });
 
     // Auto-run print-blank-direct from home page portal OR auto-blank on cold load
     const didPrintBlankDirect = ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => $('print-blank-btn').click());
     if (!didPrintBlankDirect) {
-        $('print-blank-btn').click(); // blank-first: show blank template immediately
+        applyBlankTemplate(); // blank-first: show blank template immediately (no print dialog)
     }
 
     // Initial render on page load (real-time preview, no button press needed)

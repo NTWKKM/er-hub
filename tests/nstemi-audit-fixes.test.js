@@ -37,7 +37,7 @@ describe('NSTEMI Audit Fixes — A2: clear-btn resets anticoag + DAPT', () => {
     const html = read(NSTEMI_PATH);
 
     // Extract the clear-btn handler block (greedy match to capture the full handler)
-    const clearMatch = html.match(/clear-btn['"\]]\)\.addEventListener\('click'[\s\S]*?print-blank-btn['"\]]\)\.click\(\);[\s\S]*?\}\s*\)\s*;/);
+    const clearMatch = html.match(/clear-btn['"\]]\)\.addEventListener\('click'[\s\S]*?applyBlankTemplate\(\);[\s\S]*?\}\s*\)\s*;/);
     const handler = clearMatch ? clearMatch[0] : '';
 
     test('clear-btn handler resets anticoag panel state', () => {
