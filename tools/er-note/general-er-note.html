@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>General ER Note — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note.css">
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <span class="nav-title">ER NOTE</span>
+  </div>
+  <a href="../../index.html" class="nav-home">← Home</a>
+</nav>
+<div class="tab-bar" role="tablist">
+  <a href="general-er-note.html">General ER Note</a>
+  <a href="sepsis.html">Sepsis</a>
+  <a href="trauma.html">Trauma</a>
+  <a href="mammalian-bite.html">Mammalian Bite</a>
+  <a href="chest-pain.html">Chest Pain</a>
+  <a href="abdominal-pain.html">Abdominal Pain</a>
+  <a href="eye-injury.html">Eye Injury</a>
+</div>
+<main class="main">
+<form id="er-form">
+
+<div class="card">
+  <h2 class="section-title"><span class="num">1</span>Chief Complaint & HPI</h2>
+  <div class="field-row"><label>CC</label><input type="text" id="gen-cc" placeholder="e.g. chest pain 2 hrs"></div>
+  <div class="field-row"><label>HPI</label><textarea id="gen-hpi" placeholder="Onset, character, severity, radiation, aggravating/relieving..."></textarea></div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">2</span>Vital Signs</h2>
+  <div class="inline-row">
+    <div class="field-row"><label>BP (mmHg)</label><input type="text" id="gen-bp" placeholder="120/80"></div>
+    <div class="field-row"><label>HR (/min)</label><input type="number" id="gen-hr" placeholder="80"></div>
+    <div class="field-row"><label>RR (/min)</label><input type="number" id="gen-rr" placeholder="18"></div>
+    <div class="field-row"><label>SpO₂ (%)</label><input type="number" id="gen-spo2" placeholder="98"></div>
+    <div class="field-row"><label>Temp (°C)</label><input type="number" id="gen-temp" step="0.1" placeholder="37.0"></div>
+  </div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">3</span>Physical Exam</h2>
+  <div class="field-row"><label>General</label><textarea id="gen-general" placeholder="Appearance, distress, GCS"></textarea></div>
+  <div class="field-row"><label>Focused exam</label><textarea id="gen-exam" placeholder="HEENT, CVS, RS, Abd, Neuro, Ext"></textarea></div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">4</span>Investigations</h2>
+  <div class="field-row"><label>CBC</label><input type="text" id="gen-cbc"></div>
+  <div class="field-row"><label>BMP</label><input type="text" id="gen-bmp"></div>
+  <div class="field-row"><label>Coag / D-dimer</label><input type="text" id="gen-coag"></div>
+  <div class="field-row"><label>ECG / CXR / Imaging</label><textarea id="gen-imaging"></textarea></div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">5</span>Assessment & Plan</h2>
+  <div class="field-row"><label>Assessment</label><textarea id="gen-assessment"></textarea></div>
+  <div class="field-row"><label>Plan</label><textarea id="gen-plan" placeholder="Tx, monitoring, consults, disposition"></textarea></div>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v21</footer>
+<script src="er-note.js"></script>
+</body>
+</html>

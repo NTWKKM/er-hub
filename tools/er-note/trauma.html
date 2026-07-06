@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trauma — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note.css">
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <span class="nav-title">ER NOTE</span>
+  </div>
+  <a href="../../index.html" class="nav-home">← Home</a>
+</nav>
+<div class="tab-bar" role="tablist">
+  <a href="general-er-note.html">General ER Note</a>
+  <a href="sepsis.html">Sepsis</a>
+  <a href="trauma.html">Trauma</a>
+  <a href="mammalian-bite.html">Mammalian Bite</a>
+  <a href="chest-pain.html">Chest Pain</a>
+  <a href="abdominal-pain.html">Abdominal Pain</a>
+  <a href="eye-injury.html">Eye Injury</a>
+</div>
+<main class="main">
+<form id="er-form">
+
+<div class="card">
+  <h2 class="section-title"><span class="num">1</span>Mechanism & Event</h2>
+  <div class="field-row"><label>Mechanism</label>
+    <select id="trauma-mech">
+      <option value="">— select —</option>
+      <option>RTA</option>
+      <option>Motorcycle</option>
+      <option>Pedestrian</option>
+      <option>Fall</option>
+      <option>Assault</option>
+      <option>Penetrating</option>
+      <option>Crush</option>
+      <option>Other</option>
+    </select>
+  </div>
+  <div class="inline-row">
+    <div class="field-row"><label>Time of injury</label><input type="time" id="trauma-time"></div>
+    <div class="field-row"><label>Seatbelt / Helmet</label><input type="text" id="trauma-protect"></div>
+    <div class="field-row"><label>Extrication</label><input type="text" id="trauma-extricate"></div>
+  </div>
+  <div class="field-row"><label>Scene description</label><textarea id="trauma-scene"></textarea></div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">2</span>Primary Survey</h2>
+  <div class="inline-row">
+    <div class="field-row"><label>Airway</label><input type="text" id="trauma-a" placeholder="patent / obstruction"></div>
+    <div class="field-row"><label>Breathing</label><input type="text" id="trauma-b" placeholder="RR, SpO₂, auscultation"></div>
+    <div class="field-row"><label>Circulation</label><input type="text" id="trauma-c" placeholder="HR, BP, pulses"></div>
+    <div class="field-row"><label>Disability</label><input type="text" id="trauma-d" placeholder="GCS / pupils"></div>
+    <div class="field-row"><label>Exposure</label><input type="text" id="trauma-e" placeholder="temp, bleeding"></div>
+  </div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">3</span>Focused Exam & Injuries</h2>
+  <div class="field-row"><label>Head / Neck / C-spine</label><textarea id="trauma-head"></textarea></div>
+  <div class="field-row"><label>Chest / Abdomen / Pelvis</label><textarea id="trauma-torso"></textarea></div>
+  <div class="field-row"><label>Extremities / Neuro</label><textarea id="trauma-ext"></textarea></div>
+  <div class="field-row"><label>Visible injuries</label><textarea id="trauma-injuries"></textarea></div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">4</span>Resuscitation</h2>
+  <div class="inline-row">
+    <div class="field-row"><label>IV access</label><input type="text" id="trauma-iv" placeholder="2 large-bore IVs"></div>
+    <div class="field-row"><label>O₂</label><input type="text" id="trauma-o2"></div>
+    <div class="field-row"><label>Fluids given</label><input type="text" id="trauma-fluid"></div>
+  </div>
+  <div class="field-row"><label>Imaging / FAST / Labs</label><textarea id="trauma-labs"></textarea></div>
+  <div class="field-row"><label>Tetanus / Antibiotics</label><input type="text" id="trauma-abx"></div>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v21</footer>
+<script src="er-note.js"></script>
+</body>
+</html>

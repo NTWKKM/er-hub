@@ -244,12 +244,12 @@ describe('SW Version — A11: cache version bumped', () => {
     const sw = read(SW_PATH);
     const index = read(INDEX_PATH);
 
-    test('CACHE_VERSION is v20', () => {
-        assert.match(sw, /er-hub-v20/, 'CACHE_VERSION must be er-hub-v20');
+    test('CACHE_VERSION is v21', () => {
+        assert.match(sw, /er-hub-v21/, 'CACHE_VERSION must be er-hub-v21');
     });
 
-    test('index.html version string is v20', () => {
-        assert.match(index, /v20/, 'index.html must display v20');
+    test('index.html version string is v21', () => {
+        assert.match(index, /v21/, 'index.html must display v21');
     });
 });
 

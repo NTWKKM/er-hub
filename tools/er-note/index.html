@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ER NOTE Hub — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note.css">
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <span class="nav-title">ER NOTE</span>
+  </div>
+  <a href="../../index.html" class="nav-home">← Home</a>
+</nav>
+<div class="tab-bar" role="tablist">
+  <a href="general-er-note.html">General ER Note</a>
+  <a href="sepsis.html">Sepsis</a>
+  <a href="trauma.html">Trauma</a>
+  <a href="mammalian-bite.html">Mammalian Bite</a>
+  <a href="chest-pain.html">Chest Pain</a>
+  <a href="abdominal-pain.html">Abdominal Pain</a>
+  <a href="eye-injury.html">Eye Injury</a>
+</div>
+<main class="main">
+<form id="er-form" style="display:none;"></form>
+
+<div class="card" style="text-align:center;">
+  <h2 style="margin:0 0 8px;">ER NOTE Tool</h2>
+  <p style="color:var(--muted); margin:0 0 18px;">Select a template. Each template auto-saves locally and can be copied or printed.</p>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">T</span>Templates</h2>
+  <ol style="padding-left:20px; margin:0; line-height:2;">
+    <li><a href="general-er-note.html">General ER Note</a></li>
+    <li><a href="sepsis.html">Sepsis</a></li>
+    <li><a href="trauma.html">Trauma</a></li>
+    <li><a href="mammalian-bite.html">Mammalian Bite</a></li>
+    <li><a href="chest-pain.html">Chest Pain</a></li>
+    <li><a href="abdominal-pain.html">Abdominal Pain</a></li>
+    <li><a href="eye-injury.html">Eye Injury</a></li>
+  </ol>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">i</span>Instructions</h2>
+  <ul style="margin:0; padding-left:20px; color:var(--muted);">
+    <li>Data is stored only in this browser (localStorage).</li>
+    <li>Press <strong>Copy Note</strong> to copy a plain-text summary.</li>
+    <li>Press <strong>Print</strong> to generate an A4 printout.</li>
+    <li>Press <strong>Clear</strong> to reset the current template.</li>
+  </ul>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v21</footer>
+<script src="er-note.js"></script>
+</body>
+</html>

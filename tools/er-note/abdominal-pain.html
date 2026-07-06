@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abdominal Pain — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note.css">
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <span class="nav-title">ER NOTE</span>
+  </div>
+  <a href="../../index.html" class="nav-home">← Home</a>
+</nav>
+<div class="tab-bar" role="tablist">
+  <a href="general-er-note.html">General ER Note</a>
+  <a href="sepsis.html">Sepsis</a>
+  <a href="trauma.html">Trauma</a>
+  <a href="mammalian-bite.html">Mammalian Bite</a>
+  <a href="chest-pain.html">Chest Pain</a>
+  <a href="abdominal-pain.html">Abdominal Pain</a>
+  <a href="eye-injury.html">Eye Injury</a>
+</div>
+<main class="main">
+<form id="er-form">
+
+<div class="card">
+  <h2 class="section-title"><span class="num">1</span>Pain History</h2>
+  <div class="field-row"><label>Onset & progression</label><input type="text" id="abdo-onset"></div>
+  <div class="field-row"><label>Character / location</label><input type="text" id="abdo-location"></div>
+  <div class="field-row"><label>Radiation</label><input type="text" id="abdo-radiation"></div>
+  <div class="field-row"><label>Aggravating / relieving</label><input type="text" id="abdo-relief"></div>
+  <div class="field-row"><label>Associated symptoms</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="abdo-vomit"> Vomiting</label>
+      <label><input type="checkbox" id="abdo-fever"> Fever</label>
+      <label><input type="checkbox" id="abdo-constipation"> Constipation</label>
+      <label><input type="checkbox" id="abdo-diarrhea"> Diarrhea</label>
+      <label><input type="checkbox" id="abdo-hematemesis"> Hematemesis / melena</label>
+      <label><input type="checkbox" id="abdo-dysuria"> Dysuria</label>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">2</span>Past Surgery & Gynae</h2>
+  <div class="field-row"><label>Prior abdominal surgery</label><textarea id="abdo-surgery"></textarea></div>
+  <div class="inline-row">
+    <div class="field-row"><label>LMP</label><input type="text" id="abdo-lmp"></div>
+    <div class="field-row"><label>Pregnancy test</label><input type="text" id="abdo-hcg"></div>
+    <div class="field-row"><label>Gynae history</label><input type="text" id="abdo-gynae"></div>
+  </div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">3</span>Physical Exam</h2>
+  <div class="field-row"><label>General appearance</label><input type="text" id="abdo-general"></div>
+  <div class="field-row"><label>Abdomen</label><textarea id="abdo-exam" placeholder="Inspection, palpation, guarding, rebound, masses, hernias, bowel sounds"></textarea></div>
+  <div class="field-row"><label>Rectal / pelvic</label><input type="text" id="abdo-rectal"></div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">4</span>Alvarado Score (appendicitis)</h2>
+  <div class="field-row"><label>Symptoms / signs</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="alv-migratory"> Migratory RLQ pain (1)</label>
+      <label><input type="checkbox" id="alv-anorexia"> Anorexia (1)</label>
+      <label><input type="checkbox" id="alv-nausea"> Nausea / vomiting (1)</label>
+      <label><input type="checkbox" id="alv-tenderness"> RLQ tenderness (2)</label>
+      <label><input type="checkbox" id="alv-rebound"> Rebound tenderness (1)</label>
+      <label><input type="checkbox" id="alv-elevated-wbc"> Elevated WBC (2)</label>
+      <label><input type="checkbox" id="alv-left-shift"> Left shift (1)</label>
+      <label><input type="checkbox" id="alv-fever"> Fever (1)</label>
+    </div>
+  </div>
+  <div class="score-box">Alvarado: <span class="score-val" id="alvarado-score">0</span> / 10 — <span id="alvarado-risk">unlikely</span></div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">5</span>Investigations & Plan</h2>
+  <div class="field-row"><label>Labs</label><input type="text" id="abdo-labs"></div>
+  <div class="field-row"><label>Imaging</label><input type="text" id="abdo-imaging" placeholder="US abdomen / CT abdomen-pelvis"></div>
+  <div class="field-row"><label>Plan</label><textarea id="abdo-plan"></textarea></div>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v21</footer>
+<script src="er-note.js"></script>
+<script>
+
+function calcAlvarado(){
+  let s=0;
+  const weights={ 'alv-migratory':1,'alv-anorexia':1,'alv-nausea':1,'alv-tenderness':2,'alv-rebound':1,'alv-elevated-wbc':2,'alv-left-shift':1,'alv-fever':1 };
+  for(let id in weights){ const el=document.getElementById(id); if(el && el.checked) s+=weights[id]; }
+  const scoreEl=document.getElementById('alvarado-score');
+  const riskEl=document.getElementById('alvarado-risk');
+  if(scoreEl) scoreEl.textContent=s;
+  if(riskEl) riskEl.textContent=s>=7?'high probability (surgical consult)':s>=5?'intermediate (imaging)':'unlikely';
+}
+['alv-migratory','alv-anorexia','alv-nausea','alv-tenderness','alv-rebound','alv-elevated-wbc','alv-left-shift','alv-fever'].forEach(id=>{
+  const el=document.getElementById(id); if(el) el.addEventListener('change', calcAlvarado);
+});
+calcAlvarado();
+
+</script>
+</body>
+</html>

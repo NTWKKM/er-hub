@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mammalian Bite — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note.css">
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <span class="nav-title">ER NOTE</span>
+  </div>
+  <a href="../../index.html" class="nav-home">← Home</a>
+</nav>
+<div class="tab-bar" role="tablist">
+  <a href="general-er-note.html">General ER Note</a>
+  <a href="sepsis.html">Sepsis</a>
+  <a href="trauma.html">Trauma</a>
+  <a href="mammalian-bite.html">Mammalian Bite</a>
+  <a href="chest-pain.html">Chest Pain</a>
+  <a href="abdominal-pain.html">Abdominal Pain</a>
+  <a href="eye-injury.html">Eye Injury</a>
+</div>
+<main class="main">
+<form id="er-form">
+
+<div class="card">
+  <h2 class="section-title"><span class="num">1</span>Bite Details</h2>
+  <div class="inline-row">
+    <div class="field-row"><label>Animal</label>
+      <select id="bite-animal">
+        <option value="">— select —</option>
+        <option>Dog</option>
+        <option>Cat</option>
+        <option>Monkey</option>
+        <option>Rat / rodent</option>
+        <option>Human</option>
+        <option>Other mammal</option>
+      </select>
+    </div>
+    <div class="field-row"><label>Date / time of bite</label><input type="datetime-local" id="bite-time"></div>
+    <div class="field-row"><label>Location</label><input type="text" id="bite-location" placeholder="hand / face / lower limb"></div>
+  </div>
+  <div class="field-row"><label>Wound description</label><textarea id="bite-wound" placeholder="puncture vs laceration, depth, contamination"></textarea></div>
+  <div class="field-row"><label>Provoked?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="bite-provoked" value="Yes"> Yes</label>
+      <label><input type="radio" name="bite-provoked" value="No"> No</label>
+      <label><input type="radio" name="bite-provoked" value="Unknown"> Unknown</label>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">2</span>Rabies Risk & Animal Status</h2>
+  <div class="field-row"><label>Animal status</label>
+    <select id="bite-status">
+      <option value="">— select —</option>
+      <option>Healthy, available for 10-day observation</option>
+      <option>Stray / unknown</option>
+      <option>Sick / abnormal behaviour</option>
+      <option>Dead / unavailable</option>
+    </select>
+  </div>
+  <div class="field-row"><label>Rabies immunization</label>
+    <div class="radio-group">
+      <label><input type="radio" name="bite-rabies-immune" value="Pre-exposure"> Pre-exposure</label>
+      <label><input type="radio" name="bite-rabies-immune" value="Post-exposure prior"> Prior PEP</label>
+      <label><input type="radio" name="bite-rabies-immune" value="None"> None / unknown</label>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">3</span>Wound Care & Prophylaxis</h2>
+  <div class="field-row"><label>Irrigation</label><input type="text" id="bite-irrigate" placeholder="Normal saline, ≥15 min"></div>
+  <div class="field-row"><label>Tetanus status</label>
+    <select id="bite-tetanus">
+      <option value="">— select —</option>
+      <option>Up to date</option>
+      <option>Unknown / not up to date → Td/Tdap + TIG if indicated</option>
+    </select>
+  </div>
+  <div class="field-row"><label>Antibiotics</label><input type="text" id="bite-abx" placeholder="Amoxicillin-clavulanate 875/125 mg PO q12h x 5 days"></div>
+  <div class="field-row"><label>Indications for abx</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="bite-hand"> Hand / face / genital</label>
+      <label><input type="checkbox" id="bite-deep"> Deep puncture / crush</label>
+      <label><input type="checkbox" id="bite-immuno"> Immunocompromise</label>
+      <label><input type="checkbox" id="bite-delay"> Presentation &gt;8–12 hr</label>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">4</span>Rabies PEP Plan</h2>
+  <div class="field-row"><label>Wound infiltration / IM schedule</label><textarea id="bite-rabies-plan" placeholder="HRIG / ERIG local infiltration; vaccine days 0, 3, 7, 28"></textarea></div>
+  <div class="field-row"><label>Consult / follow-up</label><input type="text" id="bite-followup"></div>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v21</footer>
+<script src="er-note.js"></script>
+</body>
+</html>

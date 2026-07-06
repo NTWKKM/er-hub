@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sepsis — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note.css">
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <span class="nav-title">ER NOTE</span>
+  </div>
+  <a href="../../index.html" class="nav-home">← Home</a>
+</nav>
+<div class="tab-bar" role="tablist">
+  <a href="general-er-note.html">General ER Note</a>
+  <a href="sepsis.html">Sepsis</a>
+  <a href="trauma.html">Trauma</a>
+  <a href="mammalian-bite.html">Mammalian Bite</a>
+  <a href="chest-pain.html">Chest Pain</a>
+  <a href="abdominal-pain.html">Abdominal Pain</a>
+  <a href="eye-injury.html">Eye Injury</a>
+</div>
+<main class="main">
+<form id="er-form">
+
+<div class="card">
+  <h2 class="section-title"><span class="num">1</span>Infection & Source</h2>
+  <div class="field-row"><label>Presumed source</label><input type="text" id="sepsis-source" placeholder="UTI / pneumonia / cellulitis / unknown"></div>
+  <div class="field-row"><label>Onset / progression</label><textarea id="sepsis-onset"></textarea></div>
+  <div class="field-row"><label>Immunocompromise</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="sepsis-dm"> DM</label>
+      <label><input type="checkbox" id="sepsis-ckd"> CKD</label>
+      <label><input type="checkbox" id="sepsis-malignancy"> Malignancy</label>
+      <label><input type="checkbox" id="sepsis-steroid"> Steroid / immunosuppressant</label>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">2</span>Vital Signs & Lactate</h2>
+  <div class="inline-row">
+    <div class="field-row"><label>Temp (°C)</label><input type="number" id="sepsis-temp" step="0.1"></div>
+    <div class="field-row"><label>HR (/min)</label><input type="number" id="sepsis-hr"></div>
+    <div class="field-row"><label>RR (/min)</label><input type="number" id="sepsis-rr"></div>
+    <div class="field-row"><label>BP (mmHg)</label><input type="text" id="sepsis-bp"></div>
+    <div class="field-row"><label>SpO₂ (%)</label><input type="number" id="sepsis-spo2"></div>
+    <div class="field-row"><label>Lactate (mmol/L)</label><input type="number" id="sepsis-lactate" step="0.1"></div>
+  </div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">3</span>Sepsis Screening</h2>
+  <div class="field-row"><label>qSOFA</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="qsofa-rr"> RR ≥ 22</label>
+      <label><input type="checkbox" id="qsofa-bp"> SBP ≤ 100</label>
+      <label><input type="checkbox" id="qsofa-gcs"> Altered mentation (GCS < 15)</label>
+    </div>
+  </div>
+  <div class="field-row"><label>SIRS criteria</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="sirs-temp"> Temp &gt;38 or &lt;36</label>
+      <label><input type="checkbox" id="sirs-hr"> HR &gt;90</label>
+      <label><input type="checkbox" id="sirs-rr"> RR &gt;20 or PaCO₂ &lt;32</label>
+      <label><input type="checkbox" id="sirs-wbc"> WBC &gt;12k or &lt;4k or &gt;10% bands</label>
+    </div>
+  </div>
+  <div class="hint" id="sepsis-score">qSOFA: 0/3 · SIRS: 0/4</div>
+</div>
+<div class="card">
+  <h2 class="section-title"><span class="num">4</span>Management</h2>
+  <div class="field-row"><label>Antibiotics <span class="sub">within 1 hr if septic shock</span></label><input type="text" id="sepsis-abx" placeholder="e.g. Ceftriaxone 2g IV"></div>
+  <div class="field-row"><label>Fluids</label><input type="text" id="sepsis-fluid" placeholder="30 mL/kg crystalloid"></div>
+  <div class="field-row"><label>Vasopressor / ICU</label><input type="text" id="sepsis-vaso"></div>
+  <div class="field-row"><label>Cultures sent</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="culture-blood"> Blood</label>
+      <label><input type="checkbox" id="culture-urine"> Urine</label>
+      <label><input type="checkbox" id="culture-sputum"> Sputum</label>
+      <label><input type="checkbox" id="culture-wound"> Wound / other</label>
+    </div>
+  </div>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v21</footer>
+<script src="er-note.js"></script>
+<script>
+
+function updateSepsisScore(){
+  let q=0, s=0;
+  ['qsofa-rr','qsofa-bp','qsofa-gcs'].forEach(id=>{ if(document.getElementById(id).checked) q++; });
+  ['sirs-temp','sirs-hr','sirs-rr','sirs-wbc'].forEach(id=>{ if(document.getElementById(id).checked) s++; });
+  const el=document.getElementById('sepsis-score');
+  if(el) el.textContent='qSOFA: '+q+'/3 · SIRS: '+s+'/4';
+}
+['qsofa-rr','qsofa-bp','qsofa-gcs','sirs-temp','sirs-hr','sirs-rr','sirs-wbc'].forEach(id=>{
+  const el=document.getElementById(id); if(el) el.addEventListener('change', updateSepsisScore);
+});
+updateSepsisScore();
+
+</script>
+</body>
+</html>
