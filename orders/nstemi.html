@@ -177,6 +177,19 @@
 
         @media (max-width: 900px) {
             .dapt-anticoag-row { grid-template-columns: 1fr; }
+            /* Troponin box: 3-row stack on tablet/mobile */
+            .troponin-row {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 8px !important;
+            }
+            .troponin-row .inline-input-group {
+                width: 100% !important;
+            }
+            .troponin-row .inline-input-group input {
+                width: 100% !important;
+                flex: none !important;
+            }
         }
 
         /* ── Mobile: data-input section ── */
@@ -232,27 +245,6 @@
                 align-items: flex-start;
                 overflow: hidden;
                 min-width: 0;
-            }
-
-            /* Troponin header row: allow checkbox to wrap below title */
-            .patient-section > div[style*="background:#f8f9fa"] > div:first-child {
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-            .patient-section > div[style*="background:#f8f9fa"] > div:first-child .flag-label {
-                margin-left: 0 !important;
-            }
-
-            /* Troponin inputs: stack vertically, full width */
-            .patient-section > div[style*="background:#f8f9fa"] > div:last-child {
-                flex-direction: column;
-            }
-            .patient-section > div[style*="background:#f8f9fa"] .inline-input-group {
-                width: 100%;
-            }
-            .patient-section > div[style*="background:#f8f9fa"] .inline-input-group input {
-                width: 100%;
-                flex: none;
             }
 
             /* GRACE Score: short labels + inline layout */
@@ -349,7 +341,7 @@
             <!-- ROW 1 : Patient Info (single-line) -->
             <div class="patient-section">
                 <h3>1. ข้อมูลผู้ป่วย
-                    <label style="font-size:12px; font-weight:normal; color:#555; cursor:pointer; vertical-align:middle; margin-left:12px;">
+                    <label style="float:right; font-size:12px; font-weight:normal; color:#555; cursor:pointer; vertical-align:middle;">
                         <input type="checkbox" id="use-current-time">
                         บันทึกเวลาปัจจุบัน (Use Current Time)
                     </label>
@@ -391,26 +383,24 @@
                         <label class="gender-radio"><input type="radio" name="asa-allergy" value="yes"> มี ⚠️</label>
                     </div>
                 </div>
-                <div style="margin-top:10px;padding:10px;background:#f8f9fa;border-radius:6px;">
-                    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
-                        <strong style="font-size:13px;">🧪 hs-Troponin I (ng/L)</strong>
-                        <label class="flag-label" style="margin-left:auto; font-weight:normal; display:flex; align-items:center; gap:4px; font-size:12px; cursor:pointer;">
+                <div class="troponin-box" style="margin-top:10px;padding:10px;background:#f8f9fa;border-radius:6px;">
+                    <div class="troponin-row" style="display:flex;gap:16px;align-items:center;flex-wrap:nowrap;">
+                        <strong style="font-size:13px;white-space:nowrap;">🧪 hs-Troponin I (ng/L)</strong>
+                        <label class="flag-label" style="font-weight:normal; display:flex; align-items:center; gap:4px; font-size:12px; cursor:pointer;white-space:nowrap;">
                             <input type="checkbox" id="troponin-from-rphch">
                             เจาะ Troponin จาก รพช. แล้ว <small style="color:#888;">(ไม่ต้องเจาะซ้ำ)</small>
                         </label>
-                    </div>
-                    <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                        <div class="inline-input-group">
-                            <label for="troponin-h0">Troponin H0 (แรกรับ):</label>
-                            <input type="number" id="troponin-h0" step="0.1" placeholder="ค่าที่เจาะ 0 hr">
+                        <div class="inline-input-group" style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;">
+                            <label for="troponin-h0" style="white-space:nowrap;">H0 (แรกรับ):</label>
+                            <input type="number" id="troponin-h0" step="0.1" placeholder="ค่าที่เจาะ 0 hr" style="flex:1;min-width:0;">
                         </div>
-                        <div class="inline-input-group">
-                            <label for="troponin-h1">Troponin H1 (+1h):</label>
-                            <input type="number" id="troponin-h1" step="0.1" placeholder="ค่าที่เจาะ 1 hr">
+                        <div class="inline-input-group" style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;">
+                            <label for="troponin-h1" style="white-space:nowrap;">H1 (+1h):</label>
+                            <input type="number" id="troponin-h1" step="0.1" placeholder="ค่าที่เจาะ 1 hr" style="flex:1;min-width:0;">
                         </div>
-                        <div class="inline-input-group">
-                            <label for="troponin-h3">Troponin H3 (+3h):</label>
-                            <input type="number" id="troponin-h3" step="0.1" placeholder="ค่าที่เจาะ 3 hr">
+                        <div class="inline-input-group" style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;">
+                            <label for="troponin-h3" style="white-space:nowrap;">H3 (+3h):</label>
+                            <input type="number" id="troponin-h3" step="0.1" placeholder="ค่าที่เจาะ 3 hr" style="flex:1;min-width:0;">
                         </div>
                     </div>
                 </div>
