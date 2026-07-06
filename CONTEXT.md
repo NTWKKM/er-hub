@@ -27,16 +27,15 @@
 
 ## 3. Architectural Decision Records (ADRs)
 
-### ADR-47: NSTEMI Use-Current-Time Checkbox (2026-07-06)
+### ADR-47: NSTEMI Use-Current-Time Checkbox & Troponin Box Layout (2026-07-06)
 
-- **Context:** NSTEMI was the only `use-current-time` page (among pe, heparin, antivenom, nstemi, rtpa) that had the checkbox deleted in ADR-20 §3 and never restored. The ADR-20 rationale (removing auto-time for *troponin draw times*) did not apply to the *order date/time* field. ER clinical workflow for NSTEMI prefers blank date/time by default.
+- **Context:** NSTEMI was the only `use-current-time` page (among pe, heparin, antivenom, nstemi, rtpa) that had the checkbox deleted in ADR-20 §3 and never restored. The ADR-20 rationale (removing auto-time for *troponin draw times*) did not apply to the *order date/time* field. ER clinical workflow for NSTEMI prefers blank date/time by default. Separately, the troponin box layout was cramped on desktop.
 - **Decision:**
-  1. Restored `use-current-time` checkbox to `orders/nstemi.html`, inline on the same flex row as the "1. ข้อมูลผู้ป่วย" heading (`justify-content:space-between`). Both share a continuous cardiac-red `border-bottom`.
-  2. Default **unchecked** (unlike other 4 pages which default to `checked`) — renders dotted lines in print date/time until clinician checks the box.
-  3. Wired to `updatePrintArea()` via `ED_PRINT_BOOTSTRAP.getDateTimeHTML($('use-current-time')?.checked, now)`.
-  4. Wired to `change` event listener for real-time preview re-render on toggle.
-- **Rationale:** Restores W-08 parity with the other 4 pages while respecting NSTEMI's blank-by-default clinical workflow. Inline-on-heading layout saves vertical space.
-- **Tests:** 199/199 pass — no test changes needed (UI-only toggle).
+  1. Restored `use-current-time` checkbox inside `<h3>` heading with `float:right` and distinct typography (`12px, normal, #555`). Default **unchecked** (unlike other 4 pages). Wired to `updatePrintArea()` + `change` event.
+  2. Troponin box **2-row desktop layout**: Row 1 = title + รพช. checkbox. Row 2 = H0/H1/H3 inputs in single flex row (`flex:1` each). Short labels ("H0 (แรกรับ):" not "Troponin H0 (แรกรับ):").
+  3. Troponin box **4-row tablet/mobile layout (≤900px)**: Row 1 = title + รพช. checkbox. Rows 2–4 = H0, H1, H3 stacked vertically, full-width.
+- **Rationale:** Restores W-08 parity. Inline-in-h3 with float:right avoids border overlap. 2-row layout is cleaner than single-line. Short labels avoid redundancy with title.
+- **Tests:** 199/199 pass — no test changes needed (UI-only).
 
 ### ADR-46: Clinical Engine Hardening — eGFR Parity, Case-Insensitive Sex, Killip Lookup, ARIA, Single-Prep Radio (2026-07-06)
 

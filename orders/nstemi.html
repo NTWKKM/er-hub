@@ -177,16 +177,16 @@
 
         @media (max-width: 900px) {
             .dapt-anticoag-row { grid-template-columns: 1fr; }
-            /* Troponin box: 3-row stack on tablet/mobile */
-            .troponin-row {
+            /* Troponin inputs: stack into 3 rows on tablet/mobile */
+            .troponin-inputs {
                 flex-direction: column !important;
                 align-items: stretch !important;
                 gap: 8px !important;
             }
-            .troponin-row .inline-input-group {
+            .troponin-inputs .inline-input-group {
                 width: 100% !important;
             }
-            .troponin-row .inline-input-group input {
+            .troponin-inputs .inline-input-group input {
                 width: 100% !important;
                 flex: none !important;
             }
@@ -384,12 +384,14 @@
                     </div>
                 </div>
                 <div class="troponin-box" style="margin-top:10px;padding:10px;background:#f8f9fa;border-radius:6px;">
-                    <div class="troponin-row" style="display:flex;gap:16px;align-items:center;flex-wrap:nowrap;">
+                    <div class="troponin-header" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
                         <strong style="font-size:13px;white-space:nowrap;">🧪 hs-Troponin I (ng/L)</strong>
                         <label class="flag-label" style="font-weight:normal; display:flex; align-items:center; gap:4px; font-size:12px; cursor:pointer;white-space:nowrap;">
                             <input type="checkbox" id="troponin-from-rphch">
                             เจาะ Troponin จาก รพช. แล้ว <small style="color:#888;">(ไม่ต้องเจาะซ้ำ)</small>
                         </label>
+                    </div>
+                    <div class="troponin-inputs" style="display:flex;gap:12px;align-items:center;flex-wrap:nowrap;">
                         <div class="inline-input-group" style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;">
                             <label for="troponin-h0" style="white-space:nowrap;">H0 (แรกรับ):</label>
                             <input type="number" id="troponin-h0" step="0.1" placeholder="ค่าที่เจาะ 0 hr" style="flex:1;min-width:0;">
