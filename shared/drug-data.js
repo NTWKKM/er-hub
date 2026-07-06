@@ -32,11 +32,22 @@ const EMERGENCY_DRUG_DATA = [
         isWeightBased: true,
         preparations: [
             { label: '4 mg in D5W 100 mL (40 mcg/mL)', concentration: 40 },
-            { label: '8 mg in D5W 100 mL (80 mcg/mL)', concentration: 80 }
+            { label: '8 mg in D5W 100 mL (80 mcg/mL)', concentration: 80 },
+            { label: '4 mg in D5W 250 mL (16 mcg/mL)', concentration: 16 }
         ],
         defaultPreparationIndex: 0,
         doseRange: { min: 0.02, max: 3.0, step: 0.01, default: 0.1 },
         titrationGuide: 'ปรับเพิ่มครั้งละ 0.05 mcg/kg/min ทุก 3 นาที เพื่อเป้าหมาย MAP ≥ 65 mmHg',
+        indications: [
+            {
+                name: 'Septic Shock (First-line vasopressor)',
+                dose: 'เริ่มต้น 0.05 mcg/kg/min ปรับเพิ่มทีละ 0.05 mcg/kg/min ทุก 3-5 นาที เพื่อเป้าหมาย MAP ≥ 65 mmHg'
+            },
+            {
+                name: 'Cardiogenic / Vasodilatory Shock (Second-line)',
+                dose: 'เริ่มต้น 0.02-0.05 mcg/kg/min ร่วมกับ Inotrope (เช่น Dobutamine) ปรับตาม MAP และ Perfusion'
+            }
+        ],
         safetyWarnings: [
             'ต้องผสมเจือจางใน D5W เท่านั้น ห้ามผสมใน NSS เปล่าๆ เพื่อเสถียรภาพของยา',
             'ต้องให้ทางหลอดเลือดดำใหญ่ (Central line หรือ Large vein) เพื่อเลี่ยง Extravasation necrosis'
@@ -165,6 +176,12 @@ const EMERGENCY_DRUG_DATA = [
         defaultPreparationIndex: 0,
         doseRange: { min: 0.5, max: 3.0, step: 0.1, default: 1.0 },
         titrationGuide: 'เริ่มให้ยาในอัตราคงที่ 0.5 - 2 mg/min ปรับเปลี่ยนขนาดยาตามเป้าหมายของความดันโลหิต',
+        indications: [
+            {
+                name: 'Hypertensive Emergency',
+                dose: 'เริ่มต้น 0.5-2 mg/min IV drip ปรับตามเป้าหมาย BP ลดลง 10-20% ใน 1 ชม.แรก (ห้ามลดเร็วเกินไป)'
+            }
+        ],
         safetyWarnings: [
             'ขนาดสูงสุดห้ามเกิน 300 mg/วัน (mg/day)',
             'ห้ามใช้ในผู้ป่วยโรคหอบหืดรุนแรง (COPD/Asthma) หรือหัวใจเต้นช้าขั้นรุนแรง (Heart block)'
@@ -183,6 +200,12 @@ const EMERGENCY_DRUG_DATA = [
         defaultPreparationIndex: 0,
         doseRange: { min: 5.0, max: 15.0, step: 0.5, default: 5.0 },
         titrationGuide: 'เริ่มต้น 5 mg/hr ปรับเพิ่มขึ้นครั้งละ 2.5 mg/hr ทุก 15 นาที เมื่อคุมความดันโลหิตได้ตามเป้าหมายแล้ว ลดระดับลงเหลือ 3-5 mg/hr',
+        indications: [
+            {
+                name: 'Hypertensive Emergency',
+                dose: 'เริ่มต้น 5 mg/hr ปรับเพิ่มทีละ 2.5 mg/hr ทุก 15 นาที (max 15 mg/hr) เพื่อลด BP 10-20% ใน 1 ชม.แรก'
+            }
+        ],
         safetyWarnings: [
             'เฝ้าระวังภาวะ Phlebitis (หลอดเลือดอักเสบ) แนะนำให้เปลี่ยนตำแหน่งหลอดเลือดดำทุก 12 ชม. หากให้ผ่านทางหลอดเลือดดำส่วนปลาย'
         ]
@@ -216,6 +239,12 @@ const EMERGENCY_DRUG_DATA = [
         defaultPreparationIndex: 0,
         doseRange: { min: 0.25, max: 10.0, step: 0.1, default: 0.25 },
         titrationGuide: 'เริ่มต้น 0.25 - 0.5 mcg/kg/min ปรับขึ้นทีละขั้นทุกๆ 3-5 นาที ตามเป้าหมายระดับความดันโลหิต',
+        indications: [
+            {
+                name: 'Hypertensive Emergency (e.g. Aortic dissection, Hypertensive encephalopathy)',
+                dose: 'เริ่มต้น 0.25-0.5 mcg/kg/min ปรับเพิ่มทุก 3-5 นาที เพื่อลด BP 10-20% ใน 1 ชม.แรก'
+            }
+        ],
         safetyWarnings: [
             'ขวดยาและสายให้ยาต้องได้รับการหุ้มกระดาษฟอยล์เพื่อป้องกันแสง เนื่องจากยาสลายตัวได้เมื่อโดนแสง',
             'ระวังภาวะพิษจากสารไซยาไนด์ (Cyanide toxicity) หากหยดยาติดต่อกันเป็นเวลานานกว่า 48 ชม.'

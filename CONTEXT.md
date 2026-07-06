@@ -27,6 +27,19 @@
 
 ## 3. Architectural Decision Records (ADRs)
 
+### ADR-45: Drip Calculator Feature Expansion + Audit Fixes (2026-07-06)
+
+- **Context:** Comprehensive audit of `rtpa.html`, `nstemi.html`, and `drip-calculator.html` identified: (A1) `nstemi.html` loaded `anticoag-engine.js` but never called its functions — dead include creating maintenance confusion (same drift root-cause class as prior anticoagulant bugs). (B1) `rtpa.html` weight input had no `min`/`max` attributes and no `ED_VALIDATE.range()` — a typo like "655" instead of "65.5" would silently cap at 90mg with no warning. (D1) `nstemi.html` version still 2.1.1. Three drip-calculator features pending: Levophed 16 mcg/mL preparation, bidirectional weight input, clinical-indication-based guide with max dose display.
+- **Decision:**
+  1. **A1 — Remove dead `anticoag-engine.js` include from `nstemi.html`:** Deleted `<script src="../shared/anticoag-engine.js"></script>`. All anticoag/eGFR logic in nstemi uses `CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021` from `clinical-engine.js`. File remains in `shared/`, still loaded by `orders/heparin.html`.
+  2. **B1 — Add weight range validation to `rtpa.html`:** Added `min="20" max="250"` to weight input + `ED_VALIDATE.range('weight', 20, 250, ...)` after existing NaN/zero check. `form-validate.js` already loaded — now matches nstemi.html validation pattern.
+  3. **D1 — Version bump:** nstemi.html 2.1.1 → 2.1.2 (print + navbar). drip-calculator.html 1.0 → 1.1. SW `CACHE_VERSION` → `er-hub-v18`.
+  4. **Feature 1 — Levophed 16 mcg/mL:** Added 3rd preparation for Norepinephrine: `4 mg in D5W 250 mL (16 mcg/mL)` (4,000 mcg ÷ 250 mL = 16 mcg/mL).
+  5. **Feature 2 — Bidirectional weight input:** Replaced slider-only weight with coupled number input (`#weight-input`) + slider (`#weight`) pair, mirroring Target Dose pattern. Both soft-clamp 30–250 kg, sync bidirectionally.
+  6. **Feature 3 — Clinical indication guide + max dose:** Added optional `indications` array to 4 drugs (Norepinephrine, Labetalol, Nicardipine, Sodium Nitroprusside). Guide box renders `<ul>` with per-indication entries when present; falls back to `titrationGuide` single-line otherwise. Every drug shows explicit max dose line in red. Changed `#guide-text` from `<p>` to `<div>` for block content support.
+- **Rationale:** A1 eliminates maintenance hazard — "two eGFR/anticoag logic sets, one unused" pattern that caused prior screen-vs-print drift bugs. B1 closes real validation gap where weight typo produces silently-capped dose. Three drip calculator features add clinical utility without breaking existing drugs — `indications` is optional and falls back gracefully.
+- **Tests:** 183/183 pass — no test changes needed. `drug-data.test.js` checks `EMERGENCY_DRUG_DATA.length === 12` (unchanged). No test asserts norepinephrine preparation count or absence of `indications`. Syntax verified via `node --check`.
+
 ### ADR-44: Print Button Removal — Float Bar as Sole Print Trigger (2026-07-06)
 
 - **Context:** rtpa.html and nstemi.html had redundant print controls — `#print-btn` inside `#results-container` AND the floating print action bar (`showFloatBar()`). Both called `window.print()`. On nstemi.html this caused recurring double-fire regressions (ADR-29, ADR-31, ADR-43). Separately, drip-calculator's Medication Formula radios displayed horizontally, crowding multiple preparation options onto one line.

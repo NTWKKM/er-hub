@@ -151,8 +151,14 @@
                 <!-- Column 1: Patient Weight & Drug -->
                 <div class="input-column">
                     <div class="inline-input-group">
-                        <label for="weight">Patient Weight (BW): <span id="weight-val" style="font-weight: bold; color: #27ae60;">50.0</span> kg</label>
-                        <input type="range" id="weight" min="30" max="250" step="0.1" value="50.0" style="width: 100%; cursor: pointer;">
+                        <label for="weight-input">Patient Weight (BW):</label>
+                        <div style="display: flex; flex-direction: column; width: 100%;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <input type="number" id="weight-input" min="30" max="250" step="0.1" value="50.0" style="flex-grow: 1;">
+                                <span class="unit-label-small">kg</span>
+                            </div>
+                            <input type="range" id="weight" min="30" max="250" step="0.1" value="50.0" style="width: 100%; cursor: pointer; margin-top: 8px;" aria-label="Weight adjustment slider">
+                        </div>
                     </div>
 
                     <div class="inline-input-group">
@@ -220,7 +226,7 @@
             <!-- Recommend Guide -->
             <div id="guide-container" class="guide-box">
                 <strong style="font-size:15px; color:#2c3e50; display:block; margin-bottom:6px;">📝 แนวทางการบริหารยา (Recommend Guide):</strong>
-                <p id="guide-text" style="margin:0; font-size:14px; font-weight:500; color:#2c3e50; line-height:1.5;"></p>
+                <div id="guide-text" style="margin:0; font-size:14px; font-weight:500; color:#2c3e50; line-height:1.5;"></div>
             </div>
 
             <!-- Safety Warnings -->
@@ -239,7 +245,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
-        'IV Infusion Drip Calculator — MNRH-ED Clinical Tool &nbsp;|&nbsp; Version 1.0');
+        'IV Infusion Drip Calculator — MNRH-ED Clinical Tool &nbsp;|&nbsp; Version 1.1');
     const $ = id => document.getElementById(id);
     
     const drugSelect = $('drug-select');
@@ -251,12 +257,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultContainer = $('result-container');
     const esmololDualDisplay = $('esmolol-dual-display');
     const esmololAltValue = $('esmolol-alt-value');
+    const weightSlider = $('weight');
+    const weightInput = $('weight-input');
 
     // Restore weight from sessionStorage if available, defaulting to 50 kg
     const storedWeight = sessionStorage.getItem('er-hub-weight');
     const initialWeight = storedWeight ? parseFloat(storedWeight) : 50;
-    $('weight').value = initialWeight;
-    $('weight-val').textContent = initialWeight.toFixed(1);
+    weightSlider.value = initialWeight;
+    weightInput.value = initialWeight.toFixed(1);
 
     // Derive concentration unit display dynamically using the drug's dose unit (B1)
     function getConcentrationUnit(doseUnit) {
@@ -460,11 +468,23 @@ document.addEventListener('DOMContentLoaded', () => {
     doseInput.addEventListener('keydown', handleKeydown);
     doseSlider.addEventListener('keydown', handleKeydown);
 
-    // Live calculation trigger for patient weight
-    $('weight').addEventListener('input', () => {
-        const val = parseFloat($('weight').value);
+    // Live calculation trigger for patient weight — bidirectional slider <-> number input sync
+    const WEIGHT_MIN = 30;
+    const WEIGHT_MAX = 250;
+
+    weightSlider.addEventListener('input', () => {
+        weightInput.value = weightSlider.value;
+        triggerCalculation();
+    });
+
+    weightInput.addEventListener('input', () => {
+        let val = parseFloat(weightInput.value);
         if (!isNaN(val)) {
-            $('weight-val').textContent = val.toFixed(1);
+            // Soft clamping to respect physiological bounds (mirrors Target Dose behavior)
+            if (val < WEIGHT_MIN) val = WEIGHT_MIN;
+            if (val > WEIGHT_MAX) val = WEIGHT_MAX;
+            weightInput.value = val;
+            weightSlider.value = val;
         }
         triggerCalculation();
     });
@@ -550,8 +570,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (badge) badge.style.display = 'inline-block';
         }
 
-        // Render titration guide
-        $('guide-text').textContent = selectedDrug.titrationGuide;
+        // Render titration guide — clinical-indication breakdown (if available) + explicit max dose
+        let guideHtml = '';
+        if (Array.isArray(selectedDrug.indications) && selectedDrug.indications.length) {
+            guideHtml += '<ul style="margin:0 0 8px 18px;padding:0;">';
+            selectedDrug.indications.forEach(ind => {
+                guideHtml += `<li style="margin-bottom:4px;"><strong>${ind.name}:</strong> ${ind.dose}</li>`;
+            });
+            guideHtml += '</ul>';
+        } else {
+            guideHtml += `<p style="margin:0 0 8px 0;">${selectedDrug.titrationGuide}</p>`;
+        }
+        guideHtml += `<div style="font-size:12.5px;color:#c0392b;font-weight:bold;">⬆️ Max dose: ${selectedDrug.doseRange.max} ${selectedDrug.doseUnit}</div>`;
+        $('guide-text').innerHTML = guideHtml;
 
         // Render safety warnings list
         const warningList = $('warning-list');

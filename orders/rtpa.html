@@ -215,7 +215,7 @@
                     </div>
                     <div class="inline-input-group">
                         <label for="weight">น้ำหนัก (kg):</label>
-                        <input type="number" id="weight" step="0.01" required placeholder="เช่น 65.50">
+                        <input type="number" id="weight" step="0.01" min="20" max="250" required placeholder="เช่น 65.50">
                     </div>
                     
                     <div class="checkbox-time-group">
@@ -676,6 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ED_VALIDATE.fail('weight', 'กรุณากรอกน้ำหนักให้ถูกต้อง');
             return;
         }
+        ED_VALIDATE.range('weight', 20, 250, 'Weight ต้องอยู่ในช่วง 20–250 kg');
 
         let totalDose, pushDose, dripDose, pushPercent, dripPercent;
 
