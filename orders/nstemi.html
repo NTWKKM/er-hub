@@ -900,9 +900,6 @@
             </div>
         </div><!-- end #print-area -->
 
-        <button type="button" id="print-btn" class="btn btn-print">
-            🖨️ พิมพ์ใบสั่งยา (Print Order)
-        </button>
     </div><!-- end #results-container -->
 
 </div><!-- end .container -->
@@ -1527,10 +1524,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── create-order-btn: print
     $('create-order-btn').addEventListener('click', () => window.print());
 
-    // ── print-btn: wired directly (setupCommonActions not used for print to avoid double-fire)
-    const pBtn = $('print-btn');
-    if (pBtn) pBtn.addEventListener('click', () => window.print());
-
     // ── Safety override for CI anticoag options: second-click confirms ──
     document.querySelectorAll('input[name="anticoag-choice"]').forEach(radio => {
         radio.addEventListener('click', function(e) {
@@ -1658,6 +1651,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial render on page load (real-time preview, no button press needed)
     calculateAndRender();
+    ED_COMPONENTS.showFloatBar();
 
     ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
         'NSTEMI Standing Order — MNRH-ED Guideline: ESC 2023 NSTEMI Guidelines &nbsp;|&nbsp; Anticoag: 2025 ACC/AHA ACS &nbsp;|&nbsp; eGFR: CKD-EPI 2021 &nbsp;|&nbsp; Version 2.1.1');

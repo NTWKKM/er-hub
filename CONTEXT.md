@@ -27,6 +27,16 @@
 
 ## 3. Architectural Decision Records (ADRs)
 
+### ADR-44: Print Button Removal — Float Bar as Sole Print Trigger (2026-07-06)
+
+- **Context:** rtpa.html and nstemi.html had redundant print controls — `#print-btn` inside `#results-container` AND the floating print action bar (`showFloatBar()`). Both called `window.print()`. On nstemi.html this caused recurring double-fire regressions (ADR-29, ADR-31, ADR-43). Separately, drip-calculator's Medication Formula radios displayed horizontally, crowding multiple preparation options onto one line.
+- **Decision:**
+  1. **rtpa.html:** Removed `#print-btn` button. Float bar (shown in submit handler via `showFloatBar()`) is sole print trigger. `setupCommonActions()` still called but finds no `#print-btn` — harmless no-op.
+  2. **nstemi.html:** Removed `#print-btn` button + dead JS wiring (`const pBtn = $('print-btn'); ...`). Added `ED_COMPONENTS.showFloatBar()` after `calculateAndRender()` on page load — nstemi is real-time preview (results always visible), so float bar shows immediately. `create-order-btn` still calls `window.print()` independently.
+  3. **drip-calculator.html:** Changed `#prep-radio-container` from `flex-direction: row; flex-wrap: wrap; gap: 16px` to `flex-direction: column; gap: 4px` — each preparation option on its own line (1 bullet = 1 choice).
+- **Rationale:** Removing `#print-btn` eliminates the double-fire bug class at the root — no button means no duplicate listener. The float bar is always visible (fixed bottom, `z-index: 1000`) and provides "พิมพ์ทันที" + "ดู Order". On nstemi (real-time preview), showing float bar on load is correct since results are always visible. Vertical radio layout reduces horizontal scanning for multiple drug preparations.
+- **Tests:** 183/183 pass — no test referenced `#print-btn` on rtpa/nstemi directly.
+
 ### ADR-43: NSTEMI Clear-Render Fix, Print Dedup, GRACE Summary Auto-Center Layout (2026-07-06)
 
 - **Context:** Three issues found during NSTEMI results QA: (1) Clear button left GRACE Score and risk badge showing stale values — `clear-btn` handler called `form.reset()` but never re-invoked `calculateAndRender()`, so `#screen-grace` and `#screen-risk-label` kept their last-computed text. (2) Print button triggered print dialog twice — `print-btn` was wired via both the inline listener in `nstemi.html` AND `ED_COMPONENTS.setupCommonActions()` (called at end of DOMContentLoaded), each adding a `click → window.print()` listener. (3) GRACE summary used a fixed `grid-template-columns: 1fr 3fr 2fr` (ADR-42) — user requested auto-centering instead.
