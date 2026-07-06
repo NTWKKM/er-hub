@@ -79,11 +79,15 @@
             border: 2px solid #c0392b;
             border-radius: 8px;
             padding: 16px;
-            margin: 20px 0;
-            display: grid;
-            grid-template-columns: 1fr 3fr 2fr;
-            gap: 16px;
-            align-items: flex-start;
+            margin: 20px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+        }
+        .grace-summary > div {
+            flex: 0 1 auto;
         }
         .dapt-anticoag-row {
             display: grid;
@@ -172,7 +176,6 @@
         .patient-fields .inline-input-group { flex: 1 1 300px; margin-bottom: 11px; }
 
         @media (max-width: 900px) {
-            .grace-summary { grid-template-columns: 1fr; }
             .dapt-anticoag-row { grid-template-columns: 1fr; }
         }
 
@@ -1521,10 +1524,10 @@ document.addEventListener('DOMContentLoaded', () => {
         '.vh-flag, .h1-flag, #cardiac-arrest, #st-deviation, #elevated-markers, #troponin-from-rphch'
     ).forEach(el => el.addEventListener('change', calculateAndRender));
 
-    // ── create-order-btn: print (setupCommonActions also wires print-btn)
+    // ── create-order-btn: print
     $('create-order-btn').addEventListener('click', () => window.print());
 
-    // ── print-btn: also wired directly (in case setupCommonActions race)
+    // ── print-btn: wired directly (setupCommonActions not used for print to avoid double-fire)
     const pBtn = $('print-btn');
     if (pBtn) pBtn.addEventListener('click', () => window.print());
 
@@ -1627,6 +1630,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (daptHintBox) daptHintBox.style.display = 'none';
         
         updateLiveEGFR();
+        // Re-render to reset GRACE score + risk badge to blank state
+        calculateAndRender();
         // Re-apply blank template so print preview resets to a clean blank order
         applyBlankTemplate();
         // Focus HN for immediate re-entry
@@ -1656,7 +1661,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
         'NSTEMI Standing Order — MNRH-ED Guideline: ESC 2023 NSTEMI Guidelines &nbsp;|&nbsp; Anticoag: 2025 ACC/AHA ACS &nbsp;|&nbsp; eGFR: CKD-EPI 2021 &nbsp;|&nbsp; Version 2.1.1');
-    ED_COMPONENTS.setupCommonActions();
+    // Note: setupCommonActions() not called — it would double-wire print-btn
 });
 </script>
 </body>
