@@ -13,7 +13,7 @@
 | `blank-print-engine.js` | Declarative blank-print reset engine. Each order page registers a manifest of reset rules (`{ id, value }` for textContent, `{ id, html }` for innerHTML, `{ id, className }` for class override, `{ id, style }` for style props, `{ selector, checked }` for checkboxes). `apply()` executes all rules. Used by rtpa.html and nstemi.html only (ADR-17 — 5 other pages now open source PDFs instead). Fixes the ADR-10 bug class at the root — adding a new protocol page is now a manifest array, not a hand-written reset block. | None |
 | `form-validate.js` | Non-blocking form validation — replaces `alert()` calls across all order pages. `fail(inputId, msg)` highlights field + inline message. `warn(msg)` shows clinical warning banner. `range(inputId, min, max, msg)` and `min(inputId, minVal, msg)` for numeric validation. `clearAll()` resets all errors. Uses existing `.field-error` CSS + new `.inline-error-msg` and `.clinical-warning` classes. | `components.js` |
 | `orders/*.html` | Specialized clinical worksheets (rt-PA, STEMI, NSTEMI, PE, Antivenom, Heparin, Sedation). All 7 files use `ED_PRINT_BOOTSTRAP` for page lifecycle and `ED_VALIDATE` for non-blocking validation. All in-page title/guideline headers and dividers are deleted; forms start directly below the sticky top nav, relying on it as the single source of truth. 5 pages (stemi, pe, heparin, antivenom, sedation) use `ED_PRINT_BOOTSTRAP.openBlankPdf()` to open source PDFs from `docs/` in a new tab (ADR-17). 2 pages (rtpa, nstemi) keep `ED_BLANK_PRINT` for HTML blank-print (no source PDF). rtpa and nstemi no longer have `#print-btn` — the floating print action bar (`showFloatBar()`) is the sole print trigger (ADR-44). Page-specific JS reduced to: form submit handler (clinical logic) + event listeners for protocol-specific UI. `nstemi.html` loads `shared/clinical-engine.js` (eGFR/GRACE logic); `anticoag-engine.js` removed from nstemi.html (ADR-45 — was dead include, all anticoag logic in nstemi uses `CLINICAL_ENGINE`). | `shared/base.css`, `shared/print.css`, `shared/calc-engine.js` or `shared/anticoag-engine.js`, `shared/components.js`, `shared/print-bootstrap.js`, `shared/form-validate.js`, `shared/clinical-engine.js` (rtpa/nstemi also load `shared/blank-print-engine.js`) |
-| `tools/drip-calculator.html` | IV infusion drip rate calculator for 12 high-alert drugs featuring bidirectional weight input (number + slider sync with soft-clamp 30–250 kg), interactive dose slider and number input coupling, real-time calculation, safety color categories, generalized dual units display, dynamic radio button choices for medication formulas (vertical 1-per-line layout per ADR-44), clinical-indication-based guide rendering with per-drug max dose display (ADR-45), inline plain text concentration display, and sessionStorage weight persistence. All input fields are translated to English. Dose input soft-clamp writes back to input value. | `shared/base.css`, `shared/calc-engine.js`, `shared/drug-data.js`, `shared/components.js` |
+| `tools/drip-calculator.html` | IV infusion drip rate calculator for 12 high-alert drugs featuring bidirectional weight input (number + slider sync with soft-clamp 30–250 kg) positioned below Concentration in Column 2, interactive dose slider and number input coupling, real-time calculation, safety color categories, generalized dual units display, dynamic radio button choices for medication formulas (vertical 1-per-line layout per ADR-44), clinical-indication-based guide rendering with per-drug max dose display (ADR-45), inline plain text concentration display, and sessionStorage weight persistence. All input fields are translated to English. Dose input soft-clamp writes back to input value. | `shared/base.css`, `shared/calc-engine.js`, `shared/drug-data.js`, `shared/components.js` |
 | `index.html` | Portal hub with custom Braun × Mid-Century Modern layout. Displays active and prototype clinical standing orders and calculators in a semantic vertical ordered list with 1px hairlines, tabular numerals, muted category styles, and signal orange indicators for time-critical actions. Implements header wordmark, hospital logo, and footer. Registers service worker for offline PWA support with dynamic reload notification (idempotent listener guard). Redirect script validates `order` slug against allow-list. Body uses custom typography and colors. | `shared/base.css`, `service-worker.js`, `manifest.json` |
 | `service-worker.js` | PWA offline cache. Network-first for navigation, cache-first for assets. Caches all HTML/CSS/JS + 4 shared behavior modules + logo PNG + 5 source PDFs + Google Fonts (including `Inter Tight`). `CACHE_VERSION` bumped to `er-hub-v19`. Enables full offline access during ED wifi outages. | None |
 | `manifest.json` | PWA manifest. App name, theme color (`#f4f2ec` Braun cream), background color (`#ebe7df` Braun paper), logo icon reference. Enables installable app + offline. | `docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png` |
@@ -300,9 +300,11 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 **Context:** A post-merge audit of `orders/nstemi.html` (post-ADR-20 / v2.1) identified four findings, two of which had patient-safety implications. Documented in `PLAN-nstemi-v2.1.1-audit.md`.
 
 **Decision — Finding 1 (Dead DOM):**
+
 - Removed `.troponin-times` HTML block (`#screen-h0/h1/h3`) and its five CSS rules. The block was permanently frozen at `--:--` with no JS writer — dead weight from the pre-v2.0 design. ADR-20 claimed removal; this closes the gap.
 
 **Decision — Finding 2 (Blank-first UX):**
+
 - On cold page load (no `?print-blank-direct` URL param), `$('print-blank-btn').click()` is now called before `calculateAndRender()`. Implements the blank-first behaviour that ADR-20 documented as shipped but never implemented.
 
 **Decision — Finding 3 (Anticoag contradiction — patient safety):**
@@ -314,6 +316,7 @@ All 138 tests pass, including the new regression guard testing all 8 interactive
 5. **Enox frequency** auto-set by eGFR (q12h if ≥30, q24h if <30) — informational pre-fill only, not auto-selection.
 
 **Decision — Finding 4 (print-btn missing listener):**
+
 - `$('print-btn').addEventListener('click', () => window.print())` added. The button is outside `<form id="nstemi-form">` so the form's submit handler never fired when clicked.
 
 **Test Gap Note:** `tests/id-integrity-guard.test.js` does not catch orphaned DOM elements or clinical-logic consistency bugs. A same-source consistency test for `calcAnticoag()` output vs. hint-label thresholds is a recommended next step.
@@ -398,6 +401,7 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 ### ADR-32: NSTEMI Mobile UX — Column-Correct Grid Placement, Gender Radio Fix, GRACE Short Labels (2026-07-04)
 
 **Context:** Post-ADR-31 screen QA on a 390px viewport identified three residual issues:
+
 1. `egfr-field` (6th DOM child, even) was placed in col-2 by the `nth-child(even) { grid-column: 2 }` rule — wrong; clinically it belongs with HN / Age / Cr in col-1 (all numeric patient identifiers / lab values).
 2. `asa-field` (7th DOM child, odd) was placed in col-1 by `nth-child(odd) { grid-column: 1 }` — wrong; it belongs with Weight / Sex in col-2.
 3. GRACE Score Variables section (`Heart Rate (bpm)`, `SBP (mmHg)`, `Creatinine (mg/dL)`) labels were too long to share a line with the input on narrow viewports, forcing a stacked layout.
@@ -431,6 +435,7 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 **Context:** The IV Infusion Drip Calculator (`tools/drip-calculator.html`) was revised to match stress-resistant, time-critical clinical needs. Additionally, security/UI bugs B1–B6 were identified and resolved, and the PWA update skipping model was integrated.
 
 **Decision:**
+
 1. **Coupled Controls & Dynamic calculations:** Replaced form submission with interactive `<input type="range">` slider and `<input type="number">` number inputs coupled together. Values are clamped to `doseRange` on input and update in real-time with 60ms debounce. Stepping buttons (`[-]` / `[+]`) enable fine touch adjustments.
 2. **Safety Color Zones:** Infusion pump rate readout color changes based on max ceiling proximity: `<60%` = green (`safe`), `60-85%` = amber (`warning`), `>85%` = red (`critical` with a visual warning badge).
 3. **Dynamic Concentration Units (B1) & Generalized Dual Units (B6):** Concentration labels derive the correct denominator dynamically (e.g. `mcg/mL`, `mg/mL`, `units/mL`). Drive dual-unit display from the `showDualUnits` flag coupled with `altUnit` + `altUnitFactor` in `drug-data.js`.
@@ -447,6 +452,7 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 **Context:** The emergency medicine clinical team requested further UX updates to `tools/drip-calculator.html` to optimize emergency room cognitive load and usability: (1) change the patient weight number field to a slider range of 30–250 kg with 1 decimal place, default to 50 kg; (2) remove Thai script annotations from the drug dropdown options, and make select inputs more compact; (3) default the active selection to Norepinephrine (Levophed) 4:100; (4) add Epinephrine refractory anaphylaxis preparation (1 mg/100 mL); (5) rename the titration guide to "Recommend Guide" and give it the same visual prominence as the primary result card.
 
 **Decision:**
+
 1. **Weight Slider:** Replaced the numeric input field with a range slider (`<input type="range" min="30" max="250" step="0.1" value="50.0">`). Added a dynamic `#weight-val` element in the label block to display the weight value.
 2. **Compact Dropdowns & Clean Names:** Removed the `(${drug.thaiName})` interpolation inside option population script. Constrained `#drug-select` and `#prep-select` max-width to `250px`. Pre-selected `norepinephrine` on load.
 3. **Epinephrine Refractory Anaphylaxis:** Appended `{ label: '1 mg in NSS 100 mL (10 mcg/mL) [Refractory Anaphylaxis]', concentration: 10 }` to epinephrine preparations in `shared/drug-data.js`.
@@ -463,6 +469,7 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 **Context:** Following the 2026-07-05 repository deep audit, several codebase maintenance issues were identified: (1) multiple dead/unreferenced CSS rules lingered from previous layout iterations; (2) `index.html` displayed a hardcoded service worker version string mismatching `CACHE_VERSION` in `service-worker.js`; and (3) no automated testing checks existed to verify CSS code cleanliness.
 
 **Decision:**
+
 1. **CSS Cleanup:** Deleted unreferenced rules `.stroke-table` in [rtpa.html](file:///Users/ntwkkm/er-hub/orders/rtpa.html), `.ac-panel-disabled`, `.ac-badge-warn`, and `.patient-fields` sub-blocks in [nstemi.html](file:///Users/ntwkkm/er-hub/orders/nstemi.html), `.calculator-card` in [drip-calculator.html](file:///Users/ntwkkm/er-hub/tools/drip-calculator.html), `.ac-opt` in [heparin.html](file:///Users/ntwkkm/er-hub/orders/heparin.html), and `.sedation-card-container` in [sedation.html](file:///Users/ntwkkm/er-hub/orders/sedation.html).
 2. **Braun Tokens & Tabular Numerals:** Moved Braun analogue color variables to [base.css](file:///Users/ntwkkm/er-hub/shared/base.css) and updated real-time screens ([nstemi.html](file:///Users/ntwkkm/er-hub/orders/nstemi.html) and [drip-calculator.html](file:///Users/ntwkkm/er-hub/tools/drip-calculator.html)) to use `font-variant-numeric: tabular-nums` to stabilize layout rendering.
 3. **PWA Version Alignments:** Synchronized version strings to `v16` and bumped `CACHE_VERSION` in [service-worker.js](file:///Users/ntwkkm/er-hub/service-worker.js) to `er-hub-v16` to clear cached assets.
@@ -479,6 +486,7 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 **Context:** The emergency medicine team requested a series of updates to `tools/drip-calculator.html` and `index.html` to improve English localization, simplify layout headings, convert select boxes to bullet choices, and fix the concentration input display.
 
 **Decision:**
+
 1. **Nav Spacing:** Reduced spacing between top-nav and main list content in `index.html` by decreasing `.portal-container` padding from `48px` to `16px` and `.top-nav` margin-bottom from `32px` to `16px`.
 2. **Remove Headers:** Deleted redundant `<h3>` grouping titles: "1. เลือกยาและข้อมูลคนไข้" and "2. กำหนดขนาดของยา (Target Dose)", removing the dividing borders to save vertical space.
 3. **English Translation:** Translated all input section labels and placeholders to English: Patient Weight (BW), Select IV Drug, Medication Formula, Target Dose, Enter dose, and Concentration.
@@ -492,12 +500,14 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 ### ADR-38: NSTEMI Anticoagulant Selection UX Polish & Safety Override Improvements (2026-07-05)
 
 **Context:** The emergency room clinicians requested four updates to the NSTEMI standing order worksheet (`orders/nstemi.html`) to improve safety override interactions, clarify contraindication limits, and enable resetting selections:
+
 1. Once selected, clinicians had no way to deselect or reset the anticoagulant radio group choice.
 2. The safety override confirmed state for Fondapalinux and Enoxaparin had styling bugs: it failed to keep the on-screen and print preview checkboxes checked.
 3. The override warning messages did not explicitly mention the guideline thresholds.
 4. Fondapalinux used an obsolete `CrCl <30 mL/min` label while eGFR was the calculated metric in use, and Enoxaparin lacked a clear `eGFR <15 mL/min` hint in its options list.
 
 **Decision:**
+
 1. **Reset Option:** Added a small red "ล้างตัวเลือก" (Reset Option) button next to the "Anticoagulant Selection" card header, wired to clear radio selections, hide sub-inputs, and trigger UI and print preview updates.
 2. **Checked Override Bullets & highlights:** Configured the override handler to retain checked states (`☑` / selected radio) on-screen and in print preview, and kept the `.recommended` class on the print container to display normal color-fill/border highlights.
 3. **Specific Override Warnings:** Replaced generic override texts with custom warnings: `"ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR < 30"` for Fondapalinux, and `"ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR < 15"` for Enoxaparin.
@@ -514,6 +524,7 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 **Context:** The NSTEMI standing order page auto-selected the DAPT loading dose (ASA 300 mg + Clopidogrel 300 mg) by default in both screen rendering and printed output. Current clinical guidelines (ESC 2023 and ACC/AHA 2025) recommend against routine pre-treatment loading of P2Y12 inhibitors in NSTEMI patients who are planned for early invasive strategy (<24 hours) to prevent bleeding risks. Clinicians requested manual control, support for multiple P2Y12 drug types (Clopidogrel, Ticagrelor, Prasugrel), dynamic guideline hints, and warning indicators.
 
 **Decision:**
+
 1. **DAPT Selection UI Panel:** Added an interactive "Antiplatelet Loading (DAPT)" card next to the Anticoagulant Selection card. Integrated a "ล้างตัวเลือก" button to reset antiplatelet settings.
 2. **Dynamic Clinical Recommendations:** Added logic checking patient risk (Very High/High Risk). If early invasive timeline is flagged, the panel displays a guideline alert advising holding/deferring P2Y12 loading to the Cath Lab.
 3. **Prasugrel Safety Banner:** Wired warning text if Prasugrel is selected, notifying users that Prasugrel is contraindicated in prior Stroke/TIA and must not be loaded in ER.
@@ -608,6 +619,7 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 **Context:** NSTEMI was the only order page among the 5 `use-current-time` pages (pe, heparin, antivenom, nstemi, rtpa) that had the checkbox deleted in ADR-20 §3 ("Removed auto-time features") — but the ADR-20 rationale (removing auto-time for *troponin draw times*) did not apply to the *order date/time* field. The other 4 pages had the checkbox restored in a later audit (A8, W-08), but nstemi remained without it, forcing clinicians to manually write the date/time on the printed order. Additionally, the ER clinical workflow for NSTEMI prefers blank date/time by default (the order is prepared before patient arrival or vitals are confirmed), unlike the other 4 pages where auto-fill is the expected default. Separately, the troponin box layout was cramped on desktop (attempted single-line with all title + checkbox + 3 inputs in one flex row) and didn't display well.
 
 **Decision:**
+
 1. **Restored `use-current-time` checkbox** to `orders/nstemi.html`, placed inside the `<h3>` heading element (inline with "1. ข้อมูลผู้ป่วย") using `float:right`, with distinct typography (`font-size:12px; font-weight:normal; color:#555`) to visually separate it from the heading. No separate border-bottom — uses the h3's existing `.theme-cardiac` border.
 2. **Default unchecked** — unlike pe/heparin/antivenom/rtpa (which default to `checked`), nstemi defaults to unchecked, rendering dotted lines (`....................`) in the print order date/time fields until the clinician explicitly checks the box.
 3. **Wired to `updatePrintArea()`** — changed `ED_PRINT_BOOTSTRAP.getDateTimeHTML(true, now)` to `ED_PRINT_BOOTSTRAP.getDateTimeHTML($('use-current-time')?.checked, now)`, respecting the checkbox state. The optional chaining (`?.`) ensures graceful fallback if the element is absent.

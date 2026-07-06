@@ -460,6 +460,24 @@
   4. **Regression Guard:** Added a new test suite [dead-css-guard.test.js](file:///Users/ntwkkm/er-hub/tests/dead-css-guard.test.js) checking all worksheets and calculators for orphaned/unused CSS selector classes.
 - **Rationale:** Removing dead code prevents code rot and confusion for future developers. Standardizing design tokens into a shared stylesheet reduces design divergence. The `dead-css-guard` test automatically captures orphaned CSS classes, preventing regressions from shipping.
 
+### ADR-48: Drip Calculator Layout Reorder — Patient Weight Below Concentration (2026-07-06)
+
+**Context:** The drip calculator's Patient Weight (BW) section was located in Column 1, above the Drug selection. The clinical workflow reads top-to-bottom: select drug → choose medication formula → set target dose → see concentration → enter weight. The weight input was out of sequence.
+
+**Decision:**
+
+1. Moved the Patient Weight (BW) inline-input-group from Column 1 (above Select IV Drug) to Column 2, below the Concentration display.
+2. Column 1 now contains only: Select IV Drug (top) and Medication Formula (bottom).
+3. Column 2 now contains: Target Dose (top) → Concentration → Patient Weight (BW) (bottom).
+4. No functional changes — all JS references to `#weight-input`, `#weight`, `weightSlider`, `weightInput` remain intact.
+5. No CSS changes needed — the existing `.inline-input-group` layout handles the new position seamlessly.
+
+**Rationale:** Reordering the fields to match the clinical cognitive flow (drug → formula → dose → concentration → weight) reduces visual scanning and input errors in time-critical ED settings. The weight field remains functionally identical — bidirectional slider/number sync, soft-clamp 30–250 kg, sessionStorage persistence, ARIA attributes — all unchanged.
+
+**Tests:** No test changes needed — all DOM IDs and JS references preserved.
+
+---
+
 ### ADR-38: Drip-Calculator Input Translating, Spacing, and Bullet Choices (2026-07-05)
 
 - **Context:** The emergency medicine team requested a series of updates to `tools/drip-calculator.html` and `index.html` to improve English localization, simplify layout headings, convert select boxes to bullet choices, and fix the concentration input display.
