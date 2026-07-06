@@ -346,15 +346,6 @@
         box-sizing: border-box;
     }
 
-    .stroke-table {
-        font-size: 8pt;
-        width: 100%;
-    }
-
-    .stroke-table td, .stroke-table th {
-        padding: 2px 4px;
-    }
-
     .stroke-checklist {
         font-size: 8.5pt;
         line-height: 1.3;

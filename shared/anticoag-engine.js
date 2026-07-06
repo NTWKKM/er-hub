@@ -1,76 +1,12 @@
 /**
  * shared/anticoag-engine.js
- * Dosing and titration logic for anticoagulants (Heparin, Enoxaparin, Fondaparinux).
+ * Dosing and titration logic for anticoagulants (Heparin standalone protocols).
+ * Note: eGFR calculation (CKD-EPI 2021) is now solely in shared/clinical-engine.js
+ * (CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021) — the parallel calcEGFR_CKDEPI2021 copy
+ * was removed to eliminate the two-implementation drift risk (ADR-46 parity class).
+ * calcAnticoag() was also removed: nstemi.html has its own inline anticoag UI logic
+ * and no order page calls it.
  */
-
-/**
- * Estimates GFR using the 2021 CKD-EPI Creatinine equation (race-free).
- * Reference: Inker LA et al. NEJM 2021; https://www.mdcalc.com/calc/3939
- *
- *   eGFR = 142 × min(Scr/κ, 1)^α × max(Scr/κ, 1)^(-1.200)
- *              × 0.9938^Age × (1.012 if female)
- *   κ = 0.7 (female) / 0.9 (male);  α = -0.241 (female) / -0.302 (male)
- *
- * @param {number} scr - Serum creatinine in mg/dL
- * @param {number} age - Age in years
- * @param {string} sex - 'male' | 'female'
- * @returns {number|null} eGFR in mL/min/1.73m² (rounded), or null if inputs invalid
- */
-function calcEGFR_CKDEPI2021(scr, age, sex) {
-    if (!(scr > 0) || !(age > 0) || !sex) return null;
-    const s = String(sex).toLowerCase().trim();
-    if (s !== 'male' && s !== 'female') return null;
-    const female = s === 'female';
-    const kappa = female ? 0.7 : 0.9;
-    const alpha = female ? -0.241 : -0.302;
-    const ratio = scr / kappa;
-    const egfr = 142
-        * Math.pow(Math.min(ratio, 1), alpha)
-        * Math.pow(Math.max(ratio, 1), -1.200)
-        * Math.pow(0.9938, age)
-        * (female ? 1.012 : 1);
-    return Math.round(egfr);
-}
-
-/**
- * Calculates NSTEMI anticoagulant recommendation based on weight, age, and eGFR.
- * Enoxaparin dosing per 2025 ACC/AHA/ACEP/NAEMSP/SCAI ACS Guideline (NSTEMI, non-fibrinolytic):
- *   1 mg/kg SC q12h; reduce to 1 mg/kg SC q24h if eGFR/CrCl < 30. Age-based 0.75 mg/kg
- *   cut applies only to STEMI + fibrinolytic, so it is intentionally NOT used here.
- *
- * @param {number} weight - Patient's weight in kg
- * @param {number} age - Patient's age in years (retained for signature/compat)
- * @param {number} egfr - Patient's eGFR in mL/min
- * @returns {Object} Recommendation details
- */
-function calcAnticoag(weight, age, egfr) {
-    const r = { egfr };
-
-    if (egfr < 15) {
-        r.rec = 'heparin';
-        r.hepBolus = Math.min(Math.round(weight * 60), 4000);
-        r.hepInf = Math.min(Math.round(weight * 12), 1000);
-        r.hepRate = (r.hepInf / 100).toFixed(1); // Default standard conc: 100 u/mL
-    } else if (egfr >= 30) {
-        r.rec = 'fondaparinux';
-    } else {
-        r.rec = 'enoxaparin'; // GFR 15-29: fondaparinux CI (CrCl <30 per label)
-    }
-
-    // Enoxaparin dose (computed regardless, for display) — 2025 ACC/AHA NSTEMI
-    if (egfr >= 15) {
-        r.enoxDose = Math.round(weight * 1.0); // 1 mg/kg regardless of age
-        if (egfr < 30) {
-            r.enoxRoute = 'SC q24h';
-            r.enoxNote = '1 mg/kg — GFR < 30 → once daily';
-        } else {
-            r.enoxRoute = 'SC q12h';
-            r.enoxNote = '1 mg/kg — GFR ≥ 30';
-        }
-    }
-
-    return r;
-}
 
 /**
  * Heparin Standalone Protocol initial dosing definitions.
@@ -218,8 +154,6 @@ function getHeparinTitration(apttRatio, currentRateUnitsHr, concentration) {
 // Export for Node testing environment
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        calcAnticoag,
-        calcEGFR_CKDEPI2021,
         calcHeparinInitialDose,
         getHeparinTitration,
         HEPARIN_STANDALONE_PROTOCOLS

@@ -13,8 +13,10 @@ const ED_PRINT_BOOTSTRAP = {
      */
     handlePrintBlankDirect(printBlankFn) {
         if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
+            // printBlankFn triggers the blank-template apply + window.print() via the
+            // page's own button handler — no second window.print() here to avoid a
+            // double print dialog on the cold-load kiosk path (nstemi/rtpa).
             printBlankFn();
-            window.print();
             return true;
         }
         return false;

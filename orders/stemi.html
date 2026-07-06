@@ -270,6 +270,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const tnk = calcTNK(weight, age);
+        // Clopidogrel loading dose: full 300 mg (4 tabs) for age ≤75, no load (1 tab) for age >75.
+        // NOTE: TNK halving uses age >= 75 (ASSENT-2 / ESC), while clopidogrel loading omission
+        // uses age > 75 (PLATO-derived). At exactly age 75, TNK is halved but full clopidogrel
+        // load is given — this boundary difference is intentional per the source guidelines.
         const clopiTabs = age <= 75 ? 4 : 1; // rule: age <=75 -> 4 tabs, >75 -> 1 tab
 
         const now = new Date();

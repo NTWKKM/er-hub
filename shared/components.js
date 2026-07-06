@@ -74,16 +74,6 @@ const ED_COMPONENTS = {
     },
 
     /**
-     * Update the printed department and ward text.
-     */
-    updateDeptWard: function(dept, ward) {
-        const deptText = document.getElementById('p-dept-text');
-        const wardText = document.getElementById('p-ward-text');
-        if (deptText) deptText.textContent = dept || '...';
-        if (wardText) wardText.textContent = ward || '...';
-    },
-
-    /**
      * Set up common event listeners (like print button).
      */
     setupCommonActions: function() {

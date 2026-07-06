@@ -1061,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // ── Hint text ──
         if (egfrKnown && weight > 0) {
             const enoxDose = Math.round(weight * 1.0);
-            $('ac-fonda-hint').innerHTML = `(Preferred — eGFR ${egfrLive.toFixed(2)})<br><span style="color:#c0392b;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
+            $('ac-fonda-hint').innerHTML = `(Preferred — eGFR ${egfrLive.toFixed(0)})<br><span style="color:#c0392b;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = `Enoxaparin ${enoxDose} mg SC`;
             $('ac-enox-hint').innerHTML = `(1 mg/kg = ${enoxDose} mg — GFR &lt; ${FONDA_MIN_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
@@ -1203,16 +1203,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const sexRadios = document.querySelectorAll('input[name="sex"]');
 
     // Live eGFR display
+    // Uses calcEGFR() (defined below) as the single eGFR source of truth to avoid
+    // the two-parallel-implementations drift bug. calcEGFR returns null for invalid
+    // inputs (incl. creatinine <= 0), so we null-guard before display.
     function updateLiveEGFR() {
-        const cr = parseFloat(patientCr.value);
-        const age = parseFloat(ageInput.value);
-        const sex = document.querySelector('input[name="sex"]:checked')?.value;
-        if (!isNaN(cr) && !isNaN(age) && age >= MIN_AGE && sex) {
-            const egfr = CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021(cr, age, sex);
-            $('screen-egfr').textContent = egfr.toFixed(2);
-        } else {
-            $('screen-egfr').textContent = '--';
-        }
+        const egfr = calcEGFR();
+        $('screen-egfr').textContent = egfr !== null ? egfr.toFixed(0) : '--';
     }
     patientCr.addEventListener('input', () => {
         graceCr.value = patientCr.value;
@@ -1345,7 +1341,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         $('p-hn').textContent     = hn !== '...' ? hn : '--';
         $('p-weight').textContent = weightOK ? weight.toFixed(1) : '--';
-        $('p-egfr').textContent   = egfr !== null ? egfr.toFixed(2) : '--';
+        $('p-egfr').textContent   = egfr !== null ? egfr.toFixed(0) : '--';
         $('p-age').textContent    = ageOK ? age : '--';
         $('p-hr').textContent     = hasGraceVars ? hr : '--';
         $('p-sbp').textContent    = hasGraceVars ? sbp : '--';

@@ -428,16 +428,26 @@
             // Coupled input synchronization
             doseInput.addEventListener('input', () => {
                 if (!selectedDrug) return;
-                let val = parseFloat(doseInput.value);
+                // Live sync slider + calc WITHOUT clamping — clamping on 'input'
+                // destroys manual number entry (mid-typing clamp writes back,
+                // next keystroke appends to clamped string). Clamp on blur only.
+                const val = parseFloat(doseInput.value);
                 if (!isNaN(val)) {
-                    // Apply soft clamping limits on input to respect boundaries
-                    const min = selectedDrug.doseRange.min;
-                    const max = selectedDrug.doseRange.max;
-                    if (val < min) val = min;
-                    if (val > max) val = max;
-                    doseInput.value = val;  // write back clamped value
                     doseSlider.value = val;
                 }
+                triggerCalculation();
+            });
+
+            doseInput.addEventListener('blur', () => {
+                if (!selectedDrug) return;
+                let val = parseFloat(doseInput.value);
+                if (isNaN(val)) return;
+                const min = selectedDrug.doseRange.min;
+                const max = selectedDrug.doseRange.max;
+                if (val < min) val = min;
+                if (val > max) val = max;
+                doseInput.value = val;
+                doseSlider.value = val;
                 triggerCalculation();
             });
 
@@ -517,14 +527,21 @@
             });
 
             weightInput.addEventListener('input', () => {
-                let val = parseFloat(weightInput.value);
+                // Live sync slider + calc WITHOUT clamping (same rationale as dose input).
+                const val = parseFloat(weightInput.value);
                 if (!isNaN(val)) {
-                    // Soft clamping to respect physiological bounds (mirrors Target Dose behavior)
-                    if (val < WEIGHT_MIN) val = WEIGHT_MIN;
-                    if (val > WEIGHT_MAX) val = WEIGHT_MAX;
-                    weightInput.value = val;
                     weightSlider.value = val;
                 }
+                triggerCalculation();
+            });
+
+            weightInput.addEventListener('blur', () => {
+                let val = parseFloat(weightInput.value);
+                if (isNaN(val)) return;
+                if (val < WEIGHT_MIN) val = WEIGHT_MIN;
+                if (val > WEIGHT_MAX) val = WEIGHT_MAX;
+                weightInput.value = val;
+                weightSlider.value = val;
                 triggerCalculation();
             });
 
@@ -545,7 +562,10 @@
                     return;
                 }
 
-                // Validate dose ranges (B2)
+                // Validate dose ranges (B2) — use local clamp for calculation only,
+                // do NOT write back to the input during typing (destroys manual entry
+                // the same way clamping in the 'input' listener does). The field is
+                // normalized to the clamped value on blur instead.
                 let dose = doseVal;
                 if (isNaN(dose)) {
                     dose = selectedDrug.doseRange.default;
@@ -555,9 +575,6 @@
                     if (dose < min) dose = min;
                     if (dose > max) dose = max;
                 }
-
-                // Sync inputs
-                if (parseFloat(doseInput.value) !== dose) doseInput.value = dose;
                 if (parseFloat(doseSlider.value) !== dose) doseSlider.value = dose;
 
                 // Run calculation engine

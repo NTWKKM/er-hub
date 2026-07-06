@@ -275,10 +275,6 @@ input[type="checkbox"] {
     gap: 6px;
 }
 
-.nav-home-icon {
-    font-size: 16px;
-}
-
 .nav-title {
     color: #F0EDE5;
     font-size: 14px;
@@ -521,11 +517,6 @@ input[type="checkbox"] {
     }
 
     /* Flag checkboxes: stack vertically */
-    .flag-group {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
     .flag-label {
         font-size: 13px;
     }

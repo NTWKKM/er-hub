@@ -10,6 +10,7 @@ const DRIP_PATH  = path.join(__dirname, '..', 'tools', 'drip-calculator.html');
 const SW_PATH    = path.join(__dirname, '..', 'service-worker.js');
 const MANIFEST   = path.join(__dirname, '..', 'manifest.json');
 const DEAD_CSS   = path.join(__dirname, 'dead-css-guard.test.js');
+const STEMI_PATH = path.join(__dirname, '..', 'orders', 'stemi.html');
 
 function read(file) {
     return fs.readFileSync(file, 'utf8');
@@ -88,24 +89,37 @@ describe('NSTEMI Audit Fixes — A4: eGFR rounding consistency', () => {
     });
 });
 
-describe('NSTEMI Audit Fixes — A5: updateLiveEGFR age guard', () => {
+describe('NSTEMI Audit Fixes — A5: updateLiveEGFR null-safe via calcEGFR()', () => {
     const html = read(NSTEMI_PATH);
 
-    test('updateLiveEGFR has age >= MIN_AGE guard', () => {
+    test('updateLiveEGFR delegates to calcEGFR() (single source of truth)', () => {
         // Extract updateLiveEGFR function
         const match = html.match(/function updateLiveEGFR\(\)\s*\{[\s\S]*?\}/);
         assert.ok(match, 'updateLiveEGFR function not found');
-        assert.match(match[0], /age\s*>=\s*MIN_AGE/, 'updateLiveEGFR must have age >= MIN_AGE guard');
+        assert.match(match[0], /calcEGFR\(\)/, 'updateLiveEGFR must delegate to calcEGFR() to avoid duplicate-impl drift');
+    });
+
+    test('updateLiveEGFR null-guards egfr before display', () => {
+        const match = html.match(/function updateLiveEGFR\(\)\s*\{[\s\S]*?\}/);
+        assert.ok(match, 'updateLiveEGFR function not found');
+        assert.match(match[0], /egfr\s*!==\s*null/, 'updateLiveEGFR must null-guard egfr before .toFixed() (calcEGFR returns null for cr<=0)');
     });
 });
 
-describe('Drip Calculator — A6: soft-clamp write-back', () => {
+describe('Drip Calculator — A6: clamp-on-blur (not on input)', () => {
     const html = read(DRIP_PATH);
 
-    test('doseInput.value is written back after clamping', () => {
+    test('doseInput input handler does NOT write back clamped value', () => {
         const match = html.match(/doseInput\.addEventListener\('input'[\s\S]*?\}\)/);
         assert.ok(match, 'doseInput input handler not found');
-        assert.match(match[0], /doseInput\.value\s*=\s*val/, 'clamped value must be written back to doseInput.value');
+        assert.doesNotMatch(match[0], /doseInput\.value\s*=\s*val/,
+            'input handler must NOT write back clamped value (destroys manual number entry mid-typing)');
+    });
+
+    test('doseInput blur handler clamps and writes back', () => {
+        const match = html.match(/doseInput\.addEventListener\('blur'[\s\S]*?\}\)/);
+        assert.ok(match, 'doseInput blur handler not found');
+        assert.match(match[0], /doseInput\.value\s*=\s*val/, 'blur handler must clamp and write back');
     });
 });
 
@@ -230,11 +244,58 @@ describe('SW Version — A11: cache version bumped', () => {
     const sw = read(SW_PATH);
     const index = read(INDEX_PATH);
 
-    test('CACHE_VERSION is v19', () => {
-        assert.match(sw, /er-hub-v19/, 'CACHE_VERSION must be er-hub-v19');
+    test('CACHE_VERSION is v20', () => {
+        assert.match(sw, /er-hub-v20/, 'CACHE_VERSION must be er-hub-v20');
     });
 
-    test('index.html version string is v19', () => {
-        assert.match(index, /v19/, 'index.html must display v19');
+    test('index.html version string is v20', () => {
+        assert.match(index, /v20/, 'index.html must display v20');
+    });
+});
+
+describe('STEMI Age-75 Boundary — ADR-49 #9: TNK vs Clopidogrel cutoffs', () => {
+    // The user confirmed the boundary difference is intentional:
+    //   - TNK halving:    age >= 75 (ASSENT-2 / ESC)
+    //   - Clopidogrel load: age <= 75 → full 4 tabs, age > 75 → 1 tab (PLATO-derived)
+    // At age 75: half TNK + full clopidogrel load.
+    const html = read(STEMI_PATH);
+
+    test('TNK halving uses age >= 75', () => {
+        assert.match(html, /const elderly = age >= 75/,
+            'TNK elderly flag must be age >= 75');
+    });
+
+    test('Clopidogrel loading uses age <= 75 for full dose', () => {
+        assert.match(html, /const clopiTabs = age <= 75 \? 4 : 1/,
+            'Clopidogrel loading must be age <= 75 → 4 tabs, >75 → 1 tab');
+    });
+
+    test('age 74 → full TNK + 300 mg clopidogrel load (4 tabs)', () => {
+        // age 74: elderly=false (74 >= 75 is false), clopiTabs=4 (74 <= 75)
+        const tnkElderly = (74 >= 75);
+        const clopiTabs = 74 <= 75 ? 4 : 1;
+        assert.equal(tnkElderly, false, 'age 74 must get full TNK dose');
+        assert.equal(clopiTabs, 4, 'age 74 must get 4 clopidogrel tabs (300 mg load)');
+    });
+
+    test('age 75 → half TNK + 300 mg clopidogrel load (4 tabs)', () => {
+        // age 75: elderly=true (75 >= 75), clopiTabs=4 (75 <= 75)
+        const tnkElderly = (75 >= 75);
+        const clopiTabs = 75 <= 75 ? 4 : 1;
+        assert.equal(tnkElderly, true, 'age 75 must get halved TNK dose');
+        assert.equal(clopiTabs, 4, 'age 75 must still get 4 clopidogrel tabs (full load)');
+    });
+
+    test('age 76 → half TNK + 75 mg clopidogrel (1 tab, no load)', () => {
+        // age 76: elderly=true (76 >= 75), clopiTabs=1 (76 > 75)
+        const tnkElderly = (76 >= 75);
+        const clopiTabs = 76 <= 75 ? 4 : 1;
+        assert.equal(tnkElderly, true, 'age 76 must get halved TNK dose');
+        assert.equal(clopiTabs, 1, 'age 76 must get 1 clopidogrel tab (75 mg, no load)');
+    });
+
+    test('code comment documents the intentional boundary discrepancy', () => {
+        assert.match(html, /TNK halving uses age >= 75.*clopidogrel loading omission.*age > 75/s,
+            'STEMI must document why TNK and clopidogrel cutoffs differ at age 75');
     });
 });
