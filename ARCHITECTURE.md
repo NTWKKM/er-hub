@@ -501,3 +501,23 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 4. **Dynamic Print Layout and Dosage Adjustments:** Updated the print output to list and dynamically check all antiplatelet loading/continuation options based on screen selection. Automatically calculated Prasugrel continuation dose (reduced to 5 mg if weight < 60 kg or age >= 75).
 
 **Rationale:** Restraining routine pre-treatment of P2Y12 prevents bleeding complications prior to coronary angiography. Providing clear options, warning states, and dynamic advice ensures safe and guideline-compliant care in time-critical emergency scenarios.
+
+---
+
+### ADR-42: NSTEMI GRACE Summary 3-Column Layout & DAPT Default State Fix (2026-07-06)
+
+**Context:** Two issues identified on the NSTEMI results panel: (1) The `.grace-summary` results row used a 2-column flex layout (Score+Risk stacked left, Breakdown right) — the risk badge was cramped beneath the score badge and the visual hierarchy was unclear. (2) The DAPT P2Y12 radio group had `Hold to Cath Lab` pre-checked by default, meaning the form was never truly blank on cold load — violating the "default = empty" principle established in ADR-41. Additionally, `p2y12Val` was referenced in `calculateAndRender()` DAPT hint logic without being declared in that scope (latent bug — worked only because `updatePrintArea` declared it separately).
+
+**Decision:**
+
+1. **GRACE Summary 3-Column Grid:** Changed `.grace-summary` from `display: flex; flex-wrap: wrap` to `display: grid; grid-template-columns: 1fr 3fr 2fr` — three explicit columns: (1) GRACE Score badge (1 part), (2) Risk badge (3 parts), (3) Score Breakdown table (2 parts). Risk badge `margin-top` reduced from `8px` to `0` (no longer stacked under score). Mobile breakpoint (`≤900px`) stacks to `grid-template-columns: 1fr`.
+
+2. **DAPT Default = Empty:** Removed `checked` attribute from the `Hold to Cath Lab` P2Y12 radio. Default state is now fully unselected — no P2Y12 radio checked, ASA checkbox unchecked. `reset-dapt-btn` and `clear-btn` now set all P2Y12 radios to `r.checked = false` (was `r.checked = (r.value === 'hold')`).
+
+3. **`p2y12Val` Scope Bug Fix:** Added `const p2y12Val = document.querySelector('input[name="dapt-p2y12"]:checked')?.value || 'hold';` at the top of the DAPT hint block in `calculateAndRender()`, before it's referenced in the hint logic. Previously the variable was only declared in `updatePrintArea()` and the hint block silently referenced an undefined variable.
+
+4. **ASA Print Logic Unchanged:** `p-asa-stat` and `p-asa-cont` remain bound to the `daptAsa` checkbox only. Selecting a P2Y12 inhibitor does NOT auto-check ASA — the clinician must explicitly check ASA in the DAPT panel. This preserves the manual clinical decision for ASA loading.
+
+**Rationale:** The 3-column grid gives each result component its own visual space with a clear 1:3:2 ratio — the risk badge (largest, 3 parts) is the primary clinical decision driver, the score (1 part) is the numeric input, and the breakdown (2 parts) provides the audit trail. Removing the default `checked` on Hold makes the cold-load state truly blank, matching the blank-print template and the "default = empty" UX principle. The `p2y12Val` fix prevents a potential `ReferenceError` if the hint logic is ever refactored.
+
+**Tests:** 183/183 pass.

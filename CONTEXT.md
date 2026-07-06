@@ -435,3 +435,16 @@
   3. **Prasugrel Safety Contraindications:** Added warning banners if Prasugrel is selected, notifying clinicians that Prasugrel is contraindicated in prior TIA/stroke and should not be used as pre-treatment in ER.
   4. **Dynamic Print Layout and Dosage Adjustments:** Updated the print output to list and dynamically check all antiplatelet loading/continuation options based on screen selection. Automatically calculated Prasugrel continuation dose (reduced to 5 mg if weight < 60 kg or age >= 75).
 - **Rationale:** Restraining routine P2Y12 pre-treatment prevents ischemic/bleeding mismatches prior to coronary angiography. Allowing manual selection and providing inline clinical decision support warnings directly targets guideline compliance and patient safety.
+
+---
+
+### ADR-42: NSTEMI GRACE Summary 3-Column Layout & DAPT Default State Fix (2026-07-06)
+
+- **Context:** The `.grace-summary` results row used a 2-column flex layout (Score+Risk stacked left, Breakdown right) — the risk badge was cramped beneath the score and the visual hierarchy was unclear. The DAPT P2Y12 radio group had `Hold to Cath Lab` pre-checked by default, meaning the form was never truly blank on cold load. Additionally, `p2y12Val` was referenced in `calculateAndRender()` DAPT hint logic without being declared in that scope (latent bug).
+- **Decision:**
+  1. **GRACE Summary 3-Column Grid:** Changed `.grace-summary` from `display: flex; flex-wrap: wrap` to `display: grid; grid-template-columns: 1fr 3fr 2fr` — three columns: (1) GRACE Score badge (1 part), (2) Risk badge (3 parts), (3) Score Breakdown table (2 parts). Risk badge `margin-top` reduced from `8px` to `0`. Mobile (`≤900px`) stacks to `grid-template-columns: 1fr`.
+  2. **DAPT Default = Empty:** Removed `checked` from the `Hold to Cath Lab` P2Y12 radio. Default state: no P2Y12 radio checked, ASA unchecked. `reset-dapt-btn` and `clear-btn` now set all P2Y12 radios to `false` (was `r.value === 'hold'`).
+  3. **`p2y12Val` Scope Fix:** Added `const p2y12Val` declaration at top of DAPT hint block in `calculateAndRender()`, before reference.
+  4. **ASA Print Logic Unchanged:** `p-asa-stat` and `p-asa-cont` remain bound to `daptAsa` checkbox only — selecting P2Y12 does NOT auto-check ASA.
+- **Rationale:** The 3-column grid gives each result component its own visual space with 1:3:2 ratio — risk badge (3 parts) is the primary decision driver, score (1 part) is numeric input, breakdown (2 parts) is audit trail. Removing default `checked` on Hold makes cold-load truly blank. The `p2y12Val` fix prevents a latent `ReferenceError`.
+- **Tests:** 183/183 pass.
