@@ -891,7 +891,7 @@
             </div>
         </div><!-- end #print-area -->
 
-        <button id="print-btn" class="btn btn-print">
+        <button type="button" id="print-btn" class="btn btn-print">
             🖨️ พิมพ์ใบสั่งยา (Print Order)
         </button>
     </div><!-- end #results-container -->
@@ -1514,8 +1514,12 @@ document.addEventListener('DOMContentLoaded', () => {
         '.vh-flag, .h1-flag, #cardiac-arrest, #st-deviation, #elevated-markers, #troponin-from-rphch'
     ).forEach(el => el.addEventListener('change', calculateAndRender));
 
-    // ── create-order-btn: print (setupCommonActions already wires print-btn)
+    // ── create-order-btn: print (setupCommonActions also wires print-btn)
     $('create-order-btn').addEventListener('click', () => window.print());
+
+    // ── print-btn: also wired directly (in case setupCommonActions race)
+    const pBtn = $('print-btn');
+    if (pBtn) pBtn.addEventListener('click', () => window.print());
 
     // ── Safety override for CI anticoag options: second-click confirms ──
     document.querySelectorAll('input[name="anticoag-choice"]').forEach(radio => {
