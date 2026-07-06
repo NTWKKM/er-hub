@@ -32,6 +32,7 @@ const ASSETS = [
   './shared/print-bootstrap.js',
   './shared/blank-print-engine.js',
   './shared/form-validate.js',
+  './docs/icon-512x512.png',
   './docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
   './docs/STEMI-PE/STEMI new 26-4doc.pdf',
   './docs/STEMI-PE/PE-Massive-merged.pdf',

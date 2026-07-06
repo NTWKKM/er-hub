@@ -41,6 +41,25 @@
 
 ## 3. Architectural Decision Records (ADRs)
 
+### ADR-51: Deep Audit Remediation B-1–B-4 — Case Sensitivity, Validation Bounds, PWA Icon, Non-Blocking Validation Contract (2026-07-07)
+
+- **Context:** The 2026-07-07 deep audit (`er-hub-deep-audit-2026-07-07.md`) flagged four issues in the existing er-hub codebase. (B-1) `orders/antivenom.html` declared `let tetanusText` but three branches assigned to undeclared `TetanusText`, creating an implicit global in sloppy module mode. (B-2) `orders/stemi.html` used `ED_VALIDATE.min('age', 18)` plus an HTML `max="120"`, leaving a 100–120 age range validated only by HTML markup and inconsistent with other pages. (B-3) `manifest.json` referenced the hospital logo PNG (`docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`, 379×262, non-square), which violates PWA icon/splash-screen requirements. (B-4) The `ED_VALIDATE` helper highlights invalid fields but never hard-blocks calculation or print, which the audit flagged as a potential bug; it is actually an intentional emergency-workflow design choice.
+- **Decision:**
+  1. **B-1 — unify variable casing:** Replace all `TetanusText` references in `orders/antivenom.html` with the already-declared lowercase `tetanusText` so the variable is declared exactly once and read everywhere.
+  2. **B-2 — consistent age bounds:** Add `ED_VALIDATE.range('age', 18, 100, ...)` to `orders/stemi.html` and reduce the HTML `<input type="number" id="age" … max="120">` to `max="100"`. This matches the validation bound used elsewhere and removes reliance on HTML-only upper-bound enforcement.
+  3. **B-3 — square PWA icon:** Generate a square 512×512 icon (`docs/icon-512x512.png`) from the existing logo, letterboxed on Braun cream `#F4F2EC`, update `manifest.json` to use a single icon entry (`sizes: "512x512"`, `purpose: "any maskable"`), and add `./docs/icon-512x512.png` to the `service-worker.js` precache list. Keep the legacy logo in the cache as a content asset but no longer as the manifest icon. Do **not** bump `CACHE_VERSION` solely for this asset addition; the SW update is detected by content change, not the version string.
+  4. **B-4 — non-blocking validation is intentional:** Document that `ED_VALIDATE.range()` and `ED_VALIDATE.min()` are advisory only. They apply `.is-invalid` styling and set `aria-invalid`, but calculation and print remain available for out-of-range values. This preserves clinician override ability in emergency scenarios. Future contributors must not convert these helpers into hard-blocking gates without explicit clinical review and a new ADR.
+- **Rationale:**
+  - B-1 prevents an accidental global and future reference errors when the module is bundled or runs in strict mode.
+  - B-2 aligns STEMI with the shared validation contract and removes a silent HTML-only upper bound.
+  - B-3 makes the PWA installable/splash-screen compliant without redesigning the hospital logo; letterboxing on the existing Braun cream keeps the icon visually consistent with the app.
+  - B-4 records a design decision that could otherwise be "fixed" into a regression. Emergency calculators must allow a clinician to print an order even when a value is outside population norms (e.g., pediatric weight entered on an adult form during trauma resuscitation).
+- **Consequences:**
+  - PWA install prompt and splash screen now use a compliant square icon.
+  - `CACHE_VERSION` remains `er-hub-v21`; the SW still picks up the new icon because the `ASSETS` array changed.
+  - Future age/weight validation changes must update both the JS helper and the HTML `min/max` attributes together to avoid bound drift.
+- **Tests:** `npm test` 193/193 pass after the fixes.
+
 ### ADR-50: ER NOTE Tool — Per-Template Split, Standalone Assets, Local Drafts, Plain-Text Output (2026-07-07)
 
 - **Context:** The `er-note` clinical-note worksheet family started as a single shared `template.html` idea. That design forced every presentation (Sepsis, Trauma, Mammalian Bite, etc.) to coexist in one page or be selected by URL state, making navigation, print styling, and per-template score logic fragile. It also risked coupling the narrative-note UX to the standing-order shared CSS/JS contracts, which have a very different lifecycle (float bar, print blank orders, validation gates).
