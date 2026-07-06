@@ -103,3 +103,58 @@
 - **Lab/IV/O2 Hygiene:** Lab investigations, IV fluids, oxygen, monitoring, and non-drug continuation orders always render as ☐ in print. Only drug-related orders auto-check (☑).
 - **Clinical Guideline Hints:** Inline contraindication and prescribing notes rendered within the printed anticoagulant block using `font-size: 9px; color: #666`. Pattern: `(CI: [threshold] — [action])`. Applies to Fondaparinux `(CI: CrCl <30 mL/min — ถ้าทำ PCI ต้องเสริม UFH bolus)` and dosing reference notes for Enoxaparin syringe sizes. Critical alerts (drug absolutely contraindicated) use `color: #c0392b` with ⚠️ prefix. Non-critical guidance uses neutral `#666` grey.
 - **Real-time UX Interaction:** `calculateAndRender()` pattern — all NSTEMI inputs wired to a single idempotent render function via `addEventListener('input'/'change')`. Results panel always visible; no gated "calculate" step. Graceful fallback: any missing field renders `--` rather than throwing. Auto-select of recommended drug fires only when a prerequisite value (eGFR) is available, preventing overwrite of manual clinician selection. Print triggered by `id="create-order-btn"` ("🖨️ สร้างใบสั่งยา") calling `window.print()`, and by the floating print action bar (`showFloatBar()` called on page load after `calculateAndRender()`) — `#print-btn` was removed (ADR-44), eliminating the recurring double-fire bug class. `setupCommonActions()` is NOT called for NSTEMI. Blank-order button (`id="print-blank-btn"`) calls `applyBlankTemplate()` + `window.print()` on user click — but cold-load and clear-btn call `applyBlankTemplate()` directly (DOM-only, no print dialog). Clear button resets form + validation state + anticoag/DAPT panel state + calls `calculateAndRender()` (re-renders GRACE score/risk badge to blank state — ADR-43) + `applyBlankTemplate()` without hiding `#results-container`. Print signature block in Column 1 (Progress Note) shows 3-line version attribution: `Version: 2.1.1` / `2025 ACC/AHA ACS` / `2023 ESC NSTEMI Guideline`.
+
+---
+
+## 4. ER NOTE Tool Visual Language
+
+The ER NOTE tool (`tools/er-note/`) is a separate clinical-note worksheet family. It deliberately does **not** reuse the standing-order `shared/base.css`, `shared/components.js`, or `shared/form-validate.js` contracts; its visual language and behaviour are self-contained in `er-note.css` and `er-note.js`.
+
+### Design Tokens (ER NOTE)
+
+| Token | Value | Usage |
+| --- | --- | --- |
+| Background | `#0f1115` | Full-page dark screen background. |
+| Card Surface | `#181b21` | Section cards; subtle border `#2a2e36`. |
+| Primary Text | `#f5f6f8` | Headings, labels, input values. |
+| Muted Text | `#8b94a8` | Placeholders, hints, footer, secondary metadata. |
+| Accent | `#5E6AD2` (indigo) | Active tab underline, primary buttons, score highlight. |
+| Danger | `#c0392b` | Clear button, destructive actions. |
+| Secondary | `#3d4554` | Copy button background. |
+| Font | `Inter Tight` (Latin) + `Sarabun` (Thai) | Matches portal typography; body `15px`, labels `13px`. |
+| Border Radius | `12px` cards, `8px` inputs/buttons | Soft glassmorphism; no elevation shadows. |
+| Spacing | `16px` card gap, `12px` internal field gap | Compact vertical rhythm for long forms. |
+
+### Layout
+
+- **Top Nav:** Sticky dark bar with MNRH logo + `ER NOTE` title + `← Home` back link. Uses the same Braun White `#F0EDE5` nav text as standing-order pages.
+- **Tab Bar:** Full-width row below nav showing the 7 templates in fixed clinical order: General ER Note → Sepsis → Trauma → Mammalian Bite → Chest Pain → Abdominal Pain → Eye Injury. Active tab gets bottom border in accent colour.
+- **Main Content:** Vertical stack of `.card` sections, each with a numbered `.section-title` (`.num` circle badge) and one or more `.field-row`s.
+- **Inline Rows:** Groups of related numeric inputs (vitals, scores) are laid out with `.inline-row` that wraps on narrow screens.
+- **Action Bar:** Fixed bottom bar with Copy Note, Clear, Print buttons; hidden in print.
+- **Print:** A4 portrait, dark UI suppressed, cards become plain bordered blocks, inputs show their values, tab bar and action bar hidden.
+
+### Components
+
+| Component | Role / Target | States & Props |
+| --- | --- | --- |
+| **Card** | Container for one clinical section (e.g. Vital Signs, HEART Score). | `background: #181b21; border: 1px solid #2a2e36; border-radius: 12px; padding: 16px`. |
+| **Section Title** | Numbered heading inside each card. | `.section-title` + `.num` circle badge; accent background for the number. |
+| **Field Row** | Label + input/textarea/select pair. | `display: flex; flex-direction: column; gap: 6px`. Labels are muted; inputs have dark background and light border. |
+| **Inline Row** | Side-by-side compact inputs (vitals, score dropdowns). | `display: flex; flex-wrap: wrap; gap: 12px`. Each child `min-width: 120px; flex: 1`. |
+| **Checkbox / Radio Group** | Multi-select or single-select clinical options. | Labels wrap; groups use `gap: 8px 16px`. |
+| **Score Box** | Read-only computed score display (HEART, Alvarado, qSOFA/SIRS). | Larger font, accent-coloured score value, plain-text risk interpretation. |
+| **Hint** | Contextual guidance (e.g. sepsis score totals). | Muted text, lives below related fields. |
+| **Action Buttons** | Copy Note / Clear / Print. | Primary (accent), Secondary (copy), Danger (clear). Fixed bottom bar on screen only. |
+
+### Interaction Patterns
+
+- **Auto-save drafts:** Every input change is saved to `localStorage` keyed by template filename (`ernote-draft-{templateId}`). Drafts survive tab/browser restarts until the user presses **Clear**.
+- **Copy Note:** Walks every `.card`, collects filled labels/values, and writes a plain-text summary (section headers as `## Section`) to the clipboard.
+- **Print:** `window.print()` with an `@media print` stylesheet that inverts the dark UI to black-on-white, removes nav/tab/action elements, and prints each card as a clean section.
+- **Clear:** `form.reset()` + removes the current draft key after confirmation.
+- **Template calculators:** Score logic (qSOFA/SIRS, HEART, Alvarado, etc.) is embedded directly in each template file and updates read-only `.score-box` / `.hint` elements in real time.
+
+### Asset Isolation Rule
+
+ER NOTE pages must not import `shared/base.css`, `shared/components.js`, or `shared/form-validate.js`. Shared style and behaviour are provided only by the local `tools/er-note/er-note.css` and `tools/er-note/er-note.js` files. This keeps the narrative-note UX decoupled from the standing-order print/float-bar lifecycle. (See ADR-50 in CONTEXT.md.)

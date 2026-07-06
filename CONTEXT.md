@@ -13,6 +13,18 @@
 | **Neurotoxin** | Snake venom causing respiratory muscle paralysis (e.g., Cobra, King Cobra, Krait). |
 | **IV Drip Rate** | Volumetric rate (mL/hr) calculated based on patient weight (kg), target dose, and drug preparation concentration. |
 | **Standing Order** | Standardized medical protocols pre-approved by clinical departments to accelerate urgent treatment. |
+| **ER NOTE** | Narrative emergency department clinical note tool (`tools/er-note/`). Uses per-template worksheets for structured documentation and plain-text output. |
+| **ER NOTE Template** | One standalone HTML file for a specific presentation (General ER Note, Sepsis, Trauma, Mammalian Bite, Chest Pain, Abdominal Pain, Eye Injury). |
+| **ER NOTE Draft** | Client-only auto-saved form state in `localStorage`, keyed `ernote-draft-{templateId}`. Survives tab/browser restarts until cleared. |
+| **qSOFA** | Quick Sequential Organ Failure Assessment — bedside sepsis screen (RR ≥22, SBP ≤100, altered mentation). Score 0–3. |
+| **SIRS** | Systemic Inflammatory Response Syndrome criteria (temperature, HR, RR, WBC). Score 0–4. |
+| **HEART Score** | Risk stratification for chest-pain patients: History, ECG, Age, Risk factors, Troponin. Score 0–10. |
+| **Alvarado Score** | Appendicitis clinical prediction score (migratory pain, anorexia, nausea, RLQ tenderness, rebound, WBC, left shift, fever). Score 0–10. |
+| **GCS** | Glasgow Coma Scale — neurological assessment (Eye, Verbal, Motor). Total 3–15. |
+| **RIG** | Rabies Immunoglobulin — passive immunization given with rabies vaccine in post-exposure prophylaxis. Dose ≈ 2 mL/kg wound infiltration (max 100 mL per episode per WHO Thailand guidance). |
+| **Rabies PEP** | Post-exposure prophylaxis for suspected rabies exposure: wound care + vaccine series + RIG when indicated. |
+| **Mammalian Bite** | Bite wound from a mammal (dog, cat, monkey, rodent, human, etc.) requiring wound care, tetanus, rabies, and antibiotic risk assessment. |
+| **NEWS2** | National Early Warning Score 2 — track-and-trigger vital-sign score for early deterioration detection. |
 
 ---
 
@@ -22,10 +34,28 @@
 - **Maintenance Infusion:** Continuous IV administration regulated by infusion pumps in milliliters per hour (mL/hr).
 - **Preparation Variant:** Custom dilution recipe (e.g., Fentanyl 5 mcg/mL vs 2 mcg/mL) affecting calculated mL/hr flow rates.
 - **Chemotherapeutic / Fibrinolysis Gate:** Safety checklists preventing critical administration errors before drug calculation output is unlocked.
+- **ER NOTE Draft:** Clinician-entered form content that is persisted locally in the browser (`localStorage`) so an interrupted note can be resumed without a server.
+- **Per-Template Split:** Each clinical presentation has its own standalone HTML template file instead of a single shared `template.html` routed by URL parameters.
 
 ---
 
 ## 3. Architectural Decision Records (ADRs)
+
+### ADR-50: ER NOTE Tool — Per-Template Split, Standalone Assets, Local Drafts, Plain-Text Output (2026-07-07)
+
+- **Context:** The `er-note` clinical-note worksheet family started as a single shared `template.html` idea. That design forced every presentation (Sepsis, Trauma, Mammalian Bite, etc.) to coexist in one page or be selected by URL state, making navigation, print styling, and per-template score logic fragile. It also risked coupling the narrative-note UX to the standing-order shared CSS/JS contracts, which have a very different lifecycle (float bar, print blank orders, validation gates).
+- **Decision:**
+  1. **Per-template split:** Each clinical presentation lives in its own standalone HTML file under `tools/er-note/`: `general-er-note.html`, `sepsis.html`, `trauma.html`, `mammalian-bite.html`, `chest-pain.html`, `abdominal-pain.html`, `eye-injury.html`.
+  2. **Template order:** The tab bar and hub page list templates in fixed order: General ER Note → Sepsis → Trauma → Mammalian Bite → Chest Pain → Abdominal Pain → Eye Injury. New templates must append at the end unless a clinical workflow explicitly demands otherwise.
+  3. **Standalone assets:** ER NOTE pages use only `tools/er-note/er-note.css` and `tools/er-note/er-note.js`. They must **not** import `shared/base.css`, `shared/components.js`, `shared/form-validate.js`, or other standing-order shared assets. Within `tools/er-note/`, CSS and JS may be shared across templates.
+  4. **Local drafts:** Every template auto-saves input values to `localStorage` keyed `ernote-draft-{templateId}` (where `templateId` is the template filename). Drafts restore on page load and are cleared when the user presses **Clear**.
+  5. **Plain-text output:** The **Copy Note** action walks each `.card`, collects section titles and filled fields, and writes a Markdown-ish plain-text summary to the clipboard (section headers as `## Section`). This is the canonical shareable note format; print is a secondary paper fallback.
+- **Rationale:** Decouples narrative-note workflows from standing-order machinery. Per-template files let each presentation have dedicated score logic (qSOFA/SIRS, HEART, Alvarado, GCS, RIG dosing, etc.) and bespoke print layout without conditional branching. Standalone assets prevent standing-order refactor regressions from breaking ER NOTE, and vice versa.
+- **Consequences:**
+  - New templates require a new HTML file + link in `tools/er-note/index.html` + tab link updates in every existing template.
+  - Service-worker cache (`service-worker.js`) must enumerate each new template file explicitly; the tool is not bundled.
+  - Shared standing-order components (modal, validation gate, float bar) are intentionally unavailable; equivalent behaviour must be implemented locally.
+- **Tests:** 193/193 pass (existing test suite unaffected; ER NOTE templates tested via hub navigation expectations in `tests/nstemi-audit-fixes.test.js` and `tests/index.test.js`).
 
 ### ADR-47: NSTEMI Use-Current-Time Checkbox & Troponin Box Layout (2026-07-06)
 
