@@ -27,6 +27,17 @@
 
 ## 3. Architectural Decision Records (ADRs)
 
+### ADR-47: NSTEMI Use-Current-Time Checkbox (2026-07-06)
+
+- **Context:** NSTEMI was the only `use-current-time` page (among pe, heparin, antivenom, nstemi, rtpa) that had the checkbox deleted in ADR-20 §3 and never restored. The ADR-20 rationale (removing auto-time for *troponin draw times*) did not apply to the *order date/time* field. ER clinical workflow for NSTEMI prefers blank date/time by default.
+- **Decision:**
+  1. Restored `use-current-time` checkbox to `orders/nstemi.html`, inline on the same flex row as the "1. ข้อมูลผู้ป่วย" heading (`justify-content:space-between`). Both share a continuous cardiac-red `border-bottom`.
+  2. Default **unchecked** (unlike other 4 pages which default to `checked`) — renders dotted lines in print date/time until clinician checks the box.
+  3. Wired to `updatePrintArea()` via `ED_PRINT_BOOTSTRAP.getDateTimeHTML($('use-current-time')?.checked, now)`.
+  4. Wired to `change` event listener for real-time preview re-render on toggle.
+- **Rationale:** Restores W-08 parity with the other 4 pages while respecting NSTEMI's blank-by-default clinical workflow. Inline-on-heading layout saves vertical space.
+- **Tests:** 199/199 pass — no test changes needed (UI-only toggle).
+
 ### ADR-46: Clinical Engine Hardening — eGFR Parity, Case-Insensitive Sex, Killip Lookup, ARIA, Single-Prep Radio (2026-07-06)
 
 - **Context:** A dual-report audit (external clinical audit + ADR-validated recheck) verified against ground truth identified 5 open findings. Both `clinical-engine.js` and `anticoag-engine.js` implemented CKD-EPI 2021 eGFR independently with different behavior (clinical-engine returned raw float, anticoag-engine returned rounded int + null guards). Both used strict `=== 'female'` sex comparison (case-sensitive — `'Female'` or `' female '` would silently default to male math, overestimating eGFR). Killip lookup used `String(killip)` coercion creating `"null"`/`"undefined"` footgun. Drip calculator weight slider lacked `aria-valuenow` (dose slider had it). Single-preparation drugs (Nitroglycerin, Nitroprusside, Esmolol) still rendered an unselected radio button requiring an unnecessary click.
@@ -241,7 +252,7 @@
   4. **A6 — Dead Code Removal:** Removed `printBlankOrder()` function from `index.html`. ADR-09 eliminated all portal print-blank buttons, making this function dead code. W-09 updated to deprecated status.
   5. **A3 (Critical) — Test Foundation:** Created `package.json` and `tests/` directory with 61 unit tests covering `calc-engine.js` (`calcDripRate`, `calcBolusVolume`), `anticoag-engine.js` (`calcAnticoag`, `calcHeparinInitialDose`, `getHeparinTitration`, `HEPARIN_STANDALONE_PROTOCOLS`), `drug-data.js` (structure validation, specific drug checks, safety ceiling verification), and `components.js` (`fmtDate`, `fmtTime`). Tests use Node's built-in `node:test` — zero new dependencies, doesn't affect ADR-01's build-step constraint since tests never ship to the browser. Run via `npm test`.
   6. **A4 — PWA Documentation Drift:** ARCHITECTURE.md §3 previously claimed a "local service worker enforces version caching." No service worker, manifest, or registration exists. Corrected the documentation to reflect reality.
-  7. **A8 — W-08 Count Fix:** ARCHITECTURE.md W-08 stated "4 order files" with `use-current-time` checkbox. Actually 5 files have it (pe, heparin, antivenom, nstemi, rtpa). Corrected.
+  7. **A8 — W-08 Count Fix:** ARCHITECTURE.md W-08 stated "4 order files" with `use-current-time` checkbox. Actually 5 files have it (pe, heparin, antivenom, nstemi, rtpa). Corrected. *(Note: nstemi's checkbox was later removed by ADR-20 §3 and restored by ADR-47 with a default-unchecked state, unlike the other 4 which default to checked.)*
   8. **U4 — Favicon:** Added `favicon.svg` (medical cross icon, red #c0392b on white) to all 9 pages. Helps clinicians identify tabs when 5+ order pages are open across shifts.
   9. **C1 — Accessibility:** Added `role="navigation"` to the sticky nav bar (via `setAttribute` in `injectNavBar()`). Added `aria-live="polite"` to dose summary banners on all 7 order pages and the stroke results container. Screen readers now announce computed doses without interrupting workflow.
 - **Rationale:** The XSS fix closes a real security gap — user-entered HN could execute arbitrary HTML in the page context. The test foundation provides a safety net for future refactoring (Phase 2 shared-behavior extraction) without adding build dependencies. Dead code/CSS removal reduces maintenance surface. Documentation corrections ensure the governance docs match reality. Accessibility improvements bring the codebase closer to its stated design principles without changing visual output or print behavior. No clinical dose logic, safety ceilings, or print geometry were modified.

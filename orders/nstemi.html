@@ -348,7 +348,13 @@
         <form id="nstemi-form">
             <!-- ROW 1 : Patient Info (single-line) -->
             <div class="patient-section">
-                <h3>1. ข้อมูลผู้ป่วย</h3>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;">
+                    <h3 style="margin:0;">1. ข้อมูลผู้ป่วย</h3>
+                    <label class="flag-label" style="font-weight:normal; display:flex; align-items:center; gap:4px; font-size:12px; cursor:pointer; padding-bottom:7px; border-bottom:2px solid var(--cardiac-primary);">
+                        <input type="checkbox" id="use-current-time">
+                        บันทึกเวลาปัจจุบัน (Use Current Time)
+                    </label>
+                </div>
                 <div class="patient-fields">
                     <div class="patient-field">
                         <label for="hn">HN:</label>
@@ -1388,7 +1394,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ? '☐ hs-troponin I Hr.0 and 3<br><small style="color:#888;">(เจาะจาก รพช. แล้ว — ไม่ต้องซ้ำ)</small>'
             : '☐ hs-troponin I Hr.0 and 3';
 
-        const dtHtml = ED_PRINT_BOOTSTRAP.getDateTimeHTML(true, now);
+        const dtHtml = ED_PRINT_BOOTSTRAP.getDateTimeHTML($('use-current-time')?.checked, now);
         $('p-dt-1').innerHTML = dtHtml;
         $('p-dt-2').innerHTML = dtHtml;
 
@@ -1517,7 +1523,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll(
         'input[name="sex"], input[name="asa-allergy"], input[name="killip"], ' +
         'input[name="anticoag-choice"], input[name="enox-freq"], input[name="dapt-p2y12"], #dapt-asa, ' +
-        '.vh-flag, .h1-flag, #cardiac-arrest, #st-deviation, #elevated-markers, #troponin-from-rphch'
+        '.vh-flag, .h1-flag, #cardiac-arrest, #st-deviation, #elevated-markers, #troponin-from-rphch, #use-current-time'
     ).forEach(el => el.addEventListener('change', calculateAndRender));
 
     // ── create-order-btn: print
