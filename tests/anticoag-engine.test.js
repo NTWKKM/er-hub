@@ -25,6 +25,20 @@ describe('calcEGFR_CKDEPI2021', () => {
     assert.equal(calcEGFR_CKDEPI2021(1.0, 60, 'x'), null);
   });
 
+  // F2: Case-insensitivity + whitespace trim tests
+  test('case-insensitive: "Female" and "FEMALE" produce same result as "female"', () => {
+    const expected = calcEGFR_CKDEPI2021(1.0, 60, 'female');
+    assert.equal(calcEGFR_CKDEPI2021(1.0, 60, 'Female'), expected);
+    assert.equal(calcEGFR_CKDEPI2021(1.0, 60, 'FEMALE'), expected);
+    assert.equal(calcEGFR_CKDEPI2021(1.0, 60, 'Male'), calcEGFR_CKDEPI2021(1.0, 60, 'male'));
+  });
+
+  test('whitespace-trimmed: " female " produces same result as "female"', () => {
+    const expected = calcEGFR_CKDEPI2021(1.0, 60, 'female');
+    assert.equal(calcEGFR_CKDEPI2021(1.0, 60, ' female '), expected);
+    assert.equal(calcEGFR_CKDEPI2021(1.0, 60, '  male  '), calcEGFR_CKDEPI2021(1.0, 60, 'male'));
+  });
+
   test('returns null when age invalid', () => {
     assert.equal(calcEGFR_CKDEPI2021(1.0, 0, 'male'), null);
   });

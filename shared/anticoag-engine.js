@@ -17,8 +17,10 @@
  * @returns {number|null} eGFR in mL/min/1.73m² (rounded), or null if inputs invalid
  */
 function calcEGFR_CKDEPI2021(scr, age, sex) {
-    if (!(scr > 0) || !(age > 0) || (sex !== 'male' && sex !== 'female')) return null;
-    const female = sex === 'female';
+    if (!(scr > 0) || !(age > 0) || !sex) return null;
+    const s = String(sex).toLowerCase().trim();
+    if (s !== 'male' && s !== 'female') return null;
+    const female = s === 'female';
     const kappa = female ? 0.7 : 0.9;
     const alpha = female ? -0.241 : -0.302;
     const ratio = scr / kappa;

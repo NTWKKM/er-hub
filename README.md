@@ -31,6 +31,7 @@ index.html                  ← Portal hub (3-column card grid, 8 modules, SW re
 ├── tests/                  ← Unit tests (node:test, zero deps)
 │   ├── calc-engine.test.js
 │   ├── anticoag-engine.test.js
+│   ├── clinical-engine.test.js
 │   ├── drug-data.test.js
 │   └── components.test.js
 ├── service-worker.js       ← PWA offline cache (network-first nav, cache-first assets)
@@ -56,4 +57,4 @@ See `ARCHITECTURE.md`, `DESIGN.md`, and `CONTEXT.md` for full specifications and
 npm test
 ```
 
-Runs 61 unit tests via Node's built-in `node:test` (zero dependencies). Covers `calc-engine.js` (drip rate + bolus volume), `anticoag-engine.js` (heparin dosing + titration + NSTEMI anticoag), `drug-data.js` (12-drug catalog validation), and `components.js` (date/time formatting). Tests are dev-only — they never ship to the browser and don't affect the ADR-01 no-build-step constraint.
+Runs 199 unit tests via Node's built-in `node:test` (zero dependencies). Covers `calc-engine.js` (drip rate), `anticoag-engine.js` (heparin dosing + titration + NSTEMI anticoag + eGFR), `clinical-engine.js` (eGFR + GRACE score + Killip lookup), `drug-data.js` (12-drug catalog validation), `components.js` (date/time formatting), `form-validate.js`, `print-bootstrap.js`, and structural regression guards. Tests are dev-only — they never ship to the browser and don't affect the ADR-01 no-build-step constraint.

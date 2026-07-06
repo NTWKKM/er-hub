@@ -30,13 +30,19 @@ const CLINICAL_ENGINE = {
     },
 
     calcEGFR_CKD_EPI_2021: function(creatinine, age, sex) {
-        const kappa = (sex === 'female') ? 0.7 : 0.9;
-        const alpha = (sex === 'female') ? -0.241 : -0.302;
-        const minCrK = Math.min(creatinine / kappa, 1);
-        const maxCrK = Math.max(creatinine / kappa, 1);
-        const egfr = 142 * Math.pow(minCrK, alpha) * Math.pow(maxCrK, -1.200) * 
-                     Math.pow(0.9938, age);
-        return (sex === 'female') ? egfr * 1.012 : egfr;
+        if (!(creatinine > 0) || !(age > 0) || !sex) return null;
+        const s = String(sex).toLowerCase().trim();
+        if (s !== 'male' && s !== 'female') return null;
+        const female = s === 'female';
+        const kappa = female ? 0.7 : 0.9;
+        const alpha = female ? -0.241 : -0.302;
+        const ratio = creatinine / kappa;
+        const egfr = 142
+            * Math.pow(Math.min(ratio, 1), alpha)
+            * Math.pow(Math.max(ratio, 1), -1.200)
+            * Math.pow(0.9938, age)
+            * (female ? 1.012 : 1);
+        return Math.round(egfr);
     },
 
     calcGRACE: function({ age, hr, sbp, cr, cardArr, stDev, elevMk, killip }) {
@@ -44,7 +50,7 @@ const CLINICAL_ENGINE = {
         const hrP  = this.lookupPts(hr,  this.HR_TBL);
         const sbpP = this.lookupPts(sbp, this.SBP_TBL);
         const crP  = this.lookupPts(cr,  this.CR_TBL);
-        const kilP = this.KILLIP_PTS[String(killip)] || 0;
+        const kilP = this.KILLIP_PTS[killip] || 0;
         const arrP = cardArr ? 39 : 0;
         const stP  = stDev   ? 28 : 0;
         const mkP  = elevMk  ? 14 : 0;

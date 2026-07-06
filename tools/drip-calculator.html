@@ -314,8 +314,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         selectedDrug = EMERGENCY_DRUG_DATA.find(d => d.id === drugId);
         
-        // Populate preparations radio buttons
+        // Populate preparations radio buttons (auto-check if only one preparation)
         prepRadioContainer.innerHTML = '';
+        const singlePrep = selectedDrug.preparations.length === 1;
         selectedDrug.preparations.forEach((prep, idx) => {
             const wrapper = document.createElement('label');
             wrapper.style.display = 'flex';
@@ -331,9 +332,11 @@ document.addEventListener('DOMContentLoaded', () => {
             radio.type = 'radio';
             radio.name = 'prep-choice';
             radio.value = idx;
-            if (idx === selectedDrug.defaultPreparationIndex) {
+            // Auto-check: default preparation OR single preparation (no choice needed)
+            if (singlePrep || idx === selectedDrug.defaultPreparationIndex) {
                 radio.checked = true;
             }
+            if (singlePrep) radio.readOnly = true;
             
             radio.addEventListener('change', (e) => {
                 if (e.target.checked) {
@@ -596,6 +599,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set up accessibility announcements
         doseSlider.setAttribute('aria-valuenow', dose);
         doseSlider.setAttribute('aria-valuetext', `${dose} ${selectedDrug.doseUnit}`);
+        weightSlider.setAttribute('aria-valuenow', weightVal);
+        weightSlider.setAttribute('aria-valuetext', `${weightVal} kg`);
 
         resultContainer.classList.remove('hidden');
     }
