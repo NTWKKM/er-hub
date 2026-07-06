@@ -81,6 +81,12 @@ describe('Dead CSS Selector Guard', () => {
         });
     }
 
+    // Include root-level index.html (has its own <style> block)
+    const indexPath = path.join(__dirname, '..', 'index.html');
+    if (fs.existsSync(indexPath)) {
+        filesToCheck.push({ name: 'index.html', path: indexPath });
+    }
+
     filesToCheck.forEach(({ name, path: filePath }) => {
         test(`All CSS classes in ${name} are referenced in markup or JS`, () => {
             const { dead, selectors } = checkDeadCssClasses(filePath);

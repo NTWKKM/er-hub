@@ -236,7 +236,6 @@
 <script src="../shared/components.js"></script>
 <script src="../shared/calc-engine.js"></script>
 <script src="../shared/drug-data.js"></script>
-<script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
@@ -389,6 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const max = selectedDrug.doseRange.max;
             if (val < min) val = min;
             if (val > max) val = max;
+            doseInput.value = val;  // write back clamped value
             doseSlider.value = val;
         }
         triggerCalculation();

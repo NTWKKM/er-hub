@@ -85,6 +85,12 @@
             gap: 16px;
             align-items: flex-start;
         }
+        .dapt-anticoag-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 0 0 20px 0;
+        }
         .grace-badge {
             display: inline-flex;
             align-items: center;
@@ -167,6 +173,7 @@
 
         @media (max-width: 900px) {
             .grace-summary { flex-direction: column; }
+            .dapt-anticoag-row { grid-template-columns: 1fr; }
         }
 
         /* ── Mobile: data-input section ── */
@@ -273,6 +280,7 @@
 
         @media print {
             .grace-summary { display: none !important; }
+            .dapt-anticoag-row { display: none !important; }
 
             /* A4 print layout optimization */
             html, body {
@@ -302,6 +310,10 @@
             }
             .order-list li {
                 margin-bottom: 4px;
+            }
+            .order-list-plain {
+                list-style: none;
+                padding-left: 0;
             }
             .order-blank-space {
                 flex-grow: 1;
@@ -586,8 +598,85 @@
                 </table>
             </div>
 
-            <!-- Right: Anticoag Selection + Timing -->
-            <div style="flex: 1 1 320px; min-width: 280px; display: flex; flex-direction: column; gap: 12px;">
+        </div><!-- end .grace-summary -->
+
+        <!-- Row 2: DAPT (left) + Anticoagulant (right) -->
+        <div class="dapt-anticoag-row">
+
+            <!-- Left: DAPT Panel -->
+            <div id="dapt-panel" style="background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; position: relative;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <strong style="font-size:11px;color:#555;margin:0;">💊 Antiplatelet Loading (DAPT)</strong>
+                    <button type="button" id="reset-dapt-btn" style="font-size: 10px; padding: 2px 6px; cursor: pointer; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; border-style: solid; font-weight: bold;">ล้างตัวเลือก</button>
+                </div>
+                <div style="font-size:12px; display: flex; flex-direction: column; gap: 8px;">
+                    <!-- ASA Selection -->
+                    <div style="padding-bottom: 6px; border-bottom: 1px solid #eee;">
+                        <label class="ac-radio-label" style="margin: 0; display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" id="dapt-asa" style="margin:0;">
+                            <div>
+                                <strong style="color:#c0392b;">ASA 300 mg chew stat</strong>
+                                <span id="dapt-badge-asa" class="ac-badge ac-badge-rec" style="display:inline-block;">✅ แนะนำ</span>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <!-- P2Y12 Selection -->
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <div>
+                            <label class="ac-radio-label" style="margin: 0;">
+                                <input type="radio" name="dapt-p2y12" value="hold" checked style="margin-top:2px;">
+                                <div>
+                                    <strong>ไม่โหลด P2Y12 / Hold to Cath Lab</strong>
+                                    <div style="font-size:10px; color:#666; margin-top:2px;">(แนะนำหาก Early Invasive &lt; 24h)</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div style="border-top: 1px solid #eee; padding-top: 6px;">
+                            <label class="ac-radio-label" style="margin: 0;">
+                                <input type="radio" name="dapt-p2y12" value="clopi300" style="margin-top:2px;">
+                                <div>
+                                    <strong>Clopidogrel 300 mg</strong> (75 mg x 4 tabs) stat
+                                    <div style="font-size:10px; color:#666; margin-top:2px;">(Conservative หรือ High bleeding risk)</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div style="border-top: 1px solid #eee; padding-top: 6px;">
+                            <label class="ac-radio-label" style="margin: 0;">
+                                <input type="radio" name="dapt-p2y12" value="clopi600" style="margin-top:2px;">
+                                <div>
+                                    <strong>Clopidogrel 600 mg</strong> (75 mg x 8 tabs) stat
+                                    <div style="font-size:10px; color:#666; margin-top:2px;">(Standard PCI strategy)</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div style="border-top: 1px solid #eee; padding-top: 6px;">
+                            <label class="ac-radio-label" style="margin: 0;">
+                                <input type="radio" name="dapt-p2y12" value="tiga180" style="margin-top:2px;">
+                                <div>
+                                    <strong>Ticagrelor 180 mg</strong> (90 mg x 2 tabs) stat
+                                    <div style="font-size:10px; color:#666; margin-top:2px;">(Preferred Upstream/Loading)</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div style="border-top: 1px solid #eee; padding-top: 6px;">
+                            <label class="ac-radio-label" style="margin: 0;">
+                                <input type="radio" name="dapt-p2y12" value="prasa60" style="margin-top:2px;">
+                                <div>
+                                    <strong style="color: #c0392b;">Prasugrel 60 mg</strong> (10 mg x 6 tabs) stat
+                                    <div style="font-size:10px; color:#666; margin-top:2px;">— ให้ใน Cath Lab เท่านั้น</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendation Hint Box -->
+                    <div id="dapt-hint-box" style="margin-top: 6px; padding: 8px; background: #fffdf0; border: 1px solid #f1c40f; border-radius: 4px; font-size: 11px; display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Right: Anticoagulant Selection + Recommendation -->
+            <div style="display: flex; flex-direction: column; gap: 12px;">
 
                 <div id="anticoag-panel" style="background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; position: relative;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -645,79 +734,9 @@
                 <div>
                     <div style="font-size: 11px; font-weight: bold; color: #7f8c8d; margin-bottom: 6px;">💊 Calculated Recommendation: <span id="screen-anticoag" style="color: #333;">--</span></div>
                 </div>
-
-                <div id="dapt-panel" style="background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; position: relative;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <strong style="font-size:11px;color:#555;margin:0;">💊 Antiplatelet Loading (DAPT)</strong>
-                        <button type="button" id="reset-dapt-btn" style="font-size: 10px; padding: 2px 6px; cursor: pointer; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; border-style: solid; font-weight: bold;">ล้างตัวเลือก</button>
-                    </div>
-                    <div style="font-size:12px; display: flex; flex-direction: column; gap: 8px;">
-                        <!-- ASA Selection -->
-                        <div style="padding-bottom: 6px; border-bottom: 1px solid #eee;">
-                            <label class="ac-radio-label" style="margin: 0; display: flex; align-items: center; gap: 6px;">
-                                <input type="checkbox" id="dapt-asa" style="margin:0;">
-                                <div>
-                                    <strong style="color:#c0392b;">ASA 300 mg chew stat</strong>
-                                    <span id="dapt-badge-asa" class="ac-badge ac-badge-rec" style="display:inline-block;">✅ แนะนำ</span>
-                                </div>
-                            </label>
-                        </div>
-                        
-                        <!-- P2Y12 Selection -->
-                        <div style="display: flex; flex-direction: column; gap: 6px;">
-                            <div>
-                                <label class="ac-radio-label" style="margin: 0;">
-                                    <input type="radio" name="dapt-p2y12" value="hold" checked style="margin-top:2px;">
-                                    <div>
-                                        <strong>ไม่โหลด P2Y12 / Hold to Cath Lab</strong>
-                                        <div style="font-size:10px; color:#666; margin-top:2px;">(แนะนำหาก Early Invasive &lt; 24h)</div>
-                                    </div>
-                                </label>
-                            </div>
-                            <div style="border-top: 1px solid #eee; padding-top: 6px;">
-                                <label class="ac-radio-label" style="margin: 0;">
-                                    <input type="radio" name="dapt-p2y12" value="clopi300" style="margin-top:2px;">
-                                    <div>
-                                        <strong>Clopidogrel 300 mg</strong> (75 mg x 4 tabs) stat
-                                        <div style="font-size:10px; color:#666; margin-top:2px;">(Conservative หรือ High bleeding risk)</div>
-                                    </div>
-                                </label>
-                            </div>
-                            <div style="border-top: 1px solid #eee; padding-top: 6px;">
-                                <label class="ac-radio-label" style="margin: 0;">
-                                    <input type="radio" name="dapt-p2y12" value="clopi600" style="margin-top:2px;">
-                                    <div>
-                                        <strong>Clopidogrel 600 mg</strong> (75 mg x 8 tabs) stat
-                                        <div style="font-size:10px; color:#666; margin-top:2px;">(Standard PCI strategy)</div>
-                                    </div>
-                                </label>
-                            </div>
-                            <div style="border-top: 1px solid #eee; padding-top: 6px;">
-                                <label class="ac-radio-label" style="margin: 0;">
-                                    <input type="radio" name="dapt-p2y12" value="tiga180" style="margin-top:2px;">
-                                    <div>
-                                        <strong>Ticagrelor 180 mg</strong> (90 mg x 2 tabs) stat
-                                        <div style="font-size:10px; color:#666; margin-top:2px;">(Preferred Upstream/Loading)</div>
-                                    </div>
-                                </label>
-                            </div>
-                            <div style="border-top: 1px solid #eee; padding-top: 6px;">
-                                <label class="ac-radio-label" style="margin: 0;">
-                                    <input type="radio" name="dapt-p2y12" value="prasa60" style="margin-top:2px;">
-                                    <div>
-                                        <strong style="color: #c0392b;">Prasugrel 60 mg</strong> (10 mg x 6 tabs) stat
-                                        <div style="font-size:10px; color:#c0392b; margin-top:2px; font-weight: bold;">⛔ ให้ใน Cath Lab เท่านั้น (ห้ามทำ Pre-treatment ใน ER)</div>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <!-- Recommendation Hint Box -->
-                        <div id="dapt-hint-box" style="margin-top: 6px; padding: 8px; background: #fffdf0; border: 1px solid #f1c40f; border-radius: 4px; font-size: 11px; display: none;"></div>
-                    </div>
-                </div>
             </div>
-        </div><!-- end .grace-summary -->
+
+        </div><!-- end .dapt-anticoag-row -->
 
         <h3>3. ตรวจสอบและพิมพ์ใบสั่งยา</h3>
 
@@ -796,12 +815,12 @@
 
                     <div class="divider"></div>
                     <strong>Stat Medications:</strong>
-                    <ul class="order-list">
+                    <ul class="order-list order-list-plain">
                         <li id="p-asa-stat">☐ ASA (300) 1 tab chew stat</li>
                         <li id="p-clopi300-stat">☐ Clopidogrel (75) 4 tabs PO stat (300 mg)</li>
                         <li id="p-clopi600-stat">☐ Clopidogrel (75) 8 tabs PO stat (600 mg)</li>
                         <li id="p-tiga-stat">☐ Ticagrelor (90) 2 tabs PO stat (180 mg)</li>
-                        <li id="p-prasa-stat" style="color: #c0392b;">☐ Prasugrel (10) 6 tabs PO stat (60 mg) <small>— ให้ใน Cath lab เท่านั้น</small></li>
+                        <li id="p-prasa-stat">☐ Prasugrel (10) 6 tabs PO stat (60 mg) <small>— ให้ใน Cath lab เท่านั้น</small></li>
                         <li id="p-isdn-stat">☐ ISDN (5) 1 tab SL prn chest pain</li>
                     </ul>
 
@@ -844,7 +863,7 @@
                     <ul class="order-list">
                         <li id="p-asa-cont">☐ ASA (81) 1×1 pc</li>
                         <li id="p-clopi-cont">☐ Clopidogrel GPO (75) 1×1 pc</li>
-                        <li id="p-tiga-cont">☐ Ticagrelor (90) 1 tab PO BID (pc เช้า-เย็น)</li>
+                        <li id="p-tiga-cont">☐ Ticagrelor (90) 1 x 2 pc</li>
                         <li id="p-prasa-cont">☐ Prasugrel (10) 1×1 pc</li>
                         <li id="p-omeprazole">☑ Omeprazole (20) 1×1 ac</li>
                         <li id="p-atorva">☑ Atorvastatin (40) 1×1 hs</li>
@@ -889,6 +908,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const FONDA_MIN_EGFR = 30;
     const ENOX_MIN_EGFR  = 15;
+    const MIN_AGE = 18;
     const $ = id => document.getElementById(id);
 
     // Static DOM Injections on Load
@@ -1144,7 +1164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'p-isdn-stat', html: '☐ ISDN (5) 1 tab SL prn chest pain' },
         { id: 'p-asa-cont', html: '☐ ASA (81) 1×1 pc' },
         { id: 'p-clopi-cont', html: '☐ Clopidogrel GPO (75) 1×1 pc' },
-        { id: 'p-tiga-cont', html: '☐ Ticagrelor (90) 1 tab PO BID (pc เช้า-เย็น)' },
+        { id: 'p-tiga-cont', html: '☐ Ticagrelor (90) 1 x 2 pc' },
         { id: 'p-prasa-cont', html: '☐ Prasugrel (10) 1×1 pc' },
         { id: 'p-omeprazole', html: '☐ Omeprazole (20) 1×1 ac' },
         { id: 'p-atorva', html: '☐ Atorvastatin (40) 1×1 hs' },
@@ -1185,7 +1205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cr = parseFloat(patientCr.value);
         const age = parseFloat(ageInput.value);
         const sex = document.querySelector('input[name="sex"]:checked')?.value;
-        if (!isNaN(cr) && !isNaN(age) && sex) {
+        if (!isNaN(cr) && !isNaN(age) && age >= MIN_AGE && sex) {
             const egfr = CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021(cr, age, sex);
             $('screen-egfr').textContent = egfr.toFixed(2);
         } else {
@@ -1384,7 +1404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-prasa-stat').innerHTML = (p2y12Val === 'prasa60' ? '☑' : '☐') + ' Prasugrel (10) 6 tabs PO stat (60 mg) <small>— ให้ใน Cath lab เท่านั้น</small>';
 
         $('p-clopi-cont').innerHTML = (p2y12Val === 'clopi300' || p2y12Val === 'clopi600' ? '☑' : '☐') + ' Clopidogrel GPO (75) 1×1 pc';
-        $('p-tiga-cont').innerHTML = (p2y12Val === 'tiga180' ? '☑' : '☐') + ' Ticagrelor (90) 1 tab PO BID (pc เช้า-เย็น)';
+        $('p-tiga-cont').innerHTML = (p2y12Val === 'tiga180' ? '☑' : '☐') + ' Ticagrelor (90) 1 x 2 pc';
 
         // Prasugrel dose reduction: 5 mg if weight < 60 kg or age >= 75
         const prasaReduced = (weight > 0 && weight < 60) || (age >= 75);
@@ -1408,11 +1428,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const killip  = document.querySelector('input[name="killip"]:checked')?.value || '1';
         const fromRpc = $('troponin-from-rphch').checked;
 
+        // Non-blocking validation: weight 30–200, age 18–120, creatinine 0.1–20
+        if (!isNaN(weight)) ED_VALIDATE.range('weight', 30, 200, 'Weight ต้องอยู่ในช่วง 30–200 kg');
+        if (!isNaN(age))    ED_VALIDATE.range('age', MIN_AGE, 120, 'Age ต้องอยู่ในช่วง 18–120 ปี');
+        if (!isNaN(cr))     ED_VALIDATE.range('creatinine', 0.1, 20, 'Creatinine ต้องอยู่ในช่วง 0.1–20 mg/dL');
+
 
 
         // eGFR calculation
         const egfr = calcEGFR();
-        const egfrForCalc = egfr !== null ? Math.round(egfr) : null;
 
 
 
@@ -1467,7 +1491,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Enox frequency is still auto-set when eGFR is available
         if (egfr !== null) {
-            const freqVal = (egfrForCalc < FONDA_MIN_EGFR) ? 'q24h' : 'q12h';
+            const freqVal = (egfr < FONDA_MIN_EGFR) ? 'q24h' : 'q12h';
             const freqRad = document.querySelector(`input[name="enox-freq"][value="${freqVal}"]`);
             if (freqRad && !freqRad.checked) freqRad.checked = true;
         }
@@ -1489,12 +1513,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'input[name="anticoag-choice"], input[name="enox-freq"], input[name="dapt-p2y12"], #dapt-asa, ' +
         '.vh-flag, .h1-flag, #cardiac-arrest, #st-deviation, #elevated-markers, #troponin-from-rphch'
     ).forEach(el => el.addEventListener('change', calculateAndRender));
-
-    // Submit button now just prints
-    document.getElementById('nstemi-form').addEventListener('submit', e => {
-        e.preventDefault();
-        window.print();
-    });
 
     // ── create-order-btn: print (setupCommonActions already wires print-btn)
     $('create-order-btn').addEventListener('click', () => window.print());
@@ -1574,6 +1592,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rowEl) rowEl.style.display = 'none';
         });
 
+        // Reset anticoag panel state (same as reset-anticoag-btn)
+        document.querySelectorAll('input[name="anticoag-choice"]').forEach(r => {
+            r.checked = false;
+            const label = r.closest('label');
+            if (label) {
+                label.classList.remove('ac-override-pending', 'ac-disabled');
+            }
+        });
+        const ciMsgs = document.querySelectorAll('[id$="-ci-msg"], [id$="-override-msg"]');
+        ciMsgs.forEach(el => { el.style.display = 'none'; el.textContent = ''; });
+        const freqContainer = $('enox-frequency-container');
+        if (freqContainer) freqContainer.style.display = 'none';
+        updateAnticoagOutput();
+        updateAcHints();
+
+        // Reset DAPT panel state (same as reset-dapt-btn)
+        document.querySelectorAll('input[name="dapt-p2y12"]').forEach(r => {
+            r.checked = (r.value === 'hold');
+        });
+        $('dapt-asa').checked = false;
+        const daptHintBox = $('dapt-hint-box');
+        if (daptHintBox) daptHintBox.style.display = 'none';
         
         updateLiveEGFR();
         // Re-apply blank template so print preview resets to a clean blank order
@@ -1586,6 +1626,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('print-blank-btn').addEventListener('click', () => {
         // Print-header and sticker-box are already injected, apply the blank template
         ED_BLANK_PRINT.apply();
+        window.print();
     });
 
     // Auto-run print-blank-direct from home page portal OR auto-blank on cold load

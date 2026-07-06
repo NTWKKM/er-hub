@@ -13,8 +13,10 @@
     <script>
         // Backward Compatibility Redirection Logic
         // Redirects old URLs/bookmarks/QR codes that pointed to index.html with inputs or hash
+        const ALLOWED_SLUGS = ['rtpa', 'nstemi', 'stemi', 'pe', 'heparin', 'antivenom', 'sedation'];
         const params = new URLSearchParams(window.location.search);
-        const orderSlug = params.get('order') || (window.location.hash.includes('rtpa') ? 'rtpa' : null);
+        const rawSlug = params.get('order') || (window.location.hash.includes('rtpa') ? 'rtpa' : null);
+        const orderSlug = (rawSlug && ALLOWED_SLUGS.includes(rawSlug)) ? rawSlug : null;
         if (orderSlug) {
             window.location.replace('orders/' + orderSlug + '.html' + window.location.search + window.location.hash);
         } else if (params.has('hn') || params.has('weight')) {
@@ -409,7 +411,6 @@
     <button id="sw-refresh-btn" style="background:#d84315; color:#f4f2ec; border:none; padding:8px 16px; font-family:var(--font-ui); font-weight:700; font-size:12px; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; border-radius:2px;">อัปเดต (Update)</button>
 </div>
 
-<script src="shared/components.js"></script>
 <script>
 // Create navigation bar directly to fit the Braun header layout without redundant helper injection
 const nav = document.createElement('nav');
@@ -420,7 +421,7 @@ nav.innerHTML = `
         <img src="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" style="height: 38px; width: auto; display: block;">
     </div>
     <div class="nav-center">MNRH-ED HUB</div>
-    <div class="nav-right">v16 · Updated 2026-07-05</div>
+    <div class="nav-right">v17 · Updated 2026-07-06</div>
 `;
 document.body.insertBefore(nav, document.body.firstChild);
 
@@ -446,8 +447,9 @@ if ('serviceWorker' in navigator) {
       function showUpdateToast(worker) {
         const toast = document.getElementById('sw-update-toast');
         const btn = document.getElementById('sw-refresh-btn');
-        if (toast && btn) {
+        if (toast && btn && !btn.dataset.wired) {
           toast.style.display = 'flex';
+          btn.dataset.wired = '1';
           btn.addEventListener('click', () => {
             worker.postMessage({ action: 'skipWaiting' });
           });
