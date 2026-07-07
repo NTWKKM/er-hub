@@ -19,11 +19,11 @@
   // type: 'input' | 'textarea' | 'select'
   var CC_FIELDS = {
     'general-er-note': { type:'input',    id:'cc-text'         },
-    'sepsis':           { type:'textarea', id:'sepsis-onset'    },
+    'sepsis':           { type:'textarea', id:'narr-sepsis-hpi-free'    },
     'trauma':           { type:'select',   id:'trauma-mech'     },
     'chest-pain':       { type:'input',    id:'chest-onset'     },
     'abdominal-pain':   { type:'input',    id:'abdo-onset'      },
-    'mammalian-bite':   { type:'radio',    id:'bite-animal'     },
+    'mammalian-bite':   { type:'input',    id:'narr-mammalian-bite-hpi-free' },
     'eye-injury':       { type:'input',    id:'eye-chemical'    },
     'index':            null
   };
@@ -347,7 +347,7 @@
         freeText: true
       },
       'sepsis': {
-        checks: ['IV corticosteroid','Active fluid removal','No beta-blocker'],
+        checks: [],
         freeText: false  // sepsis already has ABx/fluid/vasopressor fields
       },
       'chest-pain': {
@@ -428,6 +428,149 @@
       }
 
       container.innerHTML = html;
+    },
+
+    /* ---- Narrative presets ----
+     * Each: { hpi, pmh, allergies, pe }
+     * hpi/pmh/allergies/pe each: { title, placeholder, checkboxes:[], freeText:bool, autoFocus:bool }
+     * freeText adds a textarea; autoFocus focuses the first input on render.
+     * Templates use these sections as their HPI / PMH / Allergies / PE.
+     */
+    NARRATIVE_PRESETS: {
+      'general-er-note': {
+        hpi: { title: 'HPI', placeholder: 'OPQRST / SAMPLE…', checkboxes: [], freeText: true, autoFocus: false },
+        pmh: { title: 'PMH', placeholder: 'ระบุโรคประจำตัว…', checkboxes: [], freeText: true, autoFocus: false },
+        allergies: { title: 'Allergies', placeholder: 'ระบุ allergy…', checkboxes: ['NKDA', 'Unknown'], freeText: true, autoFocus: false },
+        pe: { title: 'PE', placeholder: 'ระบุ physical exam…', checkboxes: [], freeText: true, autoFocus: false }
+      },
+      'sepsis': {
+        // HPI focuses on infection onset and progression
+        hpi: {
+          title: 'HPI — Infection Onset & Progression',
+          placeholder: 'Onset / progression: when did symptoms start, how did they evolve, triggers…',
+          checkboxes: ['Community-acquired', 'Healthcare-associated', 'Nosocomial'],
+          freeText: true, autoFocus: true
+        },
+        // PMH adds sepsis-relevant risk factors
+        pmh: {
+          title: 'PMH & Risk Factors',
+          placeholder: 'ระบุโรคประจำตัว + risk factors…',
+          checkboxes: ['DM', 'CKD', 'Malignancy', 'Steroid/immunosuppressant', 'None'],
+          freeText: true, autoFocus: false
+        },
+        allergies: {
+          title: 'Allergies & Drug Intolerances',
+          placeholder: 'ระบุ allergy รวมถึง drug intolerances…',
+          checkboxes: ['NKDA', 'Unknown', 'Penicillin allergy (verify)'],
+          freeText: true, autoFocus: false
+        },
+        pe: {
+          title: 'PE — Systemic & Focused',
+          placeholder: 'Vital signs, general appearance, focused exam…',
+          checkboxes: ['Alert', 'Confused / AVPU', 'Febrile', 'Hypothermic', 'Tachycardic', 'Hypotensive'],
+          freeText: true, autoFocus: false
+        }
+      },
+      'mammalian-bite': {
+        // HPI focuses on animal exposure and bite circumstances
+        hpi: {
+          title: 'HPI — Animal Exposure & Bite Circumstances',
+          placeholder: 'Animal type, provocation, date/time, location on body…',
+          checkboxes: ['Provoked', 'Unprovoked', 'Unknown'],
+          freeText: true, autoFocus: true
+        },
+        pmh: {
+          title: 'PMH & Tetanus History',
+          placeholder: 'ระบุโรคประจำตัว + tetanus history…',
+          checkboxes: ['Immunocompetent', 'Immunocompromised', 'Splenectomy', 'CKD/Dialysis'],
+          freeText: true, autoFocus: false
+        },
+        allergies: {
+          title: 'Allergies',
+          placeholder: 'ระบุ allergy (especially antibiotics planned for prophylaxis)…',
+          checkboxes: ['NKDA', 'Unknown', 'Penicillin allergy'],
+          freeText: true, autoFocus: false
+        },
+        pe: {
+          title: 'PE — Wound & Systemic',
+          placeholder: 'Wound description, neurovascular status, regional lymph nodes…',
+          checkboxes: ['Wound irrigated ≥15 min', 'Neurovascular intact', 'Lymphadenopathy', 'No signs of infection'],
+          freeText: true, autoFocus: false
+        }
+      },
+      'chest-pain': {
+        hpi: { title: 'HPI — Chest Pain Onset', placeholder: 'Onset, character, radiation, severity, provocative factors…', checkboxes: ['Cardiac risk factors: DM', 'Cardiac risk factors: HTN', 'Cardiac risk factors: smoking', 'Cardiac risk factors: family history', 'Recent chest trauma'], freeText: true, autoFocus: true },
+        pmh: { title: 'PMH & Cardiac History', placeholder: 'ระบุโรคประจำตัว + cardiac history…', checkboxes: ['CAD/ACS history', 'Prior PCI/CABG', 'HF', 'Arrhythmia', 'None'], freeText: true, autoFocus: false },
+        allergies: { title: 'Allergies', placeholder: 'ระบุ allergy…', checkboxes: ['NKDA', 'Unknown', 'Aspirin allergy', 'Heparin-induced thrombocytopenia'], freeText: true, autoFocus: false },
+        pe: { title: 'PE — Cardiovascular & Pulmonary', placeholder: 'Vitals, cardiovascular exam, lung fields…', checkboxes: ['Regular rhythm', 'Murmur present', 'Clear lung fields', 'No leg swelling'], freeText: true, autoFocus: false }
+      },
+      'abdominal-pain': {
+        hpi: { title: 'HPI — Abdominal Pain', placeholder: 'Onset, location, migration, character, severity, aggravating/relieving factors…', checkboxes: ['Nausea/vomiting', 'Diarrhea', 'Constipation', 'Bloating', 'Recent dietary change'], freeText: true, autoFocus: true },
+        pmh: { title: 'PMH & Surgical History', placeholder: 'ระบุโรคประจำตัว + surgical history…', checkboxes: ['Prior abdominal surgery', 'IBD', 'Gallbladder disease', 'Hernia'], freeText: true, autoFocus: false },
+        allergies: { title: 'Allergies', placeholder: 'ระบุ allergy…', checkboxes: ['NKDA', 'Unknown'], freeText: true, autoFocus: false },
+        pe: { title: 'PE — Abdomen & Systemic', placeholder: 'Inspection, palpation, auscultation, rebound/guarding, masses…', checkboxes: ['Soft, non-tender', 'Guarding', 'Rebound tenderness', 'Mass palpable', 'Normal bowel sounds'], freeText: true, autoFocus: false }
+      },
+      'trauma': {
+        hpi: { title: 'HPI — Mechanism of Injury', placeholder: 'RTA details, fall height, assault weapon, time of injury…', checkboxes: ['Loss of consciousness', 'Seizure at scene', 'Amnesia'], freeText: true, autoFocus: true },
+        pmh: { title: 'PMH & Medications', placeholder: 'ระบุโรคประจำตัว + medications that affect bleeding/clotting…', checkboxes: ['Anticoagulant/antiplatelet', 'Bleeding disorder'], freeText: true, autoFocus: false },
+        allergies: { title: 'Allergies', placeholder: 'ระบุ allergy…', checkboxes: ['NKDA', 'Unknown'], freeText: true, autoFocus: false },
+        pe: { title: 'PE — Primary & Secondary Survey Findings', placeholder: 'xABCDE findings, injuries identified…', checkboxes: ['GCS 15', 'Pupils equal and reactive', 'No midline neck tenderness', 'No chest tenderness', 'No abdominal tenderness', 'No pelvic instability'], freeText: true, autoFocus: false }
+      },
+      'eye-injury': {
+        hpi: { title: 'HPI — Eye Injury', placeholder: 'Mechanism, time, symptoms (pain, vision change, foreign body sensation)…', checkboxes: ['Chemical exposure', 'Thermal injury', 'Blunt trauma', 'Penetrating injury suspected'], freeText: true, autoFocus: true },
+        pmh: { title: 'PMH & Ophthalmologic History', placeholder: 'ระบุโรคประจำตัว + eye surgery/history…', checkboxes: ['Contact lens wearer', 'Prior eye surgery', 'Glaucoma', 'None'], freeText: true, autoFocus: false },
+        allergies: { title: 'Allergies', placeholder: 'ระบุ allergy (especially topical agents)…', checkboxes: ['NKDA', 'Unknown'], freeText: true, autoFocus: false },
+        pe: { title: 'PE — Eye Exam', placeholder: 'Visual acuity, pupil, slit-lamp findings, IOP if measured…', checkboxes: ['Visual acuity documented', 'Pupil round reactive', 'No afferent pupillary defect', 'Cornea clear', 'No hyphema'], freeText: true, autoFocus: false }
+      }
+    },
+
+    /* ---- Render narrative section (HPI / PMH / Allergies / PE) ----
+     * Injects 4 sub-cards into container, one per subsection.
+     * Each subsection: title + optional checkboxes + textarea (if freeText).
+     */
+    renderNarrative: function(container, template){
+      if (!container) return;
+      var preset = this.NARRATIVE_PRESETS[template];
+      if (!preset) return;
+
+      var subsections = ['hpi', 'pmh', 'allergies', 'pe'];
+      var subTitles = { hpi: 'HPI', pmh: 'PMH', allergies: 'Allergies', pe: 'PE' };
+      var html = '';
+
+      subsections.forEach(function(key){
+        var sec = preset[key];
+        if (!sec) return;
+        var safeId = 'narr-' + template + '-' + key;
+        html += '<div class="card narrative-sub-card">';
+        html += '<h3 class="section-title"><span class="num">—</span>' + sec.title + '</h3>';
+
+        if (sec.checkboxes && sec.checkboxes.length){
+          html += '<div class="field-row"><label>' + subTitles[key] + ' checklist</label>';
+          html += '<div class="checkbox-group" id="' + safeId + '-checks">';
+          sec.checkboxes.forEach(function(item){
+            var cbId = safeId + '-cb-' + item.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+            html += '<label><input type="checkbox" id="' + cbId + '">' + item + '</label>';
+          });
+          html += '</div></div>';
+        }
+
+        if (sec.freeText){
+          html += '<div class="field-row"><label>' + subTitles[key] + ' detail</label>';
+          html += '<textarea id="' + safeId + '-free" placeholder="' + sec.placeholder + '"></textarea></div>';
+        } else {
+          html += '<div class="field-row"><label>' + subTitles[key] + ' detail</label>';
+          html += '<input type="text" id="' + safeId + '-free" placeholder="' + sec.placeholder + '"></div>';
+        }
+
+        html += '</div>\n';
+      });
+
+      container.innerHTML = html;
+
+      if (preset.hpi && preset.hpi.autoFocus){
+        var first = document.getElementById('narr-' + template + '-hpi-free');
+        if (first) first.focus();
+      }
     }
   };
 

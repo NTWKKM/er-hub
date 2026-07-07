@@ -43,11 +43,19 @@ Each file is self-contained: no dependency on `shared/components.js`, `shared/fo
 Shared style/behavior provided by local `er-note.css` and `er-note.js`.
 Features: tab-style cross-template navigation, multi-patient draft persistence (localStorage schema v2 registry),
 patient strip with HN, floating sidebar draft manager (FAB + slide-in panel),
-Investigation/Treatment checkbox modules, Thai-base history labels,
+Investigation/Treatment/Narrative checkbox modules (rendered by `ErNote.renderNarrative`),
+Thai-base history labels,
 plain-text note generation to clipboard, print via `window.print()` with `@media print` hiding nav/action bars/patient-strip/sidebar,
-built-in clinical calculators (NEWS2, SIRS, qSOFA, HEART, Alvarado, GCS, RIG dose),
+built-in clinical calculators (NEWS2, SIRS, HEART, Alvarado, GCS, RIG dose),
 vital→score auto-linking (sepsis), float sepsis risk status box,
 endemic rabies PEP logic with button-group selections and SVG wound illustrations (mammalian-bite).
+
+Each specialized template (sepsis, mammalian-bite) is fully standalone — its HPI/PMH/Allergies/PE
+fields are rendered from `NARRATIVE_PRESETS[templateId]` by `ErNote.renderNarrative(container, templateId)`.
+CC_FIELDS for sidebar display points to the narrative HPI textarea (`narr-<template>-hpi-free`).
+General-er-note is not migrated to renderNarrative (uses the original inline fields as-is).
+`NARRATIVE_PRESETS` in `er-note.js` defines per-template: `{ hpi, pmh, allergies, pe }` each with
+`{ title, placeholder, checkboxes:[], freeText:bool, autoFocus:bool }`.
 
 ### Drip Calculator (`tools/drip-calculator.html`)
 

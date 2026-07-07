@@ -292,3 +292,18 @@ input:focus,textarea:focus,select:focus { outline:none; border-color:var(--accen
 
 /* ---- Sepsis section reorder helper ---- */
 .section-num-reset { counter-reset: section-num; }
+
+/* ---- Narrative sub-cards (rendered by ErNote.renderNarrative) ---- */
+.narrative-sub-card {
+  margin-bottom: 10px;
+}
+.narrative-sub-card .section-title {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.narrative-sub-card .section-title .num {
+  background: var(--accent-2);
+  font-size: 11px;
+  width: 18px;
+  height: 18px;
+}

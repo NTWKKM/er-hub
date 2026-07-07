@@ -201,6 +201,11 @@
 </div>
 
 <div class="card">
+  <h2 class="section-title"><span class="num">3</span>HPI · PMH · Allergies · PE</h2>
+  <div id="narr-container-sepsis"></div>
+</div>
+
+<div class="card">
   <h2 class="section-title"><span class="num">4</span>Antibiotics &amp; Source Control</h2>
   <div class="field-row"><label>ABx timing</label>
     <div class="radio-group">
@@ -221,7 +226,7 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">5</span>Fluids, Hemodynamics &amp; Respiratory Support</h2>
+  <h2 class="section-title"><span class="num">6</span>Fluids, Hemodynamics &amp; Respiratory Support</h2>
   <div class="field-row"><label>Fluid type</label>
     <div class="radio-group">
       <label><input type="radio" name="sepsis-fluid-type" value="Balanced crystalloid (preferred, Rec 44)"> Balanced crystalloid (preferred)</label>
@@ -253,7 +258,7 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">6</span>Cultures &amp; Investigations</h2>
+  <h2 class="section-title"><span class="num">7</span>Cultures &amp; Investigations</h2>
   <div id="ix-container-sepsis"></div>
   <div class="field-row"><label>Cultures sent</label>
     <div class="checkbox-group">
@@ -267,12 +272,12 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">7</span>Supportive Treatment</h2>
+  <h2 class="section-title"><span class="num">8</span>Supportive Treatment</h2>
   <div id="tx-container-sepsis"></div>
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">8</span>Post-Sepsis Care &amp; Disposition</h2>
+  <h2 class="section-title"><span class="num">9</span>Post-Sepsis Care &amp; Disposition</h2>
   <div class="field-row"><label>Post-sepsis care</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="post-transition"> Transition care program initiated</label>
@@ -306,6 +311,7 @@
 <script>
 ErNote.renderInvestigation(document.getElementById('ix-container-sepsis'), 'sepsis');
 ErNote.renderTreatment(document.getElementById('tx-container-sepsis'), 'sepsis');
+ErNote.renderNarrative(document.getElementById('narr-container-sepsis'), 'sepsis');
 
 function sumChecked(ids){
   let s=0;
@@ -328,7 +334,7 @@ function anySingleParamAtLeast(names, threshold){
 }
 
 /* ---- Vital signs → screening score auto-link ----
- * When user types vital sign values, auto-check corresponding qSOFA/SIRS boxes
+ * When user types vital sign values, auto-check corresponding SIRS boxes
  * and auto-select NEWS2/MEWS radio bands.
  * User can still manually override checkboxes/radios afterwards.
  */

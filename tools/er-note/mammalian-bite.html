@@ -304,16 +304,21 @@
   <div class="field-row"><label>Immunization history</label>
     <div class="btn-group" id="tet-history-group">
       <label class="btn-tile"><input type="radio" name="tet-history" value="≥3 doses, last ≤10 yr"><span class="tile-label">≥3 doses, last ≤10 yr</span></label>
-      <label class="btn-tile"><input type="radio" name="tet-history" value="≥3 doses, last &gt;10 yr"><span class="tile-label">≥3 doses, last &gt;10 yr</span></label>
-      <label class="btn-tile"><input type="radio" name="tet-history" value="≥3 doses, last &gt;5 yr (dirty)"><span class="tile-label">≥3 doses, last &gt;5 yr (dirty)</span></label>
-      <label class="btn-tile"><input type="radio" name="tet-history" value="&lt;3 doses or unknown"><span class="tile-label">&lt;3 doses / Unknown</span></label>
+      <label class="btn-tile"><input type="radio" name="tet-history" value="≥3 doses, last >10 yr"><span class="tile-label">≥3 doses, last >10 yr</span></label>
+      <label class="btn-tile"><input type="radio" name="tet-history" value="≥3 doses, last >5 yr (dirty)"><span class="tile-label">≥3 doses, last >5 yr (dirty)</span></label>
+      <label class="btn-tile"><input type="radio" name="tet-history" value="<3 doses or unknown"><span class="tile-label"><3 doses / Unknown</span></label>
     </div>
   </div>
   <div class="score-box score-line" id="tet-line" data-copy="Tetanus: not assessed">Tetanus prophylaxis: <span id="tet-plan">— select wound type + history —</span></div>
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">5</span>Investigations &amp; Treatment</h2>
+  <h2 class="section-title"><span class="num">5</span>HPI · PMH · Allergies · PE</h2>
+  <div id="narr-container-mammalian-bite"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">6</span>Investigations &amp; Treatment</h2>
   <div id="ix-container-mammalian-bite"></div>
   <div id="tx-container-mammalian-bite"></div>
   <div class="field-row"><label>Indications for prophylactic antibiotics</label>
@@ -357,6 +362,7 @@
 <script>
 ErNote.renderInvestigation(document.getElementById('ix-container-mammalian-bite'), 'mammalian-bite');
 ErNote.renderTreatment(document.getElementById('tx-container-mammalian-bite'), 'mammalian-bite');
+ErNote.renderNarrative(document.getElementById('narr-container-mammalian-bite'), 'mammalian-bite');
 
 function getRadioVal(name){
   const el = document.querySelector('input[name="'+name+'"]:checked');
@@ -448,10 +454,11 @@ function updateTetanus(){
   const isDirty = wound === 'dirty / major';
   const doses = hist;
   let plan = '';
+  // CDC 2024 ACIP: ≥3 doses → Tdap/Td booster only, NO TIG, regardless of wound type
   if (doses.includes('last ≤10 yr')) plan = 'No Td/TIG needed';
-  else if (doses.includes('last &gt;10 yr')) plan = 'Td/Tdap booster only';
-  else if (isDirty && doses.includes('last &gt;5 yr (dirty)')) plan = 'Td/Tdap booster + TIG 250 U IM';
-  else if (doses.includes('&lt;3 doses or unknown')) plan = isDirty ? 'Td/Tdap + TIG 250 U IM' : 'Td/Tdap booster only';
+  else if (doses.includes('last >10 yr')) plan = 'Td/Tdap booster only';
+  else if (isDirty && doses.includes('last >5 yr (dirty)')) plan = 'Td/Tdap booster only';
+  else if (doses.includes('<3 doses or unknown')) plan = isDirty ? 'Td/Tdap + TIG 250 U IM' : 'Td/Tdap booster only';
   else plan = 'Review tetanus history';
   planEl.textContent = plan;
   lineEl.setAttribute('data-copy','Tetanus prophylaxis: '+plan);
