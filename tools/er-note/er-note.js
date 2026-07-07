@@ -30,26 +30,48 @@
     form.addEventListener('change', saveDraft);
   }
 
+  // Generic row extraction: each .field-row (or .score-line) inside a .card becomes one output line.
+  // .field-row containing a .checkbox-group/.radio-group -> "Label: checked1, checked2"
+  // .field-row containing input/textarea/select -> "Label: value"
+  // .score-line -> uses data-copy attribute verbatim (pre-formatted computed score text)
+  function extractRow(row){
+    if (row.classList.contains('score-line')){
+      const val = (row.getAttribute('data-copy')||'').trim();
+      return val || null;
+    }
+    const directLabel = row.querySelector(':scope > label');
+    const label = directLabel ? (directLabel.childNodes[0].textContent||'').trim() : '';
+    const group = row.querySelector('.checkbox-group, .radio-group');
+    if (group){
+      const checked = Array.from(group.querySelectorAll('input:checked'));
+      if (!checked.length) return null;
+      const vals = checked.map(inp=>{
+        const lbl = inp.closest('label');
+        return lbl ? lbl.textContent.trim() : (inp.value||'');
+      });
+      return (label||'—')+': '+vals.join(', ');
+    }
+    const el = row.querySelector('input,textarea,select');
+    if (!el) return null;
+    let val='';
+    if (el.tagName==='SELECT'){ val = el.value ? (el.options[el.selectedIndex]?.text||'').trim() : ''; }
+    else { val = el.value.trim(); }
+    if (!val) return null;
+    return (label||el.placeholder||el.id)+': '+val;
+  }
+
   window.copyNote = function(){
     const lines=[];
     document.querySelectorAll('.card').forEach(card=>{
       const title = card.querySelector('.section-title');
       if (!title) return;
-      const section = title.textContent.trim();
-      let has=false;
+      const section = title.textContent.replace(/^\s*\d+\s*/,'').trim();
       const out=[];
-      card.querySelectorAll('input,textarea,select').forEach(el=>{
-        let label='';
-        const lbl = el.closest('.field-row')?.querySelector('label');
-        if (lbl) label = lbl.childNodes[0].textContent.trim();
-        else label = el.getAttribute('data-label')||el.name||el.id;
-        let val='';
-        if (el.type==='radio'){ if(el.checked) val=el.parentNode.textContent.trim(); }
-        else if (el.type==='checkbox'){ if(el.checked) val='✓ '+label; }
-        else { val=el.value.trim(); }
-        if (val) { out.push(label+': '+val); has=true; }
+      card.querySelectorAll('.field-row, .score-line').forEach(row=>{
+        const line = extractRow(row);
+        if (line) out.push(line);
       });
-      if (has) { lines.push('## '+section, ...out, ''); }
+      if (out.length) lines.push('## '+section, ...out, '');
     });
     const text = lines.join('\n').trim() || '(no content)';
     navigator.clipboard.writeText(text).then(()=>{

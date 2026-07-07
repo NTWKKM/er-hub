@@ -29,10 +29,36 @@
 
 <div class="card">
   <h2 class="section-title"><span class="num">1</span>Pain History</h2>
-  <div class="field-row"><label>Onset & progression</label><input type="text" id="abdo-onset"></div>
-  <div class="field-row"><label>Character / location</label><input type="text" id="abdo-location"></div>
-  <div class="field-row"><label>Radiation</label><input type="text" id="abdo-radiation"></div>
-  <div class="field-row"><label>Aggravating / relieving</label><input type="text" id="abdo-relief"></div>
+  <div class="field-row"><label>Onset &amp; progression</label><input type="text" id="abdo-onset" placeholder="sudden vs gradual, constant vs colicky"></div>
+  <div class="field-row"><label>Location</label>
+    <div class="radio-group">
+      <label><input type="radio" name="abdo-location" value="RUQ"> RUQ</label>
+      <label><input type="radio" name="abdo-location" value="LUQ"> LUQ</label>
+      <label><input type="radio" name="abdo-location" value="RLQ"> RLQ</label>
+      <label><input type="radio" name="abdo-location" value="LLQ"> LLQ</label>
+      <label><input type="radio" name="abdo-location" value="Epigastric"> Epigastric</label>
+      <label><input type="radio" name="abdo-location" value="Periumbilical"> Periumbilical</label>
+      <label><input type="radio" name="abdo-location" value="Suprapubic"> Suprapubic</label>
+      <label><input type="radio" name="abdo-location" value="Diffuse"> Diffuse</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Character</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="abdo-colicky"> Colicky / cramping</label>
+      <label><input type="checkbox" id="abdo-burning"> Burning</label>
+      <label><input type="checkbox" id="abdo-constant"> Constant</label>
+      <label><input type="checkbox" id="abdo-sharp"> Sharp / stabbing</label>
+      <label><input type="checkbox" id="abdo-pleuritic"> Pleuritic / worse on inspiration</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Radiation</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="abdo-back"> Back</label>
+      <label><input type="checkbox" id="abdo-shoulder"> Shoulder</label>
+      <label><input type="checkbox" id="abdo-groin"> Groin</label>
+      <label><input type="checkbox" id="abdo-none"> None</label>
+    </div>
+  </div>
   <div class="field-row"><label>Associated symptoms</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="abdo-vomit"> Vomiting</label>
@@ -40,46 +66,125 @@
       <label><input type="checkbox" id="abdo-constipation"> Constipation</label>
       <label><input type="checkbox" id="abdo-diarrhea"> Diarrhea</label>
       <label><input type="checkbox" id="abdo-hematemesis"> Hematemesis / melena</label>
-      <label><input type="checkbox" id="abdo-dysuria"> Dysuria</label>
+      <label><input type="checkbox" id="abdo-dysuria"> Dysuria / frequency</label>
+      <label><input type="checkbox" id="abdo-anorexia"> Anorexia</label>
     </div>
   </div>
 </div>
+
 <div class="card">
-  <h2 class="section-title"><span class="num">2</span>Past Surgery & Gynae</h2>
-  <div class="field-row"><label>Prior abdominal surgery</label><textarea id="abdo-surgery"></textarea></div>
+  <h2 class="section-title"><span class="num">2</span>Past Surgery &amp; Gynae</h2>
+  <div class="field-row"><label>Prior abdominal surgery</label><textarea id="abdo-surgery" placeholder="appendectomy, cholecystectomy, caesarean"></textarea></div>
   <div class="inline-row">
     <div class="field-row"><label>LMP</label><input type="text" id="abdo-lmp"></div>
-    <div class="field-row"><label>Pregnancy test</label><input type="text" id="abdo-hcg"></div>
+    <div class="field-row"><label>Pregnancy test</label>
+      <select id="abdo-hcg">
+        <option value="">— select —</option>
+        <option>Negative</option>
+        <option>Positive</option>
+        <option>Not done</option>
+      </select>
+    </div>
     <div class="field-row"><label>Gynae history</label><input type="text" id="abdo-gynae"></div>
   </div>
 </div>
+
 <div class="card">
   <h2 class="section-title"><span class="num">3</span>Physical Exam</h2>
-  <div class="field-row"><label>General appearance</label><input type="text" id="abdo-general"></div>
-  <div class="field-row"><label>Abdomen</label><textarea id="abdo-exam" placeholder="Inspection, palpation, guarding, rebound, masses, hernias, bowel sounds"></textarea></div>
-  <div class="field-row"><label>Rectal / pelvic</label><input type="text" id="abdo-rectal"></div>
-</div>
-<div class="card">
-  <h2 class="section-title"><span class="num">4</span>Alvarado Score (appendicitis)</h2>
-  <div class="field-row"><label>Symptoms / signs</label>
+  <div class="field-row"><label>General appearance</label><input type="text" id="abdo-general" placeholder="well / toxic / distended"></div>
+  <div class="field-row"><label>Abdomen</label>
     <div class="checkbox-group">
-      <label><input type="checkbox" id="alv-migratory"> Migratory RLQ pain (1)</label>
-      <label><input type="checkbox" id="alv-anorexia"> Anorexia (1)</label>
-      <label><input type="checkbox" id="alv-nausea"> Nausea / vomiting (1)</label>
-      <label><input type="checkbox" id="alv-tenderness"> RLQ tenderness (2)</label>
-      <label><input type="checkbox" id="alv-rebound"> Rebound tenderness (1)</label>
-      <label><input type="checkbox" id="alv-elevated-wbc"> Elevated WBC (2)</label>
-      <label><input type="checkbox" id="alv-left-shift"> Left shift (1)</label>
-      <label><input type="checkbox" id="alv-fever"> Fever (1)</label>
+      <label><input type="checkbox" id="exam-soft"> Soft, non-tender</label>
+      <label><input type="checkbox" id="exam-local"> Localized tenderness</label>
+      <label><input type="checkbox" id="exam-guard"> Guarding / rigidity</label>
+      <label><input type="checkbox" id="exam-rebound"> Rebound tenderness</label>
+      <label><input type="checkbox" id="exam-mass"> Palpable mass</label>
+      <label><input type="checkbox" id="exam-hernia"> Hernia</label>
+      <label><input type="checkbox" id="exam-bowel"> Abnormal bowel sounds</label>
+      <label><input type="checkbox" id="exam-distended"> Distended</label>
     </div>
   </div>
-  <div class="score-box">Alvarado: <span class="score-val" id="alvarado-score">0</span> / 10 — <span id="alvarado-risk">unlikely</span></div>
+  <div class="field-row"><label>Rectal / pelvic</label><input type="text" id="abdo-rectal"></div>
 </div>
+
 <div class="card">
-  <h2 class="section-title"><span class="num">5</span>Investigations & Plan</h2>
-  <div class="field-row"><label>Labs</label><input type="text" id="abdo-labs"></div>
-  <div class="field-row"><label>Imaging</label><input type="text" id="abdo-imaging" placeholder="US abdomen / CT abdomen-pelvis"></div>
+  <h2 class="section-title"><span class="num">4</span>Alvarado Score (Appendicitis)</h2>
+  <div class="field-row"><label>Symptoms / signs</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="alv-migratory" data-pt="1"> Migratory RLQ pain (1)</label>
+      <label><input type="checkbox" id="alv-anorexia" data-pt="1"> Anorexia (1)</label>
+      <label><input type="checkbox" id="alv-nausea" data-pt="1"> Nausea / vomiting (1)</label>
+      <label><input type="checkbox" id="alv-tenderness" data-pt="2"> RLQ tenderness (2)</label>
+      <label><input type="checkbox" id="alv-rebound" data-pt="1"> Rebound tenderness (1)</label>
+      <label><input type="checkbox" id="alv-elevated-wbc" data-pt="2"> Elevated WBC (2)</label>
+      <label><input type="checkbox" id="alv-left-shift" data-pt="1"> Left shift (1)</label>
+      <label><input type="checkbox" id="alv-fever" data-pt="1"> Fever (1)</label>
+    </div>
+  </div>
+  <div class="score-box score-line" id="alvarado-line" data-copy="Alvarado: 0/10 (unlikely)">Alvarado: <span id="alvarado-score">0</span>/10 — <span id="alvarado-risk">unlikely</span></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">5</span>AIR Score (Appendicitis)</h2>
+  <div class="inline-row">
+    <div class="field-row"><label>Sex</label>
+      <div class="radio-group">
+        <label><input type="radio" name="air-sex" value="0"> Female</label>
+        <label><input type="radio" name="air-sex" value="1"> Male</label>
+      </div>
+    </div>
+    <div class="field-row"><label>Age</label>
+      <div class="radio-group">
+        <label><input type="radio" name="air-age" value="1"> ≥40 yr (1)</label>
+        <label><input type="radio" name="air-age" value="0"> &lt;40 yr (0)</label>
+      </div>
+    </div>
+    <div class="field-row"><label>WBC ≥10,000/μL</label>
+      <div class="radio-group">
+        <label><input type="radio" name="air-wbc" value="0"> No</label>
+        <label><input type="radio" name="air-wbc" value="1"> Yes (1)</label>
+      </div>
+    </div>
+    <div class="field-row"><label>CRP ≥10 mg/L</label>
+      <div class="radio-group">
+        <label><input type="radio" name="air-crp" value="0"> No</label>
+        <label><input type="radio" name="air-crp" value="2"> Yes (2)</label>
+      </div>
+    </div>
+  </div>
+  <div class="score-box score-line" id="air-line" data-copy="AIR: 0/5 (low risk)">AIR: <span id="air-score">0</span>/5 — <span id="air-risk">low risk</span></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">6</span>Investigations &amp; Plan</h2>
+  <div class="inline-row">
+    <div class="field-row"><label>WBC</label><input type="text" id="abdo-wbc"></div>
+    <div class="field-row"><label>CRP</label><input type="text" id="abdo-crp"></div>
+    <div class="field-row"><label>BMP</label><input type="text" id="abdo-bmp"></div>
+  </div>
+  <div class="field-row"><label>Imaging</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="img-us"> US abdomen</label>
+      <label><input type="checkbox" id="img-ct"> CT abdomen-pelvis with contrast</label>
+      <label><input type="checkbox" id="img-xray"> Plain AXR / CXR</label>
+      <label><input type="checkbox" id="img-none"> None yet</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Working diagnosis</label><input type="text" id="abdo-dx"></div>
   <div class="field-row"><label>Plan</label><textarea id="abdo-plan"></textarea></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">7</span>Disposition</h2>
+  <div class="field-row"><label>Decision</label>
+    <select id="abdo-disp">
+      <option value="">— select —</option>
+      <option>OR / surgical consult</option>
+      <option>Admit / obs</option>
+      <option>Discharge with surgical f/u</option>
+      <option>Discharge with GP f/u</option>
+    </select>
+  </div>
 </div>
 
 </form>
@@ -89,23 +194,62 @@
   <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
   <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
 </div>
-<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v21</footer>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v22</footer>
 <script src="er-note.js"></script>
 <script>
 
-function calcAlvarado(){
+function sumCheckboxPts(ids){
   let s=0;
-  const weights={ 'alv-migratory':1,'alv-anorexia':1,'alv-nausea':1,'alv-tenderness':2,'alv-rebound':1,'alv-elevated-wbc':2,'alv-left-shift':1,'alv-fever':1 };
-  for(let id in weights){ const el=document.getElementById(id); if(el && el.checked) s+=weights[id]; }
-  const scoreEl=document.getElementById('alvarado-score');
-  const riskEl=document.getElementById('alvarado-risk');
-  if(scoreEl) scoreEl.textContent=s;
-  if(riskEl) riskEl.textContent=s>=7?'high probability (surgical consult)':s>=5?'intermediate (imaging)':'unlikely';
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    if (el && el.checked) s += parseInt(el.getAttribute('data-pt')||'1',10);
+  });
+  return s;
 }
+function sumRadioGroups(names){
+  let s=0;
+  names.forEach(name=>{
+    const el=document.querySelector('input[name="'+name+'"]:checked');
+    if (el) s += parseInt(el.value,10)||0;
+  });
+  return s;
+}
+
+function updateAlvarado(){
+  const ids = ['alv-migratory','alv-anorexia','alv-nausea','alv-tenderness','alv-rebound','alv-elevated-wbc','alv-left-shift','alv-fever'];
+  const s = sumCheckboxPts(ids);
+  const lineEl = document.getElementById('alvarado-line');
+  let risk = 'unlikely';
+  if (s >= 7) risk = 'high probability (surgical consult)';
+  else if (s >= 5) risk = 'intermediate (imaging)';
+  document.getElementById('alvarado-score').textContent = s;
+  document.getElementById('alvarado-risk').textContent = risk;
+  lineEl.setAttribute('data-copy','Alvarado: '+s+'/10 ('+risk+')');
+  lineEl.classList.remove('risk-low','risk-medium','risk-high');
+  lineEl.classList.add(s>=7?'risk-high':s>=4?'risk-medium':'risk-low');
+}
+
+function updateAir(){
+  const s = sumRadioGroups(['air-sex','air-age','air-wbc','air-crp']);
+  const lineEl = document.getElementById('air-line');
+  let risk = 'low risk';
+  if (s >= 5) risk = 'high risk (imaging / surgical consult)';
+  else if (s >= 2) risk = 'intermediate risk';
+  document.getElementById('air-score').textContent = s;
+  document.getElementById('air-risk').textContent = risk;
+  lineEl.setAttribute('data-copy','AIR: '+s+'/5 ('+risk+')');
+  lineEl.classList.remove('risk-low','risk-medium','risk-high');
+  lineEl.classList.add(s>=5?'risk-high':s>=2?'risk-medium':'risk-low');
+}
+
 ['alv-migratory','alv-anorexia','alv-nausea','alv-tenderness','alv-rebound','alv-elevated-wbc','alv-left-shift','alv-fever'].forEach(id=>{
-  const el=document.getElementById(id); if(el) el.addEventListener('change', calcAlvarado);
+  const el=document.getElementById(id); if(el) el.addEventListener('change', updateAlvarado);
 });
-calcAlvarado();
+['air-sex','air-age','air-wbc','air-crp'].forEach(name=>{
+  document.querySelectorAll('input[name="'+name+'"]').forEach(el=> el.addEventListener('change', updateAir));
+});
+updateAlvarado();
+updateAir();
 
 </script>
 </body>

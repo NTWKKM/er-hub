@@ -37,13 +37,29 @@
 - **ER NOTE Draft:** Clinician-entered form content that is persisted locally in the browser (`localStorage`) so an interrupted note can be resumed without a server.
 - **Per-Template Split:** Each clinical presentation has its own standalone HTML template file instead of a single shared `template.html` routed by URL parameters.
 
----
-
 ## 3. Architectural Decision Records (ADRs)
+
+Newest first.
+
+### ADR-52: ER NOTE Part B — Standardize All Templates to Sepsis Pattern (2026-07-08)
+
+- **Context:** After ADR-50 shipped the 7 per-template ER NOTE files, the 6 non-sepsis templates (`general-er-note.html`, `trauma.html`, `mammalian-bite.html`, `chest-pain.html`, `abdominal-pain.html`, `eye-injury.html`) diverged in DOM structure from `sepsis.html`. Some lacked the tab bar, some used inconsistent section wrappers, score displays were not consistently marked for clipboard copying, and footer versions were mismatched.
+- **Decision:**
+  1. **Standardized page skeleton:** Every ER NOTE template now uses `top-nav` + 7-link `.tab-bar` + `.card` sections + `.action-bar` + `.footer` carrying the synchronized version string.
+  2. **Standardized field layouts:** Interactive fields use `.field-row`; choice fields use `.radio-group` or `.checkbox-group`; inline vital-sign clusters use `.inline-row`.
+  3. **Score-line data-copy contract:** Every computed score/risk display uses `.score-box.score-line` with a `data-copy` attribute (e.g. `data-copy="qSOFA: 0/3"`). Inline per-template `updateScores()` scripts update both visible text and `data-copy` on every relevant `change` event.
+  4. **Version sync hardening:** Bumped `CACHE_VERSION` to `er-hub-v22`, updated `index.html` nav-right to `v22`, and set every template footer to `v22`.
+  5. **Scope boundary:** Refactor limited to `tools/er-note/*.html`; no shared standing-order modules or drip calculator changed.
+- **Rationale:** A shared visual/behavior contract lets `er-note.css` and `er-note.js` work identically across all 7 templates, prevents layout drift, simplifies plain-text clipboard extraction, and makes future templates copy-paste-safe. The `data-copy` contract decouples rendering from clipboard output.
+- **Consequences:**
+  - New templates can be created by copying `sepsis.html` and editing content.
+  - Score outputs are always included in copied notes without additional parsing.
+  - Version strings across SW, portal, and footers are locked to `v22`.
+- **Tests:** `tests/nstemi-audit-fixes.test.js` updated to expect `er-hub-v22`. All 193 tests pass.
 
 ### ADR-51: Deep Audit Remediation B-1–B-4 — Case Sensitivity, Validation Bounds, PWA Icon, Non-Blocking Validation Contract (2026-07-07)
 
-- **Context:** The 2026-07-07 deep audit (`er-hub-deep-audit-2026-07-07.md`) flagged four issues in the existing er-hub codebase. (B-1) `orders/antivenom.html` declared `let tetanusText` but three branches assigned to undeclared `TetanusText`, creating an implicit global in sloppy module mode. (B-2) `orders/stemi.html` used `ED_VALIDATE.min('age', 18)` plus an HTML `max="120"`, leaving a 100–120 age range validated only by HTML markup and inconsistent with other pages. (B-3) `manifest.json` referenced the hospital logo PNG (`docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`, 379×262, non-square), which violates PWA icon/splash-screen requirements. (B-4) The `ED_VALIDATE` helper highlights invalid fields but never hard-blocks calculation or print, which the audit flagged as a potential bug; it is actually an intentional emergency-workflow design choice.
+
 - **Decision:**
   1. **B-1 — unify variable casing:** Replace all `TetanusText` references in `orders/antivenom.html` with the already-declared lowercase `tetanusText` so the variable is declared exactly once and read everywhere.
   2. **B-2 — consistent age bounds:** Add `ED_VALIDATE.range('age', 18, 100, ...)` to `orders/stemi.html` and reduce the HTML `<input type="number" id="age" … max="120">` to `max="100"`. This matches the validation bound used elsewhere and removes reliance on HTML-only upper-bound enforcement.

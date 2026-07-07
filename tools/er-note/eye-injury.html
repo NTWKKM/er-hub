@@ -28,45 +28,147 @@
 <form id="er-form">
 
 <div class="card">
-  <h2 class="section-title"><span class="num">1</span>Mechanism & History</h2>
+  <h2 class="section-title"><span class="num">1</span>Mechanism &amp; History</h2>
   <div class="field-row"><label>Mechanism</label>
-    <select id="eye-mech">
-      <option value="">— select —</option>
-      <option>Foreign body / dust</option>
-      <option>Blunt trauma</option>
-      <option>Penetrating / laceration</option>
-      <option>Chemical splash</option>
-      <option>Flash / UV burn</option>
-      <option>Other</option>
-    </select>
+    <div class="radio-group">
+      <label><input type="radio" name="eye-mech" value="Foreign body / dust"> Foreign body / dust</label>
+      <label><input type="radio" name="eye-mech" value="Blunt trauma"> Blunt trauma</label>
+      <label><input type="radio" name="eye-mech" value="Penetrating / laceration"> Penetrating / laceration</label>
+      <label><input type="radio" name="eye-mech" value="Chemical splash"> Chemical splash</label>
+      <label><input type="radio" name="eye-mech" value="Flash / UV burn"> Flash / UV burn</label>
+      <label><input type="radio" name="eye-mech" value="Other"> Other</label>
+    </div>
   </div>
-  <div class="field-row"><label>Chemical agent</label><input type="text" id="eye-chemical"></div>
-  <div class="field-row"><label>Time since injury</label><input type="text" id="eye-time"></div>
-  <div class="field-row"><label>Use of eye protection</label><input type="text" id="eye-protection"></div>
+  <div class="field-row"><label>Chemical agent (if any)</label><input type="text" id="eye-chemical"></div>
+  <div class="inline-row">
+    <div class="field-row"><label>Time since injury</label><input type="text" id="eye-time"></div>
+    <div class="field-row"><label>Eye protection</label><input type="text" id="eye-protection"></div>
+  </div>
+  <div class="field-row"><label>Affected eye(s)</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="eye-right"> Right</label>
+      <label><input type="checkbox" id="eye-left"> Left</label>
+      <label><input type="checkbox" id="eye-both"> Bilateral</label>
+    </div>
+  </div>
 </div>
+
 <div class="card">
   <h2 class="section-title"><span class="num">2</span>Visual Acuity</h2>
   <div class="inline-row">
     <div class="field-row"><label>Right eye</label><input type="text" id="eye-va-r" placeholder="6/60, CF, HM, LP, NLP"></div>
     <div class="field-row"><label>Left eye</label><input type="text" id="eye-va-l" placeholder="6/6"></div>
-    <div class="field-row"><label>With pinhole?</label><input type="text" id="eye-pinhole"></div>
+    <div class="field-row"><label>Pinhole improvement</label>
+      <div class="radio-group">
+        <label><input type="radio" name="eye-pinhole" value="Yes"> Yes</label>
+        <label><input type="radio" name="eye-pinhole" value="No"> No</label>
+      </div>
+    </div>
   </div>
 </div>
+
 <div class="card">
-  <h2 class="section-title"><span class="num">3</span>Eye Examination</h2>
-  <div class="field-row"><label>Lids / adnexa</label><textarea id="eye-lids"></textarea></div>
-  <div class="field-row"><label>Conjunctiva / Sclera</label><textarea id="eye-conj"></textarea></div>
-  <div class="field-row"><label>Cornea</label><textarea id="eye-cornea" placeholder="FB, abrasion, laceration, Seidel"></textarea></div>
-  <div class="field-row"><label>Anterior chamber</label><input type="text" id="eye-ac" placeholder="deep / shallow / hyphema"></div>
-  <div class="field-row"><label>Pupil / Iris</label><textarea id="eye-pupil"></textarea></div>
-  <div class="field-row"><label>Lens / Fundus (if viewable)</label><textarea id="eye-fundus"></textarea></div>
+  <h2 class="section-title"><span class="num">3</span>External Eye Examination</h2>
+  <div class="field-row"><label>Lids / adnexa</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="lid-normal"> Normal</label>
+      <label><input type="checkbox" id="lid-laceration"> Laceration</label>
+      <label><input type="checkbox" id="lid-edema"> Edema / ecchymosis</label>
+      <label><input type="checkbox" id="lid-everted"> Everted for FB search</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Conjunctiva / Sclera</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="conj-normal"> Normal</label>
+      <label><input type="checkbox" id="conj-injection"> Injection</label>
+      <label><input type="checkbox" id="conj-chemosis"> Chemosis</label>
+      <label><input type="checkbox" id="conj-subconj"> Subconjunctival hemorrhage</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Cornea</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="cornea-clear"> Clear</label>
+      <label><input type="checkbox" id="cornea-abrasion"> Abrasion (fluorescein positive)</label>
+      <label><input type="checkbox" id="cornea-fb"> Foreign body</label>
+      <label><input type="checkbox" id="cornea-laceration"> Laceration / Seidel positive</label>
+      <label><input type="checkbox" id="cornea-edema"> Edema / haze</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Anterior chamber</label>
+    <div class="radio-group">
+      <label><input type="radio" name="eye-ac" value="Normal"> Normal</label>
+      <label><input type="radio" name="eye-ac" value="Shallow"> Shallow</label>
+      <label><input type="radio" name="eye-ac" value="Hyphema"> Hyphema</label>
+      <label><input type="radio" name="eye-ac" value="Hypopyon"> Hypopyon</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Pupil / Iris</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="pupil-round"> Round, reactive</label>
+      <label><input type="checkbox" id="pupil-irregular"> Irregular / peaked</label>
+      <label><input type="checkbox" id="pupil-mydriasis"> Mydriasis / RAPD</label>
+      <label><input type="checkbox" id="pupil-traumatic"> Traumatic mydriasis</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Lens / Fundus (if viewable)</label><textarea id="eye-fundus" placeholder="lens status, red reflex, fundal view"></textarea></div>
 </div>
+
 <div class="card">
-  <h2 class="section-title"><span class="num">4</span>Management</h2>
-  <div class="field-row"><label>Irrigation <span class="sub">for chemical exposure</span></label><input type="text" id="eye-irrigate" placeholder="Normal saline / LR, ≥30 min, pH check"></div>
-  <div class="field-row"><label>Medications</label><textarea id="eye-meds" placeholder="Topical anesthetic, fluorescein, cycloplegic, antibiotic ointment"></textarea></div>
-  <div class="field-row"><label>Tetanus</label><input type="text" id="eye-tetanus"></div>
-  <div class="field-row"><label>Consult / disposition</label><input type="text" id="eye-consult" placeholder="Ophthalmology if penetrating, chemical, hyphema, vision loss"></div>
+  <h2 class="section-title"><span class="num">4</span>Foreign Body &amp; Seidel</h2>
+  <div class="field-row"><label>Seidel test</label>
+    <div class="radio-group">
+      <label><input type="radio" name="eye-seidel" value="Negative"> Negative</label>
+      <label><input type="radio" name="eye-seidel" value="Positive"> Positive (full-thickness)</label>
+      <label><input type="radio" name="eye-seidel" value="Not performed"> Not performed</label>
+    </div>
+  </div>
+  <div class="field-row"><label>FB location / removal</label><input type="text" id="eye-fb" placeholder="tarsal conjunctiva, corneal superficial, embedded"></div>
+  <div class="field-row"><label>Orbital / penetrating injury signs</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="orbit-deform"> Orbital wall deformity</label>
+      <label><input type="checkbox" id="orbit-prolapse"> Uveal prolapse</label>
+      <label><input type="checkbox" id="orbit-decreased-va"> Decreased VA not explained</label>
+      <label><input type="checkbox" id="orbit-none"> None</label>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">5</span>Chemical Injury</h2>
+  <div class="field-row"><label>pH (pre / post irrigation)</label><input type="text" id="eye-ph" placeholder="pre ___ / post ___"></div>
+  <div class="field-row"><label>Irrigation</label><input type="text" id="eye-irrigate" value="Normal saline / LR ≥30 min until pH neutral"></div>
+  <div class="field-row"><label>Chemical grade / limbal ischemia</label><input type="text" id="eye-grade" placeholder="Dua grade I–VI"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">6</span>Management &amp; Disposition</h2>
+  <div class="field-row"><label>Medications / procedure</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="rx-topical-abx"> Topical antibiotic ointment</label>
+      <label><input type="checkbox" id="rx-cycloplegic"> Cycloplegic</label>
+      <label><input type="checkbox" id="rx-pain"> Oral / topical analgesia</label>
+      <label><input type="checkbox" id="rx-patch"> Eye patch (not for infection/chemical)</label>
+      <label><input type="checkbox" id="rx-tetanus"> Tetanus prophylaxis checked</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Tetanus</label><input type="text" id="eye-tetanus" placeholder="booster / TIG as indicated"></div>
+  <div class="field-row"><label>Consult / disposition</label>
+    <select id="eye-consult">
+      <option value="">— select —</option>
+      <option>Ophthalmology ED consult now</option>
+      <option>Ophthalmology next-day clinic</option>
+      <option>Discharge with 24h ophthalmology f/u</option>
+      <option>Admit (chemical / penetrating / hyphema)</option>
+    </select>
+  </div>
+  <div class="field-row"><label>Red flags documented</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="rf-chemical"> Chemical injury</label>
+      <label><input type="checkbox" id="rf-penetrating"> Penetrating injury / Seidel +</label>
+      <label><input type="checkbox" id="rf-hyphema"> Hyphema / hypopyon</label>
+      <label><input type="checkbox" id="rf-vision"> Vision loss / RAPD</label>
+    </div>
+  </div>
 </div>
 
 </form>
@@ -76,7 +178,7 @@
   <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
   <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
 </div>
-<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v21</footer>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v22</footer>
 <script src="er-note.js"></script>
 </body>
 </html>

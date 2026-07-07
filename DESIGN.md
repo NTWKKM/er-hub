@@ -142,10 +142,12 @@ The ER NOTE tool (`tools/er-note/`) is a separate clinical-note worksheet family
 | **Section Title** | Numbered heading inside each card. | `.section-title` + `.num` circle badge; accent background for the number. |
 | **Field Row** | Label + input/textarea/select pair. | `display: flex; flex-direction: column; gap: 6px`. Labels are muted; inputs have dark background and light border. |
 | **Inline Row** | Side-by-side compact inputs (vitals, score dropdowns). | `display: flex; flex-wrap: wrap; gap: 12px`. Each child `min-width: 120px; flex: 1`. |
+| **Tab Bar** | Full-width cross-template navigation below top nav. | 7 links in fixed clinical order; active tab gets accent underline. Hidden in print. |
 | **Checkbox / Radio Group** | Multi-select or single-select clinical options. | Labels wrap; groups use `gap: 8px 16px`. |
-| **Score Box** | Read-only computed score display (HEART, Alvarado, qSOFA/SIRS). | Larger font, accent-coloured score value, plain-text risk interpretation. |
+| **Score Line** | Read-only computed score/risk display (HEART, Alvarado, qSOFA/SIRS, GCS, etc.). | `.score-box.score-line` with `data-copy="Score: value"`. Inline `updateScores()` keeps both visible text and `data-copy` in sync on every relevant `change` event. |
 | **Hint** | Contextual guidance (e.g. sepsis score totals). | Muted text, lives below related fields. |
 | **Action Buttons** | Copy Note / Clear / Print. | Primary (accent), Secondary (copy), Danger (clear). Fixed bottom bar on screen only. |
+| **Footer** | Version / metadata bar at bottom of each template. | Muted text, synchronized version string (currently `v22`). |
 
 ### Interaction Patterns
 

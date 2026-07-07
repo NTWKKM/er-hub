@@ -46,8 +46,22 @@ input[type=text],input[type=number],input[type=date],input[type=time],input[type
 }
 textarea { min-height:56px; resize:vertical; }
 input:focus,textarea:focus,select:focus { outline:none; border-color:var(--accent); }
-.radio-group,.checkbox-group { display:flex; flex-wrap:wrap; gap:10px 16px; }
-.radio-group label,.checkbox-group label { display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer; }
+.radio-group,.checkbox-group { display:flex; flex-wrap:wrap; gap:8px 10px; }
+.radio-group label,.checkbox-group label {
+  display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;
+  padding:6px 12px; border:1px solid var(--line); border-radius:14px; background:#fff;
+  transition:background .1s ease,border-color .1s ease,color .1s ease;
+}
+.radio-group label:hover,.checkbox-group label:hover { border-color:var(--accent-2); }
+.radio-group label:has(input:checked),.checkbox-group label:has(input:checked) {
+  background:var(--accent); border-color:var(--accent); color:#fff;
+}
+.radio-group input,.checkbox-group input { accent-color:var(--accent); }
+.field-row .field-note { font-size:12px; color:var(--muted); margin:4px 0 8px; }
+.score-line { margin-top:6px; }
+.score-box.risk-low { background:#e5f2e6; color:var(--ok); }
+.score-box.risk-medium { background:#fdf1de; color:#9a6a1a; }
+.score-box.risk-high { background:#fbe6e1; color:var(--danger); }
 .inline-row { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; }
 .inline-row .field-row { flex:1 1 220px; grid-template-columns:1fr; }
 .inline-row label { padding-top:0; margin-bottom:3px; }
