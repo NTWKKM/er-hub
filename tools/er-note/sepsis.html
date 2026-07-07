@@ -29,7 +29,6 @@
   <div class="fs-label">Sepsis Risk</div>
   <div class="fs-risk" id="fs-risk-text">Low</div>
   <div class="fs-scores">
-    <div class="fs-score" id="fs-qsofa"><span class="fs-score-name">qSOFA</span><span class="fs-score-val">0/3</span></div>
     <div class="fs-score" id="fs-sirs"><span class="fs-score-name">SIRS</span><span class="fs-score-val">0/4</span></div>
     <div class="fs-score" id="fs-news2"><span class="fs-score-name">NEWS2</span><span class="fs-score-val">0</span></div>
     <div class="fs-score" id="fs-mews"><span class="fs-score-name">MEWS</span><span class="fs-score-val">0</span></div>
@@ -54,23 +53,12 @@
     <div class="vit"><label for="sepsis-spo2">SpO₂ (%)</label><input type="number" id="sepsis-spo2" placeholder="98"></div>
     <div class="vit"><label for="sepsis-lactate">Lactate (mmol/L)</label><input type="number" id="sepsis-lactate" step="0.1" placeholder="1.2"></div>
   </div>
-  <div class="field-note">Blood culture ก่อนให้ ATB ถ้าทำได้ (Rec 7) · วัด lactate (Rec 8) · <em>Vitals ที่ใส่จะเชื่อมโยงกับ screening scores ด้านล่างอัตโนมัติ</em></div>
 </div>
 
 <div class="card">
   <h2 class="section-title"><span class="num">2</span>Screening &amp; Early Warning Scores</h2>
-  <div class="field-note">ใช้ NEWS/NEWS2/MEWS ร่วมกับ SIRS/qSOFA — <strong>qSOFA ไม่ใช่เครื่องมือคัดกรองเดี่ยว</strong> (SSC 2026)</div>
 
-  <div class="field-row"><label>qSOFA</label>
-    <div class="checkbox-group">
-      <label><input type="checkbox" id="qsofa-rr" data-pt="1"> RR ≥ 22</label>
-      <label><input type="checkbox" id="qsofa-bp" data-pt="1"> SBP ≤ 100</label>
-      <label><input type="checkbox" id="qsofa-gcs" data-pt="1"> Altered mentation (GCS &lt; 15)</label>
-    </div>
-  </div>
-  <div class="score-box score-line" id="qsofa-line" data-copy="qSOFA: 0/3">qSOFA: <span id="qsofa-score">0</span>/3</div>
-
-  <div class="field-row" style="margin-top:14px"><label>SIRS criteria</label>
+  <div class="field-row"><label>SIRS criteria</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="sirs-temp" data-pt="1"> Temp &gt;38 or &lt;36</label>
       <label><input type="checkbox" id="sirs-hr" data-pt="1"> HR &gt;90</label>
@@ -351,27 +339,14 @@ function autoLinkVitals(){
   const bpEl = document.getElementById('sepsis-bp');
   const spo2El = document.getElementById('sepsis-spo2');
 
-  // --- qSOFA auto-check from vitals ---
+  // Parse vitals
   const rrVal = parseFloat(rrEl.value);
-  if (!isNaN(rrVal) && rrVal >= 22){
-    const cb = document.getElementById('qsofa-rr');
-    if (!cb.checked){ cb.checked = true; cb.classList.add('auto-filled'); }
-  } else if (rrEl.value === '') {
-    document.getElementById('qsofa-rr').classList.remove('auto-filled');
-  }
-
-  // SBP from "120/80" → parse first number
   const bpParts = (bpEl.value || '').split('/');
   const sbpVal = parseFloat(bpParts[0]);
-  if (!isNaN(sbpVal) && sbpVal <= 100){
-    const cb = document.getElementById('qsofa-bp');
-    if (!cb.checked){ cb.checked = true; cb.classList.add('auto-filled'); }
-  } else if (bpEl.value === '') {
-    document.getElementById('qsofa-bp').classList.remove('auto-filled');
-  }
+  const tempVal = parseFloat(tempEl.value);
+  const hrVal = parseFloat(hrEl.value);
 
   // --- SIRS auto-check from vitals ---
-  const tempVal = parseFloat(tempEl.value);
   if (!isNaN(tempVal) && (tempVal > 38 || tempVal < 36)){
     const cb = document.getElementById('sirs-temp');
     if (!cb.checked){ cb.checked = true; cb.classList.add('auto-filled'); }
@@ -379,7 +354,6 @@ function autoLinkVitals(){
     document.getElementById('sirs-temp').classList.remove('auto-filled');
   }
 
-  const hrVal = parseFloat(hrEl.value);
   if (!isNaN(hrVal) && hrVal > 90){
     const cb = document.getElementById('sirs-hr');
     if (!cb.checked){ cb.checked = true; cb.classList.add('auto-filled'); }
@@ -525,19 +499,9 @@ function autoLinkVitals(){
 function updateScores(){
   autoLinkVitals();
 
-  const q = sumChecked(['qsofa-rr','qsofa-bp','qsofa-gcs']);
-  document.getElementById('qsofa-score').textContent = q;
-  document.getElementById('qsofa-line').setAttribute('data-copy','qSOFA: '+q+'/3');
-  // qSOFA risk: ≥2 high, 1 medium, 0 low
-  let qrisk = q >= 2 ? 'high' : (q === 1 ? 'medium' : 'low');
-  var qEl = document.getElementById('qsofa-line');
-  qEl.classList.remove('risk-low','risk-medium','risk-high');
-  qEl.classList.add('risk-'+qrisk);
-
   const s = sumChecked(['sirs-temp','sirs-hr','sirs-rr','sirs-wbc']);
   document.getElementById('sirs-score').textContent = s;
   document.getElementById('sirs-line').setAttribute('data-copy','SIRS: '+s+'/4');
-  // SIRS risk: ≥2 high (meets sepsis definition), 1 medium, 0 low
   let srisk = s >= 2 ? 'high' : (s === 1 ? 'medium' : 'low');
   var sEl = document.getElementById('sirs-line');
   sEl.classList.remove('risk-low','risk-medium','risk-high');
@@ -567,33 +531,28 @@ function updateScores(){
   mEl.classList.remove('risk-low','risk-medium','risk-high');
   mEl.classList.add('risk-'+mrisk);
 
-  updateFloatStatus(q, qrisk, s, srisk, n2, n2risk, m, mrisk);
+  updateFloatStatus(s, srisk, n2, n2risk, m, mrisk);
 }
 
-/* ---- Float status box (sepsis risk) — shows each score with per-score risk color ---- */
-function updateFloatStatus(qsofa, qrisk, sirs, srisk, news2, news2risk, mews, mewsrisk){
+/* ---- Float status box — shows each score with per-score risk color ---- */
+function updateFloatStatus(sirs, srisk, news2, news2risk, mews, mewsrisk){
   const box = document.getElementById('sepsis-float-status');
   const riskText = document.getElementById('fs-risk-text');
 
-  // Update per-score rows
   function setScoreRow(elId, valText, risk){
     var el = document.getElementById(elId);
     el.querySelector('.fs-score-val').textContent = valText;
-    el.classList.remove('s-risk-low','s-risk-medium','s-risk-high');
+    el.classList.remove('s-risk-low','s-risk-low-medium','s-risk-medium','s-risk-high');
     el.classList.add('s-risk-'+risk);
   }
-  setScoreRow('fs-qsofa', qsofa+'/3', qrisk);
   setScoreRow('fs-sirs', sirs+'/4', srisk);
   setScoreRow('fs-news2', String(news2), news2risk);
   setScoreRow('fs-mews', String(mews), mewsrisk);
 
-  // Determine overall sepsis risk
   let risk = 'low';
-  if (qsofa >= 2) {
+  if (sirs >= 2 && (news2risk === 'high' || mewsrisk === 'high')) {
     risk = 'high';
-  } else if (sirs >= 2 && (news2risk === 'high' || mewsrisk === 'high')) {
-    risk = 'high';
-  } else if (sirs >= 2 || qsofa >= 1) {
+  } else if (sirs >= 2) {
     risk = 'medium';
   } else if (news2risk === 'medium' || mewsrisk === 'medium') {
     risk = 'medium';
@@ -614,7 +573,7 @@ document.querySelectorAll('#sepsis-temp,#sepsis-hr,#sepsis-rr,#sepsis-bp,#sepsis
 
 // Wire all score checkboxes/radios
 document.querySelectorAll(
-  '#qsofa-rr,#qsofa-bp,#qsofa-gcs,#sirs-temp,#sirs-hr,#sirs-rr,#sirs-wbc,'+
+  '#sirs-temp,#sirs-hr,#sirs-rr,#sirs-wbc,'+
   'input[name="news2-rr"],input[name="news2-spo2"],input[name="news2-o2"],input[name="news2-sbp"],input[name="news2-hr"],input[name="news2-conscious"],input[name="news2-temp"],'+
   'input[name="mews-sbp"],input[name="mews-hr"],input[name="mews-rr"],input[name="mews-temp"],input[name="mews-avpu"]'
 ).forEach(el=>{ el.addEventListener('change', updateScores); });

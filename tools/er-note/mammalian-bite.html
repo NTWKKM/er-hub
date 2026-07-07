@@ -79,10 +79,20 @@
       <label class="btn-tile">
         <input type="radio" name="bite-category" value="I — licks on intact skin">
         <div class="wound-illust">
-          <svg viewBox="0 0 48 48">
-            <ellipse cx="24" cy="24" rx="20" ry="14" class="fill-skin"/>
-            <path d="M 12 24 Q 16 20 20 24 Q 24 28 28 24 Q 32 20 36 24" class="stroke"/>
-            <text x="24" y="44" text-anchor="middle" font-size="6" fill="var(--muted)">intact skin</text>
+          <svg viewBox="0 0 100 80">
+            <!-- Skin layers (anatomical cross-section) -->
+            <rect x="5" y="10" width="90" height="6" rx="2" class="epidermis"/>
+            <rect x="5" y="16" width="90" height="10" class="dermis"/>
+            <rect x="5" y="26" width="90" height="18" class="subcutis"/>
+            <rect x="5" y="44" width="90" height="3" class="fascia"/>
+            <rect x="5" y="47" width="90" height="22" rx="2" class="muscle"/>
+            <!-- Saliva droplet on intact surface -->
+            <ellipse cx="40" cy="8" rx="8" ry="3" fill="#7eb8e8" opacity="0.5"/>
+            <path d="M 35 10 Q 40 6 45 10" class="stroke-thin"/>
+            <!-- Arrow indicating saliva on surface only -->
+            <path d="M 50 8 L 58 8" class="stroke-thin" marker-end="url(#arr)"/>
+            <text x="50" y="5" class="label">saliva</text>
+            <text x="5" y="78" class="label">intact skin — no breach</text>
           </svg>
         </div>
         <span class="tile-label">Cat I — Lick on intact skin</span>
@@ -90,12 +100,23 @@
       <label class="btn-tile">
         <input type="radio" name="bite-category" value="II — minor scratches/abrasions without bleeding">
         <div class="wound-illust">
-          <svg viewBox="0 0 48 48">
-            <ellipse cx="24" cy="24" rx="20" ry="14" class="fill-skin"/>
-            <line x1="14" y1="18" x2="20" y2="30" class="stroke"/>
-            <line x1="22" y1="16" x2="28" y2="28" class="stroke"/>
-            <line x1="30" y1="20" x2="34" y2="30" class="stroke"/>
-            <text x="24" y="44" text-anchor="middle" font-size="6" fill="var(--muted)">scratches</text>
+          <svg viewBox="0 0 100 80">
+            <rect x="5" y="10" width="90" height="6" rx="2" class="epidermis"/>
+            <rect x="5" y="16" width="90" height="10" class="dermis"/>
+            <rect x="5" y="26" width="90" height="18" class="subcutis"/>
+            <rect x="5" y="44" width="90" height="3" class="fascia"/>
+            <rect x="5" y="47" width="90" height="22" rx="2" class="muscle"/>
+            <!-- Scratch marks: epidermis removed, dermis exposed but not through -->
+            <path d="M 25 10 L 28 18" class="stroke"/>
+            <path d="M 40 10 L 43 18" class="stroke"/>
+            <path d="M 55 10 L 58 18" class="stroke"/>
+            <path d="M 70 10 L 73 18" class="stroke"/>
+            <!-- Highlighted scratch lines -->
+            <line x1="25" y1="10" x2="28" y2="16" stroke="#d84315" stroke-width="0.8"/>
+            <line x1="40" y1="10" x2="43" y2="16" stroke="#d84315" stroke-width="0.8"/>
+            <line x1="55" y1="10" x2="58" y2="16" stroke="#d84315" stroke-width="0.8"/>
+            <line x1="70" y1="10" x2="73" y2="16" stroke="#d84315" stroke-width="0.8"/>
+            <text x="5" y="78" class="label">abrasion — epidermis only</text>
           </svg>
         </div>
         <span class="tile-label">Cat II — Minor scratches / abrasions (no bleeding)</span>
@@ -103,15 +124,26 @@
       <label class="btn-tile">
         <input type="radio" name="bite-category" value="III — single or multiple transdermal bites / scratches; mucosa contaminated">
         <div class="wound-illust">
-          <svg viewBox="0 0 48 48">
-            <ellipse cx="24" cy="24" rx="20" ry="14" class="fill-skin"/>
-            <ellipse cx="16" cy="22" rx="3" ry="2.5" fill="var(--danger)" opacity="0.3" class="stroke"/>
-            <ellipse cx="24" cy="26" rx="3" ry="2.5" fill="var(--danger)" opacity="0.3" class="stroke"/>
-            <ellipse cx="32" cy="22" rx="3" ry="2.5" fill="var(--danger)" opacity="0.3" class="stroke"/>
-            <line x1="16" y1="20" x2="16" y2="24" class="stroke"/>
-            <line x1="24" y1="24" x2="24" y2="28" class="stroke"/>
-            <line x1="32" y1="20" x2="32" y2="24" class="stroke"/>
-            <text x="24" y="44" text-anchor="middle" font-size="6" fill="var(--muted)">transdermal</text>
+          <svg viewBox="0 0 100 80">
+            <rect x="5" y="10" width="90" height="6" rx="2" class="epidermis"/>
+            <rect x="5" y="16" width="90" height="10" class="dermis"/>
+            <rect x="5" y="26" width="90" height="18" class="subcutis"/>
+            <rect x="5" y="44" width="90" height="3" class="fascia"/>
+            <rect x="5" y="47" width="90" height="22" rx="2" class="muscle"/>
+            <!-- Puncture wounds: full-thickness breach through all layers -->
+            <!-- Wound 1 -->
+            <path d="M 25 10 L 23 16 L 25 26 L 23 44 L 25 52" class="stroke" stroke-width="1.8"/>
+            <path d="M 28 10 L 30 16 L 28 26 L 30 44 L 28 52" class="stroke" stroke-width="1.8"/>
+            <rect x="23" y="10" width="7" height="42" class="blood"/>
+            <!-- Wound 2 (larger) -->
+            <path d="M 55 10 L 52 16 L 55 26 L 52 44 L 55 55" class="stroke" stroke-width="1.8"/>
+            <path d="M 62 10 L 65 16 L 62 26 L 65 44 L 62 55" class="stroke" stroke-width="1.8"/>
+            <rect x="52" y="10" width="13" height="45" class="blood"/>
+            <!-- Wound 3 -->
+            <path d="M 80 10 L 78 16 L 80 26 L 78 40" class="stroke" stroke-width="1.5"/>
+            <path d="M 85 10 L 87 16 L 85 26 L 87 40" class="stroke" stroke-width="1.5"/>
+            <rect x="78" y="10" width="9" height="30" class="blood"/>
+            <text x="5" y="78" class="label">transdermal — through dermis</text>
           </svg>
         </div>
         <span class="tile-label">Cat III — Transdermal bite / mucosa contact</span>
@@ -166,10 +198,17 @@
       <label class="btn-tile">
         <input type="radio" name="tet-wound" value="clean minor">
         <div class="wound-illust">
-          <svg viewBox="0 0 48 48">
-            <ellipse cx="24" cy="24" rx="18" ry="12" class="fill-skin"/>
-            <line x1="18" y1="22" x2="22" y2="26" class="stroke"/>
-            <text x="24" y="44" text-anchor="middle" font-size="6" fill="var(--muted)">clean minor</text>
+          <svg viewBox="0 0 100 80">
+            <rect x="5" y="10" width="90" height="6" rx="2" class="epidermis"/>
+            <rect x="5" y="16" width="90" height="10" class="dermis"/>
+            <rect x="5" y="26" width="90" height="18" class="subcutis"/>
+            <rect x="5" y="44" width="90" height="3" class="fascia"/>
+            <rect x="5" y="47" width="90" height="22" rx="2" class="muscle"/>
+            <!-- Clean minor wound: superficial, ≤1cm, epidermis only -->
+            <path d="M 42 10 L 44 16" class="stroke" stroke-width="1.5"/>
+            <path d="M 48 10 L 50 16" class="stroke" stroke-width="1.5"/>
+            <line x1="42" y1="10" x2="50" y2="10" class="stroke" stroke-width="1.5"/>
+            <text x="5" y="78" class="label">superficial — epidermis only</text>
           </svg>
         </div>
         <span class="tile-label">Clean minor</span>
@@ -178,13 +217,24 @@
       <label class="btn-tile">
         <input type="radio" name="tet-wound" value="dirty / major">
         <div class="wound-illust">
-          <svg viewBox="0 0 48 48">
-            <ellipse cx="24" cy="24" rx="18" ry="12" class="fill-skin"/>
-            <path d="M 14 20 L 18 28 L 22 20 L 26 28 L 30 20 L 34 28" class="stroke"/>
-            <circle cx="20" cy="24" r="1.5" fill="var(--muted)"/>
-            <circle cx="28" cy="24" r="1.5" fill="var(--muted)"/>
-            <circle cx="24" cy="22" r="1" fill="var(--muted)"/>
-            <text x="24" y="44" text-anchor="middle" font-size="6" fill="var(--muted)">tetanus-prone</text>
+          <svg viewBox="0 0 100 80">
+            <rect x="5" y="10" width="90" height="6" rx="2" class="epidermis"/>
+            <rect x="5" y="16" width="90" height="10" class="dermis"/>
+            <rect x="5" y="26" width="90" height="18" class="subcutis"/>
+            <rect x="5" y="44" width="90" height="3" class="fascia"/>
+            <rect x="5" y="47" width="90" height="22" rx="2" class="muscle"/>
+            <!-- Deep irregular wound: jagged edges through all layers -->
+            <path d="M 30 10 L 27 16 L 33 26 L 25 36 L 32 44 L 28 52" class="stroke" stroke-width="1.8"/>
+            <path d="M 50 10 L 53 16 L 47 26 L 55 36 L 48 44 L 52 52" class="stroke" stroke-width="1.8"/>
+            <rect x="27" y="10" width="28" height="42" class="blood"/>
+            <!-- Debris/contamination dots -->
+            <circle cx="35" cy="30" r="1.2" fill="#4a4a4a"/>
+            <circle cx="45" cy="35" r="1" fill="#4a4a4a"/>
+            <circle cx="38" cy="22" r="0.8" fill="#4a4a4a"/>
+            <circle cx="48" cy="28" r="1" fill="#4a4a4a"/>
+            <!-- Necrotic tissue indicator -->
+            <ellipse cx="40" cy="40" rx="6" ry="3" fill="#6b5b4a" opacity="0.4"/>
+            <text x="5" y="78" class="label">deep + contaminated + necrotic</text>
           </svg>
         </div>
         <span class="tile-label">Dirty / Major / Bite wound</span>
