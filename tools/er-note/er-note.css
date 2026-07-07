@@ -17,8 +17,8 @@ a { color:var(--accent-2); text-decoration:none; }
 .top-nav {
   position:sticky; top:0; z-index:100;
   display:flex; align-items:center; justify-content:space-between;
-  padding:10px 16px; background:linear-gradient(90deg,#49628d,#5E6AD2);
-  color:#F0EDE5; box-shadow:0 1px 4px rgba(0,0,0,.12);
+  padding:0 24px; background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%);
+  color:#F0EDE5; box-shadow:0 1px 4px rgba(0,0,0,.12); height:64px;
 }
 .nav-left { display:flex; align-items:center; gap:12px; }
 .nav-logo { height:34px; display:block; }
