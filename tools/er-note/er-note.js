@@ -23,7 +23,7 @@
     'trauma':           { type:'select',   id:'trauma-mech'     },
     'chest-pain':       { type:'input',    id:'chest-onset'     },
     'abdominal-pain':   { type:'input',    id:'abdo-onset'      },
-    'mammalian-bite':   { type:'select',   id:'bite-animal'     },
+    'mammalian-bite':   { type:'radio',    id:'bite-animal'     },
     'eye-injury':       { type:'input',    id:'eye-chemical'    },
     'index':            null
   };
@@ -113,6 +113,10 @@
   function getCCValue(){
     var info = CC_FIELDS[templateName];
     if (!info) return '';
+    if (info.type === 'radio'){
+      var checked = document.querySelector('input[name="'+info.id+'"]:checked');
+      return checked ? checked.value : '';
+    }
     var el = document.getElementById(info.id);
     if (!el) return '';
     if (info.type === 'select') return el.value ? (el.options[el.selectedIndex] ? el.options[el.selectedIndex].text : '') : '';
@@ -194,13 +198,17 @@
     }
     var directLabel = row.querySelector(':scope > label');
     var label = directLabel ? (directLabel.childNodes[0].textContent || '').trim() : '';
-    var group = row.querySelector('.checkbox-group, .radio-group');
+    var group = row.querySelector('.checkbox-group, .radio-group, .btn-group');
     if (group){
       var checked = Array.from(group.querySelectorAll('input:checked'));
       if (!checked.length) return null;
       var vals = checked.map(function(inp){
         var lbl = inp.closest('label');
-        return lbl ? lbl.textContent.trim() : (inp.value || '');
+        if (!lbl) return (inp.value || '');
+        // For btn-group tiles, prefer .tile-label text (avoids SVG/emoji noise)
+        var tileLabel = lbl.querySelector('.tile-label');
+        if (tileLabel) return tileLabel.textContent.trim();
+        return lbl.textContent.trim();
       });
       return (label || '—') + ': ' + vals.join(', ');
     }

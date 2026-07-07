@@ -34,7 +34,7 @@ a { color:var(--accent-2); text-decoration:none; }
   white-space:nowrap;
 }
 .tab-bar a.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
-.main { flex:1 1 auto; padding:20px var(--page-pad) 100px; max-width:880px; margin:0 auto; width:100%; }
+.main { flex:1 1 auto; padding:20px var(--page-pad) 100px; max-width:1280px; margin:0 auto; width:100%; }
 .card { background:#fff; border:1px solid var(--line); border-radius:3px; padding:18px; margin-bottom:16px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
 .section-title { font-size:15px; font-weight:700; margin:0 0 12px; display:flex; align-items:center; gap:8px; color:var(--ink); }
 .section-title .num { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:var(--accent); color:#fff; font-size:12px; }
@@ -60,6 +60,7 @@ input:focus,textarea:focus,select:focus { outline:none; border-color:var(--accen
 .field-row .field-note { font-size:12px; color:var(--muted); margin:4px 0 8px; }
 .score-line { margin-top:6px; }
 .score-box.risk-low { background:#e5f2e6; color:var(--ok); }
+.score-box.risk-low-medium { background:#eef5e8; color:#5a8a3a; }
 .score-box.risk-medium { background:#fdf1de; color:#9a6a1a; }
 .score-box.risk-high { background:#fbe6e1; color:var(--danger); }
 .inline-row { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; }
@@ -186,3 +187,81 @@ input:focus,textarea:focus,select:focus { outline:none; border-color:var(--accen
 }
 
 .visually-hidden { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+
+/* ---- Compact vital signs (1-line) ---- */
+.vitals-compact {
+  display:flex; gap:6px; align-items:flex-end; flex-wrap:nowrap;
+}
+.vitals-compact .vit {
+  flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:3px;
+}
+.vitals-compact .vit label {
+  font-size:11px; color:var(--muted); padding:0; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; line-height:1.2;
+}
+.vitals-compact .vit input {
+  padding:5px 7px; font-size:14px; font-weight:600;
+}
+.vitals-compact .vit input.auto-filled {
+  border-color:var(--accent); background:#f0eeff;
+}
+/* (main is 1280px globally — no .wide variant needed) */
+
+/* ---- Float status box (top-right) ---- */
+.float-status {
+  position:fixed; top:72px; right:16px; z-index:85;
+  background:#fff; border:1px solid var(--line); border-radius:3px;
+  padding:8px 12px; font-size:13px; min-width:180px;
+  box-shadow:0 2px 8px rgba(0,0,0,.1); transition:all .2s ease;
+}
+.float-status .fs-label { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:2px; }
+.float-status .fs-risk { font-size:15px; font-weight:700; margin-bottom:4px; }
+.float-status .fs-scores { display:flex; flex-direction:column; gap:2px; }
+.float-status .fs-score { display:flex; justify-content:space-between; align-items:center; font-size:12px; padding:1px 0; }
+.float-status .fs-score-name { color:var(--muted); }
+.float-status .fs-score-val { font-weight:600; }
+/* Per-score risk colors inside float */
+.float-status .fs-score.s-risk-low .fs-score-val { color:var(--ok); }
+.float-status .fs-score.s-risk-low-medium .fs-score-val { color:#5a8a3a; }
+.float-status .fs-score.s-risk-medium .fs-score-val { color:#9a6a1a; }
+.float-status .fs-score.s-risk-high .fs-score-val { color:var(--danger); }
+.float-status.risk-low { border-left:4px solid var(--ok); }
+.float-status.risk-low .fs-risk { color:var(--ok); }
+.float-status.risk-medium { border-left:4px solid #9a6a1a; }
+.float-status.risk-medium .fs-risk { color:#9a6a1a; }
+.float-status.risk-high { border-left:4px solid var(--danger); }
+.float-status.risk-high .fs-risk { color:var(--danger); }
+@media print { .float-status { display:none!important; } }
+@media (max-width:560px) { .float-status { top:auto; bottom:70px; right:8px; min-width:160px; } }
+
+/* ---- Button group (tappable alternatives to radio/checkbox) ---- */
+.btn-group { display:flex; flex-wrap:wrap; gap:6px; }
+.btn-group .btn-tile {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:10px 14px; border:1px solid var(--line); border-radius:3px;
+  background:#fff; cursor:pointer; font-size:13px; font-weight:500;
+  transition:all .12s ease; min-height:44px; text-align:center; position:relative;
+}
+.btn-group .btn-tile:hover { border-color:var(--accent-2); background:var(--paper-2); }
+.btn-group input[type=radio],
+.btn-group input[type=checkbox] {
+  position:absolute; opacity:0; width:0; height:0; pointer-events:none;
+}
+.btn-group .btn-tile:has(input:checked) {
+  background:var(--accent); border-color:var(--accent); color:#fff;
+}
+.btn-group .btn-tile .tile-icon { margin-bottom:4px; }
+.btn-group .btn-tile .tile-label { line-height:1.2; }
+.btn-group .btn-tile .tile-sub { font-size:10px; opacity:.7; margin-top:2px; }
+.btn-group .btn-tile:has(input:checked) .tile-sub { opacity:.85; }
+
+/* ---- Wound illustration cards ---- */
+.wound-illust {
+  width:48px; height:48px; margin-bottom:4px;
+}
+.wound-illust svg { width:100%; height:100%; display:block; }
+.wound-illust .stroke { stroke:var(--ink); stroke-width:1.5; fill:none; }
+.wound-illust .fill-skin { fill:var(--paper-2); stroke:var(--line); stroke-width:1; }
+
+/* ---- Sepsis section reorder helper ---- */
+.section-num-reset { counter-reset: section-num; }

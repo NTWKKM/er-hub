@@ -24,6 +24,18 @@
   <a href="abdominal-pain.html">Abdominal Pain</a>
   <a href="eye-injury.html">Eye Injury</a>
 </div>
+
+<div class="float-status risk-low" id="sepsis-float-status">
+  <div class="fs-label">Sepsis Risk</div>
+  <div class="fs-risk" id="fs-risk-text">Low</div>
+  <div class="fs-scores">
+    <div class="fs-score" id="fs-qsofa"><span class="fs-score-name">qSOFA</span><span class="fs-score-val">0/3</span></div>
+    <div class="fs-score" id="fs-sirs"><span class="fs-score-name">SIRS</span><span class="fs-score-val">0/4</span></div>
+    <div class="fs-score" id="fs-news2"><span class="fs-score-name">NEWS2</span><span class="fs-score-val">0</span></div>
+    <div class="fs-score" id="fs-mews"><span class="fs-score-name">MEWS</span><span class="fs-score-val">0</span></div>
+  </div>
+</div>
+
 <main class="main">
 <form id="er-form">
 <div class="patient-strip">
@@ -33,47 +45,20 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">1</span>ตำแหน่งการติดเชื้อและแหล่ง (Infection & Source)</h2>
-  <div class="field-row"><label>แหล่งที่สงสัยของการติดเชื้อ (Presumed source)</label>
-    <div class="radio-group">
-      <label><input type="radio" name="sepsis-source-type" value="UTI"> UTI</label>
-      <label><input type="radio" name="sepsis-source-type" value="Pneumonia"> Pneumonia</label>
-      <label><input type="radio" name="sepsis-source-type" value="Skin/Soft tissue"> Skin / Soft tissue</label>
-      <label><input type="radio" name="sepsis-source-type" value="Intra-abdominal"> Intra-abdominal</label>
-      <label><input type="radio" name="sepsis-source-type" value="CNS"> CNS</label>
-      <label><input type="radio" name="sepsis-source-type" value="Line/Device-related"> Line / Device-related</label>
-      <label><input type="radio" name="sepsis-source-type" value="Unknown"> Unknown</label>
-      <label><input type="radio" name="sepsis-source-type" value="Other"> Other</label>
-    </div>
+  <h2 class="section-title"><span class="num">1</span>Vital Signs &amp; Lactate</h2>
+  <div class="vitals-compact">
+    <div class="vit"><label for="sepsis-temp">T° (°C)</label><input type="number" id="sepsis-temp" step="0.1" placeholder="36.5"></div>
+    <div class="vit"><label for="sepsis-hr">HR (/min)</label><input type="number" id="sepsis-hr" placeholder="72"></div>
+    <div class="vit"><label for="sepsis-rr">RR (/min)</label><input type="number" id="sepsis-rr" placeholder="16"></div>
+    <div class="vit"><label for="sepsis-bp">BP (mmHg)</label><input type="text" id="sepsis-bp" placeholder="120/80"></div>
+    <div class="vit"><label for="sepsis-spo2">SpO₂ (%)</label><input type="number" id="sepsis-spo2" placeholder="98"></div>
+    <div class="vit"><label for="sepsis-lactate">Lactate (mmol/L)</label><input type="number" id="sepsis-lactate" step="0.1" placeholder="1.2"></div>
   </div>
-  <div class="field-row"><label>ระบุแหล่งอื่นๆ (Other source detail)</label><input type="text" id="sepsis-source-other" placeholder="ระบุถ้าเลือก Other หรือเพิ่มรายละเอียด"></div>
-  <div class="field-row"><label>การเริ่มและความก้าวหน้า (Onset / progression)</label><textarea id="sepsis-onset"></textarea></div>
-  <div class="field-row"><label>ปัจจัยเสี่ยง (Risk factors)</label>
-    <div class="checkbox-group">
-      <label><input type="checkbox" id="sepsis-dm"> DM</label>
-      <label><input type="checkbox" id="sepsis-ckd"> CKD</label>
-      <label><input type="checkbox" id="sepsis-malignancy"> Malignancy</label>
-      <label><input type="checkbox" id="sepsis-steroid"> Steroid / immunosuppressant</label>
-      <label><input type="checkbox" id="sepsis-none-risk"> None</label>
-    </div>
-  </div>
+  <div class="field-note">Blood culture ก่อนให้ ATB ถ้าทำได้ (Rec 7) · วัด lactate (Rec 8) · <em>Vitals ที่ใส่จะเชื่อมโยงกับ screening scores ด้านล่างอัตโนมัติ</em></div>
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">2</span>Vital Signs & Lactate</h2>
-  <div class="inline-row">
-    <div class="field-row"><label>Temp (°C)</label><input type="number" id="sepsis-temp" step="0.1"></div>
-    <div class="field-row"><label>HR (/min)</label><input type="number" id="sepsis-hr"></div>
-    <div class="field-row"><label>RR (/min)</label><input type="number" id="sepsis-rr"></div>
-    <div class="field-row"><label>BP (mmHg)</label><input type="text" id="sepsis-bp"></div>
-    <div class="field-row"><label>SpO₂ (%)</label><input type="number" id="sepsis-spo2"></div>
-    <div class="field-row"><label>Lactate (mmol/L)</label><input type="number" id="sepsis-lactate" step="0.1"></div>
-  </div>
-  <div class="field-note">Blood culture ก่อนให้ ATB ถ้าทำได้ (Rec 7) · วัด lactate (Rec 8)</div>
-</div>
-
-<div class="card">
-  <h2 class="section-title"><span class="num">3</span>Screening & Early Warning Scores</h2>
+  <h2 class="section-title"><span class="num">2</span>Screening &amp; Early Warning Scores</h2>
   <div class="field-note">ใช้ NEWS/NEWS2/MEWS ร่วมกับ SIRS/qSOFA — <strong>qSOFA ไม่ใช่เครื่องมือคัดกรองเดี่ยว</strong> (SSC 2026)</div>
 
   <div class="field-row"><label>qSOFA</label>
@@ -201,7 +186,34 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">4</span>Antibiotics & Source Control</h2>
+  <h2 class="section-title"><span class="num">3</span>ตำแหน่งการติดเชื้อและแหล่ง (Infection &amp; Source)</h2>
+  <div class="field-row"><label>แหล่งที่สงสัยของการติดเชื้อ (Presumed source)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="sepsis-source-type" value="UTI"> UTI</label>
+      <label><input type="radio" name="sepsis-source-type" value="Pneumonia"> Pneumonia</label>
+      <label><input type="radio" name="sepsis-source-type" value="Skin/Soft tissue"> Skin / Soft tissue</label>
+      <label><input type="radio" name="sepsis-source-type" value="Intra-abdominal"> Intra-abdominal</label>
+      <label><input type="radio" name="sepsis-source-type" value="CNS"> CNS</label>
+      <label><input type="radio" name="sepsis-source-type" value="Line/Device-related"> Line / Device-related</label>
+      <label><input type="radio" name="sepsis-source-type" value="Unknown"> Unknown</label>
+      <label><input type="radio" name="sepsis-source-type" value="Other"> Other</label>
+    </div>
+  </div>
+  <div class="field-row"><label>ระบุแหล่งอื่นๆ (Other source detail)</label><input type="text" id="sepsis-source-other" placeholder="ระบุถ้าเลือก Other หรือเพิ่มรายละเอียด"></div>
+  <div class="field-row"><label>การเริ่มและความก้าวหน้า (Onset / progression)</label><textarea id="sepsis-onset"></textarea></div>
+  <div class="field-row"><label>ปัจจัยเสี่ยง (Risk factors)</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="sepsis-dm"> DM</label>
+      <label><input type="checkbox" id="sepsis-ckd"> CKD</label>
+      <label><input type="checkbox" id="sepsis-malignancy"> Malignancy</label>
+      <label><input type="checkbox" id="sepsis-steroid"> Steroid / immunosuppressant</label>
+      <label><input type="checkbox" id="sepsis-none-risk"> None</label>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">4</span>Antibiotics &amp; Source Control</h2>
   <div class="field-row"><label>ABx timing</label>
     <div class="radio-group">
       <label><input type="radio" name="sepsis-abx-timing" value="Septic shock / probable-definite sepsis → within 1h (strong)"> Shock / probable-definite → 1h</label>
@@ -221,7 +233,7 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">5</span>Fluids, Hemodynamics & Respiratory Support</h2>
+  <h2 class="section-title"><span class="num">5</span>Fluids, Hemodynamics &amp; Respiratory Support</h2>
   <div class="field-row"><label>Fluid type</label>
     <div class="radio-group">
       <label><input type="radio" name="sepsis-fluid-type" value="Balanced crystalloid (preferred, Rec 44)"> Balanced crystalloid (preferred)</label>
@@ -253,7 +265,7 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">6</span>Cultures & Investigations</h2>
+  <h2 class="section-title"><span class="num">6</span>Cultures &amp; Investigations</h2>
   <div id="ix-container-sepsis"></div>
   <div class="field-row"><label>Cultures sent</label>
     <div class="checkbox-group">
@@ -272,14 +284,14 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">8</span>Post-Sepsis Care & Disposition</h2>
+  <h2 class="section-title"><span class="num">8</span>Post-Sepsis Care &amp; Disposition</h2>
   <div class="field-row"><label>Post-sepsis care</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="post-transition"> Transition care program initiated</label>
       <label><input type="checkbox" id="post-handoff"> Structured handoff completed</label>
       <label><input type="checkbox" id="post-medrec"> Medication reconciliation</label>
       <label><input type="checkbox" id="post-rehab"> Rehab referral</label>
-      <label><input type="checkbox" id="post-education"> Patient & family education</label>
+      <label><input type="checkbox" id="post-education"> Patient &amp; family education</label>
     </div>
   </div>
   <div class="field-row"><label>Disposition</label>
@@ -301,7 +313,7 @@
   <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
   <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
 </div>
-<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v25</footer>
 <script src="er-note.js"></script>
 <script>
 ErNote.renderInvestigation(document.getElementById('ix-container-sepsis'), 'sepsis');
@@ -327,14 +339,209 @@ function anySingleParamAtLeast(names, threshold){
   });
 }
 
+/* ---- Vital signs → screening score auto-link ----
+ * When user types vital sign values, auto-check corresponding qSOFA/SIRS boxes
+ * and auto-select NEWS2/MEWS radio bands.
+ * User can still manually override checkboxes/radios afterwards.
+ */
+function autoLinkVitals(){
+  const tempEl = document.getElementById('sepsis-temp');
+  const hrEl = document.getElementById('sepsis-hr');
+  const rrEl = document.getElementById('sepsis-rr');
+  const bpEl = document.getElementById('sepsis-bp');
+  const spo2El = document.getElementById('sepsis-spo2');
+
+  // --- qSOFA auto-check from vitals ---
+  const rrVal = parseFloat(rrEl.value);
+  if (!isNaN(rrVal) && rrVal >= 22){
+    const cb = document.getElementById('qsofa-rr');
+    if (!cb.checked){ cb.checked = true; cb.classList.add('auto-filled'); }
+  } else if (rrEl.value === '') {
+    document.getElementById('qsofa-rr').classList.remove('auto-filled');
+  }
+
+  // SBP from "120/80" → parse first number
+  const bpParts = (bpEl.value || '').split('/');
+  const sbpVal = parseFloat(bpParts[0]);
+  if (!isNaN(sbpVal) && sbpVal <= 100){
+    const cb = document.getElementById('qsofa-bp');
+    if (!cb.checked){ cb.checked = true; cb.classList.add('auto-filled'); }
+  } else if (bpEl.value === '') {
+    document.getElementById('qsofa-bp').classList.remove('auto-filled');
+  }
+
+  // --- SIRS auto-check from vitals ---
+  const tempVal = parseFloat(tempEl.value);
+  if (!isNaN(tempVal) && (tempVal > 38 || tempVal < 36)){
+    const cb = document.getElementById('sirs-temp');
+    if (!cb.checked){ cb.checked = true; cb.classList.add('auto-filled'); }
+  } else if (tempEl.value === '') {
+    document.getElementById('sirs-temp').classList.remove('auto-filled');
+  }
+
+  const hrVal = parseFloat(hrEl.value);
+  if (!isNaN(hrVal) && hrVal > 90){
+    const cb = document.getElementById('sirs-hr');
+    if (!cb.checked){ cb.checked = true; cb.classList.add('auto-filled'); }
+  } else if (hrEl.value === '') {
+    document.getElementById('sirs-hr').classList.remove('auto-filled');
+  }
+
+  if (!isNaN(rrVal) && rrVal > 20){
+    const cb = document.getElementById('sirs-rr');
+    if (!cb.checked){ cb.checked = true; cb.classList.add('auto-filled'); }
+  } else if (rrEl.value === '') {
+    document.getElementById('sirs-rr').classList.remove('auto-filled');
+  }
+
+  // --- NEWS2 auto-select from vitals ---
+  function selectRadio(name, value){
+    const existing = document.querySelector('input[name="'+name+'"]:checked');
+    // Only auto-select if no manual selection or previous auto-selection
+    if (existing && !existing.dataset.autoLinked) return;
+    const target = document.querySelector('input[name="'+name+'"][value="'+value+'"]');
+    if (existing) existing.checked = false;
+    if (target){
+      target.checked = true;
+      target.dataset.autoLinked = 'true';
+      // Remove auto-linked flag from siblings
+      document.querySelectorAll('input[name="'+name+'"]').forEach(function(r){
+        if (r !== target) delete r.dataset.autoLinked;
+      });
+    }
+  }
+  function clearAutoRadio(name){
+    const existing = document.querySelector('input[name="'+name+'"]:checked');
+    if (existing && existing.dataset.autoLinked){
+      existing.checked = false;
+      delete existing.dataset.autoLinked;
+    }
+  }
+
+  // NEWS2 RR
+  if (!isNaN(rrVal)){
+    if (rrVal <= 8) selectRadio('news2-rr', '3');
+    else if (rrVal <= 11) selectRadio('news2-rr', '1');
+    else if (rrVal <= 20) selectRadio('news2-rr', '0');
+    else if (rrVal <= 24) selectRadio('news2-rr', '2');
+    else selectRadio('news2-rr', '3');
+  } else { clearAutoRadio('news2-rr'); }
+
+  // NEWS2 HR
+  if (!isNaN(hrVal)){
+    if (hrVal <= 40) selectRadio('news2-hr', '3');
+    else if (hrVal <= 50) selectRadio('news2-hr', '1');
+    else if (hrVal <= 90) selectRadio('news2-hr', '0');
+    else if (hrVal <= 110) selectRadio('news2-hr', '1');
+    else if (hrVal <= 130) selectRadio('news2-hr', '2');
+    else selectRadio('news2-hr', '3');
+  } else { clearAutoRadio('news2-hr'); }
+
+  // NEWS2 SBP
+  if (!isNaN(sbpVal)){
+    if (sbpVal <= 90) selectRadio('news2-sbp', '3');
+    else if (sbpVal <= 100) selectRadio('news2-sbp', '2');
+    else if (sbpVal <= 110) selectRadio('news2-sbp', '1');
+    else if (sbpVal <= 219) selectRadio('news2-sbp', '0');
+    else selectRadio('news2-sbp', '3');
+  } else { clearAutoRadio('news2-sbp'); }
+
+  // NEWS2 Temp
+  if (!isNaN(tempVal)){
+    if (tempVal <= 35.0) selectRadio('news2-temp', '3');
+    else if (tempVal <= 36.0) selectRadio('news2-temp', '1');
+    else if (tempVal <= 38.0) selectRadio('news2-temp', '0');
+    else if (tempVal <= 39.0) selectRadio('news2-temp', '1');
+    else selectRadio('news2-temp', '2');
+  } else { clearAutoRadio('news2-temp'); }
+
+  // NEWS2 SpO₂
+  const spo2Val = parseFloat(spo2El.value);
+  if (!isNaN(spo2Val)){
+    if (spo2Val <= 91) selectRadio('news2-spo2', '3');
+    else if (spo2Val <= 93) selectRadio('news2-spo2', '2');
+    else if (spo2Val <= 95) selectRadio('news2-spo2', '1');
+    else selectRadio('news2-spo2', '0');
+  } else { clearAutoRadio('news2-spo2'); }
+
+  // --- MEWS auto-select from vitals ---
+  function clearAutoMews(name){
+    var existing = document.querySelector('input[name="'+name+'"]:checked');
+    if (existing && existing.dataset.autoLinked){
+      existing.checked = false;
+      delete existing.dataset.autoLinked;
+    }
+  }
+  function selectMews(name, value){
+    var existing = document.querySelector('input[name="'+name+'"]:checked');
+    if (existing && !existing.dataset.autoLinked) return;
+    var target = document.querySelector('input[name="'+name+'"][value="'+value+'"]');
+    if (existing) existing.checked = false;
+    if (target){
+      target.checked = true;
+      target.dataset.autoLinked = 'true';
+      document.querySelectorAll('input[name="'+name+'"]').forEach(function(r){
+        if (r !== target) delete r.dataset.autoLinked;
+      });
+    }
+  }
+
+  // MEWS SBP
+  if (!isNaN(sbpVal)){
+    if (sbpVal <= 70) selectMews('mews-sbp', '3');
+    else if (sbpVal <= 80) selectMews('mews-sbp', '2');
+    else if (sbpVal <= 100) selectMews('mews-sbp', '1');
+    else if (sbpVal <= 199) selectMews('mews-sbp', '0');
+    else selectMews('mews-sbp', '2');
+  } else { clearAutoMews('mews-sbp'); }
+
+  // MEWS HR
+  if (!isNaN(hrVal)){
+    if (hrVal <= 40) selectMews('mews-hr', '2');
+    else if (hrVal <= 50) selectMews('mews-hr', '1');
+    else if (hrVal <= 100) selectMews('mews-hr', '0');
+    else if (hrVal <= 110) selectMews('mews-hr', '1');
+    else if (hrVal <= 129) selectMews('mews-hr', '2');
+    else selectMews('mews-hr', '3');
+  } else { clearAutoMews('mews-hr'); }
+
+  // MEWS RR
+  if (!isNaN(rrVal)){
+    if (rrVal < 9) selectMews('mews-rr', '2');
+    else if (rrVal <= 14) selectMews('mews-rr', '0');
+    else if (rrVal <= 20) selectMews('mews-rr', '1');
+    else if (rrVal <= 29) selectMews('mews-rr', '2');
+    else selectMews('mews-rr', '3');
+  } else { clearAutoMews('mews-rr'); }
+
+  // MEWS Temp
+  if (!isNaN(tempVal)){
+    if (tempVal < 35) selectMews('mews-temp', '2');
+    else if (tempVal <= 38.4) selectMews('mews-temp', '0');
+    else selectMews('mews-temp', '2');
+  } else { clearAutoMews('mews-temp'); }
+}
+
 function updateScores(){
+  autoLinkVitals();
+
   const q = sumChecked(['qsofa-rr','qsofa-bp','qsofa-gcs']);
   document.getElementById('qsofa-score').textContent = q;
   document.getElementById('qsofa-line').setAttribute('data-copy','qSOFA: '+q+'/3');
+  // qSOFA risk: ≥2 high, 1 medium, 0 low
+  let qrisk = q >= 2 ? 'high' : (q === 1 ? 'medium' : 'low');
+  var qEl = document.getElementById('qsofa-line');
+  qEl.classList.remove('risk-low','risk-medium','risk-high');
+  qEl.classList.add('risk-'+qrisk);
 
   const s = sumChecked(['sirs-temp','sirs-hr','sirs-rr','sirs-wbc']);
   document.getElementById('sirs-score').textContent = s;
   document.getElementById('sirs-line').setAttribute('data-copy','SIRS: '+s+'/4');
+  // SIRS risk: ≥2 high (meets sepsis definition), 1 medium, 0 low
+  let srisk = s >= 2 ? 'high' : (s === 1 ? 'medium' : 'low');
+  var sEl = document.getElementById('sirs-line');
+  sEl.classList.remove('risk-low','risk-medium','risk-high');
+  sEl.classList.add('risk-'+srisk);
 
   const news2Names = ['news2-rr','news2-spo2','news2-o2','news2-sbp','news2-hr','news2-conscious','news2-temp'];
   const n2 = sumRadioGroups(news2Names);
@@ -359,8 +566,53 @@ function updateScores(){
   mEl.setAttribute('data-copy','MEWS: '+m+' ('+mrisk+' risk)');
   mEl.classList.remove('risk-low','risk-medium','risk-high');
   mEl.classList.add('risk-'+mrisk);
+
+  updateFloatStatus(q, qrisk, s, srisk, n2, n2risk, m, mrisk);
 }
 
+/* ---- Float status box (sepsis risk) — shows each score with per-score risk color ---- */
+function updateFloatStatus(qsofa, qrisk, sirs, srisk, news2, news2risk, mews, mewsrisk){
+  const box = document.getElementById('sepsis-float-status');
+  const riskText = document.getElementById('fs-risk-text');
+
+  // Update per-score rows
+  function setScoreRow(elId, valText, risk){
+    var el = document.getElementById(elId);
+    el.querySelector('.fs-score-val').textContent = valText;
+    el.classList.remove('s-risk-low','s-risk-medium','s-risk-high');
+    el.classList.add('s-risk-'+risk);
+  }
+  setScoreRow('fs-qsofa', qsofa+'/3', qrisk);
+  setScoreRow('fs-sirs', sirs+'/4', srisk);
+  setScoreRow('fs-news2', String(news2), news2risk);
+  setScoreRow('fs-mews', String(mews), mewsrisk);
+
+  // Determine overall sepsis risk
+  let risk = 'low';
+  if (qsofa >= 2) {
+    risk = 'high';
+  } else if (sirs >= 2 && (news2risk === 'high' || mewsrisk === 'high')) {
+    risk = 'high';
+  } else if (sirs >= 2 || qsofa >= 1) {
+    risk = 'medium';
+  } else if (news2risk === 'medium' || mewsrisk === 'medium') {
+    risk = 'medium';
+  } else {
+    risk = 'low';
+  }
+
+  riskText.textContent = risk.toUpperCase();
+  box.classList.remove('risk-low','risk-medium','risk-high');
+  box.classList.add('risk-' + risk);
+}
+
+// Wire vital sign inputs → updateScores (which calls autoLinkVitals first)
+document.querySelectorAll('#sepsis-temp,#sepsis-hr,#sepsis-rr,#sepsis-bp,#sepsis-spo2').forEach(function(el){
+  el.addEventListener('input', updateScores);
+  el.addEventListener('change', updateScores);
+});
+
+// Wire all score checkboxes/radios
 document.querySelectorAll(
   '#qsofa-rr,#qsofa-bp,#qsofa-gcs,#sirs-temp,#sirs-hr,#sirs-rr,#sirs-wbc,'+
   'input[name="news2-rr"],input[name="news2-spo2"],input[name="news2-o2"],input[name="news2-sbp"],input[name="news2-hr"],input[name="news2-conscious"],input[name="news2-temp"],'+

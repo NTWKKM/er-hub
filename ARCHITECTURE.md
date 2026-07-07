@@ -32,9 +32,9 @@ Seven standalone clinical note worksheets + portal hub, completely decoupled fro
 | --- | --- |
 | `index.html` | ER NOTE portal hub — lists 7 templates in clinical order |
 | `general-er-note.html` | General ER note |
-| `sepsis.html` | Sepsis — NEWS2/SIRS/qSOFA scoring |
+| `sepsis.html` | Sepsis — vital signs + screening scores first, then source infection; vital→score auto-link; float risk box |
 | `trauma.html` | Trauma — GCS scoring |
-| `mammalian-bite.html` | Mammalian bite — RIG dose calculation |
+| `mammalian-bite.html` | Mammalian bite — button-group selections, endemic rabies PEP logic, SVG wound illustrations |
 | `chest-pain.html` | Chest pain — HEART score |
 | `abdominal-pain.html` | Abdominal pain — Alvarado score |
 | `eye-injury.html` | Eye injury |
@@ -45,7 +45,9 @@ Features: tab-style cross-template navigation, multi-patient draft persistence (
 patient strip with HN, floating sidebar draft manager (FAB + slide-in panel),
 Investigation/Treatment checkbox modules, Thai-base history labels,
 plain-text note generation to clipboard, print via `window.print()` with `@media print` hiding nav/action bars/patient-strip/sidebar,
-built-in clinical calculators (NEWS2, SIRS, qSOFA, HEART, Alvarado, GCS, RIG dose).
+built-in clinical calculators (NEWS2, SIRS, qSOFA, HEART, Alvarado, GCS, RIG dose),
+vital→score auto-linking (sepsis), float sepsis risk status box,
+endemic rabies PEP logic with button-group selections and SVG wound illustrations (mammalian-bite).
 
 ### Drip Calculator (`tools/drip-calculator.html`)
 

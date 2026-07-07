@@ -34,55 +34,88 @@
 
 <div class="card">
   <h2 class="section-title"><span class="num">1</span>สัตว์และสถานการณ์การถูกกัด (Animal &amp; Bite Circumstances)</h2>
-  <div class="inline-row">
-    <div class="field-row"><label>สัตว์ที่กัด (Animal)</label>
-      <select id="bite-animal">
-        <option value="">— select —</option>
-        <option>Dog</option>
-        <option>Cat</option>
-        <option>Monkey</option>
-        <option>Rat / rodent</option>
-        <option>Human</option>
-        <option>Other mammal</option>
-      </select>
-    </div>
-    <div class="field-row"><label>วันที่/เวลาที่ถูกกัด (Date / time of bite)</label><input type="datetime-local" id="bite-time"></div>
-    <div class="field-row"><label>ตำแหน่งที่ถูกกัด (Location)</label>
-      <select id="bite-location">
-        <option value="">— select —</option>
-        <option>Head / neck / face</option>
-        <option>Hand / finger</option>
-        <option>Upper limb (non-hand)</option>
-        <option>Lower limb</option>
-        <option>Trunk / genitalia</option>
-      </select>
+  <div class="field-note" style="margin-bottom:10px">🇹🇭 <strong>Thailand is rabies-endemic</strong> — provoked/unprovoked and healthy/sick animal distinctions are <em>not</em> used for PEP decisions. All mammalian bites from reservoir species are treated as potential rabies exposure.</div>
+
+  <div class="field-row"><label>สัตว์ที่กัด (Animal)</label>
+    <div class="btn-group" id="animal-group">
+      <label class="btn-tile"><input type="radio" name="bite-animal" value="Dog"><span class="tile-label">🐕 Dog</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-animal" value="Cat"><span class="tile-label">🐈 Cat</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-animal" value="Monkey"><span class="tile-label">🐒 Monkey</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-animal" value="Rat / rodent"><span class="tile-label">🐀 Rodent</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-animal" value="Human"><span class="tile-label">🧑 Human</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-animal" value="Other mammal"><span class="tile-label">Other</span></label>
     </div>
   </div>
-  <div class="field-row"><label>ถูกยั่ว? (Provoked?)</label>
-    <div class="radio-group">
-      <label><input type="radio" name="bite-provoked" value="Yes"> Yes</label>
-      <label><input type="radio" name="bite-provoked" value="No"> No</label>
-      <label><input type="radio" name="bite-provoked" value="Unknown"> Unknown</label>
+  <div class="field-row"><label>วันที่/เวลาที่ถูกกัด (Date / time of bite)</label><input type="datetime-local" id="bite-time"></div>
+  <div class="field-row"><label>ตำแหน่งที่ถูกกัด (Location)</label>
+    <div class="btn-group" id="location-group">
+      <label class="btn-tile"><input type="radio" name="bite-location" value="Head / neck / face"><span class="tile-label">Head / Neck / Face</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-location" value="Hand / finger"><span class="tile-label">Hand / Finger</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-location" value="Upper limb (non-hand)"><span class="tile-label">Upper limb</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-location" value="Lower limb"><span class="tile-label">Lower limb</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-location" value="Trunk / genitalia"><span class="tile-label">Trunk / Genitalia</span></label>
     </div>
   </div>
   <div class="field-row"><label>สถานะของสัตว์ (Animal status)</label>
-    <select id="bite-status">
-      <option value="">— select —</option>
-      <option>Healthy, available for 10-day observation</option>
-      <option>Stray / unknown</option>
-      <option>Sick / abnormal behaviour</option>
-      <option>Dead / unavailable</option>
-    </select>
+    <div class="btn-group" id="status-group">
+      <label class="btn-tile"><input type="radio" name="bite-status" value="Available for observation"><span class="tile-label">Available for 10-day observation</span><span class="tile-sub">PEP may be deferred if healthy at day 10</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-status" value="Stray / unknown"><span class="tile-label">Stray / Unknown</span><span class="tile-sub">Treat as rabies exposure</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-status" value="Dead / unavailable"><span class="tile-label">Dead / Unavailable</span><span class="tile-sub">Treat as rabies exposure</span></label>
+    </div>
+  </div>
+  <div class="field-row"><label>ถูกยั่ว? (Provoked?) — <em>for documentation only</em></label>
+    <div class="btn-group" id="provoked-group">
+      <label class="btn-tile"><input type="radio" name="bite-provoked" value="Yes"><span class="tile-label">Yes</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-provoked" value="No"><span class="tile-label">No</span></label>
+      <label class="btn-tile"><input type="radio" name="bite-provoked" value="Unknown"><span class="tile-label">Unknown</span></label>
+    </div>
   </div>
 </div>
 
 <div class="card">
   <h2 class="section-title"><span class="num">2</span>Wound Assessment (WHO Category)</h2>
-  <div class="field-row"><label>Category</label>
-    <div class="radio-group">
-      <label><input type="radio" name="bite-category" value="I — licks on intact skin"> I — intact skin licked</label>
-      <label><input type="radio" name="bite-category" value="II — minor scratches/abrasions without bleeding"> II — minor scratches/abrasions</label>
-      <label><input type="radio" name="bite-category" value="III — single or multiple transdermal bites / scratches; mucosa contaminated"> III — transdermal bite / mucosa contact</label>
+  <div class="field-row"><label>WHO Category</label>
+    <div class="btn-group" id="category-group">
+      <label class="btn-tile">
+        <input type="radio" name="bite-category" value="I — licks on intact skin">
+        <div class="wound-illust">
+          <svg viewBox="0 0 48 48">
+            <ellipse cx="24" cy="24" rx="20" ry="14" class="fill-skin"/>
+            <path d="M 12 24 Q 16 20 20 24 Q 24 28 28 24 Q 32 20 36 24" class="stroke"/>
+            <text x="24" y="44" text-anchor="middle" font-size="6" fill="var(--muted)">intact skin</text>
+          </svg>
+        </div>
+        <span class="tile-label">Cat I — Lick on intact skin</span>
+      </label>
+      <label class="btn-tile">
+        <input type="radio" name="bite-category" value="II — minor scratches/abrasions without bleeding">
+        <div class="wound-illust">
+          <svg viewBox="0 0 48 48">
+            <ellipse cx="24" cy="24" rx="20" ry="14" class="fill-skin"/>
+            <line x1="14" y1="18" x2="20" y2="30" class="stroke"/>
+            <line x1="22" y1="16" x2="28" y2="28" class="stroke"/>
+            <line x1="30" y1="20" x2="34" y2="30" class="stroke"/>
+            <text x="24" y="44" text-anchor="middle" font-size="6" fill="var(--muted)">scratches</text>
+          </svg>
+        </div>
+        <span class="tile-label">Cat II — Minor scratches / abrasions (no bleeding)</span>
+      </label>
+      <label class="btn-tile">
+        <input type="radio" name="bite-category" value="III — single or multiple transdermal bites / scratches; mucosa contaminated">
+        <div class="wound-illust">
+          <svg viewBox="0 0 48 48">
+            <ellipse cx="24" cy="24" rx="20" ry="14" class="fill-skin"/>
+            <ellipse cx="16" cy="22" rx="3" ry="2.5" fill="var(--danger)" opacity="0.3" class="stroke"/>
+            <ellipse cx="24" cy="26" rx="3" ry="2.5" fill="var(--danger)" opacity="0.3" class="stroke"/>
+            <ellipse cx="32" cy="22" rx="3" ry="2.5" fill="var(--danger)" opacity="0.3" class="stroke"/>
+            <line x1="16" y1="20" x2="16" y2="24" class="stroke"/>
+            <line x1="24" y1="24" x2="24" y2="28" class="stroke"/>
+            <line x1="32" y1="20" x2="32" y2="24" class="stroke"/>
+            <text x="24" y="44" text-anchor="middle" font-size="6" fill="var(--muted)">transdermal</text>
+          </svg>
+        </div>
+        <span class="tile-label">Cat III — Transdermal bite / mucosa contact</span>
+      </label>
     </div>
   </div>
   <div class="field-row"><label>Wound characteristics</label>
@@ -101,13 +134,14 @@
 
 <div class="card">
   <h2 class="section-title"><span class="num">3</span>Rabies PEP Regimen Selector</h2>
+  <div class="field-note">🇹🇭 <strong>Endemic logic:</strong> Since Thailand is rabies-endemic, provoked/unprovoked and healthy/sick animal status are NOT used to determine PEP. For reservoir species (dog, cat, monkey, other mammal), Category II/III exposure always requires PEP. Rodent and human bites do not require rabies PEP.</div>
   <div class="field-row"><label>Prior rabies immunization</label>
-    <div class="radio-group">
-      <label><input type="radio" name="rabies-prior" value="Naive"> Naive</label>
-      <label><input type="radio" name="rabies-prior" value="Previously vaccinated"> Previously vaccinated (documented)</label>
+    <div class="btn-group" id="prior-group">
+      <label class="btn-tile"><input type="radio" name="rabies-prior" value="Naive"><span class="tile-label">Naive (no prior vaccine)</span></label>
+      <label class="btn-tile"><input type="radio" name="rabies-prior" value="Previously vaccinated"><span class="tile-label">Previously vaccinated (documented)</span></label>
     </div>
   </div>
-  <div class="score-box score-line" id="rabies-line" data-copy="Rabies PEP: not determined">Rabies PEP plan: <span id="rabies-plan">— select animal status, category, prior immunization —</span></div>
+  <div class="score-box score-line" id="rabies-line" data-copy="Rabies PEP: not determined">Rabies PEP plan: <span id="rabies-plan">— select animal, category, prior immunization —</span></div>
   <div class="field-row"><label>RIG details (if indicated)</label>
     <div class="inline-row">
       <div class="field-row"><label>Product</label>
@@ -128,17 +162,42 @@
 <div class="card">
   <h2 class="section-title"><span class="num">4</span>Tetanus Prophylaxis (CDC 2024)</h2>
   <div class="field-row"><label>Wound type</label>
-    <div class="radio-group">
-      <label><input type="radio" name="tet-wound" value="clean minor"> Clean minor</label>
-      <label><input type="radio" name="tet-wound" value="dirty / major"> Dirty / major / bite wound</label>
+    <div class="btn-group" id="tet-wound-group">
+      <label class="btn-tile">
+        <input type="radio" name="tet-wound" value="clean minor">
+        <div class="wound-illust">
+          <svg viewBox="0 0 48 48">
+            <ellipse cx="24" cy="24" rx="18" ry="12" class="fill-skin"/>
+            <line x1="18" y1="22" x2="22" y2="26" class="stroke"/>
+            <text x="24" y="44" text-anchor="middle" font-size="6" fill="var(--muted)">clean minor</text>
+          </svg>
+        </div>
+        <span class="tile-label">Clean minor</span>
+        <span class="tile-sub">Superficial, ≤1cm, no contamination</span>
+      </label>
+      <label class="btn-tile">
+        <input type="radio" name="tet-wound" value="dirty / major">
+        <div class="wound-illust">
+          <svg viewBox="0 0 48 48">
+            <ellipse cx="24" cy="24" rx="18" ry="12" class="fill-skin"/>
+            <path d="M 14 20 L 18 28 L 22 20 L 26 28 L 30 20 L 34 28" class="stroke"/>
+            <circle cx="20" cy="24" r="1.5" fill="var(--muted)"/>
+            <circle cx="28" cy="24" r="1.5" fill="var(--muted)"/>
+            <circle cx="24" cy="22" r="1" fill="var(--muted)"/>
+            <text x="24" y="44" text-anchor="middle" font-size="6" fill="var(--muted)">tetanus-prone</text>
+          </svg>
+        </div>
+        <span class="tile-label">Dirty / Major / Bite wound</span>
+        <span class="tile-sub">Deep, contaminated, necrotic tissue, >6h old</span>
+      </label>
     </div>
   </div>
   <div class="field-row"><label>Immunization history</label>
-    <div class="radio-group">
-      <label><input type="radio" name="tet-history" value="≥3 doses, last ≤10 yr"> ≥3 doses, last ≤10 yr</label>
-      <label><input type="radio" name="tet-history" value="≥3 doses, last &gt;10 yr"> ≥3 doses, last &gt;10 yr (clean)</label>
-      <label><input type="radio" name="tet-history" value="≥3 doses, last &gt;5 yr (dirty)"> ≥3 doses, last &gt;5 yr (dirty)</label>
-      <label><input type="radio" name="tet-history" value="&lt;3 doses or unknown"> &lt;3 doses / unknown</label>
+    <div class="btn-group" id="tet-history-group">
+      <label class="btn-tile"><input type="radio" name="tet-history" value="≥3 doses, last ≤10 yr"><span class="tile-label">≥3 doses, last ≤10 yr</span></label>
+      <label class="btn-tile"><input type="radio" name="tet-history" value="≥3 doses, last &gt;10 yr"><span class="tile-label">≥3 doses, last &gt;10 yr</span></label>
+      <label class="btn-tile"><input type="radio" name="tet-history" value="≥3 doses, last &gt;5 yr (dirty)"><span class="tile-label">≥3 doses, last &gt;5 yr (dirty)</span></label>
+      <label class="btn-tile"><input type="radio" name="tet-history" value="&lt;3 doses or unknown"><span class="tile-label">&lt;3 doses / Unknown</span></label>
     </div>
   </div>
   <div class="score-box score-line" id="tet-line" data-copy="Tetanus: not assessed">Tetanus prophylaxis: <span id="tet-plan">— select wound type + history —</span></div>
@@ -184,7 +243,7 @@
   <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
   <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
 </div>
-<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v25</footer>
 <script src="er-note.js"></script>
 <script>
 ErNote.renderInvestigation(document.getElementById('ix-container-mammalian-bite'), 'mammalian-bite');
@@ -195,37 +254,80 @@ function getRadioVal(name){
   return el ? el.value : null;
 }
 
+/* ---- Rabies PEP logic (Thailand endemic) ----
+ * Thailand is rabies-endemic. We do NOT use provoked/healthy-animal criteria.
+ * Reservoir species: Dog, Cat, Monkey, Other mammal
+ * Non-reservoir: Rat/rodent, Human (no PEP needed)
+ *
+ * Decision tree:
+ * 1. Non-reservoir species → No PEP
+ * 2. Category I → No PEP (lick on intact skin)
+ * 3. Category II + reservoir → Vaccine (no RIG)
+ * 4. Category III + reservoir → RIG + Vaccine
+ * 5. Animal available for observation + Category I/II → may defer, but in endemic
+ *    practice we still recommend PEP for Cat II/III (observation is supplementary)
+ *
+ * Prior vaccination:
+ * - Previously vaccinated → Vaccine d0,d3 only, NO RIG
+ * - Naive → Full regimen + RIG if Cat III
+ */
 function updateRabies(){
   const category = getRadioVal('bite-category');
   const prior = getRadioVal('rabies-prior');
-  const status = document.getElementById('bite-status').value;
+  const animal = getRadioVal('bite-animal');
   const planEl = document.getElementById('rabies-plan');
   const lineEl = document.getElementById('rabies-line');
-  if (!category || !prior){
-    planEl.textContent = '— select animal status, category, prior immunization —';
+
+  if (!animal || !category || !prior){
+    planEl.textContent = '— select animal, category, prior immunization —';
     lineEl.setAttribute('data-copy','Rabies PEP: not determined');
     return;
   }
+
+  // Non-reservoir species — no rabies PEP
+  const nonReservoir = ['Rat / rodent', 'Human'];
+  if (nonReservoir.includes(animal)){
+    planEl.textContent = 'No rabies PEP indicated (' + animal + ' — non-reservoir species)';
+    lineEl.setAttribute('data-copy','Rabies PEP: not indicated (' + animal + ')');
+    return;
+  }
+
+  // Category I — lick on intact skin, no PEP
+  if (category.startsWith('I —')){
+    planEl.textContent = 'No PEP (Category I — intact skin only)';
+    lineEl.setAttribute('data-copy','Rabies PEP: not indicated (Cat I)');
+    return;
+  }
+
+  // Reservoir species + Cat II/III
   const isIII = category.startsWith('III');
-  const riskyAnimal = ['Dog','Cat','Monkey','Bat','Other mammal'].includes(document.getElementById('bite-animal').value);
-  const riskyStatus = ['Stray / unknown','Sick / abnormal behaviour','Dead / unavailable'].includes(status);
-  if (!riskyAnimal){
-    planEl.textContent = 'No PEP (non-rabies reservoir / not indicated)';
-    lineEl.setAttribute('data-copy','Rabies PEP: not indicated');
+  const isII = category.startsWith('II');
+
+  if (isII || isIII){
+    if (prior === 'Previously vaccinated'){
+      if (isIII){
+        planEl.textContent = 'Vaccine days 0 + 3 only; NO RIG (previously vaccinated)';
+        lineEl.setAttribute('data-copy','Rabies PEP: vaccine days 0,3; no RIG (previously vaccinated)');
+      } else {
+        planEl.textContent = 'Vaccine days 0 + 3; NO RIG (previously vaccinated)';
+        lineEl.setAttribute('data-copy','Rabies PEP: vaccine days 0,3; no RIG');
+      }
+    } else {
+      // Naive
+      if (isIII){
+        planEl.textContent = 'RIG wound infiltration + vaccine Essen days 0,3,7,14,28';
+        lineEl.setAttribute('data-copy','Rabies PEP: RIG wound infiltration + vaccine days 0,3,7,14,28');
+      } else {
+        // Cat II naive — vaccine without RIG
+        planEl.textContent = 'Vaccine Essen days 0,3,7,14,28; NO RIG (Cat II)';
+        lineEl.setAttribute('data-copy','Rabies PEP: vaccine days 0,3,7,14,28; no RIG (Cat II)');
+      }
+    }
     return;
   }
-  if (!isIII && !riskyStatus){
-    planEl.textContent = 'Observe animal 10 days; PEP not indicated for Cat I/II if healthy animal';
-    lineEl.setAttribute('data-copy','Rabies PEP: observe animal, not indicated');
-    return;
-  }
-  if (prior === 'Previously vaccinated'){
-    planEl.textContent = 'Vaccine day 0 + day 3; NO RIG';
-    lineEl.setAttribute('data-copy','Rabies PEP: vaccine days 0,3; no RIG');
-  } else {
-    planEl.textContent = 'Wound infiltration with RIG + vaccine Essen days 0,3,7,14,28';
-    lineEl.setAttribute('data-copy','Rabies PEP: RIG wound infiltration + vaccine days 0,3,7,14,28');
-  }
+
+  planEl.textContent = '— select category —';
+  lineEl.setAttribute('data-copy','Rabies PEP: not determined');
 }
 
 function updateTetanus(){
@@ -238,7 +340,7 @@ function updateTetanus(){
   const doses = hist;
   let plan = '';
   if (doses.includes('last ≤10 yr')) plan = 'No Td/TIG needed';
-  else if (doses.includes('last &gt;10 yr (clean)')) plan = 'Td/Tdap booster only';
+  else if (doses.includes('last &gt;10 yr')) plan = 'Td/Tdap booster only';
   else if (isDirty && doses.includes('last &gt;5 yr (dirty)')) plan = 'Td/Tdap booster + TIG 250 U IM';
   else if (doses.includes('&lt;3 doses or unknown')) plan = isDirty ? 'Td/Tdap + TIG 250 U IM' : 'Td/Tdap booster only';
   else plan = 'Review tetanus history';
@@ -246,10 +348,10 @@ function updateTetanus(){
   lineEl.setAttribute('data-copy','Tetanus prophylaxis: '+plan);
 }
 
-document.querySelectorAll('input[name="bite-category"], input[name="rabies-prior"], #bite-animal, #bite-status').forEach(el=>{
+document.querySelectorAll('input[name="bite-animal"], input[name="bite-category"], input[name="rabies-prior"], input[name="bite-status"]').forEach(function(el){
   el.addEventListener('change', updateRabies);
 });
-document.querySelectorAll('input[name="tet-wound"], input[name="tet-history"]').forEach(el=>{
+document.querySelectorAll('input[name="tet-wound"], input[name="tet-history"]').forEach(function(el){
   el.addEventListener('change', updateTetanus);
 });
 updateRabies();
