@@ -306,15 +306,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Tetanus text translation
         let tetanusText = '';
-        if (tetanus === 'complete_5y') TetanusText = 'ครบ 3 เข็ม ภายใน 5 ปี (ไม่ต้องฉีดเพิ่ม)';
-        else if (tetanus === 'complete_gt5y') TetanusText = 'ครบ 3 เข็ม มากกว่า 5 ปี (พิจารณาฉีด Td กระตุ้น 1 เข็ม)';
-        else TetanusText = 'ไม่ได้รับ/ไม่ทราบ/ไม่ครบ 3 เข็ม (พิจารณาให้ Tetanus vaccine + Tetagam)';
+        if (tetanus === 'complete_5y') tetanusText = 'ครบ 3 เข็ม ภายใน 5 ปี (ไม่ต้องฉีดเพิ่ม)';
+        else if (tetanus === 'complete_gt5y') tetanusText = 'ครบ 3 เข็ม มากกว่า 5 ปี (พิจารณาฉีด Td กระตุ้น 1 เข็ม)';
+        else tetanusText = 'ไม่ได้รับ/ไม่ทราบ/ไม่ครบ 3 เข็ม (พิจารณาให้ Tetanus vaccine + Tetagam)';
 
         // Vial lookup and prescription details
         let antivenomText = '';
         let snakeName = '';
         let screenLabel = '';
-        
+
         if (snakeType === 'hematotoxin') {
             const selectedSnake = $('hemato-snake-select').value;
             if (selectedSnake === 'green_pit_viper') {
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
 
         $('p-hn').textContent = hn;
-        $('p-tetanus').textContent = TetanusText;
+        $('p-tetanus').textContent = tetanusText;
         $('p-horse-allergy').innerHTML = horseAllergy 
             ? `<strong style="color:red;">YES ⚠️ (มีประวัติแพ้: ${allergyDetail || 'ไม่ได้ระบุ'})</strong>` 
             : 'No';

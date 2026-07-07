@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mammalian Bite — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note.css">
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <a href="index.html" class="nav-title" style="color:inherit;text-decoration:none;">ER NOTE</a>
+  </div>
+  <a href="../../index.html" class="nav-home">← Home</a>
+</nav>
+<div class="tab-bar" role="tablist">
+  <a href="general-er-note.html">General ER Note</a>
+  <a href="sepsis.html">Sepsis</a>
+  <a href="trauma.html">Trauma</a>
+  <a href="mammalian-bite.html">Mammalian Bite</a>
+  <a href="chest-pain.html">Chest Pain</a>
+  <a href="abdominal-pain.html">Abdominal Pain</a>
+  <a href="eye-injury.html">Eye Injury</a>
+</div>
+<main class="main">
+<form id="er-form">
+<div class="patient-strip">
+  <label for="ernote-hn" class="visually-hidden">HN</label>
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — Mammalian Bite</span>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">1</span>สัตว์และสถานการณ์การถูกกัด (Animal &amp; Bite Circumstances)</h2>
+  <div class="inline-row">
+    <div class="field-row"><label>สัตว์ที่กัด (Animal)</label>
+      <select id="bite-animal">
+        <option value="">— select —</option>
+        <option>Dog</option>
+        <option>Cat</option>
+        <option>Monkey</option>
+        <option>Rat / rodent</option>
+        <option>Human</option>
+        <option>Other mammal</option>
+      </select>
+    </div>
+    <div class="field-row"><label>วันที่/เวลาที่ถูกกัด (Date / time of bite)</label><input type="datetime-local" id="bite-time"></div>
+    <div class="field-row"><label>ตำแหน่งที่ถูกกัด (Location)</label>
+      <select id="bite-location">
+        <option value="">— select —</option>
+        <option>Head / neck / face</option>
+        <option>Hand / finger</option>
+        <option>Upper limb (non-hand)</option>
+        <option>Lower limb</option>
+        <option>Trunk / genitalia</option>
+      </select>
+    </div>
+  </div>
+  <div class="field-row"><label>ถูกยั่ว? (Provoked?)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="bite-provoked" value="Yes"> Yes</label>
+      <label><input type="radio" name="bite-provoked" value="No"> No</label>
+      <label><input type="radio" name="bite-provoked" value="Unknown"> Unknown</label>
+    </div>
+  </div>
+  <div class="field-row"><label>สถานะของสัตว์ (Animal status)</label>
+    <select id="bite-status">
+      <option value="">— select —</option>
+      <option>Healthy, available for 10-day observation</option>
+      <option>Stray / unknown</option>
+      <option>Sick / abnormal behaviour</option>
+      <option>Dead / unavailable</option>
+    </select>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">2</span>Wound Assessment (WHO Category)</h2>
+  <div class="field-row"><label>Category</label>
+    <div class="radio-group">
+      <label><input type="radio" name="bite-category" value="I — licks on intact skin"> I — intact skin licked</label>
+      <label><input type="radio" name="bite-category" value="II — minor scratches/abrasions without bleeding"> II — minor scratches/abrasions</label>
+      <label><input type="radio" name="bite-category" value="III — single or multiple transdermal bites / scratches; mucosa contaminated"> III — transdermal bite / mucosa contact</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Wound characteristics</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="wound-puncture"> Puncture</label>
+      <label><input type="checkbox" id="wound-laceration"> Laceration</label>
+      <label><input type="checkbox" id="wound-crush"> Crush / avulsion</label>
+      <label><input type="checkbox" id="wound-contaminated"> Contaminated</label>
+      <label><input type="checkbox" id="wound-deep"> Deep / through fascia</label>
+      <label><input type="checkbox" id="wound-hand"> Hand / face / genitalia</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Irrigation</label><input type="text" id="bite-irrigate" value="Normal saline, ≥15 min"></div>
+  <div class="field-row"><label>Other wound care</label><input type="text" id="bite-wound-care" placeholder="debridement, leave punctures open, delayed closure"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">3</span>Rabies PEP Regimen Selector</h2>
+  <div class="field-row"><label>Prior rabies immunization</label>
+    <div class="radio-group">
+      <label><input type="radio" name="rabies-prior" value="Naive"> Naive</label>
+      <label><input type="radio" name="rabies-prior" value="Previously vaccinated"> Previously vaccinated (documented)</label>
+    </div>
+  </div>
+  <div class="score-box score-line" id="rabies-line" data-copy="Rabies PEP: not determined">Rabies PEP plan: <span id="rabies-plan">— select animal status, category, prior immunization —</span></div>
+  <div class="field-row"><label>RIG details (if indicated)</label>
+    <div class="inline-row">
+      <div class="field-row"><label>Product</label>
+        <select id="rig-product">
+          <option value="">— select —</option>
+          <option>Human rabies immunoglobulin (HRIG)</option>
+          <option>Equine rabies immunoglobulin (ERIG)</option>
+          <option>None — previously vaccinated or not indicated</option>
+        </select>
+      </div>
+      <div class="field-row"><label>Dose (IU/kg)</label><input type="text" id="rig-dose" placeholder="HRIG 20 IU/kg or ERIG 40 IU/kg"></div>
+      <div class="field-row"><label>Infiltration</label><input type="text" id="rig-route" placeholder="wound + IM; remainder IM distant from vaccine"></div>
+    </div>
+  </div>
+  <div class="field-row"><label>Vaccine schedule</label><input type="text" id="rabies-vax-schedule" placeholder="Essen regimen days 0,3,7,14,28 (naive) or days 0,3 (prev. vaccinated)"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">4</span>Tetanus Prophylaxis (CDC 2024)</h2>
+  <div class="field-row"><label>Wound type</label>
+    <div class="radio-group">
+      <label><input type="radio" name="tet-wound" value="clean minor"> Clean minor</label>
+      <label><input type="radio" name="tet-wound" value="dirty / major"> Dirty / major / bite wound</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Immunization history</label>
+    <div class="radio-group">
+      <label><input type="radio" name="tet-history" value="≥3 doses, last ≤10 yr"> ≥3 doses, last ≤10 yr</label>
+      <label><input type="radio" name="tet-history" value="≥3 doses, last &gt;10 yr"> ≥3 doses, last &gt;10 yr (clean)</label>
+      <label><input type="radio" name="tet-history" value="≥3 doses, last &gt;5 yr (dirty)"> ≥3 doses, last &gt;5 yr (dirty)</label>
+      <label><input type="radio" name="tet-history" value="&lt;3 doses or unknown"> &lt;3 doses / unknown</label>
+    </div>
+  </div>
+  <div class="score-box score-line" id="tet-line" data-copy="Tetanus: not assessed">Tetanus prophylaxis: <span id="tet-plan">— select wound type + history —</span></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">5</span>Investigations &amp; Treatment</h2>
+  <div id="ix-container-mammalian-bite"></div>
+  <div id="tx-container-mammalian-bite"></div>
+  <div class="field-row"><label>Indications for prophylactic antibiotics</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="abx-hand"> Hand / face / genitalia</label>
+      <label><input type="checkbox" id="abx-deep"> Deep puncture / crush</label>
+      <label><input type="checkbox" id="abx-immuno"> Immunocompromise</label>
+      <label><input type="checkbox" id="abx-delay"> Presentation &gt;8–12 hr</label>
+      <label><input type="checkbox" id="abx-none"> None — superficial, early, low-risk</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Antibiotic regimen</label>
+    <select id="bite-abx">
+      <option value="">— select —</option>
+      <option>Amoxicillin-clavulanate 875/125 mg PO q12h x 5 days</option>
+      <option>Amoxicillin-clavulanate IV / inpatient (severe)</option>
+      <option>Metronidazole + doxycycline / moxifloxacin (PCN allergy)</option>
+      <option>Not indicated</option>
+    </select>
+  </div>
+  <div class="field-row"><label>Disposition</label>
+    <select id="bite-disp">
+      <option value="">— select —</option>
+      <option>Discharge with wound care + PEP advice</option>
+      <option>Observation / infection risk</option>
+      <option>Admit for IV antibiotics</option>
+    </select>
+  </div>
+  <div class="field-row"><label>Follow-up / public-health notification</label><input type="text" id="bite-followup"></div>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
+<script src="er-note.js"></script>
+<script>
+ErNote.renderInvestigation(document.getElementById('ix-container-mammalian-bite'), 'mammalian-bite');
+ErNote.renderTreatment(document.getElementById('tx-container-mammalian-bite'), 'mammalian-bite');
+
+function getRadioVal(name){
+  const el = document.querySelector('input[name="'+name+'"]:checked');
+  return el ? el.value : null;
+}
+
+function updateRabies(){
+  const category = getRadioVal('bite-category');
+  const prior = getRadioVal('rabies-prior');
+  const status = document.getElementById('bite-status').value;
+  const planEl = document.getElementById('rabies-plan');
+  const lineEl = document.getElementById('rabies-line');
+  if (!category || !prior){
+    planEl.textContent = '— select animal status, category, prior immunization —';
+    lineEl.setAttribute('data-copy','Rabies PEP: not determined');
+    return;
+  }
+  const isIII = category.startsWith('III');
+  const riskyAnimal = ['Dog','Cat','Monkey','Bat','Other mammal'].includes(document.getElementById('bite-animal').value);
+  const riskyStatus = ['Stray / unknown','Sick / abnormal behaviour','Dead / unavailable'].includes(status);
+  if (!riskyAnimal){
+    planEl.textContent = 'No PEP (non-rabies reservoir / not indicated)';
+    lineEl.setAttribute('data-copy','Rabies PEP: not indicated');
+    return;
+  }
+  if (!isIII && !riskyStatus){
+    planEl.textContent = 'Observe animal 10 days; PEP not indicated for Cat I/II if healthy animal';
+    lineEl.setAttribute('data-copy','Rabies PEP: observe animal, not indicated');
+    return;
+  }
+  if (prior === 'Previously vaccinated'){
+    planEl.textContent = 'Vaccine day 0 + day 3; NO RIG';
+    lineEl.setAttribute('data-copy','Rabies PEP: vaccine days 0,3; no RIG');
+  } else {
+    planEl.textContent = 'Wound infiltration with RIG + vaccine Essen days 0,3,7,14,28';
+    lineEl.setAttribute('data-copy','Rabies PEP: RIG wound infiltration + vaccine days 0,3,7,14,28');
+  }
+}
+
+function updateTetanus(){
+  const wound = getRadioVal('tet-wound');
+  const hist = getRadioVal('tet-history');
+  const planEl = document.getElementById('tet-plan');
+  const lineEl = document.getElementById('tet-line');
+  if (!wound || !hist){ planEl.textContent = '— select wound type + history —'; lineEl.setAttribute('data-copy','Tetanus: not assessed'); return; }
+  const isDirty = wound === 'dirty / major';
+  const doses = hist;
+  let plan = '';
+  if (doses.includes('last ≤10 yr')) plan = 'No Td/TIG needed';
+  else if (doses.includes('last &gt;10 yr (clean)')) plan = 'Td/Tdap booster only';
+  else if (isDirty && doses.includes('last &gt;5 yr (dirty)')) plan = 'Td/Tdap booster + TIG 250 U IM';
+  else if (doses.includes('&lt;3 doses or unknown')) plan = isDirty ? 'Td/Tdap + TIG 250 U IM' : 'Td/Tdap booster only';
+  else plan = 'Review tetanus history';
+  planEl.textContent = plan;
+  lineEl.setAttribute('data-copy','Tetanus prophylaxis: '+plan);
+}
+
+document.querySelectorAll('input[name="bite-category"], input[name="rabies-prior"], #bite-animal, #bite-status').forEach(el=>{
+  el.addEventListener('change', updateRabies);
+});
+document.querySelectorAll('input[name="tet-wound"], input[name="tet-history"]').forEach(el=>{
+  el.addEventListener('change', updateTetanus);
+});
+updateRabies();
+updateTetanus();
+
+</script>
+</body>
+</html>

@@ -36,7 +36,7 @@
                     </div>
                     <div class="inline-input-group">
                         <label for="age">อายุ (ปี):</label>
-                        <input type="number" id="age" min="18" max="120"
+                        <input type="number" id="age" min="18" max="100"
                                required placeholder="เช่น 68">
                     </div>
 
@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const priorSK  = $('prior-sk').checked;
 
         if (!ED_VALIDATE.range('weight', 30, 200, 'กรุณากรอกน้ำหนัก (30–200 kg)')) return;
-        if (!ED_VALIDATE.min('age', 18, 'กรุณากรอกอายุ (≥ 18 ปี)')) return;
+        if (!ED_VALIDATE.range('age', 18, 100, 'กรุณากรอกอายุ (18–100 ปี)')) return;
 
         // HARD STOP: SK repeat within 6 months (absolute contraindication)
         if (fib === 'sk' && priorSK) {

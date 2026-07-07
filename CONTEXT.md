@@ -13,6 +13,18 @@
 | **Neurotoxin** | Snake venom causing respiratory muscle paralysis (e.g., Cobra, King Cobra, Krait). |
 | **IV Drip Rate** | Volumetric rate (mL/hr) calculated based on patient weight (kg), target dose, and drug preparation concentration. |
 | **Standing Order** | Standardized medical protocols pre-approved by clinical departments to accelerate urgent treatment. |
+| **ER NOTE** | Narrative emergency department clinical note tool (`tools/er-note/`). Uses per-template worksheets for structured documentation and plain-text output. |
+| **ER NOTE Template** | One standalone HTML file for a specific presentation (General ER Note, Sepsis, Trauma, Mammalian Bite, Chest Pain, Abdominal Pain, Eye Injury). |
+| **ER NOTE Draft** | Client-only auto-saved form state in `localStorage`. Schema v2 (ADR-53): a registry index at `ernote-registry` holds `{ id, template, hn, cc, updatedAt }` per draft; per-draft form data stored under `ernote-draft-{templateId}-{draftId}`. Supports multiple concurrent drafts per template (multi-patient ED workflow). URL `?draft={id}` selects active draft. |
+| **qSOFA** | Quick Sequential Organ Failure Assessment — bedside sepsis screen (RR ≥22, SBP ≤100, altered mentation). Score 0–3. |
+| **SIRS** | Systemic Inflammatory Response Syndrome criteria (temperature, HR, RR, WBC). Score 0–4. |
+| **HEART Score** | Risk stratification for chest-pain patients: History, ECG, Age, Risk factors, Troponin. Score 0–10. |
+| **Alvarado Score** | Appendicitis clinical prediction score (migratory pain, anorexia, nausea, RLQ tenderness, rebound, WBC, left shift, fever). Score 0–10. |
+| **GCS** | Glasgow Coma Scale — neurological assessment (Eye, Verbal, Motor). Total 3–15. |
+| **RIG** | Rabies Immunoglobulin — passive immunization given with rabies vaccine in post-exposure prophylaxis. Dose ≈ 2 mL/kg wound infiltration (max 100 mL per episode per WHO Thailand guidance). |
+| **Rabies PEP** | Post-exposure prophylaxis for suspected rabies exposure: wound care + vaccine series + RIG when indicated. |
+| **Mammalian Bite** | Bite wound from a mammal (dog, cat, monkey, rodent, human, etc.) requiring wound care, tetanus, rabies, and antibiotic risk assessment. |
+| **NEWS2** | National Early Warning Score 2 — track-and-trigger vital-sign score for early deterioration detection. |
 
 ---
 
@@ -22,10 +34,83 @@
 - **Maintenance Infusion:** Continuous IV administration regulated by infusion pumps in milliliters per hour (mL/hr).
 - **Preparation Variant:** Custom dilution recipe (e.g., Fentanyl 5 mcg/mL vs 2 mcg/mL) affecting calculated mL/hr flow rates.
 - **Chemotherapeutic / Fibrinolysis Gate:** Safety checklists preventing critical administration errors before drug calculation output is unlocked.
-
----
+- **ER NOTE Draft:** Clinician-entered form content that is persisted locally in the browser (`localStorage`) so an interrupted note can be resumed without a server.
+- **Per-Template Split:** Each clinical presentation has its own standalone HTML template file instead of a single shared `template.html` routed by URL parameters.
 
 ## 3. Architectural Decision Records (ADRs)
+
+Newest first.
+
+### ADR-53: ER NOTE Redesign — Schema v2 Multi-Patient Drafts, Investigation/Treatment Modules, Thai History Labels, Sidebar (2026-07-08)
+
+- **Context:** The ER NOTE tool (ADR-50/52) had four limitations: (1) storage schema supported only 1 draft per template — opening a second patient with the same template overwrote the first draft; (2) investigations were free-text with no structure; (3) treatment had no consistent section across templates (except sepsis); (4) all field labels were pure English, including history-taking sections which Thai-speaking clinicians found slower to scan.
+- **Decision:**
+  1. **Schema v2 multi-patient drafts:** Registry-based storage (`ernote-registry` index + `ernote-draft-{template}-{id}` per-draft data). Lazy-create on first field input. Auto-migration from v1 single-draft keys. URL `?draft={id}` selects active draft.
+  2. **Patient strip + HN field:** All 7 templates have a `.patient-strip` with HN input. HN used for sidebar card identification and included in `copyNote()` output.
+  3. **Sidebar draft manager:** Floating action button (FAB) toggles slide-in panel listing all drafts. Cards show HN, CC, relative time, template-colored left border. Real-time filter by HN/CC. Delete with `confirm()`. "+ New Draft" button creates and navigates.
+  4. **Investigation checkbox module:** `ErNote.renderInvestigation()` renders Labs + Imaging checkbox groups from per-template presets + free-text row. Presets incorporate clinical feedback: sepsis uses H/C x2 +LFT+UA+ECG; abdominal pain adds Amylase and replaces CXR with AAS; Ca/Mg/PO4 optional in all templates. No result-entry fields.
+  5. **Treatment checkbox module:** `ErNote.renderTreatment()` renders treatment checkboxes + free-text. Templates with clinical-protocol-specific fields (sepsis, mammalian-bite) keep existing fields; only supportive treatment checkboxes added.
+  6. **Thai-base history labels:** History-taking sections (§1/§2/§4 and equivalents) use Thai labels with English medical terms in parentheses. Medical abbreviations remain in English. Exam/score/investigation/treatment/disposition sections stay in pure English.
+  7. **Version bump:** `CACHE_VERSION` → `er-hub-v23`; `index.html` nav-right → v23; all footers → v23.
+- **Rationale:** Schema v2 is the critical fix — the old single-draft model was unusable for concurrent ED multi-patient workflows. Investigation/treatment modules standardize note structure while preserving clinical precision. Thai history labels reduce scanning time for Thai-speaking clinicians; English exam/plan sections preserve EMR interoperability.
+- **Consequences:**
+  - Multiple drafts per template now supported — ED can manage several patients concurrently.
+  - v1 `localStorage` keys auto-migrate on first load — no data loss.
+  - New template color tokens (`--tpl-general` through `--tpl-eye-injury`) added to `er-note.css`.
+  - `extractRow()` in `er-note.js` works unchanged for the new checkbox modules (reads checkbox-groups and free-text rows separately).
+  - `loadDraft()` deferred via `setTimeout` so inline template scripts render IX/TX containers before draft values load.
+- **Tests:** 193/193 pass. ER NOTE files excluded from structural guards by design. `tests/nstemi-audit-fixes.test.js` updated to expect `v23`.
+
+### ADR-52: ER NOTE Part B — Standardize All Templates to Sepsis Pattern (2026-07-08)
+
+- **Context:** After ADR-50 shipped the 7 per-template ER NOTE files, the 6 non-sepsis templates (`general-er-note.html`, `trauma.html`, `mammalian-bite.html`, `chest-pain.html`, `abdominal-pain.html`, `eye-injury.html`) diverged in DOM structure from `sepsis.html`. Some lacked the tab bar, some used inconsistent section wrappers, score displays were not consistently marked for clipboard copying, and footer versions were mismatched.
+- **Decision:**
+  1. **Standardized page skeleton:** Every ER NOTE template now uses `top-nav` + 7-link `.tab-bar` + `.card` sections + `.action-bar` + `.footer` carrying the synchronized version string.
+  2. **Standardized field layouts:** Interactive fields use `.field-row`; choice fields use `.radio-group` or `.checkbox-group`; inline vital-sign clusters use `.inline-row`.
+  3. **Score-line data-copy contract:** Every computed score/risk display uses `.score-box.score-line` with a `data-copy` attribute (e.g. `data-copy="qSOFA: 0/3"`). Inline per-template `updateScores()` scripts update both visible text and `data-copy` on every relevant `change` event.
+  4. **Version sync hardening:** Bumped `CACHE_VERSION` to `er-hub-v22`, updated `index.html` nav-right to `v22`, and set every template footer to `v22`.
+  5. **Scope boundary:** Refactor limited to `tools/er-note/*.html`; no shared standing-order modules or drip calculator changed.
+- **Rationale:** A shared visual/behavior contract lets `er-note.css` and `er-note.js` work identically across all 7 templates, prevents layout drift, simplifies plain-text clipboard extraction, and makes future templates copy-paste-safe. The `data-copy` contract decouples rendering from clipboard output.
+- **Consequences:**
+  - New templates can be created by copying `sepsis.html` and editing content.
+  - Score outputs are always included in copied notes without additional parsing.
+  - Version strings across SW, portal, and footers are locked to `v22`.
+- **Tests:** `tests/nstemi-audit-fixes.test.js` updated to expect `er-hub-v22`. All 193 tests pass.
+
+### ADR-51: Deep Audit Remediation B-1–B-4 — Case Sensitivity, Validation Bounds, PWA Icon, Non-Blocking Validation Contract (2026-07-07)
+
+
+- **Decision:**
+  1. **B-1 — unify variable casing:** Replace all `TetanusText` references in `orders/antivenom.html` with the already-declared lowercase `tetanusText` so the variable is declared exactly once and read everywhere.
+  2. **B-2 — consistent age bounds:** Add `ED_VALIDATE.range('age', 18, 100, ...)` to `orders/stemi.html` and reduce the HTML `<input type="number" id="age" … max="120">` to `max="100"`. This matches the validation bound used elsewhere and removes reliance on HTML-only upper-bound enforcement.
+  3. **B-3 — square PWA icon:** Generate a square 512×512 icon (`docs/icon-512x512.png`) from the existing logo, letterboxed on Braun cream `#F4F2EC`, update `manifest.json` to use a single icon entry (`sizes: "512x512"`, `purpose: "any maskable"`), and add `./docs/icon-512x512.png` to the `service-worker.js` precache list. Keep the legacy logo in the cache as a content asset but no longer as the manifest icon. Do **not** bump `CACHE_VERSION` solely for this asset addition; the SW update is detected by content change, not the version string.
+  4. **B-4 — non-blocking validation is intentional:** Document that `ED_VALIDATE.range()` and `ED_VALIDATE.min()` are advisory only. They apply `.is-invalid` styling and set `aria-invalid`, but calculation and print remain available for out-of-range values. This preserves clinician override ability in emergency scenarios. Future contributors must not convert these helpers into hard-blocking gates without explicit clinical review and a new ADR.
+- **Rationale:**
+  - B-1 prevents an accidental global and future reference errors when the module is bundled or runs in strict mode.
+  - B-2 aligns STEMI with the shared validation contract and removes a silent HTML-only upper bound.
+  - B-3 makes the PWA installable/splash-screen compliant without redesigning the hospital logo; letterboxing on the existing Braun cream keeps the icon visually consistent with the app.
+  - B-4 records a design decision that could otherwise be "fixed" into a regression. Emergency calculators must allow a clinician to print an order even when a value is outside population norms (e.g., pediatric weight entered on an adult form during trauma resuscitation).
+- **Consequences:**
+  - PWA install prompt and splash screen now use a compliant square icon.
+  - `CACHE_VERSION` remains `er-hub-v21`; the SW still picks up the new icon because the `ASSETS` array changed.
+  - Future age/weight validation changes must update both the JS helper and the HTML `min/max` attributes together to avoid bound drift.
+- **Tests:** `npm test` 193/193 pass after the fixes.
+
+### ADR-50: ER NOTE Tool — Per-Template Split, Standalone Assets, Local Drafts, Plain-Text Output (2026-07-07)
+
+- **Context:** The `er-note` clinical-note worksheet family started as a single shared `template.html` idea. That design forced every presentation (Sepsis, Trauma, Mammalian Bite, etc.) to coexist in one page or be selected by URL state, making navigation, print styling, and per-template score logic fragile. It also risked coupling the narrative-note UX to the standing-order shared CSS/JS contracts, which have a very different lifecycle (float bar, print blank orders, validation gates).
+- **Decision:**
+  1. **Per-template split:** Each clinical presentation lives in its own standalone HTML file under `tools/er-note/`: `general-er-note.html`, `sepsis.html`, `trauma.html`, `mammalian-bite.html`, `chest-pain.html`, `abdominal-pain.html`, `eye-injury.html`.
+  2. **Template order:** The tab bar and hub page list templates in fixed order: General ER Note → Sepsis → Trauma → Mammalian Bite → Chest Pain → Abdominal Pain → Eye Injury. New templates must append at the end unless a clinical workflow explicitly demands otherwise.
+  3. **Standalone assets:** ER NOTE pages use only `tools/er-note/er-note.css` and `tools/er-note/er-note.js`. They must **not** import `shared/base.css`, `shared/components.js`, `shared/form-validate.js`, or other standing-order shared assets. Within `tools/er-note/`, CSS and JS may be shared across templates.
+  4. **Local drafts:** Every template auto-saves input values to `localStorage` keyed `ernote-draft-{templateId}` (where `templateId` is the template filename). Drafts restore on page load and are cleared when the user presses **Clear**.
+  5. **Plain-text output:** The **Copy Note** action walks each `.card`, collects section titles and filled fields, and writes a Markdown-ish plain-text summary to the clipboard (section headers as `## Section`). This is the canonical shareable note format; print is a secondary paper fallback.
+- **Rationale:** Decouples narrative-note workflows from standing-order machinery. Per-template files let each presentation have dedicated score logic (qSOFA/SIRS, HEART, Alvarado, GCS, RIG dosing, etc.) and bespoke print layout without conditional branching. Standalone assets prevent standing-order refactor regressions from breaking ER NOTE, and vice versa.
+- **Consequences:**
+  - New templates require a new HTML file + link in `tools/er-note/index.html` + tab link updates in every existing template.
+  - Service-worker cache (`service-worker.js`) must enumerate each new template file explicitly; the tool is not bundled.
+  - Shared standing-order components (modal, validation gate, float bar) are intentionally unavailable; equivalent behaviour must be implemented locally.
+- **Tests:** 193/193 pass (existing test suite unaffected; ER NOTE templates tested via hub navigation expectations in `tests/nstemi-audit-fixes.test.js` and `tests/index.test.js`).
 
 ### ADR-47: NSTEMI Use-Current-Time Checkbox & Troponin Box Layout (2026-07-06)
 

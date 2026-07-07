@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sepsis — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note.css">
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <a href="index.html" class="nav-title" style="color:inherit;text-decoration:none;">ER NOTE</a>
+  </div>
+  <a href="../../index.html" class="nav-home">← Home</a>
+</nav>
+<div class="tab-bar" role="tablist">
+  <a href="general-er-note.html">General ER Note</a>
+  <a href="sepsis.html">Sepsis</a>
+  <a href="trauma.html">Trauma</a>
+  <a href="mammalian-bite.html">Mammalian Bite</a>
+  <a href="chest-pain.html">Chest Pain</a>
+  <a href="abdominal-pain.html">Abdominal Pain</a>
+  <a href="eye-injury.html">Eye Injury</a>
+</div>
+<main class="main">
+<form id="er-form">
+<div class="patient-strip">
+  <label for="ernote-hn" class="visually-hidden">HN</label>
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — Sepsis</span>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">1</span>ตำแหน่งการติดเชื้อและแหล่ง (Infection & Source)</h2>
+  <div class="field-row"><label>แหล่งที่สงสัยของการติดเชื้อ (Presumed source)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="sepsis-source-type" value="UTI"> UTI</label>
+      <label><input type="radio" name="sepsis-source-type" value="Pneumonia"> Pneumonia</label>
+      <label><input type="radio" name="sepsis-source-type" value="Skin/Soft tissue"> Skin / Soft tissue</label>
+      <label><input type="radio" name="sepsis-source-type" value="Intra-abdominal"> Intra-abdominal</label>
+      <label><input type="radio" name="sepsis-source-type" value="CNS"> CNS</label>
+      <label><input type="radio" name="sepsis-source-type" value="Line/Device-related"> Line / Device-related</label>
+      <label><input type="radio" name="sepsis-source-type" value="Unknown"> Unknown</label>
+      <label><input type="radio" name="sepsis-source-type" value="Other"> Other</label>
+    </div>
+  </div>
+  <div class="field-row"><label>ระบุแหล่งอื่นๆ (Other source detail)</label><input type="text" id="sepsis-source-other" placeholder="ระบุถ้าเลือก Other หรือเพิ่มรายละเอียด"></div>
+  <div class="field-row"><label>การเริ่มและความก้าวหน้า (Onset / progression)</label><textarea id="sepsis-onset"></textarea></div>
+  <div class="field-row"><label>ปัจจัยเสี่ยง (Risk factors)</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="sepsis-dm"> DM</label>
+      <label><input type="checkbox" id="sepsis-ckd"> CKD</label>
+      <label><input type="checkbox" id="sepsis-malignancy"> Malignancy</label>
+      <label><input type="checkbox" id="sepsis-steroid"> Steroid / immunosuppressant</label>
+      <label><input type="checkbox" id="sepsis-none-risk"> None</label>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">2</span>Vital Signs & Lactate</h2>
+  <div class="inline-row">
+    <div class="field-row"><label>Temp (°C)</label><input type="number" id="sepsis-temp" step="0.1"></div>
+    <div class="field-row"><label>HR (/min)</label><input type="number" id="sepsis-hr"></div>
+    <div class="field-row"><label>RR (/min)</label><input type="number" id="sepsis-rr"></div>
+    <div class="field-row"><label>BP (mmHg)</label><input type="text" id="sepsis-bp"></div>
+    <div class="field-row"><label>SpO₂ (%)</label><input type="number" id="sepsis-spo2"></div>
+    <div class="field-row"><label>Lactate (mmol/L)</label><input type="number" id="sepsis-lactate" step="0.1"></div>
+  </div>
+  <div class="field-note">Blood culture ก่อนให้ ATB ถ้าทำได้ (Rec 7) · วัด lactate (Rec 8)</div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">3</span>Screening & Early Warning Scores</h2>
+  <div class="field-note">ใช้ NEWS/NEWS2/MEWS ร่วมกับ SIRS/qSOFA — <strong>qSOFA ไม่ใช่เครื่องมือคัดกรองเดี่ยว</strong> (SSC 2026)</div>
+
+  <div class="field-row"><label>qSOFA</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="qsofa-rr" data-pt="1"> RR ≥ 22</label>
+      <label><input type="checkbox" id="qsofa-bp" data-pt="1"> SBP ≤ 100</label>
+      <label><input type="checkbox" id="qsofa-gcs" data-pt="1"> Altered mentation (GCS &lt; 15)</label>
+    </div>
+  </div>
+  <div class="score-box score-line" id="qsofa-line" data-copy="qSOFA: 0/3">qSOFA: <span id="qsofa-score">0</span>/3</div>
+
+  <div class="field-row" style="margin-top:14px"><label>SIRS criteria</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="sirs-temp" data-pt="1"> Temp &gt;38 or &lt;36</label>
+      <label><input type="checkbox" id="sirs-hr" data-pt="1"> HR &gt;90</label>
+      <label><input type="checkbox" id="sirs-rr" data-pt="1"> RR &gt;20 or PaCO₂ &lt;32</label>
+      <label><input type="checkbox" id="sirs-wbc" data-pt="1"> WBC &gt;12k or &lt;4k or &gt;10% bands</label>
+    </div>
+  </div>
+  <div class="score-box score-line" id="sirs-line" data-copy="SIRS: 0/4">SIRS: <span id="sirs-score">0</span>/4</div>
+
+  <div class="field-row" style="margin-top:14px"><label>NEWS2 — RR (/min)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="news2-rr" value="3"> ≤8</label>
+      <label><input type="radio" name="news2-rr" value="1"> 9–11</label>
+      <label><input type="radio" name="news2-rr" value="0"> 12–20</label>
+      <label><input type="radio" name="news2-rr" value="2"> 21–24</label>
+      <label><input type="radio" name="news2-rr" value="3"> ≥25</label>
+    </div>
+  </div>
+  <div class="field-row"><label>NEWS2 — SpO₂ (%)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="news2-spo2" value="3"> ≤91</label>
+      <label><input type="radio" name="news2-spo2" value="2"> 92–93</label>
+      <label><input type="radio" name="news2-spo2" value="1"> 94–95</label>
+      <label><input type="radio" name="news2-spo2" value="0"> ≥96</label>
+    </div>
+  </div>
+  <div class="field-row"><label>NEWS2 — Air / O₂</label>
+    <div class="radio-group">
+      <label><input type="radio" name="news2-o2" value="0"> Room air</label>
+      <label><input type="radio" name="news2-o2" value="2"> Supplemental O₂</label>
+    </div>
+  </div>
+  <div class="field-row"><label>NEWS2 — SBP (mmHg)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="news2-sbp" value="3"> ≤90</label>
+      <label><input type="radio" name="news2-sbp" value="2"> 91–100</label>
+      <label><input type="radio" name="news2-sbp" value="1"> 101–110</label>
+      <label><input type="radio" name="news2-sbp" value="0"> 111–219</label>
+      <label><input type="radio" name="news2-sbp" value="3"> ≥220</label>
+    </div>
+  </div>
+  <div class="field-row"><label>NEWS2 — Pulse (/min)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="news2-hr" value="3"> ≤40</label>
+      <label><input type="radio" name="news2-hr" value="1"> 41–50</label>
+      <label><input type="radio" name="news2-hr" value="0"> 51–90</label>
+      <label><input type="radio" name="news2-hr" value="1"> 91–110</label>
+      <label><input type="radio" name="news2-hr" value="2"> 111–130</label>
+      <label><input type="radio" name="news2-hr" value="3"> ≥131</label>
+    </div>
+  </div>
+  <div class="field-row"><label>NEWS2 — Consciousness</label>
+    <div class="radio-group">
+      <label><input type="radio" name="news2-conscious" value="0"> Alert</label>
+      <label><input type="radio" name="news2-conscious" value="3"> New confusion / CVPU</label>
+    </div>
+  </div>
+  <div class="field-row"><label>NEWS2 — Temp (°C)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="news2-temp" value="3"> ≤35.0</label>
+      <label><input type="radio" name="news2-temp" value="1"> 35.1–36.0</label>
+      <label><input type="radio" name="news2-temp" value="0"> 36.1–38.0</label>
+      <label><input type="radio" name="news2-temp" value="1"> 38.1–39.0</label>
+      <label><input type="radio" name="news2-temp" value="2"> ≥39.1</label>
+    </div>
+  </div>
+  <div class="score-box score-line" id="news2-line" data-copy="NEWS2: 0 (low)">NEWS2: <span id="news2-score">0</span> — <span id="news2-risk">low</span></div>
+
+  <div class="field-row" style="margin-top:14px"><label>MEWS — SBP (mmHg)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="mews-sbp" value="3"> ≤70</label>
+      <label><input type="radio" name="mews-sbp" value="2"> 71–80</label>
+      <label><input type="radio" name="mews-sbp" value="1"> 81–100</label>
+      <label><input type="radio" name="mews-sbp" value="0"> 101–199</label>
+      <label><input type="radio" name="mews-sbp" value="2"> ≥200</label>
+    </div>
+  </div>
+  <div class="field-row"><label>MEWS — HR (/min)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="mews-hr" value="2"> ≤40</label>
+      <label><input type="radio" name="mews-hr" value="1"> 41–50</label>
+      <label><input type="radio" name="mews-hr" value="0"> 51–100</label>
+      <label><input type="radio" name="mews-hr" value="1"> 101–110</label>
+      <label><input type="radio" name="mews-hr" value="2"> 111–129</label>
+      <label><input type="radio" name="mews-hr" value="3"> ≥130</label>
+    </div>
+  </div>
+  <div class="field-row"><label>MEWS — RR (/min)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="mews-rr" value="2"> &lt;9</label>
+      <label><input type="radio" name="mews-rr" value="0"> 9–14</label>
+      <label><input type="radio" name="mews-rr" value="1"> 15–20</label>
+      <label><input type="radio" name="mews-rr" value="2"> 21–29</label>
+      <label><input type="radio" name="mews-rr" value="3"> ≥30</label>
+    </div>
+  </div>
+  <div class="field-row"><label>MEWS — Temp (°C)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="mews-temp" value="2"> &lt;35</label>
+      <label><input type="radio" name="mews-temp" value="0"> 35–38.4</label>
+      <label><input type="radio" name="mews-temp" value="2"> ≥38.5</label>
+    </div>
+  </div>
+  <div class="field-row"><label>MEWS — AVPU</label>
+    <div class="radio-group">
+      <label><input type="radio" name="mews-avpu" value="0"> Alert</label>
+      <label><input type="radio" name="mews-avpu" value="1"> Voice</label>
+      <label><input type="radio" name="mews-avpu" value="2"> Pain</label>
+      <label><input type="radio" name="mews-avpu" value="3"> Unresponsive</label>
+    </div>
+  </div>
+  <div class="score-box score-line" id="mews-line" data-copy="MEWS: 0 (low)">MEWS: <span id="mews-score">0</span> — <span id="mews-risk">low</span></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">4</span>Antibiotics & Source Control</h2>
+  <div class="field-row"><label>ABx timing</label>
+    <div class="radio-group">
+      <label><input type="radio" name="sepsis-abx-timing" value="Septic shock / probable-definite sepsis → within 1h (strong)"> Shock / probable-definite → 1h</label>
+      <label><input type="radio" name="sepsis-abx-timing" value="Possible sepsis, no shock → within 3h if concern persists (conditional)"> Possible, no shock → 3h</label>
+      <label><input type="radio" name="sepsis-abx-timing" value="Low likelihood → defer ABx, monitor closely (conditional)"> Low likelihood → defer, monitor</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Antibiotic regimen</label><input type="text" id="sepsis-abx" placeholder="e.g. Ceftriaxone 2g IV"></div>
+  <div class="field-row"><label>Stewardship</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="sepsis-no-anaerobic"> No anaerobic coverage — no risk factor (Rec 28)</label>
+      <label><input type="checkbox" id="sepsis-prolonged-betalactam"> Prolonged β-lactam infusion after loading dose (Rec 33)</label>
+      <label><input type="checkbox" id="sepsis-deescalate"> De-escalate when pathogen identified (Rec 36)</label>
+      <label><input type="checkbox" id="sepsis-no-antifungal"> No empiric antifungal (Rec 27)</label>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">5</span>Fluids, Hemodynamics & Respiratory Support</h2>
+  <div class="field-row"><label>Fluid type</label>
+    <div class="radio-group">
+      <label><input type="radio" name="sepsis-fluid-type" value="Balanced crystalloid (preferred, Rec 44)"> Balanced crystalloid (preferred)</label>
+      <label><input type="radio" name="sepsis-fluid-type" value="0.9% NS (TBI exception, Rec 44 remark)"> 0.9% NS (TBI exception)</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Fluid volume / rate</label><input type="text" id="sepsis-fluid" placeholder="30 mL/kg first 3h if hypoperfusion (Rec 10)"></div>
+  <div class="field-row"><label>MAP target</label>
+    <div class="radio-group">
+      <label><input type="radio" name="sepsis-map-target" value="MAP ≥65 mmHg (Rec 13)"> MAP ≥65 mmHg</label>
+      <label><input type="radio" name="sepsis-map-target" value="MAP 60–65 mmHg, age ≥65 (Rec 14)"> MAP 60–65 mmHg (age ≥65)</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Vasopressor</label><input type="text" id="sepsis-vaso" placeholder="Norepinephrine first-line (Rec 53)"></div>
+  <div class="field-row"><label>Adjuncts</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="sepsis-corticosteroid"> IV corticosteroid — septic shock (Rec 79)</label>
+      <label><input type="checkbox" id="sepsis-no-betablocker"> No beta-blocker given (Rec 64)</label>
+      <label><input type="checkbox" id="sepsis-fluid-removal"> Active fluid removal post-acute phase (Rec 89)</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Respiratory support</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="resp-hfnc"> HFNC — P/F&lt;200 or SpO₂/FiO₂&lt;235 (Rec 67)</label>
+      <label><input type="checkbox" id="resp-proning"> Awake proning trial (Rec 70)</label>
+      <label><input type="checkbox" id="resp-invasive"> Invasive ventilation</label>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">6</span>Cultures & Investigations</h2>
+  <div id="ix-container-sepsis"></div>
+  <div class="field-row"><label>Cultures sent</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="culture-blood"> Blood</label>
+      <label><input type="checkbox" id="culture-urine"> Urine</label>
+      <label><input type="checkbox" id="culture-sputum"> Sputum</label>
+      <label><input type="checkbox" id="culture-wound"> Wound / other</label>
+      <label><input type="checkbox" id="culture-before-abx"> Sent before ABx (Rec 7)</label>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">7</span>Supportive Treatment</h2>
+  <div id="tx-container-sepsis"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">8</span>Post-Sepsis Care & Disposition</h2>
+  <div class="field-row"><label>Post-sepsis care</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="post-transition"> Transition care program initiated</label>
+      <label><input type="checkbox" id="post-handoff"> Structured handoff completed</label>
+      <label><input type="checkbox" id="post-medrec"> Medication reconciliation</label>
+      <label><input type="checkbox" id="post-rehab"> Rehab referral</label>
+      <label><input type="checkbox" id="post-education"> Patient & family education</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Disposition</label>
+    <select id="sepsis-disposition">
+      <option value="">— select —</option>
+      <option>ICU</option>
+      <option>Ward</option>
+      <option>Step-down / HDU</option>
+      <option>Discharge with OPD f/u</option>
+    </select>
+  </div>
+  <div class="field-row"><label>F/U</label><input type="text" id="sepsis-fu"></div>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
+<script src="er-note.js"></script>
+<script>
+ErNote.renderInvestigation(document.getElementById('ix-container-sepsis'), 'sepsis');
+ErNote.renderTreatment(document.getElementById('tx-container-sepsis'), 'sepsis');
+
+function sumChecked(ids){
+  let s=0;
+  ids.forEach(id=>{ const el=document.getElementById(id); if(el && el.checked) s += parseInt(el.dataset.pt||'1',10); });
+  return s;
+}
+function sumRadioGroups(names){
+  let s=0;
+  names.forEach(name=>{
+    const checked = document.querySelector('input[name="'+name+'"]:checked');
+    if (checked) s += parseInt(checked.value,10)||0;
+  });
+  return s;
+}
+function anySingleParamAtLeast(names, threshold){
+  return names.some(name=>{
+    const checked = document.querySelector('input[name="'+name+'"]:checked');
+    return checked && (parseInt(checked.value,10)||0) >= threshold;
+  });
+}
+
+function updateScores(){
+  const q = sumChecked(['qsofa-rr','qsofa-bp','qsofa-gcs']);
+  document.getElementById('qsofa-score').textContent = q;
+  document.getElementById('qsofa-line').setAttribute('data-copy','qSOFA: '+q+'/3');
+
+  const s = sumChecked(['sirs-temp','sirs-hr','sirs-rr','sirs-wbc']);
+  document.getElementById('sirs-score').textContent = s;
+  document.getElementById('sirs-line').setAttribute('data-copy','SIRS: '+s+'/4');
+
+  const news2Names = ['news2-rr','news2-spo2','news2-o2','news2-sbp','news2-hr','news2-conscious','news2-temp'];
+  const n2 = sumRadioGroups(news2Names);
+  let n2risk = 'low';
+  if (n2 >= 7) n2risk = 'high';
+  else if (n2 >= 5) n2risk = 'medium';
+  else if (anySingleParamAtLeast(news2Names, 3)) n2risk = 'low-medium';
+  const n2El = document.getElementById('news2-line');
+  document.getElementById('news2-score').textContent = n2;
+  document.getElementById('news2-risk').textContent = n2risk;
+  n2El.setAttribute('data-copy','NEWS2: '+n2+' ('+n2risk+' risk)');
+  n2El.classList.remove('risk-low','risk-low-medium','risk-medium','risk-high');
+  n2El.classList.add('risk-'+n2risk);
+
+  const mewsNames = ['mews-sbp','mews-hr','mews-rr','mews-temp','mews-avpu'];
+  const m = sumRadioGroups(mewsNames);
+  let mrisk = 'low';
+  if (m >= 5) mrisk = 'high'; else if (m >= 3) mrisk = 'medium';
+  const mEl = document.getElementById('mews-line');
+  document.getElementById('mews-score').textContent = m;
+  document.getElementById('mews-risk').textContent = mrisk;
+  mEl.setAttribute('data-copy','MEWS: '+m+' ('+mrisk+' risk)');
+  mEl.classList.remove('risk-low','risk-medium','risk-high');
+  mEl.classList.add('risk-'+mrisk);
+}
+
+document.querySelectorAll(
+  '#qsofa-rr,#qsofa-bp,#qsofa-gcs,#sirs-temp,#sirs-hr,#sirs-rr,#sirs-wbc,'+
+  'input[name="news2-rr"],input[name="news2-spo2"],input[name="news2-o2"],input[name="news2-sbp"],input[name="news2-hr"],input[name="news2-conscious"],input[name="news2-temp"],'+
+  'input[name="mews-sbp"],input[name="mews-hr"],input[name="mews-rr"],input[name="mews-temp"],input[name="mews-avpu"]'
+).forEach(el=>{ el.addEventListener('change', updateScores); });
+updateScores();
+
+</script>
+</body>
+</html>

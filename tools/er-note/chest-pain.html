@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chest Pain — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note.css">
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <a href="index.html" class="nav-title" style="color:inherit;text-decoration:none;">ER NOTE</a>
+  </div>
+  <a href="../../index.html" class="nav-home">← Home</a>
+</nav>
+<div class="tab-bar" role="tablist">
+  <a href="general-er-note.html">General ER Note</a>
+  <a href="sepsis.html">Sepsis</a>
+  <a href="trauma.html">Trauma</a>
+  <a href="mammalian-bite.html">Mammalian Bite</a>
+  <a href="chest-pain.html">Chest Pain</a>
+  <a href="abdominal-pain.html">Abdominal Pain</a>
+  <a href="eye-injury.html">Eye Injury</a>
+</div>
+<main class="main">
+<form id="er-form">
+<div class="patient-strip">
+  <label for="ernote-hn" class="visually-hidden">HN</label>
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — Chest Pain</span>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">1</span>ประวัติอาการเจ็บหน้าอก (Chest Pain HPI)</h2>
+  <div class="field-row"><label>การเริ่มและระยะเวลา (Onset & duration)</label><input type="text" id="chest-onset" placeholder="e.g. sudden at rest, 30 min before arrival"></div>
+  <div class="field-row"><label>ระดับความรุนแรง (Severity 0–10)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="chest-severity" value="0–3"> Mild 0–3</label>
+      <label><input type="radio" name="chest-severity" value="4–6"> Moderate 4–6</label>
+      <label><input type="radio" name="chest-severity" value="7–10"> Severe 7–10</label>
+    </div>
+  </div>
+  <div class="field-row"><label>ลักษณะของอาการ (Character)</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="chest-pressure"> Pressure / squeezing</label>
+      <label><input type="checkbox" id="chest-tearing"> Tearing / ripping</label>
+      <label><input type="checkbox" id="chest-pleuritic"> Pleuritic</label>
+      <label><input type="checkbox" id="chest-positional"> Positional / reproducible</label>
+      <label><input type="checkbox" id="chest-burning"> Burning</label>
+    </div>
+  </div>
+  <div class="field-row"><label>การกระจายของอาการ (Radiation)</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="chest-rad-arm"> Left arm / jaw</label>
+      <label><input type="checkbox" id="chest-rad-back"> Back</label>
+      <label><input type="checkbox" id="chest-rad-shoulder"> Shoulder</label>
+      <label><input type="checkbox" id="chest-rad-none"> None</label>
+    </div>
+  </div>
+  <div class="field-row"><label>อาการร่วม (Associated symptoms)</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="chest-sweat"> Diaphoresis</label>
+      <label><input type="checkbox" id="chest-nausea"> Nausea / vomiting</label>
+      <label><input type="checkbox" id="chest-dyspnea"> Dyspnea</label>
+      <label><input type="checkbox" id="chest-syncope"> Syncope / presyncope</label>
+      <label><input type="checkbox" id="chest-palpitation"> Palpitation</label>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">2</span>ปัจจัยเสี่ยงและ ECG (Risk Factors & ECG)</h2>
+  <div class="field-row"><label>ปัจจัยเสี่ยง (Risk factors)</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="chest-htn"> HTN</label>
+      <label><input type="checkbox" id="chest-dm"> DM</label>
+      <label><input type="checkbox" id="chest-hld"> HLD</label>
+      <label><input type="checkbox" id="chest-smoke"> Smoking</label>
+      <label><input type="checkbox" id="chest-fam"> Family history</label>
+      <label><input type="checkbox" id="chest-prior"> Prior CAD / PCI / CABG</label>
+    </div>
+  </div>
+  <div class="field-row"><label>ECG findings</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="ecg-normal"> Normal</label>
+      <label><input type="checkbox" id="ecg-ste"> ST elevation</label>
+      <label><input type="checkbox" id="ecg-std"> ST depression</label>
+      <label><input type="checkbox" id="ecg-twi"> T-wave inversion</label>
+      <label><input type="checkbox" id="ecg-lbbb"> New LBBB</label>
+      <label><input type="checkbox" id="ecg-nonspec"> Non-specific</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Rhythm</label>
+    <div class="radio-group">
+      <label><input type="radio" name="chest-rhythm" value="Sinus rhythm"> Sinus rhythm</label>
+      <label><input type="radio" name="chest-rhythm" value="Atrial fibrillation"> Atrial fibrillation</label>
+      <label><input type="radio" name="chest-rhythm" value="Other"> Other</label>
+    </div>
+  </div>
+  <div class="field-row"><label>0h troponin</label><input type="text" id="chest-trop-0" placeholder="ng/L"></div>
+  <div class="field-row"><label>1h / 3h troponin (if serial)</label><input type="text" id="chest-trop-1"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">3</span>HEART Score</h2>
+  <div class="field-row"><label>History</label>
+    <div class="radio-group">
+      <label><input type="radio" name="heart-history" value="0"> Slightly suspicious (0)</label>
+      <label><input type="radio" name="heart-history" value="1"> Moderately suspicious (1)</label>
+      <label><input type="radio" name="heart-history" value="2"> Highly suspicious (2)</label>
+    </div>
+  </div>
+  <div class="field-row"><label>ECG</label>
+    <div class="radio-group">
+      <label><input type="radio" name="heart-ecg" value="0"> Normal (0)</label>
+      <label><input type="radio" name="heart-ecg" value="1"> Non-specific repolarization (1)</label>
+      <label><input type="radio" name="heart-ecg" value="2"> Significant ST deviation (2)</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Age</label>
+    <div class="radio-group">
+      <label><input type="radio" name="heart-age" value="0"> &lt;45 (0)</label>
+      <label><input type="radio" name="heart-age" value="1"> 45–64 (1)</label>
+      <label><input type="radio" name="heart-age" value="2"> ≥65 (2)</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Risk factors</label>
+    <div class="radio-group">
+      <label><input type="radio" name="heart-rf" value="0"> None (0)</label>
+      <label><input type="radio" name="heart-rf" value="1"> 1–2 risk factors (1)</label>
+      <label><input type="radio" name="heart-rf" value="2"> ≥3 or prior atherosclerosis (2)</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Troponin</label>
+    <div class="radio-group">
+      <label><input type="radio" name="heart-trop" value="0"> ≤ normal limit (0)</label>
+      <label><input type="radio" name="heart-trop" value="1"> 1–3× normal (1)</label>
+      <label><input type="radio" name="heart-trop" value="2"> &gt;3× normal (2)</label>
+    </div>
+  </div>
+  <div class="score-box score-line" id="heart-line" data-copy="HEART: 0/10 (low risk)">HEART: <span id="heart-score">0</span>/10 — <span id="heart-risk">low risk</span></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">4</span>ACS Risk Stratification</h2>
+  <div class="field-row"><label>Stratification</label>
+    <div class="radio-group">
+      <label><input type="radio" name="chest-strata" value="STEMI → activate cath lab"> STEMI → cath lab</label>
+      <label><input type="radio" name="chest-strata" value="NSTEMI → risk stratify / consult cards"> NSTEMI</label>
+      <label><input type="radio" name="chest-strata" value="Unstable angina"> Unstable angina</label>
+      <label><input type="radio" name="chest-strata" value="Non-ACS chest pain"> Non-ACS</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Initial management</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="mx-oxygen"> O₂ only if SpO₂ &lt;90%</label>
+      <label><input type="checkbox" id="mx-asa"> Aspirin 162–325 mg</label>
+      <label><input type="checkbox" id="mx-p2y12"> P2Y12 loading</label>
+      <label><input type="checkbox" id="mx-anticoag"> Anticoagulation</label>
+      <label><input type="checkbox" id="mx-bb"> Beta-blocker</label>
+      <label><input type="checkbox" id="mx-statin"> High-intensity statin</label>
+      <label><input type="checkbox" id="mx-morphine"> Analgesia</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Specific P2Y12 / anticoag</label><input type="text" id="chest-meds-detail" placeholder="Ticagrelor 180 mg / Prasugrel 60 mg / Enoxaparin 1 mg/kg"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">5</span>Investigations</h2>
+  <div id="ix-container-chest-pain"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">6</span>Treatment</h2>
+  <div id="tx-container-chest-pain"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">7</span>Disposition</h2>
+  <div class="field-row"><label>Decision</label>
+    <select id="chest-disp">
+      <option value="">— select —</option>
+      <option>Cath lab activation</option>
+      <option>ICU / CCU</option>
+      <option>Obs / serial troponin</option>
+      <option>Ward admission</option>
+      <option>Discharge with OPD f/u</option>
+    </select>
+  </div>
+  <div class="field-row"><label>F/U / consult note</label><input type="text" id="chest-followup"></div>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
+<script src="er-note.js"></script>
+<script>
+ErNote.renderInvestigation(document.getElementById('ix-container-chest-pain'), 'chest-pain');
+ErNote.renderTreatment(document.getElementById('tx-container-chest-pain'), 'chest-pain');
+
+function sumRadioGroups(names){
+  let s=0;
+  names.forEach(name=>{
+    const checked = document.querySelector('input[name="'+name+'"]:checked');
+    if (checked) s += parseInt(checked.value,10)||0;
+  });
+  return s;
+}
+
+const heartNames = ['heart-history','heart-ecg','heart-age','heart-rf','heart-trop'];
+
+function updateHeart(){
+  const s = sumRadioGroups(heartNames);
+  let risk = 'low risk';
+  if (s >= 7) risk = 'high risk (consider early invasive strategy)';
+  else if (s >= 4) risk = 'moderate risk (observe, serial troponin)';
+  const el = document.getElementById('heart-line');
+  document.getElementById('heart-score').textContent = s;
+  document.getElementById('heart-risk').textContent = risk;
+  el.setAttribute('data-copy','HEART: '+s+'/10 ('+risk+')');
+  el.classList.remove('risk-low','risk-medium','risk-high');
+  el.classList.add(s>=7?'risk-high':s>=4?'risk-medium':'risk-low');
+}
+
+heartNames.forEach(name=>{
+  document.querySelectorAll('input[name="'+name+'"]').forEach(el=>{
+    el.addEventListener('change', updateHeart);
+  });
+});
+updateHeart();
+
+</script>
+</body>
+</html>

@@ -1328,7 +1328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updatePrintArea(hn, weight, egfr, age, hr, sbp, cr, killip, graceScore, risk, cardArr, stDev, elevMk, tropValH0, tropValH1, tropValH3, risingH1, risingH3, fromRpc, asaAlrg, now) {
+    function updatePrintArea(hn, weight, egfr, age, hr, sbp, cr, killip, graceScore, risk, cardArr, stDev, elevMk, tropValH0, tropValH1, tropValH3, risingH1, risingH3, fromRpc, asaAlrg, now, p2y12Val) {
         // Update patient sticker box HN text only
         const stickerHn = $('sticker-hn-text');
         if (stickerHn) {
@@ -1385,8 +1385,9 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-dt-1').innerHTML = dtHtml;
         $('p-dt-2').innerHTML = dtHtml;
 
+        // Compute shared DAPT P2Y12 selection once (used below and in updateDaptHints)
+        // p2y12Val is passed in from the caller so screen + print stay in sync.
         const daptAsa = $('dapt-asa').checked;
-        const p2y12Val = document.querySelector('input[name="dapt-p2y12"]:checked')?.value || 'hold';
 
         if (asaAlrg) {
             $('p-asa-stat').innerHTML = '<strong style="color:red;">☒ ห้ามให้ ASA (Allergy ⚠️)</strong>';
@@ -1425,6 +1426,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const elevMk  = $('elevated-markers').checked;
         const killip  = document.querySelector('input[name="killip"]:checked')?.value || '1';
         const fromRpc = $('troponin-from-rphch').checked;
+        const p2y12Val = document.querySelector('input[name="dapt-p2y12"]:checked')?.value || 'hold';
 
         // Non-blocking validation: weight 30–200, age 18–120, creatinine 0.1–20
         if (!isNaN(weight)) ED_VALIDATE.range('weight', 30, 200, 'Weight ต้องอยู่ในช่วง 30–200 kg');
@@ -1461,7 +1463,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateScreenBadges(graceScore, risk, bd, age, hr, sbp, cr, killip, cardArr, stDev, elevMk);
 
         // Update DAPT hints
-        const p2y12Val = document.querySelector('input[name="dapt-p2y12"]:checked')?.value || 'hold';
         const daptHintBox = $('dapt-hint-box');
         if (daptHintBox) {
             let hintHtml = '';
@@ -1498,7 +1499,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAcHints();
 
         const now = new Date();
-        updatePrintArea(hn, weight, egfr, age, hr, sbp, cr, killip, graceScore, risk, cardArr, stDev, elevMk, tropValH0, tropValH1, tropValH3, risingH1, risingH3, fromRpc, asaAlrg, now);
+        updatePrintArea(hn, weight, egfr, age, hr, sbp, cr, killip, graceScore, risk, cardArr, stDev, elevMk, tropValH0, tropValH1, tropValH3, risingH1, risingH3, fromRpc, asaAlrg, now, p2y12Val);
     }
 
     // Wire ALL inputs to calculateAndRender (real-time)

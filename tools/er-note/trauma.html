@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trauma — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note.css">
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <a href="index.html" class="nav-title" style="color:inherit;text-decoration:none;">ER NOTE</a>
+  </div>
+  <a href="../../index.html" class="nav-home">← Home</a>
+</nav>
+<div class="tab-bar" role="tablist">
+  <a href="general-er-note.html">General ER Note</a>
+  <a href="sepsis.html">Sepsis</a>
+  <a href="trauma.html">Trauma</a>
+  <a href="mammalian-bite.html">Mammalian Bite</a>
+  <a href="chest-pain.html">Chest Pain</a>
+  <a href="abdominal-pain.html">Abdominal Pain</a>
+  <a href="eye-injury.html">Eye Injury</a>
+</div>
+<main class="main">
+<form id="er-form">
+<div class="patient-strip">
+  <label for="ernote-hn" class="visually-hidden">HN</label>
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — Trauma</span>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">1</span>กลไกการบาดเจ็บและเหตุการณ์ (Mechanism & Event)</h2>
+  <div class="field-row"><label>กลไกการบาดเจ็บ (Mechanism)</label>
+    <select id="trauma-mech">
+      <option value="">— select —</option>
+      <option>RTA</option>
+      <option>Motorcycle</option>
+      <option>Pedestrian</option>
+      <option>Fall</option>
+      <option>Assault</option>
+      <option>Penetrating</option>
+      <option>Crush</option>
+      <option>Other</option>
+    </select>
+  </div>
+  <div class="inline-row">
+    <div class="field-row"><label>เวลาที่บาดเจ็บ (Time of injury)</label><input type="time" id="trauma-time"></div>
+    <div class="field-row"><label>เข็มขัดนิรภัย/หมวกกันน็อก (Seatbelt / Helmet)</label>
+      <div class="radio-group">
+        <label><input type="radio" name="trauma-protect" value="Yes"> Yes</label>
+        <label><input type="radio" name="trauma-protect" value="No"> No</label>
+      </div>
+    </div>
+    <div class="field-row"><label>การช่วยออกจากพาหนะ (Extrication)</label><input type="text" id="trauma-extricate" placeholder="time & method"></div>
+  </div>
+  <div class="field-row"><label>ลักษณะสถานที่เกิดเหตุ (Scene description)</label><textarea id="trauma-scene"></textarea></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">2</span>Primary Survey (ATLS 11 — xABCDE)</h2>
+  <div class="field-row"><label>x — Exsanguinating hemorrhage control</label>
+    <div class="radio-group">
+      <label><input type="radio" name="trauma-x" value="No active external bleeding"> None</label>
+      <label><input type="radio" name="trauma-x" value="Direct pressure / tourniquet / packing applied"> Controlled with TXA if needed</label>
+      <label><input type="radio" name="trauma-x" value="Ongoing hemorrhage — massive transfusion protocol"> Ongoing → MTP</label>
+    </div>
+  </div>
+  <div class="field-row"><label>A — Airway</label>
+    <div class="radio-group">
+      <label><input type="radio" name="trauma-a" value="Patent, protecting"> Patent</label>
+      <label><input type="radio" name="trauma-a" value="Obstruction / requires adjunct"> Obstructed</label>
+      <label><input type="radio" name="trauma-a" value="Intubated"> Intubated</label>
+    </div>
+  </div>
+  <div class="field-row"><label>B — Breathing</label>
+    <div class="radio-group">
+      <label><input type="radio" name="trauma-b" value="Spontaneous, equal air entry"> Spontaneous</label>
+      <label><input type="radio" name="trauma-b" value="Tachypnea / shallow"> Tachypnea / shallow</label>
+      <label><input type="radio" name="trauma-b" value="Flail / pneumothorax / hemothorax"> Thoracic injury</label>
+      <label><input type="radio" name="trauma-b" value="Ventilated"> Ventilated</label>
+    </div>
+  </div>
+  <div class="field-row"><label>C — Circulation</label>
+    <div class="radio-group">
+      <label><input type="radio" name="trauma-c" value="Stable pulse & BP"> Stable</label>
+      <label><input type="radio" name="trauma-c" value="Tachycardia"> Tachycardia</label>
+      <label><input type="radio" name="trauma-c" value="Hypotension / shock"> Hypotension / shock</label>
+      <label><input type="radio" name="trauma-c" value="In arrest"> Arrest</label>
+    </div>
+  </div>
+  <div class="field-row"><label>D — Disability</label>
+    <div class="radio-group">
+      <label><input type="radio" name="trauma-d" value="Awake / obeying"> Awake</label>
+      <label><input type="radio" name="trauma-d" value="GCS 13–14"> GCS 13–14</label>
+      <label><input type="radio" name="trauma-d" value="GCS 9–12"> GCS 9–12</label>
+      <label><input type="radio" name="trauma-d" value="GCS ≤8"> GCS ≤8</label>
+    </div>
+  </div>
+  <div class="field-row"><label>E — Exposure / Environment</label>
+    <div class="radio-group">
+      <label><input type="radio" name="trauma-e" value="Warm, no hypothermia"> Warm</label>
+      <label><input type="radio" name="trauma-e" value="Hypothermia &lt;35°C"> Hypothermia</label>
+      <label><input type="radio" name="trauma-e" value="Significant soft tissue injuries"> Significant soft tissue injury</label>
+    </div>
+  </div>
+  <div class="inline-row">
+    <div class="field-row"><label>RR</label><input type="text" id="trauma-rr" placeholder="/min"></div>
+    <div class="field-row"><label>SpO₂</label><input type="text" id="trauma-spo2" placeholder="%"></div>
+    <div class="field-row"><label>HR</label><input type="text" id="trauma-hr" placeholder="/min"></div>
+    <div class="field-row"><label>BP</label><input type="text" id="trauma-bp" placeholder="mmHg"></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">3</span>Secondary Survey</h2>
+  <div class="field-row"><label>Head / Neck / C-spine</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="ss-head-normal"> Normal</label>
+      <label><input type="checkbox" id="ss-laceration"> Scalp laceration</label>
+      <label><input type="checkbox" id="ss-cspine"> C-spine tenderness / collar</label>
+      <label><input type="checkbox" id="ss-neuro-deficit"> Focal neurological deficit</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Chest / Abdomen / Pelvis</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="ss-chest-normal"> Normal exam</label>
+      <label><input type="checkbox" id="ss-chest-injury"> Chest wall injury / crepitus</label>
+      <label><input type="checkbox" id="ss-abd-tender"> Abdominal tenderness / guarding</label>
+      <label><input type="checkbox" id="ss-pelvis"> Pelvic instability</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Extremities / Neuro</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="ss-ext-normal"> Normal</label>
+      <label><input type="checkbox" id="ss-fracture"> Deformity / fracture</label>
+      <label><input type="checkbox" id="ss-open-fracture"> Open fracture</label>
+      <label><input type="checkbox" id="ss-neuro-periph"> Peripheral neurovascular deficit</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Other findings / injuries</label><textarea id="trauma-other"></textarea></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">4</span>Resuscitation &amp; Imaging</h2>
+  <div id="ix-container-trauma"></div>
+  <div class="field-row"><label>IV access</label><input type="text" id="trauma-iv" placeholder="2 large-bore IVs"></div>
+  <div class="field-row"><label>O₂</label><input type="text" id="trauma-o2" placeholder="L/min"></div>
+  <div class="field-row"><label>Fluids / blood</label><input type="text" id="trauma-fluid" placeholder="crystalloid / PRBC / FFP / platelet"></div>
+  <div id="tx-container-trauma"></div>
+  <div class="field-row"><label>FAST / Imaging / Labs</label><textarea id="trauma-labs" placeholder="FAST positive / negative; eFAST zones; CT findings"></textarea></div>
+  <div class="field-row"><label>Damage control resuscitation</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="dc-txa"> TXA 1 g IV over 10 min (within 3 hr)</label>
+      <label><input type="checkbox" id="dc-mtp"> Massive transfusion protocol (1:1:1 PRBC:FFP:Platelet)</label>
+      <label><input type="checkbox" id="dc-permissive"> Permissive hypotension</label>
+      <label><input type="checkbox" id="dc-rewarm"> Active rewarming</label>
+      <label><input type="checkbox" id="dc-surgery"> Damage control surgery indicated</label>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">5</span>Tetanus Prophylaxis (CDC 2024)</h2>
+  <div class="field-row"><label>Wound type</label>
+    <div class="radio-group">
+      <label><input type="radio" name="tet-wound" value="clean minor"> Clean minor</label>
+      <label><input type="radio" name="tet-wound" value="dirty / major"> Dirty / major / devitalized</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Immunization history</label>
+    <div class="radio-group">
+      <label><input type="radio" name="tet-history" value="≥3 doses, last ≤10 yr"> ≥3 doses, last ≤10 yr</label>
+      <label><input type="radio" name="tet-history" value="≥3 doses, last &gt;10 yr"> ≥3 doses, last &gt;10 yr (clean)</label>
+      <label><input type="radio" name="tet-history" value="≥3 doses, last &gt;5 yr (dirty)"> ≥3 doses, last &gt;5 yr (dirty)</label>
+      <label><input type="radio" name="tet-history" value="&lt;3 doses or unknown"> &lt;3 doses / unknown</label>
+    </div>
+  </div>
+  <div class="score-box score-line" id="tet-line" data-copy="Tetanus: not assessed">Tetanus prophylaxis: <span id="tet-plan">— select wound type + history —</span></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">6</span>Disposition</h2>
+  <div class="field-row"><label>Decision</label>
+    <select id="trauma-disp">
+      <option value="">— select —</option>
+      <option>OR / damage control surgery</option>
+      <option>ICU</option>
+      <option>Trauma ward / observation</option>
+      <option>Discharge with wound care advice</option>
+    </select>
+  </div>
+  <div class="field-row"><label>Consults</label><input type="text" id="trauma-consult" placeholder="Ortho / Neurosurgery / CT surgery"></div>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
+<script src="er-note.js"></script>
+<script>
+ErNote.renderInvestigation(document.getElementById('ix-container-trauma'), 'trauma');
+ErNote.renderTreatment(document.getElementById('tx-container-trauma'), 'trauma');
+
+function updateTetanus(){
+  const wound = document.querySelector('input[name="tet-wound"]:checked');
+  const hist = document.querySelector('input[name="tet-history"]:checked');
+  const planEl = document.getElementById('tet-plan');
+  const lineEl = document.getElementById('tet-line');
+  if (!wound || !hist){ planEl.textContent = '— select wound type + history —'; lineEl.setAttribute('data-copy','Tetanus: not assessed'); return; }
+  const isDirty = wound.value === 'dirty / major';
+  const doses = hist.value;
+  let plan = '';
+  if (doses.includes('last ≤10 yr')) plan = 'No Td/TIG needed';
+  else if (doses.includes('last >10 yr')) plan = 'Td/Tdap booster only';
+  else if (isDirty && doses.includes('last >5 yr (dirty)')) plan = 'Td/Tdap booster + TIG 250 U IM';
+  else if (doses.includes('<3 doses or unknown')) plan = isDirty ? 'Td/Tdap + TIG 250 U IM' : 'Td/Tdap booster only';
+  else plan = 'Review tetanus history';
+  planEl.textContent = plan;
+  lineEl.setAttribute('data-copy','Tetanus prophylaxis: '+plan);
+}
+
+document.querySelectorAll('input[name="tet-wound"], input[name="tet-history"]').forEach(el=>{
+  el.addEventListener('change', updateTetanus);
+});
+updateTetanus();
+
+</script>
+</body>
+</html>

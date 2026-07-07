@@ -296,11 +296,16 @@
             const weightSlider = $('weight');
             const weightInput = $('weight-input');
 
+            const WEIGHT_MIN = 30;
+            const WEIGHT_MAX = 250;
+
             // Restore weight from sessionStorage if available, defaulting to 50 kg
             const storedWeight = sessionStorage.getItem('er-hub-weight');
-            const initialWeight = storedWeight ? parseFloat(storedWeight) : 50;
-            weightSlider.value = initialWeight;
-            weightInput.value = initialWeight.toFixed(1);
+            const parsedWeight = storedWeight ? parseFloat(storedWeight) : NaN;
+            const initialWeight = isNaN(parsedWeight) ? 50 : parsedWeight;
+            const clampedInitialWeight = Math.max(WEIGHT_MIN, Math.min(WEIGHT_MAX, initialWeight));
+            weightSlider.value = clampedInitialWeight;
+            weightInput.value = clampedInitialWeight.toFixed(1);
 
             // Derive concentration unit display dynamically using the drug's dose unit (B1)
             function getConcentrationUnit(doseUnit) {
@@ -549,7 +554,7 @@
                 const weightVal = parseFloat($('weight').value);
                 const doseVal = parseFloat(doseInput.value);
 
-                if (isNaN(weightVal) || weightVal < 30 || weightVal > 250) {
+                if (isNaN(weightVal) || weightVal < WEIGHT_MIN || weightVal > WEIGHT_MAX) {
                     resultContainer.classList.add('hidden');
                     return;
                 }

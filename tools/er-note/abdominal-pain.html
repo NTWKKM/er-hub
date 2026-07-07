@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abdominal Pain — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note.css">
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <a href="index.html" class="nav-title" style="color:inherit;text-decoration:none;">ER NOTE</a>
+  </div>
+  <a href="../../index.html" class="nav-home">← Home</a>
+</nav>
+<div class="tab-bar" role="tablist">
+  <a href="general-er-note.html">General ER Note</a>
+  <a href="sepsis.html">Sepsis</a>
+  <a href="trauma.html">Trauma</a>
+  <a href="mammalian-bite.html">Mammalian Bite</a>
+  <a href="chest-pain.html">Chest Pain</a>
+  <a href="abdominal-pain.html">Abdominal Pain</a>
+  <a href="eye-injury.html">Eye Injury</a>
+</div>
+<main class="main">
+<form id="er-form">
+<div class="patient-strip">
+  <label for="ernote-hn" class="visually-hidden">HN</label>
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — Abdominal Pain</span>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">1</span>ประวัติอาการปวด (Pain History)</h2>
+  <div class="field-row"><label>การเริ่มและความก้าวหน้า (Onset & progression)</label><input type="text" id="abdo-onset" placeholder="sudden vs gradual, constant vs colicky"></div>
+  <div class="field-row"><label>ตำแหน่ง (Location)</label>
+    <div class="radio-group">
+      <label><input type="radio" name="abdo-location" value="RUQ"> RUQ</label>
+      <label><input type="radio" name="abdo-location" value="LUQ"> LUQ</label>
+      <label><input type="radio" name="abdo-location" value="RLQ"> RLQ</label>
+      <label><input type="radio" name="abdo-location" value="LLQ"> LLQ</label>
+      <label><input type="radio" name="abdo-location" value="Epigastric"> Epigastric</label>
+      <label><input type="radio" name="abdo-location" value="Periumbilical"> Periumbilical</label>
+      <label><input type="radio" name="abdo-location" value="Suprapubic"> Suprapubic</label>
+      <label><input type="radio" name="abdo-location" value="Diffuse"> Diffuse</label>
+    </div>
+  </div>
+  <div class="field-row"><label>ลักษณะของอาการ (Character)</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="abdo-colicky"> Colicky / cramping</label>
+      <label><input type="checkbox" id="abdo-burning"> Burning</label>
+      <label><input type="checkbox" id="abdo-constant"> Constant</label>
+      <label><input type="checkbox" id="abdo-sharp"> Sharp / stabbing</label>
+      <label><input type="checkbox" id="abdo-pleuritic"> Pleuritic / worse on inspiration</label>
+    </div>
+  </div>
+  <div class="field-row"><label>การกระจายของอาการ (Radiation)</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="abdo-back"> Back</label>
+      <label><input type="checkbox" id="abdo-shoulder"> Shoulder</label>
+      <label><input type="checkbox" id="abdo-groin"> Groin</label>
+      <label><input type="checkbox" id="abdo-none"> None</label>
+    </div>
+  </div>
+  <div class="field-row"><label>อาการร่วม (Associated symptoms)</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="abdo-vomit"> Vomiting</label>
+      <label><input type="checkbox" id="abdo-fever"> Fever</label>
+      <label><input type="checkbox" id="abdo-constipation"> Constipation</label>
+      <label><input type="checkbox" id="abdo-diarrhea"> Diarrhea</label>
+      <label><input type="checkbox" id="abdo-hematemesis"> Hematemesis / melena</label>
+      <label><input type="checkbox" id="abdo-dysuria"> Dysuria / frequency</label>
+      <label><input type="checkbox" id="abdo-anorexia"> Anorexia</label>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">2</span>ประวัติการผ่าตัดและสูตินรีเวช (Past Surgery & Gynae)</h2>
+  <div class="field-row"><label>ประวัติการผ่าตัดช่องท้อง (Prior abdominal surgery)</label><textarea id="abdo-surgery" placeholder="appendectomy, cholecystectomy, caesarean"></textarea></div>
+  <div class="inline-row">
+    <div class="field-row"><label>ประจำเดือนครั้งสุดท้าย (LMP)</label><input type="text" id="abdo-lmp"></div>
+    <div class="field-row"><label>การตรวจการตั้งครรภ์ (Pregnancy test)</label>
+      <select id="abdo-hcg">
+        <option value="">— select —</option>
+        <option>Negative</option>
+        <option>Positive</option>
+        <option>Not done</option>
+      </select>
+    </div>
+    <div class="field-row"><label>ประวัติสูตินรีเวช (Gynae history)</label><input type="text" id="abdo-gynae"></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">3</span>Physical Exam</h2>
+  <div class="field-row"><label>General appearance</label><input type="text" id="abdo-general" placeholder="well / toxic / distended"></div>
+  <div class="field-row"><label>Abdomen</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="exam-soft"> Soft, non-tender</label>
+      <label><input type="checkbox" id="exam-local"> Localized tenderness</label>
+      <label><input type="checkbox" id="exam-guard"> Guarding / rigidity</label>
+      <label><input type="checkbox" id="exam-rebound"> Rebound tenderness</label>
+      <label><input type="checkbox" id="exam-mass"> Palpable mass</label>
+      <label><input type="checkbox" id="exam-hernia"> Hernia</label>
+      <label><input type="checkbox" id="exam-bowel"> Abnormal bowel sounds</label>
+      <label><input type="checkbox" id="exam-distended"> Distended</label>
+    </div>
+  </div>
+  <div class="field-row"><label>Rectal / pelvic</label><input type="text" id="abdo-rectal"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">4</span>Alvarado Score (Appendicitis)</h2>
+  <div class="field-row"><label>Symptoms / signs</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="alv-migratory" data-pt="1"> Migratory RLQ pain (1)</label>
+      <label><input type="checkbox" id="alv-anorexia" data-pt="1"> Anorexia (1)</label>
+      <label><input type="checkbox" id="alv-nausea" data-pt="1"> Nausea / vomiting (1)</label>
+      <label><input type="checkbox" id="alv-tenderness" data-pt="2"> RLQ tenderness (2)</label>
+      <label><input type="checkbox" id="alv-rebound" data-pt="1"> Rebound tenderness (1)</label>
+      <label><input type="checkbox" id="alv-elevated-wbc" data-pt="2"> Elevated WBC (2)</label>
+      <label><input type="checkbox" id="alv-left-shift" data-pt="1"> Left shift (1)</label>
+      <label><input type="checkbox" id="alv-fever" data-pt="1"> Fever (1)</label>
+    </div>
+  </div>
+  <div class="score-box score-line" id="alvarado-line" data-copy="Alvarado: 0/10 (unlikely)">Alvarado: <span id="alvarado-score">0</span>/10 — <span id="alvarado-risk">unlikely</span></div>
+</div>
+
+<div class="card">
+    <h2 class="section-title"><span class="num">5</span>AIR Score — Andersson Appendicitis Inflammatory Response (12-point)</h2>
+      <div class="inline-row">
+        <div class="field-row"><label>Vomiting</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-vomit" value="0"> No (0)</label>
+            <label><input type="radio" name="air-vomit" value="1"> Yes (1)</label>
+          </div>
+        </div>
+        <div class="field-row"><label>Pain in RLQ</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-rlq" value="0"> No (0)</label>
+            <label><input type="radio" name="air-rlq" value="1"> Yes (1)</label>
+          </div>
+        </div>
+        <div class="field-row"><label>Rebound tenderness / muscular defence</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-rebound" value="0"> None (0)</label>
+            <label><input type="radio" name="air-rebound" value="1"> Light (1)</label>
+            <label><input type="radio" name="air-rebound" value="2"> Medium (2)</label>
+            <label><input type="radio" name="air-rebound" value="3"> Strong (3)</label>
+          </div>
+        </div>
+        <div class="field-row"><label>Body temperature</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-temp" value="0"> &lt;38.5°C (0)</label>
+            <label><input type="radio" name="air-temp" value="1"> ≥38.5°C (1)</label>
+          </div>
+        </div>
+        <div class="field-row"><label>WBC (×10⁹/L)</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-wbc" value="0"> &lt;10.0 (0)</label>
+            <label><input type="radio" name="air-wbc" value="1"> 10.0–14.9 (1)</label>
+            <label><input type="radio" name="air-wbc" value="2"> ≥15.0 (2)</label>
+          </div>
+        </div>
+        <div class="field-row"><label>Polymorphonuclear leucocytes (%)</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-pmn" value="0"> &lt;70% (0)</label>
+            <label><input type="radio" name="air-pmn" value="1"> 70–84% (1)</label>
+            <label><input type="radio" name="air-pmn" value="2"> ≥85% (2)</label>
+          </div>
+        </div>
+        <div class="field-row"><label>CRP (mg/L)</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-crp" value="0"> &lt;10 (0)</label>
+            <label><input type="radio" name="air-crp" value="1"> 10–49 (1)</label>
+            <label><input type="radio" name="air-crp" value="2"> ≥50 (2)</label>
+          </div>
+        </div>
+      </div>
+      <div class="score-box score-line" id="air-line" data-copy="AIR: 0/12 (low risk)">AIR: <span id="air-score">0</span>/12 — <span id="air-risk">low risk</span></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">6</span>Investigations</h2>
+  <div id="ix-container-abdominal-pain"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">7</span>Treatment</h2>
+  <div id="tx-container-abdominal-pain"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">8</span>Plan & Disposition</h2>
+  <div class="field-row"><label>Working diagnosis</label><input type="text" id="abdo-dx"></div>
+  <div class="field-row"><label>Plan</label><textarea id="abdo-plan"></textarea></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">9</span>Disposition</h2>
+  <div class="field-row"><label>Decision</label>
+    <select id="abdo-disp">
+      <option value="">— select —</option>
+      <option>OR / surgical consult</option>
+      <option>Admit / obs</option>
+      <option>Discharge with surgical f/u</option>
+      <option>Discharge with GP f/u</option>
+    </select>
+  </div>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
+<script src="er-note.js"></script>
+<script>
+ErNote.renderInvestigation(document.getElementById('ix-container-abdominal-pain'), 'abdominal-pain');
+ErNote.renderTreatment(document.getElementById('tx-container-abdominal-pain'), 'abdominal-pain');
+
+function sumCheckboxPts(ids){
+  let s=0;
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    if (el && el.checked) s += parseInt(el.getAttribute('data-pt')||'1',10);
+  });
+  return s;
+}
+function sumRadioGroups(names){
+  let s=0;
+  names.forEach(name=>{
+    const el=document.querySelector('input[name="'+name+'"]:checked');
+    if (el) s += parseInt(el.value,10)||0;
+  });
+  return s;
+}
+
+function updateAlvarado(){
+  const ids = ['alv-migratory','alv-anorexia','alv-nausea','alv-tenderness','alv-rebound','alv-elevated-wbc','alv-left-shift','alv-fever'];
+  const s = sumCheckboxPts(ids);
+  const lineEl = document.getElementById('alvarado-line');
+  let risk = 'unlikely';
+  if (s >= 7) risk = 'high probability (surgical consult)';
+  else if (s >= 5) risk = 'intermediate (imaging)';
+  document.getElementById('alvarado-score').textContent = s;
+  document.getElementById('alvarado-risk').textContent = risk;
+  lineEl.setAttribute('data-copy','Alvarado: '+s+'/10 ('+risk+')');
+  lineEl.classList.remove('risk-low','risk-medium','risk-high');
+  lineEl.classList.add(s>=7?'risk-high':s>=4?'risk-medium':'risk-low');
+}
+
+function updateAir(){
+    const s = sumRadioGroups(['air-vomit','air-rlq','air-rebound','air-temp','air-wbc','air-pmn','air-crp']);
+    const lineEl = document.getElementById('air-line');
+    let risk = 'low risk';
+    if (s >= 9) risk = 'high risk (imaging / surgical consult)';
+    else if (s >= 5) risk = 'intermediate risk';
+    document.getElementById('air-score').textContent = s;
+    document.getElementById('air-risk').textContent = risk;
+    lineEl.setAttribute('data-copy','AIR: '+s+'/12 ('+risk+')');
+    lineEl.classList.remove('risk-low','risk-medium','risk-high');
+    lineEl.classList.add(s>=9?'risk-high':s>=5?'risk-medium':'risk-low');
+  }
+
+  ['alv-migratory','alv-anorexia','alv-nausea','alv-tenderness','alv-rebound','alv-elevated-wbc','alv-left-shift','alv-fever'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.addEventListener('change', updateAlvarado);
+  });
+  ['air-vomit','air-rlq','air-rebound','air-temp','air-wbc','air-pmn','air-crp'].forEach(name=>{
+    document.querySelectorAll('input[name="'+name+'"]').forEach(el=> el.addEventListener('change', updateAir));
+  });
+updateAlvarado();
+updateAir();
+
+</script>
+</body>
+</html>

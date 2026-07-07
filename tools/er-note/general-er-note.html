@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>General ER Note — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note.css">
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <a href="index.html" class="nav-title" style="color:inherit;text-decoration:none;">ER NOTE</a>
+  </div>
+  <a href="../../index.html" class="nav-home">← Home</a>
+</nav>
+<div class="tab-bar" role="tablist">
+  <a href="general-er-note.html">General ER Note</a>
+  <a href="sepsis.html">Sepsis</a>
+  <a href="trauma.html">Trauma</a>
+  <a href="mammalian-bite.html">Mammalian Bite</a>
+  <a href="chest-pain.html">Chest Pain</a>
+  <a href="abdominal-pain.html">Abdominal Pain</a>
+  <a href="eye-injury.html">Eye Injury</a>
+</div>
+<main class="main">
+<form id="er-form">
+<div class="patient-strip">
+  <label for="ernote-hn" class="visually-hidden">HN</label>
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — General</span>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">1</span>ประวัติการเจ็บป่วย (Chief Complaint &amp; HPI)</h2>
+  <div class="field-row"><label>อาการหลักที่พบบ่อย (คลิกเพื่อใส่)</label>
+    <div class="chip-row" data-target="cc-text">
+      <button type="button" class="chip" data-text="Fever">Fever</button>
+      <button type="button" class="chip" data-text="Chest pain">Chest pain</button>
+      <button type="button" class="chip" data-text="Abdominal pain">Abdominal pain</button>
+      <button type="button" class="chip" data-text="Dyspnea">Dyspnea</button>
+      <button type="button" class="chip" data-text="Headache">Headache</button>
+      <button type="button" class="chip" data-text="Syncope">Syncope</button>
+      <button type="button" class="chip" data-text="Trauma">Trauma</button>
+      <button type="button" class="chip" data-text="Altered mental status">Altered mental status</button>
+    </div>
+  </div>
+  <div class="field-row"><label>อาการหลัก (Chief complaint)</label><input type="text" id="cc-text" placeholder="พิมพ์อาการหลักของผู้ป่วย"></div>
+  <div class="field-row"><label>ประวัติการเจ็บป่วยปัจจุบัน (HPI) — เลือกได้จาก chip</label>
+    <div class="chip-row" data-target="hpi-text">
+      <button type="button" class="chip" data-text="เริ่มเป็นทันที (Sudden onset).">เริ่มเป็นทันที (Sudden onset)</button>
+      <button type="button" class="chip" data-text="ค่อยเป็นค่อยไป (Gradual onset).">ค่อยเป็นค่อยไป (Gradual onset)</button>
+      <button type="button" class="chip" data-text="ปวดต่อเนื่อง (Constant).">ปวดต่อเนื่อง (Constant)</button>
+      <button type="button" class="chip" data-text="ปวดเป็นพักๆ (Intermittent).">ปวดเป็นพักๆ (Intermittent)</button>
+      <button type="button" class="chip" data-text="อาการแย่ลงตั้งแต่เริ่มเป็น (Worsening since onset).">อาการแย่ลงตั้งแต่เริ่มเป็น (Worsening)</button>
+      <button type="button" class="chip" data-text="ไม่เคยมีอาการคล้ายนี้มาก่อน (No similar episodes previously).">ไม่เคยมีอาการคล้ายนี้มาก่อน (No previous episodes)</button>
+      <button type="button" class="chip" data-text="ไม่พบปัจจัยที่ทำให้อาการดีขึ้น (No relieving factors identified).">ไม่พบปัจจัยบรรเทา (No relief)</button>
+    </div>
+  </div>
+  <div class="field-row"><label for="hpi-text">ประวัติการเจ็บป่วยปัจจุบัน (History of present illness)</label><textarea id="hpi-text" placeholder="ใช้ chip ด้านบนเพื่อเร่งการพิมพ์ หรือพิมพ์เองได้"></textarea></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">2</span>ประวัติการเจ็บป่วยเดิม ยา และการแพ้ยา (PMH, Medications &amp; Allergies)</h2>
+  <div class="field-row"><label>โรคประจำตัว (เลือกจาก chip)</label>
+    <div class="chip-row" data-target="pmh-text">
+      <button type="button" class="chip" data-text="DM">DM</button>
+      <button type="button" class="chip" data-text="HT">HT</button>
+      <button type="button" class="chip" data-text="DLP">DLP</button>
+      <button type="button" class="chip" data-text="CKD">CKD</button>
+      <button type="button" class="chip" data-text="CAD">CAD</button>
+      <button type="button" class="chip" data-text="CVA">CVA</button>
+      <button type="button" class="chip" data-text="COPD">COPD</button>
+      <button type="button" class="chip" data-text="Asthma">Asthma</button>
+      <button type="button" class="chip" data-text="ไม่มีโรคประจำตัวที่ทราบ (No known medical illness).">ไม่มีโรคประจำตัว (No known illness)</button>
+    </div>
+  </div>
+  <div class="field-row"><label for="pmh-text">ประวัติการเจ็บป่วยเดิม (Past medical history)</label><textarea id="pmh-text"></textarea></div>
+  <div class="inline-row">
+    <div class="field-row"><label>ยาที่รับประทาน (Medications)</label><input type="text" id="meds-text"></div>
+    <div class="field-row"><label>การแพ้ยา (Allergies)</label><input type="text" id="allergy-text" placeholder="NKDA / ระบุยาที่แพ้"></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">3</span>Vitals &amp; General Appearance</h2>
+  <div class="vitals-grid">
+    <div class="field-row"><label>BP</label><input type="text" id="vit-bp"></div>
+    <div class="field-row"><label>HR</label><input type="text" id="vit-hr"></div>
+    <div class="field-row"><label>RR</label><input type="text" id="vit-rr"></div>
+    <div class="field-row"><label>Temp</label><input type="text" id="vit-t"></div>
+    <div class="field-row"><label>SpO₂</label><input type="text" id="vit-spo2"></div>
+    <div class="field-row"><label>GCS / E V M</label><input type="text" id="vit-gcs"></div>
+  </div>
+  <div class="field-row"><label>General appearance</label><input type="text" id="gen-app"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">4</span>การตรวจระบบอวัยวะ (Review of Systems — chip-assisted)</h2>
+  <div class="field-row"><label>ROS chips</label>
+    <div class="chip-row" data-target="ros-text">
+      <button type="button" class="chip" data-text="ไม่มีไข้ (No fever).">ไม่มีไข้ (No fever)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการไอ (No cough).">ไม่มีอาการไอ (No cough)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการเจ็บหน้าอก (No chest pain).">ไม่มีอาการเจ็บหน้าอก (No chest pain)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการหอบเหนื่อย (No dyspnea).">ไม่มีอาการหอบเหนื่อย (No dyspnea)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการปวดท้อง (No abdominal pain).">ไม่มีอาการปวดท้อง (No abdominal pain)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการคลื่นไส้อาเจียน/ท้องเสีย (No vomiting/diarrhea).">ไม่มีอาการคลื่นไส้/ท้องเสีย (No GI sx)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการปัสสาวะขัด/เป็นเลือด (No dysuria/hematuria).">ไม่มีอาการปัสสาวะขัด/เป็นเลือด (No urinary sx)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการปวดศีรษะ/คอแข็ง (No headache/neck stiffness).">ไม่มีอาการปวดศีรษะ/คอแข็ง (No neuro sx)</button>
+    </div>
+  </div>
+  <div class="field-row"><label for="ros-text">บันทึก ROS (ROS notes)</label><textarea id="ros-text"></textarea></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">5</span>Physical Examination (chip-assisted)</h2>
+  <div class="field-row"><label>Exam chips</label>
+    <div class="chip-row" data-target="exam-text">
+      <button type="button" class="chip" data-text="Alert, cooperative.">Alert/cooperative</button>
+      <button type="button" class="chip" data-text="No pallor/jaundice/cyanosis.">Normal inspection</button>
+      <button type="button" class="chip" data-text="Clear chest bilaterally.">Clear chest</button>
+      <button type="button" class="chip" data-text="Normal heart sounds.">Normal heart sounds</button>
+      <button type="button" class="chip" data-text="Soft, non-tender abdomen.">Soft abdomen</button>
+      <button type="button" class="chip" data-text="No edema.">No edema</button>
+      <button type="button" class="chip" data-text="GCS 15, no focal deficit.">Neuro normal</button>
+    </div>
+  </div>
+  <div class="field-row"><label for="exam-text">Physical examination</label><textarea id="exam-text"></textarea></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">6</span>Investigations</h2>
+  <div id="ix-container-general"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">7</span>Treatment</h2>
+  <div id="tx-container-general"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">8</span>Plan &amp; Disposition</h2>
+  <div class="field-row"><label>Working diagnosis</label><input type="text" id="general-dx"></div>
+  <div class="field-row"><label>Plan</label><textarea id="general-plan"></textarea></div>
+  <div class="field-row"><label>Disposition</label>
+    <select id="general-disp">
+      <option value="">— select —</option>
+      <option>Admit</option>
+      <option>Observation</option>
+      <option>Discharge with clinic f/u</option>
+      <option>Discharge with GP f/u</option>
+      <option>Refer / consult</option>
+      <option>AMA / left without being seen</option>
+    </select>
+  </div>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
+<script src="er-note.js"></script>
+<script>
+function appendChipToTarget(chip){
+  const targetId = chip.closest('.chip-row').getAttribute('data-target');
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  const text = chip.getAttribute('data-text');
+  if (target.tagName === 'INPUT'){
+    target.value = (target.value ? target.value + ', ' : '') + text;
+  } else {
+    const sep = target.value.length > 0 && !target.value.match(/[.\s]$/) ? '. ' : '';
+    target.value += sep + text + ' ';
+  }
+}
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click', () => appendChipToTarget(chip));
+});
+ErNote.renderInvestigation(document.getElementById('ix-container-general'), 'general-er-note');
+ErNote.renderTreatment(document.getElementById('tx-container-general'), 'general-er-note');
+</script>
+</body>
+</html>
