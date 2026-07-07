@@ -150,9 +150,17 @@ describe('Dead CSS Selector Guard', () => {
     }
     
     if (fs.existsSync(TOOLS_DIR)) {
-        fs.readdirSync(TOOLS_DIR).forEach(file => {
-            if (file.endsWith('.html')) {
-                filesToCheck.push({ name: `tools/${file}`, path: path.join(TOOLS_DIR, file) });
+        fs.readdirSync(TOOLS_DIR, { withFileTypes: true }).forEach(entry => {
+            if (entry.isFile() && entry.name.endsWith('.html')) {
+                filesToCheck.push({ name: `tools/${entry.name}`, path: path.join(TOOLS_DIR, entry.name) });
+            } else if (entry.isDirectory()) {
+                // Recurse into subdirectories (e.g. tools/er-note/)
+                const subDir = path.join(TOOLS_DIR, entry.name);
+                fs.readdirSync(subDir).forEach(file => {
+                    if (file.endsWith('.html')) {
+                        filesToCheck.push({ name: `tools/${entry.name}/${file}`, path: path.join(subDir, file) });
+                    }
+                });
             }
         });
     }
