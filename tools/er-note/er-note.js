@@ -232,6 +232,10 @@
     var hn = getHNValue();
     if (hn) lines.push('HN: ' + hn, '');
     document.querySelectorAll('.card').forEach(function(card){
+      // Skip nested narrative-sub-cards — their fields are already captured
+      // by the ancestor outer card's un-scoped querySelectorAll.
+      if (card.parentElement && card.parentElement.closest('.card')) return;
+
       var title = card.querySelector('.section-title');
       if (!title) return;
       var section = title.textContent.replace(/^\s*\d+\s*/, '').trim();
