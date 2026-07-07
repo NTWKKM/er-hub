@@ -15,6 +15,16 @@
 - **Portal Hover / Slate Blue:** `#49628d` (HSL 218°, 32%, 42% — same hue as the nav gradient, lower saturation, higher lightness. Used exclusively as the order-row hover background on the portal. WCAG AA verified: Braun White `#F0EDE5` on `#49628d` = 5.23:1.)
 - **Braun White:** `#F0EDE5` (Warm ivory used for all navigation bar text — `nav-home`, `nav-title`, `nav-center`, `nav-right` — and as the text/border colour of hovered portal rows. Replaces pure white `#fff` / `rgba(255,255,255,...)` across navigation elements.)
 
+#### Order-Sheet Form Page Tokens
+
+Custom properties declared under `:root` in `base.css` for standing-order form pages (rtpa, stemi, nstemi, pe, heparin, antivenom, sedation):
+
+- **Text Primary:** `--text-primary: #333333` (body text on form pages — distinct from portal `--ink: #1a1a1a`)
+- **Highlight:** `--highlight-yellow: #ffeaa7` (dose summary banner background), `--highlight-red-bg: #fff5f5` (cardiac alert background)
+- **Stroke Theme (blue):** `--stroke-primary: #007bff` (stroke page h1/buttons/focus borders), `--stroke-hover: #0056b3` (hover state), `--stroke-bg-highlight: #e6f0ff` (stroke input focus background)
+- **Cardiac Theme (red):** `--cardiac-primary: #c0392b` (cardiac page h1/buttons/focus borders/dose numbers), `--cardiac-hover: #a93226` (hover state), `--cardiac-bg-highlight: #fff5f5` (cardiac input focus background)
+- **Success (green):** `--success-primary: #28a745` (print button background), `--success-hover: #218838` (print button hover)
+
 #### Module Specific Accents (Muted Text-Only Categories)
 
 - **Neurology:** Ochre `#b8873a`

@@ -26,7 +26,7 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 │       ├── mammalian-bite.html  ← Mammalian Bite (RIG dose)
 │       ├── chest-pain.html      ← Chest Pain (HEART score)
 │       ├── abdominal-pain.html  ← Abdominal Pain (Alvarado score)
-│       ├── eye-injury.html     ← Eye Injury
+│       ├── eye-injury.html       ← Eye Injury
 │       ├── er-note.css          ← ER NOTE local styles (dark glassmorphism)
 │       └── er-note.js           ← ER NOTE local behavior (drafts, clipboard, modules)
 ├── shared/
