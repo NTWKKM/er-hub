@@ -26,18 +26,22 @@
 </div>
 <main class="main">
 <form id="er-form">
+<div class="patient-strip">
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — Chest Pain</span>
+</div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">1</span>Chest Pain HPI</h2>
-  <div class="field-row"><label>Onset &amp; duration</label><input type="text" id="chest-onset" placeholder="e.g. sudden at rest, 30 min before arrival"></div>
-  <div class="field-row"><label>Severity (0–10)</label>
+  <h2 class="section-title"><span class="num">1</span>ประวัติอาการเจ็บหน้าอก (Chest Pain HPI)</h2>
+  <div class="field-row"><label>การเริ่มและระยะเวลา (Onset & duration)</label><input type="text" id="chest-onset" placeholder="e.g. sudden at rest, 30 min before arrival"></div>
+  <div class="field-row"><label>ระดับความรุนแรง (Severity 0–10)</label>
     <div class="radio-group">
       <label><input type="radio" name="chest-severity" value="0–3"> Mild 0–3</label>
       <label><input type="radio" name="chest-severity" value="4–6"> Moderate 4–6</label>
       <label><input type="radio" name="chest-severity" value="7–10"> Severe 7–10</label>
     </div>
   </div>
-  <div class="field-row"><label>Character</label>
+  <div class="field-row"><label>ลักษณะของอาการ (Character)</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="chest-pressure"> Pressure / squeezing</label>
       <label><input type="checkbox" id="chest-tearing"> Tearing / ripping</label>
@@ -46,7 +50,7 @@
       <label><input type="checkbox" id="chest-burning"> Burning</label>
     </div>
   </div>
-  <div class="field-row"><label>Radiation</label>
+  <div class="field-row"><label>การกระจายของอาการ (Radiation)</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="chest-rad-arm"> Left arm / jaw</label>
       <label><input type="checkbox" id="chest-rad-back"> Back</label>
@@ -54,7 +58,7 @@
       <label><input type="checkbox" id="chest-rad-none"> None</label>
     </div>
   </div>
-  <div class="field-row"><label>Associated symptoms</label>
+  <div class="field-row"><label>อาการร่วม (Associated symptoms)</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="chest-sweat"> Diaphoresis</label>
       <label><input type="checkbox" id="chest-nausea"> Nausea / vomiting</label>
@@ -66,8 +70,8 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">2</span>Risk Factors &amp; ECG</h2>
-  <div class="field-row"><label>Risk factors</label>
+  <h2 class="section-title"><span class="num">2</span>ปัจจัยเสี่ยงและ ECG (Risk Factors & ECG)</h2>
+  <div class="field-row"><label>ปัจจัยเสี่ยง (Risk factors)</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="chest-htn"> HTN</label>
       <label><input type="checkbox" id="chest-dm"> DM</label>
@@ -163,7 +167,17 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">5</span>Disposition</h2>
+  <h2 class="section-title"><span class="num">5</span>Investigations</h2>
+  <div id="ix-container-chest-pain"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">6</span>Treatment</h2>
+  <div id="tx-container-chest-pain"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">7</span>Disposition</h2>
   <div class="field-row"><label>Decision</label>
     <select id="chest-disp">
       <option value="">— select —</option>
@@ -184,9 +198,11 @@
   <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
   <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
 </div>
-<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v22</footer>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
 <script src="er-note.js"></script>
 <script>
+ErNote.renderInvestigation(document.getElementById('ix-container-chest-pain'), 'chest-pain');
+ErNote.renderTreatment(document.getElementById('tx-container-chest-pain'), 'chest-pain');
 
 function sumRadioGroups(names){
   let s=0;

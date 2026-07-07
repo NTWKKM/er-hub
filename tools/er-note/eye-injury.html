@@ -26,10 +26,14 @@
 </div>
 <main class="main">
 <form id="er-form">
+<div class="patient-strip">
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — Eye Injury</span>
+</div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">1</span>Mechanism &amp; History</h2>
-  <div class="field-row"><label>Mechanism</label>
+  <h2 class="section-title"><span class="num">1</span>กลไกและประวัติ (Mechanism & History)</h2>
+  <div class="field-row"><label>กลไกการบาดเจ็บ (Mechanism)</label>
     <div class="radio-group">
       <label><input type="radio" name="eye-mech" value="Foreign body / dust"> Foreign body / dust</label>
       <label><input type="radio" name="eye-mech" value="Blunt trauma"> Blunt trauma</label>
@@ -39,12 +43,12 @@
       <label><input type="radio" name="eye-mech" value="Other"> Other</label>
     </div>
   </div>
-  <div class="field-row"><label>Chemical agent (if any)</label><input type="text" id="eye-chemical"></div>
+  <div class="field-row"><label>สารเคมี (ถ้ามี) (Chemical agent)</label><input type="text" id="eye-chemical"></div>
   <div class="inline-row">
-    <div class="field-row"><label>Time since injury</label><input type="text" id="eye-time"></div>
-    <div class="field-row"><label>Eye protection</label><input type="text" id="eye-protection"></div>
+    <div class="field-row"><label>เวลาตั้งแต่บาดเจ็บ (Time since injury)</label><input type="text" id="eye-time"></div>
+    <div class="field-row"><label>อุปกรณ์ป้องกันดวงตา (Eye protection)</label><input type="text" id="eye-protection"></div>
   </div>
-  <div class="field-row"><label>Affected eye(s)</label>
+  <div class="field-row"><label>ดวงตาที่ได้รับผลกระทบ (Affected eye(s))</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="eye-right"> Right</label>
       <label><input type="checkbox" id="eye-left"> Left</label>
@@ -141,7 +145,9 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">6</span>Management &amp; Disposition</h2>
+  <h2 class="section-title"><span class="num">6</span>Investigations &amp; Management</h2>
+  <div id="ix-container-eye-injury"></div>
+  <div id="tx-container-eye-injury"></div>
   <div class="field-row"><label>Medications / procedure</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="rx-topical-abx"> Topical antibiotic ointment</label>
@@ -178,7 +184,11 @@
   <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
   <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
 </div>
-<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v22</footer>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
 <script src="er-note.js"></script>
+<script>
+ErNote.renderInvestigation(document.getElementById('ix-container-eye-injury'), 'eye-injury');
+ErNote.renderTreatment(document.getElementById('tx-container-eye-injury'), 'eye-injury');
+</script>
 </body>
 </html>

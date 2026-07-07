@@ -26,10 +26,14 @@
 </div>
 <main class="main">
 <form id="er-form">
+<div class="patient-strip">
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — General</span>
+</div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">1</span>Chief Complaint &amp; HPI</h2>
-  <div class="field-row"><label>Common CC (click to insert)</label>
+  <h2 class="section-title"><span class="num">1</span>ประวัติการเจ็บป่วย (Chief Complaint &amp; HPI)</h2>
+  <div class="field-row"><label>อาการหลักที่พบบ่อย (คลิกเพื่อใส่)</label>
     <div class="chip-row" data-target="cc-text">
       <button type="button" class="chip" data-text="Fever">Fever</button>
       <button type="button" class="chip" data-text="Chest pain">Chest pain</button>
@@ -41,24 +45,24 @@
       <button type="button" class="chip" data-text="Altered mental status">Altered mental status</button>
     </div>
   </div>
-  <div class="field-row"><label>Chief complaint</label><input type="text" id="cc-text" placeholder="free-text chief complaint"></div>
-  <div class="field-row"><label>HPI (chip-assisted)</label>
+  <div class="field-row"><label>อาการหลัก (Chief complaint)</label><input type="text" id="cc-text" placeholder="พิมพ์อาการหลักของผู้ป่วย"></div>
+  <div class="field-row"><label>ประวัติการเจ็บป่วยปัจจุบัน (HPI) — เลือกได้จาก chip</label>
     <div class="chip-row" data-target="hpi-text">
-      <button type="button" class="chip" data-text="Sudden onset.">Sudden onset</button>
-      <button type="button" class="chip" data-text="Gradual onset.">Gradual onset</button>
-      <button type="button" class="chip" data-text="Constant.">Constant</button>
-      <button type="button" class="chip" data-text="Intermittent.">Intermittent</button>
-      <button type="button" class="chip" data-text="Worsening since onset.">Worsening</button>
-      <button type="button" class="chip" data-text="No similar episodes previously.">No previous episodes</button>
-      <button type="button" class="chip" data-text="No relieving factors identified.">No relief</button>
+      <button type="button" class="chip" data-text="เริ่มเป็นทันที (Sudden onset).">เริ่มเป็นทันที (Sudden onset)</button>
+      <button type="button" class="chip" data-text="ค่อยเป็นค่อยไป (Gradual onset).">ค่อยเป็นค่อยไป (Gradual onset)</button>
+      <button type="button" class="chip" data-text="ปวดต่อเนื่อง (Constant).">ปวดต่อเนื่อง (Constant)</button>
+      <button type="button" class="chip" data-text="ปวดเป็นพักๆ (Intermittent).">ปวดเป็นพักๆ (Intermittent)</button>
+      <button type="button" class="chip" data-text="อาการแย่ลงตั้งแต่เริ่มเป็น (Worsening since onset).">อาการแย่ลงตั้งแต่เริ่มเป็น (Worsening)</button>
+      <button type="button" class="chip" data-text="ไม่เคยมีอาการคล้ายนี้มาก่อน (No similar episodes previously).">ไม่เคยมีอาการคล้ายนี้มาก่อน (No previous episodes)</button>
+      <button type="button" class="chip" data-text="ไม่พบปัจจัยที่ทำให้อาการดีขึ้น (No relieving factors identified).">ไม่พบปัจจัยบรรเทา (No relief)</button>
     </div>
   </div>
-  <div class="field-row"><label for="hpi-text">History of present illness</label><textarea id="hpi-text" placeholder="Use chips above to speed up entry"></textarea></div>
+  <div class="field-row"><label for="hpi-text">ประวัติการเจ็บป่วยปัจจุบัน (History of present illness)</label><textarea id="hpi-text" placeholder="ใช้ chip ด้านบนเพื่อเร่งการพิมพ์ หรือพิมพ์เองได้"></textarea></div>
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">2</span>PMH, Medications &amp; Allergies</h2>
-  <div class="field-row"><label>PMH chips</label>
+  <h2 class="section-title"><span class="num">2</span>ประวัติการเจ็บป่วยเดิม ยา และการแพ้ยา (PMH, Medications &amp; Allergies)</h2>
+  <div class="field-row"><label>โรคประจำตัว (เลือกจาก chip)</label>
     <div class="chip-row" data-target="pmh-text">
       <button type="button" class="chip" data-text="DM">DM</button>
       <button type="button" class="chip" data-text="HT">HT</button>
@@ -68,13 +72,13 @@
       <button type="button" class="chip" data-text="CVA">CVA</button>
       <button type="button" class="chip" data-text="COPD">COPD</button>
       <button type="button" class="chip" data-text="Asthma">Asthma</button>
-      <button type="button" class="chip" data-text="No known medical illness.">No known illness</button>
+      <button type="button" class="chip" data-text="ไม่มีโรคประจำตัวที่ทราบ (No known medical illness).">ไม่มีโรคประจำตัว (No known illness)</button>
     </div>
   </div>
-  <div class="field-row"><label for="pmh-text">Past medical history</label><textarea id="pmh-text"></textarea></div>
+  <div class="field-row"><label for="pmh-text">ประวัติการเจ็บป่วยเดิม (Past medical history)</label><textarea id="pmh-text"></textarea></div>
   <div class="inline-row">
-    <div class="field-row"><label>Medications</label><input type="text" id="meds-text"></div>
-    <div class="field-row"><label>Allergies</label><input type="text" id="allergy-text" placeholder="NKDA / specify"></div>
+    <div class="field-row"><label>ยาที่รับประทาน (Medications)</label><input type="text" id="meds-text"></div>
+    <div class="field-row"><label>การแพ้ยา (Allergies)</label><input type="text" id="allergy-text" placeholder="NKDA / ระบุยาที่แพ้"></div>
   </div>
 </div>
 
@@ -92,20 +96,20 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">4</span>Review of Systems (chip-assisted)</h2>
+  <h2 class="section-title"><span class="num">4</span>การตรวจระบบอวัยวะ (Review of Systems — chip-assisted)</h2>
   <div class="field-row"><label>ROS chips</label>
     <div class="chip-row" data-target="ros-text">
-      <button type="button" class="chip" data-text="No fever.">No fever</button>
-      <button type="button" class="chip" data-text="No cough.">No cough</button>
-      <button type="button" class="chip" data-text="No chest pain.">No chest pain</button>
-      <button type="button" class="chip" data-text="No dyspnea.">No dyspnea</button>
-      <button type="button" class="chip" data-text="No abdominal pain.">No abdominal pain</button>
-      <button type="button" class="chip" data-text="No vomiting/diarrhea.">No GI sx</button>
-      <button type="button" class="chip" data-text="No dysuria/hematuria.">No urinary sx</button>
-      <button type="button" class="chip" data-text="No headache/neck stiffness.">No neuro sx</button>
+      <button type="button" class="chip" data-text="ไม่มีไข้ (No fever).">ไม่มีไข้ (No fever)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการไอ (No cough).">ไม่มีอาการไอ (No cough)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการเจ็บหน้าอก (No chest pain).">ไม่มีอาการเจ็บหน้าอก (No chest pain)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการหอบเหนื่อย (No dyspnea).">ไม่มีอาการหอบเหนื่อย (No dyspnea)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการปวดท้อง (No abdominal pain).">ไม่มีอาการปวดท้อง (No abdominal pain)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการคลื่นไส้อาเจียน/ท้องเสีย (No vomiting/diarrhea).">ไม่มีอาการคลื่นไส้/ท้องเสีย (No GI sx)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการปัสสาวะขัด/เป็นเลือด (No dysuria/hematuria).">ไม่มีอาการปัสสาวะขัด/เป็นเลือด (No urinary sx)</button>
+      <button type="button" class="chip" data-text="ไม่มีอาการปวดศีรษะ/คอแข็ง (No headache/neck stiffness).">ไม่มีอาการปวดศีรษะ/คอแข็ง (No neuro sx)</button>
     </div>
   </div>
-  <div class="field-row"><label for="ros-text">ROS notes</label><textarea id="ros-text"></textarea></div>
+  <div class="field-row"><label for="ros-text">บันทึก ROS (ROS notes)</label><textarea id="ros-text"></textarea></div>
 </div>
 
 <div class="card">
@@ -125,8 +129,17 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">6</span>Plan &amp; Disposition</h2>
-  <div class="field-row"><label>Investigations ordered</label><input type="text" id="general-investigations"></div>
+  <h2 class="section-title"><span class="num">6</span>Investigations</h2>
+  <div id="ix-container-general"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">7</span>Treatment</h2>
+  <div id="tx-container-general"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">8</span>Plan &amp; Disposition</h2>
   <div class="field-row"><label>Working diagnosis</label><input type="text" id="general-dx"></div>
   <div class="field-row"><label>Plan</label><textarea id="general-plan"></textarea></div>
   <div class="field-row"><label>Disposition</label>
@@ -149,10 +162,9 @@
   <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
   <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
 </div>
-<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v22</footer>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
 <script src="er-note.js"></script>
 <script>
-
 function appendChipToTarget(chip){
   const targetId = chip.closest('.chip-row').getAttribute('data-target');
   const target = document.getElementById(targetId);
@@ -161,15 +173,15 @@ function appendChipToTarget(chip){
   if (target.tagName === 'INPUT'){
     target.value = (target.value ? target.value + ', ' : '') + text;
   } else {
-    const sep = target.value.length &gt; 0 && !target.value.match(/[.\s]$/) ? '. ' : '';
+    const sep = target.value.length > 0 && !target.value.match(/[.\s]$/) ? '. ' : '';
     target.value += sep + text + ' ';
   }
 }
-
 document.querySelectorAll('.chip').forEach(chip=>{
   chip.addEventListener('click', () => appendChipToTarget(chip));
 });
-
+ErNote.renderInvestigation(document.getElementById('ix-container-general'), 'general-er-note');
+ErNote.renderTreatment(document.getElementById('tx-container-general'), 'general-er-note');
 </script>
 </body>
 </html>

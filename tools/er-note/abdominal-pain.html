@@ -26,11 +26,15 @@
 </div>
 <main class="main">
 <form id="er-form">
+<div class="patient-strip">
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — Abdominal Pain</span>
+</div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">1</span>Pain History</h2>
-  <div class="field-row"><label>Onset &amp; progression</label><input type="text" id="abdo-onset" placeholder="sudden vs gradual, constant vs colicky"></div>
-  <div class="field-row"><label>Location</label>
+  <h2 class="section-title"><span class="num">1</span>ประวัติอาการปวด (Pain History)</h2>
+  <div class="field-row"><label>การเริ่มและความก้าวหน้า (Onset & progression)</label><input type="text" id="abdo-onset" placeholder="sudden vs gradual, constant vs colicky"></div>
+  <div class="field-row"><label>ตำแหน่ง (Location)</label>
     <div class="radio-group">
       <label><input type="radio" name="abdo-location" value="RUQ"> RUQ</label>
       <label><input type="radio" name="abdo-location" value="LUQ"> LUQ</label>
@@ -42,7 +46,7 @@
       <label><input type="radio" name="abdo-location" value="Diffuse"> Diffuse</label>
     </div>
   </div>
-  <div class="field-row"><label>Character</label>
+  <div class="field-row"><label>ลักษณะของอาการ (Character)</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="abdo-colicky"> Colicky / cramping</label>
       <label><input type="checkbox" id="abdo-burning"> Burning</label>
@@ -51,7 +55,7 @@
       <label><input type="checkbox" id="abdo-pleuritic"> Pleuritic / worse on inspiration</label>
     </div>
   </div>
-  <div class="field-row"><label>Radiation</label>
+  <div class="field-row"><label>การกระจายของอาการ (Radiation)</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="abdo-back"> Back</label>
       <label><input type="checkbox" id="abdo-shoulder"> Shoulder</label>
@@ -59,7 +63,7 @@
       <label><input type="checkbox" id="abdo-none"> None</label>
     </div>
   </div>
-  <div class="field-row"><label>Associated symptoms</label>
+  <div class="field-row"><label>อาการร่วม (Associated symptoms)</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="abdo-vomit"> Vomiting</label>
       <label><input type="checkbox" id="abdo-fever"> Fever</label>
@@ -73,11 +77,11 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">2</span>Past Surgery &amp; Gynae</h2>
-  <div class="field-row"><label>Prior abdominal surgery</label><textarea id="abdo-surgery" placeholder="appendectomy, cholecystectomy, caesarean"></textarea></div>
+  <h2 class="section-title"><span class="num">2</span>ประวัติการผ่าตัดและสูตินรีเวช (Past Surgery & Gynae)</h2>
+  <div class="field-row"><label>ประวัติการผ่าตัดช่องท้อง (Prior abdominal surgery)</label><textarea id="abdo-surgery" placeholder="appendectomy, cholecystectomy, caesarean"></textarea></div>
   <div class="inline-row">
-    <div class="field-row"><label>LMP</label><input type="text" id="abdo-lmp"></div>
-    <div class="field-row"><label>Pregnancy test</label>
+    <div class="field-row"><label>ประจำเดือนครั้งสุดท้าย (LMP)</label><input type="text" id="abdo-lmp"></div>
+    <div class="field-row"><label>การตรวจการตั้งครรภ์ (Pregnancy test)</label>
       <select id="abdo-hcg">
         <option value="">— select —</option>
         <option>Negative</option>
@@ -85,7 +89,7 @@
         <option>Not done</option>
       </select>
     </div>
-    <div class="field-row"><label>Gynae history</label><input type="text" id="abdo-gynae"></div>
+    <div class="field-row"><label>ประวัติสูตินรีเวช (Gynae history)</label><input type="text" id="abdo-gynae"></div>
   </div>
 </div>
 
@@ -156,26 +160,23 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">6</span>Investigations &amp; Plan</h2>
-  <div class="inline-row">
-    <div class="field-row"><label>WBC</label><input type="text" id="abdo-wbc"></div>
-    <div class="field-row"><label>CRP</label><input type="text" id="abdo-crp"></div>
-    <div class="field-row"><label>BMP</label><input type="text" id="abdo-bmp"></div>
-  </div>
-  <div class="field-row"><label>Imaging</label>
-    <div class="checkbox-group">
-      <label><input type="checkbox" id="img-us"> US abdomen</label>
-      <label><input type="checkbox" id="img-ct"> CT abdomen-pelvis with contrast</label>
-      <label><input type="checkbox" id="img-xray"> Plain AXR / CXR</label>
-      <label><input type="checkbox" id="img-none"> None yet</label>
-    </div>
-  </div>
+  <h2 class="section-title"><span class="num">6</span>Investigations</h2>
+  <div id="ix-container-abdominal-pain"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">7</span>Treatment</h2>
+  <div id="tx-container-abdominal-pain"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">8</span>Plan & Disposition</h2>
   <div class="field-row"><label>Working diagnosis</label><input type="text" id="abdo-dx"></div>
   <div class="field-row"><label>Plan</label><textarea id="abdo-plan"></textarea></div>
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">7</span>Disposition</h2>
+  <h2 class="section-title"><span class="num">9</span>Disposition</h2>
   <div class="field-row"><label>Decision</label>
     <select id="abdo-disp">
       <option value="">— select —</option>
@@ -194,9 +195,11 @@
   <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
   <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
 </div>
-<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v22</footer>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
 <script src="er-note.js"></script>
 <script>
+ErNote.renderInvestigation(document.getElementById('ix-container-abdominal-pain'), 'abdominal-pain');
+ErNote.renderTreatment(document.getElementById('tx-container-abdominal-pain'), 'abdominal-pain');
 
 function sumCheckboxPts(ids){
   let s=0;

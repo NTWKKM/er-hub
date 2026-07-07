@@ -26,11 +26,15 @@
 </div>
 <main class="main">
 <form id="er-form">
+<div class="patient-strip">
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — Mammalian Bite</span>
+</div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">1</span>Animal &amp; Bite Circumstances</h2>
+  <h2 class="section-title"><span class="num">1</span>สัตว์และสถานการณ์การถูกกัด (Animal &amp; Bite Circumstances)</h2>
   <div class="inline-row">
-    <div class="field-row"><label>Animal</label>
+    <div class="field-row"><label>สัตว์ที่กัด (Animal)</label>
       <select id="bite-animal">
         <option value="">— select —</option>
         <option>Dog</option>
@@ -41,8 +45,8 @@
         <option>Other mammal</option>
       </select>
     </div>
-    <div class="field-row"><label>Date / time of bite</label><input type="datetime-local" id="bite-time"></div>
-    <div class="field-row"><label>Location</label>
+    <div class="field-row"><label>วันที่/เวลาที่ถูกกัด (Date / time of bite)</label><input type="datetime-local" id="bite-time"></div>
+    <div class="field-row"><label>ตำแหน่งที่ถูกกัด (Location)</label>
       <select id="bite-location">
         <option value="">— select —</option>
         <option>Head / neck / face</option>
@@ -53,14 +57,14 @@
       </select>
     </div>
   </div>
-  <div class="field-row"><label>Provoked?</label>
+  <div class="field-row"><label>ถูกยั่ว? (Provoked?)</label>
     <div class="radio-group">
       <label><input type="radio" name="bite-provoked" value="Yes"> Yes</label>
       <label><input type="radio" name="bite-provoked" value="No"> No</label>
       <label><input type="radio" name="bite-provoked" value="Unknown"> Unknown</label>
     </div>
   </div>
-  <div class="field-row"><label>Animal status</label>
+  <div class="field-row"><label>สถานะของสัตว์ (Animal status)</label>
     <select id="bite-status">
       <option value="">— select —</option>
       <option>Healthy, available for 10-day observation</option>
@@ -140,7 +144,9 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">5</span>Antibiotics &amp; Disposition</h2>
+  <h2 class="section-title"><span class="num">5</span>Investigations &amp; Treatment</h2>
+  <div id="ix-container-mammalian-bite"></div>
+  <div id="tx-container-mammalian-bite"></div>
   <div class="field-row"><label>Indications for prophylactic antibiotics</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="abx-hand"> Hand / face / genitalia</label>
@@ -177,9 +183,11 @@
   <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
   <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
 </div>
-<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v22</footer>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
 <script src="er-note.js"></script>
 <script>
+ErNote.renderInvestigation(document.getElementById('ix-container-mammalian-bite'), 'mammalian-bite');
+ErNote.renderTreatment(document.getElementById('tx-container-mammalian-bite'), 'mammalian-bite');
 
 function getRadioVal(name){
   const el = document.querySelector('input[name="'+name+'"]:checked');

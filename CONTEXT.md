@@ -15,7 +15,7 @@
 | **Standing Order** | Standardized medical protocols pre-approved by clinical departments to accelerate urgent treatment. |
 | **ER NOTE** | Narrative emergency department clinical note tool (`tools/er-note/`). Uses per-template worksheets for structured documentation and plain-text output. |
 | **ER NOTE Template** | One standalone HTML file for a specific presentation (General ER Note, Sepsis, Trauma, Mammalian Bite, Chest Pain, Abdominal Pain, Eye Injury). |
-| **ER NOTE Draft** | Client-only auto-saved form state in `localStorage`, keyed `ernote-draft-{templateId}`. Survives tab/browser restarts until cleared. |
+| **ER NOTE Draft** | Client-only auto-saved form state in `localStorage`. Schema v2 (ADR-53): a registry index at `ernote-registry` holds `{ id, template, hn, cc, updatedAt }` per draft; per-draft form data stored under `ernote-draft-{templateId}-{draftId}`. Supports multiple concurrent drafts per template (multi-patient ED workflow). URL `?draft={id}` selects active draft. |
 | **qSOFA** | Quick Sequential Organ Failure Assessment — bedside sepsis screen (RR ≥22, SBP ≤100, altered mentation). Score 0–3. |
 | **SIRS** | Systemic Inflammatory Response Syndrome criteria (temperature, HR, RR, WBC). Score 0–4. |
 | **HEART Score** | Risk stratification for chest-pain patients: History, ECG, Age, Risk factors, Troponin. Score 0–10. |
@@ -40,6 +40,26 @@
 ## 3. Architectural Decision Records (ADRs)
 
 Newest first.
+
+### ADR-53: ER NOTE Redesign — Schema v2 Multi-Patient Drafts, Investigation/Treatment Modules, Thai History Labels, Sidebar (2026-07-08)
+
+- **Context:** The ER NOTE tool (ADR-50/52) had four limitations: (1) storage schema supported only 1 draft per template — opening a second patient with the same template overwrote the first draft; (2) investigations were free-text with no structure; (3) treatment had no consistent section across templates (except sepsis); (4) all field labels were pure English, including history-taking sections which Thai-speaking clinicians found slower to scan.
+- **Decision:**
+  1. **Schema v2 multi-patient drafts:** Registry-based storage (`ernote-registry` index + `ernote-draft-{template}-{id}` per-draft data). Lazy-create on first field input. Auto-migration from v1 single-draft keys. URL `?draft={id}` selects active draft.
+  2. **Patient strip + HN field:** All 7 templates have a `.patient-strip` with HN input. HN used for sidebar card identification and included in `copyNote()` output.
+  3. **Sidebar draft manager:** Floating action button (FAB) toggles slide-in panel listing all drafts. Cards show HN, CC, relative time, template-colored left border. Real-time filter by HN/CC. Delete with `confirm()`. "+ New Draft" button creates and navigates.
+  4. **Investigation checkbox module:** `ErNote.renderInvestigation()` renders Labs + Imaging checkbox groups from per-template presets + free-text row. Presets incorporate clinical feedback: sepsis uses H/C x2 +LFT+UA+ECG; abdominal pain adds Amylase and replaces CXR with AAS; Ca/Mg/PO4 optional in all templates. No result-entry fields.
+  5. **Treatment checkbox module:** `ErNote.renderTreatment()` renders treatment checkboxes + free-text. Templates with clinical-protocol-specific fields (sepsis, mammalian-bite) keep existing fields; only supportive treatment checkboxes added.
+  6. **Thai-base history labels:** History-taking sections (§1/§2/§4 and equivalents) use Thai labels with English medical terms in parentheses. Medical abbreviations remain in English. Exam/score/investigation/treatment/disposition sections stay in pure English.
+  7. **Version bump:** `CACHE_VERSION` → `er-hub-v23`; `index.html` nav-right → v23; all footers → v23.
+- **Rationale:** Schema v2 is the critical fix — the old single-draft model was unusable for concurrent ED multi-patient workflows. Investigation/treatment modules standardize note structure while preserving clinical precision. Thai history labels reduce scanning time for Thai-speaking clinicians; English exam/plan sections preserve EMR interoperability.
+- **Consequences:**
+  - Multiple drafts per template now supported — ED can manage several patients concurrently.
+  - v1 `localStorage` keys auto-migrate on first load — no data loss.
+  - New template color tokens (`--tpl-general` through `--tpl-eye-injury`) added to `er-note.css`.
+  - `extractRow()` in `er-note.js` works unchanged for the new checkbox modules (reads checkbox-groups and free-text rows separately).
+  - `loadDraft()` deferred via `setTimeout` so inline template scripts render IX/TX containers before draft values load.
+- **Tests:** 193/193 pass. ER NOTE files excluded from structural guards by design. `tests/nstemi-audit-fixes.test.js` updated to expect `v23`.
 
 ### ADR-52: ER NOTE Part B — Standardize All Templates to Sepsis Pattern (2026-07-08)
 

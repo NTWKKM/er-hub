@@ -26,10 +26,14 @@
 </div>
 <main class="main">
 <form id="er-form">
+<div class="patient-strip">
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — Trauma</span>
+</div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">1</span>Mechanism &amp; Event</h2>
-  <div class="field-row"><label>Mechanism</label>
+  <h2 class="section-title"><span class="num">1</span>กลไกการบาดเจ็บและเหตุการณ์ (Mechanism & Event)</h2>
+  <div class="field-row"><label>กลไกการบาดเจ็บ (Mechanism)</label>
     <select id="trauma-mech">
       <option value="">— select —</option>
       <option>RTA</option>
@@ -43,16 +47,16 @@
     </select>
   </div>
   <div class="inline-row">
-    <div class="field-row"><label>Time of injury</label><input type="time" id="trauma-time"></div>
-    <div class="field-row"><label>Seatbelt / Helmet</label>
+    <div class="field-row"><label>เวลาที่บาดเจ็บ (Time of injury)</label><input type="time" id="trauma-time"></div>
+    <div class="field-row"><label>เข็มขัดนิรภัย/หมวกกັນน็อก (Seatbelt / Helmet)</label>
       <div class="radio-group">
         <label><input type="radio" name="trauma-protect" value="Yes"> Yes</label>
         <label><input type="radio" name="trauma-protect" value="No"> No</label>
       </div>
     </div>
-    <div class="field-row"><label>Extrication</label><input type="text" id="trauma-extricate" placeholder="time & method"></div>
+    <div class="field-row"><label>การช่วยออกจากพาหนะ (Extrication)</label><input type="text" id="trauma-extricate" placeholder="time & method"></div>
   </div>
-  <div class="field-row"><label>Scene description</label><textarea id="trauma-scene"></textarea></div>
+  <div class="field-row"><label>ลักษณะสถานที่เกิดเหตุ (Scene description)</label><textarea id="trauma-scene"></textarea></div>
 </div>
 
 <div class="card">
@@ -141,11 +145,11 @@
 
 <div class="card">
   <h2 class="section-title"><span class="num">4</span>Resuscitation &amp; Imaging</h2>
-  <div class="inline-row">
-    <div class="field-row"><label>IV access</label><input type="text" id="trauma-iv" placeholder="2 large-bore IVs"></div>
-    <div class="field-row"><label>O₂</label><input type="text" id="trauma-o2" placeholder="L/min"></div>
-    <div class="field-row"><label>Fluids / blood</label><input type="text" id="trauma-fluid" placeholder="crystalloid / PRBC / FFP / platelet"></div>
-  </div>
+  <div id="ix-container-trauma"></div>
+  <div class="field-row"><label>IV access</label><input type="text" id="trauma-iv" placeholder="2 large-bore IVs"></div>
+  <div class="field-row"><label>O₂</label><input type="text" id="trauma-o2" placeholder="L/min"></div>
+  <div class="field-row"><label>Fluids / blood</label><input type="text" id="trauma-fluid" placeholder="crystalloid / PRBC / FFP / platelet"></div>
+  <div id="tx-container-trauma"></div>
   <div class="field-row"><label>FAST / Imaging / Labs</label><textarea id="trauma-labs" placeholder="FAST positive / negative; eFAST zones; CT findings"></textarea></div>
   <div class="field-row"><label>Damage control resuscitation</label>
     <div class="checkbox-group">
@@ -198,9 +202,11 @@
   <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
   <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
 </div>
-<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v22</footer>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
 <script src="er-note.js"></script>
 <script>
+ErNote.renderInvestigation(document.getElementById('ix-container-trauma'), 'trauma');
+ErNote.renderTreatment(document.getElementById('tx-container-trauma'), 'trauma');
 
 function updateTetanus(){
   const wound = document.querySelector('input[name="tet-wound"]:checked');

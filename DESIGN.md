@@ -124,6 +124,13 @@ The ER NOTE tool (`tools/er-note/`) is a separate clinical-note worksheet family
 | Font | `Inter Tight` (Latin) + `Sarabun` (Thai) | Matches portal typography; body `15px`, labels `13px`. |
 | Border Radius | `12px` cards, `8px` inputs/buttons | Soft glassmorphism; no elevation shadows. |
 | Spacing | `16px` card gap, `12px` internal field gap | Compact vertical rhythm for long forms. |
+| `--tpl-general` | `#5E6AD2` | General template sidebar card border. |
+| `--tpl-sepsis` | `#d84315` | Sepsis template (red — risk-high). |
+| `--tpl-trauma` | `#e65100` | Trauma template (orange — time-critical). |
+| `--tpl-mammalian-bite` | `#2e7d32` | Mammalian bite template (dark green). |
+| `--tpl-chest-pain` | `#6A1B9A` | Chest pain template (deep purple). |
+| `--tpl-abdominal-pain` | `#9a6a1a` | Abdominal pain template (brown-yellow). |
+| `--tpl-eye-injury` | `#00897B` | Eye injury template (teal). |
 
 ### Layout
 
@@ -147,15 +154,23 @@ The ER NOTE tool (`tools/er-note/`) is a separate clinical-note worksheet family
 | **Score Line** | Read-only computed score/risk display (HEART, Alvarado, qSOFA/SIRS, GCS, etc.). | `.score-box.score-line` with `data-copy="Score: value"`. Inline `updateScores()` keeps both visible text and `data-copy` in sync on every relevant `change` event. |
 | **Hint** | Contextual guidance (e.g. sepsis score totals). | Muted text, lives below related fields. |
 | **Action Buttons** | Copy Note / Clear / Print. | Primary (accent), Secondary (copy), Danger (clear). Fixed bottom bar on screen only. |
-| **Footer** | Version / metadata bar at bottom of each template. | Muted text, synchronized version string (currently `v22`). |
+| **Footer** | Version / metadata bar at bottom of each template. | Muted text, synchronized version string (currently `v23`). |
+| **Patient Strip** | HN input field + template label at top of each form (above all `.card` sections). Used for patient identification and sidebar card display. | `display: flex; gap: 12px`. HN input `140px` width, bold. Hidden in `@media print`. |
+| **Sidebar FAB** | Floating action button (right side, above action bar) toggling the draft manager panel. | `48px` circular, accent background, `☰` icon. `position: fixed; right: 20px; bottom: 80px; z-index: 95`. Hidden in `@media print`. |
+| **Sidebar Panel** | Slide-in panel from right listing all drafts across all templates. | `340px` wide, `transform: translateX(100%)` → `0` when `.open`. Contains: header (title + close), "+ New Draft" button, real-time filter input, scrollable card list. `z-index: 96`. Hidden in `@media print`. |
+| **Sidebar Card** | Draft entry in the sidebar list. Click navigates to that draft; delete button removes it. | `4px` left border colored by template (`--tpl-*` tokens). Shows HN, CC (truncated 40 chars), relative time, template label. Hover: `background: var(--paper-2)`. |
+| **Investigation Module** | Structured lab/imaging order selection rendered by `ErNote.renderInvestigation(container, template)`. | Labs + Imaging checkbox groups from per-template presets, plus free-text row for items not in preset. No result-entry fields. `extractRow()` reads checkbox-groups and free-text separately. |
+| **Treatment Module** | Structured treatment selection rendered by `ErNote.renderTreatment(container, template)`. | Checkbox group for common treatments + free-text textarea for details. Templates with clinical-protocol-specific fields (sepsis, mammalian-bite) keep existing fields; only supportive treatment checkboxes added. |
 
 ### Interaction Patterns
 
-- **Auto-save drafts:** Every input change is saved to `localStorage` keyed by template filename (`ernote-draft-{templateId}`). Drafts survive tab/browser restarts until the user presses **Clear**.
-- **Copy Note:** Walks every `.card`, collects filled labels/values, and writes a plain-text summary (section headers as `## Section`) to the clipboard.
-- **Print:** `window.print()` with an `@media print` stylesheet that inverts the dark UI to black-on-white, removes nav/tab/action elements, and prints each card as a clean section.
-- **Clear:** `form.reset()` + removes the current draft key after confirmation.
+- **Multi-patient draft persistence (schema v2):** Every input change saves to `localStorage` under `ernote-draft-{templateId}-{draftId}`, with a registry index at `ernote-registry` holding `{ id, template, hn, cc, updatedAt }` per draft (ADR-53). Lazy-create: no draft is created until the first field is entered. URL `?draft={id}` selects active draft. v1 single-draft keys auto-migrate on first load. Drafts survive tab/browser restarts until the user presses **Clear** or deletes via sidebar.
+- **Sidebar draft manager:** Floating action button (FAB) on the right toggles a slide-in panel listing all drafts across all templates. Cards show HN, CC (truncated 40 chars), relative time, and a 4px template-colored left border. Real-time filter by HN or CC. Delete with `confirm()` dialog. "+ New Draft" creates a new draft for the current template and navigates to it.
+- **Copy Note:** Walks every `.card`, collects filled labels/values, and writes a plain-text summary (section headers as `## Section`) to the clipboard. HN from patient strip is included at the top.
+- **Print:** `window.print()` with an `@media print` stylesheet that inverts the dark UI to black-on-white, removes nav/tab/action/patient-strip/sidebar elements, and prints each card as a clean section.
+- **Clear:** `form.reset()` + removes the current draft key + registry entry after confirmation.
 - **Template calculators:** Score logic (qSOFA/SIRS, HEART, Alvarado, etc.) is embedded directly in each template file and updates read-only `.score-box` / `.hint` elements in real time.
+- **Investigation/Treatment modules:** `ErNote.renderInvestigation(container, template)` and `ErNote.renderTreatment(container, template)` render structured checkbox groups + free-text from per-template presets defined in `er-note.js`. `loadDraft()` is deferred via `setTimeout` so these containers exist before draft values are restored.
 
 ### Asset Isolation Rule
 

@@ -26,10 +26,14 @@
 </div>
 <main class="main">
 <form id="er-form">
+<div class="patient-strip">
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — Sepsis</span>
+</div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">1</span>Infection & Source</h2>
-  <div class="field-row"><label>Presumed source</label>
+  <h2 class="section-title"><span class="num">1</span>ตำแหน่งการติดเชื้อและแหล่ง (Infection & Source)</h2>
+  <div class="field-row"><label>แหล่งที่สงสัยของการติดเชื้อ (Presumed source)</label>
     <div class="radio-group">
       <label><input type="radio" name="sepsis-source-type" value="UTI"> UTI</label>
       <label><input type="radio" name="sepsis-source-type" value="Pneumonia"> Pneumonia</label>
@@ -41,9 +45,9 @@
       <label><input type="radio" name="sepsis-source-type" value="Other"> Other</label>
     </div>
   </div>
-  <div class="field-row"><label>Other source detail</label><input type="text" id="sepsis-source-other" placeholder="ระบุถ้าเลือก Other หรือเพิ่มรายละเอียด"></div>
-  <div class="field-row"><label>Onset / progression</label><textarea id="sepsis-onset"></textarea></div>
-  <div class="field-row"><label>Risk factors</label>
+  <div class="field-row"><label>ระบุแหล่งอื่นๆ (Other source detail)</label><input type="text" id="sepsis-source-other" placeholder="ระบุถ้าเลือก Other หรือเพิ่มรายละเอียด"></div>
+  <div class="field-row"><label>การเริ่มและความก้าวหน้า (Onset / progression)</label><textarea id="sepsis-onset"></textarea></div>
+  <div class="field-row"><label>ปัจจัยเสี่ยง (Risk factors)</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="sepsis-dm"> DM</label>
       <label><input type="checkbox" id="sepsis-ckd"> CKD</label>
@@ -249,6 +253,7 @@
 
 <div class="card">
   <h2 class="section-title"><span class="num">6</span>Cultures & Investigations</h2>
+  <div id="ix-container-sepsis"></div>
   <div class="field-row"><label>Cultures sent</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="culture-blood"> Blood</label>
@@ -261,7 +266,12 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">7</span>Post-Sepsis Care & Disposition</h2>
+  <h2 class="section-title"><span class="num">7</span>Supportive Treatment</h2>
+  <div id="tx-container-sepsis"></div>
+</div>
+
+<div class="card">
+  <h2 class="section-title"><span class="num">8</span>Post-Sepsis Care & Disposition</h2>
   <div class="field-row"><label>Post-sepsis care</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="post-transition"> Transition care program initiated</label>
@@ -290,9 +300,11 @@
   <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
   <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
 </div>
-<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v22</footer>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v23</footer>
 <script src="er-note.js"></script>
 <script>
+ErNote.renderInvestigation(document.getElementById('ix-container-sepsis'), 'sepsis');
+ErNote.renderTreatment(document.getElementById('tx-container-sepsis'), 'sepsis');
 
 function sumChecked(ids){
   let s=0;
