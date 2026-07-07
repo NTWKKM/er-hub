@@ -27,6 +27,7 @@
 <main class="main">
 <form id="er-form">
 <div class="patient-strip">
+  <label for="ernote-hn" class="visually-hidden">HN</label>
   <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
   <span class="strip-label">ER Note — Abdominal Pain</span>
 </div>
@@ -129,34 +130,34 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">5</span>AIR Score (Appendicitis)</h2>
-  <div class="inline-row">
-    <div class="field-row"><label>Sex</label>
-      <div class="radio-group">
-        <label><input type="radio" name="air-sex" value="0"> Female</label>
-        <label><input type="radio" name="air-sex" value="1"> Male</label>
+  <h2 class="section-title"><span class="num">5</span>AIR Score — Andersson Appendicitis Inflammatory Response (5-point)</h2>
+    <div class="inline-row">
+      <div class="field-row"><label>Sex (M = 1)</label>
+        <div class="radio-group">
+          <label><input type="radio" name="air-sex" value="0"> Female (0)</label>
+          <label><input type="radio" name="air-sex" value="1"> Male (1)</label>
+        </div>
+      </div>
+      <div class="field-row"><label>Age (≥40 yr = 1)</label>
+        <div class="radio-group">
+          <label><input type="radio" name="air-age" value="1"> ≥40 yr (1)</label>
+          <label><input type="radio" name="air-age" value="0"> &lt;40 yr (0)</label>
+        </div>
+      </div>
+      <div class="field-row"><label>WBC ≥10,000/μL (1)</label>
+        <div class="radio-group">
+          <label><input type="radio" name="air-wbc" value="0"> No</label>
+          <label><input type="radio" name="air-wbc" value="1"> Yes (1)</label>
+        </div>
+      </div>
+      <div class="field-row"><label>CRP ≥10 mg/L (2)</label>
+        <div class="radio-group">
+          <label><input type="radio" name="air-crp" value="0"> No</label>
+          <label><input type="radio" name="air-crp" value="2"> Yes (2)</label>
+        </div>
       </div>
     </div>
-    <div class="field-row"><label>Age</label>
-      <div class="radio-group">
-        <label><input type="radio" name="air-age" value="1"> ≥40 yr (1)</label>
-        <label><input type="radio" name="air-age" value="0"> &lt;40 yr (0)</label>
-      </div>
-    </div>
-    <div class="field-row"><label>WBC ≥10,000/μL</label>
-      <div class="radio-group">
-        <label><input type="radio" name="air-wbc" value="0"> No</label>
-        <label><input type="radio" name="air-wbc" value="1"> Yes (1)</label>
-      </div>
-    </div>
-    <div class="field-row"><label>CRP ≥10 mg/L</label>
-      <div class="radio-group">
-        <label><input type="radio" name="air-crp" value="0"> No</label>
-        <label><input type="radio" name="air-crp" value="2"> Yes (2)</label>
-      </div>
-    </div>
-  </div>
-  <div class="score-box score-line" id="air-line" data-copy="AIR: 0/5 (low risk)">AIR: <span id="air-score">0</span>/5 — <span id="air-risk">low risk</span></div>
+    <div class="score-box score-line" id="air-line" data-copy="AIR: 0/5 (low risk)">AIR: <span id="air-score">0</span>/5 — <span id="air-risk">low risk</span></div>
 </div>
 
 <div class="card">

@@ -135,7 +135,6 @@ er-hub/
 │       ├── eye-injury.html
 │       ├── er-note.css         ← shared within er-note only
 │       └── er-note.js          ← shared within er-note only
-```
 │   ├── wound-mx.md             ← ATB/RIG/analgesia reference data (Thai protocol)
 │   └── wound-mx.jpg            ← visual reference (not read by tool)
 ├── shared/
@@ -521,7 +520,7 @@ HN: ___ | ชื่อ: ___ | อายุ: ___ | เพศ: ___ | BW: ___ kg | 
    - [ ] Costovertebral angle tenderness
 4. **Risk Stratification:**
    - Alvarado Score: ___ / 10
-   - AIR (Age >50 + WBC >12 + CRP >50): [ ] Low / [ ] Moderate / [ ] High
+   - AIR (Andersson — Sex M=1, Age ≥40=1, WBC ≥10k=1, CRP ≥10=2; max 5): [ ] Low / [ ] Intermediate / [ ] High
 5. **Investigations** (shared) + Urinalysis + Amylase/Lipase + β-hCG (female)
 6. **Imaging:**
    - [ ] CXR (erect) / [ ] X-ray abdomen (erect + supine)

@@ -95,8 +95,8 @@
       if (reg.drafts[i].id === id && reg.drafts[i].template === template){ entry = reg.drafts[i]; break; }
     }
     if (entry){
-      entry.hn = hn || entry.hn;
-      entry.cc = cc || entry.cc;
+        entry.hn = hn;
+        entry.cc = cc;
       entry.updatedAt = Date.now();
       saveRegistry(reg);
     }
@@ -148,11 +148,16 @@
     } catch(e){}
   }
 
+  function draftInRegistry(template, id){
+    var reg = loadRegistry();
+    return reg.drafts.some(function(d){ return d.id === id && d.template === template; });
+  }
+
   function saveDraft(){
     if (!form || isIndex) return;
 
-    // Lazy-create: no draft ID → create on first save
-    if (!currentDraftId){
+    // Lazy-create: no draft ID, or ID no longer tracked in the registry → (re)create
+    if (!currentDraftId || !draftInRegistry(templateName, currentDraftId)){
       currentDraftId = genId();
       createDraft(templateName, currentDraftId);
       var url = new URL(location.href);
@@ -515,11 +520,18 @@
       list.innerHTML = '<div class="sidebar-empty">' + (query ? 'ไม่พบ draft ที่ตรง' : 'ยังไม่มี draft — พิมพ์ HN แล้วเริ่ม note') + '</div>';
       return;
     }
+    function escapeHtml(str){
+      return String(str == null ? '' : str).replace(/[&<>"']/g, function(ch){
+        return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch];
+      });
+    }
     list.innerHTML = drafts.map(function(d){
       var label = TEMPLATE_LABELS[d.template] || d.template;
-      var ccTrunc = (d.cc || '(no CC)').slice(0, 40);
-      var hn = d.hn || '(no HN)';
-      return '<div class="sidebar-card tpl-' + d.template + '" data-id="' + d.id + '" data-template="' + d.template + '">' +
+      var ccTrunc = escapeHtml((d.cc || '(no CC)').slice(0, 40));
+      var hn = escapeHtml(d.hn || '(no HN)');
+      var tpl = escapeHtml(d.template);
+      var id = escapeHtml(d.id);
+      return '<div class="sidebar-card tpl-' + tpl + '" data-id="' + id + '" data-template="' + tpl + '">' +
         '<div class="sidebar-card-info">' +
           '<div class="sidebar-card-hn">' + hn + '</div>' +
           '<div class="sidebar-card-cc">' + ccTrunc + '</div>' +

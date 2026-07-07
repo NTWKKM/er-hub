@@ -27,6 +27,7 @@
 <main class="main">
 <form id="er-form">
 <div class="patient-strip">
+  <label for="ernote-hn" class="visually-hidden">HN</label>
   <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
   <span class="strip-label">ER Note — Sepsis</span>
 </div>
@@ -338,13 +339,14 @@ function updateScores(){
   const news2Names = ['news2-rr','news2-spo2','news2-o2','news2-sbp','news2-hr','news2-conscious','news2-temp'];
   const n2 = sumRadioGroups(news2Names);
   let n2risk = 'low';
-  if (n2 >= 7 || anySingleParamAtLeast(news2Names, 3)) n2risk = 'high';
+  if (n2 >= 7) n2risk = 'high';
   else if (n2 >= 5) n2risk = 'medium';
+  else if (anySingleParamAtLeast(news2Names, 3)) n2risk = 'low-medium';
   const n2El = document.getElementById('news2-line');
   document.getElementById('news2-score').textContent = n2;
   document.getElementById('news2-risk').textContent = n2risk;
   n2El.setAttribute('data-copy','NEWS2: '+n2+' ('+n2risk+' risk)');
-  n2El.classList.remove('risk-low','risk-medium','risk-high');
+  n2El.classList.remove('risk-low','risk-low-medium','risk-medium','risk-high');
   n2El.classList.add('risk-'+n2risk);
 
   const mewsNames = ['mews-sbp','mews-hr','mews-rr','mews-temp','mews-avpu'];

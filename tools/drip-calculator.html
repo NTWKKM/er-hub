@@ -301,7 +301,8 @@
 
             // Restore weight from sessionStorage if available, defaulting to 50 kg
             const storedWeight = sessionStorage.getItem('er-hub-weight');
-            const initialWeight = storedWeight ? parseFloat(storedWeight) : 50;
+            const parsedWeight = storedWeight ? parseFloat(storedWeight) : NaN;
+            const initialWeight = isNaN(parsedWeight) ? 50 : parsedWeight;
             const clampedInitialWeight = Math.max(WEIGHT_MIN, Math.min(WEIGHT_MAX, initialWeight));
             weightSlider.value = clampedInitialWeight;
             weightInput.value = clampedInitialWeight.toFixed(1);

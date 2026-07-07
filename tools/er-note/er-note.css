@@ -152,7 +152,7 @@ input:focus,textarea:focus,select:focus { outline:none; border-color:var(--accen
   border-left:4px solid var(--accent); transition:background .1s ease;
 }
 .sidebar-card:hover { background:var(--paper-2); }
-.sidebar-card.tpl-general     { border-left-color:var(--tpl-general); }
+.sidebar-card.tpl-general-er-note { border-left-color:var(--tpl-general); }
 .sidebar-card.tpl-sepsis      { border-left-color:var(--tpl-sepsis); }
 .sidebar-card.tpl-trauma      { border-left-color:var(--tpl-trauma); }
 .sidebar-card.tpl-mammalian-bite { border-left-color:var(--tpl-mammalian-bite); }
@@ -182,5 +182,7 @@ input:focus,textarea:focus,select:focus { outline:none; border-color:var(--accen
   .top-nav,.tab-bar,.action-bar,.footer,.patient-strip,.sidebar-fab,.sidebar-panel { display:none!important; }
   body { background:#fff; }
   .main { padding:0; max-width:none; }
-  .card { border:none; box-shadow:none; padding:10px 0; margin-bottom:6px; page-break-inside:avoid; border-bottom:1px solid #ccc; }
+  .card { border:none; box-shadow:none; padding:10px 0; margin-bottom:6px; break-inside:avoid; page-break-inside:avoid; border-bottom:1px solid #ccc; }
 }
+
+.visually-hidden { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }

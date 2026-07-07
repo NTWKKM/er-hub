@@ -91,9 +91,9 @@
 - **Body Weight (BW):** _______ kg
 - **ชนิดของเซรุ่ม:**
   - [ ] **ERIG** (Equine RIG) - Max 40 IU/kg
-  - [ ] **HRIG** (Human RIG) - Max 20 IU/kg | จำนวน _____ Unit (_____ mL) SC ฉีดรอบแผล
+  - [ ] **HRIG** (Human RIG) - Max 20 IU/kg | จำนวน _____ Unit (_____ mL) infiltrate รอบแผล
 - **วิธีการฉีด:**
-  - sig SC รอบแผล ไม่เกิน _______ Unit
+    - sig Infiltrate รอบแผล ไม่เกิน _______ Unit (ส่วนที่เหลือ IM ที่ตำแหน่งห่างจากแผล)
   - กรุณาระบุจำนวนที่ต้องการเบิก:
     - [ ] แผลเล็ก (< 5 ซม.) / 1 Vial
     - [ ] แผลใหญ่ / เบิกตามน้ำหนัก _________ Vial
@@ -101,8 +101,7 @@
 
 ### 5.2 Rabies Vaccine (วัคซีนป้องกันโรคพิษสุนัขบ้า)
 - **กรณี Complete Vaccinated (เคยได้รับวัคซีนครบแล้ว):**
-  - [ ] **Booster IM 1 dose** (กรณี Last dose < 6 เดือน)
-  - [ ] **Booster IM 2 dose** (กรณี Last dose > 6 เดือน)
+    - [ ] **Booster IM 2 dose** (Day 0, Day 3)
 - **กรณีเริ่มใหม่ (Rabies vaccine 1 course):**
   - [ ] **ID** (Intradermal) - *กรณีผู้ป่วยมี Bleeding tendency*
   - [ ] **IM** (Intramuscular)
