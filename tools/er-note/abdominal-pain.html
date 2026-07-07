@@ -130,34 +130,57 @@
 </div>
 
 <div class="card">
-  <h2 class="section-title"><span class="num">5</span>AIR Score — Andersson Appendicitis Inflammatory Response (5-point)</h2>
-    <div class="inline-row">
-      <div class="field-row"><label>Sex (M = 1)</label>
-        <div class="radio-group">
-          <label><input type="radio" name="air-sex" value="0"> Female (0)</label>
-          <label><input type="radio" name="air-sex" value="1"> Male (1)</label>
+    <h2 class="section-title"><span class="num">5</span>AIR Score — Andersson Appendicitis Inflammatory Response (12-point)</h2>
+      <div class="inline-row">
+        <div class="field-row"><label>Vomiting</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-vomit" value="0"> No (0)</label>
+            <label><input type="radio" name="air-vomit" value="1"> Yes (1)</label>
+          </div>
+        </div>
+        <div class="field-row"><label>Pain in RLQ</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-rlq" value="0"> No (0)</label>
+            <label><input type="radio" name="air-rlq" value="1"> Yes (1)</label>
+          </div>
+        </div>
+        <div class="field-row"><label>Rebound tenderness / muscular defence</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-rebound" value="0"> None (0)</label>
+            <label><input type="radio" name="air-rebound" value="1"> Light (1)</label>
+            <label><input type="radio" name="air-rebound" value="2"> Medium (2)</label>
+            <label><input type="radio" name="air-rebound" value="3"> Strong (3)</label>
+          </div>
+        </div>
+        <div class="field-row"><label>Body temperature</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-temp" value="0"> &lt;38.5°C (0)</label>
+            <label><input type="radio" name="air-temp" value="1"> ≥38.5°C (1)</label>
+          </div>
+        </div>
+        <div class="field-row"><label>WBC (×10⁹/L)</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-wbc" value="0"> &lt;10.0 (0)</label>
+            <label><input type="radio" name="air-wbc" value="1"> 10.0–14.9 (1)</label>
+            <label><input type="radio" name="air-wbc" value="2"> ≥15.0 (2)</label>
+          </div>
+        </div>
+        <div class="field-row"><label>Polymorphonuclear leucocytes (%)</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-pmn" value="0"> &lt;70% (0)</label>
+            <label><input type="radio" name="air-pmn" value="1"> 70–84% (1)</label>
+            <label><input type="radio" name="air-pmn" value="2"> ≥85% (2)</label>
+          </div>
+        </div>
+        <div class="field-row"><label>CRP (mg/L)</label>
+          <div class="radio-group">
+            <label><input type="radio" name="air-crp" value="0"> &lt;10 (0)</label>
+            <label><input type="radio" name="air-crp" value="1"> 10–49 (1)</label>
+            <label><input type="radio" name="air-crp" value="2"> ≥50 (2)</label>
+          </div>
         </div>
       </div>
-      <div class="field-row"><label>Age (≥40 yr = 1)</label>
-        <div class="radio-group">
-          <label><input type="radio" name="air-age" value="1"> ≥40 yr (1)</label>
-          <label><input type="radio" name="air-age" value="0"> &lt;40 yr (0)</label>
-        </div>
-      </div>
-      <div class="field-row"><label>WBC ≥10,000/μL (1)</label>
-        <div class="radio-group">
-          <label><input type="radio" name="air-wbc" value="0"> No</label>
-          <label><input type="radio" name="air-wbc" value="1"> Yes (1)</label>
-        </div>
-      </div>
-      <div class="field-row"><label>CRP ≥10 mg/L (2)</label>
-        <div class="radio-group">
-          <label><input type="radio" name="air-crp" value="0"> No</label>
-          <label><input type="radio" name="air-crp" value="2"> Yes (2)</label>
-        </div>
-      </div>
-    </div>
-    <div class="score-box score-line" id="air-line" data-copy="AIR: 0/5 (low risk)">AIR: <span id="air-score">0</span>/5 — <span id="air-risk">low risk</span></div>
+      <div class="score-box score-line" id="air-line" data-copy="AIR: 0/12 (low risk)">AIR: <span id="air-score">0</span>/12 — <span id="air-risk">low risk</span></div>
 </div>
 
 <div class="card">
@@ -234,24 +257,24 @@ function updateAlvarado(){
 }
 
 function updateAir(){
-  const s = sumRadioGroups(['air-sex','air-age','air-wbc','air-crp']);
-  const lineEl = document.getElementById('air-line');
-  let risk = 'low risk';
-  if (s >= 5) risk = 'high risk (imaging / surgical consult)';
-  else if (s >= 2) risk = 'intermediate risk';
-  document.getElementById('air-score').textContent = s;
-  document.getElementById('air-risk').textContent = risk;
-  lineEl.setAttribute('data-copy','AIR: '+s+'/5 ('+risk+')');
-  lineEl.classList.remove('risk-low','risk-medium','risk-high');
-  lineEl.classList.add(s>=5?'risk-high':s>=2?'risk-medium':'risk-low');
-}
+    const s = sumRadioGroups(['air-vomit','air-rlq','air-rebound','air-temp','air-wbc','air-pmn','air-crp']);
+    const lineEl = document.getElementById('air-line');
+    let risk = 'low risk';
+    if (s >= 9) risk = 'high risk (imaging / surgical consult)';
+    else if (s >= 5) risk = 'intermediate risk';
+    document.getElementById('air-score').textContent = s;
+    document.getElementById('air-risk').textContent = risk;
+    lineEl.setAttribute('data-copy','AIR: '+s+'/12 ('+risk+')');
+    lineEl.classList.remove('risk-low','risk-medium','risk-high');
+    lineEl.classList.add(s>=9?'risk-high':s>=5?'risk-medium':'risk-low');
+  }
 
-['alv-migratory','alv-anorexia','alv-nausea','alv-tenderness','alv-rebound','alv-elevated-wbc','alv-left-shift','alv-fever'].forEach(id=>{
-  const el=document.getElementById(id); if(el) el.addEventListener('change', updateAlvarado);
-});
-['air-sex','air-age','air-wbc','air-crp'].forEach(name=>{
-  document.querySelectorAll('input[name="'+name+'"]').forEach(el=> el.addEventListener('change', updateAir));
-});
+  ['alv-migratory','alv-anorexia','alv-nausea','alv-tenderness','alv-rebound','alv-elevated-wbc','alv-left-shift','alv-fever'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.addEventListener('change', updateAlvarado);
+  });
+  ['air-vomit','air-rlq','air-rebound','air-temp','air-wbc','air-pmn','air-crp'].forEach(name=>{
+    document.querySelectorAll('input[name="'+name+'"]').forEach(el=> el.addEventListener('change', updateAir));
+  });
 updateAlvarado();
 updateAir();
 

@@ -617,7 +617,7 @@ The duplicate Creatinine field two-way sync was explicitly retained per user req
 
 2. **DAPT Default = Empty:** Removed `checked` attribute from the `Hold to Cath Lab` P2Y12 radio. Default state is now fully unselected — no P2Y12 radio checked, ASA checkbox unchecked. `reset-dapt-btn` and `clear-btn` now set all P2Y12 radios to `r.checked = false` (was `r.checked = (r.value === 'hold')`).
 
-3. **`p2y12Val` Scope Bug Fix:** Added `const p2y12Val = document.querySelector('input[name="dapt-p2y12"]:checked')?.value | 'hold';` at the top of the DAPT hint block in `calculateAndRender()`, before it's referenced in the hint logic. Previously the variable was only declared in `updatePrintArea()` and the hint block silently referenced an undefined variable.
+3. **`p2y12Val` Scope Bug Fix:** Added `const p2y12Val = document.querySelector('input[name="dapt-p2y12"]:checked')?.value || 'hold';` at the top of the DAPT hint block in `calculateAndRender()`, before it's referenced in the hint logic. Previously the variable was only declared in `updatePrintArea()` and the hint block silently referenced an undefined variable.
 
 4. **ASA Print Logic Unchanged:** `p-asa-stat` and `p-asa-cont` remain bound to the `daptAsa` checkbox only. Selecting a P2Y12 inhibitor does NOT auto-check ASA — the clinician must explicitly check ASA in the DAPT panel. This preserves the manual clinical decision for ASA loading.
 

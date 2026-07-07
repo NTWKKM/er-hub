@@ -520,7 +520,7 @@ HN: ___ | ชื่อ: ___ | อายุ: ___ | เพศ: ___ | BW: ___ kg | 
    - [ ] Costovertebral angle tenderness
 4. **Risk Stratification:**
    - Alvarado Score: ___ / 10
-   - AIR (Andersson — Sex M=1, Age ≥40=1, WBC ≥10k=1, CRP ≥10=2; max 5): [ ] Low / [ ] Intermediate / [ ] High
+   - AIR (Andersson — RLQ pain, rebound/muscular defence, vomiting, temperature ≥38.5°C, WBC, polymorphonuclear %, CRP; max 12): [ ] Low (0-4) / [ ] Intermediate (5-8) / [ ] High (9-12)
 5. **Investigations** (shared) + Urinalysis + Amylase/Lipase + β-hCG (female)
 6. **Imaging:**
    - [ ] CXR (erect) / [ ] X-ray abdomen (erect + supine)
