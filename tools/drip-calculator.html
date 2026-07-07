@@ -523,9 +523,7 @@
             doseSlider.addEventListener('keydown', handleKeydown);
 
             // Live calculation trigger for patient weight — bidirectional slider <-> number input sync
-            const WEIGHT_MIN = 30;
-            const WEIGHT_MAX = 250;
-
+            // WEIGHT_MIN / WEIGHT_MAX declared once at top of this handler (line ~299)
             weightSlider.addEventListener('input', () => {
                 weightInput.value = weightSlider.value;
                 triggerCalculation();
