@@ -144,6 +144,11 @@
     if (!form || !currentDraftId) return;
     try {
       var d = JSON.parse(localStorage.getItem(draftKey(templateName, currentDraftId)) || '{}');
+      /* ---- Migration: sepsis-onset → narr-sepsis-hpi-free ---- */
+      if (templateName === 'sepsis' && d['sepsis-onset'] && !d['narr-sepsis-hpi-free']){
+        d['narr-sepsis-hpi-free'] = d['sepsis-onset'];
+        try { localStorage.setItem(draftKey(templateName, currentDraftId), JSON.stringify(d)); } catch(e2){}
+      }
       form.querySelectorAll('input,textarea,select').forEach(function(el){
         if (el.type === 'radio'){ el.checked = (d[el.name] === el.value); }
         else if (el.type === 'checkbox'){ el.checked = !!d[el.id || el.name]; }
@@ -476,11 +481,11 @@
         hpi: {
           title: 'HPI — Animal Exposure & Bite Circumstances',
           placeholder: 'Animal type, provocation, date/time, location on body…',
-          checkboxes: ['Provoked', 'Unprovoked', 'Unknown'],
+          checkboxes: [],   // Provoked/Unprovoked/Unknown already captured by #provoked-group in Section 1
           freeText: true, autoFocus: true
         },
         pmh: {
-          title: 'PMH & Tetanus History',
+          title: 'PMH & Immune Status',   // was: 'PMH & Tetanus History' — tetanus covered by Section 4
           placeholder: 'ระบุโรคประจำตัว + tetanus history…',
           checkboxes: ['Immunocompetent', 'Immunocompromised', 'Splenectomy', 'CKD/Dialysis'],
           freeText: true, autoFocus: false

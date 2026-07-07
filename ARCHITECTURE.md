@@ -122,7 +122,7 @@ User Form Inputs (HN, age, weight, creatinine, clinical flags)
 
 ```
 User enters history, exam, investigations, scoring variables
-  → Template-specific JS computes scores (HEART, Alvarado, qSOFA, NEWS2, GCS, RIG)
+  → Template-specific JS computes scores (HEART, Alvarado, NEWS2, GCS, RIG)
   → Results to read-only display fields (data-copy attribute)
   → Plain-text note to clipboard + print via window.print()
   → Draft auto-saves to localStorage (schema v2 registry)
