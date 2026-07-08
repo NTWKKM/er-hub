@@ -60,7 +60,7 @@
     width:8%;
   }
   .col-cat{width:22%;}
-  .col-score{width:46%;}
+  .col-score{width:40%;}
   .cat-th{font-weight:700;}
   .cat-en{font-size:11.5px;color:#666;font-weight:400;}
   .score-list div{margin:1px 0;}
@@ -99,18 +99,18 @@
     border-top:1px solid var(--line-soft);
   }
   @media print{
-    @page{size:A4 portrait;margin:6mm;}
+    @page{size:A4 portrait;margin:8mm 16mm;}
     html,body{
       margin:0 !important;
       padding:0 !important;
-      width:210mm !important;
+      width:auto !important;
       background:#fff !important;
       color:#000 !important;
       font-size:10pt;
       line-height:1.2;
     }
     .no-print,.toolbar{display:none !important;}
-    .sheet{max-width:100%;border:none;}
+    .sheet{width:178mm;max-width:100%;border:none;}
     .title-bar,thead th,tr.total td,.subrow-label,.sig-row th{
       background:#fff !important;
       color:#000 !important;
