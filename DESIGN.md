@@ -116,7 +116,58 @@ Custom properties declared under `:root` in `base.css` for standing-order form p
 
 ---
 
-## 4. ER NOTE Tool Visual Language
+## 5. NIHSS Score Tool Visual Language
+
+The NIHSS tool (`tools/nihss.html`) is a standalone stroke severity scoring worksheet. It uses the cream/paper design system (not the dark glassmorphism of ER NOTE), shared only via inline `<style>` — no `shared/base.css`, `shared/components.js`, or `shared/form-validate.js`.
+
+### Design Tokens (NIHSS)
+
+| Token | Value | Usage |
+| --- | --- | --- |
+| Cream background | `#ebe7df` | Page background |
+| Paper white | `#ffffff` | Sheet card |
+| Header background | `#d8d3c6` | Title bar, total row, thead |
+| Ink / border | `#2b2b2b` | Table borders, rules |
+| Muted text | `#8a8a82` | Footer, sub-labels |
+| Accent | `#7a3b2e` | Focus ring, total score highlight |
+| Font | `TH Sarabun New`, `Sarabun`, `Noto Sans Thai` | Thai-first, same family as standing orders |
+
+### Layout
+
+- Toolbar: right-aligned row above the sheet. Three buttons: "พิมพ์ที่กรอกแล้ว" (→ `printWithData()`), "พิมพ์ NIHSS เปล่า" (→ `printBlank()`), "ล้างข้อมูล" (→ `clearAll()`). All three are `.no-print` (hidden in print).
+- Sheet: `max-width: 900px`, centered, white background, `2px solid` border.
+- Title bar: centered header with English title + Thai subtitle, `background: #d8d3c6`.
+- Table: 7 columns (category, score list, 5 assessment columns). `thead th` width distributed as 20% / 41% / ~9.5% × 5.
+- 5 assessment columns support repeated evaluations over time (e.g. admission, post-rt-PA, q1h).
+- Total row: spans first 2 columns, shows per-column auto-sum via `recalc()`.
+- Signature rows: initials + signature cells in the same 5-column grid.
+- Footer note: muted centered text, `border-top: 1px solid #8a8a82`.
+
+### Components
+
+| Component | Description |
+| --- | --- |
+| Score cell | `.score-list div{margin:1px 0}` — each item on its own line |
+| Subrow label | `.subrow-label` — centered, `background:#f7f5f0`, used for 5a/5b and 6a/6b split rows |
+| Input cell | `input.cell` — transparent background, `1px solid` accent on focus with `#fffceb` tint |
+| Total display | `#totalScore` — accent color `#7a3b2e`, larger font size |
+| Toolbar button | `border: 1px solid #2b2b2b`, `background: #d8d3c6`; hover: `#cfc9b8` |
+
+### Print Behavior
+
+- `@media print`: `body{padding:0;background:#fff}`, `.sheet{border:none}`, `.no-print{display:none}`.
+- "พิมพ์ที่กรอกแล้ว" → `window.print()` directly (preserves entered scores).
+- "พิมพ์ NIHSS เปล่า" → `clearAll()` → `recalc()` → `window.print()` (all inputs blank, totals = 0).
+- `?print-blank-direct=true` → auto-calls `printBlank()` on page load (used by rtpa "NIHSS เปล่า" popup button).
+
+### Interaction
+
+- `recalc()` runs on every `input` event across all 15 row keys (`1a`–`11`) and 5 columns, summing integer values per column.
+- Non-numeric or empty cells are skipped (no NaN).
+- `clearAll()` requires `confirm()` before clearing.
+- No localStorage persistence — each session starts fresh.
+
+## 6. ER NOTE Tool Visual Language
 
 The ER NOTE tool (`tools/er-note/`) is a separate clinical-note worksheet family. It deliberately does **not** reuse the standing-order `shared/base.css`, `shared/components.js`, or `shared/form-validate.js` contracts; its visual language and behaviour are self-contained in `er-note.css` and `er-note.js`.
 

@@ -23,6 +23,7 @@ All 7 use `ED_PRINT_BOOTSTRAP` for page lifecycle and `ED_VALIDATE` for non-bloc
 5 pages (stemi, pe, heparin, antivenom, sedation) open source PDFs from `docs/` for blank printing.
 2 pages (rtpa, nstemi) render blank HTML templates via `ED_BLANK_PRINT`.
 rtpa and nstemi use a floating print action bar as the sole print trigger (no `#print-btn`).
+rtpa toolbar includes a "NIHSS เปล่า" button that opens `tools/nihss.html?print-blank-direct=true` in a popup window for instant blank NIHSS printing.
 
 ### ER NOTE Tool (`tools/er-note/`)
 
@@ -56,6 +57,16 @@ CC_FIELDS for sidebar display points to the narrative HPI textarea (`narr-<templ
 General-er-note is not migrated to renderNarrative (uses the original inline fields as-is).
 `NARRATIVE_PRESETS` in `er-note.js` defines per-template: `{ hpi, pmh, allergies, pe }` each with
 `{ title, placeholder, checkboxes:[], freeText:bool, autoFocus:bool }`.
+
+### NIHSS Score Tool (`tools/nihss.html`)
+
+Standalone NIHSS (National Institutes of Health Stroke Scale) scoring worksheet.
+Cream/paper design system, Thai + English labels, 5-column repeat-assessment table.
+Toolbar: "พิมพ์ที่กรอกแล้ว" (print with data), "พิมพ์ NIHSS เปล่า" (clear → recalc → print blank instantly),
+"ล้างข้อมูล" (clear with confirm).
+`?print-blank-direct=true` auto-triggers `printBlank()` (clear all inputs → recalc() → window.print()) on load.
+Accessed from rtpa.html toolbar via "NIHSS เปล่า" popup button, and from the portal hub (T2 Clinical Tools).
+Auto-sums totals per assessment column via `recalc()` on every input event.
 
 ### Drip Calculator (`tools/drip-calculator.html`)
 

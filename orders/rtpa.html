@@ -243,6 +243,7 @@
             
             <button type="submit" class="btn btn-calculate">คำนวณและสร้างใบสั่งยา</button>
             <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
+            <button type="button" id="print-nihss-blank-btn" class="btn btn-print">🖨️ NIHSS เปล่า</button>
             <button type="button" id="clear-btn" class="btn btn-clear">ล้างข้อมูล (Clear)</button>
         </form>
     </div>
@@ -747,6 +748,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ED_BLANK_PRINT.apply();
         ED_PRINT_BOOTSTRAP.showResults();
         window.print();
+    });
+
+    document.getElementById('print-nihss-blank-btn').addEventListener('click', () => {
+        window.open('tools/nihss.html?print-blank-direct=true', '_blank',
+            'width=900,height=700,menubar=no,toolbar=no,scrollbars=yes');
     });
 
     // Auto-run print-blank-direct from home page portal

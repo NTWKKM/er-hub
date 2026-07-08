@@ -27,7 +27,8 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | **qSOFA** | Quick Sequential Organ Failure Assessment. Sepsis screening. Embedded in sepsis template. |
 | **RIG Dose** | Rabies Immunoglobulin dose ≈ 2 mL/kg wound infiltration, max 100 mL per episode (WHO Thailand rabies guidance). Embedded in mammalian-bite template. |
 | **GCS** | Glasgow Coma Scale. Consciousness assessment. Embedded in trauma template. |
-| **Blank Print** | Pre-formatted standing order sheet with all calculated fields as dotted lines and all checkboxes as ☐. For manual clinical completion. Two pathways: PDF open (5 pages) or HTML blank (rtpa/nstemi). |
+| **NIHSS** | National Institutes of Health Stroke Scale. 11-item neurological deficit score (0–42). Embedded in sepsis template and available as a standalone scoring worksheet (`tools/nihss.html`). |
+| **Blank Print** | Pre-formatted standing order sheet with all calculated fields as dotted lines and all checkboxes as ☐. Three pathways: PDF open (5 pages), HTML blank via `ED_BLANK_PRINT.apply()` (rtpa/nstemi), or popup print via `tools/nihss.html?print-blank-direct=true` (NIHSS). |
 
 ## Ubiquitous Language
 
@@ -72,7 +73,10 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | --- | --- |
 | Drug orders | Auto-check ☑ based on input data |
 | Lab/IV/O2/monitoring | Always ☐ — never auto-checked |
-| Blank print | All non-dynamic ☑ reset to ☐; calculated fields → dotted lines |
+| Blank print — 5 pages (stemi, pe, heparin, antivenom, sedation) | Open PDF from `docs/` |
+| Blank print — rtpa/nstemi | `ED_BLANK_PRINT.apply()` → `ED_PRINT_BOOTSTRAP.showResults()` → `window.print()` |
+| Blank print — NIHSS | `tools/nihss.html?print-blank-direct=true` popup → `printBlank()` (clear inputs → `recalc()` → `window.print()`) |
+| rtpa "NIHSS เปล่า" button | `window.open('tools/nihss.html?print-blank-direct=true', '_blank', ...)` popup print |
 | NSTEMI use-current-time | Defaults unchecked (blank dotted lines) |
 | Other 4 pages use-current-time | Default checked (auto-fill current time) |
 | A4 page | `@page { size: A4 portrait; margin: 0 }`, `page-break-inside: avoid` |
