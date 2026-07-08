@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f4f2ec">
 
     <link rel="stylesheet" href="shared/base.css">
-    
+
     <script>
         // Backward Compatibility Redirection Logic
         // Redirects old URLs/bookmarks/QR codes that pointed to index.html with inputs or hash
@@ -32,10 +32,9 @@
             --graphite: #4a4a4a;
             --rule: #d8d4c8;
             --signal-orange: #d84315;
-            
-
 
             --font-ui: "Inter Tight", "Neue Haas Grotesk", sans-serif;
+
         }
 
         body {
@@ -57,6 +56,8 @@
             margin: 0 auto;
             padding: 16px 24px;
             box-sizing: border-box;
+            position: relative;
+            z-index: 2;
         }
 
         /* Sticky top nav override to match Braun theme */
@@ -125,10 +126,39 @@
             border-top: 1px solid var(--rule);
         }
 
+        .list-section {
+            margin-bottom: 48px;
+            opacity: 0;
+            transform: translateY(24px);
+            animation: sectionReveal 520ms ease-out forwards;
+        }
+
+        @keyframes sectionReveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .order-item-wrap {
             margin: 0;
             padding: 0;
+            opacity: 0;
+            transform: translateY(14px);
+            animation: rowReveal 360ms ease-out forwards;
         }
+
+        .list-section:nth-child(1) { animation-delay: 80ms; }
+        .list-section:nth-child(2) { animation-delay: 220ms; }
+        .list-section:nth-child(3) { animation-delay: 360ms; }
+
+        .order-item-wrap:nth-child(1) { animation-delay: 120ms; }
+        .order-item-wrap:nth-child(2) { animation-delay: 170ms; }
+        .order-item-wrap:nth-child(3) { animation-delay: 220ms; }
+        .order-item-wrap:nth-child(4) { animation-delay: 270ms; }
+        .order-item-wrap:nth-child(5) { animation-delay: 320ms; }
+        .order-item-wrap:nth-child(6) { animation-delay: 370ms; }
+        .order-item-wrap:nth-child(7) { animation-delay: 420ms; }
+        .order-item-wrap:nth-child(8) { animation-delay: 470ms; }
+        .order-item-wrap:nth-child(9) { animation-delay: 520ms; }
+        .order-item-wrap:nth-child(10) { animation-delay: 570ms; }
 
         .order-row {
             display: flex;
@@ -141,13 +171,17 @@
             border-bottom: 1px solid var(--rule);
             border-left: 4px solid transparent;
             background-color: transparent;
-            transition: background-color 120ms linear, border-left-color 120ms linear, color 120ms linear;
+            transition: background-color 120ms linear, border-left-color 120ms linear, color 120ms linear, transform 200ms ease, box-shadow 200ms ease;
+            transform-style: preserve-3d;
+            perspective: 800px;
         }
 
         .order-row:hover {
-            background-color: #49628d;
-            border-left-color: #F0EDE5;
-            color: #F0EDE5;
+            background-color: rgba(73, 98, 141, 0.08);
+            border-left-color: var(--ink);
+            color: var(--ink);
+            transform: translateX(6px) rotateX(0.8deg) rotateY(-1deg);
+            box-shadow: 0 2px 8px rgba(26, 26, 26, 0.08);
         }
 
         .order-row:hover .order-num,
@@ -155,7 +189,7 @@
         .order-row:hover .order-title,
         .order-row:hover .order-status,
         .order-row:hover .order-arrow {
-            color: #F0EDE5;
+            color: var(--ink);
         }
 
         .order-row:focus {
@@ -221,13 +255,24 @@
 
         .signal-dot.time-critical {
             background-color: var(--signal-orange);
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12);
+            animation: ledPulse 2.4s ease-in-out infinite;
+        }
+
+        @keyframes ledPulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(216, 67, 21, 0.35); }
+            50% { opacity: 0.78; box-shadow: 0 0 0 3px rgba(216, 67, 21, 0.12); }
         }
 
         .order-arrow {
             font-size: 14px;
             color: var(--graphite);
             flex-shrink: 0;
-            transition: transform 120ms linear;
+            transition: transform 200ms ease;
+        }
+
+        @keyframes rowReveal {
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .order-row:hover .order-arrow {
@@ -432,12 +477,12 @@
     </footer>
 </div>
 
-<div id="sw-update-toast" style="display:none; position:fixed; bottom:24px; right:24px; background:#1a1a1a; color:#f4f2ec; padding:16px 24px; border-radius:2px; font-family:var(--font-ui); font-size:14px; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:1000; align-items:center; gap:16px;">
+<div id="sw-update-toast" style="display:none; position:fixed; bottom:24px; right:24px; background:#1a1a1a; color:#f4f2ec; padding:16px 24px; border-radius:2px; font-family:var(--font-ui); font-size:14px; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:1000; align-items:center; gap:16px; transform: translateY(120%); transition: transform 300ms ease;">
     <span>พบเวอร์ชันใหม่ (New version available)</span>
     <button id="sw-refresh-btn" style="background:#d84315; color:#f4f2ec; border:none; padding:8px 16px; font-family:var(--font-ui); font-weight:700; font-size:12px; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; border-radius:2px;">อัปเดต (Update)</button>
 </div>
 
-<script>
+<script type="module">
 // Create navigation bar directly to fit the Braun header layout without redundant helper injection
 const nav = document.createElement('nav');
 nav.className = 'top-nav';
@@ -447,7 +492,7 @@ nav.innerHTML = `
         <img src="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" style="height: 38px; width: auto; display: block;">
     </div>
     <div class="nav-center">MNRH-ED HUB</div>
-    <div class="nav-right">v25 · Updated 2026-07-22</div>
+    <div class="nav-right">v25 · Updated 2026-07-08</div>
 `;
 document.body.insertBefore(nav, document.body.firstChild);
 
@@ -475,6 +520,9 @@ if ('serviceWorker' in navigator) {
         const btn = document.getElementById('sw-refresh-btn');
         if (toast && btn && !btn.dataset.wired) {
           toast.style.display = 'flex';
+          // force reflow
+          void toast.offsetWidth;
+          toast.style.transform = 'translateY(0)';
           btn.dataset.wired = '1';
           btn.addEventListener('click', () => {
             worker.postMessage({ action: 'skipWaiting' });
