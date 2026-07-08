@@ -150,12 +150,12 @@ The NIHSS tool (`tools/nihss.html`) is a standalone stroke severity scoring work
 | Score cell | `.score-list div{margin:1px 0}` — each item on its own line |
 | Subrow label | `.subrow-label` — centered, `background:#f7f5f0`, used for 5a/5b and 6a/6b split rows |
 | Input cell | `input.cell` — transparent background, `1px solid` accent on focus with `#fffceb` tint |
-| Total display | `#totalScore` — accent color `#7a3b2e`, larger font size |
+| Total display | `#total-1`–`#total-5` — per-column auto-sum spans, updated by `recalc()` |
 | Toolbar button | `border: 1px solid #2b2b2b`, `background: #d8d3c6`; hover: `#cfc9b8` |
 
 ### Print Behavior
 
-- `@media print`: `body{padding:0;background:#fff}`, `.sheet{border:none}`, `.no-print{display:none}`.
+- `@media print`: A4 portrait, pure black-on-white. `@page{margin:6mm}`, `font-size:8.5pt`, `table:7.3pt`, grid borders `0.75px solid #000`. All colored surfaces (title-bar, thead, total row, subrow-label, sig-row) forced to `#fff` background. Toolbar and `.no-print` hidden.
 - "พิมพ์ที่กรอกแล้ว" → `window.print()` directly (preserves entered scores).
 - "พิมพ์ NIHSS เปล่า" → `clearAll()` → `recalc()` → `window.print()` (all inputs blank, totals = 0).
 - `?print-blank-direct=true` → auto-calls `printBlank()` on page load (used by rtpa "NIHSS เปล่า" popup button).

@@ -63,7 +63,6 @@
   .col-score{width:41%;}
   .cat-th{font-weight:700;}
   .cat-en{font-size:11.5px;color:#666;font-weight:400;}
-  .sub-th{font-size:12px;color:#555;margin-top:2px;}
   .score-list div{margin:1px 0;}
   .subrow-label{
     font-weight:700;
@@ -86,10 +85,6 @@
     font-size:16px;
     padding:10px;
   }
-  #totalScore{
-    font-size:18px;
-    color:var(--accent);
-  }
   .sig-row th{
     background:#f0ede4;
     font-weight:700;
@@ -104,9 +99,48 @@
     border-top:1px solid var(--line-soft);
   }
   @media print{
-    body{padding:0;background:#fff;}
-    .sheet{border:none;}
-    .no-print{display:none;}
+    @page{size:A4 portrait;margin:6mm;}
+    html,body{
+      margin:0 !important;
+      padding:0 !important;
+      width:210mm !important;
+      background:#fff !important;
+      color:#000 !important;
+      font-size:8.5pt;
+      line-height:1.15;
+    }
+    .no-print,.toolbar{display:none !important;}
+    .sheet{max-width:100%;border:none;}
+    .title-bar,thead th,tr.total td,.subrow-label,.sig-row th{
+      background:#fff !important;
+      color:#000 !important;
+    }
+    .title-bar{
+      border-bottom:1.5px solid #000;
+      padding:3px 6px;
+    }
+    .title-bar h1{font-size:12.5pt;}
+    .title-bar p{font-size:8pt;margin-top:2px;}
+    table{font-size:7.3pt;}
+    th,td{
+      border:0.75px solid #000 !important;
+      padding:2px 3px;
+    }
+    thead th{font-size:6.8pt;}
+    .cat-en{font-size:6.3pt;}
+    .score-list div{margin:0;line-height:1.1;}
+    input.cell{font-size:7.3pt;}
+    tr.total td{
+      font-size:9pt;
+      padding:3px;
+      border-top:1.5px solid #000 !important;
+    }
+    .footer-note{
+      font-size:6.3pt;
+      padding:2px 6px;
+      border-top:0.75px solid #000;
+      color:#000 !important;
+    }
   }
   .toolbar{
     max-width:900px;
@@ -240,7 +274,7 @@
       </tr>
 
       <tr>
-        <td rowspan="2"><div class="cat-th">5a/5b. แขน</div><div class="cat-en">Motor Arm (ยกแขน 90° นั่ง/45° นอน)</div></td>
+        <td class="subrow-label"><div class="cat-th">5a. แขนซ้าย (Left)</div><div class="cat-en">Motor Arm (ยกแขน 90° นั่ง/45° นอน)</div></td>
         <td rowspan="2" class="score-list">
           <div>0 = ไม่ตก (No drift)</div>
           <div>1 = ตกลง (Drift)</div>
@@ -249,11 +283,6 @@
           <div>4 = ไม่ขยับเลย (No movement)</div>
           <div>X = ประเมินไม่ได้ (ตัด/ข้อติด)</div>
         </td>
-      </tr>
-      <tr></tr>
-      <tr>
-        <td class="subrow-label">5a. ซ้าย (Left)</td>
-        <td class="subrow-label"></td>
         <td><input class="cell" data-key="5a-1"></td>
         <td><input class="cell" data-key="5a-2"></td>
         <td><input class="cell" data-key="5a-3"></td>
@@ -261,8 +290,7 @@
         <td><input class="cell" data-key="5a-5"></td>
       </tr>
       <tr>
-        <td class="subrow-label">5b. ขวา (Right)</td>
-        <td class="subrow-label"></td>
+        <td class="subrow-label"><div class="cat-th">5b. แขนขวา (Right)</div></td>
         <td><input class="cell" data-key="5b-1"></td>
         <td><input class="cell" data-key="5b-2"></td>
         <td><input class="cell" data-key="5b-3"></td>
@@ -271,8 +299,8 @@
       </tr>
 
       <tr>
-        <td rowspan="1"><div class="cat-th">6a/6b. ขา</div><div class="cat-en">Motor Leg (ยกขา 30° นอนหงาย)</div></td>
-        <td rowspan="1" class="score-list">
+        <td class="subrow-label"><div class="cat-th">6a. ขาซ้าย (Left)</div><div class="cat-en">Motor Leg (ยกขา 30° นอนหงาย)</div></td>
+        <td rowspan="2" class="score-list">
           <div>0 = ไม่ตก (No drift)</div>
           <div>1 = ตกลง (Drift)</div>
           <div>2 = ต้านแรงโน้มถ่วงไม่ได้</div>
@@ -280,10 +308,6 @@
           <div>4 = ไม่ขยับเลย (No movement)</div>
           <div>X = ประเมินไม่ได้ (ตัด/ข้อติด)</div>
         </td>
-      </tr>
-      <tr>
-        <td class="subrow-label">6a. ซ้าย (Left)</td>
-        <td class="subrow-label"></td>
         <td><input class="cell" data-key="6a-1"></td>
         <td><input class="cell" data-key="6a-2"></td>
         <td><input class="cell" data-key="6a-3"></td>
@@ -291,8 +315,7 @@
         <td><input class="cell" data-key="6a-5"></td>
       </tr>
       <tr>
-        <td class="subrow-label">6b. ขวา (Right)</td>
-        <td class="subrow-label"></td>
+        <td class="subrow-label"><div class="cat-th">6b. ขาขวา (Right)</div></td>
         <td><input class="cell" data-key="6b-1"></td>
         <td><input class="cell" data-key="6b-2"></td>
         <td><input class="cell" data-key="6b-3"></td>

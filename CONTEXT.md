@@ -27,7 +27,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | **qSOFA** | Quick Sequential Organ Failure Assessment. Sepsis screening. Embedded in sepsis template. |
 | **RIG Dose** | Rabies Immunoglobulin dose ≈ 2 mL/kg wound infiltration, max 100 mL per episode (WHO Thailand rabies guidance). Embedded in mammalian-bite template. |
 | **GCS** | Glasgow Coma Scale. Consciousness assessment. Embedded in trauma template. |
-| **NIHSS** | National Institutes of Health Stroke Scale. 11-item neurological deficit score (0–42). Embedded in sepsis template and available as a standalone scoring worksheet (`tools/nihss.html`). |
+| **NIHSS** | National Institutes of Health Stroke Scale. 11-item neurological deficit score (0–42). Standalone scoring worksheet (`tools/nihss.html`), linked from rtpa.html toolbar via "NIHSS เปล่า" popup button. |
 | **Blank Print** | Pre-formatted standing order sheet with all calculated fields as dotted lines and all checkboxes as ☐. Three pathways: PDF open (5 pages), HTML blank via `ED_BLANK_PRINT.apply()` (rtpa/nstemi), or popup print via `tools/nihss.html?print-blank-direct=true` (NIHSS). |
 
 ## Ubiquitous Language

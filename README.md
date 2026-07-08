@@ -18,6 +18,7 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 │   └── sedation.html            ← Post-Intubation Sedation
 ├── tools/
 │   ├── drip-calculator.html     ← IV Infusion Drip Calculator (12 HAD drugs)
+│   ├── nihss.html               ← NIHSS Stroke Scale Score Sheet
 │   └── er-note/
 │       ├── index.html           ← ER NOTE portal hub (7 templates)
 │       ├── general-er-note.html ← General ER Note
@@ -85,4 +86,4 @@ See `ARCHITECTURE.md`, `DESIGN.md`, and `CONTEXT.md` for full specifications. Se
 npm test
 ```
 
-Runs 209 unit tests via Node's built-in `node:test` (zero dependencies). Covers `calc-engine.js` (drip rate), `anticoag-engine.js` (heparin dosing + titration + eGFR), `clinical-engine.js` (eGFR + GRACE score + Killip lookup), `drug-data.js` (12-drug catalog validation), `components.js` (date/time formatting), `form-validate.js`, `print-bootstrap.js`, `blank-print-engine.js`, and structural regression guards (dead-css, id-integrity, order-safety, NSTEMI thresholds, drip-calculator UI). Tests are dev-only — they never ship to the browser.
+Runs 213 unit tests via Node's built-in `node:test` (zero dependencies). Covers `calc-engine.js` (drip rate), `anticoag-engine.js` (heparin dosing + titration + eGFR), `clinical-engine.js` (eGFR + GRACE score + Killip lookup), `drug-data.js` (12-drug catalog validation), `components.js` (date/time formatting), `form-validate.js`, `print-bootstrap.js`, `blank-print-engine.js`, and structural regression guards (dead-css, id-integrity, order-safety, NSTEMI thresholds, drip-calculator UI). Tests are dev-only — they never ship to the browser.

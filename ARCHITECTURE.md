@@ -105,7 +105,7 @@ Redirect script validates `order` slug against allow-list.
 
 PWA offline cache. Network-first for navigation requests, cache-first for static assets.
 `CACHE_VERSION` is `er-hub-v24` — must stay in sync with `index.html` nav-right version string.
-Precaches all HTML/CSS/JS + shared engines + ER NOTE templates + drip-calculator + 512×512 app icon + source PDFs + Google Fonts.
+Precaches all HTML/CSS/JS + shared engines + ER NOTE templates + drip-calculator + nihss.html + 512×512 app icon + source PDFs + Google Fonts.
 Per-asset retry with exponential backoff via `fetchWithRetry()`. `Promise.allSettled()` ensures one failure doesn't block others.
 
 ### PWA Manifest (`manifest.json`)
@@ -176,7 +176,7 @@ These are invariant rules the codebase follows. They are not decisions with date
 - **Existing field `id`s preserved.** DOM IDs are the stable contract between HTML and JS. Renaming an ID requires updating all references and running `tests/id-integrity-guard.test.js`.
 - **Print output is plain text.** Print renders black-on-white A4. No color, no shadows, no screen-only UI. `@media print` hides nav, float bar, forms, sidebar.
 - **`CACHE_VERSION` sync.** `service-worker.js` `CACHE_VERSION` must match `index.html` nav-right version string. Bump both together on deploy.
-- **SW precache must include all pages.** Every HTML page + every shared JS/CSS + ER NOTE templates + drip-calculator must be in the `ASSETS` array. Offline-first is a stated goal.
+- **SW precache must include all pages.** Every HTML page + every shared JS/CSS + ER NOTE templates + drip-calculator + nihss.html must be in the `ASSETS` array. Offline-first is a stated goal.
 - **No `alert()` calls.** Use `ED_VALIDATE` non-blocking validation instead.
 - **No `@media print` or `#print-area` changes** without a specific bug fix requiring it.
 - **Tests are dev-only.** `tests/` never ship to the browser and don't affect the no-build-step constraint.
