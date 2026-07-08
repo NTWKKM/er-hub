@@ -248,8 +248,8 @@ describe('SW Version — cache version bumped (v25 drip-calculator precache)', (
         assert.match(sw, /er-hub-v25/, 'CACHE_VERSION must be er-hub-v25');
     });
 
-    test('index.html version string is v25', () => {
-        assert.match(index, /v25/, 'index.html must display v25');
+    test('index.html version badge text is v25', () => {
+        assert.match(index, /<div class="nav-right">v25 · Updated [^<]*<\/div>/, 'index.html nav badge must show v25 with update date');
     });
 });
 

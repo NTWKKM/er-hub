@@ -137,10 +137,10 @@ The NIHSS tool (`tools/nihss.html`) is a standalone stroke severity scoring work
 - Toolbar: right-aligned row above the sheet. Three buttons: "พิมพ์ที่กรอกแล้ว" (→ `printWithData()`), "พิมพ์ NIHSS เปล่า" (→ `printBlank()`), "ล้างข้อมูล" (→ `clearAll()`). All three are `.no-print` (hidden in print).
 - Sheet: `max-width: 900px`, centered, white background, `2px solid` border.
 - Title bar: centered header with English title + Thai subtitle, `background: #d8d3c6`.
-- Table: 7 columns (category, score list, 5 assessment columns). `thead th` width distributed as 20% / 41% / ~9.5% × 5.
-- 5 assessment columns support repeated evaluations over time (e.g. admission, post-rt-PA, q1h).
+- Table: 5 columns total (category, score list, 3 assessment columns). Column widths are `.col-cat 22%`, `.col-score 40%`, `thead th 8%` × 3.
+- 3 assessment columns support repeated evaluations over time (e.g. admission, post-rt-PA, q1h).
 - Total row: spans first 2 columns, shows per-column auto-sum via `recalc()`.
-- Signature rows: initials + signature cells in the same 5-column grid.
+- Signature rows: initials + signature cells in the same 3 assessment columns.
 - Footer note: muted centered text, `border-top: 1px solid #8a8a82`.
 
 ### Components
@@ -150,19 +150,19 @@ The NIHSS tool (`tools/nihss.html`) is a standalone stroke severity scoring work
 | Score cell | `.score-list div{margin:1px 0}` — each item on its own line |
 | Subrow label | `.subrow-label` — centered, `background:#f7f5f0`, used for 5a/5b and 6a/6b split rows |
 | Input cell | `input.cell` — transparent background, `1px solid` accent on focus with `#fffceb` tint |
-| Total display | `#total-1`–`#total-5` — per-column auto-sum spans, updated by `recalc()` |
+| Total display | `#total-1`–`#total-3` — per-column auto-sum spans, updated by `recalc()` |
 | Toolbar button | `border: 1px solid #2b2b2b`, `background: #d8d3c6`; hover: `#cfc9b8` |
 
 ### Print Behavior
 
-- `@media print`: A4 portrait, pure black-on-white. `@page{margin:6mm}`, `font-size:8.5pt`, `table:7.3pt`, grid borders `0.75px solid #000`. All colored surfaces (title-bar, thead, total row, subrow-label, sig-row) forced to `#fff` background. Toolbar and `.no-print` hidden.
+- `@media print`: A4 portrait, pure black-on-white. `@page{size:A4 portrait;margin:8mm 16mm;}`, `font-size:10pt`, `table:9pt`, grid borders `0.75px solid #000`. All colored surfaces (title-bar, thead, total row, subrow-label, sig-row) forced to `#fff` background. Toolbar and `.no-print` hidden.
 - "พิมพ์ที่กรอกแล้ว" → `window.print()` directly (preserves entered scores).
-- "พิมพ์ NIHSS เปล่า" → `clearAll()` → `recalc()` → `window.print()` (all inputs blank, totals = 0).
+- "พิมพ์ NIHSS เปล่า" → `printBlank()` clears inputs → `recalc()` → `window.print()` (all inputs blank, totals = 0).
 - `?print-blank-direct=true` → auto-calls `printBlank()` on page load (used by rtpa "NIHSS เปล่า" popup button).
 
 ### Interaction
 
-- `recalc()` runs on every `input` event across all 15 row keys (`1a`–`11`) and 5 columns, summing integer values per column.
+- `recalc()` runs on every `input` event across all 15 row keys (`1a`–`11`) and 3 assessment columns, summing integer values per column.
 - Non-numeric or empty cells are skipped (no NaN).
 - `clearAll()` requires `confirm()` before clearing.
 - No localStorage persistence — each session starts fresh.

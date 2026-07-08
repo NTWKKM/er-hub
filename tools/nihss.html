@@ -438,10 +438,18 @@ function printWithData(){
 }
 
 function printBlank(){
-  // Clear inputs then print (toolbar hides via @media print)
-  document.querySelectorAll('input.cell').forEach(inp=> inp.value = '');
+  // Snapshot → clear → print → restore so user data is not lost
+  const saved = {};
+  document.querySelectorAll('input.cell').forEach(inp => {
+    saved[inp.dataset.key] = inp.value;
+    inp.value = '';
+  });
   recalc();
   window.print();
+  document.querySelectorAll('input.cell').forEach(inp => {
+    if (saved[inp.dataset.key] !== undefined) inp.value = saved[inp.dataset.key];
+  });
+  recalc();
 }
 
 // Auto-run blank print when loaded via ?print-blank-direct=true

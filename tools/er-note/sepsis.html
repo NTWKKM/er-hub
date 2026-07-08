@@ -352,26 +352,23 @@ function autoLinkVitals(){
   const hrVal = parseFloat(hrEl.value);
 
   // --- SIRS auto-check from vitals ---
-  if (!isNaN(tempVal) && (tempVal > 38 || tempVal < 36)){
-    const cb = document.getElementById('sirs-temp');
-    if (!cb.checked){ cb.checked = true; cb.classList.add('auto-filled'); }
-  } else if (tempEl.value === '') {
-    document.getElementById('sirs-temp').classList.remove('auto-filled');
+  function setAutoCheckbox(id, active){
+    const cb = document.getElementById(id);
+    if (active){
+      if (!cb.checked || cb.dataset.autoLinked){
+        cb.checked = true;
+        cb.dataset.autoLinked = 'true';
+        cb.classList.add('auto-filled');
+      }
+    } else if (cb.dataset.autoLinked){
+      cb.checked = false;
+      delete cb.dataset.autoLinked;
+      cb.classList.remove('auto-filled');
+    }
   }
-
-  if (!isNaN(hrVal) && hrVal > 90){
-    const cb = document.getElementById('sirs-hr');
-    if (!cb.checked){ cb.checked = true; cb.classList.add('auto-filled'); }
-  } else if (hrEl.value === '') {
-    document.getElementById('sirs-hr').classList.remove('auto-filled');
-  }
-
-  if (!isNaN(rrVal) && rrVal > 20){
-    const cb = document.getElementById('sirs-rr');
-    if (!cb.checked){ cb.checked = true; cb.classList.add('auto-filled'); }
-  } else if (rrEl.value === '') {
-    document.getElementById('sirs-rr').classList.remove('auto-filled');
-  }
+  setAutoCheckbox('sirs-temp', !isNaN(tempVal) && (tempVal > 38 || tempVal < 36));
+  setAutoCheckbox('sirs-hr', !isNaN(hrVal) && hrVal > 90);
+  setAutoCheckbox('sirs-rr', !isNaN(rrVal) && rrVal > 20);
 
   // --- NEWS2 auto-select from vitals ---
   function selectRadio(name, value){
@@ -501,10 +498,14 @@ function autoLinkVitals(){
   } else { clearAutoMews('mews-temp'); }
 }
 
-function updateScores(){
-  autoLinkVitals();
+function updateScores(evt){
+  // Preserve manual SIRS checkbox overrides: do not re-auto-link from a SIRS checkbox change
+  const sirsIds = ['sirs-temp','sirs-hr','sirs-rr','sirs-wbc'];
+  if (!evt || !sirsIds.includes(evt.target.id)){
+    autoLinkVitals();
+  }
 
-  const s = sumChecked(['sirs-temp','sirs-hr','sirs-rr','sirs-wbc']);
+  const s = sumChecked(sirsIds);
   document.getElementById('sirs-score').textContent = s;
   document.getElementById('sirs-line').setAttribute('data-copy','SIRS: '+s+'/4');
   let srisk = s >= 2 ? 'high' : (s === 1 ? 'medium' : 'low');
@@ -555,14 +556,14 @@ function updateFloatStatus(sirs, srisk, news2, news2risk, mews, mewsrisk){
   setScoreRow('fs-mews', String(mews), mewsrisk);
 
   let risk = 'low';
-  if (sirs >= 2 && (news2risk === 'high' || mewsrisk === 'high')) {
+  if (srisk === 'high' || news2risk === 'high' || mewsrisk === 'high') {
     risk = 'high';
-  } else if (sirs >= 2) {
+  } else if (
+    srisk === 'medium' ||
+    news2risk === 'medium' || news2risk === 'low-medium' ||
+    mewsrisk === 'medium' || mewsrisk === 'low-medium'
+  ) {
     risk = 'medium';
-  } else if (news2risk === 'medium' || mewsrisk === 'medium') {
-    risk = 'medium';
-  } else {
-    risk = 'low';
   }
 
   riskText.textContent = risk.toUpperCase();
@@ -577,6 +578,7 @@ document.querySelectorAll('#sepsis-temp,#sepsis-hr,#sepsis-rr,#sepsis-bp,#sepsis
 });
 
 // Wire all score checkboxes/radios
+// SIRS checkboxes pass evt so updateScores can skip autoLinkVitals and preserve manual overrides.
 document.querySelectorAll(
   '#sirs-temp,#sirs-hr,#sirs-rr,#sirs-wbc,'+
   'input[name="news2-rr"],input[name="news2-spo2"],input[name="news2-o2"],input[name="news2-sbp"],input[name="news2-hr"],input[name="news2-conscious"],input[name="news2-temp"],'+
