@@ -92,7 +92,7 @@ Custom properties declared under `:root` in `base.css` for standing-order form p
 - **Live Regions:** `aria-live="polite"` on dose summary banners and stroke results container — screen readers announce computed doses without interrupting workflow. Both dose and weight sliders in the drip calculator have dynamic `aria-valuenow` + `aria-valuetext` updated on every `recalculate()` call.
 - **Focus Indicators:** Interactive inputs feature a clear outline focus state (`border-color: #c0392b` or `#007bff` with `box-shadow` glow).
 - **Contrasts:** Minimum contrast ratio of 4.5:1 maintained for clinical text labels.
-- **Form Validation:** Non-blocking validation via `ED_VALIDATE` (`shared/form-validate.js`). Inline `.field-error` + `.inline-error-msg` for field-level errors. `.clinical-warning` banner for safety alerts (SK contraindication, absolute CI). Zero `alert()` calls in the codebase.
+- **Form Validation:** Non-blocking validation via `ED_VALIDATE` (`shared/form-validate.js`). Inline `.field-error` + `.inline-error-msg` for field-level errors. `.clinical-warning` banner for safety alerts (SK contraindication, absolute CI). Zero `alert()` calls in `orders/*.html` (ER NOTE and NIHSS are a separate, decoupled subsystem and use native `alert()`/`confirm()` — see Asset Isolation Rule).
 
 ### Printing Constraints (A4 Layout)
 
@@ -215,7 +215,7 @@ The ER NOTE tool (`tools/er-note/`) is a separate clinical-note worksheet family
 | **Score Line** | Read-only computed score/risk display (HEART, Alvarado, qSOFA/SIRS, GCS, etc.). | `.score-box.score-line` with `data-copy="Score: value"`. Inline `updateScores()` keeps both visible text and `data-copy` in sync on every relevant `change` event. |
 | **Hint** | Contextual guidance (e.g. sepsis score totals). | Muted text, lives below related fields. |
 | **Action Buttons** | Copy Note / Clear / Print. | Primary (accent), Secondary (copy), Danger (clear). Fixed bottom bar on screen only. |
-| **Footer** | Version / metadata bar at bottom of each template. | Muted text, synchronized version string (currently `v24`). |
+| **Footer** | Version / metadata bar at bottom of each template. | Muted text, synchronized version string (currently `v25`). |
 | **Patient Strip** | HN input field + template label at top of each form (above all `.card` sections). Used for patient identification and sidebar card display. | `display: flex; gap: 12px`. HN input `140px` width, bold. Hidden in `@media print`. |
 | **Sidebar FAB** | Floating action button (right side, above action bar) toggling the draft manager panel. | `48px` circular, accent background, `☰` icon. `position: fixed; right: 20px; bottom: 80px; z-index: 95`. Hidden in `@media print`. |
 | **Sidebar Panel** | Slide-in panel from right listing all drafts across all templates. | `340px` wide, `transform: translateX(100%)` → `0` when `.open`. Contains: header (title + close), "+ New Draft" button, real-time filter input, scrollable card list. `z-index: 96`. Hidden in `@media print`. |

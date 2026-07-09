@@ -584,7 +584,7 @@
     });
 
     function clearAll() {
-      if (confirm('ล้างข้อมูลทั้งหมดในแบบฟอร์มนี้?')) {
+      if (confirm('ต้องการล้างข้อมูลทั้งหมดในแบบฟอร์มนี้หรือไม่?')) {
         document.querySelectorAll('input.cell').forEach(inp => inp.value = '');
         recalc();
       }
