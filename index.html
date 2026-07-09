@@ -156,6 +156,10 @@
         .order-item-wrap:nth-child(9) { animation-delay: 520ms; }
         .order-item-wrap:nth-child(10) { animation-delay: 570ms; }
 
+        .order-item-wrap {
+            perspective: 800px;
+        }
+
         .order-row {
             display: flex;
             align-items: center;
@@ -169,15 +173,15 @@
             background-color: transparent;
             transition: background-color 120ms linear, border-left-color 120ms linear, color 120ms linear, transform 200ms ease, box-shadow 200ms ease;
             transform-style: preserve-3d;
-            perspective: 800px;
+            will-change: transform;
         }
 
         .order-row:hover {
             background-color: #49628d;
             border-left-color: #d84315;
             color: #F0EDE5;
-            transform: translateX(6px) rotateX(0.8deg) rotateY(-1deg);
-            box-shadow: 0 2px 8px rgba(26, 26, 26, 0.08);
+            transform: translateX(6px) translateZ(10px) rotateX(3deg) rotateY(-4deg);
+            box-shadow: 0 4px 10px rgba(26, 26, 26, 0.12);
         }
 
         .order-row:hover .order-num,
