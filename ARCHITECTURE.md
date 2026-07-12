@@ -109,7 +109,8 @@ Features:
 ### Portal Hub (`index.html`)
 
 Main entry point. Braun × Mid-Century Modern layout.
-Semantic vertical ordered list with 1px hairlines, tabular numerals, muted category styles, signal orange indicators for time-critical actions.
+Divided into two distinct sections: "Active" (which contains rt-PA, NSTEMI, and tools T1 to T3 all marked with ACTIVE status) and "Prototype" (containing the remaining standing orders and T4 tool marked with PROTOTYPE status).
+Uses semantic vertical ordered lists with 1px hairlines, tabular numerals, muted category styles, signal orange indicators for time-critical actions.
 Registers service worker for offline PWA support with dynamic reload notification.
 Redirect script validates `order` slug against allow-list.
 
