@@ -79,6 +79,16 @@ clinical-indication-based guide rendering with per-drug max dose display,
 inline plain text concentration display, sessionStorage weight persistence.
 All input fields in English.
 
+### Urgent Clinic Home Medication (`tools/Urgent-Clinic-Home-Medication.html`)
+
+Standalone Home Medication Checklist (ใบสั่งยาและแผนการรักษากลับบ้าน).
+Uses `er-note/er-note.css` for styling, but is completely decoupled from `er-note.js` draft/lifecycle logic.
+Features:
+- Self-contained local draft auto-saving to `localStorage` key `er-hub-home-med-draft` on change/input events.
+- Synchronization of patient weight input with the ERIG dose weight input field.
+- Custom clinical plain-text compiler copying checked prescriptions, patient weight, demographics, and immunizations to the clipboard.
+- @media print support that formats inputs as dotted underlines and checks (✓) inside square boxes on A4 paper prints.
+
 ### Shared Engines (`shared/`)
 
 | File | Role | Dependencies |

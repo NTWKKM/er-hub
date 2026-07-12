@@ -14,6 +14,7 @@ const ASSETS = [
   './orders/sedation.html',
   './tools/drip-calculator.html',
   './tools/nihss.html',
+  './tools/Urgent-Clinic-Home-Medication.html',
   './tools/er-note/index.html',
   './tools/er-note/general-er-note.html',
   './tools/er-note/sepsis.html',

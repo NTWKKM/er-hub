@@ -16,16 +16,25 @@ function collectRepoSources() {
     const sources = [];
     const dirsToScan = [ORDERS_DIR, TOOLS_DIR, SHARED_DIR, REPO_ROOT];
     const seen = new Set();
-    for (const dir of dirsToScan) {
-        if (!fs.existsSync(dir)) continue;
+    
+    function walk(dir) {
+        if (!fs.existsSync(dir)) return;
         for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-            if (!entry.isFile()) continue;
-            if (!/\.(html|js)$/.test(entry.name)) continue;
             const full = path.join(dir, entry.name);
-            if (seen.has(full)) continue;
-            seen.add(full);
-            sources.push(fs.readFileSync(full, 'utf8'));
+            if (entry.isDirectory()) {
+                if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === 'tests') continue;
+                walk(full);
+            } else if (entry.isFile()) {
+                if (!/\.(html|js)$/.test(entry.name)) continue;
+                if (seen.has(full)) continue;
+                seen.add(full);
+                sources.push(fs.readFileSync(full, 'utf8'));
+            }
         }
+    }
+
+    for (const dir of dirsToScan) {
+        walk(dir);
     }
     return sources;
 }
@@ -110,7 +119,7 @@ function checkDeadCssClasses(filePath) {
  * Check a standalone .css file (shared/base.css, shared/print.css) for dead classes
  * by cross-referencing every class selector against ALL .html and .js files in the repo.
  */
-function checkDeadCssInSharedFile(cssPath, repoSources) {
+function checkDeadCssInSharedFile(cssPath, repoSources, isErNote = false) {
     const cssContent = fs.readFileSync(cssPath, 'utf8');
     const selectors = extractCssClasses(cssContent);
     const dead = [];
@@ -123,6 +132,10 @@ function checkDeadCssInSharedFile(cssPath, repoSources) {
 
     for (const className of selectors) {
         if (bypass.has(className)) continue;
+        if (isErNote) {
+            if (/^(tpl-|s-risk-|risk-)/.test(className)) continue;
+            if (className === 'wide') continue;
+        }
         // Check if the class appears as a class attribute or a JS string literal
         // in ANY html/js file in the repo. JS className assignments often use
         // compound strings like 'nav-title nav-title-full', so we match the class
@@ -183,19 +196,22 @@ describe('Dead CSS Selector Guard', () => {
         });
     });
 
-    // Shared standalone CSS files — cross-reference against the full repo
-    const sharedCssFiles = ['base.css', 'print.css'];
+    // Standalone CSS files — cross-reference against the full repo
+    const cssFilesToCheck = [
+        { name: 'shared/base.css', path: path.join(SHARED_DIR, 'base.css'), isErNote: false },
+        { name: 'shared/print.css', path: path.join(SHARED_DIR, 'print.css'), isErNote: false },
+        { name: 'tools/er-note/er-note.css', path: path.join(TOOLS_DIR, 'er-note', 'er-note.css'), isErNote: true }
+    ];
     const repoSources = collectRepoSources();
 
-    sharedCssFiles.forEach(cssFile => {
-        const cssPath = path.join(SHARED_DIR, cssFile);
+    cssFilesToCheck.forEach(({ name, path: cssPath, isErNote }) => {
         if (!fs.existsSync(cssPath)) return;
-        test(`All CSS classes in shared/${cssFile} are referenced somewhere in the repo`, () => {
-            const { dead, selectors } = checkDeadCssInSharedFile(cssPath, repoSources);
+        test(`All CSS classes in ${name} are referenced somewhere in the repo`, () => {
+            const { dead, selectors } = checkDeadCssInSharedFile(cssPath, repoSources, isErNote);
             assert.equal(
                 dead.length,
                 0,
-                `shared/${cssFile} defines CSS classes that are never used in any .html or .js file: ${JSON.stringify(dead)}. ` +
+                `${name} defines CSS classes that are never used in any .html or .js file: ${JSON.stringify(dead)}. ` +
                 `Total classes analyzed: ${selectors.length}`
             );
         });

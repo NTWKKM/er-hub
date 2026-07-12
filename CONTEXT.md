@@ -29,6 +29,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | **GCS** | Glasgow Coma Scale. Consciousness assessment. Embedded in trauma template. |
 | **NIHSS** | National Institutes of Health Stroke Scale. 11-item neurological deficit score (0–42). Standalone scoring worksheet (`tools/nihss.html`), linked from rtpa.html toolbar via "NIHSS เปล่า" popup button. |
 | **Blank Print** | Pre-formatted standing order sheet with all calculated fields as dotted lines and all checkboxes as ☐. Three pathways: PDF open (5 pages), HTML blank via `ED_BLANK_PRINT.apply()` (rtpa/nstemi), or popup print via `tools/nihss.html?print-blank-direct=true` (NIHSS). |
+| **Urgent Clinic Home Medication** | Standalone home medication and emergency immunization checklist worksheet (`tools/Urgent-Clinic-Home-Medication.html`) for discharge clinical documentation, with auto-save and plain-text clipboard copy. |
 
 ## Ubiquitous Language
 
@@ -54,6 +55,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | ER NOTE draft | `ernote-draft-{templateId}-{draftId}` (localStorage key) | `tools/er-note/er-note.js` |
 | Investigation module | `ErNote.renderInvestigation()` | `tools/er-note/er-note.js` |
 | Treatment module | `ErNote.renderTreatment()` | `tools/er-note/er-note.js` |
+| Home medication draft | `er-hub-home-med-draft` (localStorage key) | `tools/Urgent-Clinic-Home-Medication.html` |
 
 ## Clinical Decision Boundaries
 
@@ -81,9 +83,11 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | Other 4 pages use-current-time | Default checked (auto-fill current time) |
 | A4 page | `@page { size: A4 portrait; margin: 0 }`, `page-break-inside: avoid` |
 | Nav in print | Hidden via `@media print` |
+| Home Medication print | Formats input values as dotted underlines, converting checkbox inputs into custom printed boxes with checks (✓) or blank squares. |
 
 ## Asset Isolation Rule
 
 ER NOTE pages must not import `shared/base.css`, `shared/components.js`, or `shared/form-validate.js`.
 Shared style and behavior are provided only by `tools/er-note/er-note.css` and `tools/er-note/er-note.js`.
 This keeps the narrative-note UX decoupled from the standing-order print/float-bar lifecycle.
+Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Home-Medication.html`) are isolated from the standing order validation and lifecycle engines, handling their own printing, copy-to-clipboard, and local draft persistence.

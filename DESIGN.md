@@ -243,3 +243,15 @@ The ER NOTE tool (`tools/er-note/`) is a separate clinical-note worksheet family
 ### Asset Isolation Rule
 
 ER NOTE pages must not import `shared/base.css`, `shared/components.js`, or `shared/form-validate.js`. Shared style and behaviour are provided only by the local `tools/er-note/er-note.css` and `tools/er-note/er-note.js` files. This keeps the narrative-note UX decoupled from the standing-order print/float-bar lifecycle.
+
+## 7. Standalone Tools Visual Language & Behavior
+
+Standalone worksheets located directly in `tools/` (e.g., `nihss.html`, `Urgent-Clinic-Home-Medication.html`) are isolated from the standing-order validation and lifecycle engines.
+
+### Urgent Clinic Home Medication (`tools/Urgent-Clinic-Home-Medication.html`)
+- **Theme**: Screen mode uses the dark glassmorphism styling parameters (`#0f1115` body, `#181b21` cards) by importing `er-note/er-note.css`, with custom local overrides to manage the tabular layout on screen.
+- **Form Layout**: Structured table separating Adult (left) and Pediatric (right) medication checklists. Includes numeric and text inputs inside table cells for doses/concentrations/vials.
+- **Print Layout**: Pure black-and-white A4 print stylesheet. Thick border lines are preserved, inputs are converted into transparent borders with dotted underlines, and checkboxes are styled as custom `☐` and `☑` print marks.
+- **Autosave Engine**: Local self-contained script listening to form `input` and `change` events, compiling form values into a single JSON object saved to local storage under `er-hub-home-med-draft`. Values are automatically restored on page initialization.
+- **Note Formatting**: Local clipboard copy script compiling medication details, patient demographics, and immunizations into a clinical summary notes template.
+

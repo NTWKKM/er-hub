@@ -66,7 +66,6 @@ input:focus,textarea:focus,select:focus { outline:none; border-color:var(--accen
 .inline-row { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; }
 .inline-row .field-row { flex:1 1 220px; grid-template-columns:1fr; }
 .inline-row label { padding-top:0; margin-bottom:3px; }
-.hint { font-size:12px; color:var(--muted); margin-top:6px; }
 .score-box { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:3px; background:var(--paper-2); font-size:13px; }
 .score-val { font-weight:700; color:var(--accent); }
 .action-bar {
@@ -254,7 +253,6 @@ input:focus,textarea:focus,select:focus { outline:none; border-color:var(--accen
 .btn-group .btn-tile:has(input:checked) {
   background:var(--accent); border-color:var(--accent); color:#fff;
 }
-.btn-group .btn-tile .tile-icon { margin-bottom:4px; }
 .btn-group .btn-tile .tile-label { line-height:1.2; }
 .btn-group .btn-tile .tile-sub { font-size:10px; opacity:.7; margin-top:2px; }
 .btn-group .btn-tile:has(input:checked) .tile-sub { opacity:.85; }
@@ -293,9 +291,6 @@ input:focus,textarea:focus,select:focus { outline:none; border-color:var(--accen
 .btn-group .btn-tile:has(.wound-illust-pair) {
   min-width:340px; align-items:center;
 }
-
-/* ---- Sepsis section reorder helper ---- */
-.section-num-reset { counter-reset: section-num; }
 
 /* ---- Narrative sub-cards (rendered by ErNote.renderNarrative) ---- */
 .narrative-sub-card {

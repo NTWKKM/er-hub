@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Urgent Clinic Home Medication — ER NOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="er-note/er-note.css">
+<style>
+/* Local CSS overrides to adapt the clinical table for ER Note dark screen style */
+.med-card {
+  margin-bottom: 80px; /* Space for fixed bottom action bar */
+  padding: 16px;
+}
+.med-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  background: var(--paper-1);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+.med-table td, .med-table th {
+  border: 1px solid var(--line);
+  padding: 6px;
+  vertical-align: top;
+}
+.med-table th {
+  background-color: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+}
+.med-table td.side-header {
+  background-color: var(--paper-2);
+  color: var(--text);
+  font-weight: 700;
+  text-align: center;
+  vertical-align: middle;
+}
+.med-table input[type="text"], .med-table input[type="number"] {
+  border: 1px solid var(--line);
+  background-color: var(--bg);
+  color: var(--text);
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-family: inherit;
+  font-size: 12px;
+}
+.med-table input[type="text"]:focus, .med-table input[type="number"]:focus {
+  border-color: var(--accent-2);
+  outline: none;
+}
+.med-table label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.med-table label input[type="checkbox"] {
+  accent-color: var(--accent);
+}
+.med-table .sub-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: none;
+}
+.med-table .sub-table td {
+  border: none;
+  padding: 4px;
+}
+.med-table .sub-table tr:not(:last-child) td {
+  border-bottom: 1px dashed var(--line);
+}
+
+/* Custom interactive input layout for patient strip & diagnosis fields */
+.meta-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.meta-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.meta-field {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.meta-field label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.meta-field input {
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  background-color: var(--paper-2);
+  color: var(--text);
+  border-radius: 4px;
+  font-family: inherit;
+}
+.meta-field input:focus {
+  border-color: var(--accent-2);
+  outline: none;
+}
+
+/* Print layout overrides to enforce pure black-and-white A4 paper style */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .card, .med-card {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+  .med-table {
+    border: 1px solid #000 !important;
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 11.5px !important;
+  }
+  .med-table td, .med-table th {
+    border: 1px solid #000 !important;
+    color: #000 !important;
+    padding: 3px !important;
+  }
+  .med-table th {
+    background-color: #000 !important;
+    color: #fff !important;
+  }
+  .med-table td.side-header {
+    background-color: #e6e6e6 !important;
+    color: #000 !important;
+  }
+  .med-table input[type="text"], .med-table input[type="number"] {
+    border: none !important;
+    border-bottom: 1px dotted #000 !important;
+    background: transparent !important;
+    color: #000 !important;
+    border-radius: 0 !important;
+    padding: 0 4px !important;
+  }
+  .meta-field input {
+    border: none !important;
+    border-bottom: 1px dotted #000 !important;
+    background: transparent !important;
+    color: #000 !important;
+    border-radius: 0 !important;
+    padding: 0 4px !important;
+  }
+  /* Checkboxes style for printing */
+  .med-table input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border: 1px solid #000;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 4px;
+    background: #fff;
+  }
+  .med-table input[type="checkbox"]:checked::before {
+    content: "✓";
+    font-size: 10px;
+    font-weight: bold;
+    color: #000;
+  }
+}
+</style>
+</head>
+<body>
+<nav class="top-nav" role="navigation">
+  <div class="nav-left">
+    <img src="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <span class="nav-title">ER NOTE</span>
+  </div>
+  <a href="../index.html" class="nav-home">← Home</a>
+</nav>
+<main class="main">
+<form id="er-form">
+<div class="patient-strip">
+  <label for="ernote-hn" class="visually-hidden">HN</label>
+  <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
+  <span class="strip-label">ER Note — Home Medication Checklist</span>
+</div>
+
+<div class="card med-card">
+  <div style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 15px; color: var(--text);">
+    Urgent Clinic Home Medication (ใบสั่งยาและแผนการรักษากลับบ้าน)
+  </div>
+
+  <div class="meta-input-group">
+    <div class="meta-row">
+      <div class="meta-field" style="flex: 2;">
+        <label for="home-med-diag">Diagnosis 1</label>
+        <input type="text" id="home-med-diag" placeholder="ระบุการวินิจฉัย">
+      </div>
+      <div class="meta-field">
+        <label for="home-med-wound-cat">Wound category</label>
+        <input type="text" id="home-med-wound-cat" placeholder="ประเภทบาดแผล">
+      </div>
+    </div>
+    <div class="meta-row">
+      <div class="meta-field" style="flex: 2; flex-direction: row; align-items: center; gap: 12px; margin-top: 10px;">
+        <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+          <input type="checkbox" id="home-med-has-underlying"> โรคประจำตัว : PU, ตับ, หัวใจ, Stroke <span style="font-size: 11px; color: var(--muted); font-weight: normal;">(เลี่ยง NSAIDs)</span>
+        </label>
+      </div>
+    </div>
+    <div class="meta-row">
+      <div class="meta-field" style="flex: 2; flex-direction: row; align-items: center; gap: 20px;">
+        <span style="display: inline-flex; align-items: center; gap: 12px;">
+          <label><input type="checkbox" id="home-med-allergy-none"> ไม่แพ้ยา</label>
+          <label><input type="checkbox" id="home-med-allergy-yes"> แพ้ยา</label>
+          <input type="text" id="home-med-allergy-detail" placeholder="ระบุชื่อยาที่แพ้..." style="width: 220px;">
+        </span>
+        <span style="display: inline-flex; align-items: center; gap: 6px; margin-left: auto;">
+          BW <input type="text" id="home-med-weight" placeholder="น้ำหนัก" style="width: 60px; text-align: center;"> kg
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <table class="med-table">
+    <thead>
+      <tr class="header-row">
+        <th style="width: 4%;"></th>
+        <th style="width: 48%; font-size: 13.5px; padding: 4px;">Adult</th>
+        <th style="width: 48%; font-size: 13.5px; padding: 4px;">Pediatric</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- สัตว์/คนกัด -->
+      <tr>
+        <td class="side-header" style="font-size: 11px; width: 4%;">
+          <div style="writing-mode: vertical-rl; transform: rotate(180deg); font-weight: bold; letter-spacing: 2px;">สัตว์/คนกัด</div>
+        </td>
+        <td>
+          <div style="margin-bottom: 2px;">
+            <label><input type="checkbox" id="home-med-amox-500"> Amoxicillin (500 mg)</label>
+            <div style="float: right;">1x3 po pc <span style="margin-left: 10px;">15 cap</span></div>
+          </div>
+          <div style="padding-left: 20px; font-size: 11px; color: var(--muted); margin-bottom: 6px;">(บาดแผลสุนัขกัดทั่วไป)</div>
+          
+          <div style="margin-bottom: 2px;">
+            <label><input type="checkbox" id="home-med-coamox-1g"> Co-amoxiclav (1 g)</label>
+            <div style="float: right;">1x2 po pc <span style="margin-left: 10px;">10 tab</span></div>
+          </div>
+          <div style="padding-left: 20px; font-size: 11px; color: var(--muted); margin-bottom: 8px;">(สุนัขกัดที่มือ, แผลลึกหรือแผลฉีกขาด, แมวกัด, คนกัด)</div>
+
+          <div style="font-weight: bold; text-decoration: underline; margin-bottom: 4px; font-size: 11.5px;">แพ้ penicillins</div>
+          <div style="margin-bottom: 3px;">
+            <label><input type="checkbox" id="home-med-doxy-100"> Doxycycline (100mg)</label>
+            <div style="float: right;">1x2 po pc <span style="margin-left: 10px;">10 cap</span></div>
+          </div>
+          <div style="margin-bottom: 3px;">
+            <label><input type="checkbox" id="home-med-cipro-500"> Ciprofloxacin (500mg)</label>
+            <div style="float: right;">1x2 po pc <span style="margin-left: 10px;">10 tab</span></div>
+          </div>
+          <div style="margin-bottom: 2px;">
+            <label><input type="checkbox" id="home-med-clinda-300"> + Clindamycin (300mg)</label>
+            <div style="float: right;">1x3 po pc <span style="margin-left: 10px;">15 cap</span></div>
+          </div>
+        </td>
+        <td>
+          <div style="margin-bottom: 4px;">
+            <label><input type="checkbox" id="home-med-amox-syr"> Amoxicillin syrup (250 mg/5 mL)</label>
+            <span style="font-size: 10.5px; color: var(--muted); float: right;">(25-50 MKDay)</span>
+            <div style="padding-left: 20px; margin-top: 2px;">
+              sig <input type="text" id="home-med-amox-syr-tsp" style="width: 40px; text-align: center;"> tsp tid po pc <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → ½ tsp]</span>
+              <span style="float: right;"><input type="text" id="home-med-amox-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 4px; border-top: 1px dashed var(--line); padding-top: 4px;">
+            <label><input type="checkbox" id="home-med-coamox-syr"> Co-amoxiclav syrup (400+57mg/5 mL)</label>
+            <span style="font-size: 10.5px; color: var(--muted); float: right;">(25-50 MKDay)</span>
+            <div style="padding-left: 20px; margin-top: 2px;">
+              sig <input type="text" id="home-med-coamox-syr-tsp" style="width: 40px; text-align: center;"> tsp bid po pc <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → ½ tsp]</span>
+              <span style="float: right;"><input type="text" id="home-med-coamox-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+            </div>
+          </div>
+
+          <div style="font-weight: bold; text-decoration: underline; margin-bottom: 4px; font-size: 11.5px; border-top: 1px dashed var(--line); padding-top: 4px;">แพ้ penicillins</div>
+          <div style="margin-bottom: 4px;">
+            <label><input type="checkbox" id="home-med-cotri-susp"> Cotrimoxazole susp. (40+200/5mL)</label>
+            <span style="font-size: 10.5px; color: var(--muted); float: right;">(8-10MKDay)</span>
+            <div style="padding-left: 20px; margin-top: 2px;">
+              sig <input type="text" id="home-med-cotri-susp-tsp" style="width: 40px; text-align: center;"> tsp bid po pc <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → 1 tsp]</span>
+              <span style="float: right;"><input type="text" id="home-med-cotri-susp-qty" style="width: 30px; text-align: center;"> ขวด</span>
+            </div>
+          </div>
+          <div style="margin-bottom: 2px;">
+            <label><input type="checkbox" id="home-med-metro-susp"> + Metronidazole susp. (200mg/5mL) 60 ml</label>
+            <span style="font-size: 10.5px; color: var(--muted); float: right;">(20-30MKDay)</span>
+            <div style="padding-left: 20px; margin-top: 2px;">
+              sig <input type="text" id="home-med-metro-susp-tsp" style="width: 40px; text-align: center;"> tsp tid po pc <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → ½ tsp]</span>
+              <span style="float: right;"><input type="text" id="home-med-metro-susp-qty" style="width: 30px; text-align: center;"> ขวด</span>
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      <!-- บาดแผล/แผลสด -->
+      <tr>
+        <td class="side-header" style="font-size: 11px; width: 4%;">
+          <div style="writing-mode: vertical-rl; transform: rotate(180deg); font-weight: bold; letter-spacing: 2px;">บาดแผล/แผลสด</div>
+        </td>
+        <td>
+          <div style="margin-bottom: 3px;">
+            <label><input type="checkbox" id="home-med-diclox-500"> Dicloxacillin (500mg)</label>
+            <div style="float: right;">1x4 po ac hs <span style="margin-left: 10px;">8 cap</span></div>
+          </div>
+          <div style="margin-bottom: 4px;">
+            <label><input type="checkbox" id="home-med-cepha-250"> Cephalexin (250mg)</label>
+            <div style="float: right;">2x3 po ac <span style="margin-left: 10px;">12 cap</span></div>
+          </div>
+          <div style="font-size: 10.5px; color: var(--muted); margin-bottom: 6px;">*จ่ายยาปฏิชีวนะเฉพาะกรณีมีความเสี่ยงต่อการติดเชื้อสูงเท่านั้น</div>
+
+          <div style="font-weight: bold; text-decoration: underline; margin-bottom: 4px; font-size: 11.5px;">แพ้ penicillins</div>
+          <div style="margin-bottom: 2px;">
+            <label><input type="checkbox" id="home-med-clinda-300-wound"> Clindamycin (300 mg)</label>
+            <div style="float: right;">1x3 po pc <span style="margin-left: 10px;">6 cap</span></div>
+          </div>
+        </td>
+        <td>
+          <div style="margin-bottom: 4px;">
+            <label><input type="checkbox" id="home-med-diclox-syr"> Dicloxacillin syrup (125 mg/5mL)</label>
+            <span style="font-size: 10.5px; color: var(--muted); float: right;">(25-50 MKDay)</span>
+            <div style="padding-left: 20px; margin-top: 2px;">
+              sig <input type="text" id="home-med-diclox-syr-tsp" style="width: 40px; text-align: center;"> tsp qid po ac hs <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → 1 tsp]</span>
+              <span style="float: right;"><input type="text" id="home-med-diclox-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 4px; border-top: 1px dashed var(--line); padding-top: 4px;">
+            <label><input type="checkbox" id="home-med-cepha-syr"> Cephalexin syrup (125 mg/5mL)</label>
+            <span style="font-size: 10.5px; color: var(--muted); float: right;">(25-50 MKDay)</span>
+            <div style="padding-left: 20px; margin-top: 2px;">
+              sig <input type="text" id="home-med-cepha-syr-tsp" style="width: 40px; text-align: center;"> tsp po tid ac <span style="font-size: 10.5px; color: var(--muted);">[~10kg → 1 tsp]</span>
+              <span style="float: right;"><input type="text" id="home-med-cepha-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 4px; border-top: 1px dashed var(--line); padding-top: 4px;">
+            <label><input type="checkbox" id="home-med-diclox-250-cap"> Dicloxacillin (250mg) capsule</label>
+            <div style="float: right;">1x4 po ac hs <span style="margin-left: 10px;">8 cap</span></div>
+          </div>
+
+          <div style="font-weight: bold; text-decoration: underline; margin-bottom: 4px; font-size: 11.5px; border-top: 1px dashed var(--line); padding-top: 4px;">แพ้ penicillins</div>
+          <div style="margin-bottom: 2px;">
+            <label><input type="checkbox" id="home-med-eryth-syr"> Erythromycin syrup (125 mg/5mL)</label>
+            <span style="font-size: 10.5px; color: var(--muted); float: right;">(20-50 MKDay)</span>
+            <div style="padding-left: 20px; margin-top: 2px;">
+              sig <input type="text" id="home-med-eryth-syr-tsp" style="width: 40px; text-align: center;"> tsp po qid ac <span style="font-size: 10.5px; color: var(--muted);">[~10kg → 1 tsp]</span>
+              <span style="float: right;"><input type="text" id="home-med-eryth-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      <!-- หมายเหตุ antibiotic -->
+      <tr>
+        <td colspan="3" style="text-align: center; padding: 6px; font-size: 12px; background-color: var(--paper-2); font-weight: 500;">
+          หมายเหตุ: กรณีแผลสดจากอุบัติเหตุทั่วไป สามารถให้ยา antibiotic นาน 2 วัน | *กรณีสัตว์/คนกัดสามารถให้ยานาน 3-5 วัน*
+        </td>
+      </tr>
+
+      <!-- Analgesics -->
+      <tr>
+        <td class="side-header" style="font-size: 11px; width: 4%;">
+          <div style="writing-mode: vertical-rl; transform: rotate(180deg); font-weight: bold; letter-spacing: 2px;">Analgesics</div>
+        </td>
+        <td>
+          <div style="margin-bottom: 4px; font-weight: bold;">Paracetamol (500 mg)</div>
+          <div style="padding-left: 10px; margin-bottom: 3px; display: flex; justify-content: space-between;">
+            <label><input type="checkbox" id="home-med-para-500-1tab"> 1 tab po prn q 6 hr</label>
+            <span><input type="text" id="home-med-para-500-1tab-qty" style="width: 40px; text-align: center;"> tab</span>
+          </div>
+          <div style="padding-left: 10px; margin-bottom: 3px; display: flex; justify-content: space-between;">
+            <label><input type="checkbox" id="home-med-para-500-2tab"> 2 tab po prn q 6 hr (น้ำหนัก &ge; 67 kg)</label>
+            <span><input type="text" id="home-med-para-500-2tab-qty" style="width: 40px; text-align: center;"> tab</span>
+          </div>
+          <div style="padding-left: 10px; margin-bottom: 6px;">
+            <label><input type="checkbox" id="home-med-para-other"> อื่นๆ</label> <input type="text" id="home-med-para-other-detail" style="width: 180px;">
+          </div>
+
+          <div style="border-top: 1px dashed var(--line); margin: 6px 0;"></div>
+
+          <div style="margin-bottom: 3px; display: flex; justify-content: space-between;">
+            <label><input type="checkbox" id="home-med-ibu-200"> Ibuprofen (200 mg) 2x3 po pc</label>
+            <span><input type="text" id="home-med-ibu-200-qty" style="width: 40px; text-align: center;"> tab</span>
+          </div>
+          <div style="margin-bottom: 3px; display: flex; justify-content: space-between;">
+            <label><input type="checkbox" id="home-med-naprox-250"> Naproxen (250 mg) 1x2 po pc</label>
+            <span><input type="text" id="home-med-naprox-250-qty" style="width: 40px; text-align: center;"> tab</span>
+          </div>
+          <div style="margin-bottom: 6px; display: flex; justify-content: space-between;">
+            <label><input type="checkbox" id="home-med-vine"> ยาเถาวัลย์เปรียง 2x3 po pc <span style="font-size: 10.5px; color: var(--muted);">(ไม่ใช้ร่วมกับ NSAIDs)</span></label>
+            <span><input type="text" id="home-med-vine-qty" style="width: 40px; text-align: center;"> cap</span>
+          </div>
+
+          <div style="border-top: 1px dashed var(--line); margin: 6px 0;"></div>
+
+          <div style="margin-bottom: 2px; display: flex; justify-content: space-between;">
+            <label><input type="checkbox" id="home-med-tramadol-50"> Tramadol (50 mg) 1 cap po prn q 8 hr</label>
+            <span><input type="text" id="home-med-tramadol-50-qty" style="width: 40px; text-align: center;"> cap</span>
+          </div>
+        </td>
+        <td>
+          <div style="margin-bottom: 4px;">
+            <label><input type="checkbox" id="home-med-para-syr"> Paracetamol syrup (120mg/5mL)</label>
+            <span style="font-size: 10.5px; color: var(--muted); float: right;">(10-15 MKDose)</span>
+            <div style="padding-left: 20px; margin-top: 2px;">
+              sig <input type="text" id="home-med-para-syr-tsp" style="width: 40px; text-align: center;"> tsp po prn q 6 hr <span style="font-size: 10.5px; color: var(--muted);">[~10kg → 1 tsp]</span>
+              <span style="float: right;"><input type="text" id="home-med-para-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 4px; border-top: 1px dashed var(--line); padding-top: 4px; display: flex; justify-content: space-between;">
+            <label><input type="checkbox" id="home-med-para-325"> Paracetamol (325mg) 1 tab po prn q6hr</label>
+            <span><input type="text" id="home-med-para-325-qty" style="width: 40px; text-align: center;"> tab</span>
+          </div>
+
+          <div style="margin-bottom: 4px; border-top: 1px dashed var(--line); padding-top: 4px;">
+            <label><input type="checkbox" id="home-med-ibu-syr"> Ibuprofen syrup (100 mg/5mL)</label>
+            <span style="font-size: 10.5px; color: var(--muted); float: right;">(5-10 MKDose)</span>
+            <div style="padding-left: 20px; margin-top: 2px;">
+              sig <input type="text" id="home-med-ibu-syr-tsp" style="width: 40px; text-align: center;"> tsp po prn q 6 hr <span style="font-size: 10.5px; color: var(--muted);">[~10kg → 4 mL]</span>
+              <span style="float: right;"><input type="text" id="home-med-ibu-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 2px; border-top: 1px dashed var(--line); padding-top: 4px; display: flex; justify-content: space-between;">
+            <label><input type="checkbox" id="home-med-ibu-200-child"> Ibuprofen (200 mg) 1x3 po pc</label>
+            <span><input type="text" id="home-med-ibu-200-child-qty" style="width: 40px; text-align: center;"> tab</span>
+          </div>
+        </td>
+      </tr>
+
+      <!-- ยาอื่นๆ -->
+      <tr>
+        <td class="side-header" style="font-size: 11px; width: 4%;">
+          <div style="writing-mode: vertical-rl; transform: rotate(180deg); font-weight: bold; letter-spacing: 2px;">ยาอื่นๆ</div>
+        </td>
+        <td colspan="2">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px; align-items: center;">
+            <label><input type="checkbox" id="home-med-plygesal"> ยาไพลจีซาล (ยานวดแก้ปวดกล้ามเนื้อ) ทาถูนวดบริเวณที่ปวด วันละ 2 ครั้ง เช้า เย็น</label>
+            <span><input type="text" id="home-med-plygesal-qty" style="width: 40px; text-align: center;"> หลอด</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px; align-items: center;">
+            <label><input type="checkbox" id="home-med-aloe"> เจลว่านหางจระเข้ (รักษาแผลไฟไหม้ น้ำร้อนลวก) ทาบริเวณแผล วันละ 3-4 ครั้ง</label>
+            <span><input type="text" id="home-med-aloe-qty" style="width: 40px; text-align: center;"> หลอด</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label><input type="checkbox" id="home-med-other-drug"> อื่นๆ</label>
+            <input type="text" id="home-med-other-drug-detail" style="flex: 1;">
+          </div>
+        </td>
+      </tr>
+
+      <!-- Emergency Immunization -->
+      <tr>
+        <td class="side-header" style="font-size: 11px; width: 4%;">
+          <div style="writing-mode: vertical-rl; transform: rotate(180deg); font-weight: bold; letter-spacing: 1px;">Emergency Immunization</div>
+        </td>
+        <td colspan="2" style="padding: 0;">
+          <table class="sub-table" style="width: 100%;">
+            <thead>
+              <tr class="header-row" style="background-color: var(--accent); color: #fff; font-size: 11.5px;">
+                <th style="width: 25%; border-right: 1px solid var(--line); padding: 3px;">dT</th>
+                <th style="width: 40%; border-right: 1px solid var(--line); padding: 3px;">RIG</th>
+                <th style="width: 35%; padding: 3px;">Rabies vaccine</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="width: 25%; vertical-align: top; padding: 6px; border-right: 1px solid var(--line);">
+                  <div style="margin-bottom: 8px;">
+                    <label><input type="checkbox" id="home-med-dt-1dose"> 1 dose (1 เข็ม)</label><br>
+                    <span style="padding-left: 18px; font-size: 11px; color: var(--muted);">0.5 mL IM</span>
+                  </div>
+                  <div>
+                    <label><input type="checkbox" id="home-med-dt-course"> 1 course (3 เข็ม 0,1,7 mo)</label><br>
+                    <span style="padding-left: 18px; font-size: 11px; color: var(--muted);">0.5 mL IM</span>
+                  </div>
+                </td>
+                <td style="width: 40%; vertical-align: top; padding: 6px; border-right: 1px solid var(--line);">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 4px; align-items: center;">
+                    <label><input type="checkbox" id="home-med-erig"> ERIG (Max 40 IU/kg)</label>
+                    <span style="font-size: 11px;">BW = <input type="text" id="home-med-erig-weight" style="width: 45px; text-align: center;"> kg</span>
+                  </div>
+                  <div style="margin-bottom: 6px; padding-left: 18px;">
+                    sig SC รอบแผล ไม่เกิน <input type="text" id="home-med-erig-unit" style="width: 60px; text-align: center;"> Unit
+                  </div>
+                  <div style="text-decoration: underline; margin-bottom: 4px; font-weight: bold; font-size: 11px; padding-left: 18px;">กรุณาระบุจำนวนที่ต้องการเบิก</div>
+                  <div style="margin-bottom: 2px; padding-left: 18px;">
+                    <label><input type="checkbox" id="home-med-erig-small"> แผลเล็ก (&lt;5 ซม.) / 1 Vial</label>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px; padding-left: 18px; align-items: center;">
+                    <label><input type="checkbox" id="home-med-erig-large"> แผลใหญ่ / เบิกตามน้ำหนัก</label>
+                    <span><input type="text" id="home-med-erig-vials" style="width: 30px; text-align: center;"> Vial</span>
+                  </div>
+                  <div style="margin-bottom: 4px; padding-left: 18px;">
+                    <label><input type="checkbox" id="home-med-erig-obs"> ให้สังเกตอาการหลังฉีด 30 นาที</label>
+                  </div>
+                  <div style="text-align: right; font-size: 10px; color: var(--muted); margin-bottom: 6px;">
+                    หมายเหตุ : 1,000 IU/Vial/5 ml, 511 บาท
+                  </div>
+                  
+                  <div style="font-weight: bold; text-decoration: underline; margin-bottom: 4px; border-top: 1px dashed var(--line); padding-top: 4px;">กรณีแพ้ ERIG</div>
+                  <div style="margin-bottom: 2px;">
+                    <label><input type="checkbox" id="home-med-hrig"> HRIG (Max 20 IU/kg)</label>
+                  </div>
+                  <div style="padding-left: 18px; margin-bottom: 2px;">
+                    sig <input type="text" id="home-med-hrig-unit" style="width: 50px; text-align: center;"> Unit (<input type="text" id="home-med-hrig-ml" style="width: 40px; text-align: center;"> ml) SC ฉีดรอบแผล
+                  </div>
+                  <div style="text-align: right; font-size: 10px; color: var(--muted);">
+                    หมายเหตุ : 300 IU/Vial/2ml, 1,623 บาท
+                  </div>
+                </td>
+                <td style="width: 35%; vertical-align: top; padding: 6px;">
+                  <div style="margin-bottom: 2px; font-weight: bold;">Complete Vaccinated</div>
+                  <div style="margin-bottom: 2px; padding-left: 5px; font-size: 11px; color: var(--muted);">Booster IM</div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px; padding-left: 5px; align-items: center;">
+                    <label><input type="checkbox" id="home-med-rabies-booster-1dose"> 1 dose</label>
+                    <span style="font-size: 10.5px; color: var(--muted);">Last dose &lt; 6 mo</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-left: 5px; align-items: center;">
+                    <label><input type="checkbox" id="home-med-rabies-booster-2dose"> 2 dose</label>
+                    <span style="font-size: 10.5px; color: var(--muted);">Last dose &gt; 6 mo</span>
+                  </div>
+                  
+                  <div style="border-top: 1px dashed var(--line); margin: 6px 0;"></div>
+                  
+                  <div style="margin-bottom: 4px; font-weight: bold;">Rabies vaccine 1 course</div>
+                  <div style="margin-bottom: 2px; padding-left: 5px;">
+                    <label><input type="checkbox" id="home-med-rabies-course-id"> ID กรณีมี Bleeding tendency</label>
+                  </div>
+                  <div style="margin-bottom: 8px; padding-left: 5px;">
+                    <label><input type="checkbox" id="home-med-rabies-course-im"> IM</label>
+                  </div>
+                  <div style="font-size: 11px; display: flex; align-items: center; gap: 4px;">
+                    หมายเหตุ: <input type="text" id="home-med-rabies-note" style="flex: 1;">
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="text-align: right; margin-top: 20px; font-size: 14px; color: var(--text);">
+    แพทย์ <input type="text" id="home-med-doctor" style="width: 200px; text-align: center;">
+  </div>
+</div>
+
+</form>
+</main>
+<div class="action-bar">
+  <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
+  <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
+</div>
+<footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v25</footer>
+<script>
+// Auto-save form fields locally for this standalone tool
+const storageKey = 'er-hub-home-med-draft';
+
+function saveDraft() {
+    const data = {};
+    document.querySelectorAll('input[type="text"], input[type="number"]').forEach(el => {
+        data[el.id] = el.value;
+    });
+    document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+        data[el.id] = el.checked;
+    });
+    localStorage.setItem(storageKey, JSON.stringify(data));
+}
+
+function loadDraft() {
+    const saved = localStorage.getItem(storageKey);
+    if (!saved) return;
+    try {
+        const data = JSON.parse(saved);
+        document.querySelectorAll('input[type="text"], input[type="number"]').forEach(el => {
+            if (data[el.id] !== undefined) el.value = data[el.id];
+        });
+        document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+            if (data[el.id] !== undefined) el.checked = data[el.id];
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+// Attach event listeners for autosave
+document.querySelectorAll('input').forEach(el => {
+    el.addEventListener('input', saveDraft);
+    el.addEventListener('change', saveDraft);
+});
+
+// Weight inputs synchronization
+document.getElementById('home-med-weight').addEventListener('input', function() {
+    var val = this.value;
+    var erigWeight = document.getElementById('home-med-erig-weight');
+    if (erigWeight) {
+        erigWeight.value = val;
+        saveDraft();
+    }
+});
+
+// Action buttons handlers
+window.clearNote = function() {
+  if (confirm('ต้องการล้างข้อมูลทั้งหมดหรือไม่?')) {
+    document.getElementById('er-form').reset();
+    localStorage.removeItem(storageKey);
+  }
+};
+
+window.printNote = function() {
+  window.print();
+};
+
+// Custom clipboard note compiler optimized for this checkbox checklist
+window.copyNote = function() {
+  var lines = [];
+  var hn = document.getElementById('ernote-hn') ? document.getElementById('ernote-hn').value.trim() : '';
+  if (hn) lines.push('HN: ' + hn, '');
+
+  lines.push('## Diagnosis & Metadata');
+  var diag = document.getElementById('home-med-diag') ? document.getElementById('home-med-diag').value.trim() : '';
+  if (diag) lines.push('Diagnosis: ' + diag);
+  var woundCat = document.getElementById('home-med-wound-cat') ? document.getElementById('home-med-wound-cat').value.trim() : '';
+  if (woundCat) lines.push('Wound Category: ' + woundCat);
+  var weight = document.getElementById('home-med-weight') ? document.getElementById('home-med-weight').value.trim() : '';
+  if (weight) lines.push('BW: ' + weight + ' kg');
+  
+  var underlying = document.getElementById('home-med-has-underlying');
+  if (underlying && underlying.checked) {
+    lines.push('โรคประจำตัว: PU, ตับ, หัวใจ, Stroke (เลี่ยง NSAIDs)');
+  }
+  
+  var allergyNone = document.getElementById('home-med-allergy-none');
+  var allergyYes = document.getElementById('home-med-allergy-yes');
+  var allergyDetail = document.getElementById('home-med-allergy-detail') ? document.getElementById('home-med-allergy-detail').value.trim() : '';
+  if (allergyNone && allergyNone.checked) {
+    lines.push('ประวัติแพ้ยา: ไม่แพ้ยา');
+  } else if (allergyYes && allergyYes.checked) {
+    lines.push('ประวัติแพ้ยา: แพ้ยา ' + (allergyDetail || ''));
+  }
+  lines.push('');
+
+  lines.push('## Home Medications & Immunization');
+
+  // Helper to add checkbox item
+  function addCheck(id, text) {
+    var el = document.getElementById(id);
+    if (el && el.checked) {
+      lines.push('- ' + text);
+    }
+  }
+
+  // Helper to add checkbox with quantity
+  function addCheckQty(id, text, qtyId, unit) {
+    var el = document.getElementById(id);
+    if (el && el.checked) {
+      var qtyEl = document.getElementById(qtyId);
+      var qty = qtyEl ? qtyEl.value.trim() : '';
+      lines.push('- ' + text + (qty ? ' (' + qty + ' ' + unit + ')' : ''));
+    }
+  }
+
+  // Helper to add checkbox with details
+  function addCheckDetail(id, text, detailId) {
+    var el = document.getElementById(id);
+    if (el && el.checked) {
+      var detEl = document.getElementById(detailId);
+      var det = detEl ? detEl.value.trim() : '';
+      lines.push('- ' + text + (det ? ': ' + det : ''));
+    }
+  }
+
+  // 1. สัตว์/คนกัด
+  addCheck('home-med-amox-500', 'Amoxicillin (500 mg) 1x3 po pc (15 cap) [Adult]');
+  addCheck('home-med-coamox-1g', 'Co-amoxiclav (1 g) 1x2 po pc (10 tab) [Adult]');
+  addCheck('home-med-doxy-100', 'Doxycycline (100mg) 1x2 po pc (10 cap) [Adult]');
+  addCheck('home-med-cipro-500', 'Ciprofloxacin (500mg) 1x2 po pc (10 tab) [Adult]');
+  addCheck('home-med-clinda-300', '+ Clindamycin (300mg) 1x3 po pc (15 cap) [Adult]');
+  
+  // Pediatric สัตว์/คนกัด
+  if (document.getElementById('home-med-amox-syr') && document.getElementById('home-med-amox-syr').checked) {
+    var tsp = document.getElementById('home-med-amox-syr-tsp').value.trim();
+    var qty = document.getElementById('home-med-amox-syr-qty').value.trim();
+    lines.push('- Amoxicillin syrup (250 mg/5 mL) sig: ' + (tsp || '___') + ' tsp tid po pc (' + (qty || '___') + ' ขวด) [Pediatric]');
+  }
+  if (document.getElementById('home-med-coamox-syr') && document.getElementById('home-med-coamox-syr').checked) {
+    var tsp = document.getElementById('home-med-coamox-syr-tsp').value.trim();
+    var qty = document.getElementById('home-med-coamox-syr-qty').value.trim();
+    lines.push('- Co-amoxiclav syrup (400+57mg/5 mL) sig: ' + (tsp || '___') + ' tsp bid po pc (' + (qty || '___') + ' ขวด) [Pediatric]');
+  }
+  if (document.getElementById('home-med-cotri-susp') && document.getElementById('home-med-cotri-susp').checked) {
+    var tsp = document.getElementById('home-med-cotri-susp-tsp').value.trim();
+    var qty = document.getElementById('home-med-cotri-susp-qty').value.trim();
+    lines.push('- Cotrimoxazole susp. (40+200/5mL) sig: ' + (tsp || '___') + ' tsp bid po pc (' + (qty || '___') + ' ขวด) [Pediatric]');
+  }
+  if (document.getElementById('home-med-metro-susp') && document.getElementById('home-med-metro-susp').checked) {
+    var tsp = document.getElementById('home-med-metro-susp-tsp').value.trim();
+    var qty = document.getElementById('home-med-metro-susp-qty').value.trim();
+    lines.push('- + Metronidazole susp. (200mg/5mL) 60 ml sig: ' + (tsp || '___') + ' tsp tid po pc (' + (qty || '___') + ' ขวด) [Pediatric]');
+  }
+
+  // 2. บาดแผล/แผลสด
+  addCheck('home-med-diclox-500', 'Dicloxacillin (500mg) 1x4 po ac hs (8 cap) [Adult]');
+  addCheck('home-med-cepha-250', 'Cephalexin (250mg) 2x3 po ac (12 cap) [Adult]');
+  addCheck('home-med-clinda-300-wound', 'Clindamycin (300 mg) 1x3 po pc (6 cap) [Adult]');
+  
+  if (document.getElementById('home-med-diclox-syr') && document.getElementById('home-med-diclox-syr').checked) {
+    var tsp = document.getElementById('home-med-diclox-syr-tsp').value.trim();
+    var qty = document.getElementById('home-med-diclox-syr-qty').value.trim();
+    lines.push('- Dicloxacillin syrup (125 mg/5mL) sig: ' + (tsp || '___') + ' tsp qid po ac hs (' + (qty || '___') + ' ขวด) [Pediatric]');
+  }
+  if (document.getElementById('home-med-cepha-syr') && document.getElementById('home-med-cepha-syr').checked) {
+    var tsp = document.getElementById('home-med-cepha-syr-tsp').value.trim();
+    var qty = document.getElementById('home-med-cepha-syr-qty').value.trim();
+    lines.push('- Cephalexin syrup (125 mg/5mL) sig: ' + (tsp || '___') + ' tsp po tid ac (' + (qty || '___') + ' ขวด) [Pediatric]');
+  }
+  addCheck('home-med-diclox-250-cap', 'Dicloxacillin (250mg) capsule 1x4 po ac hs (8 cap) [Pediatric]');
+  if (document.getElementById('home-med-eryth-syr') && document.getElementById('home-med-eryth-syr').checked) {
+    var tsp = document.getElementById('home-med-eryth-syr-tsp').value.trim();
+    var qty = document.getElementById('home-med-eryth-syr-qty').value.trim();
+    lines.push('- Erythromycin syrup (125 mg/5mL) sig: ' + (tsp || '___') + ' tsp po qid ac (' + (qty || '___') + ' ขวด) [Pediatric]');
+  }
+
+  // 3. Analgesics
+  addCheckQty('home-med-para-500-1tab', 'Paracetamol (500 mg) 1 tab po prn q 6 hr', 'home-med-para-500-1tab-qty', 'tab');
+  addCheckQty('home-med-para-500-2tab', 'Paracetamol (500 mg) 2 tab po prn q 6 hr (for BW >= 67 kg)', 'home-med-para-500-2tab-qty', 'tab');
+  addCheckDetail('home-med-para-other', 'Paracetamol อื่นๆ', 'home-med-para-other-detail');
+  addCheckQty('home-med-ibu-200', 'Ibuprofen (200 mg) 2x3 po pc', 'home-med-ibu-200-qty', 'tab');
+  addCheckQty('home-med-naprox-250', 'Naproxen (250 mg) 1x2 po pc', 'home-med-naprox-250-qty', 'tab');
+  addCheckQty('home-med-vine', 'ยาเถาวัลย์เปรียง 2x3 po pc', 'home-med-vine-qty', 'cap');
+  addCheckQty('home-med-tramadol-50', 'Tramadol (50 mg) 1 cap po prn q 8 hr', 'home-med-tramadol-50-qty', 'cap');
+  
+  if (document.getElementById('home-med-para-syr') && document.getElementById('home-med-para-syr').checked) {
+    var tsp = document.getElementById('home-med-para-syr-tsp').value.trim();
+    var qty = document.getElementById('home-med-para-syr-qty').value.trim();
+    lines.push('- Paracetamol syrup (120mg/5mL) sig: ' + (tsp || '___') + ' tsp po prn q 6 hr (' + (qty || '___') + ' ขวด) [Pediatric]');
+  }
+  addCheckQty('home-med-para-325', 'Paracetamol (325mg) 1 tab po prn q6hr', 'home-med-para-325-qty', 'tab');
+  if (document.getElementById('home-med-ibu-syr') && document.getElementById('home-med-ibu-syr').checked) {
+    var tsp = document.getElementById('home-med-ibu-syr-tsp').value.trim();
+    var qty = document.getElementById('home-med-ibu-syr-qty').value.trim();
+    lines.push('- Ibuprofen syrup (100 mg/5mL) sig: ' + (tsp || '___') + ' tsp po prn q 6 hr (' + (qty || '___') + ' ขวด) [Pediatric]');
+  }
+  addCheckQty('home-med-ibu-200-child', 'Ibuprofen (200 mg) 1x3 po pc', 'home-med-ibu-200-child-qty', 'tab');
+
+  // 4. ยาอื่นๆ
+  addCheckQty('home-med-plygesal', 'ยาไพลจีซาล (ยานวดแก้ปวดกล้ามเนื้อ) ทาถูนวดบริเวณที่ปวด วันละ 2 ครั้ง เช้า เย็น', 'home-med-plygesal-qty', 'หลอด');
+  addCheckQty('home-med-aloe', 'เจลว่านหางจระเข้ (รักษาแผลไฟไหม้ น้ำร้อนลวก) ทาบริเวณแผล วันละ 3-4 ครั้ง', 'home-med-aloe-qty', 'หลอด');
+  addCheckDetail('home-med-other-drug', 'ยาอื่นๆ', 'home-med-other-drug-detail');
+
+  // 5. Emergency Immunization
+  addCheck('home-med-dt-1dose', 'dT: 1 dose (0.5 mL IM)');
+  addCheck('home-med-dt-course', 'dT: 1 course (0.5 mL IM at 0, 1, 7 months)');
+  
+  if (document.getElementById('home-med-erig') && document.getElementById('home-med-erig').checked) {
+    var erigUnit = document.getElementById('home-med-erig-unit').value.trim();
+    var erigVials = document.getElementById('home-med-erig-vials').value.trim();
+    var erigVialSelect = document.getElementById('home-med-erig-small').checked ? 'แผลเล็ก/1 Vial' : (document.getElementById('home-med-erig-large').checked ? 'แผลใหญ่/เบิกตามน้ำหนัก' : '');
+    lines.push('- ERIG (Max 40 IU/kg): sig SC รอบแผล ไม่เกิน ' + (erigUnit || '___') + ' Unit, เบิก ' + (erigVials || '___') + ' Vial (' + erigVialSelect + ')');
+    if (document.getElementById('home-med-erig-obs').checked) {
+      lines.push('  (ให้สังเกตอาการหลังฉีด 30 นาที)');
+    }
+  }
+  if (document.getElementById('home-med-hrig') && document.getElementById('home-med-hrig').checked) {
+    var hrigUnit = document.getElementById('home-med-hrig-unit').value.trim();
+    var hrigMl = document.getElementById('home-med-hrig-ml').value.trim();
+    lines.push('- HRIG (Max 20 IU/kg): sig ' + (hrigUnit || '___') + ' Unit (' + (hrigMl || '___') + ' ml) SC ฉีดรอบแผล');
+  }
+
+  addCheck('home-med-rabies-booster-1dose', 'Rabies vaccine: Booster 1 dose IM (Last dose < 6 mo)');
+  addCheck('home-med-rabies-booster-2dose', 'Rabies vaccine: Booster 2 dose IM (Last dose > 6 mo)');
+  addCheck('home-med-rabies-course-id', 'Rabies vaccine 1 course: ID (กรณีมี Bleeding tendency)');
+  addCheck('home-med-rabies-course-im', 'Rabies vaccine 1 course: IM');
+  
+  var rabiesNote = document.getElementById('home-med-rabies-note') ? document.getElementById('home-med-rabies-note').value.trim() : '';
+  if (rabiesNote) lines.push('  หมายเหตุ: ' + rabiesNote);
+
+  var doctor = document.getElementById('home-med-doctor') ? document.getElementById('home-med-doctor').value.trim() : '';
+  if (doctor) lines.push('', 'แพทย์ผู้สั่งการรักษา: ' + doctor);
+
+  var text = lines.join('\n').trim() || '(no content)';
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.getElementById('copy-btn');
+    if (btn) {
+      var t = btn.textContent;
+      btn.textContent = 'คัดลอกแล้ว ✓';
+      setTimeout(function() { btn.textContent = t; }, 1200);
+    }
+  }).catch(function() {
+    alert('คัดลอกไม่สำเร็จ กรุณาลองใหม่');
+  });
+};
+
+// Run on load
+loadDraft();
+</script>
+</body>
+</html>
