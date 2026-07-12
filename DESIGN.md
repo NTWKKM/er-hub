@@ -132,7 +132,7 @@ The NIHSS tool (`tools/nihss.html`) is a standalone stroke severity scoring work
 | Accent | `#7a3b2e` | Focus ring, total score highlight |
 | Font | `TH Sarabun New`, `Sarabun`, `Noto Sans Thai` | Thai-first, same family as standing orders |
 
-### Layout
+### NIHSS Layout
 
 - Toolbar: right-aligned row above the sheet. Three buttons: "พิมพ์ที่กรอกแล้ว" (→ `printWithData()`), "พิมพ์ NIHSS เปล่า" (→ `printBlank()`), "ล้างข้อมูล" (→ `clearAll()`). All three are `.no-print` (hidden in print).
 - Sheet: `max-width: 900px`, centered, white background, `2px solid` border.
@@ -143,7 +143,7 @@ The NIHSS tool (`tools/nihss.html`) is a standalone stroke severity scoring work
 - Signature rows: initials + signature cells in the same 3 assessment columns.
 - Footer note: muted centered text, `border-top: 1px solid #8a8a82`.
 
-### Components
+### NIHSS Components
 
 | Component | Description |
 | --- | --- |
@@ -193,7 +193,7 @@ The ER NOTE tool (`tools/er-note/`) is a separate clinical-note worksheet family
 | `--tpl-abdominal-pain` | `#9a6a1a` | Abdominal pain template (brown-yellow). |
 | `--tpl-eye-injury` | `#00897B` | Eye injury template (teal). |
 
-### Layout
+### ER NOTE Layout
 
 - **Top Nav:** Sticky dark bar with MNRH logo + `ER NOTE` title + `← Home` back link. Uses the same Braun White `#F0EDE5` nav text as standing-order pages.
 - **Tab Bar:** Full-width row below nav showing the 7 templates in fixed clinical order: General ER Note → Sepsis → Trauma → Mammalian Bite → Chest Pain → Abdominal Pain → Eye Injury. Active tab gets bottom border in accent colour.
@@ -202,7 +202,7 @@ The ER NOTE tool (`tools/er-note/`) is a separate clinical-note worksheet family
 - **Action Bar:** Fixed bottom bar with Copy Note, Clear, Print buttons; hidden in print.
 - **Print:** A4 portrait, dark UI suppressed, cards become plain bordered blocks, inputs show their values, tab bar and action bar hidden.
 
-### Components
+### ER NOTE Components
 
 | Component | Role / Target | States & Props |
 | --- | --- | --- |
@@ -249,9 +249,9 @@ ER NOTE pages must not import `shared/base.css`, `shared/components.js`, or `sha
 Standalone worksheets located directly in `tools/` (e.g., `nihss.html`, `Urgent-Clinic-Home-Medication.html`) are isolated from the standing-order validation and lifecycle engines.
 
 ### Urgent Clinic Home Medication (`tools/Urgent-Clinic-Home-Medication.html`)
+
 - **Theme**: Screen mode uses the dark glassmorphism styling parameters (`#0f1115` body, `#181b21` cards) by importing `er-note/er-note.css`, with custom local overrides to manage the tabular layout on screen.
 - **Form Layout**: Structured table separating Adult (left) and Pediatric (right) medication checklists. Includes numeric and text inputs inside table cells for doses/concentrations/vials.
 - **Print Layout**: Pure black-and-white A4 print stylesheet. Thick border lines are preserved, inputs are converted into transparent borders with dotted underlines, and checkboxes are styled as custom `☐` and `☑` print marks.
 - **Autosave Engine**: Local self-contained script listening to form `input` and `change` events, compiling form values into a single JSON object saved to local storage under `er-hub-home-med-draft`. Values are automatically restored on page initialization.
 - **Note Formatting**: Local clipboard copy script compiling medication details, patient demographics, and immunizations into a clinical summary notes template.
-

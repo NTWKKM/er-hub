@@ -84,6 +84,7 @@ All input fields in English.
 Standalone Home Medication Checklist (ใบสั่งยาและแผนการรักษากลับบ้าน).
 Uses `er-note/er-note.css` for styling, but is completely decoupled from `er-note.js` draft/lifecycle logic.
 Features:
+
 - Self-contained local draft auto-saving to `localStorage` key `er-hub-home-med-draft` on change/input events.
 - Synchronization of patient weight input with the ERIG dose weight input field.
 - Custom clinical plain-text compiler copying checked prescriptions, patient weight, demographics, and immunizations to the clipboard.
@@ -127,7 +128,7 @@ single square 512×512 icon (`docs/icon-512x512.png`, `purpose: any maskable`).
 
 ### Standing Order Pages
 
-```
+```text
 User Form Inputs (HN, age, weight, creatinine, clinical flags)
   → UI Input Sanitizer
   → Clinical Calculator (calc-engine.js / anticoag-engine.js / clinical-engine.js)
@@ -141,7 +142,7 @@ User Form Inputs (HN, age, weight, creatinine, clinical flags)
 
 ### ER NOTE Templates
 
-```
+```text
 User enters history, exam, investigations, scoring variables
   → Template-specific JS computes scores (HEART, Alvarado, NEWS2, GCS, RIG)
   → Results to read-only display fields (data-copy attribute)
