@@ -89,6 +89,7 @@ Features:
 - Synchronization of patient weight input with the ERIG dose weight input field.
 - Custom clinical plain-text compiler copying checked prescriptions, patient weight, demographics, and immunizations to the clipboard.
 - @media print support that formats inputs as dotted underlines and checks (✓) inside square boxes on A4 paper prints.
+- Print blank order support that temporarily clears and restores form inputs to print a blank checklist template without losing current session data.
 
 ### Shared Engines (`shared/`)
 

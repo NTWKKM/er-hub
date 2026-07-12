@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Urgent Clinic Home Medication — ER NOTE</title>
+<title>Urgent Clinic Home Medication — ED MNRH</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="er-note/er-note.css">
 <style>
@@ -112,74 +112,183 @@
 
 /* Print layout overrides to enforce pure black-and-white A4 paper style */
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 6mm 8mm;
+  }
   body {
     background: #fff !important;
     color: #000 !important;
+    font-size: 10px !important;
+    line-height: 1.15 !important;
   }
   .main {
     padding: 0 !important;
     margin: 0 !important;
+    width: 100% !important;
   }
   .card, .med-card {
     background: transparent !important;
     border: none !important;
+    border-bottom: none !important;
     padding: 0 !important;
     margin: 0 !important;
     box-shadow: none !important;
   }
+  
+  /* Compact title and patient strip */
+  .print-title {
+    font-size: 13.5px !important;
+    margin-bottom: 6px !important;
+    color: #000 !important;
+    text-align: center !important;
+    font-weight: bold !important;
+  }
+  
+  .patient-strip {
+    display: flex !important;
+    border: 1px solid #000 !important;
+    border-radius: 0 !important;
+    padding: 4px 6px !important;
+    margin-bottom: 6px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    align-items: center !important;
+  }
+  .patient-strip input {
+    border: none !important;
+    border-bottom: 1px dotted #000 !important;
+    background: transparent !important;
+    color: #000 !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    width: 110px !important;
+    padding: 0 !important;
+  }
+  .strip-label {
+    font-size: 11px !important;
+    color: #000 !important;
+    font-weight: bold !important;
+    margin-left: auto !important;
+  }
+
+  /* Compact metadata group */
+  .meta-input-group {
+    gap: 4px !important;
+    margin-bottom: 6px !important;
+  }
+  .meta-row {
+    gap: 10px !important;
+    margin-bottom: 0 !important;
+  }
+  .meta-field {
+    gap: 1px !important;
+  }
+  .meta-field label {
+    font-size: 10.5px !important;
+    color: #000 !important;
+  }
+  .meta-field input {
+    font-size: 11px !important;
+    padding: 1px 2px !important;
+    height: 18px !important;
+  }
+  
+  /* Compact table */
   .med-table {
     border: 1px solid #000 !important;
     background: #fff !important;
     color: #000 !important;
-    font-size: 11.5px !important;
+    font-size: 10px !important;
   }
   .med-table td, .med-table th {
     border: 1px solid #000 !important;
     color: #000 !important;
-    padding: 3px !important;
+    padding: 1.5px 3px !important;
   }
   .med-table th {
     background-color: #000 !important;
     color: #fff !important;
+    font-size: 11px !important;
   }
   .med-table td.side-header {
-    background-color: #e6e6e6 !important;
+    background-color: #f0f0f0 !important;
     color: #000 !important;
+    font-size: 9.5px !important;
+    padding: 1px !important;
   }
+  .med-table td.side-header div {
+    letter-spacing: 1px !important;
+  }
+  
+  /* Inputs inside table */
   .med-table input[type="text"], .med-table input[type="number"] {
     border: none !important;
     border-bottom: 1px dotted #000 !important;
     background: transparent !important;
     color: #000 !important;
     border-radius: 0 !important;
-    padding: 0 4px !important;
+    padding: 0 1px !important;
+    height: 16px !important;
+    font-size: 10px !important;
   }
-  .meta-field input {
-    border: none !important;
-    border-bottom: 1px dotted #000 !important;
-    background: transparent !important;
-    color: #000 !important;
-    border-radius: 0 !important;
-    padding: 0 4px !important;
+
+  /* Sub-table styling in print */
+  .med-table .sub-table thead tr.header-row {
+    background-color: #000 !important;
+    color: #fff !important;
   }
+  .med-table .sub-table thead th {
+    background-color: #000 !important;
+    color: #fff !important;
+    border: 1px solid #000 !important;
+    font-size: 9.5px !important;
+    padding: 1.5px !important;
+  }
+  .med-table .sub-table td {
+    border-right: 1px solid #000 !important;
+    border-bottom: none !important;
+    padding: 2px 3px !important;
+  }
+  .med-table .sub-table tr:not(:last-child) td {
+    border-bottom: 1px dashed #000 !important;
+  }
+  .med-table .sub-table td:last-child {
+    border-right: none !important;
+  }
+  
   /* Checkboxes style for printing */
-  .med-table input[type="checkbox"] {
+  input[type="checkbox"] {
     appearance: none;
     -webkit-appearance: none;
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border: 1px solid #000;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-right: 4px;
+    margin-right: 3px;
     background: #fff;
+    vertical-align: middle;
   }
-  .med-table input[type="checkbox"]:checked::before {
+  input[type="checkbox"]:checked::before {
     content: "✓";
-    font-size: 10px;
+    font-size: 8px;
     font-weight: bold;
     color: #000;
+  }
+  
+  /* Signature */
+  .med-card div[style*="text-align: right; margin-top:"] {
+    margin-top: 8px !important;
+    font-size: 11px !important;
+  }
+  #home-med-doctor {
+    width: 130px !important;
+    font-size: 11px !important;
+    border: none !important;
+    border-bottom: 1px dotted #000 !important;
+    background: transparent !important;
   }
 }
 </style>
@@ -188,7 +297,7 @@
 <nav class="top-nav" role="navigation">
   <div class="nav-left">
     <img src="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
-    <span class="nav-title">ER NOTE</span>
+    <span class="nav-title">Home Medication</span>
   </div>
   <a href="../index.html" class="nav-home">← Home</a>
 </nav>
@@ -197,11 +306,11 @@
 <div class="patient-strip">
   <label for="ernote-hn" class="visually-hidden">HN</label>
   <input type="text" id="ernote-hn" placeholder="HN" inputmode="numeric" autocomplete="off">
-  <span class="strip-label">ER Note — Home Medication Checklist</span>
+  <span class="strip-label">Home Medication Checklist</span>
 </div>
 
 <div class="card med-card">
-  <div style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 15px; color: var(--text);">
+  <div class="print-title" style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 15px; color: var(--text);">
     Urgent Clinic Home Medication (ใบสั่งยาและแผนการรักษากลับบ้าน)
   </div>
 
@@ -578,6 +687,7 @@
 <div class="action-bar">
   <button type="button" class="btn btn-secondary" id="copy-btn" onclick="copyNote()">📋 Copy Note</button>
   <button type="button" class="btn btn-danger" onclick="clearNote()">🗑 Clear</button>
+  <button type="button" class="btn btn-secondary" onclick="printBlank()">📄 Print Blank Order</button>
   <button type="button" class="btn btn-primary" onclick="printNote()">🖨 Print</button>
 </div>
 <footer class="footer">Maharat Nakhon Ratchasima Hospital · Emergency Department · v25</footer>
@@ -638,6 +748,31 @@ window.clearNote = function() {
 
 window.printNote = function() {
   window.print();
+};
+
+window.printBlank = function() {
+  const saved = {};
+  // Save and clear all text/number inputs
+  document.querySelectorAll('input[type="text"], input[type="number"]').forEach(el => {
+      saved[el.id] = el.value;
+      el.value = '';
+  });
+  // Save and clear all checkbox inputs
+  document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+      saved[el.id] = el.checked;
+      el.checked = false;
+  });
+  
+  // Trigger print
+  window.print();
+  
+  // Restore all inputs
+  document.querySelectorAll('input[type="text"], input[type="number"]').forEach(el => {
+      if (saved[el.id] !== undefined) el.value = saved[el.id];
+  });
+  document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+      if (saved[el.id] !== undefined) el.checked = saved[el.id];
+  });
 };
 
 // Custom clipboard note compiler optimized for this checkbox checklist

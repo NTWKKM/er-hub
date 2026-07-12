@@ -28,8 +28,8 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | **RIG Dose** | Rabies Immunoglobulin dose ≈ 2 mL/kg wound infiltration, max 100 mL per episode (WHO Thailand rabies guidance). Embedded in mammalian-bite template. |
 | **GCS** | Glasgow Coma Scale. Consciousness assessment. Embedded in trauma template. |
 | **NIHSS** | National Institutes of Health Stroke Scale. 11-item neurological deficit score (0–42). Standalone scoring worksheet (`tools/nihss.html`), linked from rtpa.html toolbar via "NIHSS เปล่า" popup button. |
-| **Blank Print** | Pre-formatted standing order sheet with all calculated fields as dotted lines and all checkboxes as ☐. Three pathways: PDF open (5 pages), HTML blank via `ED_BLANK_PRINT.apply()` (rtpa/nstemi), or popup print via `tools/nihss.html?print-blank-direct=true` (NIHSS). |
-| **Urgent Clinic Home Medication** | Standalone home medication and emergency immunization checklist worksheet (`tools/Urgent-Clinic-Home-Medication.html`) for discharge clinical documentation, with auto-save and plain-text clipboard copy. |
+| **Blank Print** | Pre-formatted standing order sheet with all calculated fields as dotted lines and all checkboxes as ☐. Four pathways: PDF open (5 pages), HTML blank via `ED_BLANK_PRINT.apply()` (rtpa/nstemi), popup print via `tools/nihss.html?print-blank-direct=true` (NIHSS), or non-destructive print blank button (Home Medication). |
+| **Urgent Clinic Home Medication** | Standalone home medication and emergency immunization checklist worksheet (`tools/Urgent-Clinic-Home-Medication.html`) for discharge clinical documentation, with auto-save, plain-text clipboard copy, and A4 print blank support. |
 
 ## Ubiquitous Language
 
@@ -83,7 +83,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | Other 4 pages use-current-time | Default checked (auto-fill current time) |
 | A4 page | `@page { size: A4 portrait; margin: 0 }`, `page-break-inside: avoid` |
 | Nav in print | Hidden via `@media print` |
-| Home Medication print | Formats input values as dotted underlines, converting checkbox inputs into custom printed boxes with checks (✓) or blank squares. |
+| Home Medication print | Formats input values as dotted underlines, converting checkbox inputs into custom printed boxes with checks (✓) or blank squares. Features a "Print Blank Order" mode which saves, clears, and restores user inputs dynamically. |
 
 ## Asset Isolation Rule
 
