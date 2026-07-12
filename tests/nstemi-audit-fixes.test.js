@@ -240,16 +240,16 @@ describe('NSTEMI Print — B3: Prasugrel color, bullets, Ticagrelor continuation
     });
 });
 
-describe('SW Version — cache version bumped (v26 drip-calculator precache)', () => {
+describe('SW Version — cache version bumped (v27 drip-calculator precache)', () => {
     const sw = read(SW_PATH);
     const index = read(INDEX_PATH);
 
-    test('CACHE_VERSION is v26', () => {
-        assert.match(sw, /er-hub-v26/, 'CACHE_VERSION must be er-hub-v26');
+    test('CACHE_VERSION is v27', () => {
+        assert.match(sw, /er-hub-v27/, 'CACHE_VERSION must be er-hub-v27');
     });
 
-    test('index.html version badge text is v26', () => {
-        assert.match(index, /<div class="nav-right">v26 · Updated [^<]*<\/div>/, 'index.html nav badge must show v26 with update date');
+    test('index.html version badge text is v27', () => {
+        assert.match(index, /<div class="nav-right">v27 · Updated [^<]*<\/div>/, 'index.html nav badge must show v27 with update date');
     });
 });
 

@@ -320,6 +320,73 @@
                 width: 32px;
             }
         }
+
+        /* Collapsible Prototype Section (Tactile 3D Braun Design) */
+        .prototype-toggle {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            outline: none;
+            transition: color 180ms ease, border-bottom-color 180ms ease, transform 180ms cubic-bezier(0.19, 1, 0.22, 1);
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+        .prototype-toggle:hover {
+            color: var(--signal-orange);
+            border-bottom-color: var(--signal-orange);
+            transform: translateZ(4px);
+        }
+        .prototype-toggle:active {
+            transform: translateZ(-2px);
+        }
+        .prototype-toggle:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+        }
+        .prototype-toggle .toggle-icon {
+            font-size: 11px;
+            font-family: monospace;
+            display: inline-block;
+            transition: transform 450ms cubic-bezier(0.19, 1, 0.22, 1);
+            transform: rotateX(0deg);
+            transform-style: preserve-3d;
+        }
+        .prototype-toggle[aria-expanded="true"] .toggle-icon {
+            transform: rotateX(180deg);
+        }
+        .collapsible-content {
+            transform-origin: top;
+            transform: perspective(1200px) rotateX(0deg) translateZ(0px);
+            opacity: 1;
+            max-height: 1000px;
+            transition: transform 500ms cubic-bezier(0.19, 1, 0.22, 1), 
+                        opacity 350ms ease,
+                        max-height 500ms cubic-bezier(0.19, 1, 0.22, 1);
+            overflow: hidden;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        .collapsible-content::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(26, 26, 26, 0.12), rgba(26, 26, 26, 0.02));
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 500ms cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 10;
+        }
+        .collapsible-content.collapsed {
+            transform: perspective(1200px) rotateX(-90deg) translateZ(-10px);
+            opacity: 0;
+            max-height: 0;
+            pointer-events: none;
+        }
+        .collapsible-content.collapsed::before {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -395,88 +462,93 @@
         </ol>
     </div>
 
-    <div class="list-section">
-        <h3 class="section-eyebrow">Prototype</h3>
-        <ol class="order-list">
-            <!-- Cardiac STEMI -->
-            <li class="order-item-wrap">
-                <a href="orders/stemi.html" class="order-row">
-                    <span class="order-num">03</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Cardiac</span>
-                        <span class="order-title">STEMI Standing Order</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot time-critical"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- Pulmonary PE -->
-            <li class="order-item-wrap">
-                <a href="orders/pe.html" class="order-row">
-                    <span class="order-num">04</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Pulmonary</span>
-                        <span class="order-title">Massive PE Fibrinolysis</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot time-critical"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- Anticoag Heparin -->
-            <li class="order-item-wrap">
-                <a href="orders/heparin.html" class="order-row">
-                    <span class="order-num">05</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Anticoag.</span>
-                        <span class="order-title">Heparin Protocol</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- Tox Antivenom -->
-            <li class="order-item-wrap">
-                <a href="orders/antivenom.html" class="order-row">
-                    <span class="order-num">06</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Toxicology</span>
-                        <span class="order-title">Antivenom Standing Order</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- Procedural Sedation -->
-            <li class="order-item-wrap">
-                <a href="orders/sedation.html" class="order-row">
-                    <span class="order-num">07</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Procedural</span>
-                        <span class="order-title">Post-Intubation Sedation</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- ER NOTE Tool -->
-            <li class="order-item-wrap">
-                <a href="tools/er-note/index.html" class="order-row">
-                    <span class="order-num">T4</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Documentation</span>
-                        <span class="order-title">ER NOTE Tool</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-        </ol>
+    <div class="list-section" style="perspective: 1000px;">
+        <h3 class="section-eyebrow prototype-toggle" id="prototype-toggle" role="button" aria-expanded="false" tabindex="0">
+            <span>Prototype</span>
+            <span class="toggle-icon">▼</span>
+        </h3>
+        <div class="collapsible-content collapsed" id="prototype-content">
+            <ol class="order-list">
+                <!-- Cardiac STEMI -->
+                <li class="order-item-wrap">
+                    <a href="orders/stemi.html" class="order-row">
+                        <span class="order-num">03</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Cardiac</span>
+                            <span class="order-title">STEMI Standing Order</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot time-critical"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- Pulmonary PE -->
+                <li class="order-item-wrap">
+                    <a href="orders/pe.html" class="order-row">
+                        <span class="order-num">04</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Pulmonary</span>
+                            <span class="order-title">Massive PE Fibrinolysis</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot time-critical"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- Anticoag Heparin -->
+                <li class="order-item-wrap">
+                    <a href="orders/heparin.html" class="order-row">
+                        <span class="order-num">05</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Anticoag.</span>
+                            <span class="order-title">Heparin Protocol</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- Tox Antivenom -->
+                <li class="order-item-wrap">
+                    <a href="orders/antivenom.html" class="order-row">
+                        <span class="order-num">06</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Toxicology</span>
+                            <span class="order-title">Antivenom Standing Order</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- Procedural Sedation -->
+                <li class="order-item-wrap">
+                    <a href="orders/sedation.html" class="order-row">
+                        <span class="order-num">07</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Procedural</span>
+                            <span class="order-title">Post-Intubation Sedation</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- ER NOTE Tool -->
+                <li class="order-item-wrap">
+                    <a href="tools/er-note/index.html" class="order-row">
+                        <span class="order-num">T4</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Documentation</span>
+                            <span class="order-title">ER NOTE Tool</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+            </ol>
+        </div>
     </div>
 
     <footer class="portal-footer">
@@ -499,7 +571,7 @@ nav.innerHTML = `
         <img src="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" style="height: 38px; width: auto; display: block;">
     </div>
     <div class="nav-center">MNRH-ED HUB</div>
-    <div class="nav-right">v26 · Updated 2026-07-12</div>
+    <div class="nav-right">v27 · Updated 2026-07-12</div>
 `;
 document.body.insertBefore(nav, document.body.firstChild);
 
@@ -595,6 +667,26 @@ if ('serviceWorker' in navigator) {
       row.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
     });
   });
+
+  // Prototype collapsible logic
+  const toggle = document.getElementById('prototype-toggle');
+  const content = document.getElementById('prototype-content');
+  
+  if (toggle && content) {
+    function toggleSection() {
+      const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', !isExpanded);
+      content.classList.toggle('collapsed');
+    }
+
+    toggle.addEventListener('click', toggleSection);
+    toggle.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleSection();
+      }
+    });
+  }
 })();
 </script>
 
