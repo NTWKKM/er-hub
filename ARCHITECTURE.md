@@ -117,7 +117,7 @@ Redirect script validates `order` slug against allow-list.
 ### Service Worker (`service-worker.js`)
 
 PWA offline cache. Network-first for navigation requests, cache-first for static assets.
-`CACHE_VERSION` is `er-hub-v25` — must stay in sync with `index.html` nav-right version string.
+`CACHE_VERSION` is `er-hub-v26` — must stay in sync with `index.html` nav-right version string.
 Precaches all HTML/CSS/JS + shared engines + ER NOTE templates + drip-calculator + nihss.html + 512×512 app icon + source PDFs + Google Fonts.
 Per-asset retry with exponential backoff via `fetchWithRetry()`. `Promise.allSettled()` ensures one failure doesn't block others.
 
