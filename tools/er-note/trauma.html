@@ -100,6 +100,34 @@
       <label><input type="radio" name="trauma-d" value="GCS ≤8"> GCS ≤8</label>
     </div>
   </div>
+  <div class="field-row"><label>GCS Score (Eye / Verbal / Motor)</label>
+    <div class="radio-group" style="flex-wrap:wrap; gap:8px 16px;">
+      <span style="font-size:13px;font-weight:600;margin-right:4px;">E:</span>
+      <label><input type="radio" name="gcs-e" value="4"> 4 Spont</label>
+      <label><input type="radio" name="gcs-e" value="3"> 3 To voice</label>
+      <label><input type="radio" name="gcs-e" value="2"> 2 To pain</label>
+      <label><input type="radio" name="gcs-e" value="1"> 1 None</label>
+    </div>
+    <div class="radio-group" style="flex-wrap:wrap; gap:8px 16px; margin-top:6px;">
+      <span style="font-size:13px;font-weight:600;margin-right:4px;">V:</span>
+      <label><input type="radio" name="gcs-v" value="5"> 5 Oriented</label>
+      <label><input type="radio" name="gcs-v" value="4"> 4 Confused</label>
+      <label><input type="radio" name="gcs-v" value="3"> 3 Words</label>
+      <label><input type="radio" name="gcs-v" value="2"> 2 Sounds</label>
+      <label><input type="radio" name="gcs-v" value="1"> 1 None</label>
+      <label><input type="radio" name="gcs-v" value="T"> T Intubated</label>
+    </div>
+    <div class="radio-group" style="flex-wrap:wrap; gap:8px 16px; margin-top:6px;">
+      <span style="font-size:13px;font-weight:600;margin-right:4px;">M:</span>
+      <label><input type="radio" name="gcs-m" value="6"> 6 Obey</label>
+      <label><input type="radio" name="gcs-m" value="5"> 5 Localize</label>
+      <label><input type="radio" name="gcs-m" value="4"> 4 Withdraw</label>
+      <label><input type="radio" name="gcs-m" value="3"> 3 Flex</label>
+      <label><input type="radio" name="gcs-m" value="2"> 2 Extend</label>
+      <label><input type="radio" name="gcs-m" value="1"> 1 None</label>
+    </div>
+    <div class="score-box score-line" id="gcs-line" data-copy="GCS: not assessed" style="margin-top:8px;">GCS Total: <span id="gcs-total">—</span></div>
+  </div>
   <div class="field-row"><label>E — Exposure / Environment</label>
     <div class="radio-group">
       <label><input type="radio" name="trauma-e" value="Warm, no hypothermia"> Warm</label>
@@ -231,6 +259,42 @@ document.querySelectorAll('input[name="tet-wound"], input[name="tet-history"]').
   el.addEventListener('change', updateTetanus);
 });
 updateTetanus();
+
+// GCS calculator — auto-total from Eye (1-4) + Verbal (1-5 or T) + Motor (1-6)
+function updateGCS(){
+  const e = document.querySelector('input[name="gcs-e"]:checked');
+  const v = document.querySelector('input[name="gcs-v"]:checked');
+  const m = document.querySelector('input[name="gcs-m"]:checked');
+  const el = document.getElementById('gcs-total');
+  const line = document.getElementById('gcs-line');
+  const eVal = e ? parseInt(e.value, 10) : 0;
+  const mVal = m ? parseInt(m.value, 10) : 0;
+  // Verbal: T (intubated) = 1 point per convention, not numeric
+  const vNum = v ? (v.value === 'T' ? 1 : parseInt(v.value, 10)) : 0;
+  const hasAny = e || v || m;
+  if (!hasAny) {
+    el.textContent = '—';
+    line.setAttribute('data-copy', 'GCS: not assessed');
+    return;
+  }
+  const total = eVal + vNum + mVal;
+  const parts = [];
+  if (e) parts.push('E' + e.value);
+  if (v) parts.push('V' + v.value);
+  if (m) parts.push('M' + m.value);
+  const label = parts.join(' ') + ' = ' + total;
+  el.textContent = label;
+  line.setAttribute('data-copy', 'GCS: ' + label + (v && v.value === 'T' ? ' (intubated)' : ''));
+  // Auto-select trauma-d radio based on GCS total
+  const dRadios = document.querySelectorAll('input[name="trauma-d"]');
+  if (total >= 13) dRadios.forEach(r => r.checked = (r.value === 'GCS 13–14'));
+  else if (total >= 9) dRadios.forEach(r => r.checked = (r.value === 'GCS 9–12'));
+  else if (total > 0) dRadios.forEach(r => r.checked = (r.value === 'GCS ≤8'));
+}
+document.querySelectorAll('input[name="gcs-e"], input[name="gcs-v"], input[name="gcs-m"]').forEach(el=>{
+  el.addEventListener('change', updateGCS);
+});
+updateGCS();
 
 </script>
 </body>

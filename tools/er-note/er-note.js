@@ -24,7 +24,7 @@
     'chest-pain':       { type:'input',    id:'chest-onset'     },
     'abdominal-pain':   { type:'input',    id:'abdo-onset'      },
     'mammalian-bite':   { type:'input',    id:'narr-mammalian-bite-hpi-free' },
-    'eye-injury':       { type:'input',    id:'eye-chemical'    },
+    'eye-injury':       { type:'radio',    id:'eye-mech'        },
     'index':            null
   };
 

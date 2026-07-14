@@ -735,14 +735,22 @@ document.querySelectorAll('input').forEach(el => {
     el.addEventListener('change', saveDraft);
 });
 
-// Weight inputs synchronization
+// Weight inputs synchronization + ERIG/HRIG auto-calculation
 document.getElementById('home-med-weight').addEventListener('input', function() {
     var val = this.value;
     var erigWeight = document.getElementById('home-med-erig-weight');
     if (erigWeight) {
         erigWeight.value = val;
-        saveDraft();
     }
+    // Auto-calculate ERIG (40 IU/kg, max 3000 IU) and HRIG (20 IU/kg, max 1500 IU)
+    var bw = parseFloat(val);
+    if (!isNaN(bw) && bw > 0) {
+        var erigUnit = document.getElementById('home-med-erig-unit');
+        if (erigUnit) erigUnit.value = Math.min(Math.round(bw * 40), 3000);
+        var hrigUnit = document.getElementById('home-med-hrig-unit');
+        if (hrigUnit) hrigUnit.value = Math.min(Math.round(bw * 20), 1500);
+    }
+    saveDraft();
 });
 
 // Action buttons handlers

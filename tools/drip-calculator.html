@@ -580,6 +580,27 @@
                 }
                 if (parseFloat(doseSlider.value) !== dose) doseSlider.value = dose;
 
+                // Enforce absolute max per hour ceiling (e.g. Fentanyl 500 mcg/hr)
+                // This is distinct from doseRange.max (per-kg max). The absolute ceiling
+                // protects against overdose when a large patient's per-kg dose × weight
+                // exceeds the drug's clinical safety limit.
+                let ceilingWarning = '';
+                if (selectedDrug.absoluteMaxPerHour && selectedDrug.isWeightBased) {
+                    const perKg = selectedDrug.doseUnit.includes('/kg/');
+                    const perMin = selectedDrug.doseUnit.endsWith('/min');
+                    const rawPerHour = dose * (perKg ? weightVal : 1) * (perMin ? 60 : 1);
+                    if (rawPerHour > selectedDrug.absoluteMaxPerHour) {
+                        const cappedDose = selectedDrug.absoluteMaxPerHour /
+                            (perKg ? weightVal : 1) / (perMin ? 60 : 1);
+                        const cappedRounded = Math.round(cappedDose * 100) / 100;
+                        if (cappedRounded >= selectedDrug.doseRange.min) {
+                            dose = cappedRounded;
+                            if (parseFloat(doseSlider.value) !== dose) doseSlider.value = dose;
+                        }
+                        ceilingWarning = `⚠️ ระบบจำกัดขนาดยาไม่เกิน ${selectedDrug.absoluteMaxPerHour} ${selectedDrug.doseUnit.split('/')[0]}/hr (ปลอดภัยผู้ป่วย)`;
+                    }
+                }
+
                 // Run calculation engine
                 const rate = calcDripRate({
                     doseValue: dose,
@@ -641,6 +662,9 @@
                     guideHtml += `<p style="margin:0 0 8px 0;">${selectedDrug.titrationGuide}</p>`;
                 }
                 guideHtml += `<div style="font-size:12.5px;color:#c0392b;font-weight:bold;">⬆️ Max dose: ${selectedDrug.doseRange.max} ${selectedDrug.doseUnit}</div>`;
+                if (ceilingWarning) {
+                    guideHtml += `<div style="font-size:13px;color:#c0392b;font-weight:bold;margin-top:4px;">${ceilingWarning}</div>`;
+                }
                 $('guide-text').innerHTML = guideHtml;
 
                 // Render safety warnings list

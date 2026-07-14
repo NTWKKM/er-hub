@@ -34,7 +34,7 @@ Seven standalone clinical note worksheets + portal hub, completely decoupled fro
 | `index.html` | ER NOTE portal hub — lists 7 templates in clinical order |
 | `general-er-note.html` | General ER note |
 | `sepsis.html` | Sepsis — vital signs + screening scores first, then source infection; vital→score auto-link; float risk box |
-| `trauma.html` | Trauma — GCS scoring |
+| `trauma.html` | Trauma — GCS scoring (Eye/Verbal/Motor radio groups with auto-total) |
 | `mammalian-bite.html` | Mammalian bite — button-group selections, endemic rabies PEP logic, SVG wound illustrations |
 | `chest-pain.html` | Chest pain — HEART score |
 | `abdominal-pain.html` | Abdominal pain — Alvarado score |
@@ -47,7 +47,7 @@ patient strip with HN, floating sidebar draft manager (FAB + slide-in panel),
 Investigation/Treatment/Narrative checkbox modules (rendered by `ErNote.renderNarrative`),
 Thai-base history labels,
 plain-text note generation to clipboard, print via `window.print()` with `@media print` hiding nav/action bars/patient-strip/sidebar,
-built-in clinical calculators (NEWS2, SIRS, HEART, Alvarado, GCS, RIG dose),
+built-in clinical calculators (NEWS2, SIRS, HEART, Alvarado, GCS, RIG dose, ERIG/HRIG auto-calc),
 vital→score auto-linking (sepsis), float sepsis risk status box,
 endemic rabies PEP logic with button-group selections and SVG wound illustrations (mammalian-bite).
 
@@ -62,6 +62,7 @@ General-er-note is not migrated to renderNarrative (uses the original inline fie
 
 Standalone NIHSS (National Institutes of Health Stroke Scale) scoring worksheet.
 Cream/paper design system, Thai + English labels, 5-column repeat-assessment table.
+Per-item max score validation via `itemMax` lookup table (blur clamps out-of-range values, allows 'X' for untestable items).
 Toolbar: "พิมพ์ที่กรอกแล้ว" (print with data), "พิมพ์ NIHSS เปล่า" (clear → recalc → print blank instantly),
 "ล้างข้อมูล" (clear with confirm).
 `?print-blank-direct=true` auto-triggers `printBlank()` (clear all inputs → recalc() → window.print()) on load.
@@ -87,6 +88,7 @@ Features:
 
 - Self-contained local draft auto-saving to `localStorage` key `er-hub-home-med-draft` on change/input events.
 - Synchronization of patient weight input with the ERIG dose weight input field.
+- Auto-calculation of ERIG dose (40 IU/kg, max 3000 IU) and HRIG dose (20 IU/kg, max 1500 IU) from patient weight input.
 - Custom clinical plain-text compiler copying checked prescriptions, patient weight, demographics, and immunizations to the clipboard.
 - @media print support that formats inputs as dotted underlines and checks (✓) inside square boxes on A4 paper prints.
 - Print blank order support that temporarily clears and restores form inputs to print a blank checklist template without losing current session data.
@@ -98,10 +100,10 @@ Features:
 | `base.css` | Design system, CSS custom properties, responsive layout, top-nav styling | None |
 | `print.css` | A4 print constraints (`@page`, grid, font sizes, `@media print`) | None |
 | `components.js` | UI component injection: sticky nav bar (`injectNavBar`), print header, sticker box, float bar. `setupCommonActions()` wires `print-btn` to `window.print()`. | None |
-| `calc-engine.js` | Generic drip rate calculation engine (mL/hr) | None |
+| `calc-engine.js` | Generic drip rate calculation engine (mL/hr). Guards against null/undefined/NaN params. | None |
 | `clinical-engine.js` | GRACE score + eGFR (CKD-EPI 2021). Sole eGFR source of truth. Case-insensitive sex normalization, `Math.round()` return, null-safe. Killip lookup uses direct string key. | None |
 | `anticoag-engine.js` | Heparin standalone dosing/titration engine. Exports `calcHeparinInitialDose`, `getHeparinTitration`, `HEPARIN_STANDALONE_PROTOCOLS`. | None |
-| `drug-data.js` | 12-drug catalog: concentrations, dose limits, safety ceilings, titration instructions, optional `indications` array for per-drug guide rendering. | None |
+| `drug-data.js` | 12-drug catalog: concentrations, dose limits, safety ceilings, titration instructions, optional `indications` array for per-drug guide rendering, optional `absoluteMaxPerHour` for weight-based drugs with clinical hourly ceilings (e.g. Fentanyl 500 mcg/hr). | None |
 | `print-bootstrap.js` | Print/page lifecycle: `handlePrintBlankDirect()`, `handlePrintBlankDirectPdf()`, `openBlankPdf()`, `showResults()`, `clearResults()`, date/time helpers. | `components.js` |
 | `blank-print-engine.js` | Declarative blank-print reset. Each page registers a manifest of reset rules (`{ id, value }` for textContent, `{ id, html }` for innerHTML, etc.). `apply()` executes all rules. Used by rtpa and nstemi only. | None |
 | `form-validate.js` | Non-blocking form validation. `fail()`, `warn()`, `range()`, `min()`, `clearAll()`. Replaces `alert()` across all order pages. | `components.js` |

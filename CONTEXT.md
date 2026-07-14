@@ -26,7 +26,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | **Alvarado Score** | Appendicitis scoring system. Embedded in abdominal-pain template. |
 | **qSOFA** | Quick Sequential Organ Failure Assessment. Sepsis screening. Embedded in sepsis template. |
 | **RIG Dose** | Rabies Immunoglobulin dose ≈ 2 mL/kg wound infiltration, max 100 mL per episode (WHO Thailand rabies guidance). Embedded in mammalian-bite template. |
-| **GCS** | Glasgow Coma Scale. Consciousness assessment. Embedded in trauma template. |
+| **GCS** | Glasgow Coma Scale. Consciousness assessment (Eye 1-4, Verbal 1-5 or T, Motor 1-6; total 3-15). Embedded in trauma template with auto-total and auto-selection of disability range radio. |
 | **NIHSS** | National Institutes of Health Stroke Scale. 11-item neurological deficit score (0–42). Standalone scoring worksheet (`tools/nihss.html`), linked from rtpa.html toolbar via "NIHSS เปล่า" popup button. |
 | **Blank Print** | Pre-formatted standing order sheet with all calculated fields as dotted lines and all checkboxes as ☐. Four pathways: PDF open (5 pages), HTML blank via `ED_BLANK_PRINT.apply()` (rtpa/nstemi), popup print via `tools/nihss.html?print-blank-direct=true` (NIHSS), or non-destructive print blank button (Home Medication). |
 | **Urgent Clinic Home Medication** | Standalone home medication and emergency immunization checklist worksheet (`tools/Urgent-Clinic-Home-Medication.html`) for discharge clinical documentation, with auto-save, plain-text clipboard copy, and A4 print blank support. |
@@ -46,6 +46,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | Killip Class | `KILLIP_PTS` | `shared/clinical-engine.js` |
 | Snake type | `snake-type` (radio: `hematotoxin`/`neurotoxin`) | `orders/antivenom.html` |
 | Drip rate | `calcDripRate()` | `shared/calc-engine.js` |
+| Absolute dose ceiling | `absoluteMaxPerHour` | `shared/drug-data.js` (enforced in `tools/drip-calculator.html`) |
 | Heparin initial dose | `calcHeparinInitialDose()` | `shared/anticoag-engine.js` |
 | Heparin titration | `getHeparinTitration()` | `shared/anticoag-engine.js` |
 | Blank print manifest | `ED_BLANK_PRINT.apply()` | `shared/blank-print-engine.js` |
@@ -69,6 +70,9 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | SK repeat CI | within 6 months → absolute contraindication | Neutralizing antibody risk |
 | Prasugrel restriction | Cath Lab only (workflow, not contraindication) | Clinical workflow rule |
 | RIG dose | ≈ 2 mL/kg, max 100 mL per episode | WHO Thailand rabies guidance |
+| ERIG auto-calc | 40 IU/kg, max 3000 IU | WHO EML + MIMS Thailand |
+| HRIG auto-calc | 20 IU/kg, max 1500 IU | WHO EML + MIMS Thailand |
+| Fentanyl absolute ceiling | 500 mcg/hr regardless of weight | Drug safety ceiling in `drug-data.js` `absoluteMaxPerHour` |
 
 ## Print Conventions
 

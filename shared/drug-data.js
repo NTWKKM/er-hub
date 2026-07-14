@@ -139,6 +139,7 @@ const EMERGENCY_DRUG_DATA = [
         ],
         defaultPreparationIndex: 0,
         doseRange: { min: 0.5, max: 10.0, step: 0.1, default: 1.0 },
+        absoluteMaxPerHour: 500, // mcg/hr — clinical safety ceiling regardless of weight
         titrationGuide: 'ปรับขนาดตามระดับความปวดของผู้ป่วย จำกัดขนาดสูงสุดที่ 500 mcg/hr',
         safetyWarnings: [
             'จำกัดขนาดสูงสุดรวมของ maintenance drip ห้ามเกิน 500 mcg/hr เพื่อป้องกันการดื้อยาและผลข้างเคียง',

@@ -60,4 +60,50 @@ describe('calcDripRate', () => {
     const rate = calcDripRate({ doseValue: 1, doseUnit: 'mcg/kg/hr', weightKg: 70, concentration: 5 });
     assert.equal(rate, 14);
   });
+
+  test('returns 0 for null doseValue', () => {
+    assert.equal(calcDripRate({ doseValue: null, doseUnit: 'mcg/kg/min', weightKg: 70, concentration: 100 }), 0);
+  });
+
+  test('returns 0 for undefined doseValue', () => {
+    assert.equal(calcDripRate({ doseValue: undefined, doseUnit: 'mcg/kg/min', weightKg: 70, concentration: 100 }), 0);
+  });
+
+  test('returns 0 for NaN doseValue', () => {
+    assert.equal(calcDripRate({ doseValue: NaN, doseUnit: 'mcg/kg/min', weightKg: 70, concentration: 100 }), 0);
+  });
+
+  test('returns 0 for null weightKg on weight-based dose', () => {
+    assert.equal(calcDripRate({ doseValue: 0.1, doseUnit: 'mcg/kg/min', weightKg: null, concentration: 100 }), 0);
+  });
+
+  test('returns 0 for undefined weightKg on weight-based dose', () => {
+    assert.equal(calcDripRate({ doseValue: 0.1, doseUnit: 'mcg/kg/min', weightKg: undefined, concentration: 100 }), 0);
+  });
+
+  test('returns 0 for null concentration', () => {
+    assert.equal(calcDripRate({ doseValue: 0.1, doseUnit: 'mcg/kg/min', weightKg: 70, concentration: null }), 0);
+  });
+
+  test('returns 0 for undefined concentration', () => {
+    assert.equal(calcDripRate({ doseValue: 0.1, doseUnit: 'mcg/kg/min', weightKg: 70, concentration: undefined }), 0);
+  });
+
+  test('returns 0 for negative concentration', () => {
+    assert.equal(calcDripRate({ doseValue: 0.1, doseUnit: 'mcg/kg/min', weightKg: 70, concentration: -5 }), 0);
+  });
+
+  test('returns 0 for NaN weightKg', () => {
+    assert.equal(calcDripRate({ doseValue: 0.1, doseUnit: 'mcg/kg/min', weightKg: NaN, concentration: 100 }), 0);
+  });
+
+  test('returns 0 for missing doseUnit', () => {
+    assert.equal(calcDripRate({ doseValue: 0.1, doseUnit: undefined, weightKg: 70, concentration: 100 }), 0);
+  });
+
+  test('non-weight-based dose ignores weightKg when null', () => {
+    // mg/hr is not weight-based, so null weightKg should still calculate
+    const rate = calcDripRate({ doseValue: 5, doseUnit: 'mg/hr', weightKg: null, concentration: 0.1 });
+    assert.equal(rate, 50);
+  });
 });

@@ -16,9 +16,13 @@
  */
 function calcDripRate({ doseValue, doseUnit, weightKg, concentration }) {
     if (!doseValue || doseValue <= 0 || !concentration || concentration <= 0) return 0;
-    
+    if (!doseUnit) return 0;
+
     const perKg = doseUnit.includes('/kg/');
     const perMin = doseUnit.endsWith('/min');
+
+    // For weight-based doses, validate weight is a positive number
+    if (perKg && (!weightKg || weightKg <= 0 || isNaN(weightKg))) return 0;
     
     // 1. Calculate amount of drug required per hour
     const amountPerHour = doseValue * (perKg ? weightKg : 1) * (perMin ? 60 : 1);

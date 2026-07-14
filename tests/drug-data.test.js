@@ -90,6 +90,7 @@ describe('EMERGENCY_DRUG_DATA specific drugs', () => {
     const fen = EMERGENCY_DRUG_DATA.find(d => d.id === 'fentanyl');
     assert.ok(fen);
     assert.equal(fen.doseRange.max, 10.0);
+    assert.equal(fen.absoluteMaxPerHour, 500, 'fentanyl should have absoluteMaxPerHour = 500');
     // Safety warning mentions 500 mcg/hr ceiling
     const hasCeiling = fen.safetyWarnings.some(w => w.includes('500'));
     assert.ok(hasCeiling, 'fentanyl safety warning should mention 500 mcg/hr ceiling');

@@ -80,3 +80,61 @@ describe('CLINICAL_ENGINE.calcGRACE — Killip lookup (F3)', () => {
     assert.equal(r.bd.kilP, 39);
   });
 });
+
+describe('CLINICAL_ENGINE.calcGRACE — edge cases', () => {
+  test('age 0 → 0 age points', () => {
+    const r = CLINICAL_ENGINE.calcGRACE({ age: 0, hr: 80, sbp: 120, cr: 1.0, cardArr: false, stDev: false, elevMk: false, killip: '1' });
+    assert.equal(r.bd.ageP, 0);
+  });
+
+  test('HR 0 → 0 HR points', () => {
+    const r = CLINICAL_ENGINE.calcGRACE({ age: 60, hr: 0, sbp: 120, cr: 1.0, cardArr: false, stDev: false, elevMk: false, killip: '1' });
+    assert.equal(r.bd.hrP, 0);
+  });
+
+  test('SBP 0 → 58 points (highest SBP score)', () => {
+    const r = CLINICAL_ENGINE.calcGRACE({ age: 60, hr: 80, sbp: 0, cr: 1.0, cardArr: false, stDev: false, elevMk: false, killip: '1' });
+    assert.equal(r.bd.sbpP, 58);
+  });
+
+  test('creatinine 0 → 1 point (lowest CR score)', () => {
+    const r = CLINICAL_ENGINE.calcGRACE({ age: 60, hr: 80, sbp: 120, cr: 0, cardArr: false, stDev: false, elevMk: false, killip: '1' });
+    assert.equal(r.bd.crP, 1);
+  });
+
+  test('all boolean flags false → no extra points', () => {
+    const r = CLINICAL_ENGINE.calcGRACE({ age: 60, hr: 80, sbp: 120, cr: 1.0, cardArr: false, stDev: false, elevMk: false, killip: '1' });
+    assert.equal(r.bd.arrP, 0);
+    assert.equal(r.bd.stP, 0);
+    assert.equal(r.bd.mkP, 0);
+  });
+
+  test('all boolean flags true → 39+28+14 = 81 extra points', () => {
+    const r = CLINICAL_ENGINE.calcGRACE({ age: 60, hr: 80, sbp: 120, cr: 1.0, cardArr: true, stDev: true, elevMk: true, killip: '1' });
+    assert.equal(r.bd.arrP, 39);
+    assert.equal(r.bd.stP, 28);
+    assert.equal(r.bd.mkP, 14);
+  });
+
+  test('score at boundary 140 → non-high risk', () => {
+    // riskLevel uses > 140 (strict), so exactly 140 should be non-high
+    assert.equal(CLINICAL_ENGINE.riskLevel(140, false, false), 'non-high');
+  });
+
+  test('score at 141 → high risk', () => {
+    assert.equal(CLINICAL_ENGINE.riskLevel(141, false, false), 'high');
+  });
+
+  test('anyH1 flag → high risk even with low score', () => {
+    assert.equal(CLINICAL_ENGINE.riskLevel(50, false, true), 'high');
+  });
+
+  test('anyVH flag → very-high risk overrides everything', () => {
+    assert.equal(CLINICAL_ENGINE.riskLevel(50, true, true), 'very-high');
+    assert.equal(CLINICAL_ENGINE.riskLevel(50, true, false), 'very-high');
+  });
+
+  test('score 0 with no flags → non-high', () => {
+    assert.equal(CLINICAL_ENGINE.riskLevel(0, false, false), 'non-high');
+  });
+});

@@ -204,7 +204,6 @@ input:focus,textarea:focus,select:focus { outline:none; border-color:var(--accen
 .vitals-compact .vit input.auto-filled {
   border-color:var(--accent); background:#f0eeff;
 }
-/* (main is 1280px globally — no .wide variant needed) */
 
 /* ---- Float status box (top-right) ---- */
 .float-status {

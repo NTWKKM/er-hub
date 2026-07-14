@@ -532,7 +532,7 @@
         </tr>
 
         <tr class="total">
-          <td colspan="2">คะแนนรวม (TOTAL SCORE)</td>
+          <td colspan="2">คะแนนรวม (TOTAL SCORE / max 42)</td>
           <td><span id="total-1"></span></td>
           <td><span id="total-2"></span></td>
           <td><span id="total-3"></span></td>
@@ -561,6 +561,13 @@
     // Auto-sum totals for each of the 3 assessment columns (1-3)
     const rowKeys = ["1a", "1b", "1c", "2", "3", "4", "5a", "5b", "6a", "6b", "7", "8", "9", "10", "11"];
 
+    // Per-item max valid scores (NIHSS standard)
+    const itemMax = {
+      "1a": 3, "1b": 2, "1c": 2, "2": 2, "3": 3, "4": 3,
+      "5a": 4, "5b": 4, "6a": 4, "6b": 4, "7": 2, "8": 2,
+      "9": 3, "10": 2, "11": 2
+    };
+
     function recalc() {
       for (let col = 1; col <= 3; col++) {
         let sum = 0;
@@ -579,8 +586,28 @@
       }
     }
 
+    // Validate input on blur — clamp out-of-range values and flag invalid
     document.querySelectorAll('input.cell').forEach(inp => {
+      inp.setAttribute('inputmode', 'numeric');
       inp.addEventListener('input', recalc);
+      inp.addEventListener('blur', function() {
+        const key = this.dataset.key;
+        const itemKey = key.split('-')[0];
+        const max = itemMax[itemKey];
+        const v = this.value.trim();
+        if (v === '') return;
+        // Allow 'X' for untestable items (5a, 5b, 6a, 6b, 10)
+        if (/^x$/i.test(v)) { this.value = 'X'; return; }
+        const n = parseInt(v, 10);
+        if (isNaN(n)) {
+          this.value = '';
+        } else if (max !== undefined && n > max) {
+          this.value = String(max);
+        } else if (n < 0) {
+          this.value = '0';
+        }
+        recalc();
+      });
     });
 
     function clearAll() {

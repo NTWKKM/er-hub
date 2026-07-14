@@ -19,6 +19,7 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 ├── tools/
 │   ├── drip-calculator.html     ← IV Infusion Drip Calculator (12 HAD drugs)
 │   ├── nihss.html               ← NIHSS Stroke Scale Score Sheet
+│   ├── Urgent-Clinic-Home-Medication.html ← Home Medication Checklist (ERIG/HRIG auto-calc)
 │   └── er-note/
 │       ├── index.html           ← ER NOTE portal hub (7 templates)
 │       ├── general-er-note.html ← General ER Note
@@ -55,7 +56,9 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 │   ├── dead-css-guard.test.js
 │   ├── id-integrity-guard.test.js
 │   ├── order-safety-guard.test.js
-│   └── drip-calculator-ui.test.js
+│   ├── drip-calculator-ui.test.js
+│   ├── nihss-guard.test.js
+│   └── home-medication-guard.test.js
 ├── service-worker.js            ← PWA offline cache (network-first nav, cache-first assets)
 ├── manifest.json                ← PWA manifest (installable app)
 ├── ARCHITECTURE.md              ← System architecture & standing constraints
@@ -86,4 +89,4 @@ See `ARCHITECTURE.md`, `DESIGN.md`, and `CONTEXT.md` for full specifications. Se
 npm test
 ```
 
-Runs 213 unit tests via Node's built-in `node:test` (zero dependencies). Covers `calc-engine.js` (drip rate), `anticoag-engine.js` (heparin dosing + titration + eGFR), `clinical-engine.js` (eGFR + GRACE score + Killip lookup), `drug-data.js` (12-drug catalog validation), `components.js` (date/time formatting), `form-validate.js`, `print-bootstrap.js`, `blank-print-engine.js`, and structural regression guards (dead-css, id-integrity, order-safety, NSTEMI thresholds, drip-calculator UI). Tests are dev-only — they never ship to the browser.
+Runs 260 unit tests via Node's built-in `node:test` (zero dependencies). Covers `calc-engine.js` (drip rate), `anticoag-engine.js` (heparin dosing + titration + eGFR), `clinical-engine.js` (eGFR + GRACE score + Killip lookup + riskLevel boundaries), `drug-data.js` (12-drug catalog validation + absoluteMaxPerHour), `components.js` (date/time formatting), `form-validate.js`, `print-bootstrap.js`, `blank-print-engine.js`, and structural regression guards (dead-css, id-integrity, order-safety, NSTEMI thresholds, drip-calculator UI, NIHSS validation, home medication localStorage + ERIG/HRIG auto-calc). Tests are dev-only — they never ship to the browser.
