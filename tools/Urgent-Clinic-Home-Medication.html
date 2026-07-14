@@ -7,6 +7,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="er-note/er-note.css">
 <style>
+/* Nav bar overrides to match shared/base.css injected-nav pattern */
+.top-nav {
+  justify-content: flex-start !important;
+  gap: 12px;
+}
+.nav-title-full { display: inline; }
+.nav-title-short { display: none; }
+@media (max-width: 1024px) {
+  .nav-title-full { display: none; }
+  .nav-title-short { display: inline; }
+}
+@media (max-width: 768px) {
+  .top-nav { padding: 0 16px; }
+}
+
 /* Local CSS overrides to adapt the clinical table for ER Note dark screen style */
 .med-card {
   margin-bottom: 80px; /* Space for fixed bottom action bar */
@@ -301,13 +316,15 @@
 </style>
 </head>
 <body>
-<nav class="top-nav" role="navigation">
-  <div class="nav-left">
-    <img src="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
-    <span class="nav-title">Home Medication</span>
-  </div>
-  <a href="../index.html" class="nav-home">← Home</a>
-</nav>
+<script src="../shared/components.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    ED_COMPONENTS.injectNavBar(undefined,
+        '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
+        'Urgent Clinic Home Medication — MNRH-ED &nbsp;|&nbsp; v1.0',
+        'Home Med');
+});
+</script>
 <main class="main">
 <form id="er-form">
 <div class="patient-strip">

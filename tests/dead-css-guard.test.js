@@ -99,7 +99,8 @@ function checkDeadCssClasses(filePath) {
         const isSpecialBypass = [
             'theme-neutral', 'container', 'form-container', 'header', 'btn',
             'btn-print', 'btn-clear', 'results-container', 'print-btn', 'clear-btn',
-            'inline-input-group', 'patient-field', 'flag-label', 'ac-disabled'
+            'inline-input-group', 'patient-field', 'flag-label', 'ac-disabled',
+            'top-nav', 'nav-title-full', 'nav-title-short'
         ].includes(className);
 
         if (!isUsedInHtml && !isUsedInJs && !isSpecialBypass) {
@@ -127,7 +128,8 @@ function checkDeadCssInSharedFile(cssPath, repoSources, isErNote = false) {
     const bypass = new Set([
         'theme-neutral', 'container', 'form-container', 'header', 'btn',
         'btn-print', 'btn-clear', 'results-container', 'print-btn', 'clear-btn',
-        'inline-input-group', 'patient-field', 'flag-label', 'ac-disabled'
+        'inline-input-group', 'patient-field', 'flag-label', 'ac-disabled',
+        'top-nav', 'nav-title-full', 'nav-title-short'
     ]);
 
     for (const className of selectors) {
