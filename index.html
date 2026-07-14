@@ -571,7 +571,7 @@ nav.innerHTML = `
         <img src="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" style="height: 38px; width: auto; display: block;">
     </div>
     <div class="nav-center">MNRH-ED HUB</div>
-    <div class="nav-right">v28 · Updated 2026-07-14</div>
+    <div class="nav-right">v29 · Updated 2026-07-14</div>
 `;
 document.body.insertBefore(nav, document.body.firstChild);
 
@@ -675,8 +675,28 @@ if ('serviceWorker' in navigator) {
   if (toggle && content) {
     function toggleSection() {
       const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
-      toggle.setAttribute('aria-expanded', !isExpanded);
-      content.classList.toggle('collapsed');
+      if (isExpanded) {
+        // Collapsing: restore overflow:hidden so content clips during animation
+        content.style.overflow = 'hidden';
+        toggle.setAttribute('aria-expanded', 'false');
+        content.classList.add('collapsed');
+      } else {
+        // Expanding: keep overflow:hidden during animation, then allow 3D tilt overflow
+        toggle.setAttribute('aria-expanded', 'true');
+        content.classList.remove('collapsed');
+        let done = false;
+        function enableOverflow() {
+          if (done) return;
+          done = true;
+          content.style.overflow = 'visible';
+          content.removeEventListener('transitionend', onTEnd);
+        }
+        function onTEnd(e) {
+          if (e.target === content && e.propertyName === 'transform') enableOverflow();
+        }
+        content.addEventListener('transitionend', onTEnd);
+        setTimeout(enableOverflow, 550);
+      }
     }
 
     toggle.addEventListener('click', toggleSection);

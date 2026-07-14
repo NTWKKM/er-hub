@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1] — 2026-07-14
+
+### Fixed
+- Prototype collapsible section: 3D tilt effect on order rows was clipped by `overflow: hidden` when expanded. Now toggles to `overflow: visible` after the expand animation completes (and back to `hidden` during collapse) so the mouse-tracking 3D perspective renders fully.
+
+### Changed
+- Bumped cache version v28 → v29.
+
 ## [1.0.0] — 2026-07-08
 
 First production release. ER Standing Order Hub for Maharat Nakhon Ratchasima Hospital Emergency Department.
