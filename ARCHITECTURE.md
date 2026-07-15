@@ -20,8 +20,8 @@ Seven specialized clinical worksheets, each a self-contained HTML file with inli
 | `sedation.html` | Post-Intubation Sedation |
 
 All 7 use `ED_PRINT_BOOTSTRAP` for page lifecycle and `ED_VALIDATE` for non-blocking validation.
-5 pages (stemi, pe, heparin, antivenom, sedation) open source PDFs from `docs/` for blank printing.
-2 pages (rtpa, nstemi) render blank HTML templates via `ED_BLANK_PRINT`.
+4 pages (stemi, pe, heparin, sedation) open source PDFs from `docs/` for blank printing.
+3 pages (rtpa, nstemi, antivenom) render blank HTML templates via `ED_BLANK_PRINT`.
 rtpa and nstemi use a floating print action bar as the sole print trigger (no `#print-btn`).
 rtpa toolbar includes a "NIHSS เปล่า" button that opens `tools/nihss.html?print-blank-direct=true` in a popup window for instant blank NIHSS printing.
 
@@ -179,7 +179,7 @@ User enters history, exam, investigations, scoring variables
 - **Print Blank Bypass:** Both pathways (PDF open / HTML blank) bypass screen validation for emergency manual-fill.
 - **Lab/IV/O2 Hygiene:** Non-drug orders always render ☐ in print. Only drug orders auto-check ☑ based on input data.
 - **A4 Print Fit:** `@page { size: A4 portrait; margin: 0 }`. 5-column grid, `page-break-inside: avoid`. Nav hidden in print.
-- **Hardcoded Checkbox Reset:** Non-dynamic ☑ items reset to ☐ on blank print (rtpa: 10 items, nstemi: 12 items).
+- **Hardcoded Checkbox Reset:** Non-dynamic ☑ items reset to ☐ on blank print (rtpa: 10 items, nstemi: 12 items, antivenom: 3 items).
 - **Use-Current-Time Checkbox:** 5 pages (pe, heparin, antivenom, nstemi, rtpa) have it. Default: checked (auto-fill) on pe/heparin/antivenom/rtpa; unchecked (blank) on nstemi.
 - **Hard-Stop Pattern:** Pages with contraindication gating (e.g. pe.html) must `return;` after `ED_VALIDATE.warn()` to halt execution — not just hide the print button. Enforced by `tests/order-safety-guard.test.js`.
 - **Non-blocking Validation:** `ED_VALIDATE.range()` highlights invalid fields but does NOT hard-block calculation/print — preserves clinician override in emergency workflows.

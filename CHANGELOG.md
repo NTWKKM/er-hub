@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.0.0] — 2026-07-16
+
+### Added
+- **Antivenom Standing Order Interactive Calculator:**
+  - Migrated `orders/antivenom.html` to a fully interactive, real-time recalculating UI.
+  - Implemented real-time form calculations and range validation (weight 10-200 kg, age 1-120 years).
+  - Introduced live results display panel featuring computed recommended vials, infusion duration, venom type badge (`HEMATOTOXIN` / `NEUROTOXIN`), and horse serum allergy alerts.
+  - Added detailed real-time `Order Summary` breakdown card.
+  - Implemented dynamic A4 print layouts including auto-expanding neuro observation/lab lists, custom penicillin allergy alternatives, and custom printed tetanus immunization order cards.
+  - Created `.gender-radio` layout classes in `shared/base.css` to handle responsive gender selections.
+  - Integrated `shared/blank-print-engine.js` and registered the reset manifest to support high-fidelity HTML-based blank order prints (`ED_BLANK_PRINT.apply()`), removing the old static PDF pathway redirect.
+
+### Changed
+- Bumped PWA offline cache version to `v31` (updated `service-worker.js` and `index.html` nav badges, synchronized unit tests).
+
 ## [1.0.1] — 2026-07-14
 
 ### Fixed

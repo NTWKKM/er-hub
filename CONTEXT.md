@@ -28,7 +28,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | **RIG Dose** | Rabies Immunoglobulin dose ≈ 2 mL/kg wound infiltration, max 100 mL per episode (WHO Thailand rabies guidance). Embedded in mammalian-bite template. |
 | **GCS** | Glasgow Coma Scale. Consciousness assessment (Eye 1-4, Verbal 1-5 or T, Motor 1-6; total 3-15). Embedded in trauma template with auto-total and auto-selection of disability range radio. |
 | **NIHSS** | National Institutes of Health Stroke Scale. 11-item neurological deficit score (0–42). Standalone scoring worksheet (`tools/nihss.html`), linked from rtpa.html toolbar via "NIHSS เปล่า" popup button. |
-| **Blank Print** | Pre-formatted standing order sheet with all calculated fields as dotted lines and all checkboxes as ☐. Four pathways: PDF open (5 pages), HTML blank via `ED_BLANK_PRINT.apply()` (rtpa/nstemi), popup print via `tools/nihss.html?print-blank-direct=true` (NIHSS), or non-destructive print blank button (Home Medication). |
+| **Blank Print** | Pre-formatted standing order sheet with all calculated fields as dotted lines and all checkboxes as ☐. Four pathways: PDF open (4 pages: stemi, pe, heparin, sedation), HTML blank via `ED_BLANK_PRINT.apply()` (rtpa/nstemi/antivenom), popup print via `tools/nihss.html?print-blank-direct=true` (NIHSS), or non-destructive print blank button (Home Medication). |
 | **Urgent Clinic Home Medication** | Standalone home medication and emergency immunization checklist worksheet (`tools/Urgent-Clinic-Home-Medication.html`) for discharge clinical documentation, with auto-save, plain-text clipboard copy, and A4 print blank support. |
 | **Active / Prototype Release States** | Classification of portal hub items. Active releases (rt-PA, NSTEMI, T1 Drip Calc, T2 NIHSS, T3 Home Meds) are production-ready (displayed first directly without a header). Prototypes (STEMI, PE, Heparin, Antivenom, Sedation, T4 ER Note) are under active evaluation (separated by a "Prototype" heading). |
 
@@ -80,8 +80,8 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | --- | --- |
 | Drug orders | Auto-check ☑ based on input data |
 | Lab/IV/O2/monitoring | Always ☐ — never auto-checked |
-| Blank print — 5 pages (stemi, pe, heparin, antivenom, sedation) | Open PDF from `docs/` |
-| Blank print — rtpa/nstemi | `ED_BLANK_PRINT.apply()` → `ED_PRINT_BOOTSTRAP.showResults()` → `window.print()` |
+| Blank print — 4 pages (stemi, pe, heparin, sedation) | Open PDF from `docs/` |
+| Blank print — rtpa/nstemi/antivenom | `ED_BLANK_PRINT.apply()` → `ED_PRINT_BOOTSTRAP.showResults()` → `window.print()` |
 | Blank print — NIHSS | `tools/nihss.html?print-blank-direct=true` popup → `printBlank()` (clear inputs → `recalc()` → `window.print()`) |
 | rtpa "NIHSS เปล่า" button | `window.open('tools/nihss.html?print-blank-direct=true', '_blank', ...)` popup print |
 | NSTEMI use-current-time | Defaults unchecked (blank dotted lines) |
