@@ -24,6 +24,15 @@
   <a href="abdominal-pain.html">Abdominal Pain</a>
   <a href="eye-injury.html">Eye Injury</a>
 </div>
+<div class="float-status risk-low" id="bite-float-status">
+  <div class="fs-label">Bite Risk</div>
+  <div class="fs-risk" id="bite-fs-risk-text">LOW</div>
+  <div class="fs-scores">
+    <div class="fs-score" id="bite-fs-rabies"><span class="fs-score-name">Rabies</span><span class="fs-score-val">—</span></div>
+    <div class="fs-score" id="bite-fs-tetanus"><span class="fs-score-name">Tetanus</span><span class="fs-score-val">—</span></div>
+    <div class="fs-score" id="bite-fs-category"><span class="fs-score-name">WHO Cat</span><span class="fs-score-val">—</span></div>
+  </div>
+</div>
 <main class="main">
 <form id="er-form">
 <div class="patient-strip">
@@ -369,6 +378,62 @@ function getRadioVal(name){
   return el ? el.value : null;
 }
 
+/* ---- Float status box ----
+ * Mirrors sepsis float-status pattern but for categorical bite risk.
+ * Rabies: No PEP = low, Vaccine only = medium, RIG+Vaccine = high
+ * Tetanus: None = low, Booster = medium, Td+TIG = high
+ * Overall = highest of the two
+ */
+function updateBiteFloatStatus(){
+  const box = document.getElementById('bite-float-status');
+  const riskText = document.getElementById('bite-fs-risk-text');
+  const rabiesEl = document.getElementById('bite-fs-rabies');
+  const tetanusEl = document.getElementById('bite-fs-tetanus');
+  const catEl = document.getElementById('bite-fs-category');
+  const category = getRadioVal('bite-category');
+  const rabiesPlan = document.getElementById('rabies-plan').textContent;
+  const tetanusPlan = document.getElementById('tet-plan').textContent;
+
+  // Category display
+  let catShort = '—';
+  if (category){
+    if (category.startsWith('I —')) catShort = 'I';
+    else if (category.startsWith('II —')) catShort = 'II';
+    else if (category.startsWith('III')) catShort = 'III';
+  }
+  catEl.querySelector('.fs-score-val').textContent = catShort;
+
+  // Rabies urgency
+  let rabiesRisk = 'low';
+  let rabiesShort = 'No PEP';
+  if (rabiesPlan.includes('RIG')) { rabiesRisk = 'high'; rabiesShort = 'RIG+Vax'; }
+  else if (rabiesPlan.includes('Vaccine Essen') || rabiesPlan.includes('Vaccine days 0 + 3')) { rabiesRisk = 'medium'; rabiesShort = 'Vax'; }
+  else if (rabiesPlan.includes('not determined') || rabiesPlan.includes('select')) { rabiesRisk = 'low'; rabiesShort = '—'; }
+  else if (rabiesPlan.includes('No PEP') || rabiesPlan.includes('No rabies')) { rabiesRisk = 'low'; rabiesShort = 'No PEP'; }
+  rabiesEl.querySelector('.fs-score-val').textContent = rabiesShort;
+  rabiesEl.classList.remove('s-risk-low','s-risk-low-medium','s-risk-medium','s-risk-high');
+  rabiesEl.classList.add('s-risk-' + rabiesRisk);
+
+  // Tetanus urgency
+  let tetRisk = 'low';
+  let tetShort = 'None';
+  if (tetanusPlan.includes('TIG')) { tetRisk = 'high'; tetShort = 'Td+TIG'; }
+  else if (tetanusPlan.includes('booster')) { tetRisk = 'medium'; tetShort = 'Booster'; }
+  else if (tetanusPlan.includes('No Td')) { tetRisk = 'low'; tetShort = 'None'; }
+  else if (tetanusPlan.includes('select') || tetanusPlan.includes('assessed')) { tetRisk = 'low'; tetShort = '—'; }
+  tetanusEl.querySelector('.fs-score-val').textContent = tetShort;
+  tetanusEl.classList.remove('s-risk-low','s-risk-low-medium','s-risk-medium','s-risk-high');
+  tetanusEl.classList.add('s-risk-' + tetRisk);
+
+  // Overall = highest
+  let overall = 'low';
+  if (rabiesRisk === 'high' || tetRisk === 'high') overall = 'high';
+  else if (rabiesRisk === 'medium' || tetRisk === 'medium') overall = 'medium';
+  riskText.textContent = overall.toUpperCase();
+  box.classList.remove('risk-low','risk-medium','risk-high');
+  box.classList.add('risk-' + overall);
+}
+
 /* ---- Rabies PEP logic (Thailand endemic) ----
  * Thailand is rabies-endemic. We do NOT use provoked/healthy-animal criteria.
  * Reservoir species: Dog, Cat, Monkey, Other mammal
@@ -443,6 +508,7 @@ function updateRabies(){
 
   planEl.textContent = '— select category —';
   lineEl.setAttribute('data-copy','Rabies PEP: not determined');
+  updateBiteFloatStatus();
 }
 
 function updateTetanus(){
@@ -462,6 +528,7 @@ function updateTetanus(){
   else plan = 'Review tetanus history';
   planEl.textContent = plan;
   lineEl.setAttribute('data-copy','Tetanus prophylaxis: '+plan);
+  updateBiteFloatStatus();
 }
 
 document.querySelectorAll('input[name="bite-animal"], input[name="bite-category"], input[name="rabies-prior"], input[name="bite-status"]').forEach(function(el){
@@ -472,6 +539,7 @@ document.querySelectorAll('input[name="tet-wound"], input[name="tet-history"]').
 });
 updateRabies();
 updateTetanus();
+updateBiteFloatStatus();
 
 </script>
 </body>

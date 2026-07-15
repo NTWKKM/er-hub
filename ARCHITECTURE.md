@@ -35,7 +35,7 @@ Seven standalone clinical note worksheets + portal hub, completely decoupled fro
 | `general-er-note.html` | General ER note |
 | `sepsis.html` | Sepsis — vital signs + screening scores first, then source infection; vital→score auto-link; float risk box |
 | `trauma.html` | Trauma — GCS scoring (Eye/Verbal/Motor radio groups with auto-total) |
-| `mammalian-bite.html` | Mammalian bite — button-group selections, endemic rabies PEP logic, SVG wound illustrations |
+| `mammalian-bite.html` | Mammalian bite — button-group selections, endemic rabies PEP logic, SVG wound illustrations, float risk box |
 | `chest-pain.html` | Chest pain — HEART score |
 | `abdominal-pain.html` | Abdominal pain — Alvarado score |
 | `eye-injury.html` | Eye injury |
@@ -49,7 +49,8 @@ Thai-base history labels,
 plain-text note generation to clipboard, print via `window.print()` with `@media print` hiding nav/action bars/patient-strip/sidebar,
 built-in clinical calculators (NEWS2, SIRS, HEART, Alvarado, GCS, RIG dose, ERIG/HRIG auto-calc),
 vital→score auto-linking (sepsis), float sepsis risk status box,
-endemic rabies PEP logic with button-group selections and SVG wound illustrations (mammalian-bite).
+endemic rabies PEP logic with button-group selections and SVG wound illustrations (mammalian-bite),
+float bite risk status box (mammalian-bite — rabies/tetanus/WHO category urgency).
 
 Each specialized template (sepsis, mammalian-bite) is fully standalone — its HPI/PMH/Allergies/PE
 fields are rendered from `NARRATIVE_PRESETS[templateId]` by `ErNote.renderNarrative(container, templateId)`.
