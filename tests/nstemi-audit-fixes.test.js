@@ -11,6 +11,7 @@ const SW_PATH    = path.join(__dirname, '..', 'service-worker.js');
 const MANIFEST   = path.join(__dirname, '..', 'manifest.json');
 const DEAD_CSS   = path.join(__dirname, 'dead-css-guard.test.js');
 const STEMI_PATH = path.join(__dirname, '..', 'orders', 'stemi.html');
+const STEMI_ENGINE_PATH = path.join(__dirname, '..', 'shared', 'stemi-engine.js');
 
 function read(file) {
     return fs.readFileSync(file, 'utf8');
@@ -240,16 +241,16 @@ describe('NSTEMI Print — B3: Prasugrel color, bullets, Ticagrelor continuation
     });
 });
 
-describe('SW Version — cache version bumped (v29 drip-calculator precache)', () => {
+describe('SW Version — cache version bumped (v30 engines precache)', () => {
     const sw = read(SW_PATH);
     const index = read(INDEX_PATH);
 
-    test('CACHE_VERSION is v29', () => {
-        assert.match(sw, /er-hub-v29/, 'CACHE_VERSION must be er-hub-v29');
+    test('CACHE_VERSION is v30', () => {
+        assert.match(sw, /er-hub-v30/, 'CACHE_VERSION must be er-hub-v30');
     });
 
-    test('index.html version badge text is v29', () => {
-        assert.match(index, /<div class="nav-right">v29 · Updated [^<]*<\/div>/, 'index.html nav badge must show v29 with update date');
+    test('index.html version badge text is v30', () => {
+        assert.match(index, /<div class="nav-right">v30 · Updated [^<]*<\/div>/, 'index.html nav badge must show v30 with update date');
     });
 });
 
@@ -261,7 +262,8 @@ describe('STEMI Age-75 Boundary — ADR-49 #9: TNK vs Clopidogrel cutoffs', () =
     const html = read(STEMI_PATH);
 
     test('TNK halving uses age >= 75', () => {
-        assert.match(html, /const elderly = age >= 75/,
+        const engineJs = read(STEMI_ENGINE_PATH);
+        assert.match(engineJs, /const elderly = age >= 75/,
             'TNK elderly flag must be age >= 75');
     });
 

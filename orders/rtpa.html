@@ -771,6 +771,7 @@
     <script src="../shared/print-bootstrap.js"></script>
     <script src="../shared/blank-print-engine.js"></script>
     <script src="../shared/form-validate.js"></script>
+    <script src="../shared/stroke-engine.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('rtpa-form');
@@ -814,27 +815,9 @@
                 }
                 ED_VALIDATE.range('weight', 20, 250, 'Weight ต้องอยู่ในช่วง 20–250 kg');
 
-                let totalDose, pushDose, dripDose, pushPercent, dripPercent;
-
-                if (selectedDose === 0.9) {
-                    let calculatedTotal = weight * 0.9;
-                    totalDose = Math.min(calculatedTotal, 90);
-                    pushPercent = 10;
-                    dripPercent = 90;
-                    let idealPush = totalDose * 0.10;
-                    pushDose = Math.floor(idealPush * 10) / 10;
-                    let remainder = idealPush - pushDose;
-                    dripDose = (totalDose * 0.90) + remainder;
-                } else { // selectedDose === 0.6
-                    let calculatedTotal = weight * 0.6;
-                    totalDose = Math.min(calculatedTotal, 90);
-                    pushPercent = 15;
-                    dripPercent = 85;
-                    let idealPush = totalDose * 0.15;
-                    pushDose = Math.floor(idealPush * 10) / 10;
-                    let remainder = idealPush - pushDose;
-                    dripDose = (totalDose * 0.85) + remainder;
-                }
+                const dose = STROKE_ENGINE.calcRtpaDose(weight, selectedDose);
+                if (!dose) return;
+                const { totalDose, pushDose, dripDose, pushPercent, dripPercent } = dose;
 
                 document.getElementById('result-hn').textContent = hn;
                 document.getElementById('result-weight').textContent = weight.toFixed(2);

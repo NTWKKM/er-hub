@@ -212,28 +212,13 @@
 <script src="../shared/components.js"></script>
 <script src="../shared/print-bootstrap.js"></script>
 <script src="../shared/form-validate.js"></script>
+<script src="../shared/stemi-engine.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
 
-    const TNK_TABLE = [
-        { label: '<60',   min: -Infinity, max: 60,        mg: 30 },
-        { label: '60-69', min: 60,        max: 70,        mg: 35 },
-        { label: '70-79', min: 70,        max: 80,        mg: 40 },
-        { label: '80-89', min: 80,        max: 90,        mg: 45 },
-        { label: '≥90',   min: 90,        max: Infinity,  mg: 50 },
-    ];
-
-    function calcTNK(weight, age) {
-        const idx = TNK_TABLE.findIndex(b => weight >= b.min && weight < b.max);
-        const bracket = TNK_TABLE[idx];
-        const elderly = age >= 75; // rule: age >= 75 -> halve dose
-        const mg = elderly ? bracket.mg / 2 : bracket.mg;
-        return { mg, ml: mg / 5, bracketIdx: idx, elderly };
-    }
-
     function buildTNKTableHTML(activeIdx) {
-        let rows = TNK_TABLE.map((b, i) => `
+        let rows = STEMI_ENGINE.TNK_TABLE.map((b, i) => `
             <tr class="${i === activeIdx ? 'active-row' : ''}">
                 <td>${b.label}</td><td>${b.mg}</td><td>${b.mg / 5}</td>
             </tr>`).join('');
@@ -269,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ED_VALIDATE.warn('⚠️ ห้ามให้ Streptokinase ซ้ำภายในเวลา 6 เดือน — ผู้ป่วยรายนี้เคยได้รับ SK มาก่อน กรุณาเปลี่ยนไปเลือก Tenecteplase (TNK) แทน'); return;
         }
 
-        const tnk = calcTNK(weight, age);
+        const tnk = STEMI_ENGINE.calcTNK(weight, age);
         // Clopidogrel loading dose: full 300 mg (4 tabs) for age ≤75, no load (1 tab) for age >75.
         // NOTE: TNK halving uses age >= 75 (ASSENT-2 / ESC), while clopidogrel loading omission
         // uses age > 75 (PLATO-derived). At exactly age 75, TNK is halved but full clopidogrel

@@ -104,6 +104,8 @@ Features:
 | `calc-engine.js` | Generic drip rate calculation engine (mL/hr). Guards against null/undefined/NaN params. | None |
 | `clinical-engine.js` | GRACE score + eGFR (CKD-EPI 2021). Sole eGFR source of truth. Case-insensitive sex normalization, `Math.round()` return, null-safe. Killip lookup uses direct string key. | None |
 | `anticoag-engine.js` | Heparin standalone dosing/titration engine. Exports `calcHeparinInitialDose`, `getHeparinTitration`, `HEPARIN_STANDALONE_PROTOCOLS`. | None |
+| `stroke-engine.js` | Stroke rt-PA thrombolytic dosing engine. Exports `calcRtpaDose` for 0.9 mg/kg and 0.6 mg/kg regimens. | None |
+| `stemi-engine.js` | STEMI TNK weight-bracket dosing engine. Exports `calcTNK`. | None |
 | `drug-data.js` | 12-drug catalog: concentrations, dose limits, safety ceilings, titration instructions, optional `indications` array for per-drug guide rendering, optional `absoluteMaxPerHour` for weight-based drugs with clinical hourly ceilings (e.g. Fentanyl 500 mcg/hr). | None |
 | `print-bootstrap.js` | Print/page lifecycle: `handlePrintBlankDirect()`, `handlePrintBlankDirectPdf()`, `openBlankPdf()`, `showResults()`, `clearResults()`, date/time helpers. | `components.js` |
 | `blank-print-engine.js` | Declarative blank-print reset. Each page registers a manifest of reset rules (`{ id, value }` for textContent, `{ id, html }` for innerHTML, etc.). `apply()` executes all rules. Used by rtpa and nstemi only. | None |
