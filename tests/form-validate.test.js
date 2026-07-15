@@ -115,31 +115,6 @@ describe('ED_VALIDATE — form-validate.js contract', () => {
     });
   });
 
-  describe('min(inputId, minVal, message) contract', () => {
-    test('min() returns true when value >= minVal', () => {
-      const val = 50;
-      const minVal = 30;
-      assert.ok(val >= minVal);
-    });
-
-    test('min() returns false when value < minVal', () => {
-      const val = 20;
-      const minVal = 30;
-      assert.ok(!(val >= minVal));
-    });
-
-    test('min() accepts boundary value exactly', () => {
-      const val = 30;
-      const minVal = 30;
-      assert.strictEqual(val, minVal);
-    });
-
-    test('min() returns false for NaN', () => {
-      const val = parseFloat('xyz');
-      assert.ok(isNaN(val));
-    });
-  });
-
   describe('warn(message) contract', () => {
     test('warn() returns false (like fail(), halts execution if used in if)', () => {
       const returnValue = false;

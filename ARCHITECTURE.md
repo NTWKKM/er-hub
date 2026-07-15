@@ -107,7 +107,7 @@ Features:
 | `drug-data.js` | 12-drug catalog: concentrations, dose limits, safety ceilings, titration instructions, optional `indications` array for per-drug guide rendering, optional `absoluteMaxPerHour` for weight-based drugs with clinical hourly ceilings (e.g. Fentanyl 500 mcg/hr). | None |
 | `print-bootstrap.js` | Print/page lifecycle: `handlePrintBlankDirect()`, `handlePrintBlankDirectPdf()`, `openBlankPdf()`, `showResults()`, `clearResults()`, date/time helpers. | `components.js` |
 | `blank-print-engine.js` | Declarative blank-print reset. Each page registers a manifest of reset rules (`{ id, value }` for textContent, `{ id, html }` for innerHTML, etc.). `apply()` executes all rules. Used by rtpa and nstemi only. | None |
-| `form-validate.js` | Non-blocking form validation. `fail()`, `warn()`, `range()`, `min()`, `clearAll()`. Replaces `alert()` across all order pages. | `components.js` |
+| `form-validate.js` | Non-blocking form validation. `fail()`, `warn()`, `range()`, `clearAll()`. Replaces `alert()` across all order pages. | `components.js` |
 
 ### Portal Hub (`index.html`)
 
@@ -180,7 +180,7 @@ User enters history, exam, investigations, scoring variables
 - **Hardcoded Checkbox Reset:** Non-dynamic ☑ items reset to ☐ on blank print (rtpa: 10 items, nstemi: 12 items).
 - **Use-Current-Time Checkbox:** 5 pages (pe, heparin, antivenom, nstemi, rtpa) have it. Default: checked (auto-fill) on pe/heparin/antivenom/rtpa; unchecked (blank) on nstemi.
 - **Hard-Stop Pattern:** Pages with contraindication gating (e.g. pe.html) must `return;` after `ED_VALIDATE.warn()` to halt execution — not just hide the print button. Enforced by `tests/order-safety-guard.test.js`.
-- **Non-blocking Validation:** `ED_VALIDATE.range()`/`min()` highlight invalid fields but do NOT hard-block calculation/print — preserves clinician override in emergency workflows.
+- **Non-blocking Validation:** `ED_VALIDATE.range()` highlights invalid fields but does NOT hard-block calculation/print — preserves clinician override in emergency workflows.
 
 ## Standing Constraints
 

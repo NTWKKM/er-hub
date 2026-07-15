@@ -5,6 +5,7 @@ const CACHE_VERSION = 'er-hub-v29';
 const ASSETS = [
   './',
   './index.html',
+  './manifest.json',
   './orders/rtpa.html',
   './orders/stemi.html',
   './orders/nstemi.html',

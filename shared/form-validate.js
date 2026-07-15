@@ -57,18 +57,6 @@ const ED_VALIDATE = {
         return this.clear(inputId);
     },
 
-    /**
-     * Validate numeric input is at least minVal.
-     */
-    min(inputId, minVal, message) {
-        const el = document.getElementById(inputId);
-        if (!el) return false;
-        const val = parseFloat(el.value);
-        if (isNaN(val) || val < minVal) {
-            return this.fail(inputId, message);
-        }
-        return this.clear(inputId);
-    },
 
     /**
      * Show a non-blocking clinical warning banner (replaces blocking alert() for safety alerts).

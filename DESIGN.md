@@ -216,7 +216,7 @@ The ER NOTE tool (`tools/er-note/`) is a separate clinical-note worksheet family
 | **Checkbox / Radio Group** | Multi-select or single-select clinical options. | Labels wrap; groups use `gap: 8px 16px`. |
 | **Score Line** | Read-only computed score/risk display (HEART, Alvarado, qSOFA/SIRS, GCS, etc.). | `.score-box.score-line` with `data-copy="Score: value"`. Inline `updateScores()` keeps both visible text and `data-copy` in sync on every relevant `change` event. |
 | **Action Buttons** | Copy Note / Clear / Print. | Primary (accent), Secondary (copy), Danger (clear). Fixed bottom bar on screen only. |
-| **Footer** | Version / metadata bar at bottom of each template. | Muted text, synchronized version string (currently `v25`). |
+| **Footer** | Version / metadata bar at bottom of each template. | Muted text, synchronized version string (currently `v29`). |
 | **Patient Strip** | HN input field + template label at top of each form (above all `.card` sections). Used for patient identification and sidebar card display. | `display: flex; gap: 12px`. HN input `140px` width, bold. Hidden in `@media print`. |
 | **Sidebar FAB** | Floating action button (right side, above action bar) toggling the draft manager panel. | `48px` circular, accent background, `☰` icon. `position: fixed; right: 20px; bottom: 80px; z-index: 95`. Hidden in `@media print`. |
 | **Sidebar Panel** | Slide-in panel from right listing all drafts across all templates. | `340px` wide, `transform: translateX(100%)` → `0` when `.open`. Contains: header (title + close), "+ New Draft" button, real-time filter input, scrollable card list. `z-index: 96`. Hidden in `@media print`. |
