@@ -610,6 +610,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const MIN_AGE = 1;
     const $ = id => document.getElementById(id);
+    const escapeHtml = str => String(str).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
 
     // ════════════════════════════════════════
     //  ANTIVENOM DATA TABLE
@@ -817,7 +820,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Allergies
         $('p-horse-allergy').innerHTML = horseAllergy
-            ? `<strong style="color:red;">YES ⚠️ ${allergyDetail ? '(' + allergyDetail + ')' : ''}</strong>`
+            ? `<strong style="color:red;">YES ⚠️ ${allergyDetail ? '(' + escapeHtml(allergyDetail) + ')' : ''}</strong>`
             : 'No';
         $('p-penicillin-allergy').innerHTML = penicillinAllergy
             ? '<strong style="color:red;">YES ⚠️</strong>'
