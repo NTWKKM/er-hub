@@ -174,6 +174,23 @@
             display: none;
         }
 
+        /* ══ All antivenom options display ══ */
+        .antivenom-options-box {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .antivenom-opt {
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 4px 8px;
+            font-size: 10.5px;
+        }
+        .antivenom-opt.chosen {
+            border: 2px solid #c0392b;
+            background: #fff8f8;
+        }
+
         /* Remove bullets from all order lists — screen + print */
         .order-list {
             list-style: none !important;
@@ -236,6 +253,19 @@
             }
             .order-list li {
                 margin-bottom: 4px;
+            }
+            .antivenom-opt {
+                font-size: 8pt;
+                padding: 3px 6px;
+            }
+            .antivenom-opt.chosen {
+                border: 2px solid #000 !important;
+                background: #f4f4f4 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .antivenom-opt:not(.chosen) {
+                color: #888 !important;
             }
             .order-blank-space {
                 flex-grow: 1;
@@ -505,9 +535,7 @@
 
                     <div class="divider"></div>
                     <strong>Antivenom Administration:</strong>
-                    <div class="fib-order-box chosen" id="p-antivenom-order-box">
-                        ☑ <strong>--</strong>
-                    </div>
+                    <div class="antivenom-options-box" id="p-antivenom-options"></div>
 
                     <div class="divider"></div>
                     <strong>Safety &amp; Observation:</strong>
@@ -634,7 +662,16 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'p-indications', html: '' },
         { id: 'p-neuro-labs', style: { display: 'none' } },
         { id: 'p-obs-neuro', style: { display: 'none' } },
-        { id: 'p-antivenom-order-box', html: '<strong>☑ .................... vials in NSS 100 mL IV drip in .... min</strong>' },
+        { id: 'p-antivenom-options', html: ''
+            + '<div class="antivenom-opt">☐ Green pit viper antivenom .... vials in NSS 100 mL IV drip in .... min</div>'
+            + '<div class="antivenom-opt">☐ Malayan pit viper antivenom .... vials in NSS 100 mL IV drip in .... min</div>'
+            + '<div class="antivenom-opt">☐ Russell\'s viper antivenom .... vials in NSS 100 mL IV drip in .... min</div>'
+            + '<div class="antivenom-opt">☐ Hematotoxin antivenom (polyvalent) .... vials in NSS 100 mL IV drip in .... min</div>'
+            + '<div class="antivenom-opt">☐ Cobra antivenom .... vials in NSS 100 mL IV drip in .... min</div>'
+            + '<div class="antivenom-opt">☐ King cobra antivenom .... vials in NSS 100 mL IV drip in .... min</div>'
+            + '<div class="antivenom-opt">☐ Malayan krait antivenom .... vials in NSS 100 mL IV drip in .... min</div>'
+            + '<div class="antivenom-opt">☐ Neurotoxin antivenom (polyvalent) .... vials in NSS 100 mL IV drip in .... min</div>'
+        },
         { id: 'p-dt-1', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
         { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
         { id: 'p-npo', html: '☐ NPO' },
@@ -799,14 +836,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? '<strong>Indications:</strong><br>' + inds.map(i => '• ' + i).join('<br>')
                 : '<small style="color:#999;">(ยังไม่ได้เลือก indication)</small>';
 
-            // Antivenom order
-            const antivenomText = `${snakeData.antivenom} ${snakeData.vials} vials in NSS 100 mL IV drip in ${snakeData.dripMin} min`;
-            $('p-antivenom-order-box').innerHTML = `☑ <strong>${antivenomText}</strong>`;
+            // Antivenom options — show ALL, checkmark the selected one
+            const selectedKey = getSelectedSnakeKey();
+            const antivenomGroups = [
+                // Hematotoxin
+                { keys: ['green_pit_viper'],   label: 'Green pit viper antivenom' },
+                { keys: ['malayan_pit_viper'], label: 'Malayan pit viper antivenom' },
+                { keys: ['russell_viper'],     label: "Russell's viper antivenom" },
+                { keys: ['unknown_hemato'],    label: 'Hematotoxin antivenom (polyvalent)' },
+                // Neurotoxin
+                { keys: ['cobra'],             label: 'Cobra antivenom' },
+                { keys: ['king_cobra'],        label: 'King cobra antivenom' },
+                { keys: ['malayan_krait'],     label: 'Malayan krait antivenom' },
+                { keys: ['banded_krait', 'unknown_neuro'], label: 'Neurotoxin antivenom (polyvalent)' },
+            ];
+            $('p-antivenom-options').innerHTML = antivenomGroups.map(g => {
+                const isSelected = snakeData && g.keys.includes(selectedKey);
+                const text = `${g.label} ${snakeData && isSelected ? snakeData.vials + ' vials' : '.... vials'} in NSS 100 mL IV drip in ${snakeData && isSelected ? snakeData.dripMin : '....'} min`;
+                return isSelected
+                    ? `<div class="antivenom-opt chosen">☑ <strong>${text}</strong></div>`
+                    : `<div class="antivenom-opt">☐ ${text}</div>`;
+            }).join('');
         } else {
             $('p-snake-name').textContent = '--';
             $('p-venom-type').textContent = '--';
             $('p-indications').innerHTML = '';
-            $('p-antivenom-order-box').innerHTML = '☑ <strong>--</strong>';
+            $('p-antivenom-options').innerHTML = ''
+                + '<div class="antivenom-opt">☐ Green pit viper antivenom .... vials in NSS 100 mL IV drip in .... min</div>'
+                + '<div class="antivenom-opt">☐ Malayan pit viper antivenom .... vials in NSS 100 mL IV drip in .... min</div>'
+                + '<div class="antivenom-opt">☐ Russell\'s viper antivenom .... vials in NSS 100 mL IV drip in .... min</div>'
+                + '<div class="antivenom-opt">☐ Hematotoxin antivenom (polyvalent) .... vials in NSS 100 mL IV drip in .... min</div>'
+                + '<div class="antivenom-opt">☐ Cobra antivenom .... vials in NSS 100 mL IV drip in .... min</div>'
+                + '<div class="antivenom-opt">☐ King cobra antivenom .... vials in NSS 100 mL IV drip in .... min</div>'
+                + '<div class="antivenom-opt">☐ Malayan krait antivenom .... vials in NSS 100 mL IV drip in .... min</div>'
+                + '<div class="antivenom-opt">☐ Neurotoxin antivenom (polyvalent) .... vials in NSS 100 mL IV drip in .... min</div>';
         }
 
         // Neuro-specific items
