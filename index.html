@@ -34,56 +34,7 @@
             --signal-orange: #d84315;
 
             --font-ui: "Inter Tight", "Neue Haas Grotesk", sans-serif;
-        }
 
-        /* Dark Theme Overrides for Portal Index */
-        [data-theme="dark"] {
-            --paper: #0f172a;
-            --ink: #f8fafc;
-            --graphite: #94a3b8;
-            --rule: #334155;
-            --signal-orange: #ff6b4a;
-        }
-
-        [data-theme="dark"] body {
-            background-color: #0f172a !important;
-            color: #f8fafc !important;
-        }
-
-        [data-theme="dark"] .order-row {
-            color: #f8fafc !important;
-            border-bottom-color: #334155 !important;
-        }
-
-        [data-theme="dark"] .order-title {
-            color: #f8fafc !important;
-        }
-
-        [data-theme="dark"] .order-num,
-        [data-theme="dark"] .order-category,
-        [data-theme="dark"] .order-status,
-        [data-theme="dark"] .order-arrow {
-            color: #94a3b8 !important;
-        }
-
-        [data-theme="dark"] .section-eyebrow {
-            color: #f8fafc !important;
-            border-bottom-color: #334155 !important;
-        }
-
-        [data-theme="dark"] .prototype-toggle {
-            color: #f8fafc !important;
-            border-bottom-color: #334155 !important;
-        }
-
-        [data-theme="dark"] .collapsible-content {
-            background: #1e293b !important;
-            border-color: #334155 !important;
-        }
-
-        [data-theme="dark"] .portal-footer {
-            border-top-color: #334155 !important;
-            color: #94a3b8 !important;
         }
 
         body {
@@ -635,40 +586,6 @@ nav.innerHTML = `
     <div class="nav-center">MNRH-ED HUB</div>
     <div class="nav-right">v31 · Updated 2026-07-16</div>
 `;
-
-const navRight = nav.querySelector('.nav-right');
-if (navRight) {
-    navRight.style.display = 'flex';
-    navRight.style.alignItems = 'center';
-    navRight.style.justifyContent = 'flex-end';
-    navRight.style.gap = '12px';
-
-    const themeBtn = document.createElement('button');
-    themeBtn.id = 'theme-toggle-btn';
-    themeBtn.className = 'nav-theme-toggle';
-    themeBtn.type = 'button';
-    themeBtn.setAttribute('aria-label', 'Toggle Theme');
-
-    const getTheme = () => localStorage.getItem('er-hub-theme') || 'light';
-    const setTheme = (theme) => {
-        localStorage.setItem('er-hub-theme', theme);
-        document.documentElement.setAttribute('data-theme', theme);
-        themeBtn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
-        themeBtn.title = theme === 'dark' ? 'Switch to Light theme' : 'Switch to Dark theme';
-    };
-
-    const currentTheme = getTheme();
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    themeBtn.innerHTML = currentTheme === 'dark' ? '☀️' : '🌙';
-    themeBtn.title = currentTheme === 'dark' ? 'Switch to Light theme' : 'Switch to Dark theme';
-
-    themeBtn.addEventListener('click', () => {
-        setTheme(getTheme() === 'dark' ? 'light' : 'dark');
-    });
-
-    navRight.appendChild(themeBtn);
-}
-
 document.body.insertBefore(nav, document.body.firstChild);
 
 if ('serviceWorker' in navigator) {

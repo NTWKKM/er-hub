@@ -181,70 +181,7 @@ const ED_COMPONENTS = {
             }
         }
 
-        const themeBtn = document.createElement('button');
-        themeBtn.className = 'nav-theme-toggle';
-        themeBtn.id = 'theme-toggle-btn';
-        themeBtn.type = 'button';
-        themeBtn.setAttribute('aria-label', 'Toggle Theme');
-        themeBtn.addEventListener('click', () => this.toggleTheme());
-        nav.appendChild(themeBtn);
-
         document.body.insertBefore(nav, document.body.firstChild);
-        this.initTheme();
-    },
-
-    /**
-     * Theme engine utilities.
-     */
-    getTheme: function() {
-        return localStorage.getItem('er-hub-theme') || 'light';
-    },
-
-    setTheme: function(theme) {
-        localStorage.setItem('er-hub-theme', theme);
-        const isScoreHub = window.location.pathname.includes('score-hub.html') || document.body.classList.contains('score-hub-page');
-        if (!isScoreHub) {
-            document.documentElement.setAttribute('data-theme', theme);
-        }
-        this.updateThemeToggleBtns();
-    },
-
-    toggleTheme: function() {
-        const currentTheme = this.getTheme();
-        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        this.setTheme(nextTheme);
-    },
-
-    initTheme: function() {
-        const isScoreHub = window.location.pathname.includes('score-hub.html') || document.body.classList.contains('score-hub-page') || document.documentElement.getAttribute('data-theme') === 'dark';
-        if (isScoreHub) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-            const savedTheme = this.getTheme();
-            document.documentElement.setAttribute('data-theme', savedTheme);
-        }
-        this.updateThemeToggleBtns();
-    },
-
-    updateThemeToggleBtns: function() {
-        const savedTheme = this.getTheme();
-        const btns = document.querySelectorAll('.nav-theme-toggle, #theme-toggle-btn');
-        const isScoreHub = window.location.pathname.includes('score-hub.html') || document.body.classList.contains('score-hub-page');
-
-        btns.forEach(btn => {
-            if (isScoreHub) {
-                btn.innerHTML = '🌙';
-                btn.title = `Score Hub is always dark. Click to switch main app default theme (currently ${savedTheme === 'dark' ? 'Dark' : 'Light'})`;
-            } else {
-                if (savedTheme === 'dark') {
-                    btn.innerHTML = '☀️';
-                    btn.title = 'Switch to Light theme';
-                } else {
-                    btn.innerHTML = '🌙';
-                    btn.title = 'Switch to Dark theme';
-                }
-            }
-        });
     },
 
     /**
@@ -270,15 +207,6 @@ const ED_COMPONENTS = {
         if (bar) bar.style.display = 'none';
     }
 };
-
-// Auto initialize theme on page load if browser environment
-if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => ED_COMPONENTS.initTheme());
-    } else {
-        ED_COMPONENTS.initTheme();
-    }
-}
 
 // Export for Node testing
 if (typeof module !== 'undefined' && module.exports) {
