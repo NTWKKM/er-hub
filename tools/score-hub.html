@@ -37,7 +37,7 @@
             padding-bottom: 8px;
         }
         .tab-btn {
-            background: #f4f2ec;
+            background: var(--paper);
             border: 1px solid var(--rule);
             border-bottom: none;
             border-radius: 6px 6px 0 0;
@@ -53,7 +53,7 @@
             gap: 6px;
         }
         .tab-btn:hover {
-            background: #e5e0d4;
+            background: #e2ddd3;
             color: var(--ink);
         }
         .tab-btn.active {
@@ -77,7 +77,7 @@
         /* Calculator Card Layout */
         .calc-card {
             background: #ffffff;
-            border: 1px solid #d8d4c8;
+            border: 1px solid var(--rule);
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
@@ -86,11 +86,11 @@
         .calc-card-title {
             font-size: 1.1em;
             font-weight: 700;
-            color: #1a1a1a;
+            color: var(--ink);
             margin-top: 0;
             margin-bottom: 16px;
             padding-bottom: 8px;
-            border-bottom: 1.5px solid #ebe7df;
+            border-bottom: 1.5px solid var(--paper);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -108,13 +108,13 @@
         .input-group label {
             font-weight: 600;
             font-size: 13.5px;
-            color: #2b2b2b;
+            color: var(--ink);
         }
         .input-group select,
         .input-group input[type="number"],
         .input-group input[type="text"] {
             padding: 8px 12px;
-            border: 1px solid #bbb;
+            border: 1px solid var(--rule);
             border-radius: 4px;
             font-size: 14px;
             font-family: inherit;
@@ -126,6 +126,48 @@
             border-color: var(--signal-orange, #d84315);
             background: #fff;
             box-shadow: 0 0 0 2px rgba(216, 67, 21, 0.2);
+        }
+
+        /* Choice Buttons Layout */
+        .choice-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .choice-group.vertical {
+            flex-direction: column;
+        }
+        .choice-btn {
+            flex: 1 1 auto;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #f8fafc;
+            color: #334155;
+            font-size: 13.5px;
+            font-family: inherit;
+            cursor: pointer;
+            text-align: center;
+            transition: all 120ms ease;
+            user-select: none;
+            line-height: 1.35;
+        }
+        .choice-group.vertical .choice-btn {
+            text-align: left;
+            justify-content: flex-start;
+        }
+        .choice-btn:hover {
+            background: #e2e8f0;
+            border-color: #94a3b8;
+            color: #0f172a;
+        }
+        .choice-btn.selected {
+            background: var(--signal-orange, #d84315);
+            color: #ffffff;
+            border-color: var(--signal-orange, #d84315);
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(216, 67, 21, 0.25);
         }
 
         /* Result Display Box */
@@ -150,7 +192,7 @@
             font-size: 2.2em;
             font-weight: 800;
             font-family: 'Inter Tight', sans-serif;
-            color: #1a1a1a;
+            color: var(--ink);
             line-height: 1;
         }
         .risk-badge {
@@ -165,7 +207,7 @@
         .risk-low { background: #e8f8f0; color: #1e7e34; border: 1px solid #b1dfbb; }
         .risk-mod { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
         .risk-high { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .risk-vhigh { background: #d84315; color: #ffffff; border: 1px solid #b71c1c; }
+        .risk-vhigh { background: #c0392b; color: #ffffff; border: 1px solid #962d22; }
 
         .clinical-guidance-box {
             background: #ffffff;
@@ -179,7 +221,7 @@
         .clinical-guidance-box h5 {
             margin: 0 0 6px 0;
             font-size: 14px;
-            color: #1a1a1a;
+            color: var(--ink);
         }
 
         /* Checkbox list item */
@@ -219,18 +261,24 @@
             margin-bottom: 16px;
         }
         .sub-btn {
-            background: #eef2f7;
-            border: 1px solid #cbd5e1;
+            background: var(--paper);
+            border: 1px solid var(--rule);
+            color: var(--graphite);
             padding: 6px 12px;
             border-radius: 4px;
             font-size: 12.5px;
             font-weight: 600;
             cursor: pointer;
+            transition: all 120ms ease;
+        }
+        .sub-btn:hover {
+            background: #e2ddd3;
+            color: var(--ink);
         }
         .sub-btn.active {
-            background: #334155;
+            background: var(--ink);
             color: #fff;
-            border-color: #334155;
+            border-color: var(--ink);
         }
     </style>
 </head>
@@ -262,95 +310,105 @@
                 </div>
                 <div class="item-grid">
                     <div class="input-group">
-                        <label for="aws-nausea">1. Nausea & Vomiting (คลื่นไส้อาเจียน)</label>
-                        <select id="aws-nausea" onchange="calcAWS()">
-                            <option value="0">0 - None (ไม่มีอาการ)</option>
-                            <option value="1">1 - Mild nausea, no vomiting (คลื่นไส้เล็กน้อย)</option>
-                            <option value="4">4 - Intermittent nausea with dry heaves (คลื่นไส้เป็นพักๆ ผะอืดผะอม)</option>
-                            <option value="7">7 - Constant nausea, frequent dry heaves/vomiting (คลื่นไส้ตลอดเวลา อาเจียนบ่อย)</option>
-                        </select>
+                        <label>1. Nausea & Vomiting (คลื่นไส้อาเจียน)</label>
+                        <input type="hidden" id="aws-nausea" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('aws-nausea', '0', event, calcAWS)">0 - None (ไม่มีอาการ)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-nausea', '1', event, calcAWS)">1 - Mild nausea, no vomiting (คลื่นไส้เล็กน้อย)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-nausea', '4', event, calcAWS)">4 - Intermittent nausea with dry heaves (ผะอืดผะอมเป็นพักๆ)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-nausea', '7', event, calcAWS)">7 - Constant nausea / frequent vomiting (คลื่นไส้ตลอดเวลา/อาเจียนบ่อย)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="aws-tremor">2. Tremor (มือสั่น - เหยียดมือออก)</label>
-                        <select id="aws-tremor" onchange="calcAWS()">
-                            <option value="0">0 - No tremor (ไม่สั่น)</option>
-                            <option value="1">1 - Not visible, can be felt at fingertips (มองไม่เห็น สัมผัสได้ที่ปลายนิ้ว)</option>
-                            <option value="4">4 - Moderate with arms extended (สั่นปานกลางเมื่อเหยียดแขน)</option>
-                            <option value="7">7 - Severe, even arms not extended (สั่นรุนแรง แม้ไม่ได้เหยียดแขน)</option>
-                        </select>
+                        <label>2. Tremor (มือสั่น - เหยียดมือออก)</label>
+                        <input type="hidden" id="aws-tremor" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('aws-tremor', '0', event, calcAWS)">0 - No tremor (ไม่สั่น)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-tremor', '1', event, calcAWS)">1 - Not visible, felt at fingertips (สัมผัสได้ที่ปลายนิ้ว)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-tremor', '4', event, calcAWS)">4 - Moderate with arms extended (สั่นปานกลาง)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-tremor', '7', event, calcAWS)">7 - Severe, even arms not extended (สั่นรุนแรง)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="aws-sweats">3. Paroxysmal Sweats (เหงื่อแตก)</label>
-                        <select id="aws-sweats" onchange="calcAWS()">
-                            <option value="0">0 - No sweat visible (ไม่มีเหงื่อออก)</option>
-                            <option value="1">1 - Barely perceptible, palms moist (ชื้นที่ฝ่ามือเล็กน้อย)</option>
-                            <option value="4">4 - Beads of sweat visible on forehead (เหงื่อผุดเป็นเม็ดที่หน้าผาก)</option>
-                            <option value="7">7 - Drenching sweats (เหงื่อโซมตัว เสื้อผ้าเปียกโชก)</option>
-                        </select>
+                        <label>3. Paroxysmal Sweats (เหงื่อแตก)</label>
+                        <input type="hidden" id="aws-sweats" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('aws-sweats', '0', event, calcAWS)">0 - No sweat visible (ไม่มีเหงื่อออก)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-sweats', '1', event, calcAWS)">1 - Barely perceptible, palms moist (ชื้นที่ฝ่ามือ)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-sweats', '4', event, calcAWS)">4 - Beads of sweat visible on forehead (เหงื่อผุดเป็นเม็ด)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-sweats', '7', event, calcAWS)">7 - Drenching sweats (เหงื่อโซมตัว เปียกโชก)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="aws-anxiety">4. Anxiety (ความวิตกกังวล)</label>
-                        <select id="aws-anxiety" onchange="calcAWS()">
-                            <option value="0">0 - No anxiety, at ease (ปกติ ผ่อนคลาย)</option>
-                            <option value="1">1 - Mildly anxious (วิตกกังวลเล็กน้อย)</option>
-                            <option value="4">4 - Moderately anxious or guarded (กังวลปานกลาง กระสับกระส่าย)</option>
-                            <option value="7">7 - Equivalent to acute panic states (ตื่นตระหนกรุนแรง Panic)</option>
-                        </select>
+                        <label>4. Anxiety (ความวิตกกังวล)</label>
+                        <input type="hidden" id="aws-anxiety" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('aws-anxiety', '0', event, calcAWS)">0 - No anxiety, at ease (ปกติ ผ่อนคลาย)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-anxiety', '1', event, calcAWS)">1 - Mildly anxious (วิตกกังวลเล็กน้อย)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-anxiety', '4', event, calcAWS)">4 - Moderately anxious (กังวลปานกลาง/กระสับกระส่าย)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-anxiety', '7', event, calcAWS)">7 - Acute panic states (ตื่นตระหนกรุนแรง Panic)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="aws-agitation">5. Agitation (กระวนกระวาย อยู่นิ่งไม่ได้)</label>
-                        <select id="aws-agitation" onchange="calcAWS()">
-                            <option value="0">0 - Normal activity (ปกติ)</option>
-                            <option value="1">1 - Somewhat more than normal activity (ขยับขยับตัวมากกว่าปกติเล็กน้อย)</option>
-                            <option value="4">4 - Moderately fidgety and restless (ผุดลุกผุดนั่ง กระวนกระวาย)</option>
-                            <option value="7">7 - Paces back and forth or constantly thrashing (เดินไปเดินมา ดิ้นรนตลอดเวลา)</option>
-                        </select>
+                        <label>5. Agitation (กระวนกระวาย อยู่นิ่งไม่ได้)</label>
+                        <input type="hidden" id="aws-agitation" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('aws-agitation', '0', event, calcAWS)">0 - Normal activity (ปกติ)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-agitation', '1', event, calcAWS)">1 - Slightly more than normal (ขยับตัวมากกว่าปกติ)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-agitation', '4', event, calcAWS)">4 - Moderately fidgety / restless (ผุดลุกผุดนั่ง)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-agitation', '7', event, calcAWS)">7 - Paces back & forth / thrashing (ดิ้นรนตลอดเวลา)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="aws-tactile">6. Tactile Disturbances (ประสาทสัมผัสหลอน)</label>
-                        <select id="aws-tactile" onchange="calcAWS()">
-                            <option value="0">0 - None (ปกติ)</option>
-                            <option value="1">1 - Very mild itching, pins & needles, burning (คัน/ชาแป๊บๆ เล็กน้อย)</option>
-                            <option value="4">4 - Moderate hallucinations (รู้สึกมีแมลงไต่ตามตัว ชัดเจน)</option>
-                            <option value="7">7 - Continuous hallucinations (สัมผัสหลอนรุนแรงตลอดเวลา)</option>
-                        </select>
+                        <label>6. Tactile Disturbances (ประสาทสัมผัสหลอน)</label>
+                        <input type="hidden" id="aws-tactile" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('aws-tactile', '0', event, calcAWS)">0 - None (ปกติ)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-tactile', '1', event, calcAWS)">1 - Mild itching, pins & needles (คัน/ชาเล็กน้อย)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-tactile', '4', event, calcAWS)">4 - Moderate hallucinations (รู้สึกมีแมลงไต่ตามตัว)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-tactile', '7', event, calcAWS)">7 - Continuous hallucinations (สัมผัสหลอนตลอดเวลา)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="aws-auditory">7. Auditory Disturbances (หูแว่ว)</label>
-                        <select id="aws-auditory" onchange="calcAWS()">
-                            <option value="0">0 - Not present (ปกติ)</option>
-                            <option value="1">1 - Very mild harshness or ability to frighten (ได้ยินเสียงดังเกินจริงเล็กน้อย)</option>
-                            <option value="4">4 - Moderate hallucinations (ได้ยินเสียงพูด/หูแว่ว ปานกลาง)</option>
-                            <option value="7">7 - Continuous auditory hallucinations (หูแว่วรุนแรงต่อเนื่อง)</option>
-                        </select>
+                        <label>7. Auditory Disturbances (หูแว่ว)</label>
+                        <input type="hidden" id="aws-auditory" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('aws-auditory', '0', event, calcAWS)">0 - Not present (ปกติ)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-auditory', '1', event, calcAWS)">1 - Mild harshness (ได้ยินเสียงดังเกินจริง)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-auditory', '4', event, calcAWS)">4 - Moderate hallucinations (ได้ยินเสียงพูด/หูแว่ว)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-auditory', '7', event, calcAWS)">7 - Continuous hallucinations (หูแว่วรุนแรง)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="aws-visual">8. Visual Disturbances (เห็นภาพหลอน)</label>
-                        <select id="aws-visual" onchange="calcAWS()">
-                            <option value="0">0 - Not present (ปกติ)</option>
-                            <option value="1">1 - Very mild sensitivity to light (สู้แสงไม่ได้เล็กน้อย)</option>
-                            <option value="4">4 - Moderate hallucinations (เห็นภาพหลอนปานกลาง)</option>
-                            <option value="7">7 - Continuous visual hallucinations (เห็นภาพหลอนรุนแรงตลอดเวลา)</option>
-                        </select>
+                        <label>8. Visual Disturbances (เห็นภาพหลอน)</label>
+                        <input type="hidden" id="aws-visual" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('aws-visual', '0', event, calcAWS)">0 - Not present (ปกติ)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-visual', '1', event, calcAWS)">1 - Mild sensitivity to light (สู้แสงไม่ได้)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-visual', '4', event, calcAWS)">4 - Moderate hallucinations (เห็นภาพหลอนปานกลาง)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-visual', '7', event, calcAWS)">7 - Continuous hallucinations (ภาพหลอนตลอดเวลา)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="aws-headache">9. Headache & Fullness in Head (ปวดศีรษะ)</label>
-                        <select id="aws-headache" onchange="calcAWS()">
-                            <option value="0">0 - Not present (ไม่ปวด)</option>
-                            <option value="1">1 - Very mild (ปวดตึงเล็กน้อย)</option>
-                            <option value="4">4 - Moderate (ปวดปานกลาง)</option>
-                            <option value="7">7 - Extremely severe (ปวดรุนแรงมาก)</option>
-                        </select>
+                        <label>9. Headache & Fullness in Head (ปวดศีรษะ)</label>
+                        <input type="hidden" id="aws-headache" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('aws-headache', '0', event, calcAWS)">0 - Not present (ไม่ปวด)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-headache', '1', event, calcAWS)">1 - Very mild (ปวดตึงเล็กน้อย)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-headache', '4', event, calcAWS)">4 - Moderate (ปวดปานกลาง)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-headache', '7', event, calcAWS)">7 - Extremely severe (ปวดรุนแรงมาก)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="aws-orientation">10. Orientation & Sensorium (การรับรู้วันเวลาสถานที่)</label>
-                        <select id="aws-orientation" onchange="calcAWS()">
-                            <option value="0">0 - Oriented & can do serial additions (รับรู้ครบถ้วน)</option>
-                            <option value="1">1 - Cannot do serial additions or uncertain about date (สับสนเรื่องวันที่)</option>
-                            <option value="2">2 - Disoriented for date by no more than 2 calendar days (สับสนวันที่ 1-2 วัน)</option>
-                            <option value="3">3 - Disoriented for date by more than 2 calendar days (สับสนวันที่ >2 วัน)</option>
-                            <option value="4">4 - Disoriented for place and/or person (สับสนสถานที่ หรือบุคคล)</option>
-                        </select>
+                        <label>10. Orientation & Sensorium (การรับรู้วันเวลาสถานที่)</label>
+                        <input type="hidden" id="aws-orientation" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('aws-orientation', '0', event, calcAWS)">0 - Oriented (รับรู้ครบถ้วน)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-orientation', '1', event, calcAWS)">1 - Uncertain about date (สับสนเรื่องวันที่)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-orientation', '2', event, calcAWS)">2 - Disoriented date 1-2 days (สับสนวันที่ 1-2 วัน)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-orientation', '3', event, calcAWS)">3 - Disoriented date >2 days (สับสนวันที่ >2 วัน)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('aws-orientation', '4', event, calcAWS)">4 - Disoriented place/person (สับสนสถานที่/บุคคล)</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -433,52 +491,57 @@
                     <div class="calc-card-title">MEWS (Modified Early Warning Score)</div>
                     <div class="item-grid">
                         <div class="input-group">
-                            <label for="mews-sbp">Systolic BP (mmHg)</label>
-                            <select id="mews-sbp" onchange="calcMEWS()">
-                                <option value="3">≤ 70 (Score 3)</option>
-                                <option value="2">71-80 (Score 2)</option>
-                                <option value="1">81-100 (Score 1)</option>
-                                <option value="0" selected>101-199 (Score 0)</option>
-                                <option value="2">≥ 200 (Score 2)</option>
-                            </select>
+                            <label>Systolic BP (mmHg)</label>
+                            <input type="hidden" id="mews-sbp" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-sbp', '3', event, calcMEWS)">≤ 70 (+3)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-sbp', '2', event, calcMEWS)">71-80 (+2)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-sbp', '1', event, calcMEWS)">81-100 (+1)</button>
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('mews-sbp', '0', event, calcMEWS)">101-199 (0)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-sbp', '2', event, calcMEWS)">≥ 200 (+2)</button>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <label for="mews-hr">Heart Rate (bpm)</label>
-                            <select id="mews-hr" onchange="calcMEWS()">
-                                <option value="2">≤ 40 (Score 2)</option>
-                                <option value="1">41-50 (Score 1)</option>
-                                <option value="0" selected>51-100 (Score 0)</option>
-                                <option value="1">101-110 (Score 1)</option>
-                                <option value="2">111-129 (Score 2)</option>
-                                <option value="3">≥ 130 (Score 3)</option>
-                            </select>
+                            <label>Heart Rate (bpm)</label>
+                            <input type="hidden" id="mews-hr" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-hr', '2', event, calcMEWS)">≤ 40 (+2)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-hr', '1', event, calcMEWS)">41-50 (+1)</button>
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('mews-hr', '0', event, calcMEWS)">51-100 (0)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-hr', '1', event, calcMEWS)">101-110 (+1)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-hr', '2', event, calcMEWS)">111-129 (+2)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-hr', '3', event, calcMEWS)">≥ 130 (+3)</button>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <label for="mews-rr">Respiratory Rate (/min)</label>
-                            <select id="mews-rr" onchange="calcMEWS()">
-                                <option value="2">&lt; 9 (Score 2)</option>
-                                <option value="0" selected>9-14 (Score 0)</option>
-                                <option value="1">15-20 (Score 1)</option>
-                                <option value="2">21-29 (Score 2)</option>
-                                <option value="3">≥ 30 (Score 3)</option>
-                            </select>
+                            <label>Respiratory Rate (/min)</label>
+                            <input type="hidden" id="mews-rr" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-rr', '2', event, calcMEWS)">&lt; 9 (+2)</button>
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('mews-rr', '0', event, calcMEWS)">9-14 (0)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-rr', '1', event, calcMEWS)">15-20 (+1)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-rr', '2', event, calcMEWS)">21-29 (+2)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-rr', '3', event, calcMEWS)">≥ 30 (+3)</button>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <label for="mews-temp">Temperature (°C)</label>
-                            <select id="mews-temp" onchange="calcMEWS()">
-                                <option value="2">&lt; 35.0 (Score 2)</option>
-                                <option value="0" selected>35.0-38.4 (Score 0)</option>
-                                <option value="2">≥ 38.5 (Score 2)</option>
-                            </select>
+                            <label>Temperature (°C)</label>
+                            <input type="hidden" id="mews-temp" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-temp', '2', event, calcMEWS)">&lt; 35.0 (+2)</button>
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('mews-temp', '0', event, calcMEWS)">35.0-38.4 (0)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-temp', '2', event, calcMEWS)">≥ 38.5 (+2)</button>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <label for="mews-avpu">Consciousness (AVPU)</label>
-                            <select id="mews-avpu" onchange="calcMEWS()">
-                                <option value="0" selected>Alert (Score 0)</option>
-                                <option value="1">Reacts to Voice (Score 1)</option>
-                                <option value="2">Reacts to Pain (Score 2)</option>
-                                <option value="3">Unresponsive (Score 3)</option>
-                            </select>
+                            <label>Consciousness (AVPU)</label>
+                            <input type="hidden" id="mews-avpu" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('mews-avpu', '0', event, calcMEWS)">Alert (0)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-avpu', '1', event, calcMEWS)">Voice (+1)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-avpu', '2', event, calcMEWS)">Pain (+2)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('mews-avpu', '3', event, calcMEWS)">Unresponsive (+3)</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -504,68 +567,75 @@
                     <div class="calc-card-title">NEWS2 (National Early Warning Score 2)</div>
                     <div class="item-grid">
                         <div class="input-group">
-                            <label for="news-rr">Respirations (/min)</label>
-                            <select id="news-rr" onchange="calcNEWS2()">
-                                <option value="3">≤ 8 (Score 3)</option>
-                                <option value="1">9-11 (Score 1)</option>
-                                <option value="0" selected>12-20 (Score 0)</option>
-                                <option value="2">21-24 (Score 2)</option>
-                                <option value="3">≥ 25 (Score 3)</option>
-                            </select>
+                            <label>Respirations (/min)</label>
+                            <input type="hidden" id="news-rr" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-rr', '3', event, calcNEWS2)">≤ 8 (+3)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-rr', '1', event, calcNEWS2)">9-11 (+1)</button>
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('news-rr', '0', event, calcNEWS2)">12-20 (0)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-rr', '2', event, calcNEWS2)">21-24 (+2)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-rr', '3', event, calcNEWS2)">≥ 25 (+3)</button>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <label for="news-spo2">SpO2 Scale 1 (%)</label>
-                            <select id="news-spo2" onchange="calcNEWS2()">
-                                <option value="3">≤ 91 (Score 3)</option>
-                                <option value="2">92-93 (Score 2)</option>
-                                <option value="1">94-95 (Score 1)</option>
-                                <option value="0" selected>≥ 96 (Score 0)</option>
-                            </select>
+                            <label>SpO2 Scale 1 (%)</label>
+                            <input type="hidden" id="news-spo2" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-spo2', '3', event, calcNEWS2)">≤ 91 (+3)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-spo2', '2', event, calcNEWS2)">92-93 (+2)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-spo2', '1', event, calcNEWS2)">94-95 (+1)</button>
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('news-spo2', '0', event, calcNEWS2)">≥ 96 (0)</button>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <label for="news-o2">Air or Oxygen</label>
-                            <select id="news-o2" onchange="calcNEWS2()">
-                                <option value="0" selected>Room Air (Score 0)</option>
-                                <option value="2">Supplemental O2 (Score 2)</option>
-                            </select>
+                            <label>Air or Oxygen</label>
+                            <input type="hidden" id="news-o2" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('news-o2', '0', event, calcNEWS2)">Room Air (0)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-o2', '2', event, calcNEWS2)">Supplemental O2 (+2)</button>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <label for="news-sbp">Systolic BP (mmHg)</label>
-                            <select id="news-sbp" onchange="calcNEWS2()">
-                                <option value="3">≤ 90 (Score 3)</option>
-                                <option value="2">91-100 (Score 2)</option>
-                                <option value="1">101-110 (Score 1)</option>
-                                <option value="0" selected>111-219 (Score 0)</option>
-                                <option value="3">≥ 220 (Score 3)</option>
-                            </select>
+                            <label>Systolic BP (mmHg)</label>
+                            <input type="hidden" id="news-sbp" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-sbp', '3', event, calcNEWS2)">≤ 90 (+3)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-sbp', '2', event, calcNEWS2)">91-100 (+2)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-sbp', '1', event, calcNEWS2)">101-110 (+1)</button>
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('news-sbp', '0', event, calcNEWS2)">111-219 (0)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-sbp', '3', event, calcNEWS2)">≥ 220 (+3)</button>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <label for="news-hr">Pulse Rate (bpm)</label>
-                            <select id="news-hr" onchange="calcNEWS2()">
-                                <option value="3">≤ 40 (Score 3)</option>
-                                <option value="1">41-50 (Score 1)</option>
-                                <option value="0" selected>51-90 (Score 0)</option>
-                                <option value="1">91-110 (Score 1)</option>
-                                <option value="2">111-130 (Score 2)</option>
-                                <option value="3">≥ 131 (Score 3)</option>
-                            </select>
+                            <label>Pulse Rate (bpm)</label>
+                            <input type="hidden" id="news-hr" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-hr', '3', event, calcNEWS2)">≤ 40 (+3)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-hr', '1', event, calcNEWS2)">41-50 (+1)</button>
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('news-hr', '0', event, calcNEWS2)">51-90 (0)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-hr', '1', event, calcNEWS2)">91-110 (+1)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-hr', '2', event, calcNEWS2)">111-130 (+2)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-hr', '3', event, calcNEWS2)">≥ 131 (+3)</button>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <label for="news-avpu">Consciousness (AVPU)</label>
-                            <select id="news-avpu" onchange="calcNEWS2()">
-                                <option value="0" selected>Alert (Score 0)</option>
-                                <option value="3">CVPU / New Confusion / Voice / Pain / Unresponsive (Score 3)</option>
-                            </select>
+                            <label>Consciousness (AVPU)</label>
+                            <input type="hidden" id="news-avpu" value="0">
+                            <div class="choice-group vertical">
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('news-avpu', '0', event, calcNEWS2)">Alert (0)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-avpu', '3', event, calcNEWS2)">CVPU / New Confusion / Voice / Pain / Unresponsive (+3)</button>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <label for="news-temp">Temperature (°C)</label>
-                            <select id="news-temp" onchange="calcNEWS2()">
-                                <option value="3">≤ 35.0 (Score 3)</option>
-                                <option value="1">35.1-36.0 (Score 1)</option>
-                                <option value="0" selected>36.1-38.0 (Score 0)</option>
-                                <option value="1">38.1-39.0 (Score 1)</option>
-                                <option value="2">≥ 39.1 (Score 2)</option>
-                            </select>
+                            <label>Temperature (°C)</label>
+                            <input type="hidden" id="news-temp" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-temp', '3', event, calcNEWS2)">≤ 35.0 (+3)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-temp', '1', event, calcNEWS2)">35.1-36.0 (+1)</button>
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('news-temp', '0', event, calcNEWS2)">36.1-38.0 (0)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-temp', '1', event, calcNEWS2)">38.1-39.0 (+1)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('news-temp', '2', event, calcNEWS2)">≥ 39.1 (+2)</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -590,15 +660,16 @@
                 <div class="calc-card">
                     <div class="calc-card-title">Initial Empiric Antibiotics Selection by Infection Source</div>
                     <div class="input-group" style="margin-bottom: 16px;">
-                        <label for="sepsis-source-select">เลือกตำแหน่งหรือจุดกำเนิดการติดเชื้อ (Source of Infection):</label>
-                        <select id="sepsis-source-select" onchange="updateSepsisAbx()" style="font-weight: 700; font-size: 15px; padding: 10px;">
-                            <option value="unknown">1. Unknown / Undifferentiated Sepsis (ไม่ทราบสาเหตุชัดเจน)</option>
-                            <option value="pulmonary">2. Pulmonary (Community-Acquired Pneumonia / HAP)</option>
-                            <option value="intraabdominal">3. Intra-abdominal Infection / Peritonitis / Cholangitis</option>
-                            <option value="uti">4. Urinary Tract Infection / Pyelonephritis / Urosepsis</option>
-                            <option value="softtissue">5. Skin & Soft Tissue / Cellulitis / Necrotizing Fasciitis</option>
-                            <option value="cns">6. Central Nervous System (Acute Bacterial Meningitis)</option>
-                        </select>
+                        <label>เลือกตำแหน่งหรือจุดกำเนิดการติดเชื้อ (Source of Infection):</label>
+                        <input type="hidden" id="sepsis-source-select" value="unknown">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('sepsis-source-select', 'unknown', event, updateSepsisAbx)">1. Unknown / Undifferentiated Sepsis (ไม่ทราบสาเหตุชัดเจน)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('sepsis-source-select', 'pulmonary', event, updateSepsisAbx)">2. Pulmonary (Community-Acquired Pneumonia / HAP)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('sepsis-source-select', 'intraabdominal', event, updateSepsisAbx)">3. Intra-abdominal Infection / Peritonitis / Cholangitis</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('sepsis-source-select', 'uti', event, updateSepsisAbx)">4. Urinary Tract Infection / Pyelonephritis / Urosepsis</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('sepsis-source-select', 'softtissue', event, updateSepsisAbx)">5. Skin & Soft Tissue / Cellulitis / Necrotizing Fasciitis</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('sepsis-source-select', 'cns', event, updateSepsisAbx)">6. Central Nervous System (Acute Bacterial Meningitis)</button>
+                        </div>
                     </div>
                     <div class="clinical-guidance-box" id="abx-recommendation-box" style="border-left-color: #27ae60; background: #f4fbf7;">
                         <h4 style="margin: 0 0 8px 0; color: #1e7e34;" id="abx-title">Unknown / Undifferentiated Sepsis:</h4>
@@ -618,41 +689,46 @@
                 <div class="calc-card-title">ABCD2 Score for TIA Stroke Risk Stratification</div>
                 <div class="item-grid">
                     <div class="input-group">
-                        <label for="abcd2-age">A - Age (อายุ)</label>
-                        <select id="abcd2-age" onchange="calcABCD2()">
-                            <option value="0">< 60 ปี (0 คะแนน)</option>
-                            <option value="1">≥ 60 ปี (+1 คะแนน)</option>
-                        </select>
+                        <label>A - Age (อายุ)</label>
+                        <input type="hidden" id="abcd2-age" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('abcd2-age', '0', event, calcABCD2)">< 60 ปี (0 คะแนน)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('abcd2-age', '1', event, calcABCD2)">≥ 60 ปี (+1 คะแนน)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="abcd2-bp">B - Blood Pressure (ความดันโลหิต)</label>
-                        <select id="abcd2-bp" onchange="calcABCD2()">
-                            <option value="0">SBP < 140 และ DBP < 90 mmHg (0 คะแนน)</option>
-                            <option value="1">SBP ≥ 140 หรือ DBP ≥ 90 mmHg (+1 คะแนน)</option>
-                        </select>
+                        <label>B - Blood Pressure (ความดันโลหิต)</label>
+                        <input type="hidden" id="abcd2-bp" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('abcd2-bp', '0', event, calcABCD2)">SBP < 140 และ DBP < 90 mmHg (0 คะแนน)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('abcd2-bp', '1', event, calcABCD2)">SBP ≥ 140 หรือ DBP ≥ 90 mmHg (+1 คะแนน)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="abcd2-clinical">C - Clinical Features (อาการทางคลินิก)</label>
-                        <select id="abcd2-clinical" onchange="calcABCD2()">
-                            <option value="0">อาการอื่นๆ (0 คะแนน)</option>
-                            <option value="1">พูดไม่ชัด/สื่อความหมายไม่ได้ โดยไม่มีแขนขาอ่อนแรง (+1 คะแนน)</option>
-                            <option value="2">แขนหรือขาอ่อนแรงซีกใดซีกหนึ่ง (Unilateral weakness) (+2 คะแนน)</option>
-                        </select>
+                        <label>C - Clinical Features (อาการทางคลินิก)</label>
+                        <input type="hidden" id="abcd2-clinical" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('abcd2-clinical', '0', event, calcABCD2)">อาการอื่นๆ (0 คะแนน)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('abcd2-clinical', '1', event, calcABCD2)">พูดไม่ชัด/สื่อความหมายไม่ได้ โดยไม่มีแขนขาอ่อนแรง (+1 คะแนน)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('abcd2-clinical', '2', event, calcABCD2)">แขนหรือขาอ่อนแรงซีกใดซีกหนึ่ง (Unilateral weakness) (+2 คะแนน)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="abcd2-duration">D - Duration of Symptoms (ระยะเวลาที่มีอาการ)</label>
-                        <select id="abcd2-duration" onchange="calcABCD2()">
-                            <option value="0">< 10 นาที (0 คะแนน)</option>
-                            <option value="1">10 - 59 นาที (+1 คะแนน)</option>
-                            <option value="2">≥ 60 นาที (+2 คะแนน)</option>
-                        </select>
+                        <label>D - Duration of Symptoms (ระยะเวลาที่มีอาการ)</label>
+                        <input type="hidden" id="abcd2-duration" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('abcd2-duration', '0', event, calcABCD2)">< 10 นาที (0 คะแนน)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('abcd2-duration', '1', event, calcABCD2)">10 - 59 นาที (+1 คะแนน)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('abcd2-duration', '2', event, calcABCD2)">≥ 60 นาที (+2 คะแนน)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="abcd2-dm">D - Diabetes Mellitus (เบาหวาน)</label>
-                        <select id="abcd2-dm" onchange="calcABCD2()">
-                            <option value="0">ไม่มีประวัติเบาหวาน (0 คะแนน)</option>
-                            <option value="1">มีประวัติเบาหวาน (+1 คะแนน)</option>
-                        </select>
+                        <label>D - Diabetes Mellitus (เบาหวาน)</label>
+                        <input type="hidden" id="abcd2-dm" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('abcd2-dm', '0', event, calcABCD2)">ไม่มีประวัติเบาหวาน (0 คะแนน)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('abcd2-dm', '1', event, calcABCD2)">มีประวัติเบาหวาน (+1 คะแนน)</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -678,44 +754,49 @@
                 <div class="calc-card-title">HEART Score for ED Chest Pain Evaluation</div>
                 <div class="item-grid">
                     <div class="input-group">
-                        <label for="heart-history">H - History (ประวัติเจ็บแน่นหน้าอก)</label>
-                        <select id="heart-history" onchange="calcHEART()">
-                            <option value="0">0 - Slightly suspicious (สงสัยน้อยมาก)</option>
-                            <option value="1">1 - Moderately suspicious (สงสัยปานกลาง)</option>
-                            <option value="2">2 - Highly suspicious (สงสัยสูง แน่นหน้าอกร้าวไปแขน/กราม)</option>
-                        </select>
+                        <label>H - History (ประวัติเจ็บแน่นหน้าอก)</label>
+                        <input type="hidden" id="heart-history" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('heart-history', '0', event, calcHEART)">0 - Slightly suspicious (สงสัยน้อยมาก)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('heart-history', '1', event, calcHEART)">1 - Moderately suspicious (สงสัยปานกลาง)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('heart-history', '2', event, calcHEART)">2 - Highly suspicious (สงสัยสูง แน่นหน้าอกร้าวไปแขน/กราม)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="heart-ecg">E - ECG (คลื่นไฟฟ้าหัวใจ)</label>
-                        <select id="heart-ecg" onchange="calcHEART()">
-                            <option value="0">0 - Normal (ปกติ)</option>
-                            <option value="1">1 - Non-specific repolarization disturbance / LBBB / Pacemaker</option>
-                            <option value="2">2 - Significant ST-depression (ST-segment ลดลงชัดเจน)</option>
-                        </select>
+                        <label>E - ECG (คลื่นไฟฟ้าหัวใจ)</label>
+                        <input type="hidden" id="heart-ecg" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('heart-ecg', '0', event, calcHEART)">0 - Normal (ปกติ)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('heart-ecg', '1', event, calcHEART)">1 - Non-specific repolarization / LBBB / Pacemaker</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('heart-ecg', '2', event, calcHEART)">2 - Significant ST-depression (ST-segment ลดลงชัดเจน)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="heart-age">A - Age (อายุ)</label>
-                        <select id="heart-age" onchange="calcHEART()">
-                            <option value="0">0 - < 45 ปี</option>
-                            <option value="1">1 - 45 - 64 ปี</option>
-                            <option value="2">2 - ≥ 65 ปี</option>
-                        </select>
+                        <label>A - Age (อายุ)</label>
+                        <input type="hidden" id="heart-age" value="0">
+                        <div class="choice-group">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('heart-age', '0', event, calcHEART)">0 - < 45 ปี</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('heart-age', '1', event, calcHEART)">1 - 45 - 64 ปี</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('heart-age', '2', event, calcHEART)">2 - ≥ 65 ปี</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="heart-risk">R - Risk Factors (ปัจจัยเสี่ยง CAD)</label>
-                        <select id="heart-risk" onchange="calcHEART()">
-                            <option value="0">0 - No known risk factors (ไม่มีปัจจัยเสี่ยง)</option>
-                            <option value="1">1 - 1 or 2 risk factors (มีปัจจัยเสี่ยง 1-2 ข้อ)</option>
-                            <option value="2">2 - ≥ 3 risk factors or history of CAD (มี ≥3 ข้อ หรือมีประวัติ CAD)</option>
-                        </select>
+                        <label>R - Risk Factors (ปัจจัยเสี่ยง CAD)</label>
+                        <input type="hidden" id="heart-risk" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('heart-risk', '0', event, calcHEART)">0 - No known risk factors (ไม่มีปัจจัยเสี่ยง)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('heart-risk', '1', event, calcHEART)">1 - 1 or 2 risk factors (มีปัจจัยเสี่ยง 1-2 ข้อ)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('heart-risk', '2', event, calcHEART)">2 - ≥ 3 risk factors or history of CAD (มี ≥3 ข้อ หรือมีประวัติ CAD)</button>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label for="heart-trop">T - Initial Troponin (ผล Troponin แรกรับ)</label>
-                        <select id="heart-trop" onchange="calcHEART()">
-                            <option value="0">0 - Normal limit (ปกติ ≤ Normal limit)</option>
-                            <option value="1">1 - 1-3x normal limit (สูงกว่าปกติ 1-3 เท่า)</option>
-                            <option value="2">2 - > 3x normal limit (สูงกว่าปกติ > 3 เท่า)</option>
-                        </select>
+                        <label>T - Initial Troponin (ผล Troponin แรกรับ)</label>
+                        <input type="hidden" id="heart-trop" value="0">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('heart-trop', '0', event, calcHEART)">0 - Normal limit (ปกติ ≤ Normal limit)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('heart-trop', '1', event, calcHEART)">1 - 1-3x normal limit (สูงกว่าปกติ 1-3 เท่า)</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('heart-trop', '2', event, calcHEART)">2 - > 3x normal limit (สูงกว่าปกติ > 3 เท่า)</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -757,13 +838,14 @@
                         <input type="number" id="grace-cr" value="1.0" step="0.1" min="0.2" max="15.0" oninput="calcGRACEPure()">
                     </div>
                     <div class="input-group">
-                        <label for="grace-killip">Killip Class</label>
-                        <select id="grace-killip" onchange="calcGRACEPure()">
-                            <option value="1">Class I - No heart failure</option>
-                            <option value="2">Class II - Rales, JVD, S3 gallop</option>
-                            <option value="3">Class III - Frank pulmonary edema</option>
-                            <option value="4">Class IV - Cardiogenic shock</option>
-                        </select>
+                        <label>Killip Class</label>
+                        <input type="hidden" id="grace-killip" value="1">
+                        <div class="choice-group vertical">
+                            <button type="button" class="choice-btn selected" onclick="selectChoice('grace-killip', '1', event, calcGRACEPure)">Class I - No heart failure</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('grace-killip', '2', event, calcGRACEPure)">Class II - Rales, JVD, S3 gallop</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('grace-killip', '3', event, calcGRACEPure)">Class III - Frank pulmonary edema</button>
+                            <button type="button" class="choice-btn" onclick="selectChoice('grace-killip', '4', event, calcGRACEPure)">Class IV - Cardiogenic shock</button>
+                        </div>
                     </div>
                 </div>
                 <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px;">
@@ -862,25 +944,27 @@
                     <div class="calc-card-title">Revised Geneva Score for PE</div>
                     <div class="item-grid">
                         <div class="input-group">
-                            <label for="geneva-age">Age (อายุ)</label>
-                            <select id="geneva-age" onchange="calcGeneva()">
-                                <option value="0">< 65 ปี (0 คะแนน)</option>
-                                <option value="1">≥ 65 ปี (+1 คะแนน)</option>
-                            </select>
+                            <label>Age (อายุ)</label>
+                            <input type="hidden" id="geneva-age" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('geneva-age', '0', event, calcGeneva)">< 65 ปี (0 คะแนน)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('geneva-age', '1', event, calcGeneva)">≥ 65 ปี (+1 คะแนน)</button>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <label for="geneva-hr">Heart Rate (ชีพจร)</label>
-                            <select id="geneva-hr" onchange="calcGeneva()">
-                                <option value="0">< 75 bpm (0 คะแนน)</option>
-                                <option value="3">75 - 94 bpm (+3 คะแนน)</option>
-                                <option value="5">≥ 95 bpm (+5 คะแนน)</option>
-                            </select>
+                            <label>Heart Rate (ชีพจร)</label>
+                            <input type="hidden" id="geneva-hr" value="0">
+                            <div class="choice-group">
+                                <button type="button" class="choice-btn selected" onclick="selectChoice('geneva-hr', '0', event, calcGeneva)">< 75 bpm (0 คะแนน)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('geneva-hr', '3', event, calcGeneva)">75 - 94 bpm (+3 คะแนน)</button>
+                                <button type="button" class="choice-btn" onclick="selectChoice('geneva-hr', '5', event, calcGeneva)">≥ 95 bpm (+5 คะแนน)</button>
+                            </div>
                         </div>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
                         <div class="check-item">
                             <input type="checkbox" id="geneva-prev" onchange="calcGeneva()">
-                            <label for="geneva-prev">Previous DVT or PE (+2)</label>
+                            <label for="geneva-prev">Previous DVT or PE (+3)</label>
                         </div>
                         <div class="check-item">
                             <input type="checkbox" id="geneva-surg" onchange="calcGeneva()">
@@ -986,6 +1070,18 @@
 <script src="../shared/clinical-engine.js"></script>
 
 <script>
+    // Universal choice selection handler
+    function selectChoice(inputId, val, event, calcFn) {
+        const input = document.getElementById(inputId);
+        if (input) input.value = val;
+        const btn = event.currentTarget;
+        if (btn && btn.parentElement) {
+            btn.parentElement.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+        if (typeof calcFn === 'function') calcFn();
+    }
+
     // Initialize sticky top navigation bar
     document.addEventListener('DOMContentLoaded', () => {
         if (window.ED_COMPONENTS && ED_COMPONENTS.injectNavBar) {
@@ -1115,6 +1211,40 @@
             badge.className = 'risk-badge risk-low';
             badge.textContent = 'Low Clinical Risk (0-4)';
             guide.innerHTML = '<strong>NEWS2 0-4: Low Risk</strong> — ประเมินสัญญาณชีพตามรอบปกติทุก 4-6 ชั่วโมง';
+        }
+    }
+
+    // Sepsis MEWS (Modified Early Warning Score)
+    function calcMEWS() {
+        const ids = ['mews-sbp', 'mews-hr', 'mews-rr', 'mews-temp', 'mews-avpu'];
+        let score = 0;
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                score += parseInt(el.value, 10) || 0;
+            }
+        });
+
+        const scoreEl = document.getElementById('mews-score-val');
+        const badge = document.getElementById('mews-risk-badge');
+        const guide = document.getElementById('mews-guidance');
+
+        if (scoreEl) scoreEl.textContent = score;
+
+        if (badge && guide) {
+            if (score >= 5) {
+                badge.className = 'risk-badge risk-vhigh';
+                badge.textContent = 'High Risk (≥ 5)';
+                guide.innerHTML = '<strong>MEWS ≥ 5: High Risk</strong> — ตามแพทย์ฉุกเฉิน/แพทย์เจ้าของไข้ทันที เฝ้าระวังสัญญาณชีพอย่างใกล้ชิดและพิจารณาเคลื่อนย้ายเข้า ICU/High Dependency Unit';
+            } else if (score >= 2) {
+                badge.className = 'risk-badge risk-mod';
+                badge.textContent = 'Medium Risk (2-4)';
+                guide.innerHTML = '<strong>MEWS 2-4: Medium Risk</strong> — รายงานแพทย์/พยาบาลเจ้าของไข้ ประเมินสัญญาณชีพซ้ำทุก 1-2 ชั่วโมง';
+            } else {
+                badge.className = 'risk-badge risk-low';
+                badge.textContent = 'Low Risk (0-1)';
+                guide.innerHTML = '<strong>MEWS 0-1: Low Risk</strong> — ประเมินสัญญาณชีพตามรอบปกติทุก 4-6 ชั่วโมง';
+            }
         }
     }
 
@@ -1299,7 +1429,7 @@
         const hr = parseInt(document.getElementById('geneva-hr').value, 10) || 0;
         
         let score = age + hr;
-        if (document.getElementById('geneva-prev').checked) score += 2;
+        if (document.getElementById('geneva-prev').checked) score += 3;
         if (document.getElementById('geneva-surg').checked) score += 2;
         if (document.getElementById('geneva-ca').checked) score += 2;
         if (document.getElementById('geneva-leg-pain').checked) score += 3;

@@ -93,6 +93,11 @@ describe('Clinical Score Hub (`tools/score-hub.html`) Verification', () => {
         // 6. Design system token alignment (uses signal-orange instead of blue #49628d)
         assert.ok(!content.includes('#49628d'), 'Hardcoded blue accent #49628d must be replaced with design token var(--signal-orange)');
         assert.ok(content.includes('var(--signal-orange, #d84315)'), 'Braun analogue signal-orange design token missing');
+
+        // 7. MEWS calculation function definition & Revised Geneva DVT/PE +3 weight
+        assert.ok(content.includes('function calcMEWS()'), 'calcMEWS function definition missing in JS');
+        assert.ok(content.includes('Previous DVT or PE (+3)'), 'Geneva DVT/PE HTML label should specify (+3)');
+        assert.ok(content.includes("if (document.getElementById('geneva-prev').checked) score += 3;"), 'Geneva DVT/PE JS calculation must add 3 points');
     });
 
     test('index.html links to tools/score-hub.html as prototype item T5', () => {
