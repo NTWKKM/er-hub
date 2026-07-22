@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Score Hub — ED MNRH</title>
+    <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/base.css">
+    <style>
+        .score-hub-header {
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--ink);
+        }
+        .score-hub-header h2 {
+            margin: 0;
+            font-size: 1.4em;
+            color: var(--ink);
+            font-family: 'Inter Tight', sans-serif;
+            letter-spacing: -0.01em;
+        }
+        .score-hub-header p {
+            margin: 4px 0 0;
+            color: var(--graphite);
+            font-size: 0.9em;
+        }
+        /* Navigation Tabs */
+        .tab-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--rule);
+            padding-bottom: 8px;
+        }
+        .tab-btn {
+            background: #f4f2ec;
+            border: 1px solid var(--rule);
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            padding: 10px 16px;
+            font-family: 'Inter Tight', 'Sarabun', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--graphite);
+            cursor: pointer;
+            transition: all 150ms ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tab-btn:hover {
+            background: #e5e0d4;
+            color: var(--ink);
+        }
+        .tab-btn.active {
+            background: #49628d;
+            color: #F0EDE5;
+            border-color: #49628d;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tab-panel {
+            display: none;
+        }
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 200ms ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Calculator Card Layout */
+        .calc-card {
+            background: #ffffff;
+            border: 1px solid #d8d4c8;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+        .calc-card-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-top: 0;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1.5px solid #ebe7df;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .input-group label {
+            font-weight: 600;
+            font-size: 13.5px;
+            color: #2b2b2b;
+        }
+        .input-group select,
+        .input-group input[type="number"],
+        .input-group input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #fafafa;
+        }
+        .input-group select:focus,
+        .input-group input:focus {
+            outline: none;
+            border-color: #49628d;
+            background: #fff;
+            box-shadow: 0 0 0 2px rgba(73, 98, 141, 0.2);
+        }
+
+        /* Result Display Box */
+        .result-banner {
+            background: #f8f9fa;
+            border: 2px solid #49628d;
+            border-radius: 8px;
+            padding: 18px 24px;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .result-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .score-val-large {
+            font-size: 2.2em;
+            font-weight: 800;
+            font-family: 'Inter Tight', sans-serif;
+            color: #1a1a1a;
+            line-height: 1;
+        }
+        .risk-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        .risk-low { background: #e8f8f0; color: #1e7e34; border: 1px solid #b1dfbb; }
+        .risk-mod { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .risk-high { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .risk-vhigh { background: #d84315; color: #ffffff; border: 1px solid #b71c1c; }
+
+        .clinical-guidance-box {
+            background: #ffffff;
+            border-left: 4px solid #49628d;
+            padding: 12px 16px;
+            border-radius: 0 4px 4px 0;
+            font-size: 13.5px;
+            line-height: 1.5;
+            color: #2c3e50;
+        }
+        .clinical-guidance-box h5 {
+            margin: 0 0 6px 0;
+            font-size: 14px;
+            color: #1a1a1a;
+        }
+
+        /* Checkbox list item */
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            background: #fdfdfd;
+            border: 1px solid #eaeaea;
+            cursor: pointer;
+            transition: background 120ms ease;
+        }
+        .check-item:hover {
+            background: #f0ede5;
+        }
+        .check-item input[type="checkbox"] {
+            margin-top: 3px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .check-item label {
+            cursor: pointer;
+            font-size: 13.5px;
+            color: #333;
+            user-select: none;
+        }
+
+
+
+        /* Sub-navigation inside Sepsis tab */
+        .sub-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .sub-btn {
+            background: #eef2f7;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .sub-btn.active {
+            background: #334155;
+            color: #fff;
+            border-color: #334155;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="form-container">
+        <div class="score-hub-header">
+            <h2>Clinical Score & Risk Hub — ED MNRH</h2>
+            <p>ระบบรวมเครื่องมือคำนวณและประเมินความเสี่ยงทางการแพทย์ฉุกเฉิน</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tab-bar" role="tablist">
+            <button class="tab-btn active" onclick="switchTab('aws')" id="tab-btn-aws" role="tab" aria-selected="true">🍷 AWS Score (CIWA-Ar)</button>
+            <button class="tab-btn" onclick="switchTab('sepsis')" id="tab-btn-sepsis" role="tab">🦠 Sepsis Screening</button>
+            <button class="tab-btn" onclick="switchTab('abcd2')" id="tab-btn-abcd2" role="tab">🧠 ABCD2 Score (TIA)</button>
+            <button class="tab-btn" onclick="switchTab('heart')" id="tab-btn-heart" role="tab">🫀 HEART Score</button>
+            <button class="tab-btn" onclick="switchTab('grace')" id="tab-btn-grace" role="tab">🫀 GRACE Score</button>
+            <button class="tab-btn" onclick="switchTab('pe')" id="tab-btn-pe" role="tab">🫁 PE Risk & Probability</button>
+        </div>
+
+        <!-- TAB 1: AWS / CIWA-Ar Score -->
+        <div class="tab-panel active" id="panel-aws">
+            <div class="calc-card">
+                <div class="calc-card-title">
+                    <span>Clinical Institute Withdrawal Assessment for Alcohol (CIWA-Ar)</span>
+                    <span style="font-size: 12px; font-weight: normal; color: #666;">คะแนนรวมเต็ม 67</span>
+                </div>
+                <div class="item-grid">
+                    <div class="input-group">
+                        <label for="aws-nausea">1. Nausea & Vomiting (คลื่นไส้อาเจียน)</label>
+                        <select id="aws-nausea" onchange="calcAWS()">
+                            <option value="0">0 - None (ไม่มีอาการ)</option>
+                            <option value="1">1 - Mild nausea, no vomiting (คลื่นไส้เล็กน้อย)</option>
+                            <option value="4">4 - Intermittent nausea with dry heaves (คลื่นไส้เป็นพักๆ ผะอืดผะอม)</option>
+                            <option value="7">7 - Constant nausea, frequent dry heaves/vomiting (คลื่นไส้ตลอดเวลา อาเจียนบ่อย)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="aws-tremor">2. Tremor (มือสั่น - เหยียดมือออก)</label>
+                        <select id="aws-tremor" onchange="calcAWS()">
+                            <option value="0">0 - No tremor (ไม่สั่น)</option>
+                            <option value="1">1 - Not visible, can be felt at fingertips (มองไม่เห็น สัมผัสได้ที่ปลายนิ้ว)</option>
+                            <option value="4">4 - Moderate with arms extended (สั่นปานกลางเมื่อเหยียดแขน)</option>
+                            <option value="7">7 - Severe, even arms not extended (สั่นรุนแรง แม้ไม่ได้เหยียดแขน)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="aws-sweats">3. Paroxysmal Sweats (เหงื่อแตก)</label>
+                        <select id="aws-sweats" onchange="calcAWS()">
+                            <option value="0">0 - No sweat visible (ไม่มีเหงื่อออก)</option>
+                            <option value="1">1 - Barely perceptible, palms moist (ชื้นที่ฝ่ามือเล็กน้อย)</option>
+                            <option value="4">4 - Beads of sweat visible on forehead (เหงื่อผุดเป็นเม็ดที่หน้าผาก)</option>
+                            <option value="7">7 - Drenching sweats (เหงื่อโซมตัว เสื้อผ้าเปียกโชก)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="aws-anxiety">4. Anxiety (ความวิตกกังวล)</label>
+                        <select id="aws-anxiety" onchange="calcAWS()">
+                            <option value="0">0 - No anxiety, at ease (ปกติ ผ่อนคลาย)</option>
+                            <option value="1">1 - Mildly anxious (วิตกกังวลเล็กน้อย)</option>
+                            <option value="4">4 - Moderately anxious or guarded (กังวลปานกลาง กระสับกระส่าย)</option>
+                            <option value="7">7 - Equivalent to acute panic states (ตื่นตระหนกรุนแรง Panic)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="aws-agitation">5. Agitation (กระวนกระวาย อยู่นิ่งไม่ได้)</label>
+                        <select id="aws-agitation" onchange="calcAWS()">
+                            <option value="0">0 - Normal activity (ปกติ)</option>
+                            <option value="1">1 - Somewhat more than normal activity (ขยับขยับตัวมากกว่าปกติเล็กน้อย)</option>
+                            <option value="4">4 - Moderately fidgety and restless (ผุดลุกผุดนั่ง กระวนกระวาย)</option>
+                            <option value="7">7 - Paces back and forth or constantly thrashing (เดินไปเดินมา ดิ้นรนตลอดเวลา)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="aws-tactile">6. Tactile Disturbances (ประสาทสัมผัสหลอน)</label>
+                        <select id="aws-tactile" onchange="calcAWS()">
+                            <option value="0">0 - None (ปกติ)</option>
+                            <option value="1">1 - Very mild itching, pins & needles, burning (คัน/ชาแป๊บๆ เล็กน้อย)</option>
+                            <option value="4">4 - Moderate hallucinations (รู้สึกมีแมลงไต่ตามตัว ชัดเจน)</option>
+                            <option value="7">7 - Continuous hallucinations (สัมผัสหลอนรุนแรงตลอดเวลา)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="aws-auditory">7. Auditory Disturbances (หูแว่ว)</label>
+                        <select id="aws-auditory" onchange="calcAWS()">
+                            <option value="0">0 - Not present (ปกติ)</option>
+                            <option value="1">1 - Very mild harshness or ability to frighten (ได้ยินเสียงดังเกินจริงเล็กน้อย)</option>
+                            <option value="4">4 - Moderate hallucinations (ได้ยินเสียงพูด/หูแว่ว ปานกลาง)</option>
+                            <option value="7">7 - Continuous auditory hallucinations (หูแว่วรุนแรงต่อเนื่อง)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="aws-visual">8. Visual Disturbances (เห็นภาพหลอน)</label>
+                        <select id="aws-visual" onchange="calcAWS()">
+                            <option value="0">0 - Not present (ปกติ)</option>
+                            <option value="1">1 - Very mild sensitivity to light (สู้แสงไม่ได้เล็กน้อย)</option>
+                            <option value="4">4 - Moderate hallucinations (เห็นภาพหลอนปานกลาง)</option>
+                            <option value="7">7 - Continuous visual hallucinations (เห็นภาพหลอนรุนแรงตลอดเวลา)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="aws-headache">9. Headache & Fullness in Head (ปวดศีรษะ)</label>
+                        <select id="aws-headache" onchange="calcAWS()">
+                            <option value="0">0 - Not present (ไม่ปวด)</option>
+                            <option value="1">1 - Very mild (ปวดตึงเล็กน้อย)</option>
+                            <option value="4">4 - Moderate (ปวดปานกลาง)</option>
+                            <option value="7">7 - Extremely severe (ปวดรุนแรงมาก)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="aws-orientation">10. Orientation & Sensorium (การรับรู้วันเวลาสถานที่)</label>
+                        <select id="aws-orientation" onchange="calcAWS()">
+                            <option value="0">0 - Oriented & can do serial additions (รับรู้ครบถ้วน)</option>
+                            <option value="1">1 - Cannot do serial additions or uncertain about date (สับสนเรื่องวันที่)</option>
+                            <option value="2">2 - Disoriented for date by no more than 2 calendar days (สับสนวันที่ 1-2 วัน)</option>
+                            <option value="3">3 - Disoriented for date by more than 2 calendar days (สับสนวันที่ >2 วัน)</option>
+                            <option value="4">4 - Disoriented for place and/or person (สับสนสถานที่ หรือบุคคล)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AWS Result Banner -->
+            <div class="result-banner" id="aws-result-box">
+                <div class="result-header-row">
+                    <div>
+                        <span style="font-weight: 700; color: #555;">CIWA-Ar Total Score:</span>
+                        <div class="score-val-large" id="aws-score-display">0 / 67</div>
+                    </div>
+                    <div>
+                        <span class="risk-badge risk-low" id="aws-risk-badge">Mild Withdrawal</span>
+                    </div>
+                </div>
+                <div class="clinical-guidance-box" id="aws-guidance">
+                    <h5>แนวทางการรักษา (Symptom-Triggered Benzodiazepine Protocol):</h5>
+                    <div id="aws-treatment-text">คะแนน < 10: Mild alcohol withdrawal — ไม่จำเป็นต้องให้ Benzodiazepines ทันที ติดตามอาการและประเมิน CIWA-Ar ทุก 4-8 ชั่วโมง</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Sepsis Screening & Early Warning Scores -->
+        <div class="tab-panel" id="panel-sepsis">
+            <div class="sub-nav">
+                <button class="sub-btn active" id="sub-btn-qsofa" onclick="switchSepsisSub('qsofa')">qSOFA & SIRS</button>
+                <button class="sub-btn" id="sub-btn-news2" onclick="switchSepsisSub('news2')">NEWS2 Score</button>
+                <button class="sub-btn" id="sub-btn-abx" onclick="switchSepsisSub('abx')">💊 Initial Antibiotics by Source</button>
+            </div>
+
+            <!-- Sub panel: qSOFA & SIRS -->
+            <div id="sepsis-sub-qsofa">
+                <div class="calc-card">
+                    <div class="calc-card-title">1. Quick SOFA (qSOFA) Score</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="check-item">
+                            <input type="checkbox" id="qsofa-rr" onchange="calcSepsis()">
+                            <label for="qsofa-rr"><strong>Respiratory Rate ≥ 22 /min</strong> (หายใจเร็ว ≥ 22 ครั้ง/นาที)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="qsofa-gcs" onchange="calcSepsis()">
+                            <label for="qsofa-gcs"><strong>Altered Mental Status</strong> (ระดับความรู้สึกตัวเปลี่ยน GCS < 15)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="qsofa-sbp" onchange="calcSepsis()">
+                            <label for="qsofa-sbp"><strong>Systolic BP ≤ 100 mmHg</strong> (ความดันโลหิตตัวบน ≤ 100 mmHg)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calc-card">
+                    <div class="calc-card-title">2. SIRS Criteria (Systemic Inflammatory Response Syndrome)</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="check-item">
+                            <input type="checkbox" id="sirs-temp" onchange="calcSepsis()">
+                            <label for="sirs-temp"><strong>Body Temp > 38°C or < 36°C</strong> (ไข้ > 38°C หรือ อุณหภูมิกาย < 36°C)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="sirs-hr" onchange="calcSepsis()">
+                            <label for="sirs-hr"><strong>Heart Rate > 90 bpm</strong> (ชีพจร > 90 ครั้ง/นาที)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="sirs-rr" onchange="calcSepsis()">
+                            <label for="sirs-rr"><strong>Respiratory Rate > 20 /min or PaCO2 < 32 mmHg</strong> (หายใจ > 20 ครั้ง/นาที)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="sirs-wbc" onchange="calcSepsis()">
+                            <label for="sirs-wbc"><strong>WBC > 12,000 or < 4,000 /mm³ or Band form > 10%</strong> (เม็ดเลือดขาวผิดปกติ)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-banner">
+                    <div class="result-header-row">
+                        <div>
+                            <span style="font-weight: 700; color: #555;">qSOFA:</span> <span id="qsofa-score" style="font-size: 1.5em; font-weight: 700;">0 / 3</span> &nbsp;|&nbsp;
+                            <span style="font-weight: 700; color: #555;">SIRS:</span> <span id="sirs-score" style="font-size: 1.5em; font-weight: 700;">0 / 4</span>
+                        </div>
+                        <div id="sepsis-status-badge">
+                            <span class="risk-badge risk-low">Low Risk</span>
+                        </div>
+                    </div>
+                    <div class="clinical-guidance-box" id="sepsis-guidance">
+                        <h5>Sepsis Resuscitation Bundle Checklist (1-Hour Bundle):</h5>
+                        <ul style="margin: 4px 0 0 18px; padding: 0;">
+                            <li>เจาะ Serum Lactate และเก็บ Hemoculture 2 Mins ก่อนเริ่ม Antibiotic</li>
+                            <li>ให้ Empiric IV Antibiotics ภายใน 1 ชั่วโมงแรก</li>
+                            <li>หากมี Hypotension (MAP < 65) หรือ Lactate ≥ 4 mmol/L: ให้ 0.9% NSS 30 mL/kg IV drip in 3 hr</li>
+                            <li>หาก MAP < 65 หลังได้ NSS โหลด: เริ่ม Norepinephrine IV drip เพื่อรักษา MAP ≥ 65 mmHg</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub panel: NEWS2 -->
+            <div id="sepsis-sub-news2" style="display: none;">
+                <div class="calc-card">
+                    <div class="calc-card-title">NEWS2 (National Early Warning Score 2)</div>
+                    <div class="item-grid">
+                        <div class="input-group">
+                            <label for="news-rr">Respirations (/min)</label>
+                            <select id="news-rr" onchange="calcNEWS2()">
+                                <option value="3">≤ 8 (Score 3)</option>
+                                <option value="1">9-11 (Score 1)</option>
+                                <option value="0" selected>12-20 (Score 0)</option>
+                                <option value="2">21-24 (Score 2)</option>
+                                <option value="3">≥ 25 (Score 3)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="news-spo2">SpO2 Scale 1 (%)</label>
+                            <select id="news-spo2" onchange="calcNEWS2()">
+                                <option value="3">≤ 91 (Score 3)</option>
+                                <option value="2">92-93 (Score 2)</option>
+                                <option value="1">94-95 (Score 1)</option>
+                                <option value="0" selected>≥ 96 (Score 0)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="news-o2">Air or Oxygen</label>
+                            <select id="news-o2" onchange="calcNEWS2()">
+                                <option value="0" selected>Room Air (Score 0)</option>
+                                <option value="2">Supplemental O2 (Score 2)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="news-sbp">Systolic BP (mmHg)</label>
+                            <select id="news-sbp" onchange="calcNEWS2()">
+                                <option value="3">≤ 90 (Score 3)</option>
+                                <option value="2">91-100 (Score 2)</option>
+                                <option value="1">101-110 (Score 1)</option>
+                                <option value="0" selected>111-219 (Score 0)</option>
+                                <option value="3">≥ 220 (Score 3)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="news-hr">Pulse Rate (bpm)</label>
+                            <select id="news-hr" onchange="calcNEWS2()">
+                                <option value="3">≤ 40 (Score 3)</option>
+                                <option value="1">41-50 (Score 1)</option>
+                                <option value="0" selected>51-90 (Score 0)</option>
+                                <option value="1">91-110 (Score 1)</option>
+                                <option value="2">111-130 (Score 2)</option>
+                                <option value="3">≥ 131 (Score 3)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="news-avpu">Consciousness (AVPU)</label>
+                            <select id="news-avpu" onchange="calcNEWS2()">
+                                <option value="0" selected>Alert (Score 0)</option>
+                                <option value="3">CVPU / New Confusion / Voice / Pain / Unresponsive (Score 3)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="news-temp">Temperature (°C)</label>
+                            <select id="news-temp" onchange="calcNEWS2()">
+                                <option value="3">≤ 35.0 (Score 3)</option>
+                                <option value="1">35.1-36.0 (Score 1)</option>
+                                <option value="0" selected>36.1-38.0 (Score 0)</option>
+                                <option value="1">38.1-39.0 (Score 1)</option>
+                                <option value="2">≥ 39.1 (Score 2)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-banner">
+                    <div class="result-header-row">
+                        <div>
+                            <span style="font-weight: 700; color: #555;">NEWS2 Score Total:</span>
+                            <div class="score-val-large" id="news2-score-val">0</div>
+                        </div>
+                        <div>
+                            <span class="risk-badge risk-low" id="news2-risk-badge">Low Clinical Risk</span>
+                        </div>
+                    </div>
+                    <div class="clinical-guidance-box" id="news2-guidance">
+                        NEWS2 0-4: ประเมินสัญญาณชีพตามรอบปกติทุก 4-6 ชั่วโมง
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub panel: Antibiotics -->
+            <div id="sepsis-sub-abx" style="display: none;">
+                <div class="calc-card">
+                    <div class="calc-card-title">Initial Empiric Antibiotics Selection by Infection Source</div>
+                    <div class="input-group" style="margin-bottom: 16px;">
+                        <label for="sepsis-source-select">เลือกตำแหน่งหรือจุดกำเนิดการติดเชื้อ (Source of Infection):</label>
+                        <select id="sepsis-source-select" onchange="updateSepsisAbx()" style="font-weight: 700; font-size: 15px; padding: 10px;">
+                            <option value="unknown">1. Unknown / Undifferentiated Sepsis (ไม่ทราบสาเหตุชัดเจน)</option>
+                            <option value="pulmonary">2. Pulmonary (Community-Acquired Pneumonia / HAP)</option>
+                            <option value="intraabdominal">3. Intra-abdominal Infection / Peritonitis / Cholangitis</option>
+                            <option value="uti">4. Urinary Tract Infection / Pyelonephritis / Urosepsis</option>
+                            <option value="softtissue">5. Skin & Soft Tissue / Cellulitis / Necrotizing Fasciitis</option>
+                            <option value="cns">6. Central Nervous System (Acute Bacterial Meningitis)</option>
+                        </select>
+                    </div>
+                    <div class="clinical-guidance-box" id="abx-recommendation-box" style="border-left-color: #27ae60; background: #f4fbf7;">
+                        <h4 style="margin: 0 0 8px 0; color: #1e7e34;" id="abx-title">Unknown / Undifferentiated Sepsis:</h4>
+                        <div id="abx-detail-text">
+                            <strong>Empiric First-line:</strong> Ceftriaxone 2 g IV OD<br>
+                            <em>หากมีภาวะเสี่ยงต่อ Pseudomonas infection (เช่น Neutropenia, Structural lung disease, Recent ICU):</em> Cefepime 2 g IV q 8h หรือ Piperacillin/Tazobactam 4.5 g IV q 6h<br>
+                            <em>หากสงสัย MRSA (เช่น มีสายสวนหลอดเลือดดำ, ผื่นติดเชื้อ):</em> เพิ่ม Vancomycin 15-20 mg/kg IV q 8-12h
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: ABCD2 Score -->
+        <div class="tab-panel" id="panel-abcd2">
+            <div class="calc-card">
+                <div class="calc-card-title">ABCD2 Score for TIA Stroke Risk Stratification</div>
+                <div class="item-grid">
+                    <div class="input-group">
+                        <label for="abcd2-age">A - Age (อายุ)</label>
+                        <select id="abcd2-age" onchange="calcABCD2()">
+                            <option value="0">< 60 ปี (0 คะแนน)</option>
+                            <option value="1">≥ 60 ปี (+1 คะแนน)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="abcd2-bp">B - Blood Pressure (ความดันโลหิต)</label>
+                        <select id="abcd2-bp" onchange="calcABCD2()">
+                            <option value="0">SBP < 140 และ DBP < 90 mmHg (0 คะแนน)</option>
+                            <option value="1">SBP ≥ 140 หรือ DBP ≥ 90 mmHg (+1 คะแนน)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="abcd2-clinical">C - Clinical Features (อาการทางคลินิก)</label>
+                        <select id="abcd2-clinical" onchange="calcABCD2()">
+                            <option value="0">อาการอื่นๆ (0 คะแนน)</option>
+                            <option value="1">พูดไม่ชัด/สื่อความหมายไม่ได้ โดยไม่มีแขนขาอ่อนแรง (+1 คะแนน)</option>
+                            <option value="2">แขนหรือขาอ่อนแรงซีกใดซีกหนึ่ง (Unilateral weakness) (+2 คะแนน)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="abcd2-duration">D - Duration of Symptoms (ระยะเวลาที่มีอาการ)</label>
+                        <select id="abcd2-duration" onchange="calcABCD2()">
+                            <option value="0">< 10 นาที (0 คะแนน)</option>
+                            <option value="1">10 - 59 นาที (+1 คะแนน)</option>
+                            <option value="2">≥ 60 นาที (+2 คะแนน)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="abcd2-dm">D - Diabetes Mellitus (เบาหวาน)</label>
+                        <select id="abcd2-dm" onchange="calcABCD2()">
+                            <option value="0">ไม่มีประวัติเบาหวาน (0 คะแนน)</option>
+                            <option value="1">มีประวัติเบาหวาน (+1 คะแนน)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="result-banner">
+                <div class="result-header-row">
+                    <div>
+                        <span style="font-weight: 700; color: #555;">ABCD2 Total Score:</span>
+                        <div class="score-val-large" id="abcd2-score-val">0 / 7</div>
+                    </div>
+                    <div>
+                        <span class="risk-badge risk-low" id="abcd2-risk-badge">Low 2-Day Stroke Risk (1.0%)</span>
+                    </div>
+                </div>
+                <div class="clinical-guidance-box" id="abcd2-guidance">
+                    <strong>แนวทางดูแลรักษา TIA:</strong> คะแนน 0-3 ความเสี่ยงต่ำ พิจารณาตรวจหาสาเหตุ TIA (Carotid Doppler, Echo, Holter) และเริ่ม Antiplatelet single agent (Aspirin 81-325 mg/day)
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: HEART Score -->
+        <div class="tab-panel" id="panel-heart">
+            <div class="calc-card">
+                <div class="calc-card-title">HEART Score for ED Chest Pain Evaluation</div>
+                <div class="item-grid">
+                    <div class="input-group">
+                        <label for="heart-history">H - History (ประวัติเจ็บแน่นหน้าอก)</label>
+                        <select id="heart-history" onchange="calcHEART()">
+                            <option value="0">0 - Slightly suspicious (สงสัยน้อยมาก)</option>
+                            <option value="1">1 - Moderately suspicious (สงสัยปานกลาง)</option>
+                            <option value="2">2 - Highly suspicious (สงสัยสูง แน่นหน้าอกร้าวไปแขน/กราม)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="heart-ecg">E - ECG (คลื่นไฟฟ้าหัวใจ)</label>
+                        <select id="heart-ecg" onchange="calcHEART()">
+                            <option value="0">0 - Normal (ปกติ)</option>
+                            <option value="1">1 - Non-specific repolarization disturbance / LBBB / Pacemaker</option>
+                            <option value="2">2 - Significant ST-depression (ST-segment ลดลงชัดเจน)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="heart-age">A - Age (อายุ)</label>
+                        <select id="heart-age" onchange="calcHEART()">
+                            <option value="0">0 - < 45 ปี</option>
+                            <option value="1">1 - 45 - 64 ปี</option>
+                            <option value="2">2 - ≥ 65 ปี</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="heart-risk">R - Risk Factors (ปัจจัยเสี่ยง CAD)</label>
+                        <select id="heart-risk" onchange="calcHEART()">
+                            <option value="0">0 - No known risk factors (ไม่มีปัจจัยเสี่ยง)</option>
+                            <option value="1">1 - 1 or 2 risk factors (มีปัจจัยเสี่ยง 1-2 ข้อ)</option>
+                            <option value="2">2 - ≥ 3 risk factors or history of CAD (มี ≥3 ข้อ หรือมีประวัติ CAD)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="heart-trop">T - Initial Troponin (ผล Troponin แรกรับ)</label>
+                        <select id="heart-trop" onchange="calcHEART()">
+                            <option value="0">0 - Normal limit (ปกติ ≤ Normal limit)</option>
+                            <option value="1">1 - 1-3x normal limit (สูงกว่าปกติ 1-3 เท่า)</option>
+                            <option value="2">2 - > 3x normal limit (สูงกว่าปกติ > 3 เท่า)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="result-banner">
+                <div class="result-header-row">
+                    <div>
+                        <span style="font-weight: 700; color: #555;">HEART Score Total:</span>
+                        <div class="score-val-large" id="heart-score-val">0 / 10</div>
+                    </div>
+                    <div>
+                        <span class="risk-badge risk-low" id="heart-risk-badge">Low Risk (0.9-1.7% MACE)</span>
+                    </div>
+                </div>
+                <div class="clinical-guidance-box" id="heart-guidance">
+                    <strong>ข้อแนะนำ:</strong> คะแนน 0-3 ความเสี่ยงต่ำ โอกาสเกิด MACE ใน 6 สัปดาห์ต่ำ สามารถพิจารณาให้กลับบ้านได้พร้อมนัดตรวจติดตาม
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: GRACE Score -->
+        <div class="tab-panel" id="panel-grace">
+            <div class="calc-card">
+                <div class="calc-card-title">GRACE Risk Score (Global Registry of Acute Coronary Events)</div>
+                <div class="item-grid">
+                    <div class="input-group">
+                        <label for="grace-age">Age (อายุ - ปี)</label>
+                        <input type="number" id="grace-age" value="60" min="18" max="110" oninput="calcGRACEPure()">
+                    </div>
+                    <div class="input-group">
+                        <label for="grace-hr">Heart Rate (ชีพจร - bpm)</label>
+                        <input type="number" id="grace-hr" value="80" min="30" max="220" oninput="calcGRACEPure()">
+                    </div>
+                    <div class="input-group">
+                        <label for="grace-sbp">Systolic BP (mmHg)</label>
+                        <input type="number" id="grace-sbp" value="120" min="50" max="260" oninput="calcGRACEPure()">
+                    </div>
+                    <div class="input-group">
+                        <label for="grace-cr">Serum Creatinine (mg/dL)</label>
+                        <input type="number" id="grace-cr" value="1.0" step="0.1" min="0.2" max="15.0" oninput="calcGRACEPure()">
+                    </div>
+                    <div class="input-group">
+                        <label for="grace-killip">Killip Class</label>
+                        <select id="grace-killip" onchange="calcGRACEPure()">
+                            <option value="1">Class I - No heart failure</option>
+                            <option value="2">Class II - Rales, JVD, S3 gallop</option>
+                            <option value="3">Class III - Frank pulmonary edema</option>
+                            <option value="4">Class IV - Cardiogenic shock</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px;">
+                    <div class="check-item">
+                        <input type="checkbox" id="grace-arrest" onchange="calcGRACEPure()">
+                        <label for="grace-arrest">Cardiac Arrest at Admission (+39)</label>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="grace-st" onchange="calcGRACEPure()">
+                        <label for="grace-st">ST-segment Deviation (+28)</label>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="grace-enzyme" onchange="calcGRACEPure()" checked>
+                        <label for="grace-enzyme">Elevated Cardiac Enzymes/Troponin (+14)</label>
+                    </div>
+                </div>
+            </div>
+            <div class="result-banner">
+                <div class="result-header-row">
+                    <div>
+                        <span style="font-weight: 700; color: #555;">GRACE Score:</span>
+                        <div class="score-val-large" id="grace-score-val">100</div>
+                    </div>
+                    <div>
+                        <span class="risk-badge risk-low" id="grace-risk-badge">Low Risk (< 109)</span>
+                    </div>
+                </div>
+                <div class="clinical-guidance-box" id="grace-guidance">
+                    <strong>การจัดกลุ่มความเสี่ยง NSTEMI:</strong> คะแนน < 109 ความเสี่ยงต่ำ (In-hospital mortality < 1%) — แนะนำ Selective Invasive Strategy
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: PE Risk & Probability -->
+        <div class="tab-panel" id="panel-pe">
+            <div class="sub-nav">
+                <button class="sub-btn active" id="sub-btn-wells" onclick="switchPESub('wells')">Wells' Criteria for PE</button>
+                <button class="sub-btn" id="sub-btn-geneva" onclick="switchPESub('geneva')">Revised Geneva Score</button>
+                <button class="sub-btn" id="sub-btn-perc" onclick="switchPESub('perc')">PERC Rule (Rule-Out)</button>
+            </div>
+
+            <!-- Wells Criteria -->
+            <div id="pe-sub-wells">
+                <div class="calc-card">
+                    <div class="calc-card-title">Wells' Criteria for Pulmonary Embolism</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="check-item">
+                            <input type="checkbox" id="wells-dvt" onchange="calcWells()">
+                            <label for="wells-dvt">Clinical signs and symptoms of DVT (ขาบวม ปวด ขาโตข้างเดียว) <strong>[+3.0]</strong></label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="wells-alt" onchange="calcWells()">
+                            <label for="wells-alt">PE is #1 diagnosis OR equally likely as other diagnosis <strong>[+3.0]</strong></label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="wells-hr" onchange="calcWells()">
+                            <label for="wells-hr">Heart rate > 100 bpm <strong>[+1.5]</strong></label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="wells-immob" onchange="calcWells()">
+                            <label for="wells-immob">Immobilization ≥ 3 days OR surgery in past 4 weeks <strong>[+1.5]</strong></label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="wells-prev" onchange="calcWells()">
+                            <label for="wells-prev">Previous objectively diagnosed PE or DVT <strong>[+1.5]</strong></label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="wells-hemo" onchange="calcWells()">
+                            <label for="wells-hemo">Hemoptysis (ไอเป็นเลือด) <strong>[+1.0]</strong></label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="wells-ca" onchange="calcWells()">
+                            <label for="wells-ca">Malignancy with active treatment within 6 months or palliative <strong>[+1.0]</strong></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-banner">
+                    <div class="result-header-row">
+                        <div>
+                            <span style="font-weight: 700; color: #555;">Wells' PE Score:</span>
+                            <div class="score-val-large" id="wells-score-val">0.0</div>
+                        </div>
+                        <div>
+                            <span class="risk-badge risk-low" id="wells-risk-badge">PE Unlikely (≤ 4.0)</span>
+                        </div>
+                    </div>
+                    <div class="clinical-guidance-box" id="wells-guidance">
+                        <strong>คำแนะนำ 2-Tier Strategy:</strong> คะแนน ≤ 4.0 (PE Unlikely) — แนะนำส่งตรวจ High Sensitivity D-dimer หาก D-dimer ปกติ สามารถ Rule out PE ได้โดยไม่ต้องทำ CTA
+                    </div>
+                </div>
+            </div>
+
+            <!-- Geneva Score -->
+            <div id="pe-sub-geneva" style="display: none;">
+                <div class="calc-card">
+                    <div class="calc-card-title">Revised Geneva Score for PE</div>
+                    <div class="item-grid">
+                        <div class="input-group">
+                            <label for="geneva-age">Age (อายุ)</label>
+                            <select id="geneva-age" onchange="calcGeneva()">
+                                <option value="0">< 65 ปี (0 คะแนน)</option>
+                                <option value="1">≥ 65 ปี (+1 คะแนน)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="geneva-hr">Heart Rate (ชีพจร)</label>
+                            <select id="geneva-hr" onchange="calcGeneva()">
+                                <option value="0">< 75 bpm (0 คะแนน)</option>
+                                <option value="3">75 - 94 bpm (+3 คะแนน)</option>
+                                <option value="5">≥ 95 bpm (+5 คะแนน)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+                        <div class="check-item">
+                            <input type="checkbox" id="geneva-prev" onchange="calcGeneva()">
+                            <label for="geneva-prev">Previous DVT or PE (+2)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="geneva-surg" onchange="calcGeneva()">
+                            <label for="geneva-surg">Surgery or lower limb fracture in past month (+2)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="geneva-ca" onchange="calcGeneva()">
+                            <label for="geneva-ca">Active malignant solid tumor or hematologic malignancy (+2)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="geneva-leg-pain" onchange="calcGeneva()">
+                            <label for="geneva-leg-pain">Unilateral lower limb pain (+3)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="geneva-hemo" onchange="calcGeneva()">
+                            <label for="geneva-hemo">Hemoptysis (+2)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="geneva-palp" onchange="calcGeneva()">
+                            <label for="geneva-palp">Pain on deep vein palpation & unilateral edema (+4)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-banner">
+                    <div class="result-header-row">
+                        <div>
+                            <span style="font-weight: 700; color: #555;">Geneva Score Total:</span>
+                            <div class="score-val-large" id="geneva-score-val">0</div>
+                        </div>
+                        <div>
+                            <span class="risk-badge risk-low" id="geneva-risk-badge">Low Risk (8% PE Probability)</span>
+                        </div>
+                    </div>
+                    <div class="clinical-guidance-box" id="geneva-guidance">
+                        Geneva Score 0-2 (Low Risk): พิจารณาตรวจ D-dimer เพื่อ Rule-out
+                    </div>
+                </div>
+            </div>
+
+            <!-- PERC Rule -->
+            <div id="pe-sub-perc" style="display: none;">
+                <div class="calc-card">
+                    <div class="calc-card-title">Pulmonary Embolism Rule-out Criteria (PERC Rule)</div>
+                    <p style="font-size: 13px; color: #666; margin-top: -8px; margin-bottom: 14px;">
+                        ใช้ในผู้ป่วยที่มีความเสี่ยงต่อ PE ต่ำ (Low risk / PE unlikely) หากเข้าเกณฑ์ครบทั้ง 8 ข้อ สามารถ Rule out PE ได้โดยไม่ต้องส่ง D-dimer หรือ CTA
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="check-item">
+                            <input type="checkbox" id="perc-age" onchange="calcPERC()">
+                            <label for="perc-age">1. Age < 50 years (อายุ < 50 ปี)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="perc-hr" onchange="calcPERC()">
+                            <label for="perc-hr">2. Pulse < 100 bpm (ชีพจร < 100 ครั้ง/นาที)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="perc-spo2" onchange="calcPERC()">
+                            <label for="perc-spo2">3. SaO2 ≥ 95% on room air (ความอิ่มตัวออกซิเจนในเลือด ≥ 95% ในอากาศปกติ)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="perc-prev" onchange="calcPERC()">
+                            <label for="perc-prev">4. No prior DVT or PE (ไม่มีประวัติ DVT หรือ PE ในอดีต)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="perc-surg" onchange="calcPERC()">
+                            <label for="perc-surg">5. No recent surgery or trauma ≤ 4 weeks (ไม่มีผ่าตัด/อุบัติเหตุใน 4 สัปดาห์)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="perc-hemo" onchange="calcPERC()">
+                            <label for="perc-hemo">6. No hemoptysis (ไม่มีอาการไอเป็นเลือด)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="perc-estrogen" onchange="calcPERC()">
+                            <label for="perc-estrogen">7. No estrogen use (ไม่ได้ใช้ยาคุมกำเนิดชนิดฮอร์โมน/Estrogen)</label>
+                        </div>
+                        <div class="check-item">
+                            <input type="checkbox" id="perc-leg" onchange="calcPERC()">
+                            <label for="perc-leg">8. No unilateral leg swelling (ไม่มีขาบวมโตข้างเดียว)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-banner">
+                    <div class="result-header-row">
+                        <div>
+                            <span style="font-weight: 700; color: #555;">PERC Criteria Met:</span>
+                            <div class="score-val-large" id="perc-score-val">0 / 8</div>
+                        </div>
+                        <div>
+                            <span class="risk-badge risk-high" id="perc-risk-badge">PERC Negative (Rule out failed)</span>
+                        </div>
+                    </div>
+                    <div class="clinical-guidance-box" id="perc-guidance">
+                        เข้าเกณฑ์ไม่ครบ 8 ข้อ: ไม่สามารถใช้ PERC Rule out ได้ แนะนำพิจารณาตรวจ D-dimer เพิ่มเติม
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="../shared/components.js"></script>
+<script src="../shared/clinical-engine.js"></script>
+
+<script>
+    // Initialize sticky top navigation bar
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.ED_COMPONENTS && ED_COMPONENTS.injectNavBar) {
+            ED_COMPONENTS.injectNavBar();
+        }
+        // Run initial calculations for default states
+        calcAWS();
+        calcSepsis();
+        calcNEWS2();
+        calcABCD2();
+        calcHEART();
+        calcGRACEPure();
+        calcWells();
+        calcGeneva();
+        calcPERC();
+    });
+
+    // Tab switcher
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+        
+        const targetBtn = document.getElementById('tab-btn-' + tabId);
+        const targetPanel = document.getElementById('panel-' + tabId);
+        if (targetBtn) targetBtn.classList.add('active');
+        if (targetPanel) targetPanel.classList.add('active');
+    }
+
+    // Sepsis Sub-tabs
+    function switchSepsisSub(subId) {
+        document.querySelectorAll('#panel-sepsis .sub-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('sepsis-sub-qsofa').style.display = 'none';
+        document.getElementById('sepsis-sub-news2').style.display = 'none';
+        document.getElementById('sepsis-sub-abx').style.display = 'none';
+
+        document.getElementById('sub-btn-' + subId).classList.add('active');
+        document.getElementById('sepsis-sub-' + subId).style.display = 'block';
+    }
+
+    // PE Sub-tabs
+    function switchPESub(subId) {
+        document.querySelectorAll('#panel-pe .sub-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('pe-sub-wells').style.display = 'none';
+        document.getElementById('pe-sub-geneva').style.display = 'none';
+        document.getElementById('pe-sub-perc').style.display = 'none';
+
+        document.getElementById('sub-btn-' + subId).classList.add('active');
+        document.getElementById('pe-sub-' + subId).style.display = 'block';
+    }
+
+    /* ===== CALCULATORS ENGINE LOGIC ===== */
+
+    // 1. AWS Score
+    function calcAWS() {
+        const ids = ['aws-nausea', 'aws-tremor', 'aws-sweats', 'aws-anxiety', 'aws-agitation', 'aws-tactile', 'aws-auditory', 'aws-visual', 'aws-headache', 'aws-orientation'];
+        let score = 0;
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) score += parseInt(el.value, 10) || 0;
+        });
+
+        const scoreEl = document.getElementById('aws-score-display');
+        const badgeEl = document.getElementById('aws-risk-badge');
+        const textEl = document.getElementById('aws-treatment-text');
+
+        if (scoreEl) scoreEl.textContent = score + ' / 67';
+
+        if (score < 10) {
+            badgeEl.className = 'risk-badge risk-low';
+            badgeEl.textContent = 'Mild Withdrawal';
+            textEl.innerHTML = 'คะแนน < 10: <strong>Mild alcohol withdrawal</strong> — ไม่จำเป็นต้องให้ Benzodiazepines ทันที ติดตามอาการและประเมิน CIWA-Ar ทุก 4-8 ชั่วโมง';
+        } else if (score <= 19) {
+            badgeEl.className = 'risk-badge risk-mod';
+            badgeEl.textContent = 'Moderate Withdrawal';
+            textEl.innerHTML = 'คะแนน 10-19: <strong>Moderate withdrawal</strong> — แนะนำเริ่ม <strong>Lorazepam 2-4 mg PO/IV</strong> หรือ <strong>Diazepam 10-20 mg PO/IV</strong> ทุก 1-2 ชั่วโมง จนกว่า CIWA < 10 และประเมินสัญญาณชีพซ้ำทุก 1-2 ชั่วโมง';
+        } else {
+            badgeEl.className = 'risk-badge risk-vhigh';
+            badgeEl.textContent = 'Severe Withdrawal';
+            textEl.innerHTML = 'คะแนน ≥ 20: <strong>Severe withdrawal (High Risk of Delirium Tremens & Seizures)</strong> — แนะนำให้ <strong>Lorazepam 4 mg IV</strong> หรือ <strong>Diazepam 20 mg IV</strong> ทุก 1 ชั่วโมง พิจารณา Admit Monitored Bed/ICU และให้ Thiamine 100-500 mg IV ก่อนฉีด Glucose';
+        }
+    }
+
+    // 2. Sepsis (qSOFA & SIRS)
+    function calcSepsis() {
+        const qsofaRR = document.getElementById('qsofa-rr').checked ? 1 : 0;
+        const qsofaGCS = document.getElementById('qsofa-gcs').checked ? 1 : 0;
+        const qsofaSBP = document.getElementById('qsofa-sbp').checked ? 1 : 0;
+        const qsofaScore = qsofaRR + qsofaGCS + qsofaSBP;
+
+        const sirsTemp = document.getElementById('sirs-temp').checked ? 1 : 0;
+        const sirsHR = document.getElementById('sirs-hr').checked ? 1 : 0;
+        const sirsRR = document.getElementById('sirs-rr').checked ? 1 : 0;
+        const sirsWBC = document.getElementById('sirs-wbc').checked ? 1 : 0;
+        const sirsScore = sirsTemp + sirsHR + sirsRR + sirsWBC;
+
+        document.getElementById('qsofa-score').textContent = qsofaScore + ' / 3';
+        document.getElementById('sirs-score').textContent = sirsScore + ' / 4';
+
+        const badgeBox = document.getElementById('sepsis-status-badge');
+        if (qsofaScore >= 2 || sirsScore >= 2) {
+            badgeBox.innerHTML = '<span class="risk-badge risk-high">⚠️ HIGH SEPSIS RISK</span>';
+        } else {
+            badgeBox.innerHTML = '<span class="risk-badge risk-low">Low Sepsis Risk</span>';
+        }
+    }
+
+    // Sepsis NEWS2
+    function calcNEWS2() {
+        const ids = ['news-rr', 'news-spo2', 'news-o2', 'news-sbp', 'news-hr', 'news-avpu', 'news-temp'];
+        let score = 0;
+        let singleThree = false;
+        ids.forEach(id => {
+            const val = parseInt(document.getElementById(id).value, 10) || 0;
+            if (val === 3) singleThree = true;
+            score += val;
+        });
+
+        document.getElementById('news2-score-val').textContent = score;
+        const badge = document.getElementById('news2-risk-badge');
+        const guide = document.getElementById('news2-guidance');
+
+        if (score >= 7) {
+            badge.className = 'risk-badge risk-vhigh';
+            badge.textContent = 'High Clinical Risk (≥ 7)';
+            guide.innerHTML = '<strong>NEWS2 ≥ 7: High Risk</strong> — ตามแพทย์ฉุกเฉิน/แพทย์เจ้าของไข้ทันที เฝ้าระวังระบบทางเดินหายใจและสัญญาณชีพแบบต่อเนื่อง พิจารณาเคลื่อนย้ายเข้า ICU/Step-down unit';
+        } else if (score >= 5 || singleThree) {
+            badge.className = 'risk-badge risk-mod';
+            badge.textContent = 'Medium Clinical Risk (5-6)';
+            guide.innerHTML = '<strong>NEWS2 5-6 หรือมี 3 คะแนนในข้อใดข้อหนึ่ง: Medium Risk</strong> — รายงานแพทย์ทันที ประเมินสัญญาณชีพซ้ำทุก 1 ชั่วโมง';
+        } else {
+            badge.className = 'risk-badge risk-low';
+            badge.textContent = 'Low Clinical Risk (0-4)';
+            guide.innerHTML = '<strong>NEWS2 0-4: Low Risk</strong> — ประเมินสัญญาณชีพตามรอบปกติทุก 4-6 ชั่วโมง';
+        }
+    }
+
+    // Sepsis Empiric Antibiotics Update
+    function updateSepsisAbx() {
+        const source = document.getElementById('sepsis-source-select').value;
+        const titleEl = document.getElementById('abx-title');
+        const detailEl = document.getElementById('abx-detail-text');
+
+        if (source === 'unknown') {
+            titleEl.textContent = 'Unknown / Undifferentiated Sepsis:';
+            detailEl.innerHTML = `
+                <strong>Empiric First-line:</strong> Ceftriaxone 2 g IV OD<br>
+                <em>หากมีภาวะเสี่ยงต่อ Pseudomonas infection:</em> Cefepime 2 g IV q 8h หรือ Piperacillin/Tazobactam 4.5 g IV q 6h<br>
+                <em>หากสงสัย MRSA:</em> เพิ่ม Vancomycin 15-20 mg/kg IV q 8-12h
+            `;
+        } else if (source === 'pulmonary') {
+            titleEl.textContent = 'Pulmonary Sepsis (Community-Acquired Pneumonia / Severe CAP):';
+            detailEl.innerHTML = `
+                <strong>Empiric First-line:</strong> Ceftriaxone 2 g IV OD + Azithromycin 500 mg IV OD (หรือ Levofloxacin 750 mg IV OD)<br>
+                <em>หากเป็น Hospital-Acquired Pneumonia (HAP/VAP):</em> Cefepime 2 g IV q 8h (หรือ Pip/Tazo 4.5 g IV q 6h) + Levofloxacin 750 mg IV OD
+            `;
+        } else if (source === 'intraabdominal') {
+            titleEl.textContent = 'Intra-abdominal Infection / Peritonitis / Severe Cholangitis:';
+            detailEl.innerHTML = `
+                <strong>Empiric First-line:</strong> Ceftriaxone 2 g IV OD + Metronidazole 500 mg IV q 8h<br>
+                <em>หรือ High-risk / Nosocomial:</em> Piperacillin/Tazobactam 4.5 g IV q 6h (หรือ Meropenem 1 g IV q 8h)
+            `;
+        } else if (source === 'uti') {
+            titleEl.textContent = 'Urinary Tract Infection / Acute Pyelonephritis / Urosepsis:';
+            detailEl.innerHTML = `
+                <strong>Empiric First-line:</strong> Ceftriaxone 2 g IV OD<br>
+                <em>หากมีประวัติ ESBL หรือ Septic Shock:</em> Meropenem 1 g IV q 8h (หรือ Ertapenem 1 g IV OD)
+            `;
+        } else if (source === 'softtissue') {
+            titleEl.textContent = 'Skin & Soft Tissue / Cellulitis / Necrotizing Fasciitis:';
+            detailEl.innerHTML = `
+                <strong>Non-necrotizing Cellulitis:</strong> Cefazolin 2 g IV q 8h<br>
+                <strong>Necrotizing Fasciitis / Severe SSTI:</strong> Meropenem 1 g IV q 8h + Vancomycin 15-20 mg/kg IV q 8-12h + Clindamycin 600-900 mg IV q 8h (เพื่อยับยั้ง Toxin) ร่วมกับปรึกษา ศัลยกรรม Debridement ทันที
+            `;
+        } else if (source === 'cns') {
+            titleEl.textContent = 'Central Nervous System (Acute Bacterial Meningitis):';
+            detailEl.innerHTML = `
+                <strong>Empiric Regimen:</strong> Ceftriaxone 2 g IV q 12h + Vancomycin 15-20 mg/kg IV q 8-12h + Dexamethasone 10 mg IV (ก่อนหรือพร้อมยาปฏิชีวนะ)<br>
+                <em>หากอายุ > 50 ปี หรือมีภูมิคุ้มกันบกพร่อง:</em> เพิ่ม Ampicillin 2 g IV q 4h (เพื่อครอบคลุม Listeria monocytogenes)
+            `;
+        }
+    }
+
+    // 3. ABCD2 Score
+    function calcABCD2() {
+        const age = parseInt(document.getElementById('abcd2-age').value, 10);
+        const bp = parseInt(document.getElementById('abcd2-bp').value, 10);
+        const clinical = parseInt(document.getElementById('abcd2-clinical').value, 10);
+        const duration = parseInt(document.getElementById('abcd2-duration').value, 10);
+        const dm = parseInt(document.getElementById('abcd2-dm').value, 10);
+
+        const score = age + bp + clinical + duration + dm;
+        document.getElementById('abcd2-score-val').textContent = score + ' / 7';
+
+        const badge = document.getElementById('abcd2-risk-badge');
+        const guide = document.getElementById('abcd2-guidance');
+
+        if (score >= 6) {
+            badge.className = 'risk-badge risk-vhigh';
+            badge.textContent = 'High 2-Day Stroke Risk (8.1%)';
+            guide.innerHTML = '<strong>ABCD2 6-7 (High Risk):</strong> แนะนำให้รับผู้ป่วยไว้ในโรงพยาบาล (Admit Stroke Unit/ER observation) ทำ CT/MRI Brain และพิจารณาให้ Dual Antiplatelet (DAPT: ASA + Clopidogrel)';
+        } else if (score >= 4) {
+            badge.className = 'risk-badge risk-mod';
+            badge.textContent = 'Moderate 2-Day Stroke Risk (4.1%)';
+            guide.innerHTML = '<strong>ABCD2 4-5 (Moderate Risk):</strong> แนะนำสังเกตอาการในโรงพยาบาล หรือนัดติดตามคลินิกโรคหลอดเลือดสมองด่วนภายใน 24 ชม. และพิจารณาเริ่ม DAPT';
+        } else {
+            badge.className = 'risk-badge risk-low';
+            badge.textContent = 'Low 2-Day Stroke Risk (1.0%)';
+            guide.innerHTML = '<strong>ABCD2 0-3 (Low Risk):</strong> ความเสี่ยงต่ำ พิจารณาตรวจหาสาเหตุ TIA แบบผู้ป่วยนอก (Carotid Doppler, Echo, Holter) และเริ่ม Single Antiplatelet (Aspirin 81-325 mg/day)';
+        }
+    }
+
+    // 4. HEART Score
+    function calcHEART() {
+        const h = parseInt(document.getElementById('heart-history').value, 10);
+        const e = parseInt(document.getElementById('heart-ecg').value, 10);
+        const a = parseInt(document.getElementById('heart-age').value, 10);
+        const r = parseInt(document.getElementById('heart-risk').value, 10);
+        const t = parseInt(document.getElementById('heart-trop').value, 10);
+
+        const score = h + e + a + r + t;
+        document.getElementById('heart-score-val').textContent = score + ' / 10';
+
+        const badge = document.getElementById('heart-risk-badge');
+        const guide = document.getElementById('heart-guidance');
+
+        if (score >= 7) {
+            badge.className = 'risk-badge risk-vhigh';
+            badge.textContent = 'High Risk (50.1-65.0% MACE)';
+            guide.innerHTML = '<strong>HEART Score 7-10 (High Risk):</strong> ความเสี่ยงสูงต่อการเกิด MACE — แนะนำ Admit ให้อยู่ใน Monitored Bed, เริ่มยาตามแนวทาง ACS, ปรึกษาอายุรแพทย์หัวใจเพื่อส่งทำ Coronary Angiogram ด่วน';
+        } else if (score >= 4) {
+            badge.className = 'risk-badge risk-mod';
+            badge.textContent = 'Moderate Risk (12.0-16.6% MACE)';
+            guide.innerHTML = '<strong>HEART Score 4-6 (Moderate Risk):</strong> ความเสี่ยงปานกลาง — แนะนำ Admit / Observe ดูอาการ ตรวจติดตาม serial Troponin และทำ Non-invasive stress testing';
+        } else {
+            badge.className = 'risk-badge risk-low';
+            badge.textContent = 'Low Risk (0.9-1.7% MACE)';
+            guide.innerHTML = '<strong>HEART Score 0-3 (Low Risk):</strong> ความเสี่ยงต่ำ โอกาสเกิด MACE ต่ำ สามารถพิจารณาให้ผู้ป่วยกลับบ้านได้อย่างปลอดภัยพร้อมนัดตรวจติดตาม';
+        }
+    }
+
+    // 5. GRACE Score (Pure tool calling CLINICAL_ENGINE.calcGRACE)
+    function calcGRACEPure() {
+        if (!window.CLINICAL_ENGINE || !CLINICAL_ENGINE.calcGRACE) return;
+
+        const age = parseFloat(document.getElementById('grace-age').value) || 0;
+        const hr = parseFloat(document.getElementById('grace-hr').value) || 0;
+        const sbp = parseFloat(document.getElementById('grace-sbp').value) || 0;
+        const cr = parseFloat(document.getElementById('grace-cr').value) || 0;
+        const killip = document.getElementById('grace-killip').value;
+        const cardArr = document.getElementById('grace-arrest').checked;
+        const stDev = document.getElementById('grace-st').checked;
+        const elevMk = document.getElementById('grace-enzyme').checked;
+
+        const res = CLINICAL_ENGINE.calcGRACE({ age, hr, sbp, cr, cardArr, stDev, elevMk, killip });
+        const score = res.score;
+
+        document.getElementById('grace-score-val').textContent = score;
+
+        const badge = document.getElementById('grace-risk-badge');
+        const guide = document.getElementById('grace-guidance');
+
+        if (score > 140) {
+            badge.className = 'risk-badge risk-vhigh';
+            badge.textContent = 'High Risk (> 140)';
+            guide.innerHTML = '<strong>GRACE Score > 140 (High Risk):</strong> อัตราการเสียชีวิตในโรงพยาบาล > 3% — แนะนำ <strong>Early Invasive Strategy (CAG ภายใน 24 ชั่วโมง)</strong>';
+        } else if (score >= 109) {
+            badge.className = 'risk-badge risk-mod';
+            badge.textContent = 'Intermediate Risk (109-140)';
+            guide.innerHTML = '<strong>GRACE Score 109-140 (Intermediate Risk):</strong> อัตราการเสียชีวิตในโรงพยาบาล 1-3% — แนะนำ Invasive Strategy ภายใน 72 ชั่วโมง';
+        } else {
+            badge.className = 'risk-badge risk-low';
+            badge.textContent = 'Low Risk (< 109)';
+            guide.innerHTML = '<strong>GRACE Score < 109 (Low Risk):</strong> อัตราการเสียชีวิตในโรงพยาบาล < 1% — แนะนำ Selective Invasive Strategy / Ischemia-guided approach';
+        }
+    }
+
+    // 6. PE Risk (Wells, Geneva, PERC)
+    function calcWells() {
+        let score = 0;
+        if (document.getElementById('wells-dvt').checked) score += 3.0;
+        if (document.getElementById('wells-alt').checked) score += 3.0;
+        if (document.getElementById('wells-hr').checked) score += 1.5;
+        if (document.getElementById('wells-immob').checked) score += 1.5;
+        if (document.getElementById('wells-prev').checked) score += 1.5;
+        if (document.getElementById('wells-hemo').checked) score += 1.0;
+        if (document.getElementById('wells-ca').checked) score += 1.0;
+
+        document.getElementById('wells-score-val').textContent = score.toFixed(1);
+        const badge = document.getElementById('wells-risk-badge');
+        const guide = document.getElementById('wells-guidance');
+
+        if (score > 4.0) {
+            badge.className = 'risk-badge risk-high';
+            badge.textContent = 'PE Likely (> 4.0)';
+            guide.innerHTML = '<strong>Wells Score > 4.0 (PE Likely):</strong> แนะนำส่งตรวจ <strong>CTA Pulmonary Angiogram ด่วน</strong> และพิจารณาเริ่ม Empiric Anticoagulation (เช่น LMWH/Heparin) หากไม่มีข้อห้าม';
+        } else {
+            badge.className = 'risk-badge risk-low';
+            badge.textContent = 'PE Unlikely (≤ 4.0)';
+            guide.innerHTML = '<strong>Wells Score ≤ 4.0 (PE Unlikely):</strong> แนะนำส่งตรวจ <strong>High Sensitivity D-dimer</strong> หากผล D-dimer ปกติ (< 500 ng/mL หรือ age-adjusted) สามารถ Rule out PE ได้โดยไม่ต้องทำ CTA';
+        }
+    }
+
+    function calcGeneva() {
+        const age = parseInt(document.getElementById('geneva-age').value, 10);
+        const hr = parseInt(document.getElementById('geneva-hr').value, 10);
+        
+        let score = age + hr;
+        if (document.getElementById('geneva-prev').checked) score += 2;
+        if (document.getElementById('geneva-surg').checked) score += 2;
+        if (document.getElementById('geneva-ca').checked) score += 2;
+        if (document.getElementById('geneva-leg-pain').checked) score += 3;
+        if (document.getElementById('geneva-hemo').checked) score += 2;
+        if (document.getElementById('geneva-palp').checked) score += 4;
+
+        document.getElementById('geneva-score-val').textContent = score;
+        const badge = document.getElementById('geneva-risk-badge');
+        const guide = document.getElementById('geneva-guidance');
+
+        if (score >= 11) {
+            badge.className = 'risk-badge risk-vhigh';
+            badge.textContent = 'High Risk (74% PE Probability)';
+            guide.innerHTML = '<strong>Geneva ≥ 11 (High Risk):</strong> โอกาสเป็น PE สูงถึง 74% — ส่งตรวจ CTA Pulmonary Angiogram ทันที';
+        } else if (score >= 3) {
+            badge.className = 'risk-badge risk-mod';
+            badge.textContent = 'Intermediate Risk (28% PE Probability)';
+            guide.innerHTML = '<strong>Geneva 3-10 (Intermediate Risk):</strong> แนะนำส่ง D-dimer หรือ CTA Pulmonary Angiogram ตามความเหมาะสม';
+        } else {
+            badge.className = 'risk-badge risk-low';
+            badge.textContent = 'Low Risk (8% PE Probability)';
+            guide.innerHTML = '<strong>Geneva 0-2 (Low Risk):</strong> โอกาสเป็น PE ต่ำ (8%) — แนะนำส่ง D-dimer เพื่อ Rule-out';
+        }
+    }
+
+    function calcPERC() {
+        const ids = ['perc-age', 'perc-hr', 'perc-spo2', 'perc-prev', 'perc-surg', 'perc-hemo', 'perc-estrogen', 'perc-leg'];
+        let count = 0;
+        ids.forEach(id => {
+            if (document.getElementById(id).checked) count++;
+        });
+
+        document.getElementById('perc-score-val').textContent = count + ' / 8';
+        const badge = document.getElementById('perc-risk-badge');
+        const guide = document.getElementById('perc-guidance');
+
+        if (count === 8) {
+            badge.className = 'risk-badge risk-low';
+            badge.textContent = 'PERC Positive (PE Ruled Out)';
+            guide.innerHTML = '<strong>PERC 8/8 ครบทุกข้อ: Rule-Out PE สำเร็จ!</strong> โอกาสเป็น PE < 1.5% ไม่จำเป็นต้องส่งตรวจ D-dimer หรือ CTA Pulmonary Angiogram เพิ่มเติม';
+        } else {
+            badge.className = 'risk-badge risk-high';
+            badge.textContent = 'PERC Negative (Rule out failed)';
+            guide.innerHTML = 'เข้าเกณฑ์ไม่ครบ 8 ข้อ (' + count + '/8): ไม่สามารถใช้ PERC Rule out ได้ แนะนำพิจารณาตรวจ D-dimer เพิ่มเติมในผู้ป่วยกลุ่ม Low risk';
+        }
+    }
+</script>
+
+</body>
+</html>
