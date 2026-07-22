@@ -586,6 +586,40 @@ nav.innerHTML = `
     <div class="nav-center">MNRH-ED HUB</div>
     <div class="nav-right">v31 · Updated 2026-07-16</div>
 `;
+
+const navRight = nav.querySelector('.nav-right');
+if (navRight) {
+    navRight.style.display = 'flex';
+    navRight.style.alignItems = 'center';
+    navRight.style.justifyContent = 'flex-end';
+    navRight.style.gap = '12px';
+
+    const themeBtn = document.createElement('button');
+    themeBtn.id = 'theme-toggle-btn';
+    themeBtn.className = 'nav-theme-toggle';
+    themeBtn.type = 'button';
+    themeBtn.setAttribute('aria-label', 'Toggle Theme');
+
+    const getTheme = () => localStorage.getItem('er-hub-theme') || 'light';
+    const setTheme = (theme) => {
+        localStorage.setItem('er-hub-theme', theme);
+        document.documentElement.setAttribute('data-theme', theme);
+        themeBtn.innerHTML = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+        themeBtn.title = theme === 'dark' ? 'Switch to Light theme' : 'Switch to Dark theme';
+    };
+
+    const currentTheme = getTheme();
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    themeBtn.innerHTML = currentTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+    themeBtn.title = currentTheme === 'dark' ? 'Switch to Light theme' : 'Switch to Dark theme';
+
+    themeBtn.addEventListener('click', () => {
+        setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+    });
+
+    navRight.appendChild(themeBtn);
+}
+
 document.body.insertBefore(nav, document.body.firstChild);
 
 if ('serviceWorker' in navigator) {

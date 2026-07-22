@@ -96,7 +96,7 @@ Features:
 
 ### Clinical Score & Risk Hub (`tools/score-hub.html`)
 
-Unified emergency medicine scoring and risk stratification tool. Self-contained HTML worksheet with Braun analogue design system, sticky top navigation bar (`ED_COMPONENTS.injectNavBar()`), and tab switching interface.
+Unified emergency medicine scoring and risk stratification tool. Self-contained HTML worksheet with Braun analogue design system, sticky top navigation bar (`ED_COMPONENTS.injectNavBar()`), and tab switching interface. Enforced as **Always Dark** (`data-theme="dark"`).
 Modules:
 - **AWS Score (CIWA-Ar):** 10 clinical items (0-67 total) with Mild (<10), Moderate (10-19), and Severe (≥20) risk tiers, plus symptom-triggered Benzodiazepine protocol including Lorazepam (2-4 mg PO/IV) & Diazepam dosing regimens.
 - **Sepsis Warning Signs & Screening:** NEWS2 (SSC 2026 Primary Screen) and SIRS early warning calculators, Sepsis 1-Hour resuscitation bundle checklist, and initial empiric antibiotics selection categorized by infection source (Unknown, Pulmonary, Intra-abdominal, UTI, Skin/Soft Tissue, CNS).

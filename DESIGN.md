@@ -25,6 +25,20 @@ Custom properties declared under `:root` in `base.css` for standing-order form p
 - **Cardiac Theme (red):** `--cardiac-primary: #c0392b` (cardiac page h1/buttons/focus borders/dose numbers), `--cardiac-hover: #a93226` (hover state), `--cardiac-bg-highlight: #fff5f5` (cardiac input focus background)
 - **Success (green):** `--success-primary: #28a745` (print button background), `--success-hover: #218838` (print button hover)
 
+#### Dark Theme Core Tokens (`[data-theme="dark"]`)
+
+Custom properties declared under `[data-theme="dark"]` in `base.css`:
+
+- **Screen Background (`--bg-screen`, `--paper`):** `#0f172a` (Slate 900)
+- **Container / Card Background (`--bg-card`):** `#1e293b` (Slate 800)
+- **Primary Text / Ink (`--text-primary`, `--ink`):** `#f8fafc` (Slate 50)
+- **Secondary Text / Graphite (`--graphite`):** `#94a3b8` (Slate 400)
+- **Border / Rule (`--border-neutral`, `--rule`):** `#334155` (Slate 700)
+- **Signal Orange (`--signal-orange`):** `#ff6b4a` (High-contrast triage marker on dark backgrounds)
+- **Stroke Accent:** `--stroke-primary: #38bdf8`, `--stroke-hover: #0284c7`, `--stroke-bg-highlight: #0369a1`
+- **Cardiac Accent:** `--cardiac-primary: #f87171`, `--cardiac-hover: #dc2626`, `--cardiac-bg-highlight: #450a0a`
+- **Theme Toggle Button:** `.nav-theme-toggle` / `#theme-toggle-btn` embedded in sticky navigation bar (`ED_COMPONENTS.injectNavBar()`). Toggles `data-theme` attribute between `light` and `dark`, persisting preference in `localStorage.setItem('er-hub-theme', theme)`. `tools/score-hub.html` is enforced as **Always Dark** (`data-theme="dark"`).
+
 #### Module Specific Accents (Muted Text-Only Categories)
 
 - **Neurology:** Ochre `#b8873a`

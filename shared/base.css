@@ -32,10 +32,62 @@
     --neutral-primary: #7f8c8d;
     --neutral-hover: #626c6d;
 
-    /* Body horizontal/vertical padding — .top-nav's breakout math (below)
-       reads this var so the nav stays flush regardless of how a page
-       overrides body padding (see index.html, which sets this to 0). */
+    /* Body horizontal/vertical padding */
     --page-pad: 20px;
+}
+
+/* ===== Dark Theme Override Tokens ===== */
+[data-theme="dark"] {
+    --bg-screen: #0f172a;
+    --bg-card: #1e293b;
+    --text-primary: #f8fafc;
+    --border-neutral: #334155;
+    --highlight-yellow: #3a3200;
+    --highlight-red-bg: #3b1419;
+
+    --paper: #0f172a;
+    --ink: #f8fafc;
+    --graphite: #94a3b8;
+    --rule: #334155;
+    --signal-orange: #ff6b4a;
+    --braun-white: #f8fafc;
+
+    --stroke-primary: #38bdf8;
+    --stroke-hover: #0284c7;
+    --stroke-bg-highlight: #0369a1;
+
+    --cardiac-primary: #f87171;
+    --cardiac-hover: #dc2626;
+    --cardiac-bg-highlight: #450a0a;
+
+    --success-primary: #4ade80;
+    --success-hover: #16a34a;
+
+    --neutral-primary: #94a3b8;
+    --neutral-hover: #64748b;
+}
+
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] select {
+    background-color: #0f172a;
+    color: #f8fafc;
+    border-color: #334155;
+}
+
+[data-theme="dark"] select option {
+    background-color: #0f172a;
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .container {
+    background: var(--bg-card);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+[data-theme="dark"] .fib-card {
+    background-color: #0f172a;
+    border-color: #334155;
 }
 
 /* ===== Base Styles ===== */
@@ -298,6 +350,29 @@ input[type="checkbox"] {
 
 .nav-title-short {
     display: none;
+}
+
+.nav-theme-toggle {
+    margin-left: auto;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(240, 237, 229, 0.3);
+    color: #F0EDE5;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.nav-theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.28);
+    border-color: rgba(240, 237, 229, 0.6);
 }
 
 /* ===== Buttons ===== */
