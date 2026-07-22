@@ -57,9 +57,9 @@
             color: var(--ink);
         }
         .tab-btn.active {
-            background: #49628d;
-            color: #F0EDE5;
-            border-color: #49628d;
+            background: var(--signal-orange, #d84315);
+            color: #ffffff;
+            border-color: var(--signal-orange, #d84315);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .tab-panel {
@@ -123,15 +123,15 @@
         .input-group select:focus,
         .input-group input:focus {
             outline: none;
-            border-color: #49628d;
+            border-color: var(--signal-orange, #d84315);
             background: #fff;
-            box-shadow: 0 0 0 2px rgba(73, 98, 141, 0.2);
+            box-shadow: 0 0 0 2px rgba(216, 67, 21, 0.2);
         }
 
         /* Result Display Box */
         .result-banner {
-            background: #f8f9fa;
-            border: 2px solid #49628d;
+            background: #faf8f5;
+            border: 2px solid var(--signal-orange, #d84315);
             border-radius: 8px;
             padding: 18px 24px;
             margin-top: 20px;
@@ -169,7 +169,7 @@
 
         .clinical-guidance-box {
             background: #ffffff;
-            border-left: 4px solid #49628d;
+            border-left: 4px solid var(--signal-orange, #d84315);
             padding: 12px 16px;
             border-radius: 0 4px 4px 0;
             font-size: 13.5px;
@@ -376,33 +376,16 @@
         <!-- TAB 2: Sepsis Screening & Early Warning Scores -->
         <div class="tab-panel" id="panel-sepsis">
             <div class="sub-nav">
-                <button class="sub-btn active" id="sub-btn-qsofa" onclick="switchSepsisSub('qsofa')">qSOFA & SIRS</button>
-                <button class="sub-btn" id="sub-btn-news2" onclick="switchSepsisSub('news2')">NEWS2 Score</button>
+                <button class="sub-btn active" id="sub-btn-news2" onclick="switchSepsisSub('news2')">NEWS2 Score (SSC 2026 Primary Screen)</button>
+                <button class="sub-btn" id="sub-btn-mews" onclick="switchSepsisSub('mews')">MEWS Score</button>
+                <button class="sub-btn" id="sub-btn-sirs" onclick="switchSepsisSub('sirs')">SIRS Criteria</button>
                 <button class="sub-btn" id="sub-btn-abx" onclick="switchSepsisSub('abx')">💊 Initial Antibiotics by Source</button>
             </div>
 
-            <!-- Sub panel: qSOFA & SIRS -->
-            <div id="sepsis-sub-qsofa">
+            <!-- Sub panel: SIRS Criteria -->
+            <div id="sepsis-sub-sirs" style="display: none;">
                 <div class="calc-card">
-                    <div class="calc-card-title">1. Quick SOFA (qSOFA) Score</div>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <div class="check-item">
-                            <input type="checkbox" id="qsofa-rr" onchange="calcSepsis()">
-                            <label for="qsofa-rr"><strong>Respiratory Rate ≥ 22 /min</strong> (หายใจเร็ว ≥ 22 ครั้ง/นาที)</label>
-                        </div>
-                        <div class="check-item">
-                            <input type="checkbox" id="qsofa-gcs" onchange="calcSepsis()">
-                            <label for="qsofa-gcs"><strong>Altered Mental Status</strong> (ระดับความรู้สึกตัวเปลี่ยน GCS < 15)</label>
-                        </div>
-                        <div class="check-item">
-                            <input type="checkbox" id="qsofa-sbp" onchange="calcSepsis()">
-                            <label for="qsofa-sbp"><strong>Systolic BP ≤ 100 mmHg</strong> (ความดันโลหิตตัวบน ≤ 100 mmHg)</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="calc-card">
-                    <div class="calc-card-title">2. SIRS Criteria (Systemic Inflammatory Response Syndrome)</div>
+                    <div class="calc-card-title">SIRS Criteria (Systemic Inflammatory Response Syndrome)</div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div class="check-item">
                             <input type="checkbox" id="sirs-temp" onchange="calcSepsis()">
@@ -426,8 +409,7 @@
                 <div class="result-banner">
                     <div class="result-header-row">
                         <div>
-                            <span style="font-weight: 700; color: #555;">qSOFA:</span> <span id="qsofa-score" style="font-size: 1.5em; font-weight: 700;">0 / 3</span> &nbsp;|&nbsp;
-                            <span style="font-weight: 700; color: #555;">SIRS:</span> <span id="sirs-score" style="font-size: 1.5em; font-weight: 700;">0 / 4</span>
+                            <span style="font-weight: 700; color: #555;">SIRS Score Total:</span> <span id="sirs-score" style="font-size: 1.5em; font-weight: 700;">0 / 4</span>
                         </div>
                         <div id="sepsis-status-badge">
                             <span class="risk-badge risk-low">Low Risk</span>
@@ -445,8 +427,79 @@
                 </div>
             </div>
 
+            <!-- Sub panel: MEWS -->
+            <div id="sepsis-sub-mews" style="display: none;">
+                <div class="calc-card">
+                    <div class="calc-card-title">MEWS (Modified Early Warning Score)</div>
+                    <div class="item-grid">
+                        <div class="input-group">
+                            <label for="mews-sbp">Systolic BP (mmHg)</label>
+                            <select id="mews-sbp" onchange="calcMEWS()">
+                                <option value="3">≤ 70 (Score 3)</option>
+                                <option value="2">71-80 (Score 2)</option>
+                                <option value="1">81-100 (Score 1)</option>
+                                <option value="0" selected>101-199 (Score 0)</option>
+                                <option value="2">≥ 200 (Score 2)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="mews-hr">Heart Rate (bpm)</label>
+                            <select id="mews-hr" onchange="calcMEWS()">
+                                <option value="2">≤ 40 (Score 2)</option>
+                                <option value="1">41-50 (Score 1)</option>
+                                <option value="0" selected>51-100 (Score 0)</option>
+                                <option value="1">101-110 (Score 1)</option>
+                                <option value="2">111-129 (Score 2)</option>
+                                <option value="3">≥ 130 (Score 3)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="mews-rr">Respiratory Rate (/min)</label>
+                            <select id="mews-rr" onchange="calcMEWS()">
+                                <option value="2">&lt; 9 (Score 2)</option>
+                                <option value="0" selected>9-14 (Score 0)</option>
+                                <option value="1">15-20 (Score 1)</option>
+                                <option value="2">21-29 (Score 2)</option>
+                                <option value="3">≥ 30 (Score 3)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="mews-temp">Temperature (°C)</label>
+                            <select id="mews-temp" onchange="calcMEWS()">
+                                <option value="2">&lt; 35.0 (Score 2)</option>
+                                <option value="0" selected>35.0-38.4 (Score 0)</option>
+                                <option value="2">≥ 38.5 (Score 2)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="mews-avpu">Consciousness (AVPU)</label>
+                            <select id="mews-avpu" onchange="calcMEWS()">
+                                <option value="0" selected>Alert (Score 0)</option>
+                                <option value="1">Reacts to Voice (Score 1)</option>
+                                <option value="2">Reacts to Pain (Score 2)</option>
+                                <option value="3">Unresponsive (Score 3)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-banner">
+                    <div class="result-header-row">
+                        <div>
+                            <span style="font-weight: 700; color: #555;">MEWS Score Total:</span>
+                            <div class="score-val-large" id="mews-score-val">0</div>
+                        </div>
+                        <div>
+                            <span class="risk-badge risk-low" id="mews-risk-badge">Low Risk (0-1)</span>
+                        </div>
+                    </div>
+                    <div class="clinical-guidance-box" id="mews-guidance">
+                        <strong>MEWS 0-1: Low Risk</strong> — ประเมินสัญญาณชีพตามรอบปกติทุก 4-6 ชั่วโมง
+                    </div>
+                </div>
+            </div>
+
             <!-- Sub panel: NEWS2 -->
-            <div id="sepsis-sub-news2" style="display: none;">
+            <div id="sepsis-sub-news2">
                 <div class="calc-card">
                     <div class="calc-card-title">NEWS2 (National Early Warning Score 2)</div>
                     <div class="item-grid">
@@ -732,14 +785,14 @@
                 <div class="result-header-row">
                     <div>
                         <span style="font-weight: 700; color: #555;">GRACE Score:</span>
-                        <div class="score-val-large" id="grace-score-val">100</div>
+                        <div class="score-val-large" id="grace-score-val">122</div>
                     </div>
                     <div>
-                        <span class="risk-badge risk-low" id="grace-risk-badge">Low Risk (< 109)</span>
+                        <span class="risk-badge risk-mod" id="grace-risk-badge">Intermediate Risk (109-140)</span>
                     </div>
                 </div>
                 <div class="clinical-guidance-box" id="grace-guidance">
-                    <strong>การจัดกลุ่มความเสี่ยง NSTEMI:</strong> คะแนน < 109 ความเสี่ยงต่ำ (In-hospital mortality < 1%) — แนะนำ Selective Invasive Strategy
+                    <strong>การจัดกลุ่มความเสี่ยง NSTEMI:</strong> คะแนน 109-140 ความเสี่ยงปานกลาง (In-hospital mortality 1-3%) — แนะนำ Invasive Strategy ภายใน 72 ชั่วโมง
                 </div>
             </div>
         </div>
@@ -862,7 +915,7 @@
                         </div>
                     </div>
                     <div class="clinical-guidance-box" id="geneva-guidance">
-                        Geneva Score 0-2 (Low Risk): พิจารณาตรวจ D-dimer เพื่อ Rule-out
+                        Geneva Score 0-3 (Low Risk): พิจารณาตรวจ D-dimer เพื่อ Rule-out
                     </div>
                 </div>
             </div>
@@ -916,11 +969,11 @@
                             <div class="score-val-large" id="perc-score-val">0 / 8</div>
                         </div>
                         <div>
-                            <span class="risk-badge risk-high" id="perc-risk-badge">PERC Negative (Rule out failed)</span>
+                            <span class="risk-badge risk-high" id="perc-risk-badge">PERC Positive (Rule-out failed)</span>
                         </div>
                     </div>
                     <div class="clinical-guidance-box" id="perc-guidance">
-                        เข้าเกณฑ์ไม่ครบ 8 ข้อ: ไม่สามารถใช้ PERC Rule out ได้ แนะนำพิจารณาตรวจ D-dimer เพิ่มเติม
+                        เข้าเกณฑ์ไม่ครบ 8 ข้อ (0/8): มีปัจจัยเสี่ยง (PERC Positive) ไม่สามารถ Rule out PE ได้ แนะนำพิจารณาตรวจ D-dimer เพิ่มเติม
                     </div>
                 </div>
             </div>
@@ -942,6 +995,7 @@
         calcAWS();
         calcSepsis();
         calcNEWS2();
+        calcMEWS();
         calcABCD2();
         calcHEART();
         calcGRACEPure();
@@ -964,8 +1018,9 @@
     // Sepsis Sub-tabs
     function switchSepsisSub(subId) {
         document.querySelectorAll('#panel-sepsis .sub-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById('sepsis-sub-qsofa').style.display = 'none';
         document.getElementById('sepsis-sub-news2').style.display = 'none';
+        document.getElementById('sepsis-sub-mews').style.display = 'none';
+        document.getElementById('sepsis-sub-sirs').style.display = 'none';
         document.getElementById('sepsis-sub-abx').style.display = 'none';
 
         document.getElementById('sub-btn-' + subId).classList.add('active');
@@ -1015,27 +1070,21 @@
         }
     }
 
-    // 2. Sepsis (qSOFA & SIRS)
+    // 2. Sepsis (SIRS Criteria)
     function calcSepsis() {
-        const qsofaRR = document.getElementById('qsofa-rr').checked ? 1 : 0;
-        const qsofaGCS = document.getElementById('qsofa-gcs').checked ? 1 : 0;
-        const qsofaSBP = document.getElementById('qsofa-sbp').checked ? 1 : 0;
-        const qsofaScore = qsofaRR + qsofaGCS + qsofaSBP;
-
         const sirsTemp = document.getElementById('sirs-temp').checked ? 1 : 0;
         const sirsHR = document.getElementById('sirs-hr').checked ? 1 : 0;
         const sirsRR = document.getElementById('sirs-rr').checked ? 1 : 0;
         const sirsWBC = document.getElementById('sirs-wbc').checked ? 1 : 0;
         const sirsScore = sirsTemp + sirsHR + sirsRR + sirsWBC;
 
-        document.getElementById('qsofa-score').textContent = qsofaScore + ' / 3';
         document.getElementById('sirs-score').textContent = sirsScore + ' / 4';
 
         const badgeBox = document.getElementById('sepsis-status-badge');
-        if (qsofaScore >= 2 || sirsScore >= 2) {
-            badgeBox.innerHTML = '<span class="risk-badge risk-high">⚠️ HIGH SEPSIS RISK</span>';
+        if (sirsScore >= 2) {
+            badgeBox.innerHTML = '<span class="risk-badge risk-high">⚠️ SIRS POSITIVE (≥ 2)</span>';
         } else {
-            badgeBox.innerHTML = '<span class="risk-badge risk-low">Low Sepsis Risk</span>';
+            badgeBox.innerHTML = '<span class="risk-badge risk-low">SIRS Negative (< 2)</span>';
         }
     }
 
@@ -1224,20 +1273,30 @@
         const badge = document.getElementById('wells-risk-badge');
         const guide = document.getElementById('wells-guidance');
 
-        if (score > 4.0) {
+        const isLikely = score > 4.0;
+        let tier3Label = '';
+        if (score > 6.0) {
+            tier3Label = '3-Tier: High Risk (> 6.0 — 37.5%)';
+        } else if (score >= 2.0) {
+            tier3Label = '3-Tier: Moderate Risk (2.0-6.0 — 16.2%)';
+        } else {
+            tier3Label = '3-Tier: Low Risk (< 2.0 — 1.3%)';
+        }
+
+        if (isLikely) {
             badge.className = 'risk-badge risk-high';
             badge.textContent = 'PE Likely (> 4.0)';
-            guide.innerHTML = '<strong>Wells Score > 4.0 (PE Likely):</strong> แนะนำส่งตรวจ <strong>CTA Pulmonary Angiogram ด่วน</strong> และพิจารณาเริ่ม Empiric Anticoagulation (เช่น LMWH/Heparin) หากไม่มีข้อห้าม';
+            guide.innerHTML = '<strong>Wells Score > 4.0 (PE Likely):</strong> แนะนำส่งตรวจ <strong>CTA Pulmonary Angiogram ด่วน</strong> และพิจารณาเริ่ม Empiric Anticoagulation (เช่น LMWH/Heparin) หากไม่มีข้อห้าม<br><small style="color: #666; margin-top: 4px; display: inline-block;">' + tier3Label + '</small>';
         } else {
             badge.className = 'risk-badge risk-low';
             badge.textContent = 'PE Unlikely (≤ 4.0)';
-            guide.innerHTML = '<strong>Wells Score ≤ 4.0 (PE Unlikely):</strong> แนะนำส่งตรวจ <strong>High Sensitivity D-dimer</strong> หากผล D-dimer ปกติ (< 500 ng/mL หรือ age-adjusted) สามารถ Rule out PE ได้โดยไม่ต้องทำ CTA';
+            guide.innerHTML = '<strong>Wells Score ≤ 4.0 (PE Unlikely):</strong> แนะนำส่งตรวจ <strong>High Sensitivity D-dimer</strong> หากผล D-dimer ปกติ (< 500 ng/mL หรือ age-adjusted) สามารถ Rule out PE ได้โดยไม่ต้องทำ CTA<br><small style="color: #666; margin-top: 4px; display: inline-block;">' + tier3Label + '</small>';
         }
     }
 
     function calcGeneva() {
-        const age = parseInt(document.getElementById('geneva-age').value, 10);
-        const hr = parseInt(document.getElementById('geneva-hr').value, 10);
+        const age = parseInt(document.getElementById('geneva-age').value, 10) || 0;
+        const hr = parseInt(document.getElementById('geneva-hr').value, 10) || 0;
         
         let score = age + hr;
         if (document.getElementById('geneva-prev').checked) score += 2;
@@ -1255,14 +1314,14 @@
             badge.className = 'risk-badge risk-vhigh';
             badge.textContent = 'High Risk (74% PE Probability)';
             guide.innerHTML = '<strong>Geneva ≥ 11 (High Risk):</strong> โอกาสเป็น PE สูงถึง 74% — ส่งตรวจ CTA Pulmonary Angiogram ทันที';
-        } else if (score >= 3) {
+        } else if (score >= 4) {
             badge.className = 'risk-badge risk-mod';
             badge.textContent = 'Intermediate Risk (28% PE Probability)';
-            guide.innerHTML = '<strong>Geneva 3-10 (Intermediate Risk):</strong> แนะนำส่ง D-dimer หรือ CTA Pulmonary Angiogram ตามความเหมาะสม';
+            guide.innerHTML = '<strong>Geneva 4-10 (Intermediate Risk):</strong> แนะนำส่ง D-dimer หรือ CTA Pulmonary Angiogram ตามความเหมาะสม';
         } else {
             badge.className = 'risk-badge risk-low';
             badge.textContent = 'Low Risk (8% PE Probability)';
-            guide.innerHTML = '<strong>Geneva 0-2 (Low Risk):</strong> โอกาสเป็น PE ต่ำ (8%) — แนะนำส่ง D-dimer เพื่อ Rule-out';
+            guide.innerHTML = '<strong>Geneva 0-3 (Low Risk):</strong> โอกาสเป็น PE ต่ำ (8%) — แนะนำส่ง D-dimer เพื่อ Rule-out';
         }
     }
 
@@ -1279,12 +1338,12 @@
 
         if (count === 8) {
             badge.className = 'risk-badge risk-low';
-            badge.textContent = 'PERC Positive (PE Ruled Out)';
-            guide.innerHTML = '<strong>PERC 8/8 ครบทุกข้อ: Rule-Out PE สำเร็จ!</strong> โอกาสเป็น PE < 1.5% ไม่จำเป็นต้องส่งตรวจ D-dimer หรือ CTA Pulmonary Angiogram เพิ่มเติม';
+            badge.textContent = 'PERC Negative (8/8 met — PE Ruled Out)';
+            guide.innerHTML = '<strong>PERC 8/8 ครบทุกข้อ: Rule-Out PE สำเร็จ! (PERC Negative)</strong> โอกาสเป็น PE < 1.5% ไม่จำเป็นต้องส่งตรวจ D-dimer หรือ CTA Pulmonary Angiogram เพิ่มเติม';
         } else {
             badge.className = 'risk-badge risk-high';
-            badge.textContent = 'PERC Negative (Rule out failed)';
-            guide.innerHTML = 'เข้าเกณฑ์ไม่ครบ 8 ข้อ (' + count + '/8): ไม่สามารถใช้ PERC Rule out ได้ แนะนำพิจารณาตรวจ D-dimer เพิ่มเติมในผู้ป่วยกลุ่ม Low risk';
+            badge.textContent = 'PERC Positive (Rule-out failed)';
+            guide.innerHTML = 'เข้าเกณฑ์ไม่ครบ 8 ข้อ (' + count + '/8): มีปัจจัยเสี่ยง (PERC Positive) ไม่สามารถ Rule out PE ได้ แนะนำพิจารณาตรวจ D-dimer เพิ่มเติมในผู้ป่วยกลุ่ม Low risk';
         }
     }
 </script>

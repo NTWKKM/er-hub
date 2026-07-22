@@ -99,7 +99,7 @@ Features:
 Unified emergency medicine scoring and risk stratification tool. Self-contained HTML worksheet with Braun analogue design system, sticky top navigation bar (`ED_COMPONENTS.injectNavBar()`), and tab switching interface.
 Modules:
 - **AWS Score (CIWA-Ar):** 10 clinical items (0-67 total) with Mild (<10), Moderate (10-19), and Severe (≥20) risk tiers, plus symptom-triggered Benzodiazepine protocol including Lorazepam (2-4 mg PO/IV) & Diazepam dosing regimens.
-- **Sepsis Warning Signs & Screening:** qSOFA, SIRS, and NEWS2 early warning calculators, Sepsis 1-Hour resuscitation bundle checklist, and initial empiric antibiotics selection categorized by infection source (Unknown, Pulmonary, Intra-abdominal, UTI, Skin/Soft Tissue, CNS).
+- **Sepsis Warning Signs & Screening:** NEWS2 (SSC 2026 Primary Screen) and SIRS early warning calculators, Sepsis 1-Hour resuscitation bundle checklist, and initial empiric antibiotics selection categorized by infection source (Unknown, Pulmonary, Intra-abdominal, UTI, Skin/Soft Tissue, CNS).
 - **ABCD2 Score:** TIA 2-day stroke risk calculation (0-7 total, Low/Moderate/High risk).
 - **HEART Score:** ER Chest Pain MACE risk evaluation (0-10 total: Low 0-3 / Mod 4-6 / High 7-10).
 - **GRACE Score:** Pure standalone interface consuming `CLINICAL_ENGINE.calcGRACE()` for NSTEMI mortality risk stratification.

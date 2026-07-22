@@ -24,7 +24,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | **NEWS2** | National Early Warning Score. 7-physiological-parameter bedside score for clinical deterioration. Embedded in sepsis template. |
 | **HEART Score** | History, ECG, Age, Risk factors, Troponin. Major Adverse Cardiac Event risk stratification. Embedded in chest-pain template. |
 | **Alvarado Score** | Appendicitis scoring system. Embedded in abdominal-pain template. |
-| **qSOFA** | Quick Sequential Organ Failure Assessment. Sepsis screening. Embedded in sepsis template. |
+| **qSOFA** | Quick Sequential Organ Failure Assessment. Per SSC 2026 guidelines, NOT recommended as a single screening tool due to low sensitivity (NEWS2/SIRS preferred for primary screening). Removed from Score Hub screening tab. |
 | **RIG Dose** | Rabies Immunoglobulin dose ≈ 2 mL/kg wound infiltration, max 100 mL per episode (WHO Thailand rabies guidance). Embedded in mammalian-bite template. |
 | **GCS** | Glasgow Coma Scale. Consciousness assessment (Eye 1-4, Verbal 1-5 or T, Motor 1-6; total 3-15). Embedded in trauma template with auto-total and auto-selection of disability range radio. |
 | **NIHSS** | National Institutes of Health Stroke Scale. 11-item neurological deficit score (0–42). Standalone scoring worksheet (`tools/nihss.html`), linked from rtpa.html toolbar via "NIHSS เปล่า" popup button. |
