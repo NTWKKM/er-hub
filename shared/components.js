@@ -233,14 +233,14 @@ const ED_COMPONENTS = {
 
         btns.forEach(btn => {
             if (isScoreHub) {
-                btn.innerHTML = `🌙 Dark <span style="opacity:0.7; font-weight:normal; font-size:11px;">(App: ${savedTheme === 'dark' ? 'Dark' : 'Light'})</span>`;
-                btn.title = `Score Hub is always dark. Click to switch main app default theme (currently ${savedTheme})`;
+                btn.innerHTML = '🌙';
+                btn.title = `Score Hub is always dark. Click to switch main app default theme (currently ${savedTheme === 'dark' ? 'Dark' : 'Light'})`;
             } else {
                 if (savedTheme === 'dark') {
-                    btn.innerHTML = '☀️ Light';
+                    btn.innerHTML = '☀️';
                     btn.title = 'Switch to Light theme';
                 } else {
-                    btn.innerHTML = '🌙 Dark';
+                    btn.innerHTML = '🌙';
                     btn.title = 'Switch to Dark theme';
                 }
             }
