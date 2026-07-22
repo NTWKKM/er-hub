@@ -10,6 +10,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../shared/base.css">
     <style>
+        :root {
+            --paper: #1c1c1c;
+            --ink: #d4d4d4;
+            --graphite: #8f8f8f;
+            --rule: #3a3a3a;
+            --signal-orange: #e8e8e8;
+        }
+
+        body {
+            background-color: var(--paper);
+            color: var(--ink);
+        }
+
         .score-hub-header {
             margin-bottom: 20px;
             padding-bottom: 12px;
@@ -53,14 +66,14 @@
             gap: 6px;
         }
         .tab-btn:hover {
-            background: #e2ddd3;
+            background: #2e2e2e;
             color: var(--ink);
         }
         .tab-btn.active {
-            background: var(--signal-orange, #d84315);
-            color: #ffffff;
-            border-color: var(--signal-orange, #d84315);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--signal-orange);
+            color: #111111;
+            border-color: var(--signal-orange);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .tab-panel {
             display: none;
@@ -76,12 +89,12 @@
 
         /* Calculator Card Layout */
         .calc-card {
-            background: #ffffff;
+            background: #262626;
             border: 1px solid var(--rule);
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
         .calc-card-title {
             font-size: 1.1em;
@@ -118,14 +131,15 @@
             border-radius: 4px;
             font-size: 14px;
             font-family: inherit;
-            background: #fafafa;
+            background: #2e2e2e;
+            color: var(--ink);
         }
         .input-group select:focus,
         .input-group input:focus {
             outline: none;
-            border-color: var(--signal-orange, #d84315);
-            background: #fff;
-            box-shadow: 0 0 0 2px rgba(216, 67, 21, 0.2);
+            border-color: var(--signal-orange);
+            background: #333333;
+            box-shadow: 0 0 0 2px rgba(232, 232, 232, 0.25);
         }
 
         /* Choice Buttons Layout */
@@ -141,10 +155,10 @@
         .choice-btn {
             flex: 1 1 auto;
             padding: 8px 12px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid #444444;
             border-radius: 6px;
-            background: #f8fafc;
-            color: #334155;
+            background: #2e2e2e;
+            color: var(--ink);
             font-size: 13.5px;
             font-family: inherit;
             cursor: pointer;
@@ -158,22 +172,22 @@
             justify-content: flex-start;
         }
         .choice-btn:hover {
-            background: #e2e8f0;
-            border-color: #94a3b8;
-            color: #0f172a;
+            background: #3a3a3a;
+            border-color: #666666;
+            color: #ffffff;
         }
         .choice-btn.selected {
-            background: var(--signal-orange, #d84315);
-            color: #ffffff;
-            border-color: var(--signal-orange, #d84315);
+            background: var(--signal-orange);
+            color: #111111;
+            border-color: var(--signal-orange);
             font-weight: 600;
-            box-shadow: 0 2px 4px rgba(216, 67, 21, 0.25);
+            box-shadow: 0 2px 4px rgba(255, 255, 255, 0.15);
         }
 
         /* Result Display Box */
         .result-banner {
-            background: #faf8f5;
-            border: 2px solid var(--signal-orange, #d84315);
+            background: #222222;
+            border: 2px solid var(--signal-orange);
             border-radius: 8px;
             padding: 18px 24px;
             margin-top: 20px;
@@ -204,19 +218,19 @@
             text-transform: uppercase;
             display: inline-block;
         }
-        .risk-low { background: #e8f8f0; color: #1e7e34; border: 1px solid #b1dfbb; }
-        .risk-mod { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-        .risk-high { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .risk-vhigh { background: #c0392b; color: #ffffff; border: 1px solid #962d22; }
+        .risk-low { background: #2a2a2a; color: #c8c8c8; border: 1px solid #444444; }
+        .risk-mod { background: #4a4a4a; color: #e8e8e8; border: 1.5px solid #666666; }
+        .risk-high { background: #6e6e6e; color: #1a1a1a; border: 2px solid #8a8a8a; }
+        .risk-vhigh { background: #d8d8d8; color: #111111; border: 3px solid #f0f0f0; }
 
         .clinical-guidance-box {
-            background: #ffffff;
-            border-left: 4px solid var(--signal-orange, #d84315);
+            background: #2a2a2a;
+            border-left: 4px solid var(--signal-orange);
             padding: 12px 16px;
             border-radius: 0 4px 4px 0;
             font-size: 13.5px;
             line-height: 1.5;
-            color: #2c3e50;
+            color: var(--ink);
         }
         .clinical-guidance-box h5 {
             margin: 0 0 6px 0;
@@ -231,13 +245,13 @@
             gap: 8px;
             padding: 8px;
             border-radius: 4px;
-            background: #fdfdfd;
-            border: 1px solid #eaeaea;
+            background: #242424;
+            border: 1px solid #3a3a3a;
             cursor: pointer;
             transition: background 120ms ease;
         }
         .check-item:hover {
-            background: #f0ede5;
+            background: #333333;
         }
         .check-item input[type="checkbox"] {
             margin-top: 3px;
@@ -248,11 +262,9 @@
         .check-item label {
             cursor: pointer;
             font-size: 13.5px;
-            color: #333;
+            color: var(--ink);
             user-select: none;
         }
-
-
 
         /* Sub-navigation inside Sepsis tab */
         .sub-nav {
@@ -272,13 +284,33 @@
             transition: all 120ms ease;
         }
         .sub-btn:hover {
-            background: #e2ddd3;
+            background: #2e2e2e;
             color: var(--ink);
         }
         .sub-btn.active {
-            background: var(--ink);
-            color: #fff;
-            border-color: var(--ink);
+            background: var(--signal-orange);
+            color: #111111;
+            border-color: var(--signal-orange);
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }
+            .calc-card, .result-banner, .clinical-guidance-box {
+                background: #ffffff !important;
+                color: #000000 !important;
+                border-color: #666666 !important;
+                box-shadow: none !important;
+            }
+            .tab-btn.active, .sub-btn.active, .choice-btn.selected {
+                background: #e0e0e0 !important;
+                color: #000000 !important;
+            }
+            .risk-badge {
+                border-color: #000000 !important;
+            }
         }
     </style>
 </head>
@@ -306,7 +338,7 @@
             <div class="calc-card">
                 <div class="calc-card-title">
                     <span>Clinical Institute Withdrawal Assessment for Alcohol (CIWA-Ar)</span>
-                    <span style="font-size: 12px; font-weight: normal; color: #666;">คะแนนรวมเต็ม 67</span>
+                    <span style="font-size: 12px; font-weight: normal; color: var(--graphite);">คะแนนรวมเต็ม 67</span>
                 </div>
                 <div class="item-grid">
                     <div class="input-group">
@@ -417,7 +449,7 @@
             <div class="result-banner" id="aws-result-box">
                 <div class="result-header-row">
                     <div>
-                        <span style="font-weight: 700; color: #555;">CIWA-Ar Total Score:</span>
+                        <span style="font-weight: 700; color: var(--graphite);">CIWA-Ar Total Score:</span>
                         <div class="score-val-large" id="aws-score-display">0 / 67</div>
                     </div>
                     <div>
@@ -467,7 +499,7 @@
                 <div class="result-banner">
                     <div class="result-header-row">
                         <div>
-                            <span style="font-weight: 700; color: #555;">SIRS Score Total:</span> <span id="sirs-score" style="font-size: 1.5em; font-weight: 700;">0 / 4</span>
+                            <span style="font-weight: 700; color: var(--graphite);">SIRS Score Total:</span> <span id="sirs-score" style="font-size: 1.5em; font-weight: 700;">0 / 4</span>
                         </div>
                         <div id="sepsis-status-badge">
                             <span class="risk-badge risk-low">Low Risk</span>
@@ -548,7 +580,7 @@
                 <div class="result-banner">
                     <div class="result-header-row">
                         <div>
-                            <span style="font-weight: 700; color: #555;">MEWS Score Total:</span>
+                            <span style="font-weight: 700; color: var(--graphite);">MEWS Score Total:</span>
                             <div class="score-val-large" id="mews-score-val">0</div>
                         </div>
                         <div>
@@ -642,7 +674,7 @@
                 <div class="result-banner">
                     <div class="result-header-row">
                         <div>
-                            <span style="font-weight: 700; color: #555;">NEWS2 Score Total:</span>
+                            <span style="font-weight: 700; color: var(--graphite);">NEWS2 Score Total:</span>
                             <div class="score-val-large" id="news2-score-val">0</div>
                         </div>
                         <div>
@@ -671,8 +703,8 @@
                             <button type="button" class="choice-btn" onclick="selectChoice('sepsis-source-select', 'cns', event, updateSepsisAbx)">6. Central Nervous System (Acute Bacterial Meningitis)</button>
                         </div>
                     </div>
-                    <div class="clinical-guidance-box" id="abx-recommendation-box" style="border-left-color: #27ae60; background: #f4fbf7;">
-                        <h4 style="margin: 0 0 8px 0; color: #1e7e34;" id="abx-title">Unknown / Undifferentiated Sepsis:</h4>
+                    <div class="clinical-guidance-box" id="abx-recommendation-box" style="border-left-color: var(--signal-orange);">
+                        <h4 style="margin: 0 0 8px 0; color: var(--ink);" id="abx-title">Unknown / Undifferentiated Sepsis:</h4>
                         <div id="abx-detail-text">
                             <strong>Empiric First-line:</strong> Ceftriaxone 2 g IV OD<br>
                             <em>หากมีภาวะเสี่ยงต่อ Pseudomonas infection (เช่น Neutropenia, Structural lung disease, Recent ICU):</em> Cefepime 2 g IV q 8h หรือ Piperacillin/Tazobactam 4.5 g IV q 6h<br>
@@ -735,7 +767,7 @@
             <div class="result-banner">
                 <div class="result-header-row">
                     <div>
-                        <span style="font-weight: 700; color: #555;">ABCD2 Total Score:</span>
+                        <span style="font-weight: 700; color: var(--graphite);">ABCD2 Total Score:</span>
                         <div class="score-val-large" id="abcd2-score-val">0 / 7</div>
                     </div>
                     <div>
@@ -803,7 +835,7 @@
             <div class="result-banner">
                 <div class="result-header-row">
                     <div>
-                        <span style="font-weight: 700; color: #555;">HEART Score Total:</span>
+                        <span style="font-weight: 700; color: var(--graphite);">HEART Score Total:</span>
                         <div class="score-val-large" id="heart-score-val">0 / 10</div>
                     </div>
                     <div>
@@ -866,7 +898,7 @@
             <div class="result-banner">
                 <div class="result-header-row">
                     <div>
-                        <span style="font-weight: 700; color: #555;">GRACE Score:</span>
+                        <span style="font-weight: 700; color: var(--graphite);">GRACE Score:</span>
                         <div class="score-val-large" id="grace-score-val">122</div>
                     </div>
                     <div>
@@ -925,7 +957,7 @@
                 <div class="result-banner">
                     <div class="result-header-row">
                         <div>
-                            <span style="font-weight: 700; color: #555;">Wells' PE Score:</span>
+                            <span style="font-weight: 700; color: var(--graphite);">Wells' PE Score:</span>
                             <div class="score-val-large" id="wells-score-val">0.0</div>
                         </div>
                         <div>
@@ -991,7 +1023,7 @@
                 <div class="result-banner">
                     <div class="result-header-row">
                         <div>
-                            <span style="font-weight: 700; color: #555;">Geneva Score Total:</span>
+                            <span style="font-weight: 700; color: var(--graphite);">Geneva Score Total:</span>
                             <div class="score-val-large" id="geneva-score-val">0</div>
                         </div>
                         <div>
@@ -1008,7 +1040,7 @@
             <div id="pe-sub-perc" style="display: none;">
                 <div class="calc-card">
                     <div class="calc-card-title">Pulmonary Embolism Rule-out Criteria (PERC Rule)</div>
-                    <p style="font-size: 13px; color: #666; margin-top: -8px; margin-bottom: 14px;">
+                    <p style="font-size: 13px; color: var(--graphite); margin-top: -8px; margin-bottom: 14px;">
                         ใช้ในผู้ป่วยที่มีความเสี่ยงต่อ PE ต่ำ (Low risk / PE unlikely) หากเข้าเกณฑ์ครบทั้ง 8 ข้อ สามารถ Rule out PE ได้โดยไม่ต้องส่ง D-dimer หรือ CTA
                     </p>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -1049,7 +1081,7 @@
                 <div class="result-banner">
                     <div class="result-header-row">
                         <div>
-                            <span style="font-weight: 700; color: #555;">PERC Criteria Met:</span>
+                            <span style="font-weight: 700; color: var(--graphite);">PERC Criteria Met:</span>
                             <div class="score-val-large" id="perc-score-val">0 / 8</div>
                         </div>
                         <div>
@@ -1416,11 +1448,11 @@
         if (isLikely) {
             badge.className = 'risk-badge risk-high';
             badge.textContent = 'PE Likely (> 4.0)';
-            guide.innerHTML = '<strong>Wells Score > 4.0 (PE Likely):</strong> แนะนำส่งตรวจ <strong>CTA Pulmonary Angiogram ด่วน</strong> และพิจารณาเริ่ม Empiric Anticoagulation (เช่น LMWH/Heparin) หากไม่มีข้อห้าม<br><small style="color: #666; margin-top: 4px; display: inline-block;">' + tier3Label + '</small>';
+            guide.innerHTML = '<strong>Wells Score > 4.0 (PE Likely):</strong> แนะนำส่งตรวจ <strong>CTA Pulmonary Angiogram ด่วน</strong> และพิจารณาเริ่ม Empiric Anticoagulation (เช่น LMWH/Heparin) หากไม่มีข้อห้าม<br><small style="color: var(--graphite); margin-top: 4px; display: inline-block;">' + tier3Label + '</small>';
         } else {
             badge.className = 'risk-badge risk-low';
             badge.textContent = 'PE Unlikely (≤ 4.0)';
-            guide.innerHTML = '<strong>Wells Score ≤ 4.0 (PE Unlikely):</strong> แนะนำส่งตรวจ <strong>High Sensitivity D-dimer</strong> หากผล D-dimer ปกติ (< 500 ng/mL หรือ age-adjusted) สามารถ Rule out PE ได้โดยไม่ต้องทำ CTA<br><small style="color: #666; margin-top: 4px; display: inline-block;">' + tier3Label + '</small>';
+            guide.innerHTML = '<strong>Wells Score ≤ 4.0 (PE Unlikely):</strong> แนะนำส่งตรวจ <strong>High Sensitivity D-dimer</strong> หากผล D-dimer ปกติ (< 500 ng/mL หรือ age-adjusted) สามารถ Rule out PE ได้โดยไม่ต้องทำ CTA<br><small style="color: var(--graphite); margin-top: 4px; display: inline-block;">' + tier3Label + '</small>';
         }
     }
 

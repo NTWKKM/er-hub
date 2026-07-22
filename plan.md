@@ -1,62 +1,64 @@
-# Plan: Review `tools/score-hub.html` — Clinical Accuracy + Theme Colors
+# Plan: Dark / Monochrome-Safe Reskin — `tools/score-hub.html`
 
-Repo: `github.com/NTWKKM/er-hub` · ไฟล์: `tools/score-hub.html` (+ `shared/clinical-engine.js`)
-
----
-
-## 1. Clinical Accuracy — เรียงตามความสำคัญ
-
-### 🔴 Critical — `calcMEWS()` ไม่มีอยู่จริง (ReferenceError)
-- `mews-*` selects ทุกตัวเรียก `onchange="calcMEWS()"` และ init script เรียก `calcMEWS()` ตอน `DOMContentLoaded` (บรรทัด ~998) แต่ **ไม่มี `function calcMEWS()` ในไฟล์เลย**
-- ผลกระทบ:
-  - ตอนโหลดหน้า `calcMEWS()` throw ทันที → `DOMContentLoaded` callback หยุดกลางคัน → `calcABCD2/calcHEART/calcGRACEPure/calcWells/calcGeneva/calcPERC` ที่เรียกต่อจากมัน **ไม่ทำงานตอน initial load** (ผลลัพธ์ที่เห็นตอนแรกเป็นค่า hardcoded ใน HTML เท่านั้น ไม่ใช่ค่าที่คำนวณจริง)
-  - เวลาผู้ใช้เปลี่ยนค่าใน MEWS tab → error ทุกครั้ง, badge/guidance ค้างที่ "Low Risk (0-1)" เสมอ ไม่ว่าใส่ vitals แบบไหน → **ความเสี่ยงทางคลินิก**: หมอเห็น "Low Risk" ทั้งที่ vitals แย่จริง
-- แก้: เขียน `calcMEWS()` (pattern เดียวกับ `calcNEWS2`: sum ค่า option ของ `mews-sbp/hr/rr/temp/avpu`) + confirm cutoff risk tier ที่จะใช้ (ดู open question ด้านล่าง)
-
-### 🟡 Moderate — Revised Geneva Score: "Previous DVT/PE" ผิด weight
-- โค้ดปัจจุบัน (`calcGeneva`, id `geneva-prev`) ให้ **+2**
-- ค่ามาตรฐาน (Le Gal 2006 / MDCalc): Previous DVT or PE = **+3**
-- จุดอื่นถูกหมดแล้ว (age>65=+1, HR75-94=+3, HR≥95=+5, surgery/fracture=+2, malignancy=+2, unilateral leg pain=+3, hemoptysis=+2, palpation+edema=+4)
-- ผลกระทบ: คนไข้ที่มีประวัติ DVT/PE จะได้คะแนนต่ำกว่าจริง 1 แต้ม → เสี่ยงจัดกลุ่มความเสี่ยงผิด (เช่น ควรอยู่ intermediate/high แต่ตกไป low)
-- แก้: เปลี่ยน `+2` → `+3` ในโค้ด และ label `(+2)` → `(+3)`
-
-### ⚪ Minor / low-impact — GRACE lookup boundary rounding
-- `lookupPts` ใช้ `val < threshold`; ที่ค่าขอบพอดี (เช่น HR = 50 เป๊ะ) จะได้คะแนนของช่วงถัดไปแทนช่วงปัจจุบัน (HR 50 ควรได้ 0 แต่ได้ 3)
-- Impact ต่ำมาก (vitals ตรงขอบพอดีเจอไม่บ่อย) แต่ถ้าอยากให้ตรง MDCalc/GRACE ต้นฉบับเป๊ะ ต้องปรับ boundary logic (`<=` vs `<`) ให้ตรงกับนิยามช่วงจริง
-- eGFR CKD-EPI 2021 formula ตรวจแล้ว: ถูกต้อง (kappa/alpha/exponent ตรง 2021 race-free equation)
-
-### ✅ ตรวจแล้วถูกต้อง (cross-check กับ literature)
-AWS/CIWA-Ar (10 items, cutoff <10/10-19/≥20), SIRS (≥2 = positive), NEWS2 (point table + escalation ≥7/5-6/0-4 ตรง RCP NEWS2 เป๊ะ), ABCD2 (cutoff + % ตรง Johnston 2007), HEART (cutoff + %MACE ตรง Six 2008), GRACE risk tiers (>140/109-140/<109), Wells (2-tier >4 + 3-tier >6/2-6/<2), PERC (checkbox ใช้ phrasing เชิงลบ "No prior DVT" ฯลฯ ซึ่งถูกต้องแล้ว — count=8 = rule-out จริง ไม่ใช่ bug)
-
-### 📝 Scope note (ไม่ใช่ bug)
-NEWS2 ใช้ SpO2 Scale 1 อย่างเดียว ไม่มี Scale 2 (สำหรับผู้ป่วย COPD/hypercapnic ที่ target SpO2 88-92%) — เหมาะกับการใช้งานทั่วไปใน ED แต่ถ้าอยากครบสามารถเพิ่มเป็น toggle ในอนาคต
+เป้าหมาย: ปรับสีเฉพาะหน้า `score-hub.html` ให้เป็นโทนมืด สำหรับใช้บนจอ **JVC monochrome (greyscale)** โดย
+1. ไม่กระทบหน้าอื่นหรือ `shared/base.css` (สอดคล้อง constraint เดิม: no shared components, no build step)
+2. ออกแบบให้ "อ่านออกได้จริง" บนจอ greyscale — จอแบบนี้ไม่แสดง hue เลย เห็นแค่ luminance เท่านั้น ดังนั้นโค้ดเดิมที่แยกระดับความเสี่ยงด้วยสี (เขียว/เหลือง/แดง/ส้ม) **จะดูเหมือนกันหมดถ้า luminance ใกล้กัน** ต้องออกแบบใหม่ให้แยกด้วยความสว่าง+น้ำหนักเส้น ไม่ใช่สี
+3. ไม่จ้าจนแสบตา — เลี่ยง pure black/pure white, จำกัด peak luminance ของพื้นที่ใหญ่
 
 ---
 
-## 2. ปรับสีให้เข้ากับ Theme เว็บ (Braun design system ตาม `DESIGN.md`)
+## 1. วิธี Scope ให้กระทบแค่ไฟล์นี้
 
-พาเลตหลักของ score-hub ใกล้เคียง Braun tokens อยู่แล้ว (`#ebe7df`, `#d8d4c8`, `#1a1a1a`, signal-orange) แต่ครึ่งหนึ่งเขียนเป็น raw hex ซ้ำค่าที่มี CSS variable ให้แล้วใน `base.css` แทนที่จะอ้างอิง var — ตอนนี้หน้าตาเหมือนกันแต่จะ drift ถ้า token เปลี่ยนในอนาคต (เช่นที่เคยเปลี่ยน background จาก `#f4f2ec` → `#ebe7df` มาแล้วครั้งหนึ่ง)
+`score-hub.html` โหลด `base.css` แล้วมี `<style>` ของตัวเองต่อท้ายใน `<head>` — CSS cascade จะให้ `<style>` ในไฟล์ตัวเอง**ชนะ**ค่าที่มาจาก `base.css` โดยอัตโนมัติ (specificity เท่ากัน แต่โหลดทีหลัง)
 
-### แทน raw hex ด้วย shared var (ไม่เปลี่ยนหน้าตา แค่ผูกกับ token)
-| ตำแหน่ง | ปัจจุบัน | ควรเป็น |
-|---|---|---|
-| `.tab-btn` background | `#f4f2ec` | ยืนยันว่ายังต้องการอ่อนกว่า `#ebe7df` หรือ map เข้า token เดียวกัน |
-| `.calc-card` border | `#d8d4c8` | `var(--rule)` |
-| `.calc-card-title` color | `#1a1a1a` | `var(--ink)` |
-| `.input-group label` color | `#2b2b2b` | `var(--ink)` หรือ token ใกล้เคียง |
-| focus/border ใน input | `#bbb` | `var(--rule)` |
-
-### ⚠️ จุดที่ต้องตัดสินใจ ไม่ใช่แค่ rename
-- **`.risk-vhigh` badge ใช้ signal-orange (`#d84315`) เต็มพื้น** สำหรับ "very high/severe/high risk" ในหลาย tab (AWS severe, NEWS2 high, ABCD2 high, HEART high)
-  - `DESIGN.md` ระบุชัดว่า signal-orange **สงวนไว้เฉพาะ time-critical status dot บน portal** (rt-PA/STEMI/Massive PE) เท่านั้น
-  - ข้อเสนอ: เปลี่ยน `.risk-vhigh` ไปใช้ `#c0392b` (สี "danger/critical" ที่ใช้ทั่วไปในหน้าอื่นอยู่แล้ว เช่น cardiac theme, field-error, clear button) แทน เพื่อให้ signal-orange คงความหมายพิเศษเฉพาะ portal ไว้ — **ต้องการคำยืนยันจาก Plan ว่าจะเปลี่ยนหรือคงไว้แบบเดิม**
-- **`.sub-btn` (sub-nav ใต้ Sepsis/PE tab)** ใช้โทน slate `#eef2f7 / #cbd5e1 / #334155` ซึ่งเป็นคนละสไตล์กับ Braun ไปเลย (ดูเหมือน Tailwind slate ที่หลุดเข้ามา) ไม่ตรงกับ `.tab-btn` ที่อยู่ระดับบนสุดของหน้าเดียวกัน
-  - ข้อเสนอ: restyle `.sub-btn` ให้ใช้ pattern เดียวกับ `.tab-btn` (graphite/rule ปกติ, signal-orange ตอน active) เพื่อให้ sub-nav รู้สึกเป็นส่วนเดียวกับหน้า ไม่ใช่ component แปลกปลอม
-- `.tab-btn.active` ใช้ signal-orange ทั้งพื้นหลัง — อันนี้ **สอดคล้องกับ precedent ที่มีอยู่แล้วในไฟล์เดียวกัน** (input focus border ก็ใช้ signal-orange) → เก็บไว้แบบเดิมได้ ไม่ต้องแก้
+→ วิธีทำ: ประกาศ `:root { --paper: ...; --ink: ...; ... }` ซ้ำอีกครั้งภายใน `<style>` ของ `score-hub.html` เอง (ไม่แตะ `shared/base.css`) เพื่อ override ตัวแปรเฉพาะหน้านี้ ไฟล์อื่น/portal ที่ import `base.css` เหมือนกันจะไม่เห็นการเปลี่ยนแปลงนี้เลย
 
 ---
 
-## Open questions (ต้องการคำตอบก่อนลงมือแก้จริง)
-1. MEWS risk cutoff จะใช้เกณฑ์ไหน — HTML ปัจจุบันตั้ง default text ไว้ที่ "Low Risk (0-1)" แสดงว่าตั้งใจ ≤1=low แต่ยังไม่มีเกณฑ์ medium/high ที่ชัดเจนในโค้ด (คำแนะนำทั่วไปที่ใช้กันคือ 0-2 Low / 3-4 Medium / ≥5 High แต่ต่างกันไปตาม protocol ของแต่ละ รพ.)
-2. คงหรือเลิกใช้ signal-orange สำหรับ `.risk-vhigh` badge
-3. Restyle `.sub-btn` ให้เข้าธีมตอนนี้เลย หรือปล่อยไว้ก่อน
+## 2. Token Mapping (Light Braun → Dark Monochrome-Safe)
+
+| Token | ปัจจุบัน (light) | เสนอ (dark) | เหตุผล |
+|---|---|---|---|
+| `--paper` (พื้นหลังหน้า) | `#ebe7df` | `#1c1c1c` | พื้นมืด ไม่ใช่ดำสนิท (ลด glare ตัดขอบจอ) |
+| card surface (`.calc-card`, `.result-banner` ฯลฯ ปัจจุบัน hardcode `#ffffff`) | `#ffffff` | `#262626` | ต้องสว่างกว่า page bg แต่ไม่ใช่ขาว — แยกชั้น card ออกจาก bg ด้วย luminance step เดียว |
+| input/select bg (ปัจจุบัน `#fafafa`) | `#fafafa` | `#2e2e2e` | |
+| `--ink` (ตัวอักษรหลัก) | `#1a1a1a` | `#d4d4d4` | เทาอ่อนนวล ไม่ใช้ขาวจ้า `#fff` — ลดแสบตาเวลาเจอตัวหนังสือเยอะ |
+| `--graphite` (ตัวอักษรรอง) | `#4a4a4a` | `#8f8f8f` | |
+| `--rule` (เส้นแบ่ง/border) | `#d8d4c8` | `#3a3a3a` | เส้นบางบนพื้นมืด ต้องพอมองเห็นแต่ไม่แข่งกับตัวหนังสือ |
+| `--signal-orange` (ใช้เป็น accent/focus ในหน้านี้) | `#d84315` | `#e8e8e8` (เทาอ่อนเกือบสุด แทน "accent") | บนจอ mono สี = ไม่มีความหมาย ต้องแทน "accent" ด้วย luminance ที่สว่างกว่าทุกอย่างรอบข้างแทน ไม่ใช้ hue |
+
+---
+
+## 3. Risk Badge — ต้องแยกด้วย Luminance + น้ำหนักเส้น ไม่ใช้สี
+
+จอ monochrome มองไม่เห็นเขียว/เหลือง/แดง เป็นคนละสีแล้ว เห็นแค่ "เทาเข้ม-เทาอ่อน" ดังนั้นออกแบบเป็น **luminance ladder** ที่ยิ่งเสี่ยงสูงยิ่งสว่างขึ้น + เส้นขอบหนาขึ้น (ตัวหนังสือ label เช่น "Low/Medium/High Risk" ที่มีอยู่แล้วเป็นตัวช่วยสำคัญที่สุด ให้คงไว้เหมือนเดิมทุกจุด — เป็น non-color signal ที่ดีอยู่แล้ว)
+
+| Class | พื้นหลัง | ตัวอักษร | ขอบ |
+|---|---|---|---|
+| `.risk-low` | `#2a2a2a` (เข้ม, กลืนกับพื้น) | `#c8c8c8` | `1px solid #444` |
+| `.risk-mod` | `#4a4a4a` | `#e8e8e8` | `1.5px solid #666` |
+| `.risk-high` | `#6e6e6e` | `#1a1a1a` (เข้ม บนพื้นเทาสว่างขึ้น) | `2px solid #8a8a8a` |
+| `.risk-vhigh` | `#d8d8d8` (สว่างสุดในหน้า แต่ยังไม่ใช่ `#fff` เพื่อไม่ให้จ้าเกิน) | `#111` | `3px solid #f0f0f0` |
+
+หลักการ: ยิ่งเสี่ยงสูง badge ยิ่ง "เด้ง" ออกจากพื้นหลังมืดมากขึ้นเรื่อยๆ ทั้งด้วยความสว่างและความหนาของเส้นขอบ — คนอ่านจอ mono จะยัง "รู้สึก" ได้ทันทีว่าอันไหนอันตรายกว่าโดยไม่ต้องพึ่งสี
+
+---
+
+## 4. องค์ประกอบอื่นที่ต้องปรับ
+
+- **Focus ring ของ input** (ปัจจุบัน orange glow `rgba(216,67,21,0.2)`) → เปลี่ยนเป็นเทาอ่อน `box-shadow: 0 0 0 2px rgba(232,232,232,0.25)` แทน
+- **Tab bar active state** (ปัจจุบัน bg orange + ตัวอักษรขาว) → bg `#e8e8e8` ตัวอักษรเข้ม `#111` (เด่นสุดในแถบ tab)
+- **Guidance box border-left accent** (ปัจจุบัน orange) → `#e8e8e8`
+- **`.check-item:hover`** (ปัจจุบัน `#f0ede5`) → เทาเข้มขึ้นเล็กน้อยจาก resting state เช่น `#333`
+- **`.sub-btn.active`** — ให้ใช้ pattern เดียวกับ tab bar (sync กับ token ด้านบน)
+
+---
+
+## 5. ที่ไม่แตะ / คงเดิม
+
+- `shared/base.css` และหน้าอื่นทั้งหมด (portal, order pages, ER NOTE) — ยังใช้ Braun light theme ตามเดิม 100%
+- โครงสร้าง HTML/JS ของ score-hub (id, function, logic คำนวณ) — ไม่แตะเลย เปลี่ยนแค่ CSS
+- Label ข้อความ risk tier (Low/Medium/High/Severe ฯลฯ) — คงไว้เหมือนเดิม เป็นตัวช่วยอ่านที่สำคัญที่สุดบนจอ mono
+
+## 6. Open question
+- หน้านี้ไม่มี `@media print` อยู่แล้ว (ไม่เคยออกแบบไว้ให้พิมพ์) — ถ้ามีโอกาสต้องพิมพ์ scoring sheet นี้ในอนาคต ควรเพิ่ม `@media print` reset กลับเป็นขาว-ดำเพื่อไม่ให้เปลืองหมึก/อ่านยากบนกระดาษ ต้องการให้เพิ่มไว้เผื่อเลยไหม หรือไม่จำเป็นเพราะหน้านี้ใช้แค่บนจอ ไม่เคยพิมพ์จริง
