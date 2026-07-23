@@ -142,10 +142,18 @@
         }
         .input-group select:focus,
         .input-group input:focus {
-            outline: none;
-            border-color: var(--signal-orange);
-            background: #1f1f1f;
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+            outline: 2px solid #ffffff;
+            outline-offset: 1px;
+            border-color: #ffffff;
+            background: #2a2a2a;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+        }
+        .choice-btn:focus-visible,
+        .tab-btn:focus-visible,
+        .sub-btn:focus-visible {
+            outline: 2px solid #ffffff;
+            outline-offset: 2px;
+            border-color: #ffffff;
         }
 
         /* Choice Buttons Layout */
@@ -224,10 +232,10 @@
             text-transform: uppercase;
             display: inline-block;
         }
-        .risk-low { background: #1a1a1a; color: #b0b0b0; border: 1px solid #333333; }
-        .risk-mod { background: #3a3a3a; color: #f0f0f0; border: 1.5px solid #555555; }
-        .risk-high { background: #525252; color: #ffffff; border: 2px solid #777777; }
-        .risk-vhigh { background: #6e6e6e; color: #000000; border: 3px solid #6e6e6e; }
+        .risk-low { background: #181818; color: #cccccc; border: 1px solid #444444; }
+        .risk-mod { background: #3d3d3d; color: #ffffff; border: 1.5px solid #888888; }
+        .risk-high { background: #949494; color: #000000; border: 2px solid #b0b0b0; }
+        .risk-vhigh { background: #ffffff; color: #000000; border: 3px solid #ffffff; }
 
         .clinical-guidance-box {
             background: #121212;
