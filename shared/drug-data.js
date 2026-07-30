@@ -439,7 +439,7 @@ const EMERGENCY_DRUG_DATA = [
     doseRange: { min: 5, max: 50, step: 5, default: 10 },
     absoluteMaxPerHour: 500,
     defaultPreparationIndex: 0,
-    preparations: [ { label: '1% (10 mg/mL) 50 mL', concentration: 10 } ],
+    preparations: [ { label: '1% (10 mg/mL) 50 mL (10,000 mcg/mL)', concentration: 10000 } ],
     titrationGuide: 'ปรับขนาดยาทุก 5-10 นาที จนกว่าจะได้ระดับ Sedation ที่ต้องการ (เช่น RASS -2 ถึง 0)',
     indications: [
       {
