@@ -3,8 +3,8 @@ const assert = require('node:assert/strict');
 const { EMERGENCY_DRUG_DATA } = require('../shared/drug-data.js');
 
 describe('EMERGENCY_DRUG_DATA structure', () => {
-  test('has 12 drugs', () => {
-    assert.equal(EMERGENCY_DRUG_DATA.length, 12);
+  test('has 13 drugs', () => {
+    assert.equal(EMERGENCY_DRUG_DATA.length, 13);
   });
 
   test('every drug has required fields', () => {
@@ -61,6 +61,15 @@ describe('EMERGENCY_DRUG_DATA specific drugs', () => {
     assert.ok(epi);
     assert.equal(epi.doseUnit, 'mcg/kg/min');
     assert.equal(epi.isWeightBased, true);
+  });
+
+  test('epinephrine-anaphylaxis exists with correct unit', () => {
+    const epiAnaph = EMERGENCY_DRUG_DATA.find(d => d.id === 'epinephrine-anaphylaxis');
+    assert.ok(epiAnaph);
+    assert.equal(epiAnaph.doseUnit, 'mcg/min');
+    assert.equal(epiAnaph.isWeightBased, false);
+    assert.equal(epiAnaph.doseRange.min, 1);
+    assert.equal(epiAnaph.doseRange.max, 4);
   });
 
   test('heparin has two preparations (100 and 50 units/mL)', () => {

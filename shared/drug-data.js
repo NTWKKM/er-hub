@@ -12,13 +12,33 @@ const EMERGENCY_DRUG_DATA = [
         doseUnit: 'mcg/kg/min',
         isWeightBased: true,
         preparations: [
-            { label: '10 mg in NSS 100 mL (100 mcg/mL)', concentration: 100 },
-            { label: '1 mg in NSS 100 mL (10 mcg/mL) [Refractory Anaphylaxis]', concentration: 10 }
+            { label: '10 mg in NSS 100 mL (100 mcg/mL)', concentration: 100 }
         ],
         defaultPreparationIndex: 0,
         doseRange: { min: 0.05, max: 3.0, step: 0.01, default: 0.1 },
         titrationGuide: 'ปรับเพิ่มครั้งละ 0.01 mcg/kg/min ทุก 15 นาที เพื่อเป้าหมาย MAP ≥ 65 mmHg',
         safetyWarnings: [
+            'เป็นยา HAD (High Alert Drug) ต้องจ่ายผ่าน Infusion pump เท่านั้น',
+            'สังเกตภาวะ extravasation, ตรวจบริเวณตำแหน่งแทงเข็มเขียวช้ำทุก 4 ชม.',
+            'เกณฑ์รายงานแพทย์: BP > 160/110 mmHg หรือ HR > 155 bpm หรือปลายมือปลายเท้าเขียว'
+        ]
+    },
+    {
+        id: 'epinephrine-anaphylaxis',
+        name: 'Epinephrine (Refractory Anaphylaxis)',
+        thaiName: 'เอพิเนฟริน (แพ้รุนแรงที่ไม่ตอบสนอง)',
+        doseUnit: 'mcg/min',
+        isWeightBased: false,
+        preparations: [
+            { label: '1 mg in D5W/NSS 250 mL (4 mcg/mL)', concentration: 4 },
+            { label: '1 mg in D5W/NSS 500 mL (2 mcg/mL)', concentration: 2 }
+        ],
+        defaultPreparationIndex: 0,
+        doseRange: { min: 1, max: 4, step: 0.5, default: 1 },
+        titrationGuide: 'ปรับตามการตอบสนองทางคลินิก/BP เป็นระยะสั้นๆ (ไม่ใช่ทุก 15 นาที); ไม่มีเป้า MAP ตายตัว',
+        safetyWarnings: [
+            'ใช้เมื่อไม่ตอบสนองต่อ IM epinephrine หรือ BP ต่ำมาก',
+            'สำหรับเด็กใช้สูตร weight-based แยกต่างหาก (rule of 6, เริ่ม 0.1 mcg/kg/min)',
             'เป็นยา HAD (High Alert Drug) ต้องจ่ายผ่าน Infusion pump เท่านั้น',
             'สังเกตภาวะ extravasation, ตรวจบริเวณตำแหน่งแทงเข็มเขียวช้ำทุก 4 ชม.',
             'เกณฑ์รายงานแพทย์: BP > 160/110 mmHg หรือ HR > 155 bpm หรือปลายมือปลายเท้าเขียว'
