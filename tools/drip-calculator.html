@@ -315,16 +315,8 @@
                 return `${unit}/mL`;
             }
 
-            // Populate drug select dropdown with groups
-            const groups = {};
+            // Populate drug select dropdown without optgroups (flat list)
             EMERGENCY_DRUG_DATA.forEach(drug => {
-                const groupName = drug.group || 'Other';
-                if (!groups[groupName]) {
-                    const optgroup = document.createElement('optgroup');
-                    optgroup.label = groupName;
-                    groups[groupName] = optgroup;
-                    drugSelect.appendChild(optgroup);
-                }
                 const opt = document.createElement('option');
                 opt.value = drug.id;
                 opt.textContent = drug.name;
@@ -332,7 +324,7 @@
                 if (drug.id === 'norepinephrine') {
                     opt.selected = true;
                 }
-                groups[groupName].appendChild(opt);
+                drugSelect.appendChild(opt);
             });
 
             let selectedDrug = null;
