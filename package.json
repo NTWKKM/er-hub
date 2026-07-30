@@ -1,6 +1,6 @@
 {
   "name": "er-hub",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "MNRH-ED Standing Order Hub — Emergency Department clinical standing order system for Maharat Nakhon Ratchasima Hospital. 100% client-side static site.",
   "private": true,
   "type": "commonjs",
