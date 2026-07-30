@@ -368,6 +368,197 @@ const EMERGENCY_DRUG_DATA = [
             'ขวดยาและสายให้ยาต้องได้รับการหุ้มกระดาษฟอยล์เพื่อป้องกันแสง เนื่องจากยาสลายตัวได้เมื่อโดนแสง',
             'ระวังภาวะพิษจากสารไซยาไนด์ (Cyanide toxicity) หากหยดยาติดต่อกันเป็นเวลานานกว่า 48 ชม.'
         ]
+    },
+    {
+        id: 'amiodarone',
+        name: 'Amiodarone',
+        thaiName: 'ยารักษาหัวใจเต้นผิดจังหวะ (Amiodarone)',
+        isWeightBased: false,
+        doseUnit: 'mg/min',
+        doseRange: { min: 0.5, max: 1.0, step: 0.5, default: 1.0 },
+        absoluteMaxPerHour: 60,
+        defaultPreparationIndex: 0,
+        preparations: [
+            { label: '900 mg in D5W 500 mL', concentration: 1.8 },
+            { label: '450 mg in D5W 250 mL', concentration: 1.8 }
+        ],
+        titrationGuide: 'ให้ 1 mg/min นาน 6 ชั่วโมง จากนั้นลดเหลือ 0.5 mg/min นาน 18 ชั่วโมง',
+        indications: [
+            { name: 'ACLS (VT/VF) Post-resuscitation', dose: '1 mg/min for 6 hours, then 0.5 mg/min for 18 hours' }
+        ],
+        safetyWarnings: [
+            'ใช้เฉพาะ D5W เท่านั้น ห้ามผสมใน NSS',
+            'ระวังภาวะ Hypotension และ Bradycardia (ติดตาม ECG เสมอ)'
+        ]
+    },
+    {
+        id: 'lidocaine',
+        name: 'Lidocaine',
+        thaiName: 'ยาชา/ยาหัวใจ (Lidocaine)',
+        isWeightBased: false,
+        doseUnit: 'mg/min',
+        doseRange: { min: 1.0, max: 4.0, step: 0.5, default: 2.0 },
+        absoluteMaxPerHour: 240,
+        defaultPreparationIndex: 0,
+        preparations: [
+            { label: '2 g in D5W/NSS 500 mL', concentration: 4 }
+        ],
+        titrationGuide: 'ปรับ 1-4 mg/min ประเมินระดับความรู้สึกตัวและระวัง toxicity',
+        indications: [
+            { name: 'ACLS (VT/VF) Refractory', dose: '1 - 4 mg/min หลังจากการให้ Bolus' }
+        ],
+        safetyWarnings: [
+            'ระวัง Lidocaine toxicity: สับสน, ชัก, ชา, หัวใจเต้นผิดจังหวะ',
+            'ลดขนาดยาลง 50% ในผู้ป่วยโรคตับ, หัวใจล้มเหลว หรืออายุ > 70 ปี'
+        ]
+    },
+    {
+        id: 'vasopressin',
+        name: 'Vasopressin',
+        thaiName: 'ยากระตุ้นความดัน (Vasopressin)',
+        isWeightBased: false,
+        doseUnit: 'units/min',
+        doseRange: { min: 0.01, max: 0.04, step: 0.01, default: 0.03 },
+        absoluteMaxPerHour: 2.4,
+        defaultPreparationIndex: 0,
+        preparations: [
+            { label: '40 units in NSS 100 mL', concentration: 0.4 },
+            { label: '20 units in NSS 100 mL', concentration: 0.2 }
+        ],
+        titrationGuide: 'Fixed dose ที่ 0.03 units/min (ไม่แนะนำให้ปรับขึ้นลง หรือ Titrate ตาม BP)',
+        indications: [
+            { name: 'Septic Shock (SSC 2026)', dose: '0.03 units/min เป็นยาตัวที่สอง (Second-line) ร่วมกับ Norepinephrine' }
+        ],
+        safetyWarnings: [
+            'เพิ่มความเสี่ยงต่อภาวะขาดเลือดส่วนปลาย (Digital/Mesenteric Ischemia)'
+        ]
+    },
+    {
+        id: 'insulin_regular',
+        name: 'Regular Insulin (RI)',
+        thaiName: 'อินซูลิน (Regular Insulin)',
+        isWeightBased: true,
+        doseUnit: 'units/kg/hr',
+        doseRange: { min: 0.05, max: 0.15, step: 0.01, default: 0.1 },
+        absoluteMaxPerHour: 20,
+        defaultPreparationIndex: 0,
+        preparations: [
+            { label: 'RI 100 units in 100 mL (1:1)', concentration: 1 }
+        ],
+        titrationGuide: 'ปรับขนาดตาม Capillary Blood Glucose (CBG) ให้ระดับน้ำตาลลดลง 50-75 mg/dL/hr',
+        indications: [
+            { name: 'DKA / HHS', dose: '0.1 units/kg/hr (หากไม่มีการให้ Bolus อาจพิจารณาเริ่ม 0.14 units/kg/hr)' }
+        ],
+        safetyWarnings: [
+            'ติดตาม Potassium ก่อนเริ่มให้ Insulin (ห้ามให้หาก K < 3.3)',
+            'ระวัง Hypoglycemia ติดตามระดับน้ำตาลในเลือดทุก 1 ชม.'
+        ]
+    },
+    {
+        id: 'propofol',
+        name: 'Propofol (Diprivan)',
+        thaiName: 'ยานอนหลับ (Propofol)',
+        isWeightBased: true,
+        doseUnit: 'mcg/kg/min',
+        doseRange: { min: 5, max: 50, step: 5, default: 10 },
+        absoluteMaxPerHour: 500,
+        defaultPreparationIndex: 0,
+        preparations: [
+            { label: '1% (10 mg/mL) 50 mL', concentration: 10 }
+        ],
+        titrationGuide: 'ปรับขนาดยาทุก 5-10 นาที จนกว่าจะได้ระดับ Sedation ที่ต้องการ (เช่น RASS -2 ถึง 0)',
+        indications: [
+            { name: 'Sedation in Intubated Patients', dose: '5 - 50 mcg/kg/min ปรับขนาดตามระดับ RASS' }
+        ],
+        safetyWarnings: [
+            'ระวัง Hypotension โดยเฉพาะในผู้ป่วย Hypovolemia',
+            'ติดตามระดับ Triglyceride หากให้ต่อเนื่องเกิน 48 ชม. (ป้องกัน PRIS)'
+        ]
+    },
+    {
+        id: 'dexmedetomidine',
+        name: 'Dexmedetomidine (Precedex)',
+        thaiName: 'ยานอนหลับ (Dexmedetomidine)',
+        isWeightBased: true,
+        doseUnit: 'mcg/kg/hr',
+        doseRange: { min: 0.2, max: 1.5, step: 0.1, default: 0.5 },
+        absoluteMaxPerHour: 200,
+        defaultPreparationIndex: 0,
+        preparations: [
+            { label: '200 mcg in NSS 50 mL', concentration: 4 }
+        ],
+        titrationGuide: 'ปรับขนาดยาทุก 30 นาทีทีละ 0.1-0.2 mcg/kg/hr เพื่อให้ได้ RASS 0 ถึง -1',
+        indications: [
+            { name: 'Light Sedation / Delirium avoidance', dose: '0.2 - 1.5 mcg/kg/hr ไม่กดการหายใจ' }
+        ],
+        safetyWarnings: [
+            'ระวัง Bradycardia และ Hypotension',
+            'อาจพิจารณาข้าม Loading dose เพื่อลดโอกาสเกิดผลข้างเคียง'
+        ]
+    },
+    {
+        id: 'alteplase',
+        name: 'Alteplase (rtPA)',
+        thaiName: 'ยาละลายลิ่มเลือด (Alteplase)',
+        isWeightBased: false,
+        doseUnit: 'mg/hr',
+        doseRange: { min: 10, max: 90, step: 1, default: 50 },
+        absoluteMaxPerHour: 90,
+        defaultPreparationIndex: 0,
+        preparations: [
+            { label: '50 mg in 50 mL (1 mg/mL)', concentration: 1 }
+        ],
+        titrationGuide: 'สำหรับ Infusion: ไม่มีการปรับขนาด (Non-titratable) ให้ 90% ของ Dose คงที่ตลอด 1 ชั่วโมง',
+        indications: [
+            { name: 'Acute Ischemic Stroke / Massive PE', dose: 'ให้ 90% ของ Dose ทั้งหมด (Max 90 mg) หยด Continuous ภายใน 1 ชม. หลังจากการให้ Bolus' }
+        ],
+        safetyWarnings: [
+            'อัตราการหยดนี้ใช้สำหรับส่วนที่เป็น Continuous infusion เท่านั้น',
+            'ระวังการเลือดออก ตรวจสอบข้อห้าม (Contraindications) ก่อนให้เสมอ'
+        ]
+    },
+    {
+        id: 'magnesium',
+        name: 'Magnesium Sulfate',
+        thaiName: 'แมกนีเซียมซัลเฟต (MgSO4)',
+        isWeightBased: false,
+        doseUnit: 'g/hr',
+        doseRange: { min: 0.5, max: 2.0, step: 0.5, default: 1.0 },
+        absoluteMaxPerHour: 4,
+        defaultPreparationIndex: 0,
+        preparations: [
+            { label: '50% 4 mL (2 g) in 100 mL', concentration: 0.02 },
+            { label: '10% 20 mL (2 g) in 100 mL', concentration: 0.02 }
+        ],
+        titrationGuide: 'ปรับอัตราให้ตามระดับความรุนแรงของโรคหรือระดับแมกนีเซียมในเลือด',
+        indications: [
+            { name: 'Torsades de Pointes / Severe Asthma', dose: '1 - 2 g/hr หรือหยดเร็วขึ้นอยู่กับความรุนแรง' }
+        ],
+        safetyWarnings: [
+            'ระวัง Reflex ลดลง, กดการหายใจ, และ Hypotension',
+            'ต้องมี Calcium Gluconate เตรียมพร้อมเสมอเพื่อแก้ฤทธิ์'
+        ]
+    },
+    {
+        id: 'nac',
+        name: 'N-acetylcysteine (NAC) IV',
+        thaiName: 'ยาแก้พิษพาราเซตามอล (NAC)',
+        isWeightBased: true,
+        doseUnit: 'mg/kg/hr',
+        doseRange: { min: 6.25, max: 150.0, step: 1.0, default: 150.0 },
+        absoluteMaxPerHour: 20000, 
+        defaultPreparationIndex: 0,
+        preparations: [
+            { label: '200 mg/mL (นำยา 20% ไปผสมสารละลาย D5W)', concentration: 200 }
+        ],
+        titrationGuide: 'ใช้ขนาดคงที่ตามระยะเวลาของ Protocol ไม่มีการปรับขนาด (Non-titratable)',
+        indications: [
+            { name: 'Acetaminophen Poisoning (3-bag protocol)', dose: 'Bag 1: 150 mg/kg/hr (1 ชม.) | Bag 2: 12.5 mg/kg/hr (4 ชม.) | Bag 3: 6.25 mg/kg/hr (16 ชม.)' }
+        ],
+        safetyWarnings: [
+            'ระวัง Anaphylactoid reaction (ผื่น, bronchospasm, hypotension)',
+            'ความเข้มข้นในเครื่องคิดนี้ตั้งค่าเป็น 200 mg/mL เพื่อคำนวณ "ปริมาตรยาเพียวที่ยังไม่เจือจาง" ที่ต้องการต่อชั่วโมง (ในการปฏิบัติจริงต้องนำไปผสมกับ D5W ตาม protocol ก่อนเริ่มหยด)'
+        ]
     }
 ];
 
