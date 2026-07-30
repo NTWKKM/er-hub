@@ -102,6 +102,20 @@ const EMERGENCY_DRUG_DATA = [
         defaultPreparationIndex: 0,
         doseRange: { min: 2.0, max: 20.0, step: 0.5, default: 5.0 },
         titrationGuide: 'ปรับขนาดยาตามข้อบ่งใช้ (Inotropic: 2-5 mcg/kg/min, Vasopressor: 10-20 mcg/kg/min)',
+        indications: [
+            {
+                name: 'Symptomatic Bradycardia',
+                dose: '5-20 mcg/kg/min ปรับตามการตอบสนอง'
+            },
+            {
+                name: 'Inotropic support',
+                dose: '2-5 mcg/kg/min (Low dose)'
+            },
+            {
+                name: 'Vasopressor support',
+                dose: '10-20 mcg/kg/min (High dose) *ไม่แนะนำเป็น first-line ใน Septic Shock (SSC 2026)'
+            }
+        ],
         safetyWarnings: [
             'ระวังสับสนชื่อยากับ Heparin หรือ Dobutamine',
             'ติดตาม HR และ EKG สม่ำเสมอ ระวังภาวะ Tachyarrhythmias ในขนาดสูง'
@@ -120,6 +134,16 @@ const EMERGENCY_DRUG_DATA = [
         defaultPreparationIndex: 0,
         doseRange: { min: 2.5, max: 20.0, step: 0.5, default: 5.0 },
         titrationGuide: 'ปรับขนาดยาเพิ่มทีละขั้นตามอาการทางคลินิก (Max 20 mcg/kg/min)',
+        indications: [
+            {
+                name: 'Cardiogenic Shock / Severe Heart Failure',
+                dose: 'เริ่มต้น 2.5-5 mcg/kg/min ปรับเพิ่มตามอาการทางคลินิก (Max 20 mcg/kg/min)'
+            },
+            {
+                name: 'Septic Shock with Cardiac Dysfunction (SSC 2026)',
+                dose: 'พิจารณาเพิ่มร่วมกับ Norepinephrine หากยังมี hypoperfusion และ cardiac dysfunction แม้ให้สารน้ำเพียงพอ'
+            }
+        ],
         safetyWarnings: [
             'ใช้สำหรับรักษาภาวะหัวใจล้มเหลว (Heart failure/Cardiogenic shock) ที่มีน้ำเกิน',
             'ติดตาม Vital Signs และ EKG ระวังหัวใจเต้นผิดจังหวะ และภาวะความดันโลหิตต่ำจาก Vasodilation'
@@ -138,6 +162,16 @@ const EMERGENCY_DRUG_DATA = [
         defaultPreparationIndex: 0,
         doseRange: { min: 0.02, max: 0.2, step: 0.01, default: 0.05 },
         titrationGuide: 'ปรับตามระดับความลึกในการระงับความรู้สึก (RASS Sedation scale target: -2 to 0)',
+        indications: [
+            {
+                name: 'Sedation in ICU/ER (Mechanically ventilated)',
+                dose: 'เริ่มต้น 0.02-0.05 mg/kg/hr ปรับตามเป้าหมาย RASS (-2 ถึง 0)'
+            },
+            {
+                name: 'Status Epilepticus (Refractory)',
+                dose: '0.05-0.2 mg/kg/hr ปรับจนหยุดชักหรือปรับตามอาการ'
+            }
+        ],
         safetyWarnings: [
             'มีฤทธิ์กดการหายใจอย่างรุนแรง ต้องมีอุปกรณ์ช่วยหายใจพร้อมใช้งานข้างเตียงเสมอ',
             'ในหน้าจอ Sedation ของ รพ. จะบังคับเตรียมสูตรผสมเฉพาะ 1 mg/mL เท่านั้น'
@@ -155,6 +189,12 @@ const EMERGENCY_DRUG_DATA = [
         defaultPreparationIndex: 0,
         doseRange: { min: 0.05, max: 0.3, step: 0.01, default: 0.05 },
         titrationGuide: 'ปรับเพิ่มครั้งละ 0.05 mg/kg/min ทุก 4 นาที, ค่อยๆ ลดขนาดช้าๆ (Tapering) เมื่อต้องการหยุดยา',
+        indications: [
+            {
+                name: 'Aortic Dissection / Tachycardia',
+                dose: 'เริ่มต้น 0.05-0.1 mg/kg/min ปรับเพิ่ม 0.05 mg/kg/min ทุก 4 นาที (Max 0.3 mg/kg/min) เพื่อเป้าหมาย HR < 60 bpm'
+            }
+        ],
         safetyWarnings: [
             'หมายเหตุความปลอดภัย: อัตราการให้ยา 0.05 - 0.3 mg/kg/min เทียบเท่ากับ 50 - 300 mcg/kg/min ในมาตรฐานสากล',
             'ติดตาม BP และ HR ถี่ๆ ทุก 2-5 นาที ระวังภาวะความดันโลหิตต่ำและชีพจรช้าผิดปกติ'
@@ -177,6 +217,16 @@ const EMERGENCY_DRUG_DATA = [
         doseRange: { min: 0.5, max: 10.0, step: 0.1, default: 1.0 },
         absoluteMaxPerHour: 500, // mcg/hr — clinical safety ceiling regardless of weight
         titrationGuide: 'ปรับขนาดตามระดับความปวดของผู้ป่วย จำกัดขนาดสูงสุดที่ 500 mcg/hr',
+        indications: [
+            {
+                name: 'Analgesia (Continuous Infusion)',
+                dose: 'เริ่มต้น 0.5-1 mcg/kg/hr ปรับตามระดับความปวด'
+            },
+            {
+                name: 'Analgesia with Sedation (Mechanically ventilated)',
+                dose: '1-10 mcg/kg/hr (Max 500 mcg/hr)'
+            }
+        ],
         safetyWarnings: [
             'จำกัดขนาดสูงสุดรวมของ maintenance drip ห้ามเกิน 500 mcg/hr เพื่อป้องกันการดื้อยาและผลข้างเคียง',
             'ระวังภาวะ Chest wall rigidity หากมีการฉีด Bolus เร็วเกินไป'
@@ -195,6 +245,16 @@ const EMERGENCY_DRUG_DATA = [
         defaultPreparationIndex: 0,
         doseRange: { min: 10, max: 25, step: 1, default: 12 },
         titrationGuide: 'ปรับอัตราหยดตามผลตรวจ aPTT Ratio ตามแนวทางมาตรฐาน',
+        indications: [
+            {
+                name: 'Acute Coronary Syndrome (ACS) / NSTEMI',
+                dose: 'Bolus 60 units/kg (Max 4,000 units) ตามด้วย Drip 12 units/kg/hr (Max 1,000 units/hr) ปรับตาม aPTT'
+            },
+            {
+                name: 'Pulmonary Embolism (PE) / DVT',
+                dose: 'Bolus 80 units/kg (Max 10,000 units) ตามด้วย Drip 18 units/kg/hr ปรับตาม aPTT'
+            }
+        ],
         safetyWarnings: [
             'ห้ามใช้ในผู้ที่มีภาวะเกล็ดเลือดต่ำรุนแรง (Severe thrombocytopenia) หรือมีภาวะเลือดออกแอคทีฟ',
             'ติดตามระดับเกล็ดเลือด (Platelet count) ทุก 2 วันเพื่อเฝ้าระวังภาวะ HIT (Heparin Induced Thrombocytopenia)'
@@ -217,6 +277,10 @@ const EMERGENCY_DRUG_DATA = [
             {
                 name: 'Hypertensive Emergency',
                 dose: 'เริ่มต้น 0.5-2 mg/min IV drip ปรับตามเป้าหมาย BP ลดลง 10-20% ใน 1 ชม.แรก (ห้ามลดเร็วเกินไป)'
+            },
+            {
+                name: 'Acute Ischemic Stroke (AHA 2026)',
+                dose: 'เป้าหมาย BP < 185/110 ก่อนให้ rtPA และ < 180/105 หลังให้ (หากไม่ได้รับ rtPA ยอมรับได้ถึง 220/120)'
             }
         ],
         safetyWarnings: [
@@ -241,6 +305,10 @@ const EMERGENCY_DRUG_DATA = [
             {
                 name: 'Hypertensive Emergency',
                 dose: 'เริ่มต้น 5 mg/hr ปรับเพิ่มทีละ 2.5 mg/hr ทุก 15 นาที (max 15 mg/hr) เพื่อลด BP 10-20% ใน 1 ชม.แรก'
+            },
+            {
+                name: 'Acute Ischemic Stroke / ICH (AHA 2026)',
+                dose: 'ใช้คุมความดันโลหิตอย่างรวดเร็วและนิ่มนวล ปรับเพิ่ม 2.5 mg/hr ทุก 5-15 นาที'
             }
         ],
         safetyWarnings: [
@@ -259,6 +327,16 @@ const EMERGENCY_DRUG_DATA = [
         defaultPreparationIndex: 0,
         doseRange: { min: 5.0, max: 400.0, step: 5.0, default: 5.0 },
         titrationGuide: 'เริ่มต้น 5 mcg/min ปรับขึ้นทุกๆ 5 นาที ตามระดับความดันโลหิตและระดับความปวดเจ็บเค้นหน้าอก',
+        indications: [
+            {
+                name: 'Acute Coronary Syndrome (ACS)',
+                dose: 'เริ่มต้น 5-10 mcg/min ปรับขึ้น 5-10 mcg/min ทุก 5 นาที จนกว่าจะหายปวดหรือเกิดผลข้างเคียง (max 200-400 mcg/min)'
+            },
+            {
+                name: 'Acute Heart Failure / Pulmonary Edema',
+                dose: 'เริ่มต้น 10-20 mcg/min อาจปรับเพิ่มเร็วขึ้นเพื่อลด Preload'
+            }
+        ],
         safetyWarnings: [
             'ห้ามใช้เด็ดขาดในผู้ป่วยที่ได้รับยากลุ่มรักษาภาวะหย่อนสมรรถภาพทางเพศ (Sildenafil/Viagra) ในช่วง 24 ชม. ที่ผ่านมา',
             'ต้องเฝ้าระวังภาวะความดันโลหิตต่ำรุนแรง (Severe hypotension)'
@@ -280,6 +358,10 @@ const EMERGENCY_DRUG_DATA = [
             {
                 name: 'Hypertensive Emergency (e.g. Aortic dissection, Hypertensive encephalopathy)',
                 dose: 'เริ่มต้น 0.25-0.5 mcg/kg/min ปรับเพิ่มทุก 3-5 นาที เพื่อลด BP 10-20% ใน 1 ชม.แรก'
+            },
+            {
+                name: 'Aortic Dissection',
+                dose: 'ใช้ร่วมกับ Beta-blocker (เช่น Esmolol/Labetalol) เพื่อเป้าหมาย SBP 100-120 mmHg และ HR < 60 bpm'
             }
         ],
         safetyWarnings: [
