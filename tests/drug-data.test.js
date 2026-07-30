@@ -3,8 +3,8 @@ const assert = require('node:assert/strict');
 const { EMERGENCY_DRUG_DATA } = require('../shared/drug-data.js');
 
 describe('EMERGENCY_DRUG_DATA structure', () => {
-  test('has 18 drugs', () => {
-    assert.equal(EMERGENCY_DRUG_DATA.length, 18);
+  test('has 17 drugs', () => {
+    assert.equal(EMERGENCY_DRUG_DATA.length, 17);
   });
 
   test('every drug has required fields', () => {

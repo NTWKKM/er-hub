@@ -431,29 +431,6 @@ const EMERGENCY_DRUG_DATA = [
     group: 'Sedation & Analgesia'
   },
   {
-    id: 'propofol',
-    name: 'Propofol (Diprivan)',
-    thaiName: 'ยานอนหลับ (Propofol)',
-    isWeightBased: true,
-    doseUnit: 'mcg/kg/min',
-    doseRange: { min: 5, max: 50, step: 5, default: 10 },
-    absoluteMaxPerHour: 500,
-    defaultPreparationIndex: 0,
-    preparations: [ { label: '1% (10 mg/mL) 50 mL (10,000 mcg/mL)', concentration: 10000 } ],
-    titrationGuide: 'ปรับขนาดยาทุก 5-10 นาที จนกว่าจะได้ระดับ Sedation ที่ต้องการ (เช่น RASS -2 ถึง 0)',
-    indications: [
-      {
-        name: 'Sedation in Intubated Patients',
-        dose: '5 - 50 mcg/kg/min ปรับขนาดตามระดับ RASS'
-      }
-    ],
-    safetyWarnings: [
-      'ระวัง Hypotension โดยเฉพาะในผู้ป่วย Hypovolemia',
-      'ติดตามระดับ Triglyceride หากให้ต่อเนื่องเกิน 48 ชม. (ป้องกัน PRIS)'
-    ],
-    group: 'Sedation & Analgesia'
-  },
-  {
     id: 'dexmedetomidine',
     name: 'Dexmedetomidine (Precedex)',
     thaiName: 'ยานอนหลับ (Dexmedetomidine)',
