@@ -17,6 +17,12 @@ const EMERGENCY_DRUG_DATA = [
         defaultPreparationIndex: 0,
         doseRange: { min: 0.05, max: 3.0, step: 0.01, default: 0.1 },
         titrationGuide: 'ปรับเพิ่มครั้งละ 0.01 mcg/kg/min ทุก 15 นาที เพื่อเป้าหมาย MAP ≥ 65 mmHg',
+        indications: [
+            {
+                name: 'Septic shock',
+                dose: 'เริ่มต้น 0.05 - 2 mcg/kg/min ปรับเพิ่มทีละ 0.02 - 0.05 mcg/kg/min ทุก 10-15 นาที'
+            }
+        ],
         safetyWarnings: [
             'เป็นยา HAD (High Alert Drug) ต้องจ่ายผ่าน Infusion pump เท่านั้น',
             'สังเกตภาวะ extravasation, ตรวจบริเวณตำแหน่งแทงเข็มเขียวช้ำทุก 4 ชม.',
@@ -25,8 +31,8 @@ const EMERGENCY_DRUG_DATA = [
     },
     {
         id: 'epinephrine-anaphylaxis',
-        name: 'Epinephrine (Refractory Anaphylaxis)',
-        thaiName: 'เอพิเนฟริน (แพ้รุนแรงที่ไม่ตอบสนอง)',
+        name: 'Epinephrine (Refractory Anaphylaxis / Bradycardia)',
+        thaiName: 'เอพิเนฟริน (แพ้รุนแรงที่ไม่ตอบสนอง / หัวใจเต้นช้า)',
         doseUnit: 'mcg/min',
         isWeightBased: false,
         preparations: [
@@ -34,8 +40,18 @@ const EMERGENCY_DRUG_DATA = [
             { label: '1 mg in D5W/NSS 500 mL (2 mcg/mL)', concentration: 2 }
         ],
         defaultPreparationIndex: 0,
-        doseRange: { min: 1, max: 4, step: 0.5, default: 1 },
+        doseRange: { min: 1, max: 10, step: 0.5, default: 1 },
         titrationGuide: 'ปรับตามการตอบสนองทางคลินิก/BP เป็นระยะสั้นๆ (ไม่ใช่ทุก 15 นาที); ไม่มีเป้า MAP ตายตัว',
+        indications: [
+            {
+                name: 'Anaphylaxis (IV infusion)',
+                dose: 'เริ่มต้น 1 mcg/min (เช่น ผสม 1 mg in 500 mL D5W rate 0.5 mL/min) และ titrate ตามอาการ'
+            },
+            {
+                name: 'Bradycardia (IV infusion)',
+                dose: '2 - 10 mcg/min ปรับตามการตอบสนอง (titrate to desired response)'
+            }
+        ],
         safetyWarnings: [
             'ใช้เมื่อไม่ตอบสนองต่อ IM epinephrine หรือ BP ต่ำมาก',
             'สำหรับเด็กใช้สูตร weight-based แยกต่างหาก (rule of 6, เริ่ม 0.1 mcg/kg/min)',

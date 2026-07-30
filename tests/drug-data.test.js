@@ -69,7 +69,7 @@ describe('EMERGENCY_DRUG_DATA specific drugs', () => {
     assert.equal(epiAnaph.doseUnit, 'mcg/min');
     assert.equal(epiAnaph.isWeightBased, false);
     assert.equal(epiAnaph.doseRange.min, 1);
-    assert.equal(epiAnaph.doseRange.max, 4);
+    assert.equal(epiAnaph.doseRange.max, 10);
   });
 
   test('heparin has two preparations (100 and 50 units/mL)', () => {
