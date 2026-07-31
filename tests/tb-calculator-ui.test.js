@@ -49,7 +49,7 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(html.includes('1HP'), 'Should include 1HP preventive regimen');
         assert.ok(html.includes('4R'), 'Should include 4R preventive regimen');
         assert.ok(html.includes('3HR'), 'Should include 3HR preventive regimen');
-        assert.ok(html.includes('6-9H'), 'Should include 6-9H preventive regimen');
+        assert.ok(html.includes('6H'), 'Should include 6H preventive regimen');
 
         // Check MDR-TB Bedaquiline summary
         assert.ok(html.includes('Bedaquiline'), 'Should include Bedaquiline in MDR-TB section');
@@ -72,8 +72,8 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
             dom.window.calculateTBDoses();
 
             const fdcText = doc.getElementById('fdc-4-val').innerText;
-            const hVal = doc.getElementById('dose-h-val').innerText;
-            const rVal = doc.getElementById('dose-r-val').innerText;
+            const hVal = doc.getElementById('adult-h-val').innerText;
+            const rVal = doc.getElementById('adult-r-val').innerText;
 
             return { fdcText, hVal, rVal };
         }
@@ -135,15 +135,15 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(html.includes('TB Weight-Based Dosing Calculator'), 'index.html should display title');
     });
 
-    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and uses v37', () => {
+    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and uses v38', () => {
         const sw = fs.readFileSync(path.join(ROOT_DIR, 'service-worker.js'), 'utf8');
-        assert.ok(sw.includes("'er-hub-v37'"), 'CACHE_VERSION should be er-hub-v37');
+        assert.ok(sw.includes("'er-hub-v38'"), 'CACHE_VERSION should be er-hub-v38');
         assert.ok(sw.includes("'./tools/tb-calculator.html'"), 'ASSETS array should contain ./tools/tb-calculator.html');
     });
 
-    await t.test('index.html version string matches service-worker.js v37', () => {
+    await t.test('index.html version string matches service-worker.js v38', () => {
         const html = fs.readFileSync(path.join(ROOT_DIR, 'index.html'), 'utf8');
-        assert.ok(html.includes('v37'), 'index.html top nav should state v37');
+        assert.ok(html.includes('v38'), 'index.html top nav should state v38');
     });
 
     await t.test('ARCHITECTURE.md documents tools/tb-calculator.html', () => {
