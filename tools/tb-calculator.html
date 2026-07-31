@@ -173,6 +173,39 @@
             accent-color: var(--brand-navy);
         }
 
+        .preset-pills-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .preset-pill-title {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .preset-pill {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .preset-pill:hover {
+            border-color: var(--brand-navy);
+            color: var(--brand-navy);
+            background: #f0fdf4;
+        }
+
         .form-select {
             width: 100%;
             padding: 9px 12px;
@@ -478,6 +511,14 @@
                                     <button type="button" class="stepper-btn" onclick="adjustWeight(1)">+1</button>
                                 </div>
                                 <input type="range" id="tb-weight-slider" class="weight-slider" min="2" max="150" step="0.5" value="55">
+                                
+                                <div class="preset-pills-row">
+                                    <span class="preset-pill-title">Landmark น้ำหนัก:</span>
+                                    <button type="button" class="preset-pill" onclick="setWeight(25)" title="< 35 kg: คำนวณยาเดี่ยวรายบุคคลตาม mg/kg">25 kg (คำนวณรายบุคคล)</button>
+                                    <button type="button" class="preset-pill" onclick="setWeight(35)" title="35-49 kg: H300 R450 Z1000 E800 (≈3 เม็ด)">35 kg (35–49 kg)</button>
+                                    <button type="button" class="preset-pill" onclick="setWeight(50)" title="50-69 kg: H300 R600 Z1500 E1000 (≈4 เม็ด)">50 kg (50–69 kg)</button>
+                                    <button type="button" class="preset-pill" onclick="setWeight(70)" title=">= 70 kg: คำนวณยาเดี่ยวรายบุคคล (อ้างอิง H300 R600 Z2000 E1200)">70 kg (>= 70 kg)</button>
+                                </div>
                             </div>
                         </div>
 
@@ -822,8 +863,8 @@
                 fdc2Tabs = "≈2 เม็ด (ชนิด 150/300)";
             } else {
                 hDose = 300; rDose = 600; zDose = 2000; eDose = 1200;
-                fdc4Tabs = "คำนวณยาเดี่ยวตามน้ำหนักตัว (> 70 kg) — ค่าอ้างอิง H300/R600/Z2000/E1200";
-                fdc2Tabs = "คำนวณยาเดี่ยวตามน้ำหนักตัว (> 70 kg)";
+                fdc4Tabs = "คำนวณยาเดี่ยวตามน้ำหนักตัว (≥ 70 kg) — ค่าอ้างอิง H300/R600/Z2000/E1200";
+                fdc2Tabs = "คำนวณยาเดี่ยวตามน้ำหนักตัว (≥ 70 kg)";
             }
 
             // Calculate Ranges for Adult (mg/kg)

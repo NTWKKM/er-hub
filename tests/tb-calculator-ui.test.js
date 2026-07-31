@@ -99,9 +99,9 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         const b69 = runCalcAtWeight(69);
         assert.ok(b69.fdcText.includes('4 เม็ด'), `Weight 69kg should give ≈4 tabs 4-FDC, got: ${b69.fdcText}`);
 
-        // Test Band > 70 kg -> คำนวณรายบุคคล (ค่าอ้างอิง Z2000/E1200)
-        const b71 = runCalcAtWeight(71);
-        assert.ok(b71.fdcText.includes('> 70 kg'), `Weight 71kg should specify individual calculation (> 70 kg), got: ${b71.fdcText}`);
+        // Test Band >= 70 kg -> คำนวณรายบุคคล (ค่าอ้างอิง Z2000/E1200)
+        const b70 = runCalcAtWeight(70);
+        assert.ok(b70.fdcText.includes('70 kg'), `Weight 70kg should specify individual calculation (≥ 70 kg), got: ${b70.fdcText}`);
     });
 
     await t.test('Execution Test: Pediatric dispersible FDC, LFX max cap (1500mg), and TPT 3HP patient type branch', () => {
