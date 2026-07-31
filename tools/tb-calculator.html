@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TB Weight-Based Dosing Calculator — เครื่องคำนวณยารักษาวัณโรคตามน้ำหนักตัว (CPG 2018/2022)</title>
+    <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/base.css">
+    <style>
+        :root {
+            --paper: #090d16;
+            --surface: #111827;
+            --surface-card: #1f293d;
+            --ink: #f3f4f6;
+            --graphite: #9ca3af;
+            --rule: #374151;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #ef4444;
+            --accent-cyan: #06b6d4;
+            --font-ui: 'Inter Tight', 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--paper);
+            color: var(--ink);
+            font-family: var(--font-ui);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .tb-container {
+            width: 100%;
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 16px 20px 40px;
+            box-sizing: border-box;
+        }
+
+        .tb-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .tb-header-title h1 {
+            margin: 0;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tb-header-title h1 span.badge {
+            background: var(--accent-blue);
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .tb-header-title p {
+            margin: 4px 0 0;
+            color: var(--graphite);
+            font-size: 0.88rem;
+        }
+
+        .cpg-tag {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #93c5fd;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        /* Patient Profile Bar */
+        .patient-bar {
+            background: var(--surface-card);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--graphite);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .form-control {
+            background: var(--paper);
+            border: 1px solid var(--rule);
+            color: var(--ink);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* Tab Navigation */
+        .tb-tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 2px solid var(--rule);
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tb-tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--graphite);
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .tb-tab-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .tb-tab-btn.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Tab Content */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* Result Cards & Panels */
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 850px) {
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .drug-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            font-size: 0.92rem;
+        }
+
+        .drug-table th, .drug-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .drug-table th {
+            color: var(--graphite);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .drug-table td.dose-value {
+            font-weight: 700;
+            color: var(--accent-green);
+            font-size: 1rem;
+        }
+
+        .pill-badge {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .alert-box {
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            font-size: 0.88rem;
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #bfdbfe;
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fde68a;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #a7f3d0;
+        }
+
+        /* Action bar & copy note */
+        .action-bar {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            background: var(--accent-blue);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--rule);
+            color: var(--ink);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        /* Copy Feedback Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--accent-green);
+            color: #000;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .note-preview {
+            background: #060911;
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 14px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #38bdf8;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-top: 12px;
+        }
+
+        .regimen-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tb-container">
+
+        <!-- Top Header -->
+        <div class="tb-header">
+            <div class="tb-header-title">
+                <h1>
+                    <span>💊</span>
+                    คำนวณยารักษาวัณโรคตามน้ำหนักตัว
+                    <span class="badge">PROTOTYPE</span>
+                </h1>
+                <p>เครื่องมือคำนวณขนาดและสูตรยารักษาวัณโรคตามน้ำหนักตัวผู้ป่วย (Adult & Pediatric Weight-based Regimens)</p>
+            </div>
+            <div class="cpg-tag">
+                อ้างอิง: CPG วัณโรค ประเทศไทย พ.ศ. 2561 & 2565 (2022)
+            </div>
+        </div>
+
+        <!-- Patient Demographics & Profile Bar -->
+        <div class="patient-bar">
+            <div class="form-group">
+                <label for="tb-weight">น้ำหนักตัว (Body Weight)</label>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <input type="number" id="tb-weight" class="form-control" min="2" max="150" step="0.5" value="55">
+                    <span style="font-weight:600; color:var(--graphite);">kg</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tb-age">อายุ (Age)</label>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <input type="number" id="tb-age" class="form-control" min="0" max="120" step="1" value="45">
+                    <span style="font-weight:600; color:var(--graphite);">ปี</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tb-patient-type">กลุ่มผู้ป่วย (Patient Category)</label>
+                <select id="tb-patient-type" class="form-control">
+                    <option value="adult-standard">ผู้ใหญ่ (Adult ≥ 15 ปี)</option>
+                    <option value="pediatric">เด็ก (Pediatric < 15 ปี)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tb-renal">การทำงานของไต (Renal Status)</label>
+                <select id="tb-renal" class="form-control">
+                    <option value="normal">ปกติ / CrCl ≥ 30 mL/min</option>
+                    <option value="ckd-severe">ไตวายรุนแรง (CrCl < 30 หรือ Hemodialysis)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tb-liver">การทำงานของตับ (Liver Status)</label>
+                <select id="tb-liver" class="form-control">
+                    <option value="normal">ปกติ (Normal Liver Function)</option>
+                    <option value="hep-impairment">ตับอักเสบ/โรคตับเรื้อรัง (ALT > 3x Upper Normal)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tb-special">ภาวะพิเศษ (Special Conditions)</label>
+                <select id="tb-special" class="form-control">
+                    <option value="none">ไม่มี (None)</option>
+                    <option value="pregnancy">หญิงตั้งครรภ์ / ให้นมบุตร (Pregnancy / Lactation)</option>
+                    <option value="h-mono">ดื้อยา H ชนิดเดียว (H-monoresistance)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tb-tabs">
+            <button class="tb-tab-btn active" onclick="switchTab('tab-adult')">1. สูตรผู้ใหญ่ (Adult Regimen)</button>
+            <button class="tb-tab-btn" onclick="switchTab('tab-child')">2. สูตรเด็ก (Pediatric Regimen)</button>
+            <button class="tb-tab-btn" onclick="switchTab('tab-special')">3. โรคไต/ตับ & ดื้อยา H (Special Impairments)</button>
+            <button class="tb-tab-btn" onclick="switchTab('tab-tpt')">4. รักษาวัณโรคระยะแฝง (TPT Regimens)</button>
+            <button class="tb-tab-btn" onclick="switchTab('tab-mdr')">5. วัณโรคดื้อยาหลายขนาน (MDR-TB Baseline)</button>
+        </div>
+
+        <!-- TAB 1: Adult Standard Regimen -->
+        <div id="tab-adult" class="tab-panel active">
+            <div class="regimen-badge">สูตรมาตรฐานผู้ใหญ่: 2HRZE / 4HR (หรือ 2HRZE/7HR - 2HRZE/10HR ตามตำแหน่งโรค)</div>
+            
+            <div class="result-grid">
+                <!-- Single Drug Tablet Calculation -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>💊 ขนาดยาแยกเม็ด (Single Drugs)</h3>
+                        <span class="pill-badge" id="adult-single-w-tag">น้ำหนัก 55 kg</span>
+                    </div>
+
+                    <table class="drug-table">
+                        <thead>
+                            <tr>
+                                <th>ชื่อยา (Drug)</th>
+                                <th>เกณฑ์ mg/kg</th>
+                                <th>ขนาดยาต่อวัน (Daily Dose)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Isoniazid (H)</strong> (100 mg/tab)</td>
+                                <td>4-6 mg/kg</td>
+                                <td class="dose-value" id="dose-h-val">300 mg (3 เม็ด)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Rifampicin (R)</strong> (450/600 mg)</td>
+                                <td>8-12 mg/kg</td>
+                                <td class="dose-value" id="dose-r-val">600 mg (1 เม็ด 600mg)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pyrazinamide (Z)</strong> (500 mg/tab)</td>
+                                <td>20-30 mg/kg</td>
+                                <td class="dose-value" id="dose-z-val">1,500 mg (3 เม็ด)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ethambutol (E)</strong> (400 mg/tab)</td>
+                                <td>15-20 mg/kg</td>
+                                <td class="dose-value" id="dose-e-val">1,000 mg (2.5 เม็ด)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert-box alert-info">
+                        <strong>คำแนะนำ:</strong> ทานยาวันละ 1 ครั้ง ตอนท้องว่าง (ก่อนอาหาร 1 ชม. หรือ ก่อนนอน)
+                    </div>
+                </div>
+
+                <!-- Fixed-Dose Combination (FDC) Calculation -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📦 ยารวมเม็ดผู้ใหญ่ (Adult FDC Tablets)</h3>
+                        <span class="pill-badge" style="background:rgba(16, 185, 129, 0.2); color:#6ee7b7; border-color:rgba(16, 185, 129, 0.4);">แนะนำใช้ FDC</span>
+                    </div>
+
+                    <table class="drug-table">
+                        <thead>
+                            <tr>
+                                <th>ระยะการรักษา (Phase)</th>
+                                <th>ชนิดยา FDC</th>
+                                <th>จำนวนที่ต้องรับประทาน</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>ระยะเข้มข้น (2 เดือนแรก)</strong></td>
+                                <td><strong>4-FDC</strong><br><small style="color:var(--graphite);">(H75/R150/Z400/E275)</small></td>
+                                <td class="dose-value" id="fdc-4-val">4 เม็ด วันละครั้ง</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ระยะต่อเนื่อง (4 เดือนหลัง)</strong></td>
+                                <td><strong>2-FDC</strong><br><small style="color:var(--graphite);">(H150/R300 หรือ H75/R150)</small></td>
+                                <td class="dose-value" id="fdc-2-val">2 เม็ด (ชนิด 150/300) วันละครั้ง</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert-box alert-success" id="pyridoxine-alert">
+                        <span>💡</span>
+                        <div><strong>Pyridoxine (Vitamin B6):</strong> พิจารณาให้ 50-100 mg/วัน ในผู้ป่วยเสี่ยงประสาทอักเสบ (ผู้สูงอายุ, เบาหวาน, ติดเชื้อ HIV, ตั้งครรภ์, ไตวาย)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Pediatric Regimen -->
+        <div id="tab-child" class="tab-panel">
+            <div class="regimen-badge" style="background:rgba(245, 158, 11, 0.15); color:var(--accent-amber); border-color:rgba(245, 158, 11, 0.3);">สูตรเด็ก (Pediatric Regimen < 15 ปี): 2HRZE (หรือ 2HRZ) / 4HR</div>
+            
+            <div class="result-grid">
+                <!-- Pediatric Single Drug Dosing -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>👶 ขนาดยาเด็กแยกตาม mg/kg/day</h3>
+                        <span class="pill-badge" id="child-w-tag">น้ำหนัก 55 kg</span>
+                    </div>
+
+                    <table class="drug-table">
+                        <thead>
+                            <tr>
+                                <th>ยา (Drug)</th>
+                                <th>ขนาดยาที่แนะนำ (Target)</th>
+                                <th>คำนวณตามน้ำหนัก (Calculated Dose)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Isoniazid (H)</strong></td>
+                                <td>10 (10-15) mg/kg/day<br><small>(สูงสุด 300 mg)</small></td>
+                                <td class="dose-value" id="child-h-val">300 mg/day</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Rifampicin (R)</strong></td>
+                                <td>15 (10-20) mg/kg/day<br><small>(สูงสุด 600 mg)</small></td>
+                                <td class="dose-value" id="child-r-val">600 mg/day</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pyrazinamide (Z)</strong></td>
+                                <td>35 (30-40) mg/kg/day<br><small>(สูงสุด 2,000 mg)</small></td>
+                                <td class="dose-value" id="child-z-val">1,925 mg/day</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ethambutol (E)</strong></td>
+                                <td>20 (15-25) mg/kg/day<br><small>(สูงสุด 1,200 mg)</small></td>
+                                <td class="dose-value" id="child-e-val">1,100 mg/day</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pediatric Dispersible FDCs -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>💧 ยารวมเม็ดเด็กชนิดละลายน้ำ (Child FDC Dispersible)</h3>
+                    </div>
+
+                    <table class="drug-table">
+                        <thead>
+                            <tr>
+                                <th>สูตร FDC เด็ก (Dispersible)</th>
+                                <th>ช่วงน้ำหนัก (Weight Band)</th>
+                                <th>ขนาดยา (Daily Dose)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>3-FDC (RHZ 75/50/150)</strong><br><small style="color:var(--graphite);">ระยะเข้มข้น</small></td>
+                                <td id="child-rhz-band">≥ 25 kg</td>
+                                <td class="dose-value" id="child-rhz-val">ใช้สูตรผู้ใหญ่ / FDC ผู้ใหญ่</td>
+                            </tr>
+                            <tr>
+                                <td><strong>2-FDC (RH 75/50)</strong><br><small style="color:var(--graphite);">ระยะต่อเนื่อง</small></td>
+                                <td id="child-rh-band">≥ 25 kg</td>
+                                <td class="dose-value" id="child-rh-val">ใช้สูตรผู้ใหญ่ / FDC ผู้ใหญ่</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert-box alert-warning">
+                        <strong>คำแนะนำยาเม็ดละลายน้ำเด็ก:</strong> เม็ดรวมเด็ก (RHZ 75/50/150 mg และ RH 75/50 mg) เป็นชนิดละลายน้ำ ให้ละลายในน้ำดื่มเล็กน้อย (ประมาณ 5-10 mL) แล้วให้เด็กดื่มทันที ห้ามแกะแผงยาทิ้งไว้
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: Special Impairments (Renal / Liver / H-monoresistance) -->
+        <div id="tab-special" class="tab-panel">
+            <div class="regimen-badge" style="background:rgba(239, 68, 68, 0.15); color:var(--accent-rose); border-color:rgba(239, 68, 68, 0.3);">การปรับยาในผู้ป่วยโรคไต โรคตับ และการดื้อยา H (Special Impairments)</div>
+            
+            <div class="result-grid">
+                <!-- Renal Impairment Adjustment -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🏥 ผู้ป่วยไตวายรุนแรง (CrCl < 30 mL/min / Hemodialysis)</h3>
+                    </div>
+
+                    <table class="drug-table">
+                        <thead>
+                            <tr>
+                                <th>ยา (Drug)</th>
+                                <th>การปรับขนาดยาและความถี่ (Adjusted Schedule)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Isoniazid (H)</strong></td>
+                                <td class="dose-value" style="color:#60a5fa;" id="renal-h-val">300 mg วันละครั้ง (ไม่ปรับ)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Rifampicin (R)</strong></td>
+                                <td class="dose-value" style="color:#60a5fa;" id="renal-r-val">600 mg วันละครั้ง (ไม่ปรับ)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pyrazinamide (Z)</strong></td>
+                                <td class="dose-value" style="color:var(--accent-rose);" id="renal-z-val">1,100 - 1,650 mg (20-30 mg/kg) <strong>3 ครั้ง/สัปดาห์</strong> (หลังล้างไต)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ethambutol (E)</strong></td>
+                                <td class="dose-value" style="color:var(--accent-rose);" id="renal-e-val">825 - 1,100 mg (15-20 mg/kg) <strong>3 ครั้ง/สัปดาห์</strong> (หลังล้างไต)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert-box alert-danger">
+                        <strong>ข้อระวัง:</strong> Z และ E ถูกขับทางไต การทานทุกวันในผู้ป่วยไตวายจะทำให้เกิดการสะสมและพิษต่อนิวโรปาธีและเส้นประสาทตา (Optic neuritis) ต้องให้เพียง 3 ครั้งต่อสัปดาห์เท่านั้น
+                    </div>
+                </div>
+
+                <!-- Liver Disease & H-Monoresistance -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🩺 ทางเลือกในโรคตับ & H-Monoresistance</h3>
+                    </div>
+
+                    <div style="margin-bottom:16px;">
+                        <h4 style="margin:0 0 8px; color:var(--accent-amber); font-size:0.95rem;">1. ผู้ป่วยโรคตับเรื้อรัง / ตับอักเสบ (Hepatotoxicity)</h4>
+                        <div style="font-size:0.88rem; color:var(--graphite); line-height:1.5;">
+                            • <strong>ยาสูตรที่มีพิษต่อตับ 2 ชนิด:</strong> <code>2HRE / 7HR</code> หรือ <code>6-9 RZE</code><br>
+                            • <strong>ยาสูตรที่มีพิษต่อตับ 1 ชนิด:</strong> <code>2 SHE / 16 HE</code> หรือ <code>18-24 HE + Levofloxacin</code><br>
+                            • <strong>เกณฑ์หยุดยา:</strong> หยุด H, R, Z ทันทีเมื่อ AST/ALT > 5 เท่า (ไม่มีอาการ) หรือ AST/ALT > 3 เท่าร่วมกับมีอาการคลื่นไส้ตาเหลือง
+                        </div>
+                    </div>
+
+                    <div style="border-top:1px solid var(--rule); padding-top:12px;">
+                        <h4 style="margin:0 0 8px; color:var(--accent-cyan); font-size:0.95rem;">2. ดื้อยา Isoniazid ชนิดเดียว (H-Monoresistance)</h4>
+                        <div style="font-size:0.88rem; color:var(--graphite); line-height:1.5;">
+                            • <strong>สูตรยาที่แนะนำ:</strong> <strong style="color:#fff;">6(H)RZELfx</strong> (นาน 6 เดือน)<br>
+                            • <strong>ขนาดยา Levofloxacin (Lfx):</strong> <span id="hmono-lfx-val" style="color:var(--accent-green); font-weight:700;">750 - 1,000 mg วันละครั้ง</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: Latent TB Preventive Treatment (TPT) -->
+        <div id="tab-tpt" class="tab-panel">
+            <div class="regimen-badge" style="background:rgba(16, 185, 129, 0.15); color:var(--accent-green); border-color:rgba(16, 185, 129, 0.3);">การรักษาการติดเชื้อวัณโรคระยะแฝง (TB Preventive Treatment: TPT)</div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>🛡️ สูตรยารักษาวัณโรคระยะแฝง (TPT Regimens)</h3>
+                </div>
+
+                <table class="drug-table">
+                    <thead>
+                        <tr>
+                            <th>สูตรยา (Regimen)</th>
+                            <th>ระยะเวลา (Duration)</th>
+                            <th>ขนาดยาคำนวณตามน้ำหนักตัว (Calculated Dose)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>3HP</strong><br><small style="color:var(--graphite);">(Isoniazid + Rifapentine)</small></td>
+                            <td>สัปดาห์ละ 1 ครั้ง<br>นาน 3 เดือน (12 doses)</td>
+                            <td class="dose-value" id="tpt-3hp-val">Isoniazid 900 mg + Rifapentine 900 mg (สัปดาห์ละครั้ง)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>1HP</strong><br><small style="color:var(--graphite);">(Isoniazid + Rifapentine)</small></td>
+                            <td>วันละ 1 ครั้ง<br>นาน 1 เดือน (28 doses)</td>
+                            <td class="dose-value" id="tpt-1hp-val">Isoniazid 300 mg + Rifapentine 600 mg วันละครั้ง (อายุ ≥ 13 ปี)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4R</strong><br><small style="color:var(--graphite);">(Rifampicin daily)</small></td>
+                            <td>วันละ 1 ครั้ง<br>นาน 4 เดือน</td>
+                            <td class="dose-value" id="tpt-4r-val">Rifampicin 600 mg วันละครั้ง</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3HR</strong><br><small style="color:var(--graphite);">(Isoniazid + Rifampicin)</small></td>
+                            <td>วันละ 1 ครั้ง<br>นาน 3 เดือน</td>
+                            <td class="dose-value" id="tpt-3hr-val">Isoniazid 300 mg + Rifampicin 600 mg วันละครั้ง</td>
+                        </tr>
+                        <tr>
+                            <td><strong>6-9H</strong><br><small style="color:var(--graphite);">(Isoniazid daily)</small></td>
+                            <td>วันละ 1 ครั้ง<br>นาน 6 - 9 เดือน</td>
+                            <td class="dose-value" id="tpt-6h-val">Isoniazid 300 mg วันละครั้ง</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 5: MDR-TB Summary -->
+        <div id="tab-mdr" class="tab-panel">
+            <div class="regimen-badge" style="background:rgba(59, 130, 246, 0.15); color:var(--accent-blue); border-color:rgba(59, 130, 246, 0.3);">แนวทางการรักษาวัณโรคดื้อยาหลายขนาน (MDR/RR-TB Baseline Guidance)</div>
+            
+            <div class="result-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🧪 สรุปสูตรยาระยะสั้นชนิดกินที่มี Bedaquiline (Shorter All-Oral Bdq Regimen)</h3>
+                    </div>
+                    <div style="font-size:0.9rem; color:var(--graphite); line-height:1.6;">
+                        <p style="color:#fff; font-weight:600;">ระยะเวลาการรักษา 9 - 11 เดือน:</p>
+                        <ul style="padding-left:20px; margin:8px 0;">
+                            <li><strong>ระยะเข้มข้น (4-6 เดือน):</strong> <code>Bedaquiline (Bdq) + Levofloxacin (Lfx) / Moxifloxacin (Mfx) + Clofazimine (Cfz) + Pyrazinamide (Z) + Ethambutol (E) + High-dose Isoniazid (H-high) + Ethionamide (Eto)</code></li>
+                            <li><strong>ระยะต่อเนื่อง (5 เดือน):</strong> <code>Lfx/Mfx + Cfz + Z + E</code></li>
+                        </ul>
+                        <div class="alert-box alert-info">
+                            <strong>ขนาดยา Bedaquiline (Bdq):</strong> 400 mg วันละครั้ง นาน 2 สัปดาห์แรก แล้วลดเหลือ 200 mg 3 ครั้ง/สัปดาห์ อีก 22 สัปดาห์ (รวม 24 สัปดาห์)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🧬 การจัดกลุ่มยารักษาวัณโรคดื้อยา (WHO Group A, B, C)</h3>
+                    </div>
+                    <div style="font-size:0.88rem; color:var(--graphite); line-height:1.5;">
+                        <p><strong style="color:var(--accent-green);">Group A (เลือกใช้ทุกตัวถ้าไม่มีข้อห้าม):</strong><br> Levofloxacin / Moxifloxacin, Bedaquiline, Linezolid</p>
+                        <p><strong style="color:var(--accent-amber);">Group B (เลือกเติมให้ครบสูตรอย่างน้อย 4-5 ขนาน):</strong><br> Clofazimine, Cycloserine / Terizidone</p>
+                        <p><strong style="color:var(--accent-blue);">Group C (ใช้เมื่อไม่สามารถใช้ Group A/B ได้):</strong><br> Ethambutol, Delamanid, Pyrazinamide, Imipenem-cilastatin/Meropenem, Amikacin, Ethionamide, p-aminosalicylic acid (PAS)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Bar & Copy Note -->
+        <div class="action-bar">
+            <button class="btn btn-outline" onclick="copyPrescriptionNote()">
+                📋 คัดลอกคำสั่งยาเข้า Clipboard (Copy Rx Note)
+            </button>
+        </div>
+
+        <!-- Clinical Note Preview -->
+        <div class="card" style="margin-top:16px;">
+            <div class="card-header">
+                <h3>📝 ตัวอย่างข้อความคำสั่งยา (Clinical Note Preview)</h3>
+            </div>
+            <div class="note-preview" id="clinical-note-text">
+                Loading clinical note preview...
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">✓ คัดลอกคำสั่งยาลง Clipboard เรียบร้อยแล้ว!</div>
+
+    <!-- ER Hub Shared Components & Logic -->
+    <script src="../shared/components.js"></script>
+    <script>
+        // Inject ER Hub Top Navigation Bar
+        if (window.ED_COMPONENTS && window.ED_COMPONENTS.injectNavBar) {
+            window.ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tb-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+
+            const activeBtn = Array.from(document.querySelectorAll('.tb-tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+            if (activeBtn) activeBtn.classList.add('active');
+
+            const targetPanel = document.getElementById(tabId);
+            if (targetPanel) targetPanel.classList.add('active');
+        }
+
+        // Calculation Logic Engine
+        function calculateTBDoses() {
+            const weight = parseFloat(document.getElementById('tb-weight').value) || 0;
+            const age = parseInt(document.getElementById('tb-age').value) || 0;
+            const patientType = document.getElementById('tb-patient-type').value;
+            const renal = document.getElementById('tb-renal').value;
+            const liver = document.getElementById('tb-liver').value;
+            const special = document.getElementById('tb-special').value;
+
+            // Auto-switch patient category if age < 15
+            if (age < 15 && patientType !== 'pediatric') {
+                document.getElementById('tb-patient-type').value = 'pediatric';
+            } else if (age >= 15 && patientType === 'pediatric') {
+                document.getElementById('tb-patient-type').value = 'adult-standard';
+            }
+
+            // 1. Adult Single Drugs & FDC Calculation
+            document.getElementById('adult-single-w-tag').innerText = `น้ำหนัก ${weight} kg`;
+            document.getElementById('child-w-tag').innerText = `น้ำหนัก ${weight} kg`;
+
+            let hDose = 300;
+            let rDose = 600;
+            let zDose = 1500;
+            let eDose = 1000;
+
+            let fdc4Tabs = 4;
+            let fdc2Tabs = "2 เม็ด (ชนิด 150/300)";
+
+            if (weight < 35) {
+                hDose = Math.round(weight * 5); // 4-6 mg/kg
+                rDose = Math.round(weight * 10); // 8-12 mg/kg
+                zDose = Math.round(weight * 25); // 20-30 mg/kg
+                eDose = Math.round(weight * 15); // 15-20 mg/kg
+                fdc4Tabs = "2 เม็ด (สำหรับ 30-37 kg) หรือคำนวณยาเดี่ยว";
+                fdc2Tabs = "2 เม็ด (ชนิด 75/150) หรือคำนวณยาเดี่ยว";
+            } else if (weight >= 35 && weight <= 49) {
+                hDose = 300;
+                rDose = 450;
+                zDose = 1000;
+                eDose = 800;
+                fdc4Tabs = 3;
+                fdc2Tabs = "3 เม็ด (ชนิด 75/150) หรือ 1.5 เม็ด (150/300)";
+            } else if (weight >= 50 && weight <= 69) {
+                hDose = 300;
+                rDose = 600;
+                zDose = 1500;
+                eDose = 1000;
+                fdc4Tabs = 4;
+                fdc2Tabs = "2 เม็ด (ชนิด 150/300)";
+            } else { // >= 70 kg
+                hDose = 300;
+                rDose = 600;
+                zDose = 2000;
+                eDose = 1200;
+                fdc4Tabs = 5;
+                fdc2Tabs = "2.5 เม็ด (ชนิด 150/300) หรือ 5 เม็ด (75/150)";
+            }
+
+            document.getElementById('dose-h-val').innerHTML = `${hDose} mg <small style="color:var(--graphite);">(${(hDose/100).toFixed(1)} เม็ด 100mg)</small>`;
+            document.getElementById('dose-r-val').innerHTML = `${rDose} mg <small style="color:var(--graphite);">(1 เม็ด ${rDose}mg)</small>`;
+            document.getElementById('dose-z-val').innerHTML = `${zDose} mg <small style="color:var(--graphite);">(${(zDose/500).toFixed(1)} เม็ด 500mg)</small>`;
+            document.getElementById('dose-e-val').innerHTML = `${eDose} mg <small style="color:var(--graphite);">(${(eDose/400).toFixed(1)} เม็ด 400mg)</small>`;
+
+            document.getElementById('fdc-4-val').innerText = typeof fdc4Tabs === 'number' ? `${fdc4Tabs} เม็ด วันละครั้ง` : fdc4Tabs;
+            document.getElementById('fdc-2-val').innerText = fdc2Tabs;
+
+            // 2. Pediatric Dosing
+            let cH = Math.min(300, Math.round(weight * 10));
+            let cR = Math.min(600, Math.round(weight * 15));
+            let cZ = Math.min(2000, Math.round(weight * 35));
+            let cE = Math.min(1200, Math.round(weight * 20));
+
+            document.getElementById('child-h-val').innerText = `${cH} mg/day`;
+            document.getElementById('child-r-val').innerText = `${cR} mg/day`;
+            document.getElementById('child-z-val').innerText = `${cZ} mg/day`;
+            document.getElementById('child-e-val').innerText = `${cE} mg/day`;
+
+            // Child Dispersible FDCs
+            let rhzBand = "";
+            let rhzVal = "";
+            let rhBand = "";
+            let rhVal = "";
+
+            if (weight >= 4 && weight <= 7) {
+                rhzBand = "4 - 7 kg";
+                rhzVal = "1 เม็ด วันละครั้ง";
+                rhBand = "4 - 7 kg";
+                rhVal = "1 เม็ด วันละครั้ง";
+            } else if (weight >= 8 && weight <= 11) {
+                rhzBand = "8 - 11 kg";
+                rhzVal = "2 เม็ด วันละครั้ง";
+                rhBand = "8 - 11 kg";
+                rhVal = "2 เม็ด วันละครั้ง";
+            } else if (weight >= 12 && weight <= 15) {
+                rhzBand = "12 - 15 kg";
+                rhzVal = "3 เม็ด วันละครั้ง";
+                rhBand = "12 - 15 kg";
+                rhVal = "3 เม็ด วันละครั้ง";
+            } else if (weight >= 16 && weight <= 24) {
+                rhzBand = "16 - 24 kg";
+                rhzVal = "4 เม็ด วันละครั้ง";
+                rhBand = "16 - 24 kg";
+                rhVal = "4 เม็ด วันละครั้ง";
+            } else {
+                rhzBand = weight < 4 ? "< 4 kg" : "≥ 25 kg";
+                rhzVal = weight < 4 ? "คำนวณยาเดี่ยวชนิดน้ำ/ยานวด" : "ใช้สูตรผู้ใหญ่ / FDC ผู้ใหญ่";
+                rhBand = weight < 4 ? "< 4 kg" : "≥ 25 kg";
+                rhVal = weight < 4 ? "คำนวณยาเดี่ยวชนิดน้ำ/ยานวด" : "ใช้สูตรผู้ใหญ่ / FDC ผู้ใหญ่";
+            }
+
+            document.getElementById('child-rhz-band').innerText = rhzBand;
+            document.getElementById('child-rhz-val').innerText = rhzVal;
+            document.getElementById('child-rh-band').innerText = rhBand;
+            document.getElementById('child-rh-val').innerText = rhVal;
+
+            // 3. Renal Impairment Adjustments
+            let rZ = Math.round(weight * 25);
+            let rE = Math.round(weight * 15);
+            document.getElementById('renal-h-val').innerText = `${hDose} mg วันละครั้ง (ไม่ปรับ)`;
+            document.getElementById('renal-r-val').innerText = `${rDose} mg วันละครั้ง (ไม่ปรับ)`;
+            document.getElementById('renal-z-val').innerHTML = `${rZ} mg (25 mg/kg) <strong>3 ครั้ง/สัปดาห์</strong> (หลังล้างไต)`;
+            document.getElementById('renal-e-val').innerHTML = `${rE} mg (15 mg/kg) <strong>3 ครั้ง/สัปดาห์</strong> (หลังล้างไต)`;
+
+            // H-mono Levofloxacin
+            let lfxDose = weight >= 50 ? 1000 : 750;
+            if (age < 15) lfxDose = Math.round(weight * 15);
+            document.getElementById('hmono-lfx-val').innerText = `${lfxDose} mg วันละครั้ง`;
+
+            // 4. TPT Regimens
+            let tpt3hpH = 900;
+            let tpt3hpRpt = 900;
+            if (weight >= 10 && weight <= 15) { tpt3hpH = 300; tpt3hpRpt = 300; }
+            else if (weight >= 16 && weight <= 23) { tpt3hpH = 500; tpt3hpRpt = 450; }
+            else if (weight >= 24 && weight <= 30) { tpt3hpH = 600; tpt3hpRpt = 600; }
+            else if (weight > 30 && weight < 50) { tpt3hpH = 700; tpt3hpRpt = 750; }
+
+            document.getElementById('tpt-3hp-val').innerText = `Isoniazid ${tpt3hpH} mg + Rifapentine ${tpt3hpRpt} mg (สัปดาห์ละ 1 ครั้ง x 12 สัปดาห์)`;
+            document.getElementById('tpt-1hp-val').innerText = `Isoniazid 300 mg + Rifapentine 600 mg (วันละ 1 ครั้ง x 28 วัน)`;
+            document.getElementById('tpt-4r-val').innerText = `Rifampicin ${rDose} mg (วันละ 1 ครั้ง x 4 เดือน)`;
+            document.getElementById('tpt-3hr-val').innerText = `Isoniazid ${hDose} mg + Rifampicin ${rDose} mg (วันละ 1 ครั้ง x 3 เดือน)`;
+            document.getElementById('tpt-6h-val').innerText = `Isoniazid ${hDose} mg (วันละ 1 ครั้ง x 6-9 เดือน)`;
+
+            // Build Clinical Rx Note Text
+            let rxNote = `[TB RX NOTE - CPG 2022]\n`;
+            rxNote += `Patient: BW ${weight} kg, Age ${age} yrs | Renal: ${renal} | Liver: ${liver}\n`;
+            if (renal === 'ckd-severe') {
+                rxNote += `Regimen (Renal Adjustment CrCl < 30):\n`;
+                rxNote += `- Isoniazid (H): ${hDose} mg PO OD\n`;
+                rxNote += `- Rifampicin (R): ${rDose} mg PO OD\n`;
+                rxNote += `- Pyrazinamide (Z): ${rZ} mg PO 3 times/week (post-HD)\n`;
+                rxNote += `- Ethambutol (E): ${rE} mg PO 3 times/week (post-HD)\n`;
+            } else if (age < 15) {
+                rxNote += `Pediatric Regimen (2HRZE / 4HR):\n`;
+                rxNote += `- H: ${cH} mg/day | R: ${cR} mg/day | Z: ${cZ} mg/day | E: ${cE} mg/day\n`;
+                if (rhzVal.includes("เม็ด")) {
+                    rxNote += `- 3-FDC Child (RHZ 75/50/150): ${rhzVal}\n`;
+                    rxNote += `- 2-FDC Child (RH 75/50): ${rhVal}\n`;
+                }
+            } else {
+                rxNote += `Adult Regimen (2HRZE / 4HR):\n`;
+                rxNote += `- 4-FDC (H75/R150/Z400/E275): ${fdc4Tabs} เม็ด PO OD (ระยะเข้มข้น 2 เดือน)\n`;
+                rxNote += `- 2-FDC (H150/R300): ${fdc2Tabs} PO OD (ระยะต่อเนื่อง 4 เดือน)\n`;
+                rxNote += `หรือ ยาแยกเม็ด: H(${hDose}mg), R(${rDose}mg), Z(${zDose}mg), E(${eDose}mg)\n`;
+            }
+            rxNote += `- Pyridoxine (B6): 50 mg PO OD`;
+
+            document.getElementById('clinical-note-text').innerText = rxNote;
+        }
+
+        // Copy Note to Clipboard
+        function copyPrescriptionNote() {
+            const noteText = document.getElementById('clinical-note-text').innerText;
+            navigator.clipboard.writeText(noteText).then(() => {
+                const toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 2500);
+            });
+        }
+
+        // Attach Event Listeners
+        document.querySelectorAll('#tb-weight, #tb-age, #tb-patient-type, #tb-renal, #tb-liver, #tb-special').forEach(el => {
+            el.addEventListener('input', calculateTBDoses);
+            el.addEventListener('change', calculateTBDoses);
+        });
+
+        // Initialize calculation on page load
+        window.addEventListener('DOMContentLoaded', calculateTBDoses);
+    </script>
+</body>
+</html>

@@ -241,16 +241,20 @@ describe('NSTEMI Print — B3: Prasugrel color, bullets, Ticagrelor continuation
     });
 });
 
-describe('SW Version — cache version bumped (v33 engines precache)', () => {
+describe('SW Version — cache version sync', () => {
     const sw = read(SW_PATH);
     const index = read(INDEX_PATH);
 
-    test('CACHE_VERSION is v33', () => {
-        assert.match(sw, /er-hub-v33/, 'CACHE_VERSION must be er-hub-v33');
-    });
+    test('service-worker.js CACHE_VERSION matches index.html nav badge', () => {
+        const swMatch = sw.match(/CACHE_VERSION\s*=\s*'er-hub-(v\d+)'/);
+        assert.ok(swMatch, 'CACHE_VERSION er-hub-vXX must be defined in service-worker.js');
+        const swVersion = swMatch[1];
 
-    test('index.html version badge text is v33', () => {
-        assert.match(index, /<div class="nav-right">v33 · Updated [^<]*<\/div>/, 'index.html nav badge must show v33 with update date');
+        const indexMatch = index.match(/<div class="nav-right">(v\d+) · Updated [^<]*<\/div>/);
+        assert.ok(indexMatch, 'index.html nav badge vXX must be present');
+        const indexVersion = indexMatch[1];
+
+        assert.strictEqual(swVersion, indexVersion, `service-worker.js (${swVersion}) and index.html (${indexVersion}) must be in sync`);
     });
 });
 
