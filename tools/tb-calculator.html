@@ -41,36 +41,6 @@
             border: 1px solid var(--card-border);
         }
 
-        .tool-header-block {
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-            padding: 24px 30px;
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        .tool-title-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .tool-title {
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-size: 1.45rem;
-            font-weight: 700;
-            color: var(--brand-navy);
-            margin: 0;
-            letter-spacing: -0.01em;
-        }
-
-        .badge-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
         .meta-badge {
             background: #e2e8f0;
             color: #334155;
@@ -85,13 +55,6 @@
         .meta-badge.primary {
             background: #dbeafe;
             color: #1e40af;
-        }
-
-        .tool-subtitle {
-            margin: 6px 0 0 0;
-            color: var(--text-muted);
-            font-size: 13.5px;
-            line-height: 1.5;
         }
 
         .form-container {
@@ -521,29 +484,14 @@
             .section-grid, .fdc-card-grid {
                 grid-template-columns: 1fr;
             }
-            .form-container, .results-wrapper, .tool-header-block {
+            .form-container, .results-wrapper {
                 padding: 16px 20px;
-            }
-            .tool-title {
-                font-size: 1.25rem;
             }
         }
     </style>
 </head>
 <body class="theme-neutral">
     <div class="container">
-        <!-- Tool Header -->
-        <div class="tool-header-block">
-            <div class="tool-title-row">
-                <h1 class="tool-title">TB Dose Calculator & Weight-Based Regimens</h1>
-                <div class="badge-group">
-                    <span class="meta-badge primary">CPG 2022</span>
-                    <span class="meta-badge">Adult / Pediatric / TPT</span>
-                </div>
-            </div>
-            <p class="tool-subtitle">คำนวณขนาดยารักษาวัณโรคตามน้ำหนักตัว อ้างอิงแนวทางปฏิบัติตาม CPG การรักษาวัณโรคในผู้ใหญ่และเด็ก ประเทศไทย พ.ศ. 2561 & 2565 (2022)</p>
-        </div>
-        
         <div class="form-container">
             <form id="calc-form" onsubmit="event.preventDefault();">
                 <div class="section-grid">
@@ -1078,7 +1026,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof ED_COMPONENTS !== 'undefined' && ED_COMPONENTS.injectNavBar) {
-                ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png', 'TB Dose Calculator — CPG 2022');
+                ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png', 'TB Dose Calculator & Weight-Based Regimens — CPG การรักษาวัณโรค พ.ศ. 2561 & 2565 (2022)', 'TB Dose Calc CPG 2022');
             }
             calculateTBDoses();
         });
