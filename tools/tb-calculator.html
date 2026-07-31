@@ -860,28 +860,35 @@
             let fdc4Tabs = 4;
             let fdc2Tabs = "2 เม็ด (ชนิด 150/300)";
 
-            if (weight < 35) {
+            if (weight < 30) {
                 hDose = Math.round(weight * 5); // 4-6 mg/kg
                 rDose = Math.round(weight * 10); // 8-12 mg/kg
                 zDose = Math.round(weight * 25); // 20-30 mg/kg
                 eDose = Math.round(weight * 15); // 15-20 mg/kg
-                fdc4Tabs = "2 เม็ด (สำหรับ 30-37 kg) หรือคำนวณยาเดี่ยว";
-                fdc2Tabs = "2 เม็ด (ชนิด 75/150) หรือคำนวณยาเดี่ยว";
-            } else if (weight >= 35 && weight <= 49) {
+                fdc4Tabs = "คำนวณยาเดี่ยว หรือใช้ยาเม็ดละลายน้ำเด็ก";
+                fdc2Tabs = "คำนวณยาเดี่ยว หรือใช้ยาเม็ดละลายน้ำเด็ก";
+            } else if (weight <= 37) { // 30 - 37 kg
+                hDose = 300;
+                rDose = 450;
+                zDose = 1000;
+                eDose = 800;
+                fdc4Tabs = 2;
+                fdc2Tabs = "2 เม็ด (ชนิด 75/150) หรือ 1 เม็ด (150/300)";
+            } else if (weight <= 54) { // 38 - 54 kg
                 hDose = 300;
                 rDose = 450;
                 zDose = 1000;
                 eDose = 800;
                 fdc4Tabs = 3;
                 fdc2Tabs = "3 เม็ด (ชนิด 75/150) หรือ 1.5 เม็ด (150/300)";
-            } else if (weight >= 50 && weight <= 69) {
+            } else if (weight <= 70) { // 55 - 70 kg
                 hDose = 300;
                 rDose = 600;
                 zDose = 1500;
                 eDose = 1000;
                 fdc4Tabs = 4;
                 fdc2Tabs = "2 เม็ด (ชนิด 150/300)";
-            } else { // >= 70 kg
+            } else { // > 70 kg
                 hDose = 300;
                 rDose = 600;
                 zDose = 2000;
@@ -957,7 +964,7 @@
 
             // H-mono Levofloxacin
             let lfxDose = weight >= 50 ? 1000 : 750;
-            if (age < 15) lfxDose = Math.round(weight * 15);
+            if (age < 15) lfxDose = Math.min(1000, Math.round(weight * 15));
             document.getElementById('hmono-lfx-val').innerText = `${lfxDose} mg วันละครั้ง`;
 
             // 4. TPT Regimens
@@ -966,7 +973,7 @@
             if (weight >= 10 && weight <= 15) { tpt3hpH = 300; tpt3hpRpt = 300; }
             else if (weight >= 16 && weight <= 23) { tpt3hpH = 500; tpt3hpRpt = 450; }
             else if (weight >= 24 && weight <= 30) { tpt3hpH = 600; tpt3hpRpt = 600; }
-            else if (weight > 30 && weight < 50) { tpt3hpH = 700; tpt3hpRpt = 750; }
+            else { tpt3hpH = 900; tpt3hpRpt = 900; }
 
             document.getElementById('tpt-3hp-val').innerText = `Isoniazid ${tpt3hpH} mg + Rifapentine ${tpt3hpRpt} mg (สัปดาห์ละ 1 ครั้ง x 12 สัปดาห์)`;
             document.getElementById('tpt-1hp-val').innerText = `Isoniazid 300 mg + Rifapentine 600 mg (วันละ 1 ครั้ง x 28 วัน)`;
