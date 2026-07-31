@@ -212,7 +212,8 @@ User enters history, exam, investigations, scoring variables
 
 - **SK Contraindication:** Prior SK within 6 months permanently blocks order generation. Must use TNK.
 - **Individualized Dosing Bypass:** Heparin/Antivenom risk factors (active bleeding, platelet <50K) disable auto-calc, force attending consultation.
-- **Max Dose Ceilings:** Engine caps at clinical upper limit (Fentanyl 500 mcg/hr, rt-PA 90mg/50mg) to prevent overdose.
+- **Max Dose Ceilings:** Engine caps at clinical upper limit (Fentanyl 500 mcg/hr, rt-PA 90mg/50mg, TB single drugs: H 300mg, R 600mg, Z 2000mg, E 1200mg, pediatric LFX 1500mg) to prevent overdose.
+- **TB Dose Calculator (Thailand CPG 2018/2022):** Implements official Thailand adult 4-FDC weight bands (<35kg per-kg, 35-49kg ≈3 tabs H300/R450/Z1000/E800, 50-69kg ≈4 tabs H300/R600/Z1500/E1000, >70kg per-kg ref H300/R600/Z2000/E1200), pediatric dispersible FDCs, pediatric LFX max 1500mg, and age-branched TPT 3HP (pediatric >30kg H700/Rpt750 vs adult ≥30kg H900/Rpt900).
 - **Print Blank Bypass:** Both pathways (PDF open / HTML blank) bypass screen validation for emergency manual-fill.
 - **Lab/IV/O2 Hygiene:** Non-drug orders always render ☐ in print. Only drug orders auto-check ☑ based on input data.
 - **A4 Print Fit:** `@page { size: A4 portrait; margin: 0 }`. 5-column grid, `page-break-inside: avoid`. Nav hidden in print.

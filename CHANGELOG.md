@@ -1,3 +1,16 @@
+## [2.4.0] — 2026-08-01
+
+### Fixed & Aligned with Official Thailand CPG (2018 Table 3.1 & 2022 Table 5.1 / 7.1 / 9.2)
+- **TB Weight-Based Dosing Calculator (`tools/tb-calculator.html`):**
+  - **Adult First-Line Regimen Weight Bands:** Fixed weight band tablet & single-drug mapping to strictly match official Thailand CPG 2018 Table 3.1 & CPG 2022 Table 5.1:
+    * `< 35 kg`: Individualized per-kg single-drug calculation (H 5, R 10, Z 25, E 15 mg/kg).
+    * `35 – 49 kg`: H 300 mg, R 450 mg, Z 1,000 mg, E 800 mg (≈ 3 tabs 4-FDC).
+    * `50 – 69 kg`: H 300 mg, R 600 mg, Z 1,500 mg, E 1,000 mg (≈ 4 tabs 4-FDC).
+    * `> 70 kg`: Individualized per-kg single-drug calculation (Ref H 300 / R 600 / Z 2,000 / E 1,200 mg).
+  - **Pediatric Levofloxacin Max Cap:** Corrected H-monoresistance pediatric Levofloxacin max cap to `1,500 mg/day` (15-20 mg/kg, max 1.5 g) per CPG 2022 Table 7.1.
+  - **TPT 3HP Pediatric Age Branch:** Added explicit age condition (`age <= 14`) for 3HP regimen so pediatric patients > 30 kg correctly receive `H 700 mg + Rpt 750 mg` (CPG 2022 Table 9.2) rather than adult fixed `900 mg / 900 mg`.
+  - **Landmark Weight Presets:** Updated preset weight buttons to official Thai CPG landmarks: `25 kg (คำนวณรายบุคคล)`, `35 kg (35–49 kg)`, `50 kg (50–69 kg)`, and `71 kg (> 70 kg)`.
+
 ## [2.3.0] — 2026-07-31
 
 ### Changed / Refactored

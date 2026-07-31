@@ -513,12 +513,11 @@
                                 <input type="range" id="tb-weight-slider" class="weight-slider" min="2" max="150" step="0.5" value="55">
                                 
                                 <div class="preset-pills-row">
-                                    <span class="preset-pill-title">Landmark น้ำหนัก (สูตรแยก / FDC):</span>
-                                    <button type="button" class="preset-pill" onclick="setWeight(25)" title="< 30 kg: ใช้สูตรแยกคำนวณตาม mg/kg">25 kg (สูตรแยก mg/kg)</button>
-                                    <button type="button" class="preset-pill" onclick="setWeight(35)" title="30-37 kg: ยาเดี่ยว (H150 R300 Z800 E550) / FDC 2 เม็ด">35 kg (Tier 1)</button>
-                                    <button type="button" class="preset-pill" onclick="setWeight(45)" title="38-54 kg: ยาเดี่ยว (H225 R450 Z1200 E800) / FDC 3 เม็ด">45 kg (Tier 2)</button>
-                                    <button type="button" class="preset-pill" onclick="setWeight(55)" title="55-70 kg: H & R ชน Max Cap (H300/R600) / FDC 4 เม็ด">55 kg (H,R Max Cap)</button>
-                                    <button type="button" class="preset-pill" onclick="setWeight(71)" title="> 70 kg: ชน Max Cap ทุกตัว (Z2000/E1200) / FDC 5 เม็ด">71 kg (Max Cap ทั้งหมด)</button>
+                                    <span class="preset-pill-title">Landmark น้ำหนัก (CPG 2018/2022):</span>
+                                    <button type="button" class="preset-pill" onclick="setWeight(25)" title="< 35 kg: คำนวณยาเดี่ยวรายบุคคลตาม mg/kg">25 kg (คำนวณรายบุคคล)</button>
+                                    <button type="button" class="preset-pill" onclick="setWeight(35)" title="35-49 kg: H300 R450 Z1000 E800 (≈3 เม็ด)">35 kg (35–49 kg)</button>
+                                    <button type="button" class="preset-pill" onclick="setWeight(50)" title="50-69 kg: H300 R600 Z1500 E1000 (≈4 เม็ด)">50 kg (50–69 kg)</button>
+                                    <button type="button" class="preset-pill" onclick="setWeight(71)" title="> 70 kg: คำนวณยาเดี่ยวรายบุคคล (อ้างอิง H300 R600 Z2000 E1200)">71 kg (> 70 kg)</button>
                                 </div>
                             </div>
                         </div>
@@ -850,7 +849,7 @@
             } else if (special === 'h-mono') {
                 warningBox.style.display = 'block';
                 let lfxDose = weight >= 50 ? 1000 : 750;
-                if (age < 15) lfxDose = Math.min(1000, Math.round(weight * 15));
+                if (age < 15) lfxDose = Math.min(1500, Math.round(weight * 15));
                 warningBox.innerHTML = `<strong>⚠️ H-monoresistance:</strong> แนะนำใช้สูตร 6(H)RZELfx (Levofloxacin ${lfxDose} mg/day)`;
             } else if (renal === 'ckd-severe') {
                 warningBox.style.display = 'block';
@@ -860,27 +859,27 @@
                 warningBox.innerHTML = `<strong>⚠️ ตับอักเสบ:</strong> หลีกเลี่ยงยาทำลายตับ (H, R, Z) หากเอนไซม์ตับสูงกว่า 3 เท่า ควรพิจารณาสูตรปราศจากยาทำลายตับ (เช่น SE Lfx)`;
             }
 
-            // Calculate Adult
+            // Calculate Adult (Thailand CPG 2018 Table 3.1 & CPG 2022 Table 5.1)
             let hDose, rDose, zDose, eDose, fdc4Tabs, fdc2Tabs;
-            if (weight < 30) {
+            if (weight < 35) {
                 hDose = Math.round(weight * 5);
                 rDose = Math.round(weight * 10);
                 zDose = Math.round(weight * 25);
                 eDose = Math.round(weight * 15);
-                fdc4Tabs = "ใช้ยาเดี่ยว";
-                fdc2Tabs = "ใช้ยาเดี่ยว";
-            } else if (weight <= 37) {
-                hDose = 150; rDose = 300; zDose = 800; eDose = 550;
-                fdc4Tabs = "2 เม็ด วันละครั้ง"; fdc2Tabs = "2 เม็ด (ชนิด 75/150) หรือ 1 เม็ด (150/300)";
-            } else if (weight <= 54) {
-                hDose = 225; rDose = 450; zDose = 1200; eDose = 800;
-                fdc4Tabs = "3 เม็ด วันละครั้ง"; fdc2Tabs = "3 เม็ด (ชนิด 75/150) หรือ 1.5 เม็ด (150/300)";
-            } else if (weight <= 70) {
+                fdc4Tabs = "คำนวณยาเดี่ยวตามน้ำหนักตัว (< 35 kg)";
+                fdc2Tabs = "คำนวณยาเดี่ยวตามน้ำหนักตัว (< 35 kg)";
+            } else if (weight <= 49) {
+                hDose = 300; rDose = 450; zDose = 1000; eDose = 800;
+                fdc4Tabs = "≈3 เม็ด วันละครั้ง";
+                fdc2Tabs = "≈3 เม็ด (ชนิด 75/150) หรือ 1.5 เม็ด (150/300)";
+            } else if (weight <= 69) {
                 hDose = 300; rDose = 600; zDose = 1500; eDose = 1000;
-                fdc4Tabs = "4 เม็ด วันละครั้ง"; fdc2Tabs = "2 เม็ด (ชนิด 150/300)";
+                fdc4Tabs = "≈4 เม็ด วันละครั้ง";
+                fdc2Tabs = "≈2 เม็ด (ชนิด 150/300)";
             } else {
                 hDose = 300; rDose = 600; zDose = 2000; eDose = 1200;
-                fdc4Tabs = "5 เม็ด วันละครั้ง"; fdc2Tabs = "2.5 เม็ด (ชนิด 150/300)";
+                fdc4Tabs = "คำนวณยาเดี่ยวตามน้ำหนักตัว (> 70 kg) — ค่าอ้างอิง H300/R600/Z2000/E1200";
+                fdc2Tabs = "คำนวณยาเดี่ยวตามน้ำหนักตัว (> 70 kg)";
             }
 
             // Calculate Ranges for Adult (mg/kg)
@@ -943,12 +942,16 @@
             document.getElementById('child-rhz-val').innerText = rhzVal.includes("เม็ด") ? `${rhzVal} วันละครั้ง` : rhzVal;
             document.getElementById('child-rh-val').innerText = rhVal.includes("เม็ด") ? `${rhVal} วันละครั้ง` : rhVal;
 
-            // Calculate TPT
-            let tpt3hpH = 900, tpt3hpRpt = 900;
-            if (weight >= 10 && weight <= 15) { tpt3hpH = 300; tpt3hpRpt = 300; }
-            else if (weight >= 16 && weight <= 23) { tpt3hpH = 500; tpt3hpRpt = 450; }
-            else if (weight >= 24 && weight <= 30) { tpt3hpH = 600; tpt3hpRpt = 600; }
-            else if (weight < 50) { tpt3hpH = 700; tpt3hpRpt = 750; }
+            // Calculate TPT (CPG 2022 Table 9.2)
+            let tpt3hpH, tpt3hpRpt;
+            if (age <= 14) {
+                if (weight >= 10 && weight <= 15) { tpt3hpH = 300; tpt3hpRpt = 300; }
+                else if (weight >= 16 && weight <= 23) { tpt3hpH = 500; tpt3hpRpt = 450; }
+                else if (weight >= 24 && weight <= 30) { tpt3hpH = 600; tpt3hpRpt = 600; }
+                else { tpt3hpH = 700; tpt3hpRpt = 750; }
+            } else {
+                tpt3hpH = 900; tpt3hpRpt = 900;
+            }
             
             document.getElementById('tpt-3hp-val').innerText = `H ${tpt3hpH} mg + Rpt ${tpt3hpRpt} mg`;
             document.getElementById('tpt-1hp-val').innerText = `H 300 mg + Rpt 600 mg`;

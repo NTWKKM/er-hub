@@ -78,36 +78,33 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
             return { fdcText, hVal, rVal };
         }
 
-        // Test Band 30 - 37 kg -> 2 tabs
+        // Test Band < 35 kg -> คำนวณรายบุคคล
+        const b30 = runCalcAtWeight(30);
+        assert.ok(b30.fdcText.includes('< 35 kg'), `Weight 30kg should specify per-kg calculation (< 35 kg), got: ${b30.fdcText}`);
+
+        // Test Band 35 - 49 kg -> ≈3 tabs (H300 R450 Z1000 E800)
         const b35 = runCalcAtWeight(35);
-        assert.ok(b35.fdcText.includes('2 เม็ด'), `Weight 35kg should give 2 tabs 4-FDC, got: ${b35.fdcText}`);
+        assert.ok(b35.fdcText.includes('3 เม็ด'), `Weight 35kg (boundary) should give ≈3 tabs 4-FDC, got: ${b35.fdcText}`);
+        assert.strictEqual(b35.hVal, '300 mg/day');
+        assert.strictEqual(b35.rVal, '450 mg/day');
 
-        const b37 = runCalcAtWeight(37);
-        assert.ok(b37.fdcText.includes('2 เม็ด'), `Weight 37kg should give 2 tabs 4-FDC, got: ${b37.fdcText}`);
+        const b49 = runCalcAtWeight(49);
+        assert.ok(b49.fdcText.includes('3 เม็ด'), `Weight 49kg (boundary) should give ≈3 tabs 4-FDC, got: ${b49.fdcText}`);
 
-        // Test Band 38 - 54 kg -> 3 tabs (Critical Bug Fix verification: 50kg & 54kg must give 3 tabs!)
-        const b38 = runCalcAtWeight(38);
-        assert.ok(b38.fdcText.includes('3 เม็ด'), `Weight 38kg should give 3 tabs 4-FDC, got: ${b38.fdcText}`);
-
+        // Test Band 50 - 69 kg -> ≈4 tabs (H300 R600 Z1500 E1000)
         const b50 = runCalcAtWeight(50);
-        assert.ok(b50.fdcText.includes('3 เม็ด'), `Weight 50kg (boundary) should give 3 tabs 4-FDC, got: ${b50.fdcText}`);
+        assert.ok(b50.fdcText.includes('4 เม็ด'), `Weight 50kg (boundary) should give ≈4 tabs 4-FDC, got: ${b50.fdcText}`);
+        assert.strictEqual(b50.rVal, '600 mg/day');
 
-        const b54 = runCalcAtWeight(54);
-        assert.ok(b54.fdcText.includes('3 เม็ด'), `Weight 54kg should give 3 tabs 4-FDC, got: ${b54.fdcText}`);
+        const b69 = runCalcAtWeight(69);
+        assert.ok(b69.fdcText.includes('4 เม็ด'), `Weight 69kg should give ≈4 tabs 4-FDC, got: ${b69.fdcText}`);
 
-        // Test Band 55 - 70 kg -> 4 tabs
-        const b55 = runCalcAtWeight(55);
-        assert.ok(b55.fdcText.includes('4 เม็ด'), `Weight 55kg should give 4 tabs 4-FDC, got: ${b55.fdcText}`);
-
-        const b70 = runCalcAtWeight(70);
-        assert.ok(b70.fdcText.includes('4 เม็ด'), `Weight 70kg should give 4 tabs 4-FDC, got: ${b70.fdcText}`);
-
-        // Test Band > 70 kg -> 5 tabs
+        // Test Band > 70 kg -> คำนวณรายบุคคล (ค่าอ้างอิง Z2000/E1200)
         const b71 = runCalcAtWeight(71);
-        assert.ok(b71.fdcText.includes('5 เม็ด'), `Weight 71kg should give 5 tabs 4-FDC, got: ${b71.fdcText}`);
+        assert.ok(b71.fdcText.includes('> 70 kg'), `Weight 71kg should specify individual calculation (> 70 kg), got: ${b71.fdcText}`);
     });
 
-    await t.test('Execution Test: Pediatric dispersible FDC weight boundaries', () => {
+    await t.test('Execution Test: Pediatric dispersible FDC, LFX max cap (1500mg), and TPT 3HP age branch', () => {
         const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
 
         function runChildCalc(w, age = 5) {
@@ -118,7 +115,9 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
             dom.window.calculateTBDoses();
             return {
                 rhzVal: doc.getElementById('child-rhz-val').innerText,
-                rhVal: doc.getElementById('child-rh-val').innerText
+                rhVal: doc.getElementById('child-rh-val').innerText,
+                tpt3hp: doc.getElementById('tpt-3hp-val').innerText,
+                warning: doc.getElementById('clinical-warning').innerText
             };
         }
 
@@ -126,6 +125,22 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(runChildCalc(10).rhzVal.includes('2 เม็ด'), 'Child 10kg should get 2 tabs');
         assert.ok(runChildCalc(14).rhzVal.includes('3 เม็ด'), 'Child 14kg should get 3 tabs');
         assert.ok(runChildCalc(20).rhzVal.includes('4 เม็ด'), 'Child 20kg should get 4 tabs');
+
+        // Test Pediatric LFX max cap = 1500 mg (CPG 2022 Table 7.1)
+        const domH = new JSDOM(html, { runScripts: 'dangerously' });
+        const docH = domH.window.document;
+        docH.getElementById('tb-weight').value = 110;
+        docH.getElementById('tb-age').value = 12; // Child
+        docH.getElementById('tb-special').value = 'h-mono';
+        domH.window.calculateTBDoses();
+        assert.ok(docH.getElementById('clinical-warning').innerHTML.includes('1500 mg/day'), 'Pediatric LFX max cap should be 1500 mg/day');
+
+        // Test TPT 3HP age branch: child > 30kg gets H700/Rpt750 vs adult >= 30kg gets H900/Rpt900
+        const childOver30 = runChildCalc(35, 10);
+        assert.strictEqual(childOver30.tpt3hp, 'H 700 mg + Rpt 750 mg', 'Child 35kg age 10 y/o should get H 700 mg + Rpt 750 mg');
+
+        const adultOver30 = runChildCalc(35, 30);
+        assert.strictEqual(adultOver30.tpt3hp, 'H 900 mg + Rpt 900 mg', 'Adult 35kg age 30 y/o should get H 900 mg + Rpt 900 mg');
     });
 
     await t.test('index.html links to tools/tb-calculator.html as prototype item T6', () => {
