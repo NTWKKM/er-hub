@@ -868,10 +868,10 @@
                 fdc4Tabs = "คำนวณยาเดี่ยว หรือใช้ยาเม็ดละลายน้ำเด็ก";
                 fdc2Tabs = "คำนวณยาเดี่ยว หรือใช้ยาเม็ดละลายน้ำเด็ก";
             } else if (weight <= 37) { // 30 - 37 kg
-                hDose = 300;
-                rDose = 450;
-                zDose = 1000;
-                eDose = 800;
+                hDose = 150;
+                rDose = 300;
+                zDose = 800;
+                eDose = 550;
                 fdc4Tabs = 2;
                 fdc2Tabs = "2 เม็ด (ชนิด 75/150) หรือ 1 เม็ด (150/300)";
             } else if (weight <= 54) { // 38 - 54 kg
@@ -973,6 +973,7 @@
             if (weight >= 10 && weight <= 15) { tpt3hpH = 300; tpt3hpRpt = 300; }
             else if (weight >= 16 && weight <= 23) { tpt3hpH = 500; tpt3hpRpt = 450; }
             else if (weight >= 24 && weight <= 30) { tpt3hpH = 600; tpt3hpRpt = 600; }
+            else if (weight < 50) { tpt3hpH = 700; tpt3hpRpt = 750; }
             else { tpt3hpH = 900; tpt3hpRpt = 900; }
 
             document.getElementById('tpt-3hp-val').innerText = `Isoniazid ${tpt3hpH} mg + Rifapentine ${tpt3hpRpt} mg (สัปดาห์ละ 1 ครั้ง x 12 สัปดาห์)`;
