@@ -240,6 +240,7 @@
                             <td class="dose-value">
                                 <span id="adult-h-val"></span>
                                 <span class="dose-range" id="adult-h-range"></span>
+                                <span class="dose-range" id="adult-h-tabs" style="color: #d84315; font-weight: bold;"></span>
                             </td>
                         </tr>
                         <tr>
@@ -247,6 +248,7 @@
                             <td class="dose-value">
                                 <span id="adult-r-val"></span>
                                 <span class="dose-range" id="adult-r-range"></span>
+                                <span class="dose-range" id="adult-r-tabs" style="color: #d84315; font-weight: bold;"></span>
                             </td>
                         </tr>
                         <tr>
@@ -254,6 +256,7 @@
                             <td class="dose-value">
                                 <span id="adult-z-val"></span>
                                 <span class="dose-range" id="adult-z-range"></span>
+                                <span class="dose-range" id="adult-z-tabs" style="color: #d84315; font-weight: bold;"></span>
                             </td>
                         </tr>
                         <tr>
@@ -261,6 +264,7 @@
                             <td class="dose-value">
                                 <span id="adult-e-val"></span>
                                 <span class="dose-range" id="adult-e-range"></span>
+                                <span class="dose-range" id="adult-e-tabs" style="color: #d84315; font-weight: bold;"></span>
                             </td>
                         </tr>
                     </tbody>
@@ -387,6 +391,40 @@
     <div id="toast" class="toast">✅ คัดลอก Note เรียบร้อยแล้ว</div>
 
     <script>
+        function suggestTablets(dose, sizes) {
+            let suggestions = [];
+            sizes.sort((a,b) => b - a);
+            
+            // Try single size exact match or half-tablet
+            for (let s of sizes) {
+                let tabs = dose / s;
+                if (tabs > 0 && (tabs % 0.5 === 0)) {
+                    suggestions.push(`${tabs} เม็ด (${s}mg)`);
+                }
+            }
+            
+            // Combination
+            if (suggestions.length === 0) {
+                let remaining = dose;
+                let combo = [];
+                for (let s of sizes) {
+                    if (remaining >= s) {
+                        let count = Math.floor(remaining / s);
+                        combo.push(`${count} เม็ด (${s}mg)`);
+                        remaining = remaining % s;
+                    }
+                }
+                if (remaining === 0 && combo.length > 0) {
+                     suggestions.push(combo.join(" + "));
+                }
+            }
+            
+            if (suggestions.length > 0) {
+                return `➔ ${suggestions.join(" หรือ ")}`;
+            }
+            return `➔ จัดขนาดให้ใกล้เคียง ${dose} mg`;
+        }
+
         function calculateTBDoses() {
             const weight = parseFloat(document.getElementById('tb-weight').value) || 0;
             const age = parseInt(document.getElementById('tb-age').value) || 0;
@@ -466,6 +504,11 @@
             document.getElementById('adult-z-range').innerText = `(Range: ${zMinA} - ${zMaxA} mg)`;
             document.getElementById('adult-e-val').innerText = `${eDose} mg/day`;
             document.getElementById('adult-e-range').innerText = `(Range: ${eMinA} - ${eMaxA} mg)`;
+            
+            document.getElementById('adult-h-tabs').innerText = suggestTablets(hDose, [300, 100]);
+            document.getElementById('adult-r-tabs').innerText = suggestTablets(rDose, [600, 450, 300, 150]);
+            document.getElementById('adult-z-tabs').innerText = suggestTablets(zDose, [1000, 500, 400]);
+            document.getElementById('adult-e-tabs').innerText = suggestTablets(eDose, [500, 400]);
             
             document.getElementById('fdc-4-val').innerText = typeof fdc4Tabs === 'number' ? `${fdc4Tabs} เม็ด วันละครั้ง` : fdc4Tabs;
             document.getElementById('fdc-2-val').innerText = fdc2Tabs;
