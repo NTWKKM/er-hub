@@ -572,47 +572,40 @@
             }
 
             // Build Note
-            let rxNote = `[TB RX NOTE - CPG 2022]
-`;
-            rxNote += `Patient: BW ${weight} kg, Age ${age} yrs | Renal: ${renal} | Liver: ${liver}
-`;
+            let rxNote = `[TB RX NOTE - CPG 2022]\n`;
+            rxNote += `Patient: BW ${weight} kg, Age ${age} yrs | Renal: ${renal} | Liver: ${liver}\n`;
             
+            const stripArrow = (str) => str.replace('➔ ', '');
+
             if (special === 'tpt') {
-                rxNote += `Preventive Regimen (TPT):
-`;
-                rxNote += `- 3HP: H ${tpt3hpH}mg + Rpt ${tpt3hpRpt}mg qWK x12
-`;
+                rxNote += `Preventive Regimen (TPT):\n`;
+                rxNote += `- 3HP: H ${tpt3hpH}mg + Rpt ${tpt3hpRpt}mg qWK x12\n`;
             } else if (renal === 'ckd-severe') {
-                rxNote += `Regimen (Renal Adjustment CrCl < 30):
-`;
-                rxNote += `- H: ${hDose} mg PO OD
-`;
-                rxNote += `- R: ${rDose} mg PO OD
-`;
-                rxNote += `- Z: ${Math.round(weight*25)} mg PO 3x/week (post-HD)
-`;
-                rxNote += `- E: ${Math.round(weight*15)} mg PO 3x/week (post-HD)
-`;
+                let rZ = Math.round(weight*25);
+                let rE = Math.round(weight*15);
+                rxNote += `Regimen (Renal Adjustment CrCl < 30):\n`;
+                rxNote += `- INH (${hDose}mg) OD: ${stripArrow(suggestTablets(hDose, [300, 100]))}\n`;
+                rxNote += `- RIF (${rDose}mg) OD: ${stripArrow(suggestTablets(rDose, [600, 450, 300, 150]))}\n`;
+                rxNote += `- PZA (${rZ}mg) 3x/wk (หลังฟอก): ${stripArrow(suggestTablets(rZ, [1000, 500, 400]))}\n`;
+                rxNote += `- EMB (${rE}mg) 3x/wk (หลังฟอก): ${stripArrow(suggestTablets(rE, [500, 400]))}\n`;
             } else if (age < 15 || patientType === 'pediatric') {
-                rxNote += `Pediatric Regimen (2HRZE / 4HR):
-`;
-                rxNote += `- H: ${cH} mg/day (${(cH/10).toFixed(1)} mL of 10mg/mL syrup)
-`;
-                rxNote += `- R: ${cR} mg/day | Z: ${cZ} mg/day | E: ${cE} mg/day
-`;
+                rxNote += `Pediatric Regimen (2HRZE / 4HR):\n`;
+                rxNote += `- INH: ${cH} mg/day (${(cH/10).toFixed(1)} mL of 10mg/mL syrup)\n`;
+                rxNote += `- RIF: ${cR} mg/day [ ${stripArrow(suggestTablets(cR, [600, 450, 300, 150]))} ]\n`;
+                rxNote += `- PZA: ${cZ} mg/day [ ${stripArrow(suggestTablets(cZ, [1000, 500, 400]))} ]\n`;
+                rxNote += `- EMB: ${cE} mg/day [ ${stripArrow(suggestTablets(cE, [500, 400]))} ]\n`;
                 if (rhzVal.includes("เม็ด")) {
-                    rxNote += `- 3-FDC Child: ${rhzVal} | 2-FDC Child: ${rhVal}
-`;
+                    rxNote += `- 3-FDC Child: ${rhzVal} | 2-FDC Child: ${rhVal}\n`;
                 }
             } else {
-                rxNote += `Adult Regimen (2HRZE / 4HR):
-`;
-                rxNote += `- 4-FDC: ${fdc4Tabs} เม็ด PO OD
-`;
-                rxNote += `- 2-FDC: ${fdc2Tabs} PO OD
-`;
-                rxNote += `หรือ H(${hDose}), R(${rDose}), Z(${zDose}), E(${eDose})
-`;
+                rxNote += `Adult Regimen (2HRZE / 4HR):\n`;
+                rxNote += `- 4-FDC: ${fdc4Tabs} เม็ด PO OD\n`;
+                rxNote += `- 2-FDC: ${fdc2Tabs} PO OD\n`;
+                rxNote += `หรือยาเดี่ยว (Single Drugs):\n`;
+                rxNote += `  • INH (${hDose}mg): ${stripArrow(suggestTablets(hDose, [300, 100]))}\n`;
+                rxNote += `  • RIF (${rDose}mg): ${stripArrow(suggestTablets(rDose, [600, 450, 300, 150]))}\n`;
+                rxNote += `  • PZA (${zDose}mg): ${stripArrow(suggestTablets(zDose, [1000, 500, 400]))}\n`;
+                rxNote += `  • EMB (${eDose}mg): ${stripArrow(suggestTablets(eDose, [500, 400]))}\n`;
             }
 
             document.getElementById('clinical-note-text').innerText = rxNote;
