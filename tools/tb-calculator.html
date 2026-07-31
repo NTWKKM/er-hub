@@ -206,7 +206,7 @@
             background: #f0fdf4;
         }
 
-        .form-select, .form-input {
+        .form-select {
             width: 100%;
             padding: 9px 12px;
             border-radius: 6px;
@@ -217,7 +217,7 @@
             transition: border-color 0.15s, box-shadow 0.15s;
         }
 
-        .form-select:focus, .form-input:focus {
+        .form-select:focus {
             border-color: var(--brand-navy);
             box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.15);
             outline: none;
@@ -523,14 +523,6 @@
                         </div>
 
                         <div class="input-group-row">
-                            <label for="tb-age">อายุ (Age):</label>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <input type="number" id="tb-age" class="form-input" step="1" min="0" max="120" value="45" required style="width: 120px;">
-                                <span class="unit-label">ปี</span>
-                            </div>
-                        </div>
-
-                        <div class="input-group-row">
                             <label for="tb-patient-type">กลุ่มผู้ป่วย (Patient Category):</label>
                             <select id="tb-patient-type" class="form-select" required>
                                 <option value="adult-standard">ผู้ใหญ่ (Adult ≥ 15 ปี)</option>
@@ -820,18 +812,11 @@
 
         function calculateTBDoses() {
             const weight = parseFloat(document.getElementById('tb-weight').value) || 0;
-            const age = parseInt(document.getElementById('tb-age').value) || 0;
             const patientType = document.getElementById('tb-patient-type').value;
+            const isPediatric = patientType === 'pediatric';
             const renal = document.getElementById('tb-renal').value;
             const liver = document.getElementById('tb-liver').value;
             const special = document.getElementById('tb-special').value;
-
-            // Auto-switch patient category if age < 15
-            if (age < 15 && patientType !== 'pediatric') {
-                document.getElementById('tb-patient-type').value = 'pediatric';
-            } else if (age >= 15 && patientType === 'pediatric') {
-                document.getElementById('tb-patient-type').value = 'adult-standard';
-            }
 
             // Hide all result boxes first
             document.getElementById('result-adult').classList.remove('active');
@@ -849,7 +834,7 @@
             } else if (special === 'h-mono') {
                 warningBox.style.display = 'block';
                 let lfxDose = weight >= 50 ? 1000 : 750;
-                if (age < 15) lfxDose = Math.min(1500, Math.round(weight * 15));
+                if (isPediatric) lfxDose = Math.min(1500, Math.round(weight * 15));
                 warningBox.innerHTML = `<strong>⚠️ H-monoresistance:</strong> แนะนำใช้สูตร 6(H)RZELfx (Levofloxacin ${lfxDose} mg/day)`;
             } else if (renal === 'ckd-severe') {
                 warningBox.style.display = 'block';
@@ -944,7 +929,7 @@
 
             // Calculate TPT (CPG 2022 Table 9.2)
             let tpt3hpH, tpt3hpRpt;
-            if (age <= 14) {
+            if (isPediatric) {
                 if (weight >= 10 && weight <= 15) { tpt3hpH = 300; tpt3hpRpt = 300; }
                 else if (weight >= 16 && weight <= 23) { tpt3hpH = 500; tpt3hpRpt = 450; }
                 else if (weight >= 24 && weight <= 30) { tpt3hpH = 600; tpt3hpRpt = 600; }
@@ -962,7 +947,7 @@
             // Display Logic
             if (special === 'tpt') {
                 document.getElementById('result-tpt').classList.add('active');
-            } else if (age < 15 || patientType === 'pediatric') {
+            } else if (isPediatric) {
                 document.getElementById('result-pediatric').classList.add('active');
             } else {
                 document.getElementById('result-adult').classList.add('active');
@@ -970,7 +955,7 @@
 
             // Build Note
             let rxNote = `[TB RX NOTE - CPG 2022]\n`;
-            rxNote += `Patient: BW ${weight} kg, Age ${age} yrs | Renal: ${renal} | Liver: ${liver}\n`;
+            rxNote += `Patient: BW ${weight} kg | Category: ${isPediatric ? 'Pediatric (<15 yrs)' : 'Adult (≥15 yrs)'} | Renal: ${renal} | Liver: ${liver}\n`;
             
             const stripArrow = (str) => str.replace('➔ ', '');
 
@@ -985,7 +970,7 @@
                 rxNote += `- RIF (${rDose}mg) OD: ${stripArrow(suggestTablets(rDose, [600, 450, 300, 150]))}\n`;
                 rxNote += `- PZA (${rZ}mg) 3x/wk (หลังฟอก): ${stripArrow(suggestTablets(rZ, [1000, 500, 400]))}\n`;
                 rxNote += `- EMB (${rE}mg) 3x/wk (หลังฟอก): ${stripArrow(suggestTablets(rE, [500, 400]))}\n`;
-            } else if (age < 15 || patientType === 'pediatric') {
+            } else if (isPediatric) {
                 rxNote += `Pediatric Regimen (2HRZE / 4HR):\n`;
                 rxNote += `- INH: ${cH} mg/day (${(cH/10).toFixed(1)} mL of 10mg/mL syrup)\n`;
                 rxNote += `- RIF: ${cR} mg/day [ ${stripArrow(suggestTablets(cR, [600, 450, 300, 150]))} ]\n`;

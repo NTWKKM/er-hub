@@ -59,14 +59,14 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
     await t.test('Execution Test: Adult 4-FDC tablet weight boundaries calculation correctness', () => {
         const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
 
-        function runCalcAtWeight(w, age = 40) {
+        function runCalcAtWeight(w, patientType = 'adult-standard') {
             const dom = new JSDOM(html, { runScripts: 'dangerously' });
             const doc = dom.window.document;
             const wInput = doc.getElementById('tb-weight');
-            const ageInput = doc.getElementById('tb-age');
+            const typeSelect = doc.getElementById('tb-patient-type');
 
             wInput.value = w;
-            ageInput.value = age;
+            typeSelect.value = patientType;
 
             // Trigger calculateTBDoses
             dom.window.calculateTBDoses();
@@ -104,14 +104,14 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(b71.fdcText.includes('> 70 kg'), `Weight 71kg should specify individual calculation (> 70 kg), got: ${b71.fdcText}`);
     });
 
-    await t.test('Execution Test: Pediatric dispersible FDC, LFX max cap (1500mg), and TPT 3HP age branch', () => {
+    await t.test('Execution Test: Pediatric dispersible FDC, LFX max cap (1500mg), and TPT 3HP patient type branch', () => {
         const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
 
-        function runChildCalc(w, age = 5) {
+        function runChildCalc(w, patientType = 'pediatric') {
             const dom = new JSDOM(html, { runScripts: 'dangerously' });
             const doc = dom.window.document;
             doc.getElementById('tb-weight').value = w;
-            doc.getElementById('tb-age').value = age;
+            doc.getElementById('tb-patient-type').value = patientType;
             dom.window.calculateTBDoses();
             return {
                 rhzVal: doc.getElementById('child-rhz-val').innerText,
@@ -130,17 +130,17 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         const domH = new JSDOM(html, { runScripts: 'dangerously' });
         const docH = domH.window.document;
         docH.getElementById('tb-weight').value = 110;
-        docH.getElementById('tb-age').value = 12; // Child
+        docH.getElementById('tb-patient-type').value = 'pediatric';
         docH.getElementById('tb-special').value = 'h-mono';
         domH.window.calculateTBDoses();
         assert.ok(docH.getElementById('clinical-warning').innerHTML.includes('1500 mg/day'), 'Pediatric LFX max cap should be 1500 mg/day');
 
-        // Test TPT 3HP age branch: child > 30kg gets H700/Rpt750 vs adult >= 30kg gets H900/Rpt900
-        const childOver30 = runChildCalc(35, 10);
-        assert.strictEqual(childOver30.tpt3hp, 'H 700 mg + Rpt 750 mg', 'Child 35kg age 10 y/o should get H 700 mg + Rpt 750 mg');
+        // Test TPT 3HP patient type branch: pediatric > 30kg gets H700/Rpt750 vs adult >= 30kg gets H900/Rpt900
+        const childOver30 = runChildCalc(35, 'pediatric');
+        assert.strictEqual(childOver30.tpt3hp, 'H 700 mg + Rpt 750 mg', 'Pediatric 35kg should get H 700 mg + Rpt 750 mg');
 
-        const adultOver30 = runChildCalc(35, 30);
-        assert.strictEqual(adultOver30.tpt3hp, 'H 900 mg + Rpt 900 mg', 'Adult 35kg age 30 y/o should get H 900 mg + Rpt 900 mg');
+        const adultOver30 = runChildCalc(35, 'adult-standard');
+        assert.strictEqual(adultOver30.tpt3hp, 'H 900 mg + Rpt 900 mg', 'Adult 35kg should get H 900 mg + Rpt 900 mg');
     });
 
     await t.test('index.html links to tools/tb-calculator.html as prototype item T6', () => {
