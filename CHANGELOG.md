@@ -1,3 +1,14 @@
+## [2.3.0] — 2026-07-31
+
+### Changed / Refactored
+- **TB Weight-Based Dosing Calculator (`tools/tb-calculator.html`):**
+  - Redesigned visual layout adhering to Braun Analogue precision aesthetics, replacing emoji headers with clean typography and clinical micro-badges (`CPG 2022`, `Adult / Pediatric / TPT`).
+  - Integrated sticky top navigation bar (`ED_COMPONENTS.injectNavBar()`).
+  - Added ergonomic weight controls with `-1` / `+1` kg steppers, range slider, and 5 landmark weight preset pills mapped directly to single-drug and FDC dosage step tiers: `25 kg (สูตรแยก mg/kg)`, `35 kg (Tier 1)`, `45 kg (Tier 2)`, `55 kg (H,R Max Cap)`, `71 kg (Max Cap ทั้งหมด)`.
+  - Added explicit `Max [cap] mg` dose ceiling indicators (H 300 mg, R 600 mg, Z 2,000 mg, E 1,200 mg) to Adult and Pediatric Single Drug Breakdown tables.
+  - Formatted EMR clinical note output block with one-click copy and toast notification feedback.
+  - Bumped PWA offline cache version to `v39` (`service-worker.js` and `index.html` synchronized).
+
 ## [2.2.0] — 2026-07-31
 
 ### Added

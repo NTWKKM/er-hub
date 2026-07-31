@@ -81,6 +81,20 @@ clinical-indication-based guide rendering with per-drug max dose display,
 inline plain text concentration display, sessionStorage weight persistence.
 All input fields in English.
 
+### TB Calculator (`tools/tb-calculator.html`)
+
+Weight-based anti-tuberculosis medication calculator referencing Thailand CPG 2018 & 2022 guidelines.
+Features:
+- Braun Analogue precision design with sticky top navigation (`ED_COMPONENTS.injectNavBar()`).
+- Ergonomic weight controls: number input, range slider, stepper buttons (-1/+1 kg), and landmark weight preset pills for single drugs & FDC (`25 kg (สูตรแยก mg/kg)`, `35 kg (Tier 1)`, `45 kg (Tier 2)`, `55 kg (H,R Max Cap)`, `71 kg (Max Cap ทั้งหมด)`).
+- Age-dependent auto-switching between Adult (≥15 yrs) and Pediatric (<15 yrs) regimens.
+- Renal (CrCl < 30 / Hemodialysis) and Liver toxicity warning callouts with dosage adjustment guidance.
+- FDC highlight cards for 4-FDC & 2-FDC adult regimens and child dispersible 3-FDC/2-FDC.
+- Single drug breakdown tables for Isoniazid, Rifampicin, Pyrazinamide, and Ethambutol with tablet combination suggestions.
+- Latent TB infection treatment (TPT) dosage lookup (3HP, 1HP, 3HR, 4R, 6H).
+- Standardized EMR clinical note compiler for one-click copy to clipboard.
+
+
 ### Urgent Clinic Home Medication (`tools/Urgent-Clinic-Home-Medication.html`)
 
 Standalone Home Medication Checklist (ใบสั่งยาและแผนการรักษากลับบ้าน).

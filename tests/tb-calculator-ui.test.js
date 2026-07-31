@@ -20,7 +20,7 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
 
         // Check CPG citation
-        assert.ok(html.includes('CPG วัณโรค ประเทศไทย พ.ศ. 2561 & 2565'), 'Should cite Thailand CPG 2018 & 2022');
+        assert.ok(html.includes('2561 & 2565 (2022)'), 'Should cite Thailand CPG 2018 & 2022');
 
         // Check Adult 4-FDC & 2-FDC
         assert.ok(html.includes('H75/R150/Z400/E275'), 'Should include Adult 4-FDC composition');
@@ -135,15 +135,15 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(html.includes('TB Weight-Based Dosing Calculator'), 'index.html should display title');
     });
 
-    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and uses v38', () => {
+    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and uses v39', () => {
         const sw = fs.readFileSync(path.join(ROOT_DIR, 'service-worker.js'), 'utf8');
-        assert.ok(sw.includes("'er-hub-v38'"), 'CACHE_VERSION should be er-hub-v38');
+        assert.ok(sw.includes("'er-hub-v39'"), 'CACHE_VERSION should be er-hub-v39');
         assert.ok(sw.includes("'./tools/tb-calculator.html'"), 'ASSETS array should contain ./tools/tb-calculator.html');
     });
 
-    await t.test('index.html version string matches service-worker.js v38', () => {
+    await t.test('index.html version string matches service-worker.js v39', () => {
         const html = fs.readFileSync(path.join(ROOT_DIR, 'index.html'), 'utf8');
-        assert.ok(html.includes('v38'), 'index.html top nav should state v38');
+        assert.ok(html.includes('v39'), 'index.html top nav should state v39');
     });
 
     await t.test('ARCHITECTURE.md documents tools/tb-calculator.html', () => {
