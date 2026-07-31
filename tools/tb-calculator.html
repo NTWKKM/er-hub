@@ -11,17 +11,17 @@
     <link rel="stylesheet" href="../shared/base.css">
     <style>
         :root {
-            --paper: #090d16;
-            --surface: #111827;
-            --surface-card: #1f293d;
-            --ink: #f3f4f6;
-            --graphite: #9ca3af;
-            --rule: #374151;
-            --accent-blue: #3b82f6;
-            --accent-green: #10b981;
-            --accent-amber: #f59e0b;
-            --accent-rose: #ef4444;
-            --accent-cyan: #06b6d4;
+            --paper: #ebe7df;
+            --surface: #ffffff;
+            --surface-card: #ffffff;
+            --ink: #1a1a1a;
+            --graphite: #4a4a4a;
+            --rule: #d8d4c8;
+            --accent-blue: #1e3c72;
+            --accent-green: #2e7d32;
+            --accent-amber: #d84315;
+            --accent-rose: #c62828;
+            --accent-cyan: #0277bd;
             --font-ui: 'Inter Tight', 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
@@ -44,12 +44,11 @@
         }
 
         .tb-header {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid var(--rule);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             border-radius: 12px;
             padding: 20px 24px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -68,7 +67,7 @@
         }
 
         .tb-header-title h1 span.badge {
-            background: var(--accent-blue);
+            background: rgba(255, 255, 255, 0.2);
             color: #fff;
             font-size: 0.75rem;
             padding: 2px 8px;
@@ -79,14 +78,14 @@
 
         .tb-header-title p {
             margin: 4px 0 0;
-            color: var(--graphite);
+            color: rgba(255, 255, 255, 0.85);
             font-size: 0.88rem;
         }
 
         .cpg-tag {
-            background: rgba(59, 130, 246, 0.15);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            color: #93c5fd;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #ffffff;
             padding: 6px 12px;
             border-radius: 8px;
             font-size: 0.8rem;
@@ -104,7 +103,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .form-group {
@@ -122,7 +121,7 @@
         }
 
         .form-control {
-            background: var(--paper);
+            background: #ffffff;
             border: 1px solid var(--rule);
             color: var(--ink);
             padding: 10px 12px;
@@ -136,7 +135,7 @@
 
         .form-control:focus {
             border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.2);
         }
 
         select.form-control {
@@ -170,14 +169,14 @@
         }
 
         .tb-tab-btn:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.04);
+            color: var(--ink);
+            background: rgba(0, 0, 0, 0.04);
         }
 
         .tb-tab-btn.active {
             color: var(--accent-blue);
             border-bottom-color: var(--accent-blue);
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(30, 60, 114, 0.06);
         }
 
         /* Tab Content */
@@ -205,9 +204,9 @@
         .card {
             background: var(--surface);
             border: 1px solid var(--rule);
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .card-header {
@@ -223,7 +222,7 @@
             margin: 0;
             font-size: 1.1rem;
             font-weight: 700;
-            color: #ffffff;
+            color: var(--ink);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -239,7 +238,7 @@
         .drug-table th, .drug-table td {
             padding: 10px 12px;
             text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            border-bottom: 1px solid var(--rule);
         }
 
         .drug-table th {
@@ -248,19 +247,19 @@
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(0, 0, 0, 0.02);
         }
 
         .drug-table td.dose-value {
             font-weight: 700;
-            color: var(--accent-green);
+            color: var(--accent-blue);
             font-size: 1rem;
         }
 
         .pill-badge {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.4);
+            background: rgba(30, 60, 114, 0.1);
+            color: var(--accent-blue);
+            border: 1px solid rgba(30, 60, 114, 0.2);
             padding: 2px 8px;
             border-radius: 12px;
             font-size: 0.8rem;
@@ -279,27 +278,27 @@
         }
 
         .alert-info {
-            background: rgba(59, 130, 246, 0.12);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            color: #bfdbfe;
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            color: #0d47a1;
         }
 
         .alert-warning {
-            background: rgba(245, 158, 11, 0.12);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: #fde68a;
+            background: #fff3e0;
+            border: 1px solid #ffe0b2;
+            color: #e65100;
         }
 
         .alert-danger {
-            background: rgba(239, 68, 68, 0.12);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            color: #b71c1c;
         }
 
         .alert-success {
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #a7f3d0;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            color: #1b5e20;
         }
 
         /* Action bar & copy note */
@@ -312,7 +311,7 @@
 
         .btn {
             background: var(--accent-blue);
-            color: #fff;
+            color: #ffffff;
             border: none;
             padding: 10px 20px;
             border-radius: 8px;
@@ -327,7 +326,7 @@
         }
 
         .btn:hover {
-            background: #2563eb;
+            background: #152a51;
         }
 
         .btn:active {
@@ -336,13 +335,13 @@
 
         .btn-outline {
             background: transparent;
-            border: 1px solid var(--rule);
+            border: 1px solid var(--graphite);
             color: var(--ink);
         }
 
         .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--ink);
         }
 
         /* Copy Feedback Toast */
@@ -350,13 +349,13 @@
             position: fixed;
             bottom: 24px;
             right: 24px;
-            background: var(--accent-green);
-            color: #000;
+            background: var(--ink);
+            color: #ffffff;
             padding: 12px 20px;
             border-radius: 8px;
             font-weight: 700;
             font-size: 0.9rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             display: none;
             z-index: 1000;
             animation: fadeIn 0.2s ease-in-out;
@@ -368,13 +367,13 @@
         }
 
         .note-preview {
-            background: #060911;
+            background: #f8f9fa;
             border: 1px solid var(--rule);
             border-radius: 8px;
             padding: 14px;
             font-family: monospace;
             font-size: 0.85rem;
-            color: #38bdf8;
+            color: #0f172a;
             white-space: pre-wrap;
             word-break: break-all;
             margin-top: 12px;
@@ -386,9 +385,9 @@
             border-radius: 6px;
             font-weight: 700;
             font-size: 0.85rem;
-            background: rgba(6, 182, 212, 0.15);
+            background: #e1f5fe;
             color: var(--accent-cyan);
-            border: 1px solid rgba(6, 182, 212, 0.3);
+            border: 1px solid #b3e5fc;
             margin-bottom: 12px;
         }
     </style>
