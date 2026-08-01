@@ -785,6 +785,55 @@
                 <div id="mdr-dose-output"></div>
             </div>
 
+            <!-- H-mono Resistance Result Box -->
+            <div id="result-hmono" class="result-box">
+                <div class="result-header">
+                    <h2 class="result-header-title">สูตรรักษา H-monoresistance — 6(H)RZELfx</h2>
+                    <span class="meta-badge primary">CPG 2022 หัวข้อ 5.3</span>
+                </div>
+                <div style="background:#fef3c7;color:#78350f;padding:10px 12px;border-radius:6px;margin-bottom:12px;font-size:0.9em;line-height:1.4;">
+                    ⚠️ สำหรับผู้ป่วยวัณโรคที่ดื้อยา Isoniazid ชนิด mono-resistance (สัมผัสยา H หรือตรวจพบ mutation katG/inhA) ให้ใช้สูตร 6(H)RZELfx นาน 6 เดือน (ไม่แนะนำให้ใช้ FDC ที่มี H ขนาดปกติ)
+                </div>
+                <div class="clinical-table-wrapper">
+                    <table class="clinical-table">
+                        <thead>
+                            <tr>
+                                <th>ยา</th>
+                                <th>ขนาดยา (mg/day)</th>
+                                <th>คำแนะนำจำนวนเม็ด</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="drug-name-col">Rifampicin (R)<small>8-12 mg/kg/day</small></td>
+                                <td class="dose-value" id="hmono-r-val"></td>
+                                <td class="dose-value" id="hmono-r-tabs"></td>
+                            </tr>
+                            <tr>
+                                <td class="drug-name-col">Pyrazinamide (Z)<small>20-30 mg/kg/day</small></td>
+                                <td class="dose-value" id="hmono-z-val"></td>
+                                <td class="dose-value" id="hmono-z-tabs"></td>
+                            </tr>
+                            <tr>
+                                <td class="drug-name-col">Ethambutol (E)<small>15-20 mg/kg/day</small></td>
+                                <td class="dose-value" id="hmono-e-val"></td>
+                                <td class="dose-value" id="hmono-e-tabs"></td>
+                            </tr>
+                            <tr>
+                                <td class="drug-name-col">Levofloxacin (Lfx)<small>&lt;50kg: 750mg, ≥50kg: 1000mg</small></td>
+                                <td class="dose-value" id="hmono-lfx-val"></td>
+                                <td class="dose-value" id="hmono-lfx-tabs"></td>
+                            </tr>
+                            <tr>
+                                <td class="drug-name-col">High-dose INH (H)<small>10-15 mg/kg/day (ทางเลือกกรณี inhA mutation)</small></td>
+                                <td class="dose-value" id="hmono-h-val"></td>
+                                <td class="dose-value" id="hmono-h-tabs"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- EMR Note -->
             <div class="emr-section">
                 <div class="emr-header">
@@ -967,16 +1016,21 @@
             document.getElementById('result-tpt').classList.remove('active');
             document.getElementById('result-mdr-shorter').classList.remove('active');
             document.getElementById('result-mdr-longer').classList.remove('active');
+            document.getElementById('result-hmono').classList.remove('active');
             
             const warningBox = document.getElementById('clinical-warning');
             warningBox.style.display = 'none';
             warningBox.innerHTML = '';
 
+            let lfxDose = weight >= 50 ? 1000 : 750;
+            if (isPediatric) lfxDose = Math.min(1500, Math.round(weight * 15));
+
+            let hHighDose = weight < 35 ? Math.round(weight * 10) : (weight <= 45 ? 400 : 600);
+            if (isPediatric) hHighDose = Math.min(600, Math.round(weight * 15));
+
             // Handle Warnings
             if (special === 'h-mono') {
                 warningBox.style.display = 'block';
-                let lfxDose = weight >= 50 ? 1000 : 750;
-                if (isPediatric) lfxDose = Math.min(1500, Math.round(weight * 15));
                 warningBox.innerHTML = `<strong>⚠️ H-monoresistance:</strong> แนะนำใช้สูตร 6(H)RZELfx (Levofloxacin ${lfxDose} mg/day)`;
             } else if (renal === 'ckd-severe') {
                 warningBox.style.display = 'block';
@@ -1069,6 +1123,22 @@
             document.getElementById('child-rhz-val').innerText = rhzVal.includes("เม็ด") ? `${rhzVal} วันละครั้ง` : rhzVal;
             document.getElementById('child-rh-val').innerText = rhVal.includes("เม็ด") ? `${rhVal} วันละครั้ง` : rhVal;
 
+            // Populate H-mono Table
+            const activeR = isPediatric ? cR : rDose;
+            const activeZ = isPediatric ? cZ : zDose;
+            const activeE = isPediatric ? cE : eDose;
+
+            document.getElementById('hmono-r-val').innerText = `${activeR} mg/day`;
+            document.getElementById('hmono-r-tabs').innerText = suggestTablets(activeR, [600, 450, 300, 150]);
+            document.getElementById('hmono-z-val').innerText = `${activeZ} mg/day`;
+            document.getElementById('hmono-z-tabs').innerText = suggestTablets(activeZ, [1000, 500, 400]);
+            document.getElementById('hmono-e-val').innerText = `${activeE} mg/day`;
+            document.getElementById('hmono-e-tabs').innerText = suggestTablets(activeE, [500, 400]);
+            document.getElementById('hmono-lfx-val').innerText = `${lfxDose} mg/day`;
+            document.getElementById('hmono-lfx-tabs').innerText = suggestTablets(lfxDose, [500, 250]);
+            document.getElementById('hmono-h-val').innerText = `${hHighDose} mg/day`;
+            document.getElementById('hmono-h-tabs').innerText = suggestTablets(hHighDose, [300, 100]);
+
             // Calculate TPT (CPG 2022 Table 9.2)
             let tpt3hpH, tpt3hpRpt;
             if (isPediatric) {
@@ -1089,6 +1159,8 @@
             // Display Logic
             if (special === 'tpt') {
                 document.getElementById('result-tpt').classList.add('active');
+            } else if (special === 'h-mono') {
+                document.getElementById('result-hmono').classList.add('active');
             } else if (special === 'mdr-shorter') {
                 document.getElementById('result-mdr-shorter').classList.add('active');
                 const bandIdx = getDrBandIndex(weight);
@@ -1135,6 +1207,13 @@
             if (special === 'tpt') {
                 rxNote += `Preventive Regimen (TPT):\n`;
                 rxNote += `- 3HP: H ${tpt3hpH}mg + Rpt ${tpt3hpRpt}mg qWK x12\n`;
+            } else if (special === 'h-mono') {
+                rxNote += `H-monoresistance Regimen [6(H)RZELfx x 6 เดือน]:\n`;
+                rxNote += `- RIF (${activeR}mg): ${stripArrow(suggestTablets(activeR, [600, 450, 300, 150]))}\n`;
+                rxNote += `- PZA (${activeZ}mg): ${stripArrow(suggestTablets(activeZ, [1000, 500, 400]))}\n`;
+                rxNote += `- EMB (${activeE}mg): ${stripArrow(suggestTablets(activeE, [500, 400]))}\n`;
+                rxNote += `- Levofloxacin (${lfxDose}mg): ${stripArrow(suggestTablets(lfxDose, [500, 250]))}\n`;
+                rxNote += `- High-dose INH (พิจารณาใช้กรณี Low-level INH resistance): ${hHighDose} mg/day\n`;
             } else if (special === 'mdr-shorter') {
                 rxNote += `MDR/RR-TB Shorter All-Oral Bdq Regimen:\n`;
                 if (weight < 30) {

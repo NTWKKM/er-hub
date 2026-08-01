@@ -146,6 +146,50 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.strictEqual(adultOver30.tpt3hp, 'H 900 mg + Rpt 900 mg', 'Adult 35kg should get H 900 mg + Rpt 900 mg');
     });
 
+    await t.test('Execution Test: H-monoresistance 6(H)RZELfx regimen dosage table (CPG 2022 Section 5.3)', () => {
+        const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
+
+        function runHMonoCalc(w, patientType = 'adult-standard') {
+            const dom = new JSDOM(html, { runScripts: 'dangerously' });
+            const doc = dom.window.document;
+            doc.getElementById('tb-weight').value = w;
+            doc.getElementById('tb-patient-type').value = patientType;
+            doc.getElementById('tb-special').value = 'h-mono';
+            dom.window.calculateTBDoses();
+            return {
+                hmonoActive: doc.getElementById('result-hmono').classList.contains('active'),
+                rVal: doc.getElementById('hmono-r-val').innerText,
+                zVal: doc.getElementById('hmono-z-val').innerText,
+                eVal: doc.getElementById('hmono-e-val').innerText,
+                lfxVal: doc.getElementById('hmono-lfx-val').innerText,
+                hHighVal: doc.getElementById('hmono-h-val').innerText,
+                note: doc.getElementById('clinical-note-text').innerText
+            };
+        }
+
+        // Test adult <50kg (45kg): Lfx 750mg
+        const a45 = runHMonoCalc(45);
+        assert.strictEqual(a45.hmonoActive, true, '#result-hmono should be active');
+        assert.strictEqual(a45.lfxVal, '750 mg/day');
+        assert.strictEqual(a45.rVal, '450 mg/day');
+        assert.strictEqual(a45.zVal, '1000 mg/day');
+        assert.strictEqual(a45.eVal, '800 mg/day');
+        assert.strictEqual(a45.hHighVal, '400 mg/day');
+        assert.ok(a45.note.includes('H-monoresistance Regimen [6(H)RZELfx x 6 เดือน]'));
+
+        // Test adult >=50kg (60kg): Lfx 1000mg
+        const a60 = runHMonoCalc(60);
+        assert.strictEqual(a60.lfxVal, '1000 mg/day');
+        assert.strictEqual(a60.rVal, '600 mg/day');
+        assert.strictEqual(a60.zVal, '1500 mg/day');
+        assert.strictEqual(a60.eVal, '1000 mg/day');
+
+        // Test pediatric (20kg): Lfx 300mg (15 mg/kg)
+        const c20 = runHMonoCalc(20, 'pediatric');
+        assert.strictEqual(c20.lfxVal, '300 mg/day');
+        assert.strictEqual(c20.rVal, '300 mg/day');
+    });
+
     await t.test('Execution Test: MDR/RR-TB Shorter Bdq Regimen weight boundaries (CPG 2022 Table 6.3)', () => {
         const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
 
