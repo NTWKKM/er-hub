@@ -1123,13 +1123,16 @@
             let eMinA = Math.min(1200, Math.round(weight * 15)), eMaxA = Math.min(1200, Math.round(weight * 20));
 
             // Populate Adult
+            const zFreqStr = renal === 'ckd-severe' ? 'mg (3 วัน/สัปดาห์)' : 'mg/day';
+            const eFreqStr = renal === 'ckd-severe' ? 'mg (3 วัน/สัปดาห์)' : 'mg/day';
+
             document.getElementById('adult-h-val').innerText = `${hDose} mg/day`;
             document.getElementById('adult-h-range').innerText = `(Range: ${hMinA} - ${hMaxA} mg)`;
             document.getElementById('adult-r-val').innerText = `${rDose} mg/day`;
             document.getElementById('adult-r-range').innerText = `(Range: ${rMinA} - ${rMaxA} mg)`;
-            document.getElementById('adult-z-val').innerText = `${zDose} mg/day`;
+            document.getElementById('adult-z-val').innerText = `${zDose} ${zFreqStr}`;
             document.getElementById('adult-z-range').innerText = `(Range: ${zMinA} - ${zMaxA} mg)`;
-            document.getElementById('adult-e-val').innerText = `${eDose} mg/day`;
+            document.getElementById('adult-e-val').innerText = `${eDose} ${eFreqStr}`;
             document.getElementById('adult-e-range').innerText = `(Range: ${eMinA} - ${eMaxA} mg)`;
             
             document.getElementById('adult-h-tabs').innerText = suggestTablets(hDose, [300, 100]);
@@ -1157,9 +1160,9 @@
             
             document.getElementById('child-r-val').innerText = `${cR} mg/day`;
             document.getElementById('child-r-range').innerText = `(Range: ${rMinC} - ${rMaxC} mg)`;
-            document.getElementById('child-z-val').innerText = `${cZ} mg/day`;
+            document.getElementById('child-z-val').innerText = `${cZ} ${zFreqStr}`;
             document.getElementById('child-z-range').innerText = `(Range: ${zMinC} - ${zMaxC} mg)`;
-            document.getElementById('child-e-val').innerText = `${cE} mg/day`;
+            document.getElementById('child-e-val').innerText = `${cE} ${eFreqStr}`;
             document.getElementById('child-e-range').innerText = `(Range: ${eMinC} - ${eMaxC} mg)`;
 
             let rhzVal = "";
@@ -1180,9 +1183,6 @@
             const activeR = isPediatric ? cR : rDose;
             const activeZ = isPediatric ? cZ : zDose;
             const activeE = isPediatric ? cE : eDose;
-
-            const zFreqStr = renal === 'ckd-severe' ? 'mg (3 วัน/สัปดาห์)' : 'mg/day';
-            const eFreqStr = renal === 'ckd-severe' ? 'mg (3 วัน/สัปดาห์)' : 'mg/day';
 
             document.getElementById('hmono-r-val').innerText = `${activeR} mg/day`;
             document.getElementById('hmono-r-tabs').innerText = suggestTablets(activeR, [600, 450, 300, 150]);
@@ -1324,8 +1324,8 @@
                 rxNote += `Regimen (Renal Adjustment CrCl < 30):\n`;
                 rxNote += `- INH (${hDose}mg) OD: ${stripArrow(suggestTablets(hDose, [300, 100]))}\n`;
                 rxNote += `- RIF (${rDose}mg) OD: ${stripArrow(suggestTablets(rDose, [600, 450, 300, 150]))}\n`;
-                rxNote += `- PZA (${rZ}mg) 3x/wk (หลังฟอก): ${stripArrow(suggestTablets(rZ, [1000, 500, 400]))}\n`;
-                rxNote += `- EMB (${rE}mg) 3x/wk (หลังฟอก): ${stripArrow(suggestTablets(rE, [500, 400]))}\n`;
+                rxNote += `- PZA (${rZ}mg) 3 วัน/สัปดาห์: ${stripArrow(suggestTablets(rZ, [1000, 500, 400]))}\n`;
+                rxNote += `- EMB (${rE}mg) 3 วัน/สัปดาห์: ${stripArrow(suggestTablets(rE, [500, 400]))}\n`;
             } else if (isPediatric) {
                 rxNote += `Pediatric Regimen (2HRZE / 4HR):\n`;
                 rxNote += `- INH: ${cH} mg/day (${(cH/10).toFixed(1)} mL of 10mg/mL syrup)\n`;
