@@ -270,6 +270,16 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(hmonoWarnHTML.includes('Z/E ในสูตรนี้ต้องปรับเป็น 3 วัน/สัปดาห์'), 'H-mono inline warning should list Z/E renal adjustment');
         assert.ok(hmonoWarnHTML.includes('ในสูตรนี้มีผลต่อตับ'), 'H-mono inline warning should list liver risk');
 
+        // Test 2b: Verify H-mono table dosage cells & rxNote lines display 3 วัน/สัปดาห์ when renal === ckd-severe
+        const hmonoZVal = docHMono.getElementById('hmono-z-val').innerText;
+        const hmonoEVal = docHMono.getElementById('hmono-e-val').innerText;
+        const hmonoNote = docHMono.getElementById('clinical-note-text').innerText;
+
+        assert.ok(hmonoZVal.includes('3 วัน/สัปดาห์'), 'H-mono Z table cell should state 3 วัน/สัปดาห์ when renal === ckd-severe');
+        assert.ok(hmonoEVal.includes('3 วัน/สัปดาห์'), 'H-mono E table cell should state 3 วัน/สัปดาห์ when renal === ckd-severe');
+        assert.ok(hmonoNote.includes('- PZA (1500mg) [3 วัน/สัปดาห์]:'), 'H-mono rxNote PZA line should specify [3 วัน/สัปดาห์]');
+        assert.ok(hmonoNote.includes('- EMB (1000mg) [3 วัน/สัปดาห์]:'), 'H-mono rxNote EMB line should specify [3 วัน/สัปดาห์]');
+
         // Test 3: MDR-longer dynamic checkbox update
         const domLonger = new JSDOM(html, { runScripts: 'dangerously' });
         const docLonger = domLonger.window.document;

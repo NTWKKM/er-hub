@@ -1181,11 +1181,14 @@
             const activeZ = isPediatric ? cZ : zDose;
             const activeE = isPediatric ? cE : eDose;
 
+            const zFreqStr = renal === 'ckd-severe' ? 'mg (3 วัน/สัปดาห์)' : 'mg/day';
+            const eFreqStr = renal === 'ckd-severe' ? 'mg (3 วัน/สัปดาห์)' : 'mg/day';
+
             document.getElementById('hmono-r-val').innerText = `${activeR} mg/day`;
             document.getElementById('hmono-r-tabs').innerText = suggestTablets(activeR, [600, 450, 300, 150]);
-            document.getElementById('hmono-z-val').innerText = `${activeZ} mg/day`;
+            document.getElementById('hmono-z-val').innerText = `${activeZ} ${zFreqStr}`;
             document.getElementById('hmono-z-tabs').innerText = suggestTablets(activeZ, [1000, 500, 400]);
-            document.getElementById('hmono-e-val').innerText = `${activeE} mg/day`;
+            document.getElementById('hmono-e-val').innerText = `${activeE} ${eFreqStr}`;
             document.getElementById('hmono-e-tabs').innerText = suggestTablets(activeE, [500, 400]);
             document.getElementById('hmono-lfx-val').innerText = `${lfxDose} mg/day`;
             document.getElementById('hmono-lfx-tabs').innerText = suggestTablets(lfxDose, [500, 250]);
@@ -1242,7 +1245,10 @@
                     Object.keys(SHORTER_REGIMEN_TABLE).forEach(key => {
                         const d = SHORTER_REGIMEN_TABLE[key];
                         const label = labels[key] || key;
-                        const val = d.fixed || `${d.bands[bandIdx]} ${d.unit}`;
+                        let val = d.fixed || `${d.bands[bandIdx]} ${d.unit}`;
+                        if ((key === 'z' || key === 'e') && renal === 'ckd-severe') {
+                            val = `${d.bands[bandIdx]} mg (3 วัน/สัปดาห์)`;
+                        }
                         rows += `<tr><td class="drug-name-col">${label}</td><td class="dose-value">${val}</td></tr>`;
                     });
                     document.getElementById('mdr-shorter-output').innerHTML =
@@ -1269,24 +1275,29 @@
                 rxNote += `Preventive Regimen (TPT):\n`;
                 rxNote += `- 3HP: H ${tpt3hpH}mg + Rpt ${tpt3hpRpt}mg qWK x12\n`;
             } else if (special === 'h-mono') {
+                const zTag = renal === 'ckd-severe' ? ' [3 วัน/สัปดาห์]' : '';
+                const eTag = renal === 'ckd-severe' ? ' [3 วัน/สัปดาห์]' : '';
                 rxNote += `H-monoresistance Regimen [6(H)RZELfx x 6 เดือน]:\n`;
                 rxNote += `- RIF (${activeR}mg): ${stripArrow(suggestTablets(activeR, [600, 450, 300, 150]))}\n`;
-                rxNote += `- PZA (${activeZ}mg): ${stripArrow(suggestTablets(activeZ, [1000, 500, 400]))}\n`;
-                rxNote += `- EMB (${activeE}mg): ${stripArrow(suggestTablets(activeE, [500, 400]))}\n`;
+                rxNote += `- PZA (${activeZ}mg)${zTag}: ${stripArrow(suggestTablets(activeZ, [1000, 500, 400]))}\n`;
+                rxNote += `- EMB (${activeE}mg)${eTag}: ${stripArrow(suggestTablets(activeE, [500, 400]))}\n`;
                 rxNote += `- Levofloxacin (${lfxDose}mg): ${stripArrow(suggestTablets(lfxDose, [500, 250]))}\n`;
                 rxNote += `- High-dose INH (พิจารณาใช้กรณี Low-level INH resistance): ${hHighDose} mg/day\n`;
             } else if (special === 'mdr-shorter') {
-                rxNote += `MDR/RR-TB Shorter All-Oral Bdq Regimen:\n`;
                 if (weight < 30) {
+                    rxNote += `MDR/RR-TB Shorter All-Oral Bdq Regimen:\n`;
                     rxNote += `- น้ำหนัก < 30 kg: ใช้ตารางเด็ก ปรึกษาผู้เชี่ยวชาญ\n`;
                 } else {
                     const bandIdx = getDrBandIndex(weight);
+                    const zTag = renal === 'ckd-severe' ? ' [3 วัน/สัปดาห์]' : '';
+                    const eTag = renal === 'ckd-severe' ? ' [3 วัน/สัปดาห์]' : '';
+                    rxNote += `MDR/RR-TB Shorter All-Oral Bdq Regimen:\n`;
                     rxNote += `- Bdq: 400mg/d x2wk, 200mg 3x/wk x22wk\n`;
                     rxNote += `- Lfx: 750mg/d | Mfx: 400mg/d | Cfz: 100mg/d\n`;
                     rxNote += `- Pto: ${SHORTER_REGIMEN_TABLE.pto.bands[bandIdx]}mg/d\n`;
-                    rxNote += `- PZA: ${SHORTER_REGIMEN_TABLE.z.bands[bandIdx]}mg/d\n`;
+                    rxNote += `- PZA: ${SHORTER_REGIMEN_TABLE.z.bands[bandIdx]}mg/d${zTag}\n`;
                     rxNote += `- INH (high-dose): ${SHORTER_REGIMEN_TABLE.h.bands[bandIdx]}mg/d\n`;
-                    rxNote += `- EMB: ${SHORTER_REGIMEN_TABLE.e.bands[bandIdx]}mg/d\n`;
+                    rxNote += `- EMB: ${SHORTER_REGIMEN_TABLE.e.bands[bandIdx]}mg/d${eTag}\n`;
                 }
             } else if (special === 'mdr-longer') {
                 rxNote += `MDR/RR-TB Individualized Longer Regimen:\n`;
@@ -1301,6 +1312,9 @@
                         const d = MDR_DOSE_TABLE[cb.value];
                         const label = MDR_DRUG_GROUPS[cb.value].label;
                         let doseText = d.fixed ? d.fixed : (d.bands[bandIdx] === null ? (d.note || "ปรึกษาตารางเด็ก") : `${d.bands[bandIdx]} ${d.unit}`);
+                        if ((cb.value === 'z' || cb.value === 'e' || cb.value === 'am') && renal === 'ckd-severe') {
+                            doseText += ' [3 วัน/สัปดาห์]';
+                        }
                         rxNote += `- ${label}: ${doseText}\n`;
                     });
                 }
