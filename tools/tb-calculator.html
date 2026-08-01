@@ -385,6 +385,19 @@
             margin-left: 6px;
         }
 
+        .dose-warn-badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 6px;
+            border: 1px solid #fde68a;
+            vertical-align: middle;
+        }
+
         .tablet-suggestion {
             display: block;
             margin-top: 4px;
@@ -616,6 +629,7 @@
                                 <td>
                                     <span class="dose-value" id="adult-z-val"></span>
                                     <span class="dose-range-tag" id="adult-z-range"></span>
+                                    <span class="dose-warn-badge" id="adult-z-warn" style="display:none;"></span>
                                     <span class="tablet-suggestion" id="adult-z-tabs"></span>
                                 </td>
                             </tr>
@@ -624,6 +638,7 @@
                                 <td>
                                     <span class="dose-value" id="adult-e-val"></span>
                                     <span class="dose-range-tag" id="adult-e-range"></span>
+                                    <span class="dose-warn-badge" id="adult-e-warn" style="display:none;"></span>
                                     <span class="tablet-suggestion" id="adult-e-tabs"></span>
                                 </td>
                             </tr>
@@ -672,6 +687,7 @@
                                 <td>
                                     <span class="dose-value" id="child-z-val"></span>
                                     <span class="dose-range-tag" id="child-z-range"></span>
+                                    <span class="dose-warn-badge" id="child-z-warn" style="display:none;"></span>
                                 </td>
                             </tr>
                             <tr>
@@ -679,6 +695,7 @@
                                 <td>
                                     <span class="dose-value" id="child-e-val"></span>
                                     <span class="dose-range-tag" id="child-e-range"></span>
+                                    <span class="dose-warn-badge" id="child-e-warn" style="display:none;"></span>
                                 </td>
                             </tr>
                         </tbody>
@@ -817,12 +834,12 @@
                             </tr>
                             <tr>
                                 <td class="drug-name-col">Pyrazinamide (Z)<small>20-30 mg/kg/day</small></td>
-                                <td class="dose-value" id="hmono-z-val"></td>
+                                <td class="dose-value"><span id="hmono-z-val"></span><span class="dose-warn-badge" id="hmono-z-warn" style="display:none;"></span></td>
                                 <td class="dose-value" id="hmono-z-tabs"></td>
                             </tr>
                             <tr>
                                 <td class="drug-name-col">Ethambutol (E)<small>15-20 mg/kg/day</small></td>
-                                <td class="dose-value" id="hmono-e-val"></td>
+                                <td class="dose-value"><span id="hmono-e-val"></span><span class="dose-warn-badge" id="hmono-e-warn" style="display:none;"></span></td>
                                 <td class="dose-value" id="hmono-e-tabs"></td>
                             </tr>
                             <tr>
@@ -1000,6 +1017,14 @@
                             doseText = `${v} ${d.unit}${maxStr}`;
                         }
                     }
+                    const renal = document.getElementById('tb-renal').value;
+                    if (renal === 'ckd-severe') {
+                        if (cb.value === 'z' || cb.value === 'e') {
+                            doseText += ' <span class="dose-warn-badge">⚠️ ปรับกิน 3 วัน/สัปดาห์ (เช่น จ-พ-ศ หรือหลังฟอกไต)</span>';
+                        } else if (cb.value === 'am') {
+                            doseText += ' <span class="dose-warn-badge">⚠️ ปรับกิน 2-3 ครั้ง/สัปดาห์ (หลังฟอกไต)</span>';
+                        }
+                    }
                     html += `<tr><td class="drug-name-col">${label}</td><td class="dose-value">${doseText}</td></tr>`;
                 });
                 html += "</tbody></table></div>";
@@ -1115,6 +1140,9 @@
                 fdc4Tabs = "คำนวณยาเดี่ยวตามน้ำหนักตัว (≥ 70 kg) — ค่าอ้างอิง H300/R600/Z2000/E1200";
                 fdc2Tabs = "คำนวณยาเดี่ยวตามน้ำหนักตัว (≥ 70 kg)";
             }
+            if (renal === 'ckd-severe' && weight >= 35) {
+                fdc4Tabs += "\n⚠️ ไตวายรุนแรง: ไม่แนะนำ FDC (ต้องใช้ยาเดี่ยวเพื่อปรับ Z/E เป็น 3 วัน/สัปดาห์)";
+            }
 
             // Calculate Ranges for Adult (mg/kg)
             let hMinA = Math.min(300, Math.round(weight * 4)), hMaxA = Math.min(300, Math.round(weight * 6));
@@ -1122,7 +1150,31 @@
             let zMinA = Math.min(2000, Math.round(weight * 20)), zMaxA = Math.min(2000, Math.round(weight * 30));
             let eMinA = Math.min(1200, Math.round(weight * 15)), eMaxA = Math.min(1200, Math.round(weight * 20));
 
-            // Populate Adult
+            // Populate Adult & Child Dose Warn Badges
+            const shortWarnText = '⚠️ ปรับกิน 3 วัน/สัปดาห์ (เช่น จ-พ-ศ หรือหลังฟอกไต)';
+            const adultZWarn = document.getElementById('adult-z-warn');
+            const adultEWarn = document.getElementById('adult-e-warn');
+            const childZWarn = document.getElementById('child-z-warn');
+            const childEWarn = document.getElementById('child-e-warn');
+            const hmonoZWarn = document.getElementById('hmono-z-warn');
+            const hmonoEWarn = document.getElementById('hmono-e-warn');
+
+            if (renal === 'ckd-severe') {
+                if (adultZWarn) { adultZWarn.innerText = shortWarnText; adultZWarn.style.display = 'inline-block'; }
+                if (adultEWarn) { adultEWarn.innerText = shortWarnText; adultEWarn.style.display = 'inline-block'; }
+                if (childZWarn) { childZWarn.innerText = shortWarnText; childZWarn.style.display = 'inline-block'; }
+                if (childEWarn) { childEWarn.innerText = shortWarnText; childEWarn.style.display = 'inline-block'; }
+                if (hmonoZWarn) { hmonoZWarn.innerText = shortWarnText; hmonoZWarn.style.display = 'inline-block'; }
+                if (hmonoEWarn) { hmonoEWarn.innerText = shortWarnText; hmonoEWarn.style.display = 'inline-block'; }
+            } else {
+                if (adultZWarn) { adultZWarn.innerText = ''; adultZWarn.style.display = 'none'; }
+                if (adultEWarn) { adultEWarn.innerText = ''; adultEWarn.style.display = 'none'; }
+                if (childZWarn) { childZWarn.innerText = ''; childZWarn.style.display = 'none'; }
+                if (childEWarn) { childEWarn.innerText = ''; childEWarn.style.display = 'none'; }
+                if (hmonoZWarn) { hmonoZWarn.innerText = ''; hmonoZWarn.style.display = 'none'; }
+                if (hmonoEWarn) { hmonoEWarn.innerText = ''; hmonoEWarn.style.display = 'none'; }
+            }
+
             const zFreqStr = renal === 'ckd-severe' ? 'mg (3 วัน/สัปดาห์)' : 'mg/day';
             const eFreqStr = renal === 'ckd-severe' ? 'mg (3 วัน/สัปดาห์)' : 'mg/day';
 
@@ -1247,7 +1299,7 @@
                         const label = labels[key] || key;
                         let val = d.fixed || `${d.bands[bandIdx]} ${d.unit}`;
                         if ((key === 'z' || key === 'e') && renal === 'ckd-severe') {
-                            val = `${d.bands[bandIdx]} mg (3 วัน/สัปดาห์)`;
+                            val = `${d.bands[bandIdx]} mg (3 วัน/สัปดาห์) <span class="dose-warn-badge">⚠️ ปรับกิน 3 วัน/สัปดาห์ (เช่น จ-พ-ศ หรือหลังฟอกไต)</span>`;
                         }
                         rows += `<tr><td class="drug-name-col">${label}</td><td class="dose-value">${val}</td></tr>`;
                     });

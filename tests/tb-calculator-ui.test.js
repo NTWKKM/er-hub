@@ -273,10 +273,12 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         // Test 2b: Verify H-mono table dosage cells & rxNote lines display 3 วัน/สัปดาห์ when renal === ckd-severe
         const hmonoZVal = docHMono.getElementById('hmono-z-val').innerText;
         const hmonoEVal = docHMono.getElementById('hmono-e-val').innerText;
+        const hmonoZWarnText = docHMono.getElementById('hmono-z-warn').innerText;
         const hmonoNote = docHMono.getElementById('clinical-note-text').innerText;
 
         assert.ok(hmonoZVal.includes('3 วัน/สัปดาห์'), 'H-mono Z table cell should state 3 วัน/สัปดาห์ when renal === ckd-severe');
         assert.ok(hmonoEVal.includes('3 วัน/สัปดาห์'), 'H-mono E table cell should state 3 วัน/สัปดาห์ when renal === ckd-severe');
+        assert.ok(hmonoZWarnText.includes('ปรับกิน 3 วัน/สัปดาห์'), 'H-mono Z dose warn badge should display short warning');
         assert.ok(hmonoNote.includes('- PZA (1500mg) [3 วัน/สัปดาห์]:'), 'H-mono rxNote PZA line should specify [3 วัน/สัปดาห์]');
         assert.ok(hmonoNote.includes('- EMB (1000mg) [3 วัน/สัปดาห์]:'), 'H-mono rxNote EMB line should specify [3 วัน/สัปดาห์]');
 
