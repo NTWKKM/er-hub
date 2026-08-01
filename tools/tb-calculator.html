@@ -1034,16 +1034,27 @@
             }
             if (isPediatric) hHighDose = Math.min(600, Math.round(weight * 15));
 
-            // Handle Warnings
+            // Handle Warnings (stacked, non-exclusive)
+            let warnings = [];
             if (special === 'h-mono') {
+                warnings.push(`<strong>⚠️ H-monoresistance:</strong> แนะนำใช้สูตร 6(H)RZELfx (Levofloxacin ${lfxDose} mg/day)`);
+            }
+            if (special === 'mdr-longer' && document.querySelector('.mdr-drug[value="am"]:checked') && renal === 'ckd-severe') {
+                warnings.push(`<strong>⚠️ Amikacin + ไตวายรุนแรง (CrCl &lt; 30):</strong> ยามีพิษต่อไตสูง ต้องปรับความถี่เป็น 2-3 ครั้ง/สัปดาห์ (หลังล้างไต) หรือพิจารณาหลีกเลี่ยง (อ้างอิงหลักการทั่วไป ควรปรึกษาเภสัชกร/ผู้เชี่ยวชาญก่อนใช้)`);
+            }
+            if (renal === 'ckd-severe') {
+                warnings.push(`<strong>⚠️ ไตวายรุนแรง (CrCl &lt; 30):</strong> ปรับลดยา Z และ E เป็น <strong>3 ครั้ง/สัปดาห์ (หลังล้างไต)</strong> ส่วน H และ R ให้ขนาดเดิมทุกวัน`);
+            }
+            if (liver === 'abnormal') {
+                warnings.push(`<strong>⚠️ ตับอักเสบ:</strong> หลีกเลี่ยงยาทำลายตับ (H, R, Z) หากเอนไซม์ตับสูงกว่า 3 เท่า ควรพิจารณาสูตรปราศจากยาทำลายตับ (เช่น SE Lfx)`);
+            }
+
+            if (warnings.length > 0) {
                 warningBox.style.display = 'block';
-                warningBox.innerHTML = `<strong>⚠️ H-monoresistance:</strong> แนะนำใช้สูตร 6(H)RZELfx (Levofloxacin ${lfxDose} mg/day)`;
-            } else if (renal === 'ckd-severe') {
-                warningBox.style.display = 'block';
-                warningBox.innerHTML = `<strong>⚠️ ไตวายรุนแรง (CrCl &lt; 30):</strong> ปรับลดยา Z และ E เป็น <strong>3 ครั้ง/สัปดาห์ (หลังล้างไต)</strong> ส่วน H และ R ให้ขนาดเดิมทุกวัน`;
-            } else if (liver === 'abnormal') {
-                warningBox.style.display = 'block';
-                warningBox.innerHTML = `<strong>⚠️ ตับอักเสบ:</strong> หลีกเลี่ยงยาทำลายตับ (H, R, Z) หากเอนไซม์ตับสูงกว่า 3 เท่า ควรพิจารณาสูตรปราศจากยาทำลายตับ (เช่น SE Lfx)`;
+                warningBox.innerHTML = warnings.join('<div style="margin:8px 0;border-top:1px solid #fde68a;"></div>');
+            } else {
+                warningBox.style.display = 'none';
+                warningBox.innerHTML = '';
             }
 
             // Calculate Adult (Thailand CPG 2018 Table 3.1 & CPG 2022 Table 5.1)
@@ -1205,6 +1216,7 @@
             }
 
             // Build Note
+            // TODO: Z/E dose in h-mono/mdr-shorter/mdr-longer is note-only warning, not auto-recalculated in table
             let rxNote = `[TB RX NOTE - CPG 2022]\n`;
             rxNote += `Patient: BW ${weight} kg | Category: ${isPediatric ? 'Pediatric (<15 yrs)' : 'Adult (≥15 yrs)'} | Renal: ${renal} | Liver: ${liver}\n`;
             
@@ -1275,6 +1287,17 @@
                 rxNote += `  • RIF (${rDose}mg): ${stripArrow(suggestTablets(rDose, [600, 450, 300, 150]))}\n`;
                 rxNote += `  • PZA (${zDose}mg): ${stripArrow(suggestTablets(zDose, [1000, 500, 400]))}\n`;
                 rxNote += `  • EMB (${eDose}mg): ${stripArrow(suggestTablets(eDose, [500, 400]))}\n`;
+            }
+
+            // Universal Renal & Liver Notes Append (for special regimens & overall clinical safety)
+            if (special !== 'none' && special !== 'tpt' && renal === 'ckd-severe') {
+                rxNote += `⚠️ หมายเหตุปรับยาตามภาวะไต (CrCl < 30): ปรับลดยา Z และ E เป็น 3 ครั้ง/สัปดาห์ หลังล้างไต\n`;
+            }
+            if (special === 'mdr-longer' && document.querySelector('.mdr-drug[value="am"]:checked') && renal === 'ckd-severe') {
+                rxNote += `⚠️ Amikacin (Nephrotoxic): ไตวายรุนแรง ปรับเป็น 2-3 ครั้ง/สัปดาห์ หลังล้างไต (ควรปรึกษาเภสัชกร)\n`;
+            }
+            if (liver === 'abnormal') {
+                rxNote += `⚠️ หมายเหตุภาวะตับ: เอนไซม์ตับสูง >3x หลีกเลี่ยงยาทำลายตับ (H, R, Z)\n`;
             }
 
             document.getElementById('clinical-note-text').innerText = rxNote;

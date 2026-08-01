@@ -203,6 +203,44 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.strictEqual(c20.rVal, '300 mg/day');
     });
 
+    await t.test('Execution Test: Multi-warning stacking and universal EMR note renal/liver alerts', () => {
+        const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
+
+        // Test 1: H-mono + ckd-severe + abnormal liver stacking
+        const dom1 = new JSDOM(html, { runScripts: 'dangerously' });
+        const doc1 = dom1.window.document;
+        doc1.getElementById('tb-weight').value = 50;
+        doc1.getElementById('tb-special').value = 'h-mono';
+        doc1.getElementById('tb-renal').value = 'ckd-severe';
+        doc1.getElementById('tb-liver').value = 'abnormal';
+        dom1.window.calculateTBDoses();
+
+        const warningHTML = doc1.getElementById('clinical-warning').innerHTML;
+        const noteText = doc1.getElementById('clinical-note-text').innerText;
+
+        assert.ok(warningHTML.includes('H-monoresistance'), 'Warning box should contain H-mono callout');
+        assert.ok(warningHTML.includes('ไตวายรุนแรง'), 'Warning box should contain Renal callout');
+        assert.ok(warningHTML.includes('ตับอักเสบ'), 'Warning box should contain Liver callout');
+        assert.ok(noteText.includes('⚠️ หมายเหตุปรับยาตามภาวะไต'), 'EMR note should contain renal warning note');
+        assert.ok(noteText.includes('⚠️ หมายเหตุภาวะตับ'), 'EMR note should contain liver warning note');
+
+        // Test 2: MDR-longer + Amikacin checked + ckd-severe
+        const dom2 = new JSDOM(html, { runScripts: 'dangerously' });
+        const doc2 = dom2.window.document;
+        doc2.getElementById('tb-weight').value = 50;
+        doc2.getElementById('tb-special').value = 'mdr-longer';
+        doc2.getElementById('tb-renal').value = 'ckd-severe';
+        const amCb = doc2.querySelector('.mdr-drug[value="am"]');
+        if (amCb) amCb.checked = true;
+        dom2.window.calculateTBDoses();
+
+        const warningHTML2 = doc2.getElementById('clinical-warning').innerHTML;
+        const noteText2 = doc2.getElementById('clinical-note-text').innerText;
+
+        assert.ok(warningHTML2.includes('Amikacin + ไตวายรุนแรง'), 'Warning box should contain Amikacin nephrotoxicity alert');
+        assert.ok(noteText2.includes('Amikacin (Nephrotoxic)'), 'EMR note should contain Amikacin renal adjustment note');
+    });
+
     await t.test('Execution Test: MDR/RR-TB Shorter Bdq Regimen weight boundaries (CPG 2022 Table 6.3)', () => {
         const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
 
