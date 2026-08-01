@@ -219,9 +219,9 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         const noteText = doc1.getElementById('clinical-note-text').innerText;
 
         assert.ok(warningHTML.includes('H-monoresistance'), 'Warning box should contain H-mono callout');
-        assert.ok(warningHTML.includes('ไตวายรุนแรง'), 'Warning box should contain Renal callout');
+        assert.ok(warningHTML.includes('ไตวายรุนแรง (CrCl &lt; 30 หรือฟอกไต)'), 'Warning box should contain updated Renal wording');
         assert.ok(warningHTML.includes('ตับอักเสบ'), 'Warning box should contain Liver callout');
-        assert.ok(noteText.includes('⚠️ หมายเหตุปรับยาตามภาวะไต'), 'EMR note should contain renal warning note');
+        assert.ok(noteText.includes('⚠️ หมายเหตุปรับยาตามภาวะไต (CrCl < 30 หรือฟอกไต)'), 'EMR note should contain updated renal warning note');
         assert.ok(noteText.includes('⚠️ หมายเหตุภาวะตับ'), 'EMR note should contain liver warning note');
 
         // Test 2: MDR-longer + Amikacin checked + ckd-severe
@@ -239,6 +239,59 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
 
         assert.ok(warningHTML2.includes('Amikacin + ไตวายรุนแรง'), 'Warning box should contain Amikacin nephrotoxicity alert');
         assert.ok(noteText2.includes('Amikacin (Nephrotoxic)'), 'EMR note should contain Amikacin renal adjustment note');
+    });
+
+    await t.test('Execution Test: Context-aware inline table warnings & drug specificity', () => {
+        const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
+
+        // Test 1: TPT Drug Specificity — TPT has H, so ckd-severe gives NO renal warning, but abnormal liver gives liver warning
+        const domTPT = new JSDOM(html, { runScripts: 'dangerously' });
+        const docTPT = domTPT.window.document;
+        docTPT.getElementById('tb-weight').value = 50;
+        docTPT.getElementById('tb-special').value = 'tpt';
+        docTPT.getElementById('tb-renal').value = 'ckd-severe';
+        docTPT.getElementById('tb-liver').value = 'abnormal';
+        domTPT.window.calculateTBDoses();
+
+        const tptWarnHTML = docTPT.getElementById('inline-warn-tpt').innerHTML;
+        assert.strictEqual(tptWarnHTML.includes('ไตวายรุนแรง'), false, 'TPT inline warning should NOT contain renal alert (no Z/E/Am in TPT)');
+        assert.ok(tptWarnHTML.includes('ตับอักเสบ'), 'TPT inline warning should contain liver alert for H');
+
+        // Test 2: H-mono inline warning — shows both Z/E renal and liver alerts
+        const domHMono = new JSDOM(html, { runScripts: 'dangerously' });
+        const docHMono = domHMono.window.document;
+        docHMono.getElementById('tb-weight').value = 50;
+        docHMono.getElementById('tb-special').value = 'h-mono';
+        docHMono.getElementById('tb-renal').value = 'ckd-severe';
+        docHMono.getElementById('tb-liver').value = 'abnormal';
+        domHMono.window.calculateTBDoses();
+
+        const hmonoWarnHTML = docHMono.getElementById('inline-warn-hmono').innerHTML;
+        assert.ok(hmonoWarnHTML.includes('Z/E ในสูตรนี้ต้องปรับเป็น 3 วัน/สัปดาห์'), 'H-mono inline warning should list Z/E renal adjustment');
+        assert.ok(hmonoWarnHTML.includes('ในสูตรนี้มีผลต่อตับ'), 'H-mono inline warning should list liver risk');
+
+        // Test 3: MDR-longer dynamic checkbox update
+        const domLonger = new JSDOM(html, { runScripts: 'dangerously' });
+        const docLonger = domLonger.window.document;
+        docLonger.getElementById('tb-weight').value = 50;
+        docLonger.getElementById('tb-special').value = 'mdr-longer';
+        docLonger.getElementById('tb-renal').value = 'ckd-severe';
+        domLonger.window.calculateTBDoses();
+
+        // Check Lfx & Bdq only (no renal-adjusted drugs)
+        docLonger.querySelector('.mdr-drug[value="lfx"]').checked = true;
+        docLonger.querySelector('.mdr-drug[value="bdq"]').checked = true;
+        domLonger.window.updateMdrLongerRegimen();
+
+        let longerWarnHTML = docLonger.getElementById('inline-warn-mdr-longer').innerHTML;
+        assert.strictEqual(longerWarnHTML.includes('ไตวายรุนแรง'), false, 'MDR-longer inline warning should be clean when no renal drugs are checked');
+
+        // Check Amikacin dynamically
+        docLonger.querySelector('.mdr-drug[value="am"]').checked = true;
+        domLonger.window.updateMdrLongerRegimen();
+
+        longerWarnHTML = docLonger.getElementById('inline-warn-mdr-longer').innerHTML;
+        assert.ok(longerWarnHTML.includes('AM ในสูตรนี้ต้องปรับเป็น 3 วัน/สัปดาห์'), 'MDR-longer inline warning should dynamically include AM when checked');
     });
 
     await t.test('Execution Test: MDR/RR-TB Shorter Bdq Regimen weight boundaries (CPG 2022 Table 6.3)', () => {
@@ -386,15 +439,15 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(html.includes('TB Weight-Based Dosing Calculator'), 'index.html should display title');
     });
 
-    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and uses v40', () => {
+    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and uses v41', () => {
         const sw = fs.readFileSync(path.join(ROOT_DIR, 'service-worker.js'), 'utf8');
-        assert.ok(sw.includes("'er-hub-v40'"), 'CACHE_VERSION should be er-hub-v40');
+        assert.ok(sw.includes("'er-hub-v41'"), 'CACHE_VERSION should be er-hub-v41');
         assert.ok(sw.includes("'./tools/tb-calculator.html'"), 'ASSETS array should contain ./tools/tb-calculator.html');
     });
 
-    await t.test('index.html version string matches service-worker.js v40', () => {
+    await t.test('index.html version string matches service-worker.js v41', () => {
         const html = fs.readFileSync(path.join(ROOT_DIR, 'index.html'), 'utf8');
-        assert.ok(html.includes('v40'), 'index.html top nav should state v40');
+        assert.ok(html.includes('v41'), 'index.html top nav should state v41');
     });
 
     await t.test('ARCHITECTURE.md documents tools/tb-calculator.html', () => {

@@ -570,6 +570,7 @@
                     <h2 class="result-header-title">ยารักษาวัณโรคผู้ใหญ่ (Adult Regimen)</h2>
                     <span class="meta-badge primary">2HRZE / 4HR</span>
                 </div>
+                <div id="inline-warn-adult"></div>
                 
                 <div class="fdc-card-grid">
                     <div class="fdc-card primary-choice">
@@ -637,6 +638,7 @@
                     <h2 class="result-header-title">ยารักษาวัณโรคเด็ก (Pediatric Regimen &lt; 15 ปี)</h2>
                     <span class="meta-badge primary">2HRZE / 4HR</span>
                 </div>
+                <div id="inline-warn-pediatric"></div>
                 
                 <div class="clinical-table-wrapper">
                     <table class="clinical-table">
@@ -702,6 +704,7 @@
                     <h2 class="result-header-title">ยาป้องกันวัณโรคแฝง (TPT Regimens)</h2>
                     <span class="meta-badge primary">Latent TB Infection</span>
                 </div>
+                <div id="inline-warn-tpt"></div>
                 
                 <div class="clinical-table-wrapper">
                     <table class="clinical-table">
@@ -743,6 +746,7 @@
                     <h2 class="result-header-title">MDR/RR-TB — Shorter All-Oral Bdq Regimen</h2>
                     <span class="meta-badge primary">CPG 2022 ตาราง 6.3</span>
                 </div>
+                <div id="inline-warn-mdr-shorter"></div>
                 <div id="mdr-shorter-output"></div>
             </div>
 
@@ -752,6 +756,7 @@
                     <h2 class="result-header-title">MDR/RR-TB — Individualized Longer Regimen</h2>
                     <span class="meta-badge primary">CPG 2022 ตาราง 6.4-6.6</span>
                 </div>
+                <div id="inline-warn-mdr-longer"></div>
                 <div style="background:#fef3c7;color:#78350f;padding:10px 12px;border-radius:6px;margin-bottom:12px;font-size:0.9em;line-height:1.4;">
                     ⚠️ การเลือกยาต้องอิงผลทดสอบความไวต่อยา (DST) และดุลยพินิจผู้เชี่ยวชาญวัณโรคดื้อยา เครื่องมือนี้ช่วยคำนวณขนาดยาเท่านั้น ไม่ใช่ตัวช่วยตัดสินใจเลือกสูตรยา
                 </div>
@@ -791,6 +796,7 @@
                     <h2 class="result-header-title">สูตรรักษา H-monoresistance — 6(H)RZELfx</h2>
                     <span class="meta-badge primary">CPG 2022 หัวข้อ 5.3</span>
                 </div>
+                <div id="inline-warn-hmono"></div>
                 <div style="background:#fef3c7;color:#78350f;padding:10px 12px;border-radius:6px;margin-bottom:12px;font-size:0.9em;line-height:1.4;">
                     ⚠️ สำหรับผู้ป่วยวัณโรคที่ดื้อยา Isoniazid ชนิด mono-resistance (สัมผัสยา H หรือตรวจพบ mutation katG/inhA) ให้ใช้สูตร 6(H)RZELfx นาน 6 เดือน (ไม่แนะนำให้ใช้ FDC ที่มี H ขนาดปกติ)
                 </div>
@@ -1000,6 +1006,36 @@
             }
             const outputEl = document.getElementById('mdr-dose-output');
             if (outputEl) outputEl.innerHTML = html;
+
+            const warnEl = document.getElementById('inline-warn-mdr-longer');
+            if (warnEl) {
+                warnEl.innerHTML = getInlineRxWarning(checked.map(cb => cb.value));
+            }
+        }
+
+        const RENAL_ADJUST_DRUGS = ['z', 'e', 'am'];
+        const HEPATOTOXIC_DRUGS = ['h', 'r', 'z', 'eto', 'pto'];
+
+        function getInlineRxWarning(drugKeysInRegimen) {
+            const renal = document.getElementById('tb-renal').value;
+            const liver = document.getElementById('tb-liver').value;
+            let parts = [];
+            if (renal === 'ckd-severe') {
+                const affected = drugKeysInRegimen.filter(k => RENAL_ADJUST_DRUGS.includes(k));
+                if (affected.length > 0) {
+                    const names = affected.map(k => k.toUpperCase()).join('/');
+                    parts.push(`⚠️ ไตวายรุนแรง (CrCl &lt; 30 หรือฟอกไต): ${names} ในสูตรนี้ต้องปรับเป็น 3 วัน/สัปดาห์ (ขนาด mg/kg เท่าเดิม)`);
+                }
+            }
+            if (liver === 'abnormal') {
+                const affected = drugKeysInRegimen.filter(k => HEPATOTOXIC_DRUGS.includes(k));
+                if (affected.length > 0) {
+                    const names = affected.map(k => k.toUpperCase()).join('/');
+                    parts.push(`⚠️ ตับอักเสบ: ${names} ในสูตรนี้มีผลต่อตับ — ติดตาม AST/ALT ใกล้ชิด พิจารณาสูตรทางเลือกถ้าจำเป็น`);
+                }
+            }
+            if (parts.length === 0) return '';
+            return `<div class="inline-rx-warning" style="background:#fef3c7;color:#78350f;padding:8px 12px;border-radius:6px;margin-bottom:10px;font-size:0.85em;line-height:1.5;">${parts.join('<br>')}</div>`;
         }
 
         function calculateTBDoses() {
@@ -1043,7 +1079,7 @@
                 warnings.push(`<strong>⚠️ Amikacin + ไตวายรุนแรง (CrCl &lt; 30):</strong> ยามีพิษต่อไตสูง ต้องปรับความถี่เป็น 2-3 ครั้ง/สัปดาห์ (หลังล้างไต) หรือพิจารณาหลีกเลี่ยง (อ้างอิงหลักการทั่วไป ควรปรึกษาเภสัชกร/ผู้เชี่ยวชาญก่อนใช้)`);
             }
             if (renal === 'ckd-severe') {
-                warnings.push(`<strong>⚠️ ไตวายรุนแรง (CrCl &lt; 30):</strong> ปรับลดยา Z และ E เป็น <strong>3 ครั้ง/สัปดาห์ (หลังล้างไต)</strong> ส่วน H และ R ให้ขนาดเดิมทุกวัน`);
+                warnings.push(`<strong>⚠️ ไตวายรุนแรง (CrCl &lt; 30 หรือฟอกไต):</strong> ปรับลดยา Z และ E เป็น <strong>3 วัน/สัปดาห์</strong> (ขนาด mg/kg เท่าเดิม — ถ้าฟอกไตให้กินหลังฟอกไต, ถ้าไม่ได้ฟอกไตให้กินตามตารางปกติเช่น จ-พ-ศ) ส่วน H และ R ให้ขนาดเดิมทุกวัน`);
             }
             if (liver === 'abnormal') {
                 warnings.push(`<strong>⚠️ ตับอักเสบ:</strong> หลีกเลี่ยงยาทำลายตับ (H, R, Z) หากเอนไซม์ตับสูงกว่า 3 เท่า ควรพิจารณาสูตรปราศจากยาทำลายตับ (เช่น SE Lfx)`);
@@ -1173,6 +1209,13 @@
             document.getElementById('tpt-3hr-val').innerText = `H ${hDose} mg + R ${rDose} mg`;
             document.getElementById('tpt-6h-val').innerText = `Isoniazid ${hDose} mg`;
 
+            // Populate Inline Warnings for active result boxes
+            document.getElementById('inline-warn-adult').innerHTML = getInlineRxWarning(['h','r','z','e']);
+            document.getElementById('inline-warn-pediatric').innerHTML = getInlineRxWarning(['h','r','z','e']);
+            document.getElementById('inline-warn-tpt').innerHTML = getInlineRxWarning(['h']);
+            document.getElementById('inline-warn-mdr-shorter').innerHTML = getInlineRxWarning(['pto','z','h','e','lfx','mfx','cfz','bdq']);
+            document.getElementById('inline-warn-hmono').innerHTML = getInlineRxWarning(['r','z','e','lfx','h']);
+
             // Display Logic
             if (special === 'tpt') {
                 document.getElementById('result-tpt').classList.add('active');
@@ -1291,7 +1334,7 @@
 
             // Universal Renal & Liver Notes Append (for special regimens & overall clinical safety)
             if (special !== 'none' && special !== 'tpt' && renal === 'ckd-severe') {
-                rxNote += `⚠️ หมายเหตุปรับยาตามภาวะไต (CrCl < 30): ปรับลดยา Z และ E เป็น 3 ครั้ง/สัปดาห์ หลังล้างไต\n`;
+                rxNote += `⚠️ หมายเหตุปรับยาตามภาวะไต (CrCl < 30 หรือฟอกไต): ปรับลดยา Z และ E เป็น 3 วัน/สัปดาห์ (ขนาด mg/kg เท่าเดิม)\n`;
             }
             if (special === 'mdr-longer' && document.querySelector('.mdr-drug[value="am"]:checked') && renal === 'ckd-severe') {
                 rxNote += `⚠️ Amikacin (Nephrotoxic): ไตวายรุนแรง ปรับเป็น 2-3 ครั้ง/สัปดาห์ หลังล้างไต (ควรปรึกษาเภสัชกร)\n`;
