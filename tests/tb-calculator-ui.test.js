@@ -177,6 +177,19 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.strictEqual(a45.hHighVal, '400 mg/day');
         assert.ok(a45.note.includes('H-monoresistance Regimen [6(H)RZELfx x 6 เดือน]'));
 
+        // Test adult High-dose H boundary at 29, 30, 34, 35 kg (CPG Table 6.3 30-35kg band = 400mg)
+        const a29 = runHMonoCalc(29);
+        assert.strictEqual(a29.hHighVal, '363 mg/day', '29kg fallback should be 363 mg/day');
+
+        const a30 = runHMonoCalc(30);
+        assert.strictEqual(a30.hHighVal, '400 mg/day', '30kg boundary should be 400 mg/day');
+
+        const a34 = runHMonoCalc(34);
+        assert.strictEqual(a34.hHighVal, '400 mg/day', '34kg boundary should be 400 mg/day');
+
+        const a35 = runHMonoCalc(35);
+        assert.strictEqual(a35.hHighVal, '400 mg/day', '35kg boundary should be 400 mg/day');
+
         // Test adult >=50kg (60kg): Lfx 1000mg
         const a60 = runHMonoCalc(60);
         assert.strictEqual(a60.lfxVal, '1000 mg/day');

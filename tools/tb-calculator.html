@@ -1025,7 +1025,13 @@
             let lfxDose = weight >= 50 ? 1000 : 750;
             if (isPediatric) lfxDose = Math.min(1500, Math.round(weight * 15));
 
-            let hHighDose = weight < 35 ? Math.round(weight * 10) : (weight <= 45 ? 400 : 600);
+            let hHighDose;
+            if (weight >= 30) {
+                const bandIdx = getDrBandIndex(weight);
+                hHighDose = bandIdx !== -1 ? SHORTER_REGIMEN_TABLE.h.bands[bandIdx] : 600;
+            } else {
+                hHighDose = Math.round(weight * 12.5);
+            }
             if (isPediatric) hHighDose = Math.min(600, Math.round(weight * 15));
 
             // Handle Warnings
