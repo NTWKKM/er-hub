@@ -51,9 +51,12 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(html.includes('3HR'), 'Should include 3HR preventive regimen');
         assert.ok(html.includes('6H'), 'Should include 6H preventive regimen');
 
-        // Check MDR-TB Bedaquiline summary
+        // Check MDR-TB Bedaquiline summary & dropdown options
         assert.ok(html.includes('Bedaquiline'), 'Should include Bedaquiline in MDR-TB section');
         assert.ok(html.includes('Group A'), 'Should include WHO Group A classification');
+        assert.ok(html.includes('mdr-shorter'), 'Should include mdr-shorter dropdown option');
+        assert.ok(html.includes('mdr-longer'), 'Should include mdr-longer dropdown option');
+        assert.ok(!html.includes('value="mdr"'), 'Should remove legacy value="mdr" dropdown option');
     });
 
     await t.test('Execution Test: Adult 4-FDC tablet weight boundaries calculation correctness', () => {
@@ -143,6 +146,144 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.strictEqual(adultOver30.tpt3hp, 'H 900 mg + Rpt 900 mg', 'Adult 35kg should get H 900 mg + Rpt 900 mg');
     });
 
+    await t.test('Execution Test: MDR/RR-TB Shorter Bdq Regimen weight boundaries (CPG 2022 Table 6.3)', () => {
+        const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
+
+        function runShorterCalc(w) {
+            const dom = new JSDOM(html, { runScripts: 'dangerously' });
+            const doc = dom.window.document;
+            doc.getElementById('tb-weight').value = w;
+            doc.getElementById('tb-special').value = 'mdr-shorter';
+            dom.window.calculateTBDoses();
+            return {
+                html: doc.getElementById('mdr-shorter-output').innerHTML,
+                note: doc.getElementById('clinical-note-text').innerText
+            };
+        }
+
+        // Test <30kg safeguard
+        const under30 = runShorterCalc(25);
+        assert.ok(under30.html.includes('น้ำหนัก &lt; 30 kg — ปรึกษาผู้เชี่ยวชาญ'));
+        assert.ok(under30.note.includes('น้ำหนัก < 30 kg'));
+
+        // Weight 35kg (band 30-35)
+        const w35 = runShorterCalc(35);
+        assert.ok(w35.html.includes('500 mg/day'), 'Pto at 35kg should be 500mg');
+        assert.ok(w35.html.includes('1000 mg/day'), 'Z at 35kg should be 1000mg');
+        assert.ok(w35.html.includes('400 mg/day high-dose'), 'H at 35kg should be 400mg');
+        assert.ok(w35.html.includes('800 mg/day'), 'E at 35kg should be 800mg');
+
+        // Weight 36kg (band 36-45)
+        const w36 = runShorterCalc(36);
+        assert.ok(w36.html.includes('500 mg/day'), 'Pto at 36kg should be 500mg');
+        assert.ok(w36.html.includes('1000 mg/day'), 'Z at 36kg should be 1000mg');
+
+        // Weight 55kg (band 46-55)
+        const w55 = runShorterCalc(55);
+        assert.ok(w55.html.includes('750 mg/day'), 'Pto at 55kg should be 750mg');
+        assert.ok(w55.html.includes('1500 mg/day'), 'Z at 55kg should be 1500mg');
+        assert.ok(w55.html.includes('600 mg/day high-dose'), 'H at 55kg should be 600mg');
+        assert.ok(w55.html.includes('1200 mg/day'), 'E at 55kg should be 1200mg');
+
+        // Weight 56kg (band 56-70)
+        const w56 = runShorterCalc(56);
+        assert.ok(w56.html.includes('750 mg/day'), 'Pto at 56kg should be 750mg');
+        assert.ok(w56.html.includes('1500 mg/day'), 'Z at 56kg should be 1500mg');
+
+        // Weight 71kg (band >70)
+        const w71 = runShorterCalc(71);
+        assert.ok(w71.html.includes('1000 mg/day'), 'Pto at 71kg should be 1000mg');
+        assert.ok(w71.html.includes('2000 mg/day'), 'Z at 71kg should be 2000mg');
+        assert.ok(w71.html.includes('1200 mg/day'), 'E at 71kg should be 1200mg');
+    });
+
+    await t.test('Execution Test: MDR/RR-TB Individualized Longer Regimen dosage table & selection validator (CPG 2022 Tables 6.4-6.6)', () => {
+        const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
+
+        function runLongerCalc(w, checkedDrugs = []) {
+            const dom = new JSDOM(html, { runScripts: 'dangerously' });
+            const doc = dom.window.document;
+            doc.getElementById('tb-weight').value = w;
+            doc.getElementById('tb-special').value = 'mdr-longer';
+            
+            checkedDrugs.forEach(val => {
+                const cb = doc.querySelector(`.mdr-drug[value="${val}"]`);
+                if (cb) cb.checked = true;
+            });
+
+            dom.window.calculateTBDoses();
+            return {
+                status: doc.getElementById('mdr-rule-status').innerText,
+                doseHtml: doc.getElementById('mdr-dose-output').innerHTML,
+                note: doc.getElementById('clinical-note-text').innerText
+            };
+        }
+
+        // Test Selection Rules
+        // 4 drugs from A+B -> ครบเกณฑ์ ไม่ต้องใช้ C
+        const rule4AB = runLongerCalc(40, ['lfx', 'bdq', 'lzd', 'cfz']);
+        assert.ok(rule4AB.status.includes('ครบเกณฑ์ ไม่ต้องใช้ C'), '4 A+B drugs should satisfy rule without C');
+
+        // 3 drugs from A+B + 0 from C -> ⚠️ A+B=3 ต้องเพิ่ม Group C
+        const rule3AB = runLongerCalc(40, ['lfx', 'bdq', 'lzd']);
+        assert.ok(rule3AB.status.includes('ต้องเพิ่ม Group C'), '3 A+B with 0 C should warn to add Group C');
+
+        // 3 drugs from A+B + 1 from C -> ✅ ครบเกณฑ์
+        const rule3AB1C = runLongerCalc(40, ['lfx', 'bdq', 'lzd', 'e']);
+        assert.ok(rule3AB1C.status.includes('ครบเกณฑ์'), '3 A+B with 1 C should satisfy rule');
+
+        // 2 drugs from A+B + 2 from C -> ⚠️ A+B=2 ต้องเพิ่ม Group C อย่างน้อย 3 ตัว
+        const rule2AB2C = runLongerCalc(40, ['lfx', 'bdq', 'e', 'z']);
+        assert.ok(rule2AB2C.status.includes('ต้องเพิ่ม Group C อย่างน้อย 3 ตัว'), '2 A+B with 2 C should warn to add at least 3 C drugs');
+
+        // 2 drugs from A+B + 3 from C -> ✅ ครบเกณฑ์
+        const rule2AB3C = runLongerCalc(40, ['lfx', 'bdq', 'e', 'z', 'eto']);
+        assert.ok(rule2AB3C.status.includes('ครบเกณฑ์'), '2 A+B with 3 C should satisfy rule');
+
+        // Test Weight-based Dosing Table Output for 35, 45, 55, 70, 71 kg
+        const allDrugs = ['lfx', 'mfx', 'bdq', 'lzd', 'cfz', 'cs', 'e', 'dlm', 'z', 'am', 'eto', 'pas', 'ipm'];
+
+        // 35 kg (band 30-35)
+        const d35 = runLongerCalc(35, allDrugs);
+        assert.ok(d35.doseHtml.includes('3 เม็ด (250mg)'), 'Lfx at 35kg should be 3 tabs');
+        assert.ok(d35.doseHtml.includes('2 แคปซูล (250mg)'), 'Cs at 35kg should be 2 caps');
+        assert.ok(d35.doseHtml.includes('2.5mL'), 'Am at 35kg should be 2.5mL');
+        assert.ok(d35.doseHtml.includes('2 เม็ด (250mg)'), 'Eto at 35kg should be 2 tabs');
+
+        // 45 kg (band 36-45)
+        const d45 = runLongerCalc(45, allDrugs);
+        assert.ok(d45.doseHtml.includes('3 เม็ด (250mg)'), 'Lfx at 45kg should be 3 tabs');
+        assert.ok(d45.doseHtml.includes('3mL'), 'Am at 45kg should be 3mL');
+
+        // 55 kg (band 46-55)
+        const d55 = runLongerCalc(55, allDrugs);
+        assert.ok(d55.doseHtml.includes('4 เม็ด (250mg)'), 'Lfx at 55kg should be 4 tabs');
+        assert.ok(d55.doseHtml.includes('1 เม็ด (600mg)'), 'Lzd at 55kg should be 1 tab');
+        assert.ok(d55.doseHtml.includes('3 แคปซูล (250mg)'), 'Cs at 55kg should be 3 caps');
+
+        // 70 kg (band 56-70)
+        const d70 = runLongerCalc(70, allDrugs);
+        assert.ok(d70.doseHtml.includes('4 เม็ด (250mg)'), 'Lfx at 70kg should be 4 tabs');
+        assert.ok(d70.doseHtml.includes('4mL'), 'Am at 70kg should be 4mL');
+
+        // 71 kg (band >70)
+        const d71 = runLongerCalc(71, allDrugs);
+        assert.ok(d71.doseHtml.includes('4 เม็ด (500mg)'), 'PZA at 71kg should be 4 tabs');
+        assert.ok(d71.doseHtml.includes('4 เม็ด (250mg)'), 'Eto at 71kg should be 4 tabs');
+    });
+
+    await t.test('DOM ID integrity cross-check', () => {
+        const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
+        const usedMatches = [...html.matchAll(/getElementById\(['"]([\w-]+)['"]\)/g)].map(m => m[1]);
+        const definedMatches = [...html.matchAll(/id=["']([\w-]+)["']/g)].map(m => m[1]);
+
+        const usedSet = new Set(usedMatches);
+        const definedSet = new Set(definedMatches);
+
+        const missing = [...usedSet].filter(id => !definedSet.has(id));
+        assert.deepStrictEqual(missing, [], `DOM IDs used in JS must exist in HTML, missing: ${missing.join(', ')}`);
+    });
+
     await t.test('index.html links to tools/tb-calculator.html as prototype item T6', () => {
         const html = fs.readFileSync(path.join(ROOT_DIR, 'index.html'), 'utf8');
         assert.ok(html.includes('href="tools/tb-calculator.html"'), 'index.html should link to tools/tb-calculator.html');
@@ -150,15 +291,15 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(html.includes('TB Weight-Based Dosing Calculator'), 'index.html should display title');
     });
 
-    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and uses v39', () => {
+    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and uses v40', () => {
         const sw = fs.readFileSync(path.join(ROOT_DIR, 'service-worker.js'), 'utf8');
-        assert.ok(sw.includes("'er-hub-v39'"), 'CACHE_VERSION should be er-hub-v39');
+        assert.ok(sw.includes("'er-hub-v40'"), 'CACHE_VERSION should be er-hub-v40');
         assert.ok(sw.includes("'./tools/tb-calculator.html'"), 'ASSETS array should contain ./tools/tb-calculator.html');
     });
 
-    await t.test('index.html version string matches service-worker.js v39', () => {
+    await t.test('index.html version string matches service-worker.js v40', () => {
         const html = fs.readFileSync(path.join(ROOT_DIR, 'index.html'), 'utf8');
-        assert.ok(html.includes('v39'), 'index.html top nav should state v39');
+        assert.ok(html.includes('v40'), 'index.html top nav should state v40');
     });
 
     await t.test('ARCHITECTURE.md documents tools/tb-calculator.html', () => {

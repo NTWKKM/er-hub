@@ -551,7 +551,8 @@
                                 <option value="none">สูตรมาตรฐาน (Standard CPG Regimen)</option>
                                 <option value="tpt">ยารักษาวัณโรคแฝง (TPT Regimens)</option>
                                 <option value="h-mono">ดื้อยา Isoniazid (H-mono resistance)</option>
-                                <option value="mdr">MDR-TB (ดื้อยาหลายขนาน)</option>
+                                <option value="mdr-shorter">MDR/RR-TB — Shorter Bdq regimen (เข้าเกณฑ์แล้ว)</option>
+                                <option value="mdr-longer">MDR/RR-TB — Individualized Longer Regimen</option>
                             </select>
                         </div>
                     </div>
@@ -736,6 +737,54 @@
                 </div>
             </div>
 
+            <!-- MDR Shorter Result Box -->
+            <div id="result-mdr-shorter" class="result-box">
+                <div class="result-header">
+                    <h2 class="result-header-title">MDR/RR-TB — Shorter All-Oral Bdq Regimen</h2>
+                    <span class="meta-badge primary">CPG 2022 ตาราง 6.3</span>
+                </div>
+                <div id="mdr-shorter-output"></div>
+            </div>
+
+            <!-- MDR Longer Result Box -->
+            <div id="result-mdr-longer" class="result-box">
+                <div class="result-header">
+                    <h2 class="result-header-title">MDR/RR-TB — Individualized Longer Regimen</h2>
+                    <span class="meta-badge primary">CPG 2022 ตาราง 6.4-6.6</span>
+                </div>
+                <div style="background:#fef3c7;color:#78350f;padding:10px 12px;border-radius:6px;margin-bottom:12px;font-size:0.9em;line-height:1.4;">
+                    ⚠️ การเลือกยาต้องอิงผลทดสอบความไวต่อยา (DST) และดุลยพินิจผู้เชี่ยวชาญวัณโรคดื้อยา เครื่องมือนี้ช่วยคำนวณขนาดยาเท่านั้น ไม่ใช่ตัวช่วยตัดสินใจเลือกสูตรยา
+                </div>
+                <div id="mdr-rule-status" style="padding:8px 12px;font-weight:600;margin-bottom:12px;border-radius:6px;background:#f3f4f6;color:#1f2937;"></div>
+                
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px;margin-bottom:16px;">
+                    <div class="drug-group-section" style="background:#f9fafb;padding:10px;border-radius:6px;border:1px solid #e5e7eb;">
+                        <h3 style="font-size:0.95em;margin:0 0 8px 0;color:#111827;border-bottom:1px solid #e5e7eb;padding-bottom:4px;">Group A (เลือกให้ครบ 3 ถ้าเป็นไปได้)</h3>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="lfx"> Levofloxacin</label>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="mfx"> Moxifloxacin</label>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="bdq"> Bedaquiline</label>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="lzd"> Linezolid</label>
+                    </div>
+                    <div class="drug-group-section" style="background:#f9fafb;padding:10px;border-radius:6px;border:1px solid #e5e7eb;">
+                        <h3 style="font-size:0.95em;margin:0 0 8px 0;color:#111827;border-bottom:1px solid #e5e7eb;padding-bottom:4px;">Group B</h3>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="cfz"> Clofazimine</label>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="cs"> Cycloserine/Terizidone</label>
+                    </div>
+                    <div class="drug-group-section" style="background:#f9fafb;padding:10px;border-radius:6px;border:1px solid #e5e7eb;">
+                        <h3 style="font-size:0.95em;margin:0 0 8px 0;color:#111827;border-bottom:1px solid #e5e7eb;padding-bottom:4px;">Group C</h3>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="e"> Ethambutol</label>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="dlm"> Delamanid</label>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="z"> Pyrazinamide</label>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="ipm"> Imipenem-cilastatin/Meropenem</label>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="am"> Amikacin</label>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="eto"> Ethionamide/Prothionamide</label>
+                        <label style="display:block;margin-bottom:6px;cursor:pointer;"><input type="checkbox" class="mdr-drug" value="pas"> PAS</label>
+                    </div>
+                </div>
+                
+                <div id="mdr-dose-output"></div>
+            </div>
+
             <!-- EMR Note -->
             <div class="emr-section">
                 <div class="emr-header">
@@ -802,6 +851,108 @@
             return `➔ จัดขนาดให้ใกล้เคียง ${dose} mg`;
         }
 
+        const WEIGHT_BANDS_DR = [[30,35],[36,45],[46,55],[56,70],[71,9999]];
+        function getDrBandIndex(weight) {
+            return WEIGHT_BANDS_DR.findIndex(([lo,hi]) => weight >= lo && weight <= hi);
+        }
+
+        // Shorter Bdq regimen (CPG 2022 ตาราง 6.3)
+        const SHORTER_REGIMEN_TABLE = {
+            pto: { bands:[500,500,750,750,1000], unit:"mg/day (15-20 mg/kg)" },
+            z:   { bands:[1000,1000,1500,1500,2000], unit:"mg/day (20-30 mg/kg)" },
+            h:   { bands:[400,400,600,600,600], unit:"mg/day high-dose (10-15 mg/kg)" },
+            e:   { bands:[800,800,1200,1200,1200], unit:"mg/day (15-25 mg/kg)" },
+            lfx: { fixed:"750 mg/day (ไม่ใช้ weight-based)" },
+            mfx: { fixed:"400 mg/day (ไม่ใช้ weight-based)" },
+            cfz: { fixed:"100 mg/day (ไม่ใช้ weight-based)" },
+            bdq: { fixed:"400 mg/day × 2 สัปดาห์ แล้ว 200 mg 3×/สัปดาห์ × 22 สัปดาห์" }
+        };
+
+        // Individualized Longer Regimen (CPG 2022 ตาราง 6.4-6.6)
+        const MDR_DRUG_GROUPS = {
+            lfx: {label:"Levofloxacin", group:"A"},
+            mfx: {label:"Moxifloxacin", group:"A"},
+            bdq: {label:"Bedaquiline", group:"A"},
+            lzd: {label:"Linezolid", group:"A"},
+            cfz: {label:"Clofazimine", group:"B"},
+            cs:  {label:"Cycloserine/Terizidone", group:"B"},
+            e:   {label:"Ethambutol", group:"C"},
+            dlm: {label:"Delamanid", group:"C"},
+            z:   {label:"Pyrazinamide", group:"C"},
+            ipm: {label:"Imipenem-cilastatin/Meropenem", group:"C"},
+            am:  {label:"Amikacin", group:"C"},
+            eto: {label:"Ethionamide/Prothionamide", group:"C"},
+            pas: {label:"PAS", group:"C"}
+        };
+
+        const MDR_DOSE_TABLE = {
+            lfx:  {bands:[3,3,4,4,4], unit:"เม็ด (250mg)", max:"1.5g"},
+            mfx:  {bands:[1,1,1,1,1], unit:"เม็ด (400mg, standard dose)", max:"400mg"},
+            bdq:  {fixed:"4 เม็ด (100mg) วันละครั้ง ×2 สัปดาห์ แล้ว 2 เม็ด 3×/สัปดาห์ ×22 สัปดาห์", max:"400mg"},
+            lzd:  {bands:[null,null,1,1,1], unit:"เม็ด (600mg)", max:"1.2g", note:"<15 ปี ใช้ตารางเด็กแยก"},
+            cfz:  {bands:[1,1,1,1,1], unit:"เม็ด (100mg)", max:"100mg"},
+            cs:   {bands:[2,2,3,3,3], unit:"แคปซูล (250mg)", max:"1g"},
+            e:    {bands:[2,2,3,3,3], unit:"เม็ด (400mg)", max:"-"},
+            dlm:  {fixed:"2 เม็ด (50mg) วันละ 2 ครั้ง", max:"200mg"},
+            z:    {bands:[2,3,3,3,4], unit:"เม็ด (500mg)", max:"-"},
+            am:   {bands:["2.5mL","3mL","3-4mL","4mL","4mL"], unit:"(500mg/2mL)", max:"1g"},
+            eto:  {bands:[2,2,3,3,4], unit:"เม็ด (250mg)", max:"1g"},
+            pas:  {bands:["1bd","1bd","1bd","1bd","1-1.5bd"], unit:"(4g/ซอง)", max:"12g"},
+            ipm:  {fixed:"2 vials (1g+1g) bd — ต้องคู่กับ clavulanic acid, หรือ Meropenem 1 vial×3/วัน หรือ 2 vials bd", max:"-"}
+        };
+
+        function updateMdrLongerRegimen() {
+            const weight = parseFloat(document.getElementById('tb-weight').value) || 0;
+            const checked = [...document.querySelectorAll('.mdr-drug:checked')];
+            const countA = checked.filter(c => MDR_DRUG_GROUPS[c.value].group === 'A').length;
+            const countB = checked.filter(c => MDR_DRUG_GROUPS[c.value].group === 'B').length;
+            const countC = checked.filter(c => MDR_DRUG_GROUPS[c.value].group === 'C').length;
+            const ab = countA + countB;
+
+            let status;
+            if (ab >= 4) status = `✅ A+B = ${ab} ตัว — ครบเกณฑ์ ไม่ต้องใช้ C`;
+            else if (ab === 3) status = countC >= 1
+                ? `✅ A+B=3 + C=${countC} — ครบเกณฑ์`
+                : `⚠️ A+B=3 ต้องเพิ่ม Group C อีก 1-2 ตัว`;
+            else if (ab === 2) status = countC >= 3
+                ? `✅ A+B=2 + C=${countC} — ครบเกณฑ์`
+                : `⚠️ A+B=2 ต้องเพิ่ม Group C อย่างน้อย 3 ตัว (ตอนนี้มี ${countC})`;
+            else status = `⚠️ ต้องเลือกยาอย่างน้อย 4 ตัวรวมกัน (Group A ควรมาก่อน)`;
+            
+            const statusEl = document.getElementById('mdr-rule-status');
+            if (statusEl) statusEl.innerText = status;
+
+            const bandIdx = getDrBandIndex(weight);
+            let html = (weight > 0 && weight < 30) || bandIdx === -1
+                ? "<p style='color:#b45309;margin:8px 0;'>น้ำหนัก &lt; 30 kg — ใช้ตารางเด็กแยกต่างหาก ปรึกษาผู้เชี่ยวชาญ</p>"
+                : (checked.length === 0
+                    ? "<p style='color:#6b7280;margin:8px 0;'>กรุณาเลือกยาด้านบนเพื่อแสดงขนาดยา</p>"
+                    : "<div class='clinical-table-wrapper'><table class='clinical-table'><thead><tr><th>ยา</th><th>ขนาด</th></tr></thead><tbody>");
+
+            if (weight >= 30 && bandIdx !== -1 && checked.length > 0) {
+                checked.forEach(cb => {
+                    const d = MDR_DOSE_TABLE[cb.value];
+                    const label = MDR_DRUG_GROUPS[cb.value].label;
+                    let doseText;
+                    if (d.fixed) {
+                        doseText = d.fixed;
+                    } else {
+                        const v = d.bands[bandIdx];
+                        if (v === null) {
+                            doseText = d.note || "ปรึกษาตารางเด็ก";
+                        } else {
+                            const maxStr = d.max !== "-" ? ` (max ${d.max})` : "";
+                            doseText = `${v} ${d.unit}${maxStr}`;
+                        }
+                    }
+                    html += `<tr><td class="drug-name-col">${label}</td><td class="dose-value">${doseText}</td></tr>`;
+                });
+                html += "</tbody></table></div>";
+            }
+            const outputEl = document.getElementById('mdr-dose-output');
+            if (outputEl) outputEl.innerHTML = html;
+        }
+
         function calculateTBDoses() {
             const weight = parseFloat(document.getElementById('tb-weight').value) || 0;
             const patientType = document.getElementById('tb-patient-type').value;
@@ -814,16 +965,15 @@
             document.getElementById('result-adult').classList.remove('active');
             document.getElementById('result-pediatric').classList.remove('active');
             document.getElementById('result-tpt').classList.remove('active');
+            document.getElementById('result-mdr-shorter').classList.remove('active');
+            document.getElementById('result-mdr-longer').classList.remove('active');
             
             const warningBox = document.getElementById('clinical-warning');
             warningBox.style.display = 'none';
             warningBox.innerHTML = '';
 
             // Handle Warnings
-            if (special === 'mdr') {
-                warningBox.style.display = 'block';
-                warningBox.innerHTML = `<strong>⚠️ MDR-TB Alert:</strong> ควรปรึกษาผู้เชี่ยวชาญวัณโรคดื้อยา ไม่แนะนำให้จัดยาด้วยตนเองผ่านเครื่องมือนี้<br><small style="color:#78350f;">WHO Group A (Bedaquiline, Linezolid, Fluoroquinolone) เป็นยาหลัก</small>`;
-            } else if (special === 'h-mono') {
+            if (special === 'h-mono') {
                 warningBox.style.display = 'block';
                 let lfxDose = weight >= 50 ? 1000 : 750;
                 if (isPediatric) lfxDose = Math.min(1500, Math.round(weight * 15));
@@ -939,6 +1089,37 @@
             // Display Logic
             if (special === 'tpt') {
                 document.getElementById('result-tpt').classList.add('active');
+            } else if (special === 'mdr-shorter') {
+                document.getElementById('result-mdr-shorter').classList.add('active');
+                const bandIdx = getDrBandIndex(weight);
+                if (weight < 30 || bandIdx === -1) {
+                    document.getElementById('mdr-shorter-output').innerHTML =
+                        "<p style='color:#b45309;margin:8px 0;'>น้ำหนัก &lt; 30 kg — ปรึกษาผู้เชี่ยวชาญ</p>";
+                } else {
+                    let rows = "";
+                    const labels = {
+                        pto: "Prothionamide/Ethionamide",
+                        z: "Pyrazinamide",
+                        h: "Isoniazid (high-dose)",
+                        e: "Ethambutol",
+                        lfx: "Levofloxacin",
+                        mfx: "Moxifloxacin",
+                        cfz: "Clofazimine",
+                        bdq: "Bedaquiline"
+                    };
+                    Object.keys(SHORTER_REGIMEN_TABLE).forEach(key => {
+                        const d = SHORTER_REGIMEN_TABLE[key];
+                        const label = labels[key] || key;
+                        const val = d.fixed || `${d.bands[bandIdx]} ${d.unit}`;
+                        rows += `<tr><td class="drug-name-col">${label}</td><td class="dose-value">${val}</td></tr>`;
+                    });
+                    document.getElementById('mdr-shorter-output').innerHTML =
+                        `<div class="clinical-table-wrapper"><table class="clinical-table"><thead><tr><th>ยา</th><th>ขนาด</th></tr></thead><tbody>${rows}</tbody></table></div>
+                         <div style="background:#fef3c7;color:#78350f;padding:8px 12px;margin-top:8px;border-radius:6px;font-size:0.9em;">⚠️ ใช้เฉพาะผู้ป่วยที่เข้าเกณฑ์ shorter all-oral Bdq regimen แล้วเท่านั้น (CPG 2022 แผนภูมิ 6.1) — ยืนยันเกณฑ์กับผู้เชี่ยวชาญก่อนใช้</div>`;
+                }
+            } else if (special === 'mdr-longer') {
+                document.getElementById('result-mdr-longer').classList.add('active');
+                updateMdrLongerRegimen();
             } else if (isPediatric) {
                 document.getElementById('result-pediatric').classList.add('active');
             } else {
@@ -954,6 +1135,35 @@
             if (special === 'tpt') {
                 rxNote += `Preventive Regimen (TPT):\n`;
                 rxNote += `- 3HP: H ${tpt3hpH}mg + Rpt ${tpt3hpRpt}mg qWK x12\n`;
+            } else if (special === 'mdr-shorter') {
+                rxNote += `MDR/RR-TB Shorter All-Oral Bdq Regimen:\n`;
+                if (weight < 30) {
+                    rxNote += `- น้ำหนัก < 30 kg: ใช้ตารางเด็ก ปรึกษาผู้เชี่ยวชาญ\n`;
+                } else {
+                    const bandIdx = getDrBandIndex(weight);
+                    rxNote += `- Bdq: 400mg/d x2wk, 200mg 3x/wk x22wk\n`;
+                    rxNote += `- Lfx: 750mg/d | Mfx: 400mg/d | Cfz: 100mg/d\n`;
+                    rxNote += `- Pto: ${SHORTER_REGIMEN_TABLE.pto.bands[bandIdx]}mg/d\n`;
+                    rxNote += `- PZA: ${SHORTER_REGIMEN_TABLE.z.bands[bandIdx]}mg/d\n`;
+                    rxNote += `- INH (high-dose): ${SHORTER_REGIMEN_TABLE.h.bands[bandIdx]}mg/d\n`;
+                    rxNote += `- EMB: ${SHORTER_REGIMEN_TABLE.e.bands[bandIdx]}mg/d\n`;
+                }
+            } else if (special === 'mdr-longer') {
+                rxNote += `MDR/RR-TB Individualized Longer Regimen:\n`;
+                const checked = [...document.querySelectorAll('.mdr-drug:checked')];
+                if (checked.length === 0) {
+                    rxNote += `- ยังไม่ได้เลือกตัวยา\n`;
+                } else if (weight < 30) {
+                    rxNote += `- น้ำหนัก < 30 kg: ใช้ตารางเด็ก ปรึกษาผู้เชี่ยวชาญ\n`;
+                } else {
+                    const bandIdx = getDrBandIndex(weight);
+                    checked.forEach(cb => {
+                        const d = MDR_DOSE_TABLE[cb.value];
+                        const label = MDR_DRUG_GROUPS[cb.value].label;
+                        let doseText = d.fixed ? d.fixed : (d.bands[bandIdx] === null ? (d.note || "ปรึกษาตารางเด็ก") : `${d.bands[bandIdx]} ${d.unit}`);
+                        rxNote += `- ${label}: ${doseText}\n`;
+                    });
+                }
             } else if (renal === 'ckd-severe') {
                 let rZ = Math.round(weight*25);
                 let rE = Math.round(weight*15);
@@ -1002,6 +1212,13 @@
         document.querySelectorAll('input:not(#tb-weight):not(#tb-weight-slider), select').forEach(el => {
             el.addEventListener('input', calculateTBDoses);
             el.addEventListener('change', calculateTBDoses);
+        });
+
+        document.querySelectorAll('.mdr-drug').forEach(cb => {
+            cb.addEventListener('change', () => {
+                updateMdrLongerRegimen();
+                calculateTBDoses();
+            });
         });
 
         window.addEventListener('DOMContentLoaded', () => {

@@ -128,8 +128,8 @@ Features:
 - **Renal Impairment Adjustments (CrCl < 30 mL/min / HD):** Maintains daily H & R; adjusts Z (20-30 mg/kg) and E (15-20 mg/kg) to 3 times per week post-hemodialysis.
 - **Hepatotoxicity & Special Cases:** Alternative 2-hepatotoxic (2HRE/7HR, 6-9 RZE) and 1-hepatotoxic (2 SHE/16 HE, 18-24 HE + Lfx) regimens, AST/ALT monitoring/re-challenge protocols, pregnancy Pyridoxine (B6) supplementation rules, and H-monoresistance 6(H)RZELfx Levofloxacin dosing.
 - **Latent TB Preventive Treatment (TPT):** 3HP (weekly H + Rifapentine x 12 doses by weight band), 1HP (daily H 300 + RPT 600 x 1 month), 4R, 3HR, 6-9H.
-- **MDR-TB Baseline Summary:** Overview of Shorter All-Oral Bedaquiline-containing regimen and WHO Group A/B/C drug classifications.
-- **Clinical Prescription Clipboard Integration:** Copy-to-clipboard clinical prescription note compiler.
+- **MDR-TB Regimens (CPG 2022 Tables 6.3–6.6):** Shorter All-Oral Bedaquiline-containing regimen (weight bands 30-35, 36-45, 46-55, 56-70, >70 kg for Bdq, Lfx/Mfx, Pto, Cfz, Z, High-dose H, E) and Individualized Longer Regimen (interactive WHO Group A/B/C drug selector with 4 / (3+1-2) / (2+3) selection-rule validator and weight-band tablet lookup).
+- **Clinical Prescription Clipboard Integration:** Copy-to-clipboard clinical prescription note compiler supporting Adult, Pediatric, TPT, Renal, and MDR-TB regimens.
 
 ### Shared Engines (`shared/`)
 
