@@ -84,6 +84,13 @@
                 </div>
             </div>
 
+            <div class="form-group checkbox-group" style="margin-top:15px; margin-bottom:15px;">
+                <label>
+                    <input type="checkbox" id="use-current-time" checked>
+                    ใช้เวลาปัจจุบันลงในใบสั่งยา (หากไม่เลือกจะเป็นช่องว่าง)
+                </label>
+            </div>
+
             <button type="submit" class="btn btn-calculate">🧮 คำนวณขนาดยาและสร้างใบสั่งยา</button>
             <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (PDF)</button>
             <button type="button" id="clear-btn" class="btn btn-clear">🗑️ ล้างข้อมูล (Clear)</button>
@@ -201,10 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const fenDose = parseFloat($('fen-dose').value);
         const midDose = parseFloat($('mid-dose').value);
 
-        if (isNaN(weight) || weight < 30 || weight > 200) {
-            ED_VALIDATE.fail('weight', 'กรุณากรอกน้ำหนักให้ถูกต้อง (30-200 kg)');
-            return;
-        }
+        if (!ED_VALIDATE.range('weight', 30, 200, 'กรุณากรอกน้ำหนักให้ถูกต้อง (30-200 kg)')) return;
+        if (!ED_VALIDATE.range('fen-dose', 0.5, 3.0, 'Fentanyl dose ต้องอยู่ระหว่าง 0.5 - 3.0 mcg/kg/h')) return;
+        if (!ED_VALIDATE.range('mid-dose', 0.02, 0.2, 'Midazolam dose ต้องอยู่ระหว่าง 0.02 - 0.2 mg/kg/h')) return;
 
         const fenRate = calcDripRate({ doseValue: fenDose, doseUnit: 'mcg/kg/hr', weightKg: weight, concentration: 5.0 });
         const midRate = calcDripRate({ doseValue: midDose, doseUnit: 'mg/kg/hr', weightKg: weight, concentration: 1.0 });
@@ -214,23 +220,19 @@ document.addEventListener('DOMContentLoaded', () => {
         $('screen-mid-rate').textContent = `${midRate.toFixed(1)} mL/hr`;
 
         // Update Print Area
-        ED_COMPONENTS.injectPrintHeader('print-header-container');
-        ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
+        const useTime = $('use-current-time').checked;
+        const printNow = ED_PRINT_BOOTSTRAP.generateCommonPrintFields(hn, weight, useTime);
 
-        $('p-hn').textContent = hn;
-        $('p-weight').textContent = weight.toFixed(1);
+        const dtHtml = ED_PRINT_BOOTSTRAP.getDateTimeHTML(useTime, printNow);
+        $('p-dt-1').innerHTML = dtHtml;
+        $('p-dt-2').innerHTML = dtHtml;
+
         $('p-fen-dose').textContent = fenDose.toFixed(1);
         $('p-mid-dose').textContent = midDose.toFixed(2);
         $('p-fen-rate').textContent = fenRate.toFixed(1);
         $('p-fen-target').textContent = fenDose.toFixed(1);
         $('p-mid-rate').textContent = midRate.toFixed(1);
         $('p-mid-target').textContent = midDose.toFixed(2);
-
-        const now = new Date();
-        const dtStr = `${ED_COMPONENTS.fmtDate(now)}<br>${ED_COMPONENTS.fmtTime(now)}`;
-        $('p-dt-1').innerHTML = dtStr;
-        $('p-dt-2').innerHTML = dtStr;
-        ED_COMPONENTS.updateGeneratedTime('p-generated', now);
 
         ED_PRINT_BOOTSTRAP.showResults();
     });

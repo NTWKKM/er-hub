@@ -800,17 +800,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updatePrintArea(hn, weight, age, sex, tetanus, horseAllergy, allergyDetail, penicillinAllergy, snakeData, indicationCount, now) {
-        // Patient sticker HN
-        const stickerHn = $('sticker-hn-text');
-        if (stickerHn) {
-            stickerHn.textContent = 'HN: ' + (hn !== '...' ? hn : '....................');
-        }
+        const useTime = $('use-current-time')?.checked;
+        ED_PRINT_BOOTSTRAP.generateCommonPrintFields(hn, weight, useTime);
 
-        const weightOK = !isNaN(weight) && weight >= 10 && weight <= 200;
         const ageOK = !isNaN(age) && age >= 1;
-
-        $('p-hn').textContent     = hn !== '...' ? hn : '--';
-        $('p-weight').textContent = weightOK ? weight.toFixed(1) : '--';
         $('p-age').textContent    = ageOK ? age : '--';
         $('p-sex').textContent    = sex === 'male' ? 'ชาย' : sex === 'female' ? 'หญิง' : '--';
 
@@ -889,10 +882,6 @@ document.addEventListener('DOMContentLoaded', () => {
             $('p-cipro-clinda').innerHTML = '☐ Penicillin allergy alternative: Ciprofloxacin (500) 1x2 po pc + Clindamycin (300) 1x3 po pc <small style="color:#999;">— ไม่ได้เลือก</small>';
         }
 
-        // Date/Time
-        const dtHtml = ED_PRINT_BOOTSTRAP.getDateTimeHTML($('use-current-time')?.checked, now);
-        $('p-dt-1').innerHTML = dtHtml;
-        $('p-dt-2').innerHTML = dtHtml;
     }
 
     function calculateAndRender() {
@@ -905,7 +894,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const allergyDetail = $('horse-allergy-detail').value.trim();
         const penicillinAllergy = document.querySelector('input[name="penicillin-allergy"]:checked')?.value === 'yes';
 
-        // Non-blocking validation
+        // Real-time visual validation (non-blocking)
         if (!isNaN(weight)) ED_VALIDATE.range('weight', 10, 200, 'Weight ต้องอยู่ในช่วง 10–200 kg');
         if (!isNaN(age))    ED_VALIDATE.range('age', MIN_AGE, 120, 'Age ต้องอยู่ในช่วง 1–120 ปี');
 
@@ -935,6 +924,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── create-order-btn: print ──
     $('create-order-btn').addEventListener('click', () => {
+        // Strict blocking validation on print
+        const weight  = parseFloat($('weight').value);
+        const age     = parseFloat($('age').value);
+        
+        if (!ED_VALIDATE.range('weight', 10, 200, 'Weight ต้องอยู่ในช่วง 10–200 kg')) return;
+        if (!ED_VALIDATE.range('age', MIN_AGE, 120, 'Age ต้องอยู่ในช่วง 1–120 ปี')) return;
+
         const indicationCount = getIndicationCount();
         if (indicationCount === 0) {
             ED_VALIDATE.warn('⚠️ กรุณาเลือกข้อบ่งใช้ (Indication) อย่างน้อย 1 ข้อ ก่อนคำนวณและสั่งใช้เซรุ่มต้านพิษงู');

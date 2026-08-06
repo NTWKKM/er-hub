@@ -92,6 +92,38 @@ const ED_PRINT_BOOTSTRAP = {
      */
     getBlankDateTimeHTML() {
         return 'วันที่ .................... เวลา ....................';
+    },
+
+    /**
+     * Boilerplate reduction for order page print generation.
+     * Injects headers, stickers, hn, weight, date/time, and generation stamp.
+     * @param {string} hn - Patient HN
+     * @param {number|string} weight - Patient weight
+     * @param {boolean} useCurrentTime - Whether to use current time or dotted lines
+     * @returns {Date} The generation timestamp
+     */
+    generateCommonPrintFields(hn, weight, useCurrentTime) {
+        const now = new Date();
+        const dtHtml = this.getDateTimeHTML(useCurrentTime, now);
+        
+        ED_COMPONENTS.injectPrintHeader('print-header-container');
+        ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
+        
+        const phn = document.getElementById('p-hn');
+        if (phn) phn.textContent = hn;
+        
+        const pweight = document.getElementById('p-weight');
+        if (pweight) pweight.textContent = typeof weight === 'number' ? weight.toFixed(1) : weight;
+        
+        const dt1 = document.getElementById('p-dt-1');
+        if (dt1) dt1.innerHTML = dtHtml;
+        
+        const dt2 = document.getElementById('p-dt-2');
+        if (dt2) dt2.innerHTML = dtHtml;
+        
+        ED_COMPONENTS.updateGeneratedTime('p-generated', now);
+        
+        return now;
     }
 };
 

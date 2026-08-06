@@ -94,6 +94,13 @@
 
             </div><!-- end .input-layout -->
 
+            <div class="form-group checkbox-group" style="margin-top:15px; margin-bottom:15px;">
+                <label>
+                    <input type="checkbox" id="use-current-time" checked>
+                    ใช้เวลาปัจจุบันลงในใบสั่งยา (หากไม่เลือกจะเป็นช่องว่าง)
+                </label>
+            </div>
+
             <button type="submit" class="btn btn-calculate">
                 🧮 คำนวณขนาดยาและสร้างใบสั่งยา
             </button>
@@ -261,8 +268,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // load is given — this boundary difference is intentional per the source guidelines.
         const clopiTabs = age <= 75 ? 4 : 1; // rule: age <=75 -> 4 tabs, >75 -> 1 tab
 
-        const now = new Date();
-        const dtStr = `${ED_COMPONENTS.fmtDate(now)}<br>${ED_COMPONENTS.fmtTime(now)}`;
+        /* ══ PRINT AREA ══ */
+        const useTime = $('use-current-time').checked;
+        const printNow = ED_PRINT_BOOTSTRAP.generateCommonPrintFields(hn, weight, useTime);
+
+        const dtHtml = ED_PRINT_BOOTSTRAP.getDateTimeHTML(useTime, printNow);
+        $('p-dt-1').innerHTML = dtHtml;
+        $('p-dt-2').innerHTML = dtHtml;
 
         /* ══ SCREEN BANNER ══ */
         $('screen-dose').textContent = fib === 'tnk'
@@ -270,13 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : `SK 1.5 MU (60 min drip)`;
         $('screen-clopi').textContent = `Clopidogrel: ${clopiTabs} เม็ด stat`;
         $('screen-elderly-note').style.display = tnk.elderly ? 'inline-block' : 'none';
-
-        /* ══ PRINT AREA ══ */
-        ED_COMPONENTS.injectPrintHeader('print-header-container');
-        ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
         
-        $('p-hn').textContent     = hn;
-        $('p-weight').textContent = weight.toFixed(1);
         $('p-age').textContent    = age;
         $('p-asa').innerHTML      = asaAlrg ? '<strong style="color:red;">YES ⚠️</strong>' : 'No';
         $('p-tnk-table').innerHTML = buildTNKTableHTML(tnk.bracketIdx);
@@ -302,10 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
                ☑ 0.9% NSS 20 cc IV flush หลัง Streptokinase หมด<br>
                <small style="color:#c0392b;">⚠️ ห้ามบริหารยาซ้ำภายในเวลา 6 เดือน</small>`
             : '☐ Streptokinase (SK) — <small style="color:#999;">ไม่ได้เลือก</small>';
-
-        $('p-dt-1').innerHTML = dtStr;
-        $('p-dt-2').innerHTML = dtStr;
-        ED_COMPONENTS.updateGeneratedTime('p-generated', now);
 
         ED_PRINT_BOOTSTRAP.showResults();
     });

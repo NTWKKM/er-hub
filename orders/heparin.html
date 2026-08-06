@@ -117,6 +117,12 @@
                 <strong>🚫 Individualized Dosing Required:</strong>
                 <p style="margin:4px 0 0 0; font-size:13.5px;">ผู้ป่วยรายนี้มีปัจจัยเสี่ยงทางคลินิก ไม่สามารถคำนวณขนาดเริ่มต้นแบบมาตรฐานได้ กรุณาปรึกษาแพทย์เฉพาะทาง หรือ Staff เพื่อสั่งใช้ยารายบุคคล</p>
             </div>
+            <div class="form-group checkbox-group" style="margin-top:15px; margin-bottom:15px;">
+                <label>
+                    <input type="checkbox" id="use-current-time" checked>
+                    ใช้เวลาปัจจุบันลงในใบสั่งยา (หากไม่เลือกจะเป็นช่องว่าง)
+                </label>
+            </div>
 
             <button type="submit" class="btn btn-calculate">🧮 ตรวจสอบและสร้างใบสั่งยาเริ่มต้น</button>
             <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (PDF)</button>
@@ -279,27 +285,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const hn = $('hn').value.trim() || '...';
         const weight = parseFloat($('weight').value);
         const protocolKey = $('indication-select').value;
-        const conc = parseInt($('concentration-select').value);
+        const conc = parseInt($('concentration-select').value, 10);
         
         const hasRisk = [...riskCheckboxes].some(c => c.checked);
 
-        if (isNaN(weight) || weight < 30 || weight > 200) {
-            ED_VALIDATE.fail('weight', 'กรุณากรอกน้ำหนักให้ถูกต้อง (30-200 kg)');
-            return;
-        }
+        if (!ED_VALIDATE.range('weight', 30, 200, 'กรุณากรอกน้ำหนักให้ถูกต้อง (30-200 kg)')) return;
 
-        const now = new Date();
+        // Render common print fields and populate print sheet
         const useTime = $('use-current-time').checked;
-        const dateStr = useTime ? ED_COMPONENTS.fmtDate(now) : '....................';
-        const timeStr = useTime ? ED_COMPONENTS.fmtTime(now) : '....................';
-        const dtStr = `${dateStr}<br>${timeStr}`;
+        const printNow = ED_PRINT_BOOTSTRAP.generateCommonPrintFields(hn, weight, useTime);
 
-        // Render common header & sticker
-        ED_COMPONENTS.injectPrintHeader('print-header-container');
-        ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
-
-        $('p-hn').textContent = hn;
-        $('p-weight').textContent = weight.toFixed(1);
+        const dtHtml = ED_PRINT_BOOTSTRAP.getDateTimeHTML(useTime, printNow);
+        $('p-dt-1').innerHTML = dtHtml;
+        $('p-dt-2').innerHTML = dtHtml;
         
         // Find indication name
         const protocolObj = HEPARIN_STANDALONE_PROTOCOLS[protocolKey];
@@ -332,10 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        $('p-dt-1').innerHTML = dtStr;
-        $('p-dt-2').innerHTML = dtStr;
-        ED_COMPONENTS.updateGeneratedTime('p-generated', now);
-
         ED_PRINT_BOOTSTRAP.showResults();
     });
 
@@ -343,12 +337,11 @@ document.addEventListener('DOMContentLoaded', () => {
     $('titrate-btn').addEventListener('click', () => {
         const ratio = parseFloat($('aptt-ratio').value);
         const rateMl = parseFloat($('current-rate-ml').value);
-        const conc = parseInt($('concentration-select').value);
+        const conc = parseInt($('concentration-select').value, 10);
 
-        if (isNaN(ratio) || ratio <= 0 || isNaN(rateMl) || rateMl < 0) {
-            ED_VALIDATE.warn('กรุณากรอก aPTT Ratio และอัตราการหยดเดิมให้ถูกต้อง');
-            return;
-        }
+        if (!ED_VALIDATE.range('aptt-ratio', 0.1, 15.0, 'กรุณากรอก aPTT Ratio ให้ถูกต้อง')) return;
+        if (!ED_VALIDATE.range('current-rate-ml', 0.0, 100.0, 'กรุณากรอกอัตราการหยดเดิมให้ถูกต้อง')) return;
+
         ED_VALIDATE.clearWarn();
 
         // Convert current mL/hr rate back to units/hr for calculations

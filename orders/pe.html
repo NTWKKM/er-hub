@@ -324,10 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const now = new Date();
         const expiryDate = new Date(now.getTime() + 8 * 3600 * 1000);
         const expiryStr = ED_COMPONENTS.fmtTime(expiryDate).replace(' น.', '');
-        const useTime = $('use-current-time').checked;
-        const dateStr = useTime ? ED_COMPONENTS.fmtDate(now) : '....................';
-        const timeStr = useTime ? ED_COMPONENTS.fmtTime(now) : '....................';
-        const dtStr = `${dateStr}<br>${timeStr}`;
 
         // Update Screen
         let regimenLabel = '';
@@ -345,11 +341,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Update Print Area
-        ED_COMPONENTS.injectPrintHeader('print-header-container');
-        ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
+        const useTime = $('use-current-time').checked;
+        const printNow = ED_PRINT_BOOTSTRAP.generateCommonPrintFields(hn, weight, useTime);
 
-        $('p-hn').textContent = hn;
-        $('p-weight').textContent = weight.toFixed(1);
+        const dtHtml = ED_PRINT_BOOTSTRAP.getDateTimeHTML(useTime, printNow);
+        $('p-dt-1').innerHTML = dtHtml;
+        $('p-dt-2').innerHTML = dtHtml;
         $('p-indication').textContent = riskType === 'high' ? 'High-risk PE' : 'Intermediate-to-high risk PE';
         
         $('p-abs-status').innerHTML = absCIChecked ? '<strong style="color:red;">YES ⚠️ (ห้ามใช้)</strong>' : 'No';
@@ -371,13 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-box-rtpa-b').querySelector('strong').previousSibling.textContent = regimen === 'rtpa_b' ? '☑ ' : '☐ ';
         $('p-rtpa-b-dose').textContent = rtpaDoseVal.toFixed(1);
 
-        $('p-dt-1').innerHTML = dtStr;
-        $('p-dt-2').innerHTML = dtStr;
-        ED_COMPONENTS.updateGeneratedTime('p-generated', now);
-
-        $('results-container').classList.remove('hidden');
         ED_PRINT_BOOTSTRAP.showResults();
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     });
 
     $('clear-btn').addEventListener('click', () => {

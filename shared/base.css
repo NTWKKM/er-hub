@@ -391,9 +391,7 @@ input[type="checkbox"] {
     color: #fff;
 }
 
-@media print {
-    .float-print-bar { display: none !important; }
-}
+
 
 /* ===== Results Screen Layout ===== */
 .results-container {

@@ -809,11 +809,7 @@
                 const weight = parseFloat(weightInput.value);
                 const selectedDose = parseFloat(selectedDoseInput.value);
 
-                if (isNaN(weight) || weight <= 0) {
-                    ED_VALIDATE.fail('weight', 'กรุณากรอกน้ำหนักให้ถูกต้อง');
-                    return;
-                }
-                ED_VALIDATE.range('weight', 20, 250, 'Weight ต้องอยู่ในช่วง 20–250 kg');
+                if (!ED_VALIDATE.range('weight', 20, 250, 'Weight ต้องอยู่ในช่วง 20–250 kg')) return;
 
                 const dose = STROKE_ENGINE.calcRtpaDose(weight, selectedDose);
                 if (!dose) return;
@@ -829,26 +825,14 @@
                 document.getElementById('drip-percent').textContent = dripPercent.toString();
                 document.getElementById('drip-dose').textContent = dripDose.toFixed(2);
 
-                // Use shared components for header & sticker & date-time
-                ED_COMPONENTS.injectPrintHeader('print-header-container');
-                ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
-
                 const useTime = document.getElementById('use-current-time').checked;
-                let dateStr = '...';
-                let timeStr = '...';
+                const now = ED_PRINT_BOOTSTRAP.generateCommonPrintFields(hn, weight, useTime);
 
-                if (useTime) {
-                    const now = new Date();
-                    dateStr = ED_COMPONENTS.fmtDate(now);
-                    timeStr = ED_COMPONENTS.fmtTime(now);
-                }
+                const dtHtml = ED_PRINT_BOOTSTRAP.getDateTimeHTML(useTime, now);
+                document.getElementById('order-date').innerHTML = dtHtml;
+                document.getElementById('order-date-cont').innerHTML = dtHtml;
 
-                document.getElementById('order-date').innerHTML = `${dateStr}<br>${timeStr}`;
-                document.getElementById('order-date-cont').innerHTML = `${dateStr}<br>${timeStr}`;
-
-                resultsContainer.classList.remove('hidden');
-                ED_COMPONENTS.showFloatBar();
-                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                ED_PRINT_BOOTSTRAP.showResults();
             });
 
             document.getElementById('clear-btn').addEventListener('click', () => {

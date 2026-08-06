@@ -22,21 +22,17 @@ const STROKE_ENGINE = {
             totalDose = Math.min(calculatedTotal, 90);
             pushPercent = 10;
             dripPercent = 90;
-            const idealPush = totalDose * 0.10;
-            const pushDose = Math.floor(idealPush * 10) / 10;
-            const remainder = idealPush - pushDose;
-            const dripDose = (totalDose * 0.90) + remainder;
-            return { totalDose, pushPercent, dripPercent, pushDose, dripDose };
         } else { // regimen === 0.6
             totalDose = Math.min(calculatedTotal, 50); // Clinical safety ceiling capped at 50 mg
             pushPercent = 15;
             dripPercent = 85;
-            const idealPush = totalDose * 0.15;
-            const pushDose = Math.floor(idealPush * 10) / 10;
-            const remainder = idealPush - pushDose;
-            const dripDose = (totalDose * 0.85) + remainder;
-            return { totalDose, pushPercent, dripPercent, pushDose, dripDose };
         }
+
+        const idealPush = totalDose * (pushPercent / 100);
+        const pushDose = Math.floor(idealPush * 10) / 10;
+        const dripDose = totalDose - pushDose;
+
+        return { totalDose, pushPercent, dripPercent, pushDose, dripDose };
     }
 };
 

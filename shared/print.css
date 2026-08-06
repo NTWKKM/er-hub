@@ -180,6 +180,7 @@
     .header,
     form,
     .top-nav,
+    .float-print-bar,
     a[href*="index.html"] {
         display: none !important;
     }

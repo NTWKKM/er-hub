@@ -6,8 +6,6 @@
  */
 
 const ED_VALIDATE = {
-    _warningEl: null,
-
     /**
      * Mark a field as failed: add .field-error, show inline message, focus.
      * @returns false (for use in `if (!ED_VALIDATE.fail(...)) return;`)
@@ -73,7 +71,6 @@ const ED_VALIDATE = {
             if (header) header.insertAdjacentElement('afterend', banner);
             else fc.insertBefore(banner, fc.firstChild);
         }
-        this._warningEl = banner;
         return false;
     },
 
@@ -82,7 +79,6 @@ const ED_VALIDATE = {
      */
     clearWarn() {
         document.querySelectorAll('.clinical-warning').forEach(el => el.remove());
-        this._warningEl = null;
     },
 
     /**
