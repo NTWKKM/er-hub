@@ -1,3 +1,17 @@
+## [2.5.0] — 2026-08-13
+
+### Added
+- **MgSO4 Calculator (`tools/mgso4-calculator.html`):**
+  - Standalone clinical tool for MgSO4 dosing calculation and diagnostic reference in Pre-eclampsia, Severe Pre-eclampsia, and Eclampsia.
+  - Supports dual concentration preparation & infusion rate calculations for both 50% MgSO4 (ampule) and 10% MgSO4 (diluted).
+  - Provides dual maintenance IV infusion guides (Thai-CMU 10g/1000mL & Concentrated 20g/500mL) displaying both 1 g/hr and 2 g/hr rates, plus IM Pritchard alternative.
+  - Features diagnostic criteria cards, 2g IV recurrent seizure protocol, severe-range BP control reference, and toxicity monitoring with Calcium gluconate antidote instructions.
+- **OB Engine (`shared/ob-engine.js`):**
+  - Pure functional calculation engine for MgSO4 loading, maintenance IV/IM, recurrent seizure, toxicity check, BP severity classification, and severe feature evaluation.
+- Added 48 unit tests (`tests/ob-engine.test.js`).
+- Linked as prototype tool `T7` in `index.html` and precached in `service-worker.js`.
+- Bumped PWA cache version to `v43`.
+
 ## [2.4.0] — 2026-08-01
 
 ### Fixed & Aligned with Official Thailand CPG (2018 Table 3.1 & 2022 Table 5.1 / 7.1 / 9.2)

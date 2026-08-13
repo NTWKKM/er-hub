@@ -20,6 +20,9 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 │   ├── drip-calculator.html     ← IV Infusion Drip Calculator (12 HAD drugs)
 │   ├── nihss.html               ← NIHSS Stroke Scale Score Sheet
 │   ├── Urgent-Clinic-Home-Medication.html ← Home Medication Checklist (ERIG/HRIG auto-calc)
+│   ├── score-hub.html           ← Clinical Score & Risk Hub (AWS, Sepsis, ABCD2, HEART, GRACE, PE)
+│   ├── tb-calculator.html       ← TB Weight-Based Dosing Calculator (Thailand CPG 2018/2022)
+│   ├── mgso4-calculator.html    ← MgSO4 Dosing & Pre-eclampsia/Eclampsia Calculator
 │   └── er-note/
 │       ├── index.html           ← ER NOTE portal hub (7 templates)
 │       ├── general-er-note.html ← General ER Note
@@ -38,6 +41,9 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 │   ├── calc-engine.js           ← Drip rate calculation engine
 │   ├── clinical-engine.js       ← GRACE score + eGFR (CKD-EPI 2021)
 │   ├── anticoag-engine.js       ← Heparin dosing/titration
+│   ├── stroke-engine.js         ← Stroke rt-PA thrombolytic dosing engine
+│   ├── stemi-engine.js          ← STEMI TNK weight-bracket dosing engine
+│   ├── ob-engine.js             ← MgSO4 dosing & pre-eclampsia severity classification engine
 │   ├── drug-data.js             ← 12-drug catalog (concentrations, limits, warnings)
 │   ├── print-bootstrap.js       ← Print/page lifecycle (show/clear/print-blank-direct)
 │   ├── blank-print-engine.js    ← Declarative blank-print reset (rtpa/nstemi)
@@ -46,6 +52,9 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 │   ├── calc-engine.test.js
 │   ├── anticoag-engine.test.js
 │   ├── clinical-engine.test.js
+│   ├── stroke-engine.test.js
+│   ├── stemi-engine.test.js
+│   ├── ob-engine.test.js
 │   ├── drug-data.test.js
 │   ├── components.test.js
 │   ├── form-validate.test.js
@@ -53,12 +62,15 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 │   ├── blank-print-engine.test.js
 │   ├── nstemi-audit-fixes.test.js
 │   ├── nstemi-thresholds.test.js
+│   ├── score-hub.test.js
+│   ├── tb-calculator-ui.test.js
+│   ├── drip-calculator-ui.test.js
+│   ├── nihss-guard.test.js
+│   ├── home-medication-guard.test.js
 │   ├── dead-css-guard.test.js
 │   ├── id-integrity-guard.test.js
 │   ├── order-safety-guard.test.js
-│   ├── drip-calculator-ui.test.js
-│   ├── nihss-guard.test.js
-│   └── home-medication-guard.test.js
+│   └── pwa-assets.test.js
 ├── service-worker.js            ← PWA offline cache (network-first nav, cache-first assets)
 ├── manifest.json                ← PWA manifest (installable app)
 ├── ARCHITECTURE.md              ← System architecture & standing constraints
@@ -89,4 +101,4 @@ See `ARCHITECTURE.md`, `DESIGN.md`, and `CONTEXT.md` for full specifications. Se
 npm test
 ```
 
-Runs 260 unit tests via Node's built-in `node:test` (zero dependencies). Covers `calc-engine.js` (drip rate), `anticoag-engine.js` (heparin dosing + titration + eGFR), `clinical-engine.js` (eGFR + GRACE score + Killip lookup + riskLevel boundaries), `drug-data.js` (12-drug catalog validation + absoluteMaxPerHour), `components.js` (date/time formatting), `form-validate.js`, `print-bootstrap.js`, `blank-print-engine.js`, and structural regression guards (dead-css, id-integrity, order-safety, NSTEMI thresholds, drip-calculator UI, NIHSS validation, home medication localStorage + ERIG/HRIG auto-calc). Tests are dev-only — they never ship to the browser.
+Runs 344 unit tests via Node's built-in `node:test` (zero dependencies). Covers `calc-engine.js` (drip rate), `anticoag-engine.js` (heparin dosing + titration), `stroke-engine.js` (rt-PA dosing), `stemi-engine.js` (TNK dosing), `ob-engine.js` (MgSO4 loading, maintenance IV/IM, recurrent seizure, toxicity check, BP severity, severe feature evaluation), `clinical-engine.js` (eGFR + GRACE score + Killip lookup + riskLevel boundaries), `drug-data.js` (12-drug catalog validation + absoluteMaxPerHour), `components.js` (date/time formatting), `form-validate.js`, `print-bootstrap.js`, `blank-print-engine.js`, and structural regression guards (dead-css, id-integrity, order-safety, PWA assets, score-hub, TB calculator UI, drip-calculator UI, NIHSS validation, home medication). Tests are dev-only — they never ship to the browser.
