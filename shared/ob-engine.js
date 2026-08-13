@@ -141,8 +141,8 @@ const CALCIUM_ANTIDOTES = {
  * Literature Dosing Variations Reference (Tintinalli, Rosen, Goldfrank).
  */
 const TEXTBOOK_VARIATIONS = {
-    tintinalli: 'Tintinalli 9th: Loading 4-6g IV over 15-30m (หรือ 10g IM Pritchard), Maintenance 2g/h IV',
-    rosen: 'Rosen 10th: Loading 4-6g IV over 15-20m, Maintenance 1-2g/h IV',
+    tintinalli: 'Tintinalli 9th: Loading 4-6g IV (ละลายใน D5W / 0.9% NSS 100 mL) over 15-30 min (หรือ 10g IM Pritchard), Maintenance 2g/h IV',
+    rosen: 'Rosen 10th: Loading 4-6g IV over 15-20 min, Maintenance 1-2g/h IV',
     goldfrank: 'Goldfrank 11th: Loading 4g IV (ให้อย่างรวดเร็วใน 5 min หากกำลังชักรุนแรง), Maintenance 1-2g/h IV'
 };
 
@@ -187,7 +187,7 @@ const DIAGNOSTIC_CRITERIA = {
 
 /**
  * Calculates MgSO4 loading dose (4g IV standard).
- * Returns volumes for both 50% and 10% MgSO4 concentrations.
+ * Returns volumes for 50%, 10%, and 100 mL IV bag dilutions.
  *
  * @returns {Object} Loading dose details
  */
@@ -204,6 +204,10 @@ function calcMgSO4Loading() {
     // Diluent to add to make 10%: 40 - 8 = 32 mL
     const diluentVol = vol10pct - vol50pct;
 
+    // Alternative: Dilute in 100 mL IV Bag (Tintinalli recommendation)
+    const ivBagDiluent = 100;
+    const ivBagTotalVol = vol50pct + ivBagDiluent; // 108 mL
+
     return {
         doseG,
         doseMg,
@@ -214,9 +218,17 @@ function calcMgSO4Loading() {
         rateMaxGPerMin: 1,
         infusionTimeMin: '20-30',
         // At 40 mL over 20-30 min → pump rate 80-120 mL/hr
-        pumpRateRange: { min: 80, max: 120 }
+        pumpRateRange: { min: 80, max: 120 },
+        // IV Bag 100 mL option (Tintinalli): 108 mL over 20-30 min → pump rate 216-324 mL/hr
+        ivBagOption: {
+            diluentVol: ivBagDiluent, // 100 mL (D5W / 0.9% NSS)
+            totalVol: ivBagTotalVol,  // 108 mL
+            pumpRateRange: { min: 216, max: 324 },
+            note: 'ดูด 50% MgSO4 8 mL (4g) ผสมใน D5W หรือ 0.9% NSS 100 mL (รวม 108 mL) หยดหมดใน 20-30 min (Tintinalli 9th)'
+        }
     };
 }
+
 
 /**
  * Calculates MgSO4 maintenance IV drip for both formulas A and B,

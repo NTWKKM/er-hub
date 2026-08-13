@@ -53,6 +53,15 @@ describe('calcMgSO4Loading', () => {
         const r = calcMgSO4Loading();
         assert.equal(r.rateMaxGPerMin, 1);
     });
+
+    test('100 mL IV bag dilution option calculates total volume 108 mL and pump rate 216-324 mL/hr', () => {
+        const r = calcMgSO4Loading();
+        assert.ok(r.ivBagOption);
+        assert.equal(r.ivBagOption.diluentVol, 100);
+        assert.equal(r.ivBagOption.totalVol, 108);
+        assert.equal(r.ivBagOption.pumpRateRange.min, 216);
+        assert.equal(r.ivBagOption.pumpRateRange.max, 324);
+    });
 });
 
 // ─── calcMgSO4MaintenanceIV ──────────────────────────────────────────────────
