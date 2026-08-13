@@ -298,15 +298,18 @@ describe('evalSevereFeatures', () => {
 // ─── BP_PROTOCOLS & Engine Cross-Validation ────────────────────────────────────────
 
 describe('BP_PROTOCOLS & Engine Cross-Validation', () => {
-    test('BP_PROTOCOLS has hydralazine, labetalol, and nifedipine with contraindications', () => {
-        const { BP_PROTOCOLS } = require('../shared/ob-engine.js');
+    test('BP_PROTOCOLS has hydralazine, labetalol, nifedipine, and nicardipine with contraindications', () => {
+        const { BP_PROTOCOLS, NURSING_CARE_ORDERS } = require('../shared/ob-engine.js');
         assert.ok(BP_PROTOCOLS.hydralazine);
         assert.ok(BP_PROTOCOLS.labetalol);
         assert.ok(BP_PROTOCOLS.nifedipine);
+        assert.ok(BP_PROTOCOLS.nicardipine);
         assert.ok(BP_PROTOCOLS.contraindicatedPregnancy);
         assert.ok(BP_PROTOCOLS.hydralazine.contraindications.includes('ACS'));
         assert.ok(BP_PROTOCOLS.labetalol.contraindications.includes('astma') || BP_PROTOCOLS.labetalol.contraindications.includes('asthma'));
         assert.ok(BP_PROTOCOLS.nifedipine.contraindications.includes('hypotension'));
+        assert.ok(BP_PROTOCOLS.nicardipine.contraindications.includes('shock') || BP_PROTOCOLS.nicardipine.contraindications.includes('Cardiogenic'));
+        assert.ok(NURSING_CARE_ORDERS.location.includes('Labour Room'));
     });
 
     test('Loading dose mathematical identities holds', () => {

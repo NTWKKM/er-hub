@@ -544,14 +544,23 @@
         </div>
     </div>
 
-    <!-- ══════════════ 7. LAB ORDERS (Default Collapsed) ══════════════ -->
+    <!-- ══════════════ 7. LABOUR ROOM CARE & LAB ORDERS (Default Collapsed) ══════════════ -->
     <h3 class="section-header collapse-toggle" role="button" aria-expanded="false" tabindex="0" id="lab-toggle">
         <span class="section-title-group">
             <span class="toggle-chevron">▼</span>
-            🧪 Lab Orders Checklist — การส่งตรวจทางห้องปฏิบัติการ
+            🏥 Labour Room Care &amp; Lab Orders — คำสั่งการรักษา &amp; การตรวจทางห้องปฏิบัติการ
         </span>
     </h3>
     <div class="collapsible-body collapsed" id="lab-body">
+        <div class="compact-card" style="margin-bottom: 10px; background: #f0fdf4; border-color: #bbf7d0;">
+            <div class="compact-card-title" style="color: #166534;">📋 Labour Room Nursing Care &amp; Monitoring Orders</div>
+            <div style="font-size: 12.5px; color: #14532d; line-height: 1.6;">
+                • <strong>Admit:</strong> ห้องคลอด (Labour Room) · <strong>Activity:</strong> Absolute bed rest<br>
+                • <strong>Catheter:</strong> Retain Foley’s catheter<br>
+                • <strong>Record:</strong> Vital signs &amp; Urine output <strong>ทุก 1 ชม.</strong> · Deep Tendon Reflexes (DTR) <strong>ทุก 2 ชม.</strong><br>
+                • <strong>Toxicity Criteria:</strong> ถ้า RR &lt; 14/min (หรือ &lt;12), DTR หายไป, หรือ Urine output &lt; 30 mL/hr (หรือ &lt;25) → ประเมิน Mg Toxicity &amp; ให้ Calcium gluconate 10% 10 mL IV push
+            </div>
+        </div>
         <div class="lab-grid" style="margin-bottom: 14px;">
             <div class="lab-item">☐ CBC &amp; Platelet count</div>
             <div class="lab-item">☐ AST / ALT (LFT)</div>
@@ -730,7 +739,8 @@
         // 7. BP Protocols
         const bpTbody = document.getElementById('bp-table-body');
         if (bpTbody && typeof BP_PROTOCOLS !== 'undefined') {
-            const rows = ['hydralazine', 'labetalol', 'nifedipine'].map(key => {
+            const keys = ['hydralazine', 'labetalol', 'nifedipine', 'nicardipine'];
+            const rows = keys.map(key => {
                 const p = BP_PROTOCOLS[key];
                 if (!p) return '';
                 return `

@@ -1,3 +1,13 @@
+## [2.5.3] — 2026-08-13
+
+### Added & Enhanced (Departmental CPG Protocol Aligned)
+- **OB Engine (`shared/ob-engine.js`) & MgSO4 Calculator (`tools/mgso4-calculator.html`):**
+  - **Nicardipine Antihypertensive Protocol:** Integrated Nicardipine IV Push (1–2 mL of 0.5 mg/mL q15–20m) and Continuous IV Drip (25–50 mL/hr of 0.1 mg/mL, titrate 2.5 mg/hr q15m up to max 15 mg/hr) targeting DBP 90–100 mmHg.
+  - **Nicardipine Contraindications:** Documented specific contraindications (Cardiogenic shock, recent MI / acute unstable angina, severe aortic stenosis).
+  - **Labour Room Nursing & Monitoring Care Orders Card:** Added explicit care guidelines card (Admit Labour Room, Absolute Bed Rest, Retain Foley's catheter, Record VS & UO q1h, DTR q2h, and departmental toxicity thresholds RR < 14, UO < 30 mL/hr, absent DTR).
+  - Added unit test assertions in `tests/ob-engine.test.js` (351 tests passed).
+  - Bumped PWA offline cache version to `v46` (`service-worker.js` and `index.html` synchronized).
+
 ## [2.5.2] — 2026-08-13
 
 ### Added & Enhanced (Clinical Safety Guidelines)

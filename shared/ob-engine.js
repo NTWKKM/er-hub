@@ -86,11 +86,47 @@ const BP_PROTOCOLS = {
         note: 'ถ้าครบ max → switch IV Labetalol 40 mg',
         contraindications: 'ระวัง Overshoot hypotension และ tachycardia รุนแรง ซึ่งทำให้เกิด uteroplacental hypoperfusion'
     },
+    nicardipine: {
+        name: 'Nicardipine IV',
+        steps: [
+            'IV Push: 1 amp (2 mg/2mL) + NSS 2 mL = 4 mL (0.5 mg/mL) → ให้ 1-2 mL (0.5-1 mg) IV push q15-20min (ถ้า DBP ≥ 110 mmHg)',
+            'IV Drip: 5 amp (10 mg/10mL) + NSS 90 mL = 100 mL (0.1 mg/mL) → เริ่ม 25-50 mL/hr (2.5-5 mg/hr), ปรับขึ้นครั้งละ 2.5 mg/hr q15min'
+        ],
+        maxTotal: '≤ 15 mg/hr (150 mL/hr)',
+        note: 'เป้าหมาย: Maintain Diastolic BP 90-100 mmHg',
+        contraindications: 'ห้ามใช้ใน Cardiogenic shock, Recent MI / Acute unstable angina, Severe aortic stenosis, หรือแพ้ยา'
+    },
     contraindicatedPregnancy: {
         title: '⛔ Absolute Contraindications in Pregnancy',
         drugs: 'ACE inhibitors, ARBs, Direct Renin Inhibitors, Sodium Nitroprusside',
         reason: 'มีพิษร้ายแรงต่อทารกในครรภ์ (Teratogenic / Fetal renal failure / Oligohydramnios)'
     }
+};
+
+/**
+ * Labour Room Care & Monitoring Orders.
+ */
+const NURSING_CARE_ORDERS = {
+    location: 'Admit ห้องคลอด (Labour Room)',
+    activity: 'Absolute bed rest',
+    catheter: 'Retain Foley’s catheter',
+    monitoring: [
+        'Record Vital signs & Urine output ทุก 1 ชม.',
+        'Record Deep tendon reflexes (DTR) ทุก 2 ชม.'
+    ],
+    toxicityTriggers: [
+        'RR < 14/min (หรือ < 12/min)',
+        'DTR หายไป (Absent DTR)',
+        'Urine output < 30 mL/hr (หรือ < 25 mL/hr)'
+    ],
+    labs: [
+        'CBC & Platelet count',
+        'Coagulogram (PT/INR, aPTT)',
+        'LFT (AST/ALT)',
+        'Uric acid & LDH',
+        'Creatinine & Urine protein/albumin ratio',
+        'Serum Magnesium (หาก Cr > 1.0 mg/dL หรือมีสัญญาณพิษ)'
+    ]
 };
 
 /**
@@ -448,6 +484,7 @@ if (typeof module !== 'undefined' && module.exports) {
         ALTERNATIVE_ANTICONVULSANTS,
         CALCIUM_ANTIDOTES,
         TEXTBOOK_VARIATIONS,
+        NURSING_CARE_ORDERS,
         MGSO4_CONC_50PCT,
         MGSO4_CONC_10PCT
     };
