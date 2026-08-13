@@ -131,6 +131,16 @@ Features:
 - **MDR-TB Regimens (CPG 2022 Tables 6.3–6.6):** Shorter All-Oral Bedaquiline-containing regimen (weight bands 30-35, 36-45, 46-55, 56-70, >70 kg for Bdq, Lfx/Mfx, Pto, Cfz, Z, High-dose H, E) and Individualized Longer Regimen (interactive WHO Group A/B/C drug selector with 4 / (3+1-2) / (2+3) selection-rule validator, Amikacin nephrotoxicity safety gating, and weight-band tablet lookup).
 - **Clinical Prescription Clipboard Integration:** Copy-to-clipboard clinical prescription note compiler supporting Adult, Pediatric, TPT, Renal, H-monoresistance, and MDR-TB regimens with universal renal/liver warning appends.
 
+### MgSO4 Dosing & Pre-eclampsia/Eclampsia Calculator (`tools/mgso4-calculator.html`)
+
+Standalone obstetric emergency calculation tool and diagnostic reference for Pre-eclampsia, Severe Pre-eclampsia, and Eclampsia. Built with Braun Analogue precision design system (`theme-neutral`).
+Features:
+- **Diagnostic Criteria Cards:** Visual reference for Pre-eclampsia, Severe Pre-eclampsia, and Eclampsia.
+- **Dual Concentration Support:** Explicit prep, volume, and pump rate calculations for both 50% MgSO4 (500 mg/mL ampule) and 10% MgSO4 (100 mg/mL diluted form).
+- **Loading & Maintenance Regimens:** Standard 4g IV loading dose over 20-30 min, dual maintenance infusion formula guides (Thai-CMU 10g/1000mL & Concentrated 20g/500mL) displaying both 1 g/hr and 2 g/hr rates, and IM Pritchard alternative (5g/buttock + Lidocaine).
+- **Recurrent Seizure Protocol:** 2g IV bolus administration instructions with 50%/10% volumes and second-line benzodiazepine escalation guide.
+- **BP Control & Toxicity Monitoring:** Severe-range BP (≥160/110) antihypertensive reference table (Hydralazine, Labetalol, Nifedipine with max ceilings), DTR/RR/UO toxicity monitoring parameters, Calcium gluconate antidote instructions, and serum Mg therapeutic levels.
+
 ### Shared Engines (`shared/`)
 
 | File | Role | Dependencies |
@@ -143,6 +153,7 @@ Features:
 | `anticoag-engine.js` | Heparin standalone dosing/titration engine. Exports `calcHeparinInitialDose`, `getHeparinTitration`, `HEPARIN_STANDALONE_PROTOCOLS`. | None |
 | `stroke-engine.js` | Stroke rt-PA thrombolytic dosing engine. Exports `calcRtpaDose` for 0.9 mg/kg and 0.6 mg/kg regimens. | None |
 | `stemi-engine.js` | STEMI TNK weight-bracket dosing engine. Exports `calcTNK`. | None |
+| `ob-engine.js` | MgSO4 dosing & pre-eclampsia severity classification engine. Exports `calcMgSO4Loading`, `calcMgSO4MaintenanceIV`, `calcMgSO4IM`, `calcMgSO4RecurrentBolus`, `checkMgSO4Toxicity`, `classifyBPSeverity`, `evalSevereFeatures`. | None |
 | `drug-data.js` | 12-drug catalog: concentrations, dose limits, safety ceilings, titration instructions, optional `indications` array for per-drug guide rendering, optional `absoluteMaxPerHour` for weight-based drugs with clinical hourly ceilings (e.g. Fentanyl 500 mcg/hr). | None |
 | `print-bootstrap.js` | Print/page lifecycle: `handlePrintBlankDirect()`, `handlePrintBlankDirectPdf()`, `openBlankPdf()`, `showResults()`, `clearResults()`, date/time helpers. | `components.js` |
 | `blank-print-engine.js` | Declarative blank-print reset. Each page registers a manifest of reset rules (`{ id, value }` for textContent, `{ id, html }` for innerHTML, etc.). `apply()` executes all rules. Used by rtpa and nstemi only. | None |
