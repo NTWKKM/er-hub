@@ -244,12 +244,14 @@ describe('NSTEMI Print — B3: Prasugrel color, bullets, Ticagrelor continuation
 describe('SW Version — cache version sync', () => {
     const sw = read(SW_PATH);
     const index = read(INDEX_PATH);
+    const components = read(path.join(ROOT_DIR, 'shared/components.js'));
 
-    test('service-worker.js CACHE_VERSION is dynamically synced in index.html', () => {
+    test('service-worker.js CACHE_VERSION is dynamically synced in index.html and components.js', () => {
         const swMatch = sw.match(/CACHE_VERSION\s*=\s*'er-hub-(v\d+)'/);
         assert.ok(swMatch, 'CACHE_VERSION er-hub-vXX must be defined in service-worker.js');
 
         assert.ok(index.includes("fetch('service-worker.js')"), 'index.html must dynamically fetch service-worker.js for version sync');
+        assert.ok(components.includes("fetch(swPath)"), 'components.js injectNavBar must dynamically fetch service-worker.js for version sync across all orders and tools');
     });
 });
 

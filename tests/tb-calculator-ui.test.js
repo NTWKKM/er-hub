@@ -457,13 +457,16 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(sw.includes("'./tools/tb-calculator.html'"), 'tb-calculator.html should be cached');
     });
 
-    await t.test('index.html dynamically syncs top nav version with service-worker.js CACHE_VERSION', () => {
+    await t.test('index.html and components.js dynamically sync top nav version with service-worker.js CACHE_VERSION', () => {
         const sw = fs.readFileSync(path.join(__dirname, '../service-worker.js'), 'utf8');
         const swMatch = sw.match(/CACHE_VERSION\s*=\s*['"]er-hub-(v\d+)['"]/i);
         assert.ok(swMatch, 'service-worker.js should contain CACHE_VERSION');
 
         const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
         assert.ok(html.includes("fetch('service-worker.js')"), 'index.html should fetch service-worker.js for dynamic version sync');
+
+        const comp = fs.readFileSync(path.join(__dirname, '../shared/components.js'), 'utf8');
+        assert.ok(comp.includes("fetch(swPath)"), 'components.js injectNavBar should fetch service-worker.js for dynamic version sync across all orders/tools');
     });
 
     await t.test('ARCHITECTURE.md documents tools/tb-calculator.html', () => {

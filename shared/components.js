@@ -181,6 +181,35 @@ const ED_COMPONENTS = {
             }
         }
 
+        // Right-aligned dynamic version badge automatically fetched from service-worker.js
+        const verBadge = document.createElement('div');
+        verBadge.className = 'nav-right';
+        verBadge.id = 'nav-ver-display';
+        verBadge.style.cssText = 'margin-left: auto; font-size: 11px; opacity: 0.85; font-family: var(--font-mono, monospace); padding-right: 4px; display: flex; align-items: center;';
+        nav.appendChild(verBadge);
+
+        // Determine relative path to service-worker.js based on homeHref
+        let swPath = 'service-worker.js';
+        if (href.startsWith('../')) {
+            swPath = '../service-worker.js';
+        } else if (href.startsWith('./')) {
+            swPath = './service-worker.js';
+        }
+
+        if (typeof fetch === 'function') {
+            fetch(swPath)
+                .then(res => res.text())
+                .then(code => {
+                    const match = code.match(/CACHE_VERSION\s*=\s*['"]er-hub-(v\d+)['"]/i);
+                    if (match && match[1]) {
+                        verBadge.textContent = match[1];
+                    }
+                })
+                .catch(() => {
+                    // Silent catch in offline or restricted environments
+                });
+        }
+
         document.body.insertBefore(nav, document.body.firstChild);
     },
 
