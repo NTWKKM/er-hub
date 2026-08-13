@@ -1,3 +1,12 @@
+## [2.5.4] — 2026-08-13
+
+### Added & Enhanced (Departmental CPG Protocol Aligned)
+- **OB Engine (`shared/ob-engine.js`) & MgSO4 Calculator (`tools/mgso4-calculator.html`):**
+  - **Formula C Maintenance Drip:** Added Formula C (50% MgSO4 40 mL [20 g] in 5% D5W 1000 mL: 1 g/hr = 50 mL/hr, 2 g/hr = 100 mL/hr) to maintenance infusion grid.
+  - **10% MgSO4 Direct IV Push Loading:** Added explicit instructions for 10% MgSO4 4–6 g (40–60 mL) slow IV push > 5 min.
+  - **Recurrent Seizure Protocol:** Added 10% MgSO4 2–4 g (20–40 mL) slow IV push half-dose and 3rd line refractory seizure options (Diazepam 5 mg IV push, Phenytoin IV push).
+  - Synchronized PWA offline cache version to `v47` across `service-worker.js` and `index.html`.
+
 ## [2.5.3] — 2026-08-13
 
 ### Added & Enhanced (Departmental CPG Protocol Aligned)
