@@ -4,8 +4,14 @@
 - **OB Engine (`shared/ob-engine.js`) & MgSO4 Calculator (`tools/mgso4-calculator.html`):**
   - **Formula C Maintenance Drip:** Added Formula C (50% MgSO4 40 mL [20 g] in 5% D5W 1000 mL: 1 g/hr = 50 mL/hr, 2 g/hr = 100 mL/hr) to maintenance infusion grid.
   - **10% MgSO4 Direct IV Push Loading:** Added explicit instructions for 10% MgSO4 4–6 g (40–60 mL) slow IV push > 5 min.
+  - **100 mL IV Bag Dilution Option (Tintinalli 9th):** Added 50% MgSO4 8 mL (4 g) diluted in D5W/0.9% NSS 100 mL IV bag with pump rate 216–324 mL/hr over 20–30 min as loading dose alternative.
   - **Recurrent Seizure Protocol:** Added 10% MgSO4 2–4 g (20–40 mL) slow IV push half-dose and 3rd line refractory seizure options (Diazepam 5 mg IV push, Phenytoin IV push).
-  - Synchronized PWA offline cache version to `v47` across `service-worker.js` and `index.html`.
+- **Dynamic SW Version Sync (`shared/components.js`, `index.html`):**
+  - Refactored `injectNavBar` to dynamically fetch `CACHE_VERSION` from `service-worker.js` at runtime, eliminating hardcoded version strings across all order and tool pages.
+  - `index.html` top bar version badge now auto-syncs from service-worker.js with generic `'Offline'` fallback.
+  - Fixed `tests/tb-calculator-ui.test.js` CACHE_VERSION assertion to use regex pattern instead of hardcoded version string.
+  - Updated `ARCHITECTURE.md` `ob-engine.js` export list (8 functions + 10 constants).
+  - Synchronized PWA offline cache version to `v47` across `service-worker.js`.
 
 ## [2.5.3] — 2026-08-13
 

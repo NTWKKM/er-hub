@@ -451,9 +451,9 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(html.includes('TB Weight-Based Dosing Calculator'), 'index.html should display title');
     });
 
-    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and uses v47', () => {
+    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and has valid CACHE_VERSION', () => {
         const sw = fs.readFileSync(path.join(__dirname, '../service-worker.js'), 'utf8');
-        assert.ok(sw.includes("'er-hub-v47'"), 'CACHE_VERSION should be er-hub-v47');
+        assert.match(sw, /CACHE_VERSION\s*=\s*'er-hub-v\d+'/, 'CACHE_VERSION should follow er-hub-vNN pattern');
         assert.ok(sw.includes("'./tools/tb-calculator.html'"), 'tb-calculator.html should be cached');
     });
 
