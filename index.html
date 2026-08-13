@@ -610,9 +610,27 @@ nav.innerHTML = `
         <img src="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" style="height: 38px; width: auto; display: block;">
     </div>
     <div class="nav-center">MNRH-ED HUB</div>
-    <div class="nav-right">v47 · Updated 2026-08-13</div>
+    <div class="nav-right" id="nav-ver-display">...</div>
 `;
 document.body.insertBefore(nav, document.body.firstChild);
+
+// Dynamically sync top bar version with service-worker.js CACHE_VERSION
+fetch('service-worker.js')
+  .then(res => res.text())
+  .then(code => {
+    const match = code.match(/CACHE_VERSION\s*=\s*['"]er-hub-(v\d+)['"]/i);
+    if (match && match[1]) {
+      const verEl = document.getElementById('nav-ver-display');
+      if (verEl) {
+        const today = new Date().toISOString().slice(0, 10);
+        verEl.textContent = `${match[1]} · Updated ${today}`;
+      }
+    }
+  })
+  .catch(() => {
+    const verEl = document.getElementById('nav-ver-display');
+    if (verEl) verEl.textContent = 'v47 · Updated 2026-08-13';
+  });
 
 if ('serviceWorker' in navigator) {
   let refreshing = false;

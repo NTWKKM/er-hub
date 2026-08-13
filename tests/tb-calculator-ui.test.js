@@ -457,9 +457,13 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(sw.includes("'./tools/tb-calculator.html'"), 'tb-calculator.html should be cached');
     });
 
-    await t.test('index.html version string matches service-worker.js v47', () => {
+    await t.test('index.html dynamically syncs top nav version with service-worker.js CACHE_VERSION', () => {
+        const sw = fs.readFileSync(path.join(__dirname, '../service-worker.js'), 'utf8');
+        const swMatch = sw.match(/CACHE_VERSION\s*=\s*['"]er-hub-(v\d+)['"]/i);
+        assert.ok(swMatch, 'service-worker.js should contain CACHE_VERSION');
+
         const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
-        assert.ok(html.includes('v47'), 'index.html top nav should state v47');
+        assert.ok(html.includes("fetch('service-worker.js')"), 'index.html should fetch service-worker.js for dynamic version sync');
     });
 
     await t.test('ARCHITECTURE.md documents tools/tb-calculator.html', () => {

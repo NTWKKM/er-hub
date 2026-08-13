@@ -245,16 +245,11 @@ describe('SW Version — cache version sync', () => {
     const sw = read(SW_PATH);
     const index = read(INDEX_PATH);
 
-    test('service-worker.js CACHE_VERSION matches index.html nav badge', () => {
+    test('service-worker.js CACHE_VERSION is dynamically synced in index.html', () => {
         const swMatch = sw.match(/CACHE_VERSION\s*=\s*'er-hub-(v\d+)'/);
         assert.ok(swMatch, 'CACHE_VERSION er-hub-vXX must be defined in service-worker.js');
-        const swVersion = swMatch[1];
 
-        const indexMatch = index.match(/<div class="nav-right">(v\d+) · Updated [^<]*<\/div>/);
-        assert.ok(indexMatch, 'index.html nav badge vXX must be present');
-        const indexVersion = indexMatch[1];
-
-        assert.strictEqual(swVersion, indexVersion, `service-worker.js (${swVersion}) and index.html (${indexVersion}) must be in sync`);
+        assert.ok(index.includes("fetch('service-worker.js')"), 'index.html must dynamically fetch service-worker.js for version sync');
     });
 });
 
