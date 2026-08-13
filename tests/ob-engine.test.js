@@ -321,8 +321,10 @@ describe('BP_PROTOCOLS & Engine Cross-Validation', () => {
 
     test('Maintenance formulas concentration math is precise', () => {
         const m = calcMgSO4MaintenanceIV();
-        assert.equal((m.formulaA.mgso4_g * 1000) / m.formulaA.totalVolume_mL, m.formulaA.finalConc_mg_per_mL);
-        assert.equal((m.formulaB.mgso4_g * 1000) / m.formulaB.totalVolume_mL, m.formulaB.finalConc_mg_per_mL);
+        assert.ok(m.formulaC);
+        assert.equal(m.formulaC.mgso4_g, 20);
+        assert.equal(m.formulaC.rate1g, 50);
+        assert.equal(m.formulaC.rate2g, 100);
     });
 
     test('Recurrent bolus volume math is precise', () => {

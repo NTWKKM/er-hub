@@ -431,14 +431,18 @@
         <span class="section-title-group">💧 Maintenance IV Drip — Continuous Infusion (24 ชม. หลังคลอด / last seizure)</span>
     </h3>
 
-    <div class="grid-2col" style="margin-bottom: 12px;">
+    <div class="grid-2col" style="margin-bottom: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
         <div class="compact-card">
-            <div class="compact-card-title" id="formula-a-title">สูตร A (Thai-CMU)</div>
+            <div class="compact-card-title" id="formula-a-title">สูตร A (Thai-CMU 10g / 1000 mL)</div>
             <div id="formula-a-body" style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;"></div>
         </div>
         <div class="compact-card">
-            <div class="compact-card-title" id="formula-b-title">สูตร B (Concentrated)</div>
+            <div class="compact-card-title" id="formula-b-title">สูตร B (Concentrated 20g / 500 mL)</div>
             <div id="formula-b-body" style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;"></div>
+        </div>
+        <div class="compact-card">
+            <div class="compact-card-title" id="formula-c-title">สูตร C (CPG 20g / 1000 mL)</div>
+            <div id="formula-c-body" style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;"></div>
         </div>
     </div>
 
@@ -644,6 +648,8 @@
         const fA = maint.formulaA;
         const fB = maint.formulaB;
 
+        const fC = maint.formulaC;
+
         const fABody = document.getElementById('formula-a-body');
         if (fABody) {
             fABody.innerHTML = `
@@ -664,6 +670,18 @@
                 <div style="margin-top:6px;">
                     <span class="rate-badge rate-1g">1 g/hr → ${fB.rate1g} mL/hr</span>
                     <span class="rate-badge rate-2g">2 g/hr → ${fB.rate2g} mL/hr</span>
+                </div>
+            `;
+        }
+
+        const fCBody = document.getElementById('formula-c-body');
+        if (fCBody && fC) {
+            fCBody.innerHTML = `
+                <strong>50% MgSO4 ${fC.mgso4_50pct_mL} mL (${fC.mgso4_g} g)</strong> ใน <strong>${fC.diluent}</strong><br>
+                ความเข้มข้น: ${fC.finalConc_mg_per_mL} mg/mL (2%)<br>
+                <div style="margin-top:6px;">
+                    <span class="rate-badge rate-1g">1 g/hr → ${fC.rate1g} mL/hr</span>
+                    <span class="rate-badge rate-2g">2 g/hr → ${fC.rate2g} mL/hr</span>
                 </div>
             `;
         }

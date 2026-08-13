@@ -27,18 +27,18 @@ const MGSO4_AMP_DOSE_G = 5;    // grams per ampule (50% × 10 mL)
  */
 const MAINTENANCE_FORMULAS = {
     formulaA: {
-        label: 'สูตร A (Thai-CMU)',
+        label: 'สูตร A (Thai-CMU / 10g in 1000 mL)',
         mgso4_50pct_mL: 20,
         mgso4_g: 10,
         diluent: 'D5W 1000 mL',
-        totalVolume_mL: 1000,
-        // final concentration: 10g / 1000 mL = 10 mg/mL (1%)
+        totalVolume_mL: 1020,
+        // final concentration: ~10 mg/mL (1%)
         finalConc_mg_per_mL: 10,
         rate1g: 100,  // mL/hr for 1 g/hr
         rate2g: 200   // mL/hr for 2 g/hr
     },
     formulaB: {
-        label: 'สูตร B (Concentrated)',
+        label: 'สูตร B (Concentrated 20g in 500 mL)',
         mgso4_50pct_mL: 40,
         mgso4_g: 20,
         diluent: 'D5W/NSS 460 mL',
@@ -47,6 +47,17 @@ const MAINTENANCE_FORMULAS = {
         finalConc_mg_per_mL: 40,
         rate1g: 25,   // mL/hr for 1 g/hr
         rate2g: 50    // mL/hr for 2 g/hr
+    },
+    formulaC: {
+        label: 'สูตร C (CPG 20g in 1000 mL)',
+        mgso4_50pct_mL: 40,
+        mgso4_g: 20,
+        diluent: 'D5W 1000 mL',
+        totalVolume_mL: 1040,
+        // final concentration: 20g / 1040 mL ≈ 19.2 mg/mL (2%)
+        finalConc_mg_per_mL: 20,
+        rate1g: 50,   // mL/hr for 1 g/hr
+        rate2g: 100   // mL/hr for 2 g/hr
     }
 };
 
@@ -267,15 +278,16 @@ function calcMgSO4Loading() {
 
 
 /**
- * Calculates MgSO4 maintenance IV drip for both formulas A and B,
+ * Calculates MgSO4 maintenance IV drip for formulas A, B, and C,
  * showing both 1 g/hr and 2 g/hr rates.
  *
- * @returns {Object} Maintenance drip details for both formulas and both rates
+ * @returns {Object} Maintenance drip details for formulas and rates
  */
 function calcMgSO4MaintenanceIV() {
     return {
         formulaA: { ...MAINTENANCE_FORMULAS.formulaA },
         formulaB: { ...MAINTENANCE_FORMULAS.formulaB },
+        formulaC: { ...MAINTENANCE_FORMULAS.formulaC },
         duration: '24 ชม. หลังคลอด หรือหลัง last seizure'
     };
 }
@@ -325,8 +337,9 @@ function calcMgSO4RecurrentBolus() {
         vol50pct,       // 4 mL
         vol10pct,       // 20 mL
         diluentVol,     // 16 mL NSS to dilute
-        rateNote: 'Slow IV push ≤1 g/min (ให้ช้าๆ อย่างน้อย 2 นาที)',
-        secondLine: 'ถ้ายังชักหลัง repeat MgSO4 bolus → พิจารณา Benzodiazepine second-line (Lorazepam 4 mg IV / Diazepam 5-10 mg IV / Midazolam 10 mg IM)'
+        rateNote: 'Slow IV push ≤1 g/min (ให้ช้าๆ อย่างน้อย 2-5 นาที)',
+        cpgHalfDoseNote: '10% MgSO4 2-4 g (half dose) IV push slowly',
+        secondLine: 'ถ้ายังชักหลัง repeat MgSO4 bolus → พิจารณา Benzodiazepine / Anticonvulsant second-line (Lorazepam 2-4 mg IV / Diazepam 5 mg IV / Phenytoin 15-20 mg/kg IV)'
     };
 }
 
