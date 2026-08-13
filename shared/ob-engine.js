@@ -52,7 +52,7 @@ const MAINTENANCE_FORMULAS = {
 
 /**
  * Antihypertensive escalation protocols for severe-range BP (≥160/110).
- * Source: Thai-CMU (max ceilings) aligned with ACOG dose/interval.
+ * Source: Thai-CMU (max ceilings) aligned with ACOG, Tintinalli 9th, and Rosen 10th.
  */
 const BP_PROTOCOLS = {
     hydralazine: {
@@ -61,8 +61,9 @@ const BP_PROTOCOLS = {
             '5 mg IV (ให้ช้า ≥2 min)',
             'ถ้า BP ยังไม่ลดใน 20 min → 5-10 mg IV ซ้ำ q20min'
         ],
-        maxTotal: '30 mg',
-        note: 'ถ้าครบ max → เปลี่ยนเป็น Labetalol หรือ consult specialist'
+        maxTotal: '20-30 mg',
+        note: 'ถ้าครบ max → เปลี่ยนเป็น Labetalol หรือ consult specialist',
+        contraindications: 'หลีกเลี่ยงในผู้ป่วยโรคหลอดเลือดหัวใจตีบเฉียบพลัน (ACS) เนื่องจากเกิด reflex tachycardia'
     },
     labetalol: {
         name: 'Labetalol IV',
@@ -71,18 +72,78 @@ const BP_PROTOCOLS = {
             'ถ้าไม่ตอบสนองใน 10 min → 40 mg IV',
             'ถ้ายังไม่ตอบสนอง → 80 mg IV q10min'
         ],
-        maxTotal: '220 mg',
-        note: 'ถ้าครบ max → เปลี่ยนเป็น Hydralazine หรือ consult specialist'
+        maxTotal: '220-300 mg',
+        note: 'ถ้าครบ max → เปลี่ยนเป็น Hydralazine หรือ consult specialist',
+        contraindications: 'ห้ามใช้ใน Active asthma/Severe bronchospasm, Sinus bradycardia, Heart block > 1st degree'
     },
     nifedipine: {
         name: 'Nifedipine Oral',
         steps: [
-            '10 mg oral',
-            'ถ้ายังไม่ลดใน 30 min → repeat 10 mg oral q30min'
+            '10 mg oral (Immediate-release)',
+            'ถ้ายังไม่ลดใน 30 min → repeat 10-20 mg oral q30min'
         ],
         maxTotal: '120 mg/day',
-        note: 'ถ้าครบ max → switch IV Labetalol 40 mg'
+        note: 'ถ้าครบ max → switch IV Labetalol 40 mg',
+        contraindications: 'ระวัง Overshoot hypotension และ tachycardia รุนแรง ซึ่งทำให้เกิด uteroplacental hypoperfusion'
+    },
+    contraindicatedPregnancy: {
+        title: '⛔ Absolute Contraindications in Pregnancy',
+        drugs: 'ACE inhibitors, ARBs, Direct Renin Inhibitors, Sodium Nitroprusside',
+        reason: 'มีพิษร้ายแรงต่อทารกในครรภ์ (Teratogenic / Fetal renal failure / Oligohydramnios)'
     }
+};
+
+/**
+ * MgSO4 Contraindications and Safety Warnings.
+ */
+const MGSO4_CONTRAINDICATIONS = {
+    myastheniaGravis: {
+        title: 'Myasthenia Gravis (Absolute Contraindication)',
+        text: 'ห้ามใช้ MgSO4 เด็ดขาด! แมกนีเซียมยับยั้ง Pre-synaptic Acetylcholine release ที่ Neuromuscular junction ทำให้กล้ามเนื้ออ่อนแรงรุนแรงจนเกิด Respiratory failure เฉียบพลัน',
+        action: 'ใช้ Alternative Anticonvulsant แทนทันที (Lorazepam / Diazepam / Phenytoin / Levetiracetam)'
+    },
+    renalImpairment: {
+        title: 'Severe Renal Impairment (Dose Adjustment Required)',
+        text: 'MgSO4 ขับออกทางไต 100% หากมี Renal insufficiency / oliguria ยาจะสะสมเกิดพิษร้ายแรง',
+        action: 'พิจ็ารณาลด Loading dose เหลือ 2 g IV bolus, เจาะ Serum Mg ก่อนให้, และ Hold/ลด Maintenance dose'
+    }
+};
+
+/**
+ * Alternative Anticonvulsants when MgSO4 is contraindicated or fails (refractory seizures).
+ */
+const ALTERNATIVE_ANTICONVULSANTS = [
+    { name: 'Lorazepam IV', dose: '2-4 mg IV slow over 2-5 min (ซ้ำได้ 1 ครั้งใน 10-15 min)', max: '4 mg' },
+    { name: 'Diazepam IV', dose: '5-10 mg IV slow push', max: '10 mg' },
+    { name: 'Phenytoin / Fosphenytoin IV', dose: 'Loading 15-20 mg/kg IV (Phenytoin max rate ≤50 mg/min, Fosphenytoin ≤150 mg/min)', max: '20 mg/kg' },
+    { name: 'Levetiracetam IV', dose: '20-60 mg/kg IV q12h', max: '60 mg/kg' }
+];
+
+/**
+ * Antidotes for Magnesium Toxicity (Hypermagnesemia).
+ */
+const CALCIUM_ANTIDOTES = {
+    calciumGluconate: {
+        name: 'Calcium gluconate 10%',
+        dose: '10 mL (1 g) IV push over 3-5 min',
+        route: 'Peripheral IV / Central line',
+        note: 'ยาล้างพิษมาตรฐานประจำหอผู้ป่วย'
+    },
+    calciumChloride: {
+        name: 'Calcium chloride 10%',
+        dose: '10 mL (1 g) IV slow over 5-10 min',
+        route: 'Central line / IO เท่านั้น',
+        note: '⚠️ ห้ามให้ทาง Peripheral IV เพราะทำให้เกิด severe thrombophlebitis / tissue necrosis'
+    }
+};
+
+/**
+ * Literature Dosing Variations Reference (Tintinalli, Rosen, Goldfrank).
+ */
+const TEXTBOOK_VARIATIONS = {
+    tintinalli: 'Tintinalli 9th: Loading 4-6g IV over 15-30m (หรือ 10g IM Pritchard), Maintenance 2g/h IV',
+    rosen: 'Rosen 10th: Loading 4-6g IV over 15-20m, Maintenance 1-2g/h IV',
+    goldfrank: 'Goldfrank 11th: Loading 4g IV (ให้อย่างรวดเร็วใน 5 min หากกำลังชักรุนแรง), Maintenance 1-2g/h IV'
 };
 
 /**
@@ -310,6 +371,51 @@ function evalSevereFeatures(features) {
     };
 }
 
+/**
+ * Comprehensive MgSO4 safety check combining toxicity monitoring,
+ * contraindications (e.g. Myasthenia Gravis), and renal adjustments.
+ *
+ * @param {Object} params
+ * @param {boolean} [params.hasMyasthenia] - Patient has Myasthenia Gravis?
+ * @param {boolean} [params.isRenalImpaired] - Severe renal impairment (Cr > 1.1 or CrCl < 30)?
+ * @param {number|null} [params.rr] - Respiratory rate
+ * @param {boolean} [params.dtrAbsent] - DTR absent?
+ * @param {number|null} [params.urineOutput] - Urine output in mL/hr
+ * @returns {Object} Comprehensive safety result
+ */
+function checkMgSO4Safety({ hasMyasthenia, isRenalImpaired, rr, dtrAbsent, urineOutput } = {}) {
+    const tox = checkMgSO4Toxicity({ rr, dtrAbsent, urineOutput });
+    const warnings = [...tox.flags];
+    let isContraindicated = false;
+
+    if (hasMyasthenia === true) {
+        isContraindicated = true;
+        warnings.unshift({
+            id: 'myasthenia',
+            text: '⛔ MYASTHENIA GRAVIS — ห้ามใช้ MgSO4 เด็ดขาด! (เสี่ยง Respiratory failure รุนแรง)',
+            severity: 'critical'
+        });
+    }
+
+    if (isRenalImpaired === true) {
+        warnings.push({
+            id: 'renal',
+            text: '⚠️ Severe Renal Impairment — ปรับลด Loading dose เป็น 2 g IV, เจาะ Serum Mg, และ Hold/ลด Maintenance',
+            severity: 'warning'
+        });
+    }
+
+    return {
+        isSafe: !isContraindicated && !tox.isToxic,
+        isContraindicated,
+        isToxic: tox.isToxic,
+        warnings,
+        antidoteNote: tox.antidoteNote,
+        serumMgNote: tox.serumMgNote,
+        alternatives: ALTERNATIVE_ANTICONVULSANTS
+    };
+}
+
 // ─── Exports ─────────────────────────────────────────────────────────────────
 
 // Export for Node testing environment
@@ -320,12 +426,18 @@ if (typeof module !== 'undefined' && module.exports) {
         calcMgSO4IM,
         calcMgSO4RecurrentBolus,
         checkMgSO4Toxicity,
+        checkMgSO4Safety,
         classifyBPSeverity,
         evalSevereFeatures,
         MAINTENANCE_FORMULAS,
         BP_PROTOCOLS,
         DIAGNOSTIC_CRITERIA,
+        MGSO4_CONTRAINDICATIONS,
+        ALTERNATIVE_ANTICONVULSANTS,
+        CALCIUM_ANTIDOTES,
+        TEXTBOOK_VARIATIONS,
         MGSO4_CONC_50PCT,
         MGSO4_CONC_10PCT
     };
 }
+

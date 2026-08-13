@@ -1,3 +1,16 @@
+## [2.5.2] — 2026-08-13
+
+### Added & Enhanced (Clinical Safety Guidelines)
+- **OB Engine (`shared/ob-engine.js`) & MgSO4 Calculator (`tools/mgso4-calculator.html`):**
+  - **Absolute Contraindication Alert:** Added Myasthenia Gravis safety callout (MgSO4 inhibits pre-synaptic Acetylcholine release → severe respiratory muscle failure).
+  - **Alternative Anticonvulsants:** Added secondary protocol guidance for MgSO4 contraindications or treatment failure: Lorazepam 2–4 mg IV (2–5 min), Diazepam 5–10 mg IV, Phenytoin/Fosphenytoin 15–20 mg/kg IV, and Levetiracetam 20–60 mg/kg IV.
+  - **Renal Impairment Dosing Adjustment:** Added renal insufficiency warning (Cr > 1.1 mg/dL / oliguria): reduce Loading dose to 2 g IV bolus, check Serum Mg, and hold/reduce Maintenance infusion.
+  - **Textbook Dosing Variations:** Added reference note box detailing Tintinalli 9th (4–6g over 15–30m, 2g/h), Rosen 10th (4–6g over 15–20m, 1–2g/h), and Goldfrank 11th (4g in 5m for active seizure, 1–2g/h).
+  - **Antidote Options:** Added 1st line Calcium Gluconate 10% 1g IV (3–5 min) and 2nd line Calcium Chloride 10% 1g IV (5–10 min, Central line/IO only to avoid thrombophlebitis).
+  - **Antihypertensive Contraindications:** Added specific warnings for Labetalol (Active asthma / Bradycardia / Heart block), Hydralazine (ACS / Reflex tachycardia), Nifedipine (Overshoot hypotension), and highlighted absolute contraindications in pregnancy (ACEi, ARBs, Nitroprusside).
+  - Added unit test suite `checkMgSO4Safety & Clinical Constants` in `tests/ob-engine.test.js` (54 tests passed).
+  - Bumped PWA offline cache version to `v45` (`service-worker.js` and `index.html` synchronized).
+
 ## [2.5.1] — 2026-08-13
 
 ### Changed / Refactored

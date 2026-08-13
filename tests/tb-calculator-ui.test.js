@@ -451,15 +451,15 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         assert.ok(html.includes('TB Weight-Based Dosing Calculator'), 'index.html should display title');
     });
 
-    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and uses v44', () => {
+    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and uses v45', () => {
         const sw = fs.readFileSync(path.join(__dirname, '../service-worker.js'), 'utf8');
-        assert.ok(sw.includes("'er-hub-v44'"), 'CACHE_VERSION should be er-hub-v44');
+        assert.ok(sw.includes("'er-hub-v45'"), 'CACHE_VERSION should be er-hub-v45');
         assert.ok(sw.includes("'./tools/tb-calculator.html'"), 'tb-calculator.html should be cached');
     });
 
-    await t.test('index.html version string matches service-worker.js v44', () => {
+    await t.test('index.html version string matches service-worker.js v45', () => {
         const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
-        assert.ok(html.includes('v44'), 'index.html top nav should state v44');
+        assert.ok(html.includes('v45'), 'index.html top nav should state v45');
     });
 
     await t.test('ARCHITECTURE.md documents tools/tb-calculator.html', () => {

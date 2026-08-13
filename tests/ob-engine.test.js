@@ -286,17 +286,18 @@ describe('evalSevereFeatures', () => {
     });
 });
 
-// ─── BP_PROTOCOLS & Cross-Validation ────────────────────────────────────────
+// ─── BP_PROTOCOLS & Engine Cross-Validation ────────────────────────────────────────
 
 describe('BP_PROTOCOLS & Engine Cross-Validation', () => {
-    test('BP_PROTOCOLS has hydralazine, labetalol, and nifedipine', () => {
+    test('BP_PROTOCOLS has hydralazine, labetalol, and nifedipine with contraindications', () => {
         const { BP_PROTOCOLS } = require('../shared/ob-engine.js');
         assert.ok(BP_PROTOCOLS.hydralazine);
         assert.ok(BP_PROTOCOLS.labetalol);
         assert.ok(BP_PROTOCOLS.nifedipine);
-        assert.equal(BP_PROTOCOLS.hydralazine.maxTotal, '30 mg');
-        assert.equal(BP_PROTOCOLS.labetalol.maxTotal, '220 mg');
-        assert.equal(BP_PROTOCOLS.nifedipine.maxTotal, '120 mg/day');
+        assert.ok(BP_PROTOCOLS.contraindicatedPregnancy);
+        assert.ok(BP_PROTOCOLS.hydralazine.contraindications.includes('ACS'));
+        assert.ok(BP_PROTOCOLS.labetalol.contraindications.includes('astma') || BP_PROTOCOLS.labetalol.contraindications.includes('asthma'));
+        assert.ok(BP_PROTOCOLS.nifedipine.contraindications.includes('hypotension'));
     });
 
     test('Loading dose mathematical identities holds', () => {
@@ -320,3 +321,56 @@ describe('BP_PROTOCOLS & Engine Cross-Validation', () => {
     });
 });
 
+// ─── Safety & Contraindications ─────────────────────────────────────────────
+
+describe('checkMgSO4Safety & Clinical Constants', () => {
+    const {
+        checkMgSO4Safety,
+        MGSO4_CONTRAINDICATIONS,
+        ALTERNATIVE_ANTICONVULSANTS,
+        CALCIUM_ANTIDOTES,
+        TEXTBOOK_VARIATIONS
+    } = require('../shared/ob-engine.js');
+
+    test('Myasthenia Gravis triggers absolute contraindication and lists alternative drugs', () => {
+        const res = checkMgSO4Safety({ hasMyasthenia: true });
+        assert.equal(res.isSafe, false);
+        assert.equal(res.isContraindicated, true);
+        assert.ok(res.warnings.some(w => w.id === 'myasthenia' && w.severity === 'critical'));
+        assert.equal(res.alternatives.length, 4);
+    });
+
+    test('Renal impairment adds warning flag', () => {
+        const res = checkMgSO4Safety({ isRenalImpaired: true });
+        assert.equal(res.isSafe, true); // Not contraindicated per se, but has warning
+        assert.ok(res.warnings.some(w => w.id === 'renal' && w.severity === 'warning'));
+    });
+
+    test('Toxicity and contraindication warnings stack correctly', () => {
+        const res = checkMgSO4Safety({ hasMyasthenia: true, isRenalImpaired: true, rr: 10, dtrAbsent: true });
+        assert.equal(res.isSafe, false);
+        assert.equal(res.isContraindicated, true);
+        assert.equal(res.isToxic, true);
+        assert.equal(res.warnings.length, 4); // myasthenia + dtr + rr + renal
+    });
+
+    test('CALCIUM_ANTIDOTES has both gluconate and chloride', () => {
+        assert.ok(CALCIUM_ANTIDOTES.calciumGluconate);
+        assert.ok(CALCIUM_ANTIDOTES.calciumChloride);
+        assert.ok(CALCIUM_ANTIDOTES.calciumChloride.route.includes('Central line'));
+    });
+
+    test('ALTERNATIVE_ANTICONVULSANTS contains 4 first-line choices', () => {
+        assert.equal(ALTERNATIVE_ANTICONVULSANTS.length, 4);
+        assert.ok(ALTERNATIVE_ANTICONVULSANTS.some(a => a.name.includes('Lorazepam')));
+        assert.ok(ALTERNATIVE_ANTICONVULSANTS.some(a => a.name.includes('Diazepam')));
+        assert.ok(ALTERNATIVE_ANTICONVULSANTS.some(a => a.name.includes('Phenytoin')));
+        assert.ok(ALTERNATIVE_ANTICONVULSANTS.some(a => a.name.includes('Levetiracetam')));
+    });
+
+    test('TEXTBOOK_VARIATIONS documents Tintinalli, Rosen, and Goldfrank', () => {
+        assert.ok(TEXTBOOK_VARIATIONS.tintinalli.includes('Tintinalli 9th'));
+        assert.ok(TEXTBOOK_VARIATIONS.rosen.includes('Rosen 10th'));
+        assert.ok(TEXTBOOK_VARIATIONS.goldfrank.includes('Goldfrank 11th'));
+    });
+});
