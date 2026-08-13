@@ -133,13 +133,11 @@ Features:
 
 ### MgSO4 Dosing & Pre-eclampsia/Eclampsia Calculator (`tools/mgso4-calculator.html`)
 
-Standalone obstetric emergency calculation tool and diagnostic reference for Pre-eclampsia, Severe Pre-eclampsia, and Eclampsia. Built with Braun Analogue precision design system (`theme-neutral`).
+Standalone obstetric emergency calculation tool and diagnostic reference for Pre-eclampsia, Severe Pre-eclampsia, and Eclampsia. Built with Braun Analogue precision design system (`theme-neutral`). Dynamically populated via `shared/ob-engine.js`.
 Features:
-- **Diagnostic Criteria Cards:** Visual reference for Pre-eclampsia, Severe Pre-eclampsia, and Eclampsia.
+- **Glanceable Primary Cards (Default Expanded):** Prominent MgSO4 4g IV loading dose banner, pump rate table (80-120 mL/hr), dual maintenance infusion formula guides (Thai-CMU 10g/1000mL & Concentrated 20g/500mL) displaying 1 g/hr and 2 g/hr rates, IM Pritchard alternative, and toxicity monitoring parameters (DTR, RR, UO + Calcium gluconate antidote).
+- **Compact Accordions (Default Collapsed):** Accessible toggling for Diagnostic Criteria, Recurrent Seizures (2g bolus + 2nd-line Benzos), Severe BP Control (Hydralazine, Labetalol, Nifedipine), and Lab Orders checklist.
 - **Dual Concentration Support:** Explicit prep, volume, and pump rate calculations for both 50% MgSO4 (500 mg/mL ampule) and 10% MgSO4 (100 mg/mL diluted form).
-- **Loading & Maintenance Regimens:** Standard 4g IV loading dose over 20-30 min, dual maintenance infusion formula guides (Thai-CMU 10g/1000mL & Concentrated 20g/500mL) displaying both 1 g/hr and 2 g/hr rates, and IM Pritchard alternative (5g/buttock + Lidocaine).
-- **Recurrent Seizure Protocol:** 2g IV bolus administration instructions with 50%/10% volumes and second-line benzodiazepine escalation guide.
-- **BP Control & Toxicity Monitoring:** Severe-range BP (≥160/110) antihypertensive reference table (Hydralazine, Labetalol, Nifedipine with max ceilings), DTR/RR/UO toxicity monitoring parameters, Calcium gluconate antidote instructions, and serum Mg therapeutic levels.
 
 ### Shared Engines (`shared/`)
 

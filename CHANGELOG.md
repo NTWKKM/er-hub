@@ -1,3 +1,13 @@
+## [2.5.1] — 2026-08-13
+
+### Changed / Refactored
+- **MgSO4 Calculator (`tools/mgso4-calculator.html`):**
+  - Refactored page to dynamically populate all dosing protocols, infusion rates, diagnostic criteria, recurrent seizure guidance, and severe BP control steps directly from `ob-engine.js`.
+  - Redesigned interface into a compact, scannable layout featuring glanceable top-level cards for Loading Dose, Maintenance IV/IM Infusions, and Toxicity Monitoring (default expanded), alongside accordion sections for Diagnostic Criteria, Recurrent Seizures, BP Control, and Lab Orders (default collapsed).
+  - Optimized CSS and responsiveness for desktop displays and mobile screen reflow.
+  - Added unit test suites for `BP_PROTOCOLS` and mathematical cross-validation assertions in `tests/ob-engine.test.js`.
+  - Bumped PWA offline cache version to `v44` (`service-worker.js` and `index.html` synchronized).
+
 ## [2.5.0] — 2026-08-13
 
 ### Added

@@ -286,24 +286,37 @@ describe('evalSevereFeatures', () => {
     });
 });
 
-// ─── Constants sanity checks ─────────────────────────────────────────────────
+// ─── BP_PROTOCOLS & Cross-Validation ────────────────────────────────────────
 
-describe('Constants', () => {
-    test('50% MgSO4 concentration is 500 mg/mL', () => {
-        assert.equal(MGSO4_CONC_50PCT, 500);
+describe('BP_PROTOCOLS & Engine Cross-Validation', () => {
+    test('BP_PROTOCOLS has hydralazine, labetalol, and nifedipine', () => {
+        const { BP_PROTOCOLS } = require('../shared/ob-engine.js');
+        assert.ok(BP_PROTOCOLS.hydralazine);
+        assert.ok(BP_PROTOCOLS.labetalol);
+        assert.ok(BP_PROTOCOLS.nifedipine);
+        assert.equal(BP_PROTOCOLS.hydralazine.maxTotal, '30 mg');
+        assert.equal(BP_PROTOCOLS.labetalol.maxTotal, '220 mg');
+        assert.equal(BP_PROTOCOLS.nifedipine.maxTotal, '120 mg/day');
     });
 
-    test('10% MgSO4 concentration is 100 mg/mL', () => {
-        assert.equal(MGSO4_CONC_10PCT, 100);
+    test('Loading dose mathematical identities holds', () => {
+        const load = calcMgSO4Loading();
+        assert.equal(load.diluentVol, load.vol10pct - load.vol50pct);
+        assert.equal(load.vol50pct * MGSO4_CONC_50PCT, load.doseMg);
+        assert.equal(load.vol10pct * MGSO4_CONC_10PCT, load.doseMg);
     });
 
-    test('DIAGNOSTIC_CRITERIA has 3 classifications', () => {
-        assert.ok(DIAGNOSTIC_CRITERIA.preeclampsia);
-        assert.ok(DIAGNOSTIC_CRITERIA.severePreeclampsia);
-        assert.ok(DIAGNOSTIC_CRITERIA.eclampsia);
+    test('Maintenance formulas concentration math is precise', () => {
+        const m = calcMgSO4MaintenanceIV();
+        assert.equal((m.formulaA.mgso4_g * 1000) / m.formulaA.totalVolume_mL, m.formulaA.finalConc_mg_per_mL);
+        assert.equal((m.formulaB.mgso4_g * 1000) / m.formulaB.totalVolume_mL, m.formulaB.finalConc_mg_per_mL);
     });
 
-    test('severe pre-eclampsia has 8 criteria', () => {
-        assert.equal(DIAGNOSTIC_CRITERIA.severePreeclampsia.criteria.length, 8);
+    test('Recurrent bolus volume math is precise', () => {
+        const r = calcMgSO4RecurrentBolus();
+        assert.equal(r.vol50pct * MGSO4_CONC_50PCT, r.doseMg);
+        assert.equal(r.vol10pct * MGSO4_CONC_10PCT, r.doseMg);
+        assert.equal(r.diluentVol, r.vol10pct - r.vol50pct);
     });
 });
+

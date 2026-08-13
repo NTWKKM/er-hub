@@ -11,418 +11,92 @@
     <link rel="stylesheet" href="../shared/base.css">
     <style>
         :root {
-            --brand-navy: #1e3c72;
-            --brand-navy-dark: #122549;
             --ob-primary: #7c3aed;
             --ob-primary-dark: #5b21b6;
-            --ob-primary-light: #ede9fe;
-            --ob-primary-bg: #f5f3ff;
+            --ob-bg-light: #f5f3ff;
+            --ob-border: #ddd6fe;
             --surface-bg: #f8fafc;
             --card-border: #e2e8f0;
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --alert-amber-bg: #fffbe6;
-            --alert-amber-border: #d97706;
-            --alert-amber-text: #92400e;
             --alert-red-bg: #fef2f2;
-            --alert-red-border: #dc2626;
+            --alert-red-border: #fca5a5;
             --alert-red-text: #991b1b;
-            --alert-green-bg: #f0fdf4;
-            --alert-green-border: #16a34a;
-            --alert-green-text: #166534;
+            --alert-amber-bg: #fffbe6;
+            --alert-amber-border: #fcd34d;
+            --alert-amber-text: #92400e;
         }
 
         body.theme-neutral {
-            background-color: #ffffff;
+            background-color: #f1f5f9;
             color: var(--text-main);
             font-family: 'Sarabun', sans-serif;
+            padding: 16px;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1040px;
             margin: 0 auto;
             background: #ffffff;
-            border: none;
-            box-shadow: none;
-            border-radius: 0;
-            overflow: visible;
-        }
-
-        .form-container {
-            padding: 24px 30px 30px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+            padding: 20px 24px;
         }
 
         /* ══ Section Headers ══ */
         .section-header {
             font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 700;
-            color: var(--ob-primary);
+            color: var(--ob-primary-dark);
             text-transform: uppercase;
             letter-spacing: 0.04em;
-            margin: 28px 0 16px 0;
-            padding-bottom: 8px;
+            margin: 16px 0 10px 0;
+            padding-bottom: 6px;
             border-bottom: 2px solid #f1f5f9;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
         }
 
         .section-header:first-child {
             margin-top: 0;
         }
 
-        .section-header .badge {
+        .section-title-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-treatment {
             font-size: 11px;
             font-weight: 700;
             padding: 2px 8px;
             border-radius: 4px;
             text-transform: uppercase;
             letter-spacing: 0.03em;
-        }
-
-        .badge-treatment {
-            background: #fef2f2;
-            color: #991b1b;
-        }
-
-        /* ══ Diagnostic Criteria Cards ══ */
-        .dx-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .dx-card {
-            border: 1.5px solid var(--card-border);
-            border-radius: 8px;
-            padding: 16px;
-            background: #ffffff;
-        }
-
-        .dx-card-title {
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--ob-primary);
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            margin-bottom: 10px;
-            padding-bottom: 6px;
-            border-bottom: 1.5px solid #f1f5f9;
-        }
-
-        .dx-card.severity-mild .dx-card-title { color: #d97706; }
-
-        .dx-card.severity-severe .dx-card-title { color: #dc2626; }
-
-        .dx-card.severity-critical .dx-card-title { color: #7c3aed; }
-
-        .dx-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
-            margin-bottom: 6px;
-            font-size: 13px;
-            line-height: 1.4;
-            color: var(--text-main);
-        }
-
-        .dx-item:last-child { margin-bottom: 0; }
-
-        .dx-bullet {
-            flex-shrink: 0;
-            margin-top: 2px;
-            font-size: 11px;
-        }
-
-        .dx-note {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px dashed #e2e8f0;
-            line-height: 1.5;
-        }
-
-        /* ══ Dose Cards ══ */
-        .dose-card {
-            background: var(--surface-bg);
-            border: 1.5px solid var(--card-border);
-            border-radius: 8px;
-            padding: 18px 20px;
-            margin-bottom: 16px;
-        }
-
-        .dose-card-title {
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .dose-highlight {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--ob-primary);
-            font-variant-numeric: tabular-nums;
-            line-height: 1.2;
-            margin-bottom: 6px;
-        }
-
-        .dose-highlight.critical-dose {
-            color: #dc2626;
-        }
-
-        .dose-sub {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        .dose-sub strong {
-            color: var(--text-main);
-        }
-
-        /* ══ Concentration Comparison Table ══ */
-        .conc-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 12px;
-            font-size: 13px;
-        }
-
-        .conc-table th {
-            background: #f1f5f9;
-            padding: 8px 12px;
-            text-align: left;
-            font-weight: 700;
-            color: #334155;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .conc-table td {
-            padding: 8px 12px;
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: top;
-        }
-
-        .conc-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .conc-table .conc-50 {
-            background: #fef3c7;
-        }
-
-        .conc-table .conc-10 {
-            background: #dbeafe;
-        }
-
-        .conc-label {
-            display: inline-block;
-            font-weight: 700;
-            font-size: 11px;
-            padding: 1px 6px;
-            border-radius: 3px;
-            margin-right: 4px;
-        }
-
-        .conc-label-50 {
-            background: #fbbf24;
-            color: #78350f;
-        }
-
-        .conc-label-10 {
-            background: #60a5fa;
-            color: #1e3a5f;
-        }
-
-        /* ══ Maintenance Formula Cards ══ */
-        .formula-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-top: 12px;
-        }
-
-        .formula-card {
-            border: 1.5px solid var(--card-border);
-            border-radius: 8px;
-            padding: 14px 16px;
-            background: #ffffff;
-        }
-
-        .formula-card-title {
-            font-weight: 700;
-            font-size: 13px;
-            color: var(--brand-navy);
-            margin-bottom: 8px;
-        }
-
-        .formula-detail {
-            font-size: 12.5px;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        .formula-detail strong {
-            color: var(--text-main);
-        }
-
-        .rate-badge {
-            display: inline-block;
-            font-weight: 700;
-            font-size: 13px;
-            padding: 3px 10px;
-            border-radius: 4px;
-            margin: 3px 4px 3px 0;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .rate-badge-1g {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .rate-badge-2g {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        /* ══ Toxicity Card ══ */
-        .tox-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .tox-item {
-            border: 1.5px solid var(--card-border);
-            border-radius: 8px;
-            padding: 12px 14px;
-            background: #ffffff;
-            text-align: center;
-        }
-
-        .tox-item-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            margin-bottom: 6px;
-        }
-
-        .tox-item-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text-main);
-        }
-
-        .tox-threshold {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        /* ══ Warning Banners ══ */
-        .warning-banner {
-            padding: 12px 16px;
-            border-radius: 6px;
-            font-size: 13px;
-            line-height: 1.5;
-            margin-top: 12px;
-            display: none;
-        }
-
-        .warning-banner.visible {
-            display: block;
-        }
-
-        .warning-banner.critical {
             background: var(--alert-red-bg);
-            border: 1.5px solid var(--alert-red-border);
             color: var(--alert-red-text);
+            border: 1px solid var(--alert-red-border);
         }
 
-        /* ══ Antidote Box ══ */
-        .antidote-box {
-            background: #fef3c7;
-            border: 2px solid #f59e0b;
-            border-radius: 8px;
-            padding: 14px 18px;
-            margin-top: 14px;
-        }
-
-        .antidote-box strong {
-            color: #92400e;
-        }
-
-        /* ══ BP Reference Table ══ */
-        .bp-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            margin-top: 12px;
-        }
-
-        .bp-table th {
-            background: #f1f5f9;
-            padding: 8px 10px;
-            text-align: left;
-            font-weight: 700;
-            font-size: 12px;
-            color: #334155;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .bp-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: top;
-            line-height: 1.5;
-        }
-
-        .bp-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* ══ IM Route Card ══ */
-        .im-card {
-            background: #fffbeb;
-            border: 1.5px solid #fbbf24;
-            border-radius: 8px;
-            padding: 14px 18px;
-            margin-top: 12px;
-        }
-
-        .im-card-title {
-            font-weight: 700;
-            font-size: 13px;
-            color: #92400e;
-            margin-bottom: 8px;
-        }
-
-        /* ══ Collapsible Sections ══ */
+        /* ══ Collapsible Toggles ══ */
         .collapse-toggle {
             cursor: pointer;
             user-select: none;
+            transition: color 0.15s ease;
+        }
+
+        .collapse-toggle:hover {
+            color: var(--ob-primary);
         }
 
         .collapse-toggle .toggle-chevron {
             display: inline-block;
             transition: transform 0.2s ease;
             font-size: 11px;
+            color: var(--text-muted);
         }
 
         .collapse-toggle[aria-expanded="false"] .toggle-chevron {
@@ -431,336 +105,410 @@
 
         .collapsible-body {
             overflow: hidden;
-            transition: max-height 0.3s ease, opacity 0.3s ease;
-            max-height: 2000px;
+            transition: max-height 0.25s ease-in-out, opacity 0.2s ease-in-out;
+            max-height: 1500px;
             opacity: 1;
         }
 
         .collapsible-body.collapsed {
             max-height: 0;
             opacity: 0;
+            margin: 0;
+            padding: 0;
         }
 
-        /* ══ Lab Checklist ══ */
-        .lab-grid {
+        /* ══ Compact Grids & Cards ══ */
+        .grid-2col {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 8px;
-            margin-top: 10px;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
-        .lab-item {
+        .grid-3col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .compact-card {
+            background: var(--surface-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+
+        .compact-card.highlight {
+            background: var(--ob-bg-light);
+            border-color: var(--ob-border);
+        }
+
+        .compact-card-title {
+            font-family: 'Inter Tight', 'Sarabun', sans-serif;
             font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* ══ Primary Dosing Bar ══ */
+        .primary-dose-banner {
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: 0 3px 10px rgba(124, 58, 237, 0.2);
+        }
+
+        .primary-dose-main {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .primary-dose-val {
+            font-family: 'Inter Tight', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .primary-dose-lbl {
+            font-size: 13.5px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .primary-dose-sub {
+            font-size: 12.5px;
+            text-align: right;
+            opacity: 0.95;
+            line-height: 1.4;
+        }
+
+        /* ══ Tables ══ */
+        .compact-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+            margin-top: 6px;
+        }
+
+        .compact-table th {
+            background: #f1f5f9;
             padding: 6px 10px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            text-align: left;
+            font-weight: 700;
+            color: #475569;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            border-bottom: 1.5px solid #e2e8f0;
+        }
+
+        .compact-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+            line-height: 1.4;
+        }
+
+        .compact-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .conc-badge {
+            display: inline-block;
+            font-weight: 700;
+            font-size: 11px;
+            padding: 1px 6px;
+            border-radius: 3px;
+        }
+
+        .conc-50 { background: #fef3c7; color: #92400e; }
+        .conc-10 { background: #dbeafe; color: #1e40af; }
+
+        .rate-badge {
+            display: inline-block;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 2px 8px;
             border-radius: 4px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .rate-1g { background: #dbeafe; color: #1e40af; }
+        .rate-2g { background: #fef3c7; color: #92400e; }
+
+        /* ══ Toxicity Status ══ */
+        .tox-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tox-pill {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            text-align: center;
+        }
+
+        .tox-pill-lbl {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .tox-pill-val {
+            font-size: 13px;
+            font-weight: 700;
+            color: #166534;
+            margin-top: 2px;
+        }
+
+        .tox-pill-sub {
+            font-size: 10.5px;
+            color: #dc2626;
+            margin-top: 2px;
+        }
+
+        .antidote-banner {
+            background: var(--alert-amber-bg);
+            border: 1px solid var(--alert-amber-border);
+            color: var(--alert-amber-text);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        /* ══ Diagnostic Cards ══ */
+        .dx-item {
+            font-size: 12.5px;
+            line-height: 1.4;
+            margin-bottom: 4px;
             color: var(--text-main);
         }
 
-        /* ══ Responsive ══ */
-        @media (max-width: 900px) {
-            .dx-grid {
+        .dx-item:last-child { margin-bottom: 0; }
+
+        /* ══ Lab Grid ══ */
+        .lab-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .lab-item {
+            font-size: 12px;
+            padding: 4px 8px;
+            background: var(--surface-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
+        }
+
+        /* ══ Responsive Layout ══ */
+        @media (max-width: 820px) {
+            .grid-2col, .grid-3col {
                 grid-template-columns: 1fr;
             }
-            .formula-grid {
-                grid-template-columns: 1fr;
+            .primary-dose-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
             }
-            .tox-grid {
-                grid-template-columns: 1fr;
+            .primary-dose-sub {
+                text-align: left;
+            }
+            .tox-bar {
+                flex-direction: column;
             }
             .lab-grid {
                 grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .form-container {
-                padding: 16px 14px 20px 14px;
-            }
-            .lab-grid {
-                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body class="theme-neutral">
 <div class="container">
-    <div class="form-container">
 
-        <!-- ══════════════ DIAGNOSTIC CRITERIA ══════════════ -->
-        <h3 class="section-header">เกณฑ์วินิจฉัย — Diagnostic Criteria</h3>
-
-        <div class="dx-grid">
-            <!-- Pre-eclampsia -->
-            <div class="dx-card severity-mild" id="dx-preeclampsia">
-                <div class="dx-card-title">Pre-eclampsia</div>
-                <div class="dx-item"><span class="dx-bullet">•</span> BP ≥140/90 mmHg (วัด 2 ครั้ง ห่าง ≥4 ชม.)</div>
-                <div class="dx-item"><span class="dx-bullet">•</span> Proteinuria ≥300 mg/24h หรือ P/C ratio ≥0.3 หรือ dipstick ≥1+</div>
-                <div class="dx-item"><span class="dx-bullet">•</span> GA ≥20 สัปดาห์ หรือ postpartum</div>
-                <div class="dx-note">ต้องมี BP ≥140/90 + proteinuria (หรือ severe feature แม้ไม่มี proteinuria) หลัง GA 20 wk</div>
-            </div>
-
-            <!-- Severe Pre-eclampsia -->
-            <div class="dx-card severity-severe" id="dx-severe">
-                <div class="dx-card-title">Pre-eclampsia with Severe Features</div>
-                <div class="dx-item"><span class="dx-bullet">⚠️</span> BP ≥160/110 mmHg (คงอยู่ ≥15 นาที)</div>
-                <div class="dx-item"><span class="dx-bullet">⚠️</span> Platelet &lt;100,000 /μL</div>
-                <div class="dx-item"><span class="dx-bullet">⚠️</span> AST/ALT ≥2× ULN</div>
-                <div class="dx-item"><span class="dx-bullet">⚠️</span> Cr &gt;1.1 mg/dL หรือ doubling baseline</div>
-                <div class="dx-item"><span class="dx-bullet">⚠️</span> Pulmonary edema</div>
-                <div class="dx-item"><span class="dx-bullet">⚠️</span> New-onset headache ไม่ตอบสนองยาแก้ปวด</div>
-                <div class="dx-item"><span class="dx-bullet">⚠️</span> Visual disturbances (ตาพร่ามัว, scotomata)</div>
-                <div class="dx-item"><span class="dx-bullet">⚠️</span> RUQ / epigastric pain ไม่ตอบสนองยา</div>
-                <div class="dx-note">Pre-eclampsia + severe feature ≥1 ข้อ → ให้ MgSO4 seizure prophylaxis + BP control</div>
-            </div>
-
-            <!-- Eclampsia -->
-            <div class="dx-card severity-critical" id="dx-eclampsia">
-                <div class="dx-card-title">Eclampsia</div>
-                <div class="dx-item"><span class="dx-bullet">🔴</span> New-onset tonic-clonic seizure ใน pregnancy/postpartum ที่ไม่มีสาเหตุอื่น</div>
-                <div class="dx-item"><span class="dx-bullet">🔴</span> อาจมีหรือไม่มีประวัติ pre-eclampsia นำมาก่อน</div>
-                <div class="dx-note">Eclampsia = seizure → MgSO4 treatment dose (loading 4g IV) + ABC management ทันที</div>
-            </div>
+    <!-- ══════════════ 1. LOADING DOSE (Always Expanded) ══════════════ -->
+    <div class="primary-dose-banner">
+        <div class="primary-dose-main">
+            <span class="primary-dose-val" id="load-dose-val">4 g IV</span>
+            <span class="primary-dose-lbl">Loading Dose (MgSO4)</span>
         </div>
+        <div class="primary-dose-sub" id="load-dose-sub">
+            Infusion time: <strong>20-30 นาที</strong> (Rate ≤ 1 g/min)<br>
+            เตรียม Calcium gluconate ไว้พร้อมเสมอ
+        </div>
+    </div>
 
-        <!-- ══════════════ LOADING DOSE ══════════════ -->
-        <h3 class="section-header">
-            Loading Dose — MgSO4 4g IV
-            <span class="badge badge-treatment">ทั้ง Prophylaxis &amp; Treatment</span>
-        </h3>
+    <div class="compact-card highlight" style="margin-bottom: 14px;">
+        <div class="compact-card-title">
+            <span>💉 วิธีเตรียม &amp; Pump Rate — MgSO4 Loading 4g</span>
+            <span class="badge-treatment">ทั้ง Prophylaxis &amp; Treatment</span>
+        </div>
+        <table class="compact-table">
+            <thead>
+                <tr>
+                    <th>ความเข้มข้น</th>
+                    <th>ปริมาณยา</th>
+                    <th>วิธีเตรียม</th>
+                    <th>Pump Rate</th>
+                </tr>
+            </thead>
+            <tbody id="loading-table-body">
+                <!-- Dynamically populated from ob-engine.js -->
+            </tbody>
+        </table>
+    </div>
 
-        <div class="dose-card">
-            <div class="dose-card-title">💉 Loading Dose: MgSO4 4g IV over 20-30 min (rate ≤1 g/min)</div>
-            <div class="dose-highlight">4 g IV</div>
-            <div class="dose-sub">
-                Infusion time: <strong>20-30 นาที</strong> · Max rate: ≤1 g/min · เตรียม Calcium gluconate ไว้พร้อม
-            </div>
+    <!-- ══════════════ 2. MAINTENANCE IV DRIP (Always Expanded) ══════════════ -->
+    <h3 class="section-header">
+        <span class="section-title-group">💧 Maintenance IV Drip — Continuous Infusion (24 ชม. หลังคลอด / last seizure)</span>
+    </h3>
 
-            <table class="conc-table">
+    <div class="grid-2col" style="margin-bottom: 12px;">
+        <div class="compact-card">
+            <div class="compact-card-title" id="formula-a-title">สูตร A (Thai-CMU)</div>
+            <div id="formula-a-body" style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;"></div>
+        </div>
+        <div class="compact-card">
+            <div class="compact-card-title" id="formula-b-title">สูตร B (Concentrated)</div>
+            <div id="formula-b-body" style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;"></div>
+        </div>
+    </div>
+
+    <!-- IM Pritchard Card -->
+    <div class="compact-card" style="background: #fffbeb; border-color: #fcd34d; margin-bottom: 14px;">
+        <div class="compact-card-title" style="color: #92400e;">📌 IM Pritchard Regimen (กรณีไม่มี IV Pump / refer)</div>
+        <div id="im-regimen-body" style="font-size: 12px; color: #78350f; line-height: 1.5;"></div>
+    </div>
+
+    <!-- ══════════════ 3. TOXICITY MONITORING (Always Expanded) ══════════════ -->
+    <h3 class="section-header">
+        <span class="section-title-group">🔍 เฝ้าระวังพิษ MgSO4 (Toxicity Monitoring — ตรวจทุก 1-2 ชม.)</span>
+    </h3>
+
+    <div class="tox-bar">
+        <div class="tox-pill">
+            <div class="tox-pill-lbl">Deep Tendon Reflexes</div>
+            <div class="tox-pill-val">Present ✓</div>
+            <div class="tox-pill-sub">Absent = หยุดยาทันที</div>
+        </div>
+        <div class="tox-pill">
+            <div class="tox-pill-lbl">Respiratory Rate</div>
+            <div class="tox-pill-val">≥ 12 /min ✓</div>
+            <div class="tox-pill-sub">&lt; 12/min = หยุดยาทันที</div>
+        </div>
+        <div class="tox-pill">
+            <div class="tox-pill-lbl">Urine Output</div>
+            <div class="tox-pill-val">≥ 25 mL/hr ✓</div>
+            <div class="tox-pill-sub">&lt; 25 mL/hr = หยุดยา</div>
+        </div>
+    </div>
+
+    <div class="antidote-banner" id="antidote-banner-body" style="margin-bottom: 16px;">
+        <!-- Dynamically populated antidote note -->
+    </div>
+
+    <!-- ══════════════ 4. DIAGNOSTIC CRITERIA (Default Collapsed) ══════════════ -->
+    <h3 class="section-header collapse-toggle" role="button" aria-expanded="false" tabindex="0" id="dx-toggle">
+        <span class="section-title-group">
+            <span class="toggle-chevron">▼</span>
+            เกณฑ์วินิจฉัย — Diagnostic Criteria (Pre-eclampsia / Eclampsia)
+        </span>
+    </h3>
+    <div class="collapsible-body collapsed" id="dx-body">
+        <div class="grid-3col" style="margin-bottom: 14px;" id="dx-grid-container">
+            <!-- Dynamically populated from ob-engine.js -->
+        </div>
+    </div>
+
+    <!-- ══════════════ 5. RECURRENT SEIZURE (Default Collapsed) ══════════════ -->
+    <h3 class="section-header collapse-toggle" role="button" aria-expanded="false" tabindex="0" id="recurrent-toggle">
+        <span class="section-title-group">
+            <span class="toggle-chevron">▼</span>
+            ⚡ Recurrent Seizure — ชักซ้ำหลัง Loading Dose (MgSO4 2g IV)
+        </span>
+    </h3>
+    <div class="collapsible-body collapsed" id="recurrent-body">
+        <div class="compact-card" style="margin-bottom: 14px;">
+            <div class="compact-card-title">MgSO4 2g IV Slow Push (≤ 1 g/min อย่างน้อย 2 นาที)</div>
+            <table class="compact-table" style="margin-bottom: 10px;">
                 <thead>
                     <tr>
                         <th>ความเข้มข้น</th>
-                        <th>ปริมาณยา</th>
+                        <th>ปริมาณ</th>
                         <th>วิธีเตรียม</th>
-                        <th>Pump Rate</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr class="conc-50">
-                        <td><span class="conc-label conc-label-50">50%</span> 500 mg/mL</td>
-                        <td><strong>8 mL</strong> (≈1 amp)</td>
-                        <td>ดูด 50% MgSO4 <strong>8 mL</strong> + sterile water/NSS <strong>32 mL</strong><br>→ ได้ <strong>40 mL of 10% MgSO4</strong></td>
-                        <td><strong>80-120 mL/hr</strong></td>
+                <tbody id="recurrent-table-body">
+                    <!-- Dynamically populated -->
+                </tbody>
+            </table>
+            <div class="antidote-banner" style="background: #fef2f2; border-color: #fca5a5; color: #991b1b;" id="recurrent-2ndline-note">
+                <!-- 2nd line note -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════ 6. BP CONTROL (Default Collapsed) ══════════════ -->
+    <h3 class="section-header collapse-toggle" role="button" aria-expanded="false" tabindex="0" id="bp-toggle">
+        <span class="section-title-group">
+            <span class="toggle-chevron">▼</span>
+            🩺 BP Control — Severe Range (≥ 160/110 mmHg, เป้าหมาย 140-150 / 90-100 mmHg)
+        </span>
+    </h3>
+    <div class="collapsible-body collapsed" id="bp-body">
+        <div class="compact-card" style="margin-bottom: 14px;">
+            <table class="compact-table">
+                <thead>
+                    <tr>
+                        <th>ยา</th>
+                        <th>Dose Escalation</th>
+                        <th>Max Total</th>
                     </tr>
-                    <tr class="conc-10">
-                        <td><span class="conc-label conc-label-10">10%</span> 100 mg/mL</td>
-                        <td><strong>40 mL</strong></td>
-                        <td>ใช้ 10% MgSO4 <strong>40 mL</strong> ตรง (ถ้ามี prefab)</td>
-                        <td><strong>80-120 mL/hr</strong></td>
-                    </tr>
+                </thead>
+                <tbody id="bp-table-body">
+                    <!-- Dynamically populated -->
                 </tbody>
             </table>
         </div>
-
-        <!-- ══════════════ MAINTENANCE IV ══════════════ -->
-        <h3 class="section-header">Maintenance IV Drip — ผสมจาก 50% MgSO4</h3>
-
-        <div class="dose-card">
-            <div class="dose-card-title">💧 Continuous IV Infusion · ระยะเวลา 24 ชม. หลังคลอด / หลัง last seizure</div>
-
-            <div class="formula-grid">
-                <!-- Formula A -->
-                <div class="formula-card">
-                    <div class="formula-card-title">สูตร A — Thai-CMU (Standard)</div>
-                    <div class="formula-detail">
-                        <strong>50% MgSO4 20 mL (10 g)</strong> ใน <strong>D5W 1000 mL</strong><br>
-                        ความเข้มข้นสุดท้าย: 10 mg/mL (1%)<br><br>
-                        <span class="rate-badge rate-badge-1g">1 g/hr → 100 mL/hr</span>
-                        <span class="rate-badge rate-badge-2g">2 g/hr → 200 mL/hr</span>
-                    </div>
-                </div>
-
-                <!-- Formula B -->
-                <div class="formula-card">
-                    <div class="formula-card-title">สูตร B — Concentrated</div>
-                    <div class="formula-detail">
-                        <strong>50% MgSO4 40 mL (20 g)</strong> ใน <strong>D5W/NSS 460 mL</strong> (total 500 mL)<br>
-                        ความเข้มข้นสุดท้าย: 40 mg/mL (4%)<br><br>
-                        <span class="rate-badge rate-badge-1g">1 g/hr → 25 mL/hr</span>
-                        <span class="rate-badge rate-badge-2g">2 g/hr → 50 mL/hr</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- IM Pritchard Alternative -->
-            <div class="im-card">
-                <div class="im-card-title">📌 IM Pritchard Alternative (กรณีไม่มี IV pump / ต้อง refer)</div>
-                <div class="formula-detail">
-                    <strong>Loading:</strong> 50% MgSO4 <strong>10 mL (5 g) IM deep</strong> ข้างละ buttock (รวม 10 g)<br>
-                    ผสม Lidocaine 2% 1 mL ต่อ injection ลดปวด · ฉีด upper outer quadrant<br><br>
-                    <strong>Maintenance:</strong> 50% MgSO4 <strong>10 mL (5 g) IM deep q4h</strong> (ข้างเดียว สลับข้าง)
-                </div>
-            </div>
-        </div>
-
-        <!-- ══════════════ RECURRENT SEIZURE ══════════════ -->
-        <h3 class="section-header collapse-toggle" role="button" aria-expanded="true" tabindex="0" id="recurrent-toggle">
-            <span class="toggle-chevron">▼</span>
-            Recurrent Seizure — ชักซ้ำหลัง Loading Dose
-        </h3>
-
-        <div class="collapsible-body" id="recurrent-body">
-            <div class="dose-card">
-                <div class="dose-card-title">⚡ Recurrent Seizure Bolus: MgSO4 2g IV push</div>
-                <div class="dose-highlight critical-dose">2 g IV</div>
-                <div class="dose-sub">Slow IV push ≤1 g/min (ให้ช้าๆ อย่างน้อย 2 นาที)</div>
-
-                <table class="conc-table">
-                    <thead>
-                        <tr>
-                            <th>ความเข้มข้น</th>
-                            <th>ปริมาณ</th>
-                            <th>วิธีเตรียม</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="conc-50">
-                            <td><span class="conc-label conc-label-50">50%</span></td>
-                            <td><strong>4 mL</strong></td>
-                            <td>ดูด 50% MgSO4 <strong>4 mL</strong> + NSS <strong>16 mL</strong> → ได้ <strong>20 mL of 10%</strong> → slow IV</td>
-                        </tr>
-                        <tr class="conc-10">
-                            <td><span class="conc-label conc-label-10">10%</span></td>
-                            <td><strong>20 mL</strong></td>
-                            <td>ใช้ 10% MgSO4 <strong>20 mL</strong> ตรง → slow IV</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="warning-banner critical visible" style="margin-top:14px;">
-                    <strong>⚠️ ถ้ายังชักหลัง repeat MgSO4 bolus →</strong> พิจารณา Benzodiazepine second-line:<br>
-                    • Lorazepam 4 mg IV · Diazepam 5-10 mg IV · Midazolam 10 mg IM<br>
-                    • ถ้ายังไม่หยุด → Fosphenytoin/Phenytoin, พิจารณา intubation
-                </div>
-            </div>
-        </div>
-
-        <!-- ══════════════ BP CONTROL ══════════════ -->
-        <h3 class="section-header collapse-toggle" role="button" aria-expanded="true" tabindex="0" id="bp-toggle">
-            <span class="toggle-chevron">▼</span>
-            BP Control — Severe Range (≥160/110 mmHg)
-        </h3>
-
-        <div class="collapsible-body" id="bp-body">
-            <div class="dose-card">
-                <div class="dose-card-title">🩺 เป้าหมาย: 140-150 / 90-100 mmHg · ต้องรักษาภายใน 30-60 นาที</div>
-
-                <table class="bp-table">
-                    <thead>
-                        <tr>
-                            <th>ยา</th>
-                            <th>Dose Escalation</th>
-                            <th>Max Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Hydralazine IV</strong></td>
-                            <td>
-                                5 mg IV (ให้ช้า ≥2 min)<br>
-                                ถ้า BP ยังไม่ลดใน 20 min → 5-10 mg IV ซ้ำ q20min
-                            </td>
-                            <td><strong style="color:#dc2626;">30 mg</strong></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Labetalol IV</strong></td>
-                            <td>
-                                20 mg IV (ให้ช้า ≥2 min)<br>
-                                ถ้าไม่ตอบสนองใน 10 min → 40 mg IV<br>
-                                ถ้ายังไม่ตอบสนอง → 80 mg IV q10min
-                            </td>
-                            <td><strong style="color:#dc2626;">220 mg</strong></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Nifedipine Oral</strong></td>
-                            <td>
-                                10 mg oral<br>
-                                ถ้ายังไม่ลดใน 30 min → repeat 10 mg oral q30min
-                            </td>
-                            <td><strong style="color:#dc2626;">120 mg/day</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="dose-sub" style="margin-top:12px;">
-                    ถ้าครบ max dose แล้ว BP ยังไม่ลง → <strong>Consult MFM / Anesthesia / Critical Care</strong> (ห้ามให้ยาเพิ่มเอง)
-                </div>
-            </div>
-        </div>
-
-        <!-- ══════════════ TOXICITY MONITORING ══════════════ -->
-        <h3 class="section-header">Toxicity Monitoring — เฝ้าระวังพิษ MgSO4</h3>
-
-        <div class="dose-card">
-            <div class="dose-card-title">🔍 ตรวจทุก 1-2 ชม. ระหว่างให้ MgSO4 · ถ้า positive → หยุด maintenance ทันที</div>
-
-            <div class="tox-grid">
-                <div class="tox-item" id="tox-dtr">
-                    <div class="tox-item-label">DTR (Deep Tendon Reflexes)</div>
-                    <div class="tox-item-value">Present ✓</div>
-                    <div class="tox-threshold">⚠️ Absent = หยุดยาทันที</div>
-                </div>
-                <div class="tox-item" id="tox-rr">
-                    <div class="tox-item-label">Respiratory Rate</div>
-                    <div class="tox-item-value">≥12 /min ✓</div>
-                    <div class="tox-threshold">⚠️ &lt;12/min = หยุดยาทันที</div>
-                </div>
-                <div class="tox-item" id="tox-uo">
-                    <div class="tox-item-label">Urine Output</div>
-                    <div class="tox-item-value">≥25 mL/hr ✓</div>
-                    <div class="tox-threshold">⚠️ &lt;25 mL/hr หรือ &lt;100 mL/4hr = หยุดยา</div>
-                </div>
-            </div>
-
-            <div class="antidote-box">
-                <strong>💊 Antidote: Calcium gluconate 10% 10 mL (1 g) IV push over 3-5 min</strong><br>
-                <span style="font-size:13px; color:#78350f;">เตรียมพร้อมเสมอตลอดเวลาที่ให้ MgSO4 · Therapeutic Mg range: 4-7 mEq/L · เจาะ serum Mg เมื่อ Cr &gt;1.0 mg/dL</span>
-            </div>
-
-            <div style="margin-top:14px; padding:10px 14px; background:#f1f5f9; border-radius:6px; font-size:12.5px; color:#475569; line-height:1.6;">
-                <strong>Serum Magnesium levels and clinical effects:</strong><br>
-                4-7 mEq/L (4.8-8.4 mg/dL) = Therapeutic range<br>
-                7-10 mEq/L = DTR หายไป<br>
-                10-13 mEq/L = กดการหายใจ<br>
-                &gt;15 mEq/L = Cardiac arrest
-            </div>
-        </div>
-
-        <!-- ══════════════ LAB ORDERS ══════════════ -->
-        <h3 class="section-header collapse-toggle" role="button" aria-expanded="true" tabindex="0" id="lab-toggle">
-            <span class="toggle-chevron">▼</span>
-            Lab Orders — การส่งตรวจทางห้องปฏิบัติการ
-        </h3>
-
-        <div class="collapsible-body" id="lab-body">
-            <div class="lab-grid">
-                <div class="lab-item">☐ CBC</div>
-                <div class="lab-item">☐ Platelet count</div>
-                <div class="lab-item">☐ AST / ALT (LFT)</div>
-                <div class="lab-item">☐ Creatinine</div>
-                <div class="lab-item">☐ Uric acid</div>
-                <div class="lab-item">☐ Urine protein / Cr ratio</div>
-                <div class="lab-item">☐ Coagulation (PT/INR, aPTT)</div>
-                <div class="lab-item">☐ LDH</div>
-                <div class="lab-item">☐ Peripheral blood smear</div>
-                <div class="lab-item">☐ Serum Mg (ถ้า Cr &gt;1.0)</div>
-                <div class="lab-item">☐ Type &amp; Screen</div>
-                <div class="lab-item">☐ Fetal monitoring (NST)</div>
-            </div>
-        </div>
-
     </div>
+
+    <!-- ══════════════ 7. LAB ORDERS (Default Collapsed) ══════════════ -->
+    <h3 class="section-header collapse-toggle" role="button" aria-expanded="false" tabindex="0" id="lab-toggle">
+        <span class="section-title-group">
+            <span class="toggle-chevron">▼</span>
+            🧪 Lab Orders Checklist — การส่งตรวจทางห้องปฏิบัติการ
+        </span>
+    </h3>
+    <div class="collapsible-body collapsed" id="lab-body">
+        <div class="lab-grid" style="margin-bottom: 14px;">
+            <div class="lab-item">☐ CBC &amp; Platelet count</div>
+            <div class="lab-item">☐ AST / ALT (LFT)</div>
+            <div class="lab-item">☐ Creatinine &amp; Uric acid</div>
+            <div class="lab-item">☐ Urine protein / Cr ratio</div>
+            <div class="lab-item">☐ Coagulation (PT/INR, aPTT)</div>
+            <div class="lab-item">☐ LDH &amp; Peripheral smear</div>
+            <div class="lab-item">☐ Serum Mg (ถ้า Cr &gt; 1.0)</div>
+            <div class="lab-item">☐ Type &amp; Screen &amp; NST</div>
+        </div>
+    </div>
+
 </div>
 
 <!-- ══════════════ SCRIPTS ══════════════ -->
@@ -775,7 +523,141 @@
         ED_COMPONENTS.injectNavBar();
     }
 
-    // ─── Collapsible Sections ────────────────────────────────────────────────
+    // ─── Render Engine Data ──────────────────────────────────────────────────
+    function renderEngineData() {
+        if (typeof calcMgSO4Loading !== 'function') return;
+
+        // 1. Loading Dose
+        const loading = calcMgSO4Loading();
+        const loadTbody = document.getElementById('loading-table-body');
+        if (loadTbody) {
+            loadTbody.innerHTML = `
+                <tr>
+                    <td><span class="conc-badge conc-50">50%</span> 500 mg/mL</td>
+                    <td><strong>${loading.vol50pct} mL</strong> (≈1 amp)</td>
+                    <td>ดูด 50% MgSO4 <strong>${loading.vol50pct} mL</strong> + sterile water/NSS <strong>${loading.diluentVol} mL</strong> → ได้ <strong>${loading.vol10pct} mL of 10%</strong></td>
+                    <td><strong>${loading.pumpRateRange.min}-${loading.pumpRateRange.max} mL/hr</strong></td>
+                </tr>
+                <tr>
+                    <td><span class="conc-badge conc-10">10%</span> 100 mg/mL</td>
+                    <td><strong>${loading.vol10pct} mL</strong></td>
+                    <td>ใช้ 10% MgSO4 <strong>${loading.vol10pct} mL</strong> ตรง (ถ้ามี prefab)</td>
+                    <td><strong>${loading.pumpRateRange.min}-${loading.pumpRateRange.max} mL/hr</strong></td>
+                </tr>
+            `;
+        }
+
+        // 2. Maintenance IV
+        const maint = calcMgSO4MaintenanceIV();
+        const fA = maint.formulaA;
+        const fB = maint.formulaB;
+
+        const fABody = document.getElementById('formula-a-body');
+        if (fABody) {
+            fABody.innerHTML = `
+                <strong>50% MgSO4 ${fA.mgso4_50pct_mL} mL (${fA.mgso4_g} g)</strong> ใน <strong>${fA.diluent}</strong><br>
+                ความเข้มข้น: ${fA.finalConc_mg_per_mL} mg/mL (1%)<br>
+                <div style="margin-top:6px;">
+                    <span class="rate-badge rate-1g">1 g/hr → ${fA.rate1g} mL/hr</span>
+                    <span class="rate-badge rate-2g">2 g/hr → ${fA.rate2g} mL/hr</span>
+                </div>
+            `;
+        }
+
+        const fBBody = document.getElementById('formula-b-body');
+        if (fBBody) {
+            fBBody.innerHTML = `
+                <strong>50% MgSO4 ${fB.mgso4_50pct_mL} mL (${fB.mgso4_g} g)</strong> ใน <strong>${fB.diluent}</strong><br>
+                ความเข้มข้น: ${fB.finalConc_mg_per_mL} mg/mL (4%)<br>
+                <div style="margin-top:6px;">
+                    <span class="rate-badge rate-1g">1 g/hr → ${fB.rate1g} mL/hr</span>
+                    <span class="rate-badge rate-2g">2 g/hr → ${fB.rate2g} mL/hr</span>
+                </div>
+            `;
+        }
+
+        // 3. IM Regimen
+        const im = calcMgSO4IM();
+        const imBody = document.getElementById('im-regimen-body');
+        if (imBody) {
+            imBody.innerHTML = `
+                <strong>Loading:</strong> 50% MgSO4 <strong>${im.volPerSide} mL (${im.dosePerSideG} g) IM deep</strong> ข้างละ buttock (รวม ${im.loadDoseG} g) · ${im.lidocaineNote}<br>
+                <strong>Maintenance:</strong> 50% MgSO4 <strong>${im.maintVol} mL (${im.maintDoseG} g) IM deep ${im.maintInterval}</strong> (สลับข้าง)
+            `;
+        }
+
+        // 4. Toxicity Antidote Note
+        const tox = checkMgSO4Toxicity({});
+        const antidoteBody = document.getElementById('antidote-banner-body');
+        if (antidoteBody) {
+            antidoteBody.innerHTML = `
+                <strong>💊 Antidote:</strong> ${tox.antidoteNote}<br>
+                <span style="font-size:11px; opacity:0.9;">${tox.serumMgNote}</span>
+            `;
+        }
+
+        // 5. Diagnostic Criteria
+        const dxContainer = document.getElementById('dx-grid-container');
+        if (dxContainer && typeof DIAGNOSTIC_CRITERIA !== 'undefined') {
+            const pe = DIAGNOSTIC_CRITERIA.preeclampsia;
+            const spe = DIAGNOSTIC_CRITERIA.severePreeclampsia;
+            const ecl = DIAGNOSTIC_CRITERIA.eclampsia;
+
+            dxContainer.innerHTML = `
+                <div class="compact-card">
+                    <div class="compact-card-title" style="color: #d97706;">${pe.label}</div>
+                    ${pe.criteria.map(c => `<div class="dx-item">• ${c.text}</div>`).join('')}
+                </div>
+                <div class="compact-card">
+                    <div class="compact-card-title" style="color: #dc2626;">${spe.label}</div>
+                    ${spe.criteria.map(c => `<div class="dx-item">⚠️ ${c.text}</div>`).join('')}
+                </div>
+                <div class="compact-card">
+                    <div class="compact-card-title" style="color: #7c3aed;">${ecl.label}</div>
+                    ${ecl.criteria.map(c => `<div class="dx-item">🔴 ${c.text}</div>`).join('')}
+                </div>
+            `;
+        }
+
+        // 6. Recurrent Seizure
+        const recurrent = calcMgSO4RecurrentBolus();
+        const recTbody = document.getElementById('recurrent-table-body');
+        if (recTbody) {
+            recTbody.innerHTML = `
+                <tr>
+                    <td><span class="conc-badge conc-50">50%</span></td>
+                    <td><strong>${recurrent.vol50pct} mL</strong></td>
+                    <td>ดูด 50% <strong>${recurrent.vol50pct} mL</strong> + NSS <strong>${recurrent.diluentVol} mL</strong> → <strong>20 mL of 10%</strong></td>
+                </tr>
+                <tr>
+                    <td><span class="conc-badge conc-10">10%</span></td>
+                    <td><strong>${recurrent.vol10pct} mL</strong></td>
+                    <td>ใช้ 10% MgSO4 <strong>${recurrent.vol10pct} mL</strong> ตรง → Slow IV push</td>
+                </tr>
+            `;
+        }
+        const rec2nd = document.getElementById('recurrent-2ndline-note');
+        if (rec2nd) {
+            rec2nd.innerHTML = `<strong>⚠️ Second-line:</strong> ${recurrent.secondLine}`;
+        }
+
+        // 7. BP Protocols
+        const bpTbody = document.getElementById('bp-table-body');
+        if (bpTbody && typeof BP_PROTOCOLS !== 'undefined') {
+            const rows = Object.values(BP_PROTOCOLS).map(p => `
+                <tr>
+                    <td><strong>${p.name}</strong></td>
+                    <td>${p.steps.join('<br>')}</td>
+                    <td><strong style="color: #dc2626;">${p.maxTotal}</strong></td>
+                </tr>
+            `).join('');
+            bpTbody.innerHTML = rows;
+        }
+    }
+
+    renderEngineData();
+
+    // ─── Collapsible Sections Event Handling ─────────────────────────────────
     document.querySelectorAll('.collapse-toggle').forEach(toggle => {
         const bodyId = toggle.id.replace('-toggle', '-body');
         const body = document.getElementById(bodyId);
