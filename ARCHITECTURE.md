@@ -97,19 +97,22 @@ Features:
 - Copy-to-clipboard drug dosing summary.
 - Real-time auto-calculation on weight/age input change.
 
-### Resuscitation Timer (`tools/resus-timer.html`)
+### Resuscitation Timer (`tools/resus-timer.html`) [PROTOTYPE]
 
-Real-time cardiac arrest management timer with ACLS protocol support.
-Dark theme (high-visibility for resus rooms). Features:
-- Large elapsed timer (MM:SS) with 2-minute cycle counter.
-- Audio alerts via Web Audio API (880Hz square wave, 200ms) at each 2-min mark.
-- Silence/mute toggle with localStorage persistence.
-- Epinephrine dose logging with q3-5 min auto-reminder.
-- Defibrillation tracking with energy selector (120/150/200/360J biphasic).
-- Amiodarone tracking (300 mg 1st dose, 150 mg 2nd dose, max 2).
-- Rhythm check prompts: Shockable (VF/pVT) / Non-Shockable (Asystole/PEA).
-- ROSC documentation with post-ROSC checklist.
-- Print summary: full intervention timeline with timestamps.
+Real-time cardiac arrest management assistant and timer adhering to AHA ACLS 2025/2026 Guidelines (`Part 9: Adult ALS` and `Part 11: Post-Cardiac Arrest Care`).
+Dark theme with tactile controls for high-stress ER resus rooms. Features:
+- Dual timers: Total elapsed time (MM:SS) and 2-minute CPR cycle countdown with visual progress bar.
+- CPR Metronome: 110 bpm (100–120 bpm guideline range) with Web Audio API synthesizer clicks and rhythmic pulsing dot.
+- 2-Minute Cycle Alert: High-priority audio chime and visual strobe alerting team to pause CPR (<10s), check rhythm/pulse, switch compressors, and evaluate ETCO2.
+- Adaptive Rhythm Pathways:
+  - Shockable (VF/pVT): Biphasic defibrillation (120–360J), Vector Change (AP pad placement) / DSED prompts for persisting VF (≥3 shocks).
+  - Non-Shockable (PEA/Asystole): Immediate Epinephrine prompt, strict no-shock enforcement, active reversible causes focus.
+- Dynamic Epinephrine 3–5 min indicator badge (Green 0–3m, Amber 3–5m due soon, Red flashing >5m overdue).
+- Antiarrhythmic tracking: Amiodarone (300 mg → 150 mg → max cap) and Lidocaine alternative (1–1.5 mg/kg → 0.5–0.75 mg/kg).
+- Special Resuscitation Drugs Quick-Log with clinical indications: Calcium Gluconate, Sodium Bicarbonate, Magnesium Sulfate, Push-Dose Epinephrine, 20% Lipid Emulsion (Intralipid), Naloxone.
+- Interactive 5 H's & 5 T's reversible causes diagnostic checklist.
+- Post-ROSC Care Bundle (ACLS Part 11): SpO2 90–98% titration, MAP ≥ 65 mmHg, 12-lead ECG STEMI screen, TTM 32–37.5°C for ≥36h, EEG seizure evaluation, glucose 140–180 mg/dL.
+- Event timeline log with quick custom event entry, undo, Thai/English EMR progress note generation, and A4 printable record.
 
 ### TB Calculator (`tools/tb-calculator.html`)
 

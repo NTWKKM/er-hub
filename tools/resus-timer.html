@@ -3,24 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resuscitation Timer — ED MNRH</title>
+    <title>Resuscitation Timer & ACLS 2026 Guide — ED MNRH</title>
     <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../shared/base.css">
     <style>
         :root {
-            --paper-dark: #0a0a0a;
-            --ink-light: #f5f5f5;
-            --accent-red: #e53935;
-            --accent-green: #43a047;
-            --accent-blue: #1e88e5;
-            --accent-yellow: #fdd835;
-            --gray-dark: #222222;
-            --gray-med: #444444;
-            --gray-light: #b8b8b8;
+            --paper-dark: #080c10;
+            --surface-1: #121820;
+            --surface-2: #1c2430;
+            --surface-3: #263342;
+            --border-dim: #253346;
+            --border-bright: #3d516d;
+            --ink-light: #f8fafc;
+            --ink-muted: #94a3b8;
+            --accent-red: #ef4444;
+            --accent-red-glow: rgba(239, 68, 68, 0.4);
+            --accent-green: #10b981;
+            --accent-green-glow: rgba(16, 185, 129, 0.4);
+            --accent-blue: #3b82f6;
+            --accent-amber: #f59e0b;
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
         }
+
+        * { box-sizing: border-box; }
 
         body {
             background-color: var(--paper-dark);
@@ -28,530 +37,1681 @@
             font-family: 'Inter Tight', 'Sarabun', sans-serif;
             margin: 0;
             padding: 0;
+            line-height: 1.4;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1040px;
             margin: 0 auto;
-            padding: 16px;
+            padding: 12px 16px 40px;
         }
 
-        /* Timer Area */
-        .timer-section {
-            text-align: center;
-            padding: 24px 0;
-            border-bottom: 2px solid var(--gray-dark);
-            position: relative;
-        }
-        
-        .timer-display {
-            font-size: 72px;
-            font-family: monospace;
-            font-weight: bold;
-            color: var(--ink-light);
-            line-height: 1;
-            margin-bottom: 8px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-            transition: color 0.3s ease;
-        }
-        .timer-display.flash {
-            color: var(--accent-red);
-            text-shadow: 0 0 20px var(--accent-red);
-        }
-
-        .cycle-display {
-            font-size: 24px;
-            color: var(--accent-red);
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-
-        .controls {
+        /* Top Header & Toolbar */
+        .resus-header {
             display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 16px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0 14px;
+            border-bottom: 1px solid var(--border-dim);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        button {
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
+        .resus-title-block {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .resus-badge {
+            background: #b91c1c;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .resus-title {
+            font-size: 18px;
             font-weight: 700;
-            font-size: 16px;
-            padding: 16px 24px;
+            margin: 0;
+            color: var(--ink-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-tools {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-btn {
+            background: var(--surface-2);
+            border: 1px solid var(--border-dim);
+            color: var(--ink-light);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+        .tool-btn:hover {
+            background: var(--surface-3);
+            border-color: var(--border-bright);
+        }
+        .tool-btn.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
+        }
+
+        /* Metronome visualizer */
+        .metro-pulse {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #475569;
+            display: inline-block;
+            transition: transform 0.05s ease, background-color 0.05s ease;
+        }
+        .metro-pulse.beat {
+            background: var(--accent-amber);
+            transform: scale(1.5);
+            box-shadow: 0 0 10px var(--accent-amber);
+        }
+
+        /* Main Resus Dashboard */
+        .resus-dashboard {
+            background: var(--surface-1);
+            border: 1px solid var(--border-dim);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resus-dashboard.cycle-alert-flash {
+            animation: alertStrobe 0.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes alertStrobe {
+            from { border-color: var(--border-dim); box-shadow: 0 0 10px transparent; }
+            to { border-color: var(--accent-red); box-shadow: 0 0 30px var(--accent-red-glow); background: #201015; }
+        }
+
+        .timer-hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            align-items: center;
+            border-bottom: 1px solid var(--border-dim);
+            padding-bottom: 16px;
+        }
+        @media (max-width: 680px) {
+            .timer-hero-grid { grid-template-columns: 1fr; text-align: center; }
+        }
+
+        .total-time-box {
+            display: flex;
+            flex-direction: column;
+        }
+        .timer-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--ink-muted);
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .digital-clock {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 54px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: 1px;
+            color: var(--ink-light);
+            text-shadow: 0 0 12px rgba(255,255,255,0.15);
+        }
+
+        .cycle-time-box {
+            display: flex;
+            flex-direction: column;
+            background: var(--surface-2);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-dim);
+        }
+
+        .cycle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .cycle-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--accent-amber);
+            text-transform: uppercase;
+        }
+        .cycle-clock {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--ink-light);
+        }
+        .cycle-progress-bar-wrap {
+            width: 100%;
+            height: 8px;
+            background: var(--surface-3);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .cycle-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-amber), var(--accent-red));
+            transition: width 0.2s linear;
+        }
+
+        /* Cycle Alert Banner */
+        .cycle-alert-banner {
+            background: var(--accent-red);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-top: 14px;
+            font-weight: 700;
+            font-size: 15px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            animation: pulseAlert 1s infinite alternate;
+        }
+        @keyframes pulseAlert {
+            from { opacity: 0.9; }
+            to { opacity: 1; }
+        }
+
+        /* Primary Controls Deck */
+        .main-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .btn-ctrl {
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 12px 20px;
             border-radius: 8px;
             border: none;
             cursor: pointer;
-            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.15s ease;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        button:disabled {
-            opacity: 0.5;
+        .btn-ctrl:disabled {
+            opacity: 0.35;
             cursor: not-allowed;
         }
+        .btn-start-code { background: var(--accent-green); color: #022c15; flex: 2; min-width: 160px; }
+        .btn-start-code:hover:not(:disabled) { background: #34d399; }
+        .btn-pause-code { background: var(--accent-amber); color: #2e1500; flex: 1; min-width: 120px; }
+        .btn-pause-code:hover:not(:disabled) { background: #fbbf24; }
+        .btn-rosc-code { background: linear-gradient(135deg, #059669, #10b981); color: #fff; flex: 2; min-width: 160px; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .btn-rosc-code:hover:not(:disabled) { background: #34d399; }
+        .btn-reset-code { background: var(--surface-3); color: var(--ink-muted); flex: 0.5; min-width: 90px; }
+        .btn-reset-code:hover:not(:disabled) { background: #334155; color: #fff; }
 
-        .btn-start { background-color: var(--accent-green); color: #fff; }
-        .btn-stop { background-color: var(--accent-yellow); color: #000; }
-        .btn-reset { background-color: var(--gray-med); color: #fff; }
-        .btn-mute { background-color: var(--gray-dark); color: #fff; font-size: 24px; padding: 8px 16px; }
+        /* Dynamic Clinical Guidance Bar */
+        .guidance-bar {
+            background: var(--surface-2);
+            border-left: 4px solid var(--accent-blue);
+            padding: 10px 14px;
+            border-radius: 4px;
+            margin-top: 14px;
+            font-size: 13.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .guidance-bar strong { color: #fff; }
 
-        /* Actions Grid */
-        .actions-grid {
+        /* Action Panels Grid */
+        .action-columns {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1px));
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
             gap: 16px;
-            padding: 24px 0;
-        }
-        @media (min-width: 600px) {
-            .actions-grid { grid-template-columns: 1fr 1fr; }
+            margin-top: 16px;
         }
 
-        .action-card {
-            background-color: #111;
-            border: 1px solid var(--gray-dark);
-            border-radius: 8px;
-            padding: 16px;
+        .card-panel {
+            background: var(--surface-1);
+            border: 1px solid var(--border-dim);
+            border-radius: 10px;
+            padding: 14px 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         }
 
-        .action-title {
-            font-size: 18px;
-            font-weight: bold;
+        .card-panel-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--ink-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             margin-bottom: 12px;
-            color: var(--gray-light);
-            border-bottom: 1px solid var(--gray-dark);
-            padding-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .action-card button {
-            width: 100%;
-            margin-bottom: 8px;
+        /* Rhythm & Defib Buttons */
+        .rhythm-toggle-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
         }
-
-        .btn-shockable { background-color: var(--accent-red); color: #fff; }
-        .btn-non-shockable { background-color: var(--accent-blue); color: #fff; }
-        .btn-epi { background-color: #9c27b0; color: #fff; }
-        .btn-shock { background-color: #ff9800; color: #fff; }
-        .btn-amio { background-color: #00bcd4; color: #fff; }
-        .btn-rosc { background-color: var(--accent-green); color: #fff; font-size: 20px; padding: 24px; }
-
-        .epi-warning {
-            color: var(--accent-yellow);
-            font-weight: bold;
-            display: none;
-            margin-top: 8px;
+        .btn-rhythm {
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 13.5px;
+            padding: 12px 10px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
             text-align: center;
         }
+        .btn-rhythm:disabled { opacity: 0.35; cursor: not-allowed; }
+        .btn-rhythm-shockable {
+            background: #3b1419;
+            color: #fca5a5;
+            border-color: #7f1d1d;
+        }
+        .btn-rhythm-shockable:hover:not(:disabled) {
+            background: #4c1d24;
+            border-color: var(--accent-red);
+            color: #fff;
+        }
+        .btn-rhythm-nonshockable {
+            background: #10243e;
+            color: #93c5fd;
+            border-color: #1e3a8a;
+        }
+        .btn-rhythm-nonshockable:hover:not(:disabled) {
+            background: #173459;
+            border-color: var(--accent-blue);
+            color: #fff;
+        }
 
-        .shock-selector {
+        .shock-dock {
             display: flex;
             gap: 8px;
             margin-bottom: 8px;
         }
-        .shock-selector select {
+        .shock-energy-select {
             flex: 1;
-            padding: 12px;
-            font-size: 16px;
-            background: var(--gray-dark);
+            background: var(--surface-2);
             color: var(--ink-light);
-            border: 1px solid var(--gray-med);
-            border-radius: 4px;
+            border: 1px solid var(--border-bright);
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .btn-shock-fire {
+            flex: 2;
+            background: var(--accent-red);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 15px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px var(--accent-red-glow);
+        }
+        .btn-shock-fire:hover:not(:disabled) {
+            background: #dc2626;
+        }
+        .btn-shock-fire:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            box-shadow: none;
         }
 
-        /* Timeline Log */
-        .timeline-section {
-            background-color: #111;
-            border: 1px solid var(--gray-dark);
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 24px;
+        .persisting-vf-alert {
+            background: #311317;
+            border: 1px dashed var(--accent-red);
+            color: #fca5a5;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            margin-top: 8px;
+            display: none;
         }
-        .timeline-container {
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 8px;
+
+        /* Medication Buttons & Dynamic Badges */
+        .med-action-block {
+            margin-bottom: 12px;
         }
-        .timeline-item {
+        .med-row {
             display: flex;
-            gap: 16px;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--gray-dark);
+            gap: 8px;
             align-items: center;
         }
-        .timeline-item:last-child { border-bottom: none; }
-        .time-col { font-family: monospace; font-size: 16px; color: var(--gray-light); width: 60px; flex-shrink: 0; }
-        .event-col { flex-grow: 1; font-size: 16px; }
-        
-        /* Event Colors */
-        .event-start { color: var(--accent-green); }
-        .event-rhythm { color: var(--accent-blue); }
-        .event-shock { color: #ff9800; }
-        .event-epi { color: #9c27b0; }
-        .event-amio { color: #00bcd4; }
-        .event-rosc { color: var(--accent-green); font-weight: bold; }
+        .btn-med {
+            flex: 1;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 13.5px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .btn-med:disabled { opacity: 0.35; cursor: not-allowed; }
+        .btn-med-epi { background: #581c87; color: #f3e8ff; border: 1px solid #7e22ce; }
+        .btn-med-epi:hover:not(:disabled) { background: #6b21a8; color: #fff; }
+        .btn-med-amio { background: #0e4e61; color: #cffafe; border: 1px solid #155e75; }
+        .btn-med-amio:hover:not(:disabled) { background: #164e63; color: #fff; }
+        .btn-med-lido { background: #1e3a5f; color: #dbeafe; border: 1px solid #2563eb; font-size: 12.5px; }
 
-        /* ROSC Checklist */
-        .rosc-checklist {
-            display: none;
-            background-color: #111;
-            border: 2px solid var(--accent-green);
+        /* Dynamic Epinephrine Timer Indicator */
+        .epi-timer-pill {
+            background: var(--surface-2);
+            border: 1px solid var(--border-dim);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .epi-timer-pill.green { background: #064e3b; border-color: #059669; color: #a7f3d0; }
+        .epi-timer-pill.amber { background: #78350f; border-color: #d97706; color: #fde68a; animation: pulseAmber 1s infinite alternate; }
+        .epi-timer-pill.red { background: #7f1d1d; border-color: #dc2626; color: #fecaca; animation: pulseRed 0.6s infinite alternate; }
+
+        @keyframes pulseAmber { from { opacity: 0.8; } to { opacity: 1; } }
+        @keyframes pulseRed { from { opacity: 0.8; } to { opacity: 1; transform: scale(1.02); } }
+
+        /* Special Meds Quick-Log & Indications Guide */
+        .special-meds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .btn-quick-med {
+            background: var(--surface-2);
+            border: 1px solid var(--border-dim);
+            color: var(--ink-light);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.15s ease;
+        }
+        .btn-quick-med:hover:not(:disabled) {
+            background: var(--surface-3);
+            border-color: var(--border-bright);
+        }
+        .btn-quick-med:disabled { opacity: 0.35; cursor: not-allowed; }
+        .btn-quick-med span.dose-sub { font-size: 10px; color: var(--ink-muted); font-weight: normal; margin-top: 2px; }
+
+        /* Accordion Collapsible Sections */
+        .collapsible-drawer {
+            background: var(--surface-1);
+            border: 1px solid var(--border-dim);
             border-radius: 8px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+        .drawer-header {
+            padding: 12px 16px;
+            background: var(--surface-2);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--ink-light);
+        }
+        .drawer-header:hover { background: var(--surface-3); }
+        .drawer-body {
+            padding: 16px;
+            display: none;
+            background: var(--surface-1);
+            border-top: 1px solid var(--border-dim);
+        }
+        .drawer-body.open { display: block; }
+
+        /* Drug Indications Guide Cards */
+        .drug-guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+        }
+        .drug-guide-card {
+            background: var(--surface-2);
+            border: 1px solid var(--border-dim);
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .drug-guide-card h4 {
+            margin: 0 0 6px 0;
+            font-size: 14px;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .drug-guide-card p {
+            margin: 0 0 6px 0;
+            font-size: 12.5px;
+            color: var(--ink-light);
+        }
+        .drug-guide-card .indication-tag {
+            background: #1e293b;
+            color: #38bdf8;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        /* 5 H's and 5 T's Checklist */
+        .ht-checklist-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        @media (max-width: 600px) {
+            .ht-checklist-grid { grid-template-columns: 1fr; }
+        }
+        .ht-column h4 {
+            font-size: 14px;
+            color: var(--accent-amber);
+            margin: 0 0 8px 0;
+            border-bottom: 1px solid var(--border-dim);
+            padding-bottom: 4px;
+        }
+        .ht-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .ht-item input[type="checkbox"] {
+            margin-top: 3px;
+            accent-color: var(--accent-amber);
+            cursor: pointer;
+        }
+
+        /* Post-ROSC Bundle (ACLS 2025/2026 Part 11) */
+        .rosc-bundle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+        }
+        .rosc-item {
+            background: var(--surface-2);
+            border-left: 3px solid var(--accent-green);
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .rosc-item strong { color: var(--accent-green); display: block; margin-bottom: 2px; }
+
+        /* Timeline Log & Quick-Event Entry */
+        .timeline-dock {
+            background: var(--surface-1);
+            border: 1px solid var(--border-dim);
+            border-radius: 10px;
             padding: 16px;
             margin-top: 16px;
         }
-        .rosc-checklist h3 { margin-top: 0; color: var(--accent-green); }
-        .checklist-item {
+        .custom-note-bar {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-            font-size: 16px;
+            gap: 8px;
+            margin-bottom: 12px;
         }
-        .checklist-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+        .custom-note-input {
+            flex: 1;
+            background: var(--surface-2);
+            border: 1px solid var(--border-dim);
+            color: var(--ink-light);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .btn-note-add {
+            background: var(--surface-3);
+            border: 1px solid var(--border-bright);
+            color: var(--ink-light);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .btn-note-add:hover { background: #334155; }
+
+        .timeline-scroll {
+            max-height: 360px;
+            overflow-y: auto;
+            border: 1px solid var(--border-dim);
+            border-radius: 6px;
+            background: #090d12;
+            padding: 8px 12px;
+        }
+        .timeline-row {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            padding: 6px 0;
+            border-bottom: 1px solid #182230;
+            font-size: 13.5px;
+        }
+        .timeline-row:last-child { border-bottom: none; }
+        .time-badge {
+            font-family: ui-monospace, monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--ink-muted);
+            width: 58px;
+            flex-shrink: 0;
+        }
+        .time-real {
+            font-family: ui-monospace, monospace;
+            font-size: 11px;
+            color: #64748b;
+            width: 62px;
+            flex-shrink: 0;
+        }
+        .event-text { flex-grow: 1; }
+        .event-text.ev-start { color: var(--accent-green); font-weight: 700; }
+        .event-text.ev-rhythm { color: var(--accent-blue); font-weight: 600; }
+        .event-text.ev-shock { color: var(--accent-red); font-weight: 700; }
+        .event-text.ev-epi { color: #d8b4fe; font-weight: 700; }
+        .event-text.ev-amio { color: #67e8f9; font-weight: 600; }
+        .event-text.ev-rosc { color: var(--accent-green); font-weight: 800; font-size: 15px; }
+        .event-text.ev-med { color: var(--accent-amber); }
+
+        /* Summary Stats & Export */
+        .summary-ribbon {
+            display: flex;
+            gap: 16px;
+            background: var(--surface-2);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .stat-item {
+            font-size: 13px;
+            color: var(--ink-muted);
+        }
+        .stat-item strong {
+            color: var(--ink-light);
+            font-size: 15px;
+            margin-left: 4px;
         }
 
-        /* Print Layout */
+        .export-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-export {
+            background: var(--surface-3);
+            border: 1px solid var(--border-bright);
+            color: var(--ink-light);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-export:hover { background: #334155; }
+
+        /* Print Specific Styles */
         @media print {
-            @page { size: A4 portrait; margin: 20mm; }
-            body { 
-                background: #fff; 
-                color: #000; 
-                display: block !important; 
+            @page { size: A4 portrait; margin: 15mm; }
+            body { background: #fff !important; color: #000 !important; }
+            .no-print, nav, .resus-header, .resus-dashboard, .main-controls, .action-columns, .collapsible-drawer, .custom-note-bar, .export-actions {
+                display: none !important;
             }
-            .no-print, nav, .timer-section, .actions-grid, .rosc-checklist { 
-                display: none !important; 
+            .timeline-dock {
+                border: none !important;
+                background: none !important;
+                padding: 0 !important;
             }
-            .timeline-section {
-                background: none;
-                border: none;
-                padding: 0;
+            .timeline-scroll {
+                max-height: none !important;
+                border: 1px solid #ccc !important;
+                background: #fff !important;
+                overflow: visible !important;
             }
-            .timeline-container {
-                max-height: none;
-                overflow: visible;
-            }
-            .timeline-item {
-                border-bottom: 1px solid #ccc;
-                page-break-inside: avoid;
-            }
-            .time-col, .event-col, .event-start, .event-rhythm, .event-shock, .event-epi, .event-amio, .event-rosc {
+            .timeline-row {
+                border-bottom: 1px solid #ddd !important;
                 color: #000 !important;
             }
-            h1.print-title {
+            .time-badge, .time-real, .event-text {
+                color: #000 !important;
+            }
+            .print-only-header {
                 display: block !important;
                 text-align: center;
-                font-family: 'Inter Tight', sans-serif;
-                margin-bottom: 20px;
-            }
-            .print-summary {
-                display: block !important;
-                margin-bottom: 20px;
-                border: 1px solid #000;
-                padding: 10px;
+                margin-bottom: 16px;
             }
         }
-        .print-title, .print-summary { display: none; }
+        .print-only-header { display: none; }
     </style>
 </head>
 <body>
     <div id="nav-container" class="no-print"></div>
 
     <div class="container">
-        <!-- Timer Section -->
-        <div class="timer-section no-print">
-            <div class="cycle-display" id="cycle-display">Cycle 1</div>
-            <div class="timer-display" id="timer-display">00:00</div>
-            
-            <div class="controls">
-                <button class="btn-start" id="btn-start" onclick="startTimer()">Start Code</button>
-                <button class="btn-stop" id="btn-stop" onclick="stopTimer()" disabled>Stop</button>
-                <button class="btn-reset" onclick="resetTimer()">Reset</button>
-                <button class="btn-mute" id="btn-mute" onclick="toggleMute()">🔊</button>
+        <!-- Resuscitation Header Bar -->
+        <header class="resus-header no-print">
+            <div class="resus-title-block">
+                <span class="resus-badge">ACLS 2026</span>
+                <h1 class="resus-title">Resuscitation Assistant & Timer</h1>
             </div>
-            <button class="btn-rosc" id="btn-rosc" onclick="logROSC()" disabled>ROSC Achieved</button>
+            <div class="header-tools">
+                <button class="tool-btn" id="btn-metronome" onclick="toggleMetronome()" title="CPR Metronome: 110 bpm (100-120 bpm guideline range)">
+                    <span class="metro-pulse" id="metro-dot"></span>
+                    <span>Metronome 110 bpm</span>
+                </button>
+                <button class="tool-btn" id="btn-mute" onclick="toggleMute()" title="Audio Alerts">
+                    <span id="mute-icon">🔊</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Timer Dashboard Deck -->
+        <div class="resus-dashboard no-print" id="resus-dashboard">
+            <div class="timer-hero-grid">
+                <div class="total-time-box">
+                    <span class="timer-label">Total Code Time</span>
+                    <div class="digital-clock" id="total-clock">00:00</div>
+                </div>
+                <div class="cycle-time-box">
+                    <div class="cycle-header">
+                        <span class="cycle-title" id="cycle-label">Cycle 1 (2:00 CPR)</span>
+                        <span class="cycle-clock" id="cycle-clock">02:00</span>
+                    </div>
+                    <div class="cycle-progress-bar-wrap">
+                        <div class="cycle-progress-bar" id="cycle-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2-Minute Alert Strobe Banner -->
+            <div class="cycle-alert-banner" id="cycle-alert-banner">
+                <span>🚨 2-MINUTE CYCLE COMPLETE: 1) Pause CPR &lt;10s 2) Check Rhythm/Pulse 3) Switch Compressor 4) Check ETCO2</span>
+                <button class="tool-btn" style="background:#fff; color:#000;" onclick="dismissCycleAlert()">Acknowledge</button>
+            </div>
+
+            <!-- Main Control Buttons -->
+            <div class="main-controls">
+                <button class="btn-ctrl btn-start-code" id="btn-start" onclick="startCode()">▶ Start Resuscitation</button>
+                <button class="btn-ctrl btn-pause-code" id="btn-pause" onclick="pauseCode()" disabled>⏸ Pause</button>
+                <button class="btn-ctrl btn-rosc-code" id="btn-rosc" onclick="achieveROSC()" disabled>⭐ ROSC Achieved</button>
+                <button class="btn-ctrl btn-reset-code" id="btn-reset" onclick="confirmReset()">↺ Reset</button>
+            </div>
+
+            <!-- Adaptive Clinical Guidance -->
+            <div class="guidance-bar" id="guidance-bar">
+                <div id="guidance-text">💡 <strong>ACLS 2026:</strong> Push hard (5–6 cm), push fast (100–120/min), complete chest recoil, minimize interruptions (CCF &gt; 80%).</div>
+                <div class="epi-timer-pill" id="epi-pill" style="display:none;">
+                    <span>Epi Interval:</span>
+                    <span id="epi-pill-time">--:--</span>
+                </div>
+            </div>
         </div>
 
-        <!-- Action Panel -->
-        <div class="actions-grid no-print">
-            <div class="action-card">
-                <div class="action-title">Rhythm Check (Every 2 min)</div>
-                <button class="btn-shockable" onclick="logRhythm('Shockable (VF/pVT)')" id="btn-shockable" disabled>Shockable (VF/pVT)</button>
-                <button class="btn-non-shockable" onclick="logRhythm('Non-Shockable (Asystole/PEA)')" id="btn-non-shockable" disabled>Non-Shockable (Asystole/PEA)</button>
-            </div>
-            
-            <div class="action-card">
-                <div class="action-title">Defibrillation</div>
-                <div class="shock-selector">
-                    <select id="shock-energy" disabled>
-                        <option value="120J">120J</option>
-                        <option value="150J">150J</option>
-                        <option value="200J" selected>200J</option>
-                        <option value="360J">360J</option>
-                    </select>
+        <!-- Action Columns Grid (Rhythms, Defibrillation, Medications) -->
+        <div class="action-columns no-print">
+            <!-- Rhythm & Defibrillation Panel -->
+            <div class="card-panel">
+                <div class="card-panel-title">
+                    <span>1. Rhythm Check & Defibrillation</span>
+                    <small style="color:var(--ink-muted);">Every 2 min (&lt;10s pause)</small>
                 </div>
-                <button class="btn-shock" onclick="logShock()" id="btn-shock" disabled>Shock Delivered</button>
-            </div>
-
-            <div class="action-card">
-                <div class="action-title">Medications</div>
-                <button class="btn-epi" onclick="logEpi()" id="btn-epi" disabled>Epinephrine 1mg IV/IO</button>
-                <div class="epi-warning" id="epi-warning">⚠️ Give Epinephrine (≥3 min)</div>
                 
-                <button class="btn-amio" onclick="logAmio()" id="btn-amio" disabled>Amiodarone 300mg IV/IO</button>
+                <div class="rhythm-toggle-group">
+                    <button class="btn-rhythm btn-rhythm-shockable" id="btn-rhythm-shockable" onclick="recordRhythm('Shockable (VF / Pulseless VT)', true)" disabled>
+                        ⚡ Shockable<br><small style="font-weight:normal;">VF / Pulseless VT</small>
+                    </button>
+                    <button class="btn-rhythm btn-rhythm-nonshockable" id="btn-rhythm-nonshockable" onclick="recordRhythm('Non-Shockable (PEA / Asystole)', false)" disabled>
+                        🔵 Non-Shockable<br><small style="font-weight:normal;">PEA / Asystole</small>
+                    </button>
+                </div>
+
+                <div class="shock-dock">
+                    <select class="shock-energy-select" id="shock-energy-select" disabled>
+                        <option value="200J Biphasic" selected>200J (Biphasic Default)</option>
+                        <option value="120J Biphasic">120J Biphasic</option>
+                        <option value="150J Biphasic">150J Biphasic</option>
+                        <option value="300J Biphasic">300J Biphasic</option>
+                        <option value="360J Monophasic">360J Monophasic</option>
+                        <option value="Vector Change AP">Vector Change (AP Pads)</option>
+                        <option value="DSED 200J+200J">DSED (Double Sequential)</option>
+                    </select>
+                    <button class="btn-shock-fire" id="btn-shock" onclick="deliverShock()" disabled>
+                        ⚡ Deliver Shock
+                    </button>
+                </div>
+
+                <div class="persisting-vf-alert" id="persisting-vf-alert">
+                    ⚠️ <strong>Persisting/Refractory VF (≥3 shocks):</strong> ตรวจสอบตำแหน่ง Pad และพิจารณา <strong>Vector Change (AP Placement)</strong> หรือ <strong>DSED</strong> พร้อมให้ Antiarrhythmic.
+                </div>
             </div>
 
-            <div class="action-card">
-                <div class="action-title">Post-ROSC Checklist</div>
-                <div class="rosc-checklist" id="rosc-checklist" style="display:block;">
-                    <label class="checklist-item"><input type="checkbox"> 12-lead ECG</label>
-                    <label class="checklist-item"><input type="checkbox"> Targeted Temperature Management</label>
-                    <label class="checklist-item"><input type="checkbox"> BP/MAP monitoring (target >65)</label>
-                    <label class="checklist-item"><input type="checkbox"> Labs: ABG, Lactate, Lytes, Trop</label>
-                    <label class="checklist-item"><input type="checkbox"> CT Head if indicated</label>
+            <!-- Core Medications Panel -->
+            <div class="card-panel">
+                <div class="card-panel-title">
+                    <span>2. Core Medications</span>
+                    <small style="color:var(--ink-muted);">IV / IO Access</small>
+                </div>
+
+                <!-- Epinephrine -->
+                <div class="med-action-block">
+                    <button class="btn-med btn-med-epi" id="btn-med-epi" onclick="giveEpi()" disabled>
+                        <span>💉 Epinephrine 1 mg IV/IO</span>
+                        <span id="badge-epi-count">Dose #1</span>
+                    </button>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+                        <small style="color:var(--ink-muted); font-size:11.5px;">Non-shockable: ให้ทันที | Shockable: ให้หลัง Shock #2</small>
+                        <span id="epi-last-given" style="font-size:11.5px; color:var(--ink-muted);">ยังไม่ได้ให้</span>
+                    </div>
+                </div>
+
+                <!-- Antiarrhythmics -->
+                <div class="med-action-block">
+                    <div class="med-row">
+                        <button class="btn-med btn-med-amio" id="btn-med-amio" onclick="giveAmio()" disabled>
+                            <span>💊 Amiodarone <span id="amio-dose-label">300 mg</span></span>
+                            <span id="badge-amio-count">Dose #1</span>
+                        </button>
+                        <button class="btn-med btn-med-lido" id="btn-med-lido" onclick="giveLidocaine()" disabled title="Lidocaine 1-1.5 mg/kg (Dose 1) or 0.5-0.75 mg/kg (Dose 2)">
+                            <span>Lidocaine <span id="lido-dose-label">1-1.5 mg/kg</span></span>
+                        </button>
+                    </div>
+                    <small style="color:var(--ink-muted); font-size:11.5px; margin-top:4px; display:block;">ข้อบ่งชี้: Refractory VF/pVT หลัง Shock ครั้งที่ 2–3</small>
+                </div>
+
+                <!-- Special Resuscitation Meds Quick Bar -->
+                <div style="margin-top:10px; border-top:1px solid var(--border-dim); padding-top:8px;">
+                    <div style="font-size:12px; font-weight:700; color:var(--ink-muted); margin-bottom:6px; display:flex; justify-content:space-between;">
+                        <span>Special Resuscitation Drugs</span>
+                        <a href="#drug-guide-drawer" onclick="openDrawer('drug-guide-drawer')" style="color:var(--accent-cyan); text-decoration:none;">ดูข้อบ่งชี้ ℹ️</a>
+                    </div>
+                    <div class="special-meds-grid">
+                        <button class="btn-quick-med" onclick="giveQuickMed('Calcium Gluconate 10% 10-20 mL', 'Hyperkalemia / CCB toxicity')" disabled>
+                            <span>Calcium Gluconate</span>
+                            <span class="dose-sub">10% 10-20 mL (1-2g)</span>
+                        </button>
+                        <button class="btn-quick-med" onclick="giveQuickMed('Sodium Bicarbonate 50 mEq', 'Acidosis / Hyperkalemia / TCA')" disabled>
+                            <span>Sodium Bicarb</span>
+                            <span class="dose-sub">7.5% 50 mEq (50 mL)</span>
+                        </button>
+                        <button class="btn-quick-med" onclick="giveQuickMed('Magnesium Sulfate 2g IV', 'Torsades de Pointes / HypoMg')" disabled>
+                            <span>Magnesium SO4</span>
+                            <span class="dose-sub">2g IV in D5W 10mL</span>
+                        </button>
+                        <button class="btn-quick-med" onclick="giveQuickMed('Push-Dose Epinephrine 10-20 mcg', 'Peri-arrest Hypotension')" disabled>
+                            <span>Push-Dose Epi</span>
+                            <span class="dose-sub">10-20 mcg (10mcg/mL)</span>
+                        </button>
+                        <button class="btn-quick-med" onclick="giveQuickMed('20% Lipid Emulsion 1.5 mL/kg', 'LAST / Lipophilic toxicity')" disabled>
+                            <span>Intralipid 20%</span>
+                            <span class="dose-sub">1.5 mL/kg Bolus</span>
+                        </button>
+                        <button class="btn-quick-med" onclick="giveQuickMed('Naloxone 0.4-2 mg IV/IM', 'Opioid Overdose')" disabled>
+                            <span>Naloxone</span>
+                            <span class="dose-sub">0.4 - 2 mg IV/IO/IM</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Timeline Log -->
-        <div class="timeline-section">
-            <div class="action-title" style="display:flex; justify-content:space-between; align-items:center;">
-                Event Timeline
-                <button class="no-print" style="padding: 6px 12px; font-size: 14px; background:var(--gray-med);" onclick="window.print()">Print Log</button>
+        <!-- Collapsible Drawer 1: Clinical Indications Guide for Resus Meds -->
+        <div class="collapsible-drawer no-print" id="drug-guide-drawer">
+            <div class="drawer-header" onclick="toggleDrawer('drug-guide-drawer')">
+                <span>📖 คำแนะนำการใช้ยาในภาวะฉุกเฉิน (Resuscitation Drug Indications Guide)</span>
+                <span id="icon-drug-guide">▼</span>
             </div>
-            <h1 class="print-title">Resuscitation Record — ED MNRH</h1>
-            <div class="print-summary" id="print-summary">
-                <strong>Summary:</strong><br>
-                Total Duration: <span id="summary-duration">00:00</span><br>
-                Total Epi Doses: <span id="summary-epi">0</span><br>
-                Total Shocks: <span id="summary-shocks">0</span><br>
-                Outcome: <span id="summary-outcome">Ongoing</span>
+            <div class="drawer-body" id="body-drug-guide">
+                <div class="drug-guide-grid">
+                    <div class="drug-guide-card">
+                        <h4>💉 Epinephrine (1:10,000 IV/IO)</h4>
+                        <span class="indication-tag">Cardiac Arrest ทุก Rhythm</span>
+                        <p><strong>ขนาด:</strong> 1 mg IV/IO ทุก 3–5 นาที ตามด้วย NSS flush 20 mL.</p>
+                        <p><strong>ข้อบ่งชี้ & จังหวะการให้:</strong></p>
+                        <p>• <em>Non-shockable (Asystole/PEA):</em> ให้ทันทีที่เปิดเส้นได้ (As soon as feasible) เพื่อเพิ่ม Coronary Perfusion Pressure.</p>
+                        <p>• <em>Shockable (VF/pVT):</em> ให้หลังจากการ Defibrillate ครั้งที่ 2 ล้มเหลว (Cycle 2–3).</p>
+                    </div>
+
+                    <div class="drug-guide-card">
+                        <h4>💊 Amiodarone / Lidocaine</h4>
+                        <span class="indication-tag">Refractory VF / Pulseless VT</span>
+                        <p><strong>ขนาด Amiodarone:</strong> Dose 1: 300 mg bolus, Dose 2: 150 mg bolus.</p>
+                        <p><strong>ขนาด Lidocaine:</strong> Dose 1: 1–1.5 mg/kg, Dose 2: 0.5–0.75 mg/kg (Max รวม 3 mg/kg).</p>
+                        <p><strong>ข้อบ่งชี้:</strong> ให้เมื่อ Shockable Rhythm ดื้อต่อการช็อกไฟฟ้าตั้งแต่ 2–3 ครั้งขึ้นไป เพื่อเพิ่มโอกาสเกิด ROSC.</p>
+                    </div>
+
+                    <div class="drug-guide-card">
+                        <h4>🧪 Calcium Gluconate / Chloride 10%</h4>
+                        <span class="indication-tag">Hyperkalemia / CCB Overdose / Hypocalcemia</span>
+                        <p><strong>ขนาด:</strong> Calcium Gluconate 10% 10–30 mL (1–3 g) หรือ Calcium Chloride 10% 5–10 mL (500–1000 mg) IV/IO.</p>
+                        <p><strong>ข้อบ่งชี้:</strong> 1) ผู้ป่วยฟอกไต/ESRD ที่สงสัย Hyperkalemia 2) สงสัยพิษ Calcium Channel Blocker 3) Severe Hypocalcemia หรือ Hypermagnesemia.</p>
+                        <p><em>*ข้อควรระวัง:</em> ห้ามให้แบบ Routine หากไม่มีข้อบ่งชี้ และห้ามฉีดพร้อม Bicarb ในสายเดียวกัน.</p>
+                    </div>
+
+                    <div class="drug-guide-card">
+                        <h4>🧂 Sodium Bicarbonate (7.5% / 8.4%)</h4>
+                        <span class="indication-tag">Acidosis / Hyperkalemia / TCA Overdose</span>
+                        <p><strong>ขนาด:</strong> 1 mEq/kg (50 mL = 50 mEq) IV/IO push ช้าๆ.</p>
+                        <p><strong>ข้อบ่งชี้:</strong> 1) Known Pre-existing Severe Metabolic Acidosis (เช่น DKA, Sepsis) 2) Severe Hyperkalemia 3) พิษจากยา TCA / Sodium channel blocker (QRS กว้าง).</p>
+                    </div>
+
+                    <div class="drug-guide-card">
+                        <h4>⚡ Magnesium Sulfate</h4>
+                        <span class="indication-tag">Torsades de Pointes / Eclampsia</span>
+                        <p><strong>ขนาด:</strong> 1–2 g IV/IO เจือจางใน D5W/NSS 10 mL push ใน 1–2 นาที.</p>
+                        <p><strong>ข้อบ่งชี้:</strong> Polymorphic VT ร่วมกับ Prolonged QT interval (Torsades de Pointes) หรือภาวะชักจาก Eclampsia.</p>
+                    </div>
+
+                    <div class="drug-guide-card">
+                        <h4>💧 Push-Dose Epinephrine (10 mcg/mL)</h4>
+                        <span class="indication-tag">Peri-arrest Severe Hypotension</span>
+                        <p><strong>ขนาด:</strong> 0.5–2 mL (5–20 mcg) IV push ทุก 2–5 นาที.</p>
+                        <p><strong>วิธีผสม:</strong> Epi 1:1,000 (1 mg/mL) 1 mL + NSS 99 mL = 10 mcg/mL.</p>
+                        <p><strong>ข้อบ่งชี้:</strong> ช่วยประคองความดันขณะรอตั้งสาย Norepinephrine / Epinephrine Drip หลัง ROSC หรือช่วง Periarrest.</p>
+                    </div>
+
+                    <div class="drug-guide-card">
+                        <h4>🥛 20% Lipid Emulsion (Intralipid)</h4>
+                        <span class="indication-tag">LAST (Local Anesthetic Toxicity)</span>
+                        <p><strong>ขนาด:</strong> Bolus 1.5 mL/kg ใน 2–3 นาที ตามด้วย Infusion 0.25 mL/kg/min.</p>
+                        <p><strong>ข้อบ่งชี้:</strong> พิษจากยาชาเฉพาะที่ (Lidocaine, Bupivacaine) หรือยา Lipophilic รุนแรงที่ไม่ตอบสนองต่อการรักษามาตรฐาน.</p>
+                    </div>
+
+                    <div class="drug-guide-card">
+                        <h4>🎯 Naloxone</h4>
+                        <span class="indication-tag">Opioid Overdose / Respiratory Arrest</span>
+                        <p><strong>ขนาด:</strong> 0.4–2 mg IV/IO/IM/IN ซ้ำได้ทุก 2–3 นาที.</p>
+                        <p><strong>ข้อบ่งชี้:</strong> สงสัยภาวะหยุดหายใจจากพิษกลุ่ม Opioid (รูม่านตาหดเล็ก Pinpoint pupils, ประวัติใช้ยาแก้ปวด/สารเสพติด).</p>
+                    </div>
+                </div>
             </div>
-            <div class="timeline-container" id="timeline">
-                <!-- Log entries appear here -->
+        </div>
+
+        <!-- Collapsible Drawer 2: 5 H's & 5 T's Diagnostic Checklist -->
+        <div class="collapsible-drawer no-print" id="ht-drawer">
+            <div class="drawer-header" onclick="toggleDrawer('ht-drawer')">
+                <span>🔍 Reversible Causes: 5 H's &amp; 5 T's Checklist (ACLS 2026)</span>
+                <span id="icon-ht">▼</span>
+            </div>
+            <div class="drawer-body" id="body-ht">
+                <div class="ht-checklist-grid">
+                    <div class="ht-column">
+                        <h4>5 H's</h4>
+                        <label class="ht-item">
+                            <input type="checkbox" onchange="logChecklist('Hypovolemia', this.checked)">
+                            <div><strong>Hypovolemia:</strong> ให้ IV Fluid Bolus, เตรียมเลือดหากมีภาวะตกเลือด (Hemorrhagic Shock)</div>
+                        </label>
+                        <label class="ht-item">
+                            <input type="checkbox" onchange="logChecklist('Hypoxia', this.checked)">
+                            <div><strong>Hypoxia:</strong> 100% O2, ตรวจสอบท่อช่วยหายใจ (ETT / SGA) และทรวงอกทั้ง 2 ข้าง</div>
+                        </label>
+                        <label class="ht-item">
+                            <input type="checkbox" onchange="logChecklist('Hydrogen Ion (Acidosis)', this.checked)">
+                            <div><strong>Hydrogen ion (Acidosis):</strong> เพิ่มการช่วยหายใจอย่างเหมาะสม, พิจารณา NaHCO3 หากเป็น Metabolic</div>
+                        </label>
+                        <label class="ht-item">
+                            <input type="checkbox" onchange="logChecklist('Hypo / Hyperkalemia', this.checked)">
+                            <div><strong>Hypo / Hyperkalemia:</strong> เจาะ Stat Lytes/ABG, ให้ Calcium Gluconate + NaHCO3 + RI/Glucose</div>
+                        </label>
+                        <label class="ht-item">
+                            <input type="checkbox" onchange="logChecklist('Hypothermia', this.checked)">
+                            <div><strong>Hypothermia:</strong> ห่มผ้าอุ่น, ให้อุ่นสารน้ำ (Warmed IV fluids), Active rewarming</div>
+                        </label>
+                    </div>
+
+                    <div class="ht-column">
+                        <h4>5 T's</h4>
+                        <label class="ht-item">
+                            <input type="checkbox" onchange="logChecklist('Tension Pneumothorax', this.checked)">
+                            <div><strong>Tension Pneumothorax:</strong> Needle Decompression (2nd ICS MCL / 5th ICS AAL) &rarr; ICD</div>
+                        </label>
+                        <label class="ht-item">
+                            <input type="checkbox" onchange="logChecklist('Tamponade (Cardiac)', this.checked)">
+                            <div><strong>Tamponade (Cardiac):</strong> Bedside POCUS (&lt;10s) &rarr; ทำ Pericardiocentesis ทันที</div>
+                        </label>
+                        <label class="ht-item">
+                            <input type="checkbox" onchange="logChecklist('Toxins / Overdose', this.checked)">
+                            <div><strong>Toxins:</strong> ประเมิน Antidote (Naloxone, Intralipid, Bicarb, Calcium, Glucagon)</div>
+                        </label>
+                        <label class="ht-item">
+                            <input type="checkbox" onchange="logChecklist('Thrombosis (Pulmonary PE)', this.checked)">
+                            <div><strong>Thrombosis (Pulmonary - Massive PE):</strong> POCUS RV strain, พิจารณา Thrombolysis / ECPR</div>
+                        </label>
+                        <label class="ht-item">
+                            <input type="checkbox" onchange="logChecklist('Thrombosis (Coronary ACS)', this.checked)">
+                            <div><strong>Thrombosis (Coronary - STEMI/ACS):</strong> เตรียมนำส่ง Cath Lab / ทำ Primary PCI หลัง ROSC</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Collapsible Drawer 3: Post-ROSC Care Protocol (Part 11) -->
+        <div class="collapsible-drawer no-print" id="rosc-drawer">
+            <div class="drawer-header" onclick="toggleDrawer('rosc-drawer')">
+                <span>⭐ Post-Cardiac Arrest Care Protocol (ACLS Part 11 Guidelines)</span>
+                <span id="icon-rosc">▼</span>
+            </div>
+            <div class="drawer-body" id="body-rosc">
+                <div class="rosc-bundle-grid">
+                    <div class="rosc-item">
+                        <strong>1. Airway &amp; Oxygenation</strong>
+                        เริ่มต้นด้วย 100% O2 จนกระทั่งวัดค่าได้แน่นอน &rarr; ปรับ FiO2 เพื่อคุม <strong>SpO2 90–98%</strong> (PaO2 60–105 mmHg). หลีกเลี่ยงทั้ง Hypoxemia และ Severe Hyperoxia (PaO2 &gt; 250).
+                    </div>
+                    <div class="rosc-item">
+                        <strong>2. Ventilation (PaCO2)</strong>
+                        ตั้งเป้า <strong>PaCO2 35–45 mmHg (Normocapnia)</strong>. เริ่มต้นหายใจ 10–12 ครั้ง/นาที. หลีกเลี่ยงการ Hyperventilate ที่ทำให้หลอดเลือดสมองหดตัว.
+                    </div>
+                    <div class="rosc-item">
+                        <strong>3. Hemodynamics &amp; MAP</strong>
+                        ป้องกันความดันตกอย่างเด็ดขาด! ตั้งเป้า <strong>MAP &ge; 65 mmHg</strong> (หรือ SBP &ge; 90). ให้ IV Fluid bolus และเริ่ม Norepinephrine / Epinephrine Drip ทันทีหากความดันต่ำ.
+                    </div>
+                    <div class="rosc-item">
+                        <strong>4. 12-Lead ECG</strong>
+                        ทำ 12-lead ECG โดยเร็วที่สุดเพื่อตรวจหา <strong>STEMI / Acute Coronary Occlusion</strong> &rarr; Activate Cath Lab ทำ Emergent Coronary Angiography.
+                    </div>
+                    <div class="rosc-item">
+                        <strong>5. Targeted Temperature Management</strong>
+                        คุมอุณหภูมิ <strong>32°C – 37.5°C อย่างน้อย 36 ชั่วโมง</strong> ในผู้ป่วยที่ไม่รู้สึกตัว. ป้องกันไข้ (&ge;38°C) อย่างเคร่งครัด. Rewarm ช้าๆ ไม่เกิน 0.5°C/ชม. (ไม่แนะนำให้โหลดน้ำเกลือเย็นจัดก่อนถึง รพ.).
+                    </div>
+                    <div class="rosc-item">
+                        <strong>6. Neuro &amp; Seizure Management</strong>
+                        ทำ EEG ตรวจหา Seizure / Non-convulsive status ในผู้ป่วย Coma. ให้ยากันชักเมื่อมี Seizure เท่านั้น (ไม่แนะนำให้ยากันชักแบบ Prophylaxis).
+                    </div>
+                    <div class="rosc-item">
+                        <strong>7. Metabolic &amp; Diagnostics</strong>
+                        คุม Blood Glucose <strong>140–180 mg/dL</strong> (ระวัง Hypoglycemia &lt;70). พิจารณา CT Brain หรือ Head-to-Pelvis CT และ Bedside Echo/POCUS เพื่อหาสาเหตุ.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Log Section -->
+        <div class="timeline-dock">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div style="font-weight:700; font-size:15px; text-transform:uppercase; color:var(--ink-light);">
+                    📋 Resuscitation Event Timeline
+                </div>
+                <div class="export-actions no-print">
+                    <button class="btn-export" onclick="undoLastEvent()" title="Undo last action">↩ Undo</button>
+                    <button class="btn-export" onclick="copyEMRSummary()">📄 Copy EMR Note</button>
+                    <button class="btn-export" onclick="window.print()">🖨️ Print Sheet</button>
+                </div>
+            </div>
+
+            <!-- Custom Quick-Event Input -->
+            <div class="custom-note-bar no-print">
+                <input type="text" class="custom-note-input" id="custom-note-input" placeholder="พิมพ์บันทึกเหตุการณ์ฉุกเฉิน (เช่น ใส่ ETT เบอร์ 7.5 ลึก 21cm, เปิด IO ขาขวา, ส่ง ABG)..." onkeypress="if(event.key==='Enter') addCustomNote()">
+                <button class="btn-note-add" onclick="addCustomNote()">+ Add Log</button>
+            </div>
+
+            <div class="print-only-header">
+                <h2>MAHARAT NAKHON RATCHASIMA HOSPITAL</h2>
+                <h3>Emergency Department — Official Resuscitation Record</h3>
+                <p id="print-header-meta">Date: -- | Total Code Duration: -- | Outcome: --</p>
+            </div>
+
+            <!-- Scrollable Timeline -->
+            <div class="timeline-scroll" id="timeline-container">
+                <!-- Timeline items injected by JS -->
+            </div>
+
+            <!-- Summary Ribbon -->
+            <div class="summary-ribbon">
+                <div class="stat-item">Duration: <strong id="stat-duration">00:00</strong></div>
+                <div class="stat-item">Shocks: <strong id="stat-shocks">0</strong></div>
+                <div class="stat-item">Epi Doses: <strong id="stat-epi">0</strong></div>
+                <div class="stat-item">Antiarrhythmic: <strong id="stat-amio">0</strong></div>
+                <div class="stat-item">Status: <strong id="stat-outcome" style="color:var(--accent-amber);">Ready</strong></div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Components Script -->
     <script src="../shared/components.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            if(window.ED_COMPONENTS) {
+            if (window.ED_COMPONENTS) {
                 ED_COMPONENTS.injectNavBar('../index.html', '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
             }
-            initMuteState();
+            initAudioSettings();
+            initPrintHeaderMeta();
         });
 
-        // State
-        let timerInterval = null;
+        // ══════════════════════════════════════════════════════════════
+        // APPLICATION STATE
+        // ══════════════════════════════════════════════════════════════
+        let isRunning = false;
+        let isPaused = false;
         let startTime = 0;
         let elapsedTime = 0; // ms
-        let isRunning = false;
+        let timerInterval = null;
+
+        const CYCLE_DURATION_MS = 120000; // 2 minutes (120 sec)
+        let lastCycleAlertIndex = 0;
+        let cycleAcknowledged = false;
+
         let isMuted = false;
-        let lastBeepCycle = 0;
+        let isMetronomeOn = false;
+        let metronomeInterval = null;
+
+        let eventsLog = []; // { id, codeMs, realTime, text, type }
 
         let stats = {
-            epiCount: 0,
-            lastEpiTime: null,
-            shockCount: 0,
-            amioCount: 0
+            shocks: 0,
+            epiDoses: 0,
+            lastEpiMs: null,
+            amioDoses: 0,
+            lidoDoses: 0,
+            lastRhythm: 'None',
+            isShockable: false,
+            outcome: 'Ready'
         };
 
-        const CYCLE_MS = 120000; // 2 minutes
-
-        function formatTime(ms) {
+        // ══════════════════════════════════════════════════════════════
+        // TIMER LOGIC & CLOCKS
+        // ══════════════════════════════════════════════════════════════
+        function formatClock(ms) {
             const totalSec = Math.floor(ms / 1000);
             const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
             const s = String(totalSec % 60).padStart(2, '0');
             return `${m}:${s}`;
         }
 
-        function updateDisplay() {
-            const formatted = formatTime(elapsedTime);
-            document.getElementById('timer-display').textContent = formatted;
-            document.getElementById('summary-duration').textContent = formatted;
-
-            const cycle = Math.floor(elapsedTime / CYCLE_MS) + 1;
-            document.getElementById('cycle-display').textContent = `Cycle ${cycle}`;
-
-            // Check if we hit a 2 min mark
-            const currentCycleMark = Math.floor(elapsedTime / CYCLE_MS);
-            if (currentCycleMark > lastBeepCycle && currentCycleMark > 0) {
-                lastBeepCycle = currentCycleMark;
-                triggerCycleAlert();
-            }
-
-            // Epi Reminder (≥3 min)
-            if (stats.lastEpiTime !== null && isRunning) {
-                const msSinceEpi = elapsedTime - stats.lastEpiTime;
-                if (msSinceEpi >= 180000) { // 3 min
-                    document.getElementById('epi-warning').style.display = 'block';
-                } else {
-                    document.getElementById('epi-warning').style.display = 'none';
-                }
-            }
+        function getRealTimeStr() {
+            const d = new Date();
+            return d.toTimeString().split(' ')[0];
         }
 
         function tick() {
             const now = performance.now();
             elapsedTime = now - startTime;
-            updateDisplay();
+            updateClocks();
+            checkCycleAlert();
+            updateEpiIndicator();
         }
 
-        function startTimer() {
+        function updateClocks() {
+            const totalStr = formatClock(elapsedTime);
+            document.getElementById('total-clock').textContent = totalStr;
+            document.getElementById('stat-duration').textContent = totalStr;
+
+            // Cycle Calculations
+            const cycleIndex = Math.floor(elapsedTime / CYCLE_DURATION_MS) + 1;
+            const cycleElapsedMs = elapsedTime % CYCLE_DURATION_MS;
+            const cycleRemainingMs = Math.max(0, CYCLE_DURATION_MS - cycleElapsedMs);
+            const cycleClockStr = formatClock(cycleRemainingMs);
+
+            document.getElementById('cycle-label').textContent = `Cycle ${cycleIndex} (2:00 CPR)`;
+            document.getElementById('cycle-clock').textContent = cycleClockStr;
+
+            const cyclePct = (cycleElapsedMs / CYCLE_DURATION_MS) * 100;
+            document.getElementById('cycle-bar').style.width = `${cyclePct}%`;
+        }
+
+        function startCode() {
             if (isRunning) return;
             if (elapsedTime === 0) {
                 startTime = performance.now();
-                logEvent('Code Started', 'event-start');
-                document.getElementById('summary-outcome').textContent = 'In Progress';
+                stats.outcome = 'In Progress';
+                logEvent('▶ Code Started / Resuscitation Initiated', 'ev-start');
             } else {
                 startTime = performance.now() - elapsedTime;
-                logEvent('Code Resumed', 'event-start');
-                document.getElementById('summary-outcome').textContent = 'In Progress';
+                logEvent('▶ Code Resumed', 'ev-start');
             }
             isRunning = true;
+            isPaused = false;
             timerInterval = setInterval(tick, 100);
-            toggleButtons(true);
+
+            document.getElementById('btn-start').disabled = true;
+            document.getElementById('btn-pause').disabled = false;
+            document.getElementById('btn-rosc').disabled = false;
+            document.getElementById('stat-outcome').textContent = 'In Progress';
+            document.getElementById('stat-outcome').style.color = 'var(--accent-green)';
+
+            enableActionButtons(true);
         }
 
-        function stopTimer() {
+        function pauseCode() {
             if (!isRunning) return;
             isRunning = false;
+            isPaused = true;
             clearInterval(timerInterval);
-            logEvent('Code Stopped', 'event-start');
-            toggleButtons(false);
-            // document.getElementById('summary-outcome').textContent = 'Stopped';
+
+            logEvent('⏸ Code Paused', 'ev-rhythm');
+            document.getElementById('btn-start').disabled = false;
+            document.getElementById('btn-start').textContent = '▶ Resume Code';
+            document.getElementById('btn-pause').disabled = true;
+            document.getElementById('stat-outcome').textContent = 'Paused';
+            document.getElementById('stat-outcome').style.color = 'var(--accent-amber)';
         }
 
-        function resetTimer() {
-            stopTimer();
-            elapsedTime = 0;
-            lastBeepCycle = 0;
-            stats = { epiCount: 0, lastEpiTime: null, shockCount: 0, amioCount: 0 };
-            document.getElementById('timeline').innerHTML = '';
-            document.getElementById('timer-display').textContent = '00:00';
-            document.getElementById('cycle-display').textContent = 'Cycle 1';
-            document.getElementById('epi-warning').style.display = 'none';
-            document.getElementById('btn-amio').textContent = 'Amiodarone 300mg IV/IO';
-            updateSummary();
-            document.getElementById('summary-duration').textContent = '00:00';
-            document.getElementById('summary-outcome').textContent = 'Not Started';
-            document.getElementById('rosc-checklist').style.border = '2px solid var(--accent-green)';
-            toggleButtons(false);
-        }
-
-        function toggleButtons(active) {
-            const buttons = ['btn-stop', 'btn-shockable', 'btn-non-shockable', 'btn-shock', 'btn-epi', 'btn-amio', 'btn-rosc'];
-            buttons.forEach(id => {
-                const el = document.getElementById(id);
-                if(el) {
-                    el.disabled = !active;
-                    if(active && id === 'btn-amio' && stats.amioCount >= 2) el.disabled = true;
-                }
-            });
-            document.getElementById('btn-start').disabled = active;
-            document.getElementById('shock-energy').disabled = !active;
-        }
-
-        // Logging
-        function logEvent(text, cssClass) {
-            const timeStr = formatTime(elapsedTime);
-            const timeline = document.getElementById('timeline');
-            const div = document.createElement('div');
-            div.className = 'timeline-item';
-            div.innerHTML = `<div class="time-col">${timeStr}</div><div class="event-col ${cssClass}">${text}</div>`;
-            timeline.prepend(div);
-        }
-
-        function logRhythm(rhythm) {
-            logEvent(`Rhythm Check: ${rhythm}`, 'event-rhythm');
-            stopFlash();
-        }
-
-        function logShock() {
-            const energy = document.getElementById('shock-energy').value;
-            stats.shockCount++;
-            logEvent(`Shock #${stats.shockCount} Delivered (${energy})`, 'event-shock');
-            updateSummary();
-        }
-
-        function logEpi() {
-            stats.epiCount++;
-            stats.lastEpiTime = elapsedTime;
-            document.getElementById('epi-warning').style.display = 'none';
-            logEvent(`Epinephrine #${stats.epiCount} Given`, 'event-epi');
-            updateSummary();
-        }
-
-        function logAmio() {
-            stats.amioCount++;
-            let dose = stats.amioCount === 1 ? '300mg' : '150mg';
-            logEvent(`Amiodarone #${stats.amioCount} Given (${dose})`, 'event-amio');
+        function achieveROSC() {
+            pauseCode();
+            stats.outcome = `ROSC Achieved at ${formatClock(elapsedTime)}`;
+            logEvent(`⭐ ROSC Achieved! (${formatClock(elapsedTime)})`, 'ev-rosc');
+            document.getElementById('stat-outcome').textContent = 'ROSC Achieved';
+            document.getElementById('stat-outcome').style.color = 'var(--accent-green)';
             
-            if (stats.amioCount >= 2) {
-                document.getElementById('btn-amio').disabled = true;
-                document.getElementById('btn-amio').textContent = 'Amiodarone Max Doses Given';
-            } else {
-                document.getElementById('btn-amio').textContent = 'Amiodarone 150mg IV/IO';
+            // Open Post-ROSC care bundle drawer automatically
+            openDrawer('rosc-drawer');
+            setGuidance('⭐ <strong>ROSC Achieved:</strong> เข้าสู่ Post-Cardiac Arrest Care Protocol: คุม SpO2 90–98%, MAP ≥ 65, 12-lead ECG, TTM 32–37.5°C ≥36h.');
+        }
+
+        function confirmReset() {
+            if (elapsedTime > 0 && !confirm('ยืนยันการ Reset เวลาและล้างข้อมูลบันทึกทั้งหมด?')) {
+                return;
+            }
+            clearInterval(timerInterval);
+            isRunning = false;
+            isPaused = false;
+            elapsedTime = 0;
+            startTime = 0;
+            lastCycleAlertIndex = 0;
+            cycleAcknowledged = false;
+
+            if (isMetronomeOn) toggleMetronome();
+
+            stats = {
+                shocks: 0,
+                epiDoses: 0,
+                lastEpiMs: null,
+                amioDoses: 0,
+                lidoDoses: 0,
+                lastRhythm: 'None',
+                isShockable: false,
+                outcome: 'Ready'
+            };
+
+            eventsLog = [];
+            document.getElementById('timeline-container').innerHTML = '';
+            document.getElementById('total-clock').textContent = '00:00';
+            document.getElementById('cycle-label').textContent = 'Cycle 1 (2:00 CPR)';
+            document.getElementById('cycle-clock').textContent = '02:00';
+            document.getElementById('cycle-bar').style.width = '0%';
+            document.getElementById('btn-start').disabled = false;
+            document.getElementById('btn-start').textContent = '▶ Start Resuscitation';
+            document.getElementById('btn-pause').disabled = true;
+            document.getElementById('btn-rosc').disabled = true;
+            document.getElementById('badge-epi-count').textContent = 'Dose #1';
+            document.getElementById('epi-last-given').textContent = 'ยังไม่ได้ให้';
+            document.getElementById('badge-amio-count').textContent = 'Dose #1';
+            document.getElementById('amio-dose-label').textContent = '300 mg';
+            document.getElementById('lido-dose-label').textContent = '1-1.5 mg/kg';
+            document.getElementById('persisting-vf-alert').style.display = 'none';
+            document.getElementById('epi-pill').style.display = 'none';
+            document.getElementById('cycle-alert-banner').style.display = 'none';
+            document.getElementById('resus-dashboard').classList.remove('cycle-alert-flash');
+
+            updateStatsRibbon();
+            enableActionButtons(false);
+            setGuidance('💡 <strong>ACLS 2026:</strong> Push hard (5–6 cm), push fast (100–120/min), complete chest recoil, minimize interruptions (CCF &gt; 80%).');
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // CYCLE 2-MIN ALERT SYSTEM
+        // ══════════════════════════════════════════════════════════════
+        function checkCycleAlert() {
+            const currentCycleIndex = Math.floor(elapsedTime / CYCLE_DURATION_MS);
+            if (currentCycleIndex > lastCycleAlertIndex && currentCycleIndex > 0) {
+                lastCycleAlertIndex = currentCycleIndex;
+                triggerCycleAlert();
             }
         }
 
-        function logROSC() {
-            stopTimer();
-            logEvent(`ROSC Achieved!`, 'event-rosc');
-            document.getElementById('summary-outcome').textContent = 'ROSC Achieved at ' + formatTime(elapsedTime);
-            // Show checklist highlight
-            document.getElementById('rosc-checklist').style.backgroundColor = '#1a3320';
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
-
-        function updateSummary() {
-            document.getElementById('summary-epi').textContent = stats.epiCount;
-            document.getElementById('summary-shocks').textContent = stats.shockCount;
-        }
-
-        // Alerts & Audio
         function triggerCycleAlert() {
-            const display = document.getElementById('timer-display');
-            display.classList.add('flash');
-            playBeep();
+            const banner = document.getElementById('cycle-alert-banner');
+            banner.style.display = 'flex';
+            document.getElementById('resus-dashboard').classList.add('cycle-alert-flash');
+            playChime();
+            logEvent(`⚠️ 2-Minute CPR Mark Reached (Cycle ${lastCycleAlertIndex + 1}) — Rhythm Check & Switch Compressor`, 'ev-rhythm');
         }
 
-        function stopFlash() {
-            document.getElementById('timer-display').classList.remove('flash');
+        function dismissCycleAlert() {
+            document.getElementById('cycle-alert-banner').style.display = 'none';
+            document.getElementById('resus-dashboard').classList.remove('cycle-alert-flash');
         }
 
-        function initMuteState() {
+        // ══════════════════════════════════════════════════════════════
+        // RHYTHM & DEFIBRILLATION
+        // ══════════════════════════════════════════════════════════════
+        function recordRhythm(rhythmName, isShockable) {
+            stats.lastRhythm = rhythmName;
+            stats.isShockable = isShockable;
+            dismissCycleAlert();
+
+            logEvent(`Rhythm Check: ${rhythmName}`, 'ev-rhythm');
+
+            if (isShockable) {
+                setGuidance('⚡ <strong>Shockable Rhythm:</strong> ช็อกไฟฟ้าทันที (200J Biphasic) &rarr; ทำ CPR ต่อทันที 2 นาที. ให้ Epi หลัง Shock #2, ให้ Amiodarone 300mg หากดื้อต่อการช็อก.');
+                document.getElementById('btn-shock').disabled = false;
+                document.getElementById('shock-energy-select').disabled = false;
+            } else {
+                setGuidance('🔵 <strong>Non-Shockable Rhythm:</strong> ห้ามช็อกไฟฟ้า! รีบให้ <strong>Epinephrine 1 mg ทันที</strong>, ทำ CPR คุณภาพสูง 2 นาที และค้นหา 5 H\'s & 5 T\'s.');
+                document.getElementById('btn-shock').disabled = true;
+                document.getElementById('shock-energy-select').disabled = true;
+            }
+        }
+
+        function deliverShock() {
+            stats.shocks++;
+            const energy = document.getElementById('shock-energy-select').value;
+            logEvent(`⚡ Shock #${stats.shocks} Delivered (${energy}) — Resume CPR Immediately!`, 'ev-shock');
+            updateStatsRibbon();
+            playShockBeep();
+
+            if (stats.shocks >= 3) {
+                document.getElementById('persisting-vf-alert').style.display = 'block';
+                setGuidance('⚠️ <strong>Persisting VF (≥3 shocks):</strong> พิจารณา <strong>Vector Change (AP Pads)</strong> หรือ <strong>DSED</strong> และให้ Amiodarone 300mg / Lidocaine 1-1.5 mg/kg.');
+            } else {
+                setGuidance(`⚡ Shock #${stats.shocks} Delivered (${energy}). ทำ CPR ต่อเนื่อง 2 นาทีทันทีโดยไม่ต้องคลำชีพจร.`);
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // MEDICATION MANAGEMENT
+        // ══════════════════════════════════════════════════════════════
+        function giveEpi() {
+            stats.epiDoses++;
+            stats.lastEpiMs = elapsedTime;
+            logEvent(`💉 Epinephrine #${stats.epiDoses} (1 mg IV/IO) Given`, 'ev-epi');
+            
+            document.getElementById('badge-epi-count').textContent = `Dose #${stats.epiDoses + 1}`;
+            document.getElementById('epi-last-given').textContent = `ให้เมื่อ ${formatClock(elapsedTime)}`;
+            updateStatsRibbon();
+            updateEpiIndicator();
+        }
+
+        function updateEpiIndicator() {
+            const pill = document.getElementById('epi-pill');
+            const pillTime = document.getElementById('epi-pill-time');
+
+            if (stats.lastEpiMs === null || !isRunning) {
+                if (stats.lastEpiMs === null) pill.style.display = 'none';
+                return;
+            }
+
+            pill.style.display = 'inline-flex';
+            const msSinceEpi = elapsedTime - stats.lastEpiMs;
+            const secSinceEpi = Math.floor(msSinceEpi / 1000);
+            pillTime.textContent = formatClock(msSinceEpi);
+
+            pill.className = 'epi-timer-pill';
+            if (secSinceEpi < 180) { // 0 - 3 min
+                pill.classList.add('green');
+            } else if (secSinceEpi < 300) { // 3 - 5 min
+                pill.classList.add('amber');
+            } else { // > 5 min
+                pill.classList.add('red');
+            }
+        }
+
+        function giveAmio() {
+            stats.amioDoses++;
+            let dose = stats.amioDoses === 1 ? '300 mg' : '150 mg';
+            logEvent(`💊 Amiodarone #${stats.amioDoses} (${dose} IV/IO) Given`, 'ev-amio');
+            
+            if (stats.amioDoses === 1) {
+                document.getElementById('badge-amio-count').textContent = 'Dose #2';
+                document.getElementById('amio-dose-label').textContent = '150 mg';
+            } else {
+                document.getElementById('badge-amio-count').textContent = 'Max Doses';
+                document.getElementById('btn-med-amio').disabled = true;
+            }
+            updateStatsRibbon();
+        }
+
+        function giveLidocaine() {
+            stats.lidoDoses++;
+            let dose = stats.lidoDoses === 1 ? '1 - 1.5 mg/kg' : '0.5 - 0.75 mg/kg';
+            logEvent(`💊 Lidocaine #${stats.lidoDoses} (${dose} IV/IO) Given`, 'ev-amio');
+            
+            if (stats.lidoDoses === 1) {
+                document.getElementById('lido-dose-label').textContent = '0.5-0.75 mg/kg';
+            } else {
+                document.getElementById('lido-dose-label').textContent = 'Max Doses';
+                document.getElementById('btn-med-lido').disabled = true;
+            }
+            updateStatsRibbon();
+        }
+
+        function giveQuickMed(drugName, indication) {
+            logEvent(`💉 ${drugName} Given (Indication: ${indication})`, 'ev-med');
+        }
+
+        function logChecklist(causeName, isChecked) {
+            if (isChecked) {
+                logEvent(`🔍 5H5T Checked: ${causeName} considered & addressed`, 'ev-med');
+            }
+        }
+
+        function setGuidance(htmlText) {
+            document.getElementById('guidance-text').innerHTML = htmlText;
+        }
+
+        function updateStatsRibbon() {
+            document.getElementById('stat-shocks').textContent = stats.shocks;
+            document.getElementById('stat-epi').textContent = stats.epiDoses;
+            document.getElementById('stat-amio').textContent = stats.amioDoses + stats.lidoDoses;
+        }
+
+        function enableActionButtons(enable) {
+            const buttons = [
+                'btn-rhythm-shockable', 'btn-rhythm-nonshockable',
+                'btn-med-epi', 'btn-med-amio', 'btn-med-lido'
+            ];
+            buttons.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.disabled = !enable;
+                    if (enable && id === 'btn-med-amio' && stats.amioDoses >= 2) el.disabled = true;
+                    if (enable && id === 'btn-med-lido' && stats.lidoDoses >= 2) el.disabled = true;
+                }
+            });
+
+            // Special quick meds
+            const quickMeds = document.querySelectorAll('.btn-quick-med');
+            quickMeds.forEach(btn => { btn.disabled = !enable; });
+
+            if (!enable) {
+                document.getElementById('btn-shock').disabled = true;
+                document.getElementById('shock-energy-select').disabled = true;
+            } else if (stats.isShockable) {
+                document.getElementById('btn-shock').disabled = false;
+                document.getElementById('shock-energy-select').disabled = false;
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // TIMELINE & LOGGING
+        // ══════════════════════════════════════════════════════════════
+        function logEvent(text, cssClass = '') {
+            const codeTimeStr = formatClock(elapsedTime);
+            const realTimeStr = getRealTimeStr();
+            const eventObj = {
+                id: Date.now() + Math.random(),
+                codeTimeStr,
+                realTimeStr,
+                text,
+                cssClass
+            };
+            eventsLog.unshift(eventObj);
+
+            renderTimeline();
+        }
+
+        function renderTimeline() {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+
+            eventsLog.forEach(ev => {
+                const row = document.createElement('div');
+                row.className = 'timeline-row';
+                row.innerHTML = `
+                    <span class="time-badge">+${ev.codeTimeStr}</span>
+                    <span class="time-real">${ev.realTimeStr}</span>
+                    <span class="event-text ${ev.cssClass}">${ev.text}</span>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function addCustomNote() {
+            const input = document.getElementById('custom-note-input');
+            const val = input.value.trim();
+            if (!val) return;
+            logEvent(`📝 Note: ${val}`, 'ev-med');
+            input.value = '';
+        }
+
+        function undoLastEvent() {
+            if (eventsLog.length === 0) return;
+            const removed = eventsLog.shift();
+            renderTimeline();
+        }
+
+        function copyEMRSummary() {
+            let out = `=== RESUSCITATION RECORD (ED MNRH - ACLS 2026) ===\n`;
+            out += `Date: ${new Date().toLocaleDateString('th-TH')}\n`;
+            out += `Total Duration: ${formatClock(elapsedTime)}\n`;
+            out += `Outcome: ${stats.outcome}\n`;
+            out += `Total Shocks: ${stats.shocks}\n`;
+            out += `Total Epinephrine: ${stats.epiDoses} mg\n`;
+            out += `Amiodarone Doses: ${stats.amioDoses} | Lidocaine Doses: ${stats.lidoDoses}\n`;
+            out += `----------------------------------------\n`;
+            out += `TIMELINE:\n`;
+            
+            // In chronological order for EMR
+            [...eventsLog].reverse().forEach(ev => {
+                out += `[${ev.realTimeStr} | +${ev.codeTimeStr}] ${ev.text}\n`;
+            });
+            out += `========================================`;
+
+            navigator.clipboard.writeText(out).then(() => {
+                alert('คัดลอกบันทึก Resuscitation สรุปสำหรับ EMR เรียบร้อยแล้ว!');
+            }).catch(e => {
+                console.error(e);
+                alert('ไม่สามารถคัดลอกได้อัตโนมัติ กรุณาเลือกข้อความจาก Timeline โดยตรง');
+            });
+        }
+
+        function initPrintHeaderMeta() {
+            const d = new Date().toLocaleDateString('th-TH');
+            document.getElementById('print-header-meta').textContent = `Date: ${d} | Resuscitation Record`;
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // METRONOME & AUDIO ENGINE (WEB AUDIO API)
+        // ══════════════════════════════════════════════════════════════
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function initAudioSettings() {
             const saved = localStorage.getItem('resusMute');
             if (saved === 'true') {
                 isMuted = true;
+                document.getElementById('mute-icon').textContent = '🔇';
             }
-            updateMuteBtn();
         }
 
         function toggleMute() {
             isMuted = !isMuted;
             localStorage.setItem('resusMute', isMuted);
-            updateMuteBtn();
-            if (!isMuted) playBeep(); // Test beep
+            document.getElementById('mute-icon').textContent = isMuted ? '🔇' : '🔊';
+            if (!isMuted) playChime();
         }
 
-        function updateMuteBtn() {
-            document.getElementById('btn-mute').textContent = isMuted ? '🔇' : '🔊';
+        function toggleMetronome() {
+            isMetronomeOn = !isMetronomeOn;
+            const btn = document.getElementById('btn-metronome');
+            const dot = document.getElementById('metro-dot');
+
+            if (isMetronomeOn) {
+                btn.classList.add('active');
+                getAudioContext();
+                // 110 bpm = ~545.45 ms per beat
+                const intervalMs = (60 / 110) * 1000;
+                metronomeInterval = setInterval(() => {
+                    dot.classList.add('beat');
+                    setTimeout(() => dot.classList.remove('beat'), 100);
+                    if (!isMuted) playMetroTick();
+                }, intervalMs);
+            } else {
+                btn.classList.remove('active');
+                clearInterval(metronomeInterval);
+                dot.classList.remove('beat');
+            }
         }
 
-        function playBeep() {
+        function playMetroTick() {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.04);
+            } catch (e) {
+                console.error("Audio error", e);
+            }
+        }
+
+        function playChime() {
             if (isMuted) return;
             try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                // High double beep
+                [880, 1174].forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + i * 0.15);
+                    gain.gain.setValueAtTime(0.25, now + i * 0.15);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.2);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + i * 0.15);
+                    osc.stop(now + i * 0.15 + 0.2);
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function playShockBeep() {
+            if (isMuted) return;
+            try {
+                const ctx = getAudioContext();
                 const osc = ctx.createOscillator();
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(880, ctx.currentTime);
-                osc.connect(ctx.destination);
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(440, ctx.currentTime);
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
                 osc.start();
-                osc.stop(ctx.currentTime + 0.2);
-            } catch(e) {
-                console.error("Audio failed", e);
+                osc.stop(ctx.currentTime + 0.25);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // UI DRAWER COLLAPSIBLE CONTROLS
+        // ══════════════════════════════════════════════════════════════
+        function toggleDrawer(drawerId) {
+            const body = document.getElementById(drawerId.replace('drawer', 'body') || drawerId);
+            const icon = document.getElementById(drawerId.replace('drawer', 'icon') || drawerId);
+            if (!body) return;
+            const isOpen = body.classList.contains('open');
+            if (isOpen) {
+                body.classList.remove('open');
+                if (icon) icon.textContent = '▼';
+            } else {
+                body.classList.add('open');
+                if (icon) icon.textContent = '▲';
+            }
+        }
+
+        function openDrawer(drawerId) {
+            let bodyId = 'body-' + drawerId.replace('-drawer', '');
+            let iconId = 'icon-' + drawerId.replace('-drawer', '');
+            const body = document.getElementById(bodyId);
+            const icon = document.getElementById(iconId);
+            if (body) {
+                body.classList.add('open');
+                if (icon) icon.textContent = '▲';
+                body.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         }
     </script>

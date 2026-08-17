@@ -1,3 +1,21 @@
+## [2.6.1] — 2026-08-17
+
+### Fixed & Enhanced (ACLS 2026 Resuscitation Hub & Prototype Alignment)
+- **Portal Bug Fix (`index.html`):** Removed stray literal `\n` character in the tool list DOM around item T5.
+- **Anaphylaxis Standing Order (`orders/anaphylaxis.html`):** Corrected Epinephrine IV drip calculation link path from `drip-calculator.html` to `../tools/drip-calculator.html`.
+- **Prototype Classification:** Reclassified Anaphylaxis Standing Order (08), RSI Checklist (T8), and Resuscitation Timer (T9) under the **Prototype** collapsible section in `index.html` with `PROTOTYPE` badge status.
+- **ACLS 2025/2026 Resuscitation Timer Overhaul (`tools/resus-timer.html`):**
+  - Integrated **CPR Metronome 110 bpm** (within 100–120 bpm guideline range) with synthesized audio click and rhythmic visual pulse dot.
+  - Enhanced **2-Minute CPR Cycle Alarm** with high-priority audio chime and visual strobe reminding the team to pause CPR (<10s), check rhythm/pulse, switch compressors, and monitor ETCO2.
+  - Built dynamic **Epinephrine 3–5 min Interval Indicator** (Green 0–3m, Amber 3–5m due soon, Red flashing >5m overdue) with smart rhythm-based timing advice.
+  - Added antiarrhythmic support with **Amiodarone** (300 mg → 150 mg) and **Lidocaine** (1–1.5 mg/kg → 0.5–0.75 mg/kg) tracking.
+  - Added **Vector Change (AP Pads)** and **DSED** prompts for persisting/refractory VF (≥3 shocks).
+  - Added **Special Resuscitation Drugs Quick-Log & Indications Guide**: detailed clinical guidance on when and how to administer Calcium Gluconate (Hyperkalemia/CCB toxicity), Sodium Bicarbonate (Acidosis/Hyperkalemia/TCA), Magnesium Sulfate (Torsades), Push-Dose Epinephrine (Peri-arrest shock), 20% Lipid Emulsion (LAST), and Naloxone (Opioids).
+  - Added interactive **5 H's & 5 T's Checklist** and **Part 11 Post-ROSC Care Bundle** (SpO2 90–98%, MAP ≥ 65, 12-lead ECG, TTM 32–37.5°C ≥36h, EEG, Blood Sugar 140–180 mg/dL).
+  - Implemented one-click **Copy EMR Progress Note** (standardized Thai/English format) and formatted A4 print sheet.
+- **PWA Cache:** Bumped cache version to `er-hub-v49` in `service-worker.js`.
+- **Test Suite:** Added `tests/resus-timer-acls2025.test.js` (total 362 tests passing across 72 test suites).
+
 ## [2.6.0] — 2026-08-17
 
 ### Added & Enhanced (ER Department Deep Audit & International Standards Aligned)
