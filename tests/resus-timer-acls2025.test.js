@@ -51,6 +51,45 @@ describe('Resuscitation Timer & ACLS 2026 Verification', () => {
         assert.ok(content.includes('32°C – 37.5°C') || content.includes('32-37.5'), 'Should include TTM 32-37.5°C for >= 36h');
     });
 
+    test('resus-timer.html adopts Braun analogue palette matching index.html', () => {
+        const content = fs.readFileSync(RESUS_PATH, 'utf8');
+
+        // Theme variables from index.html
+        assert.ok(content.includes('--paper: #ebe7df;'), 'Must define --paper: #ebe7df matching index.html');
+        assert.ok(content.includes('--ink: #1a1a1a;'), 'Must define --ink: #1a1a1a matching index.html');
+        assert.ok(content.includes('--graphite: #4a4a4a;'), 'Must define --graphite: #4a4a4a');
+        assert.ok(content.includes('--rule: #d8d4c8;'), 'Must define --rule: #d8d4c8 matching index.html');
+        assert.ok(content.includes('--signal-orange: #d84315;'), 'Must define --signal-orange: #d84315 matching index.html');
+        assert.ok(content.includes('linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)'), 'Must style top-nav with blue gradient matching index.html');
+    });
+
+    test('resus-timer.html collapsible drawers have valid IDs, aria attributes, and toggle logic', () => {
+        const content = fs.readFileSync(RESUS_PATH, 'utf8');
+
+        // Drawer 1: Drug Guide
+        assert.ok(content.includes('id="drug-guide-drawer"'), 'Drug guide drawer container must exist');
+        assert.ok(content.includes('id="body-drug-guide"'), 'Drug guide body must exist');
+        assert.ok(content.includes('toggleDrawer(\'drug-guide-drawer\')'), 'Must toggle drug-guide-drawer');
+
+        // Drawer 2: 5H5T Checklist
+        assert.ok(content.includes('id="ht-drawer"'), '5H5T drawer container must exist');
+        assert.ok(content.includes('id="body-ht"'), '5H5T body must exist');
+        assert.ok(content.includes('toggleDrawer(\'ht-drawer\')'), 'Must toggle ht-drawer');
+
+        // Drawer 3: Post-ROSC Protocol
+        assert.ok(content.includes('id="rosc-drawer"'), 'Post-ROSC drawer container must exist');
+        assert.ok(content.includes('id="body-rosc"'), 'Post-ROSC body must exist');
+        assert.ok(content.includes('toggleDrawer(\'rosc-drawer\')'), 'Must toggle rosc-drawer');
+
+        // Accessibility attributes
+        assert.ok(content.includes('role="button"'), 'Drawer headers must have role="button"');
+        assert.ok(content.includes('tabindex="0"'), 'Drawer headers must have tabindex="0"');
+        assert.ok(content.includes('aria-expanded'), 'Drawer headers must have aria-expanded');
+
+        // JS logic matches DOM elements via querySelector without broken string replace
+        assert.ok(content.includes('drawer.querySelector(\'.drawer-body\')'), 'toggleDrawer must find body via querySelector');
+    });
+
     test('anaphylaxis.html links correctly to tools/drip-calculator.html', () => {
         const content = fs.readFileSync(ANAPHY_PATH, 'utf8');
         assert.ok(

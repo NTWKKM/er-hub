@@ -258,3 +258,14 @@ Standalone worksheets located directly in `tools/` (e.g., `nihss.html`, `Urgent-
 - **Print Layout**: Pure black-and-white A4 print stylesheet. Thick border lines are preserved, inputs are converted into transparent borders with dotted underlines, and checkboxes are styled as custom `☐` and `☑` print marks.
 - **Autosave Engine**: Local self-contained script listening to form `input` and `change` events, compiling form values into a single JSON object saved to local storage under `er-hub-home-med-draft`. Values are automatically restored on page initialization.
 - **Note Formatting**: Local clipboard copy script compiling medication details, patient demographics, and immunizations into a clinical summary notes template.
+
+### Resuscitation Assistant & Timer (`tools/resus-timer.html`)
+
+- **Theme & Layout**: Adopts the core Braun Analogue warm paper palette (`--paper: #ebe7df`, `--ink: #1a1a1a`, `--graphite: #4a4a4a`, `--rule: #d8d4c8`, `--signal-orange: #d84315`, `--braun-white: #F0EDE5`). Max container width `1120px` matching portal grid.
+- **Header & Navigation**: Sticky navy top navigation (`linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)`) with hospital branding and home link. Header bar features an ACLS 2026 badge and interactive CPR metronome (110 bpm) and Web Audio chime/mute toggles.
+- **Timer Console**: Crisp white container cards (`#ffffff`) with hairline borders. Total Code Time and 2-minute CPR countdown clocks use large high-contrast tabular typography with linear gradient progress bar (green → amber → red) and visual strobe alarm at cycle completion.
+- **Clinical Controls**: Color-coded tactile action buttons — Start Resuscitation (Emerald Green `#15803d`), Pause (Amber `#d97706`), ROSC Achieved (Teal Gradient `#059669` to `#0d9488`), Shockable Rhythm (Crimson `#b91c1c`), Non-Shockable Rhythm (Royal Blue `#1e40af`), and Defibrillation fire trigger (`#dc2626`).
+- **Dynamic Medication Tracker**: Live Epinephrine 3–5 min countdown pill with auto-updating color status (green <3m, amber 3–5m, flashing red >5m). Antiarrhythmic (Amiodarone/Lidocaine) max dose clamping and special resuscitation medication quick logs.
+- **Collapsible Clinical Drawers**: Interactive accessible accordions (`role="button"`, `tabindex="0"`, `aria-expanded`) for (1) Resuscitation Drug Indications Guide, (2) 5 H's & 5 T's Diagnostic Checklist, and (3) Post-Cardiac Arrest Care Protocol (Part 11) with auto-open on ROSC.
+- **Timeline & EMR Export**: Real-time event log with timestamps, quick-event text input, undo function, one-click EMR summary copying, and clean black-and-white A4 print stylesheet.
+

@@ -1,3 +1,16 @@
+## [2.6.2] — 2026-08-17
+
+### Fixed & Enhanced (Resuscitation Timer Drawer Bug Fix & Braun Theme Alignment)
+- **Resuscitation Timer Drawers (`tools/resus-timer.html`):**
+  - Fixed accordion drawer toggle issue where `toggleDrawer` ID string replacement produced invalid element IDs (`drug-guide-body` instead of `body-drug-guide`). Refactored to query child elements (`.drawer-body`, `.drawer-toggle-icon`) directly from the container drawer element.
+  - Added accessibility attributes (`role="button"`, `tabindex="0"`, `aria-expanded="false/true"`) and keyboard navigation support (`Enter`/`Space`).
+- **Braun Theme Alignment (`tools/resus-timer.html`):**
+  - Overhauled theme to match `index.html` (warm cream paper background `--paper: #ebe7df`, deep charcoal ink `--ink: #1a1a1a`, graphite `--graphite: #4a4a4a`, hairline rules `--rule: #d8d4c8`, and Braun white `#F0EDE5`).
+  - Redesigned main dashboard and action panels to use clean white surface cards with high-contrast emergency typography and large tabular digital LCD clocks.
+  - Aligned sticky top-nav bar with the deep blue gradient (`#1e3c72` to `#2a5298`) and hospital branding.
+- **PWA Cache:** Bumped cache version to `er-hub-v50` in `service-worker.js`.
+- **Test Suite:** Added test assertions for theme tokens and drawer toggle accessibility in `tests/resus-timer-acls2025.test.js`.
+
 ## [2.6.1] — 2026-08-17
 
 ### Fixed & Enhanced (ACLS 2026 Resuscitation Hub & Prototype Alignment)
