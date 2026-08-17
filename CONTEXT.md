@@ -18,7 +18,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | **Hematotoxin** | Snake venom causing systemic bleeding/coagulopathy (Green Pit Viper, Russell's Viper, Malayan Pit Viper). |
 | **Neurotoxin** | Snake venom causing respiratory muscle paralysis (Cobra, King Cobra, Krait). |
 | **IV Drip Rate** | Volumetric rate (mL/hr) calculated from patient weight (kg), target dose, and drug preparation concentration. |
-| **High-Alert Drug (HAD)** | Medication with elevated risk of patient harm. 12 HAD drugs cataloged in `shared/drug-data.js`. |
+| **High-Alert Drug (HAD)** | Medication with elevated risk of patient harm. 17 HAD drugs cataloged in `shared/drug-data.js`. |
 | **DAPT** | Dual Antiplatelet Therapy — ASA + P2Y12 inhibitor (Clopidogrel, Ticagrelor, Prasugrel). Used in NSTEMI/STEMI. |
 | **ED NOTE** | Narrative emergency department clinical note tool (`tools/er-note/`). Per-template worksheets for structured documentation and plain-text output. |
 | **NEWS2** | National Early Warning Score. 7-physiological-parameter bedside score for clinical deterioration. Embedded in sepsis template. |

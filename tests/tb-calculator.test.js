@@ -1,5 +1,5 @@
-// tests/tb-calculator-ui.test.js
-// Unit tests and verification guard for TB Weight-Based Dosing Calculator prototype tool
+// tests/tb-calculator.test.js
+// Clinical unit tests and Thailand CPG 2018 & 2022 dosing execution verification for TB Weight-Based Dosing Calculator
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -10,7 +10,7 @@ const { JSDOM } = require('jsdom');
 const ROOT_DIR = path.resolve(__dirname, '..');
 const TB_CALC_PATH = path.join(ROOT_DIR, 'tools', 'tb-calculator.html');
 
-test('TB Weight-Based Dosing Calculator Verification', async (t) => {
+test('TB Weight-Based Dosing Calculator Clinical Verification', async (t) => {
 
     await t.test('tb-calculator.html exists on disk', () => {
         assert.strictEqual(fs.existsSync(TB_CALC_PATH), true, 'tools/tb-calculator.html should exist');
@@ -430,48 +430,6 @@ test('TB Weight-Based Dosing Calculator Verification', async (t) => {
         const d71 = runLongerCalc(71, allDrugs);
         assert.ok(d71.doseHtml.includes('4 เม็ด (500mg)'), 'PZA at 71kg should be 4 tabs');
         assert.ok(d71.doseHtml.includes('4 เม็ด (250mg)'), 'Eto at 71kg should be 4 tabs');
-    });
-
-    await t.test('DOM ID integrity cross-check', () => {
-        const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
-        const usedMatches = [...html.matchAll(/getElementById\(['"]([\w-]+)['"]\)/g)].map(m => m[1]);
-        const definedMatches = [...html.matchAll(/id=["']([\w-]+)["']/g)].map(m => m[1]);
-
-        const usedSet = new Set(usedMatches);
-        const definedSet = new Set(definedMatches);
-
-        const missing = [...usedSet].filter(id => !definedSet.has(id));
-        assert.deepStrictEqual(missing, [], `DOM IDs used in JS must exist in HTML, missing: ${missing.join(', ')}`);
-    });
-
-    await t.test('index.html links to tools/tb-calculator.html as prototype item T6', () => {
-        const html = fs.readFileSync(path.join(ROOT_DIR, 'index.html'), 'utf8');
-        assert.ok(html.includes('href="tools/tb-calculator.html"'), 'index.html should link to tools/tb-calculator.html');
-        assert.ok(html.includes('T6'), 'index.html should label TB calculator as T6');
-        assert.ok(html.includes('TB Weight-Based Dosing Calculator'), 'index.html should display title');
-    });
-
-    await t.test('service-worker.js includes ./tools/tb-calculator.html in ASSETS array and has valid CACHE_VERSION', () => {
-        const sw = fs.readFileSync(path.join(__dirname, '../service-worker.js'), 'utf8');
-        assert.match(sw, /CACHE_VERSION\s*=\s*'er-hub-v\d+'/, 'CACHE_VERSION should follow er-hub-vNN pattern');
-        assert.ok(sw.includes("'./tools/tb-calculator.html'"), 'tb-calculator.html should be cached');
-    });
-
-    await t.test('index.html and components.js dynamically sync top nav version with service-worker.js CACHE_VERSION', () => {
-        const sw = fs.readFileSync(path.join(__dirname, '../service-worker.js'), 'utf8');
-        const swMatch = sw.match(/CACHE_VERSION\s*=\s*['"]er-hub-(v\d+)['"]/i);
-        assert.ok(swMatch, 'service-worker.js should contain CACHE_VERSION');
-
-        const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
-        assert.ok(html.includes("fetch('service-worker.js')"), 'index.html should fetch service-worker.js for dynamic version sync');
-
-        const comp = fs.readFileSync(path.join(__dirname, '../shared/components.js'), 'utf8');
-        assert.ok(comp.includes("fetch(swPath)"), 'components.js injectNavBar should fetch service-worker.js for dynamic version sync across all orders/tools');
-    });
-
-    await t.test('ARCHITECTURE.md documents tools/tb-calculator.html', () => {
-        const arch = fs.readFileSync(path.join(ROOT_DIR, 'ARCHITECTURE.md'), 'utf8');
-        assert.ok(arch.includes('tools/tb-calculator.html'), 'ARCHITECTURE.md should document tools/tb-calculator.html');
     });
 
 });

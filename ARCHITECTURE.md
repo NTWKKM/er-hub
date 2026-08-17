@@ -74,7 +74,7 @@ Auto-sums totals per assessment column via `recalc()` on every input event.
 
 ### Drip Calculator (`tools/drip-calculator.html`)
 
-IV infusion drip rate calculator for 12 high-alert drugs.
+IV infusion drip rate calculator for 17 high-alert drugs.
 Bidirectional weight input (number + slider sync, clamp on blur only),
 interactive dose slider and number input coupling, real-time calculation,
 safety color categories, generalized dual units display,
@@ -113,20 +113,6 @@ Dark theme with tactile controls for high-stress ER resus rooms. Features:
 - Interactive 5 H's & 5 T's reversible causes diagnostic checklist.
 - Post-ROSC Care Bundle (ACLS Part 11): SpO2 90–98% titration, MAP ≥ 65 mmHg, 12-lead ECG STEMI screen, TTM 32–37.5°C for ≥36h, EEG seizure evaluation, glucose 140–180 mg/dL.
 - Event timeline log with quick custom event entry, undo, Thai/English EMR progress note generation, and A4 printable record.
-
-### TB Calculator (`tools/tb-calculator.html`)
-
-Weight-based anti-tuberculosis medication calculator referencing Thailand CPG 2018 & 2022 guidelines.
-Features:
-- Braun Analogue precision design with sticky top navigation (`ED_COMPONENTS.injectNavBar()`).
-- Ergonomic weight controls: number input, range slider, stepper buttons (-1/+1 kg), and landmark weight preset pills for single drugs & FDC (`25 kg (สูตรแยก mg/kg)`, `35 kg (Tier 1)`, `45 kg (Tier 2)`, `55 kg (H,R Max Cap)`, `71 kg (Max Cap ทั้งหมด)`).
-- Age-dependent auto-switching between Adult (≥15 yrs) and Pediatric (<15 yrs) regimens.
-- Renal (CrCl < 30 / Hemodialysis) and Liver toxicity warning callouts with dosage adjustment guidance.
-- FDC highlight cards for 4-FDC & 2-FDC adult regimens and child dispersible 3-FDC/2-FDC.
-- Single drug breakdown tables for Isoniazid, Rifampicin, Pyrazinamide, and Ethambutol with tablet combination suggestions.
-- Latent TB infection treatment (TPT) dosage lookup (3HP, 1HP, 3HR, 4R, 6H).
-- Standardized EMR clinical note compiler for one-click copy to clipboard.
-
 
 ### Urgent Clinic Home Medication (`tools/Urgent-Clinic-Home-Medication.html`)
 
@@ -185,7 +171,7 @@ Features:
 | `stroke-engine.js` | Stroke rt-PA thrombolytic dosing engine. Exports `calcRtpaDose` for 0.9 mg/kg and 0.6 mg/kg regimens. | None |
 | `stemi-engine.js` | STEMI TNK weight-bracket dosing engine. Exports `calcTNK`. | None |
 | `ob-engine.js` | MgSO4 dosing & pre-eclampsia severity classification engine. Exports functions: `calcMgSO4Loading`, `calcMgSO4MaintenanceIV`, `calcMgSO4IM`, `calcMgSO4RecurrentBolus`, `checkMgSO4Toxicity`, `checkMgSO4Safety`, `classifyBPSeverity`, `evalSevereFeatures`. Exports constants: `MAINTENANCE_FORMULAS`, `BP_PROTOCOLS`, `DIAGNOSTIC_CRITERIA`, `MGSO4_CONTRAINDICATIONS`, `ALTERNATIVE_ANTICONVULSANTS`, `CALCIUM_ANTIDOTES`, `TEXTBOOK_VARIATIONS`, `NURSING_CARE_ORDERS`, `MGSO4_CONC_50PCT`, `MGSO4_CONC_10PCT`. | None |
-| `drug-data.js` | 12-drug catalog: concentrations, dose limits, safety ceilings, titration instructions, optional `indications` array for per-drug guide rendering, optional `absoluteMaxPerHour` for weight-based drugs with clinical hourly ceilings (e.g. Fentanyl 500 mcg/hr). | None |
+| `drug-data.js` | 17-drug catalog: concentrations, dose limits, safety ceilings, titration instructions, optional `indications` array for per-drug guide rendering, optional `absoluteMaxPerHour` for weight-based drugs with clinical hourly ceilings (e.g. Fentanyl 500 mcg/hr). | None |
 | `print-bootstrap.js` | Print/page lifecycle: `handlePrintBlankDirect()`, `handlePrintBlankDirectPdf()`, `openBlankPdf()`, `showResults()`, `clearResults()`, date/time helpers. | `components.js` |
 | `blank-print-engine.js` | Declarative blank-print reset. Each page registers a manifest of reset rules (`{ id, value }` for textContent, `{ id, html }` for innerHTML, etc.). `apply()` executes all rules. Used by rtpa and nstemi only. | None |
 | `form-validate.js` | Non-blocking form validation. `fail()`, `warn()`, `range()`, `clearAll()`. Replaces `alert()` across all order pages. | `components.js` |
@@ -263,6 +249,31 @@ User enters history, exam, investigations, scoring variables
 - **Use-Current-Time Checkbox:** 5 pages (pe, heparin, antivenom, nstemi, rtpa) have it. Default: checked (auto-fill) on pe/heparin/antivenom/rtpa; unchecked (blank) on nstemi.
 - **Hard-Stop Pattern:** Pages with contraindication gating (e.g. pe.html) must `return;` after `ED_VALIDATE.warn()` to halt execution — not just hide the print button. Enforced by `tests/order-safety-guard.test.js`.
 - **Non-blocking Validation:** `ED_VALIDATE.range()` highlights invalid fields but does NOT hard-block calculation/print — preserves clinician override in emergency workflows.
+
+## Test Suite Architecture & Quality Guardrails
+
+The ER-Hub test suite is designed with high signal-to-noise ratio and zero clinical false-alarms. It comprises **13 high-value test suites** executing via Node.js native test runner (`node:test`):
+
+```bash
+node --test tests/*.test.js
+```
+
+### 1. Core Clinical Engines (8 Files)
+- [`anticoag-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/anticoag-engine.test.js): Heparin initial dosing, bolus caps (10,000 U), infusion ceilings (1,800 U/hr), and full aPTT titration table logic.
+- [`calc-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/calc-engine.test.js): Mathematical unit tests for weight-based and non-weight-based drip rates (mL/hr) with strict NaN/0/null/negative guards.
+- [`clinical-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/clinical-engine.test.js): CKD-EPI 2021 eGFR equation, GRACE score calculation, Killip points, and ESC risk stratification.
+- [`drug-data.test.js`](file:///Users/ntwkkm/er-hub/tests/drug-data.test.js): Schema validation & safety constraints for all 17 High-Alert Drugs (HAD), Tall-man spellings, preparations, and absolute ceilings.
+- [`ob-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/ob-engine.test.js): Obstetric emergency engine: MgSO4 4g loading, maintenance infusions, Pritchard IM, toxicity flags (RR, DTR, UO), severe pre-eclampsia criteria, antidotes, and Myasthenia Gravis safety blocks.
+- [`stemi-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/stemi-engine.test.js): TNK (Tenecteplase) weight brackets (<60kg to ≥90kg) and elderly halving boundary (age ≥ 75).
+- [`stroke-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/stroke-engine.test.js): rt-PA (Alteplase) 0.9 & 0.6 mg/kg dosing, push vs drip breakdown, 90mg/50mg max caps, and remainder rounding.
+- [`tb-calculator.test.js`](file:///Users/ntwkkm/er-hub/tests/tb-calculator.test.js): Clinical execution tests via JSDOM for Thailand CPG 2018 & 2022 TB regimens: Adult 4-FDC weight bands, Pediatric dispersible FDCs, TPT 3HP, H-monoresistance 6(H)RZELfx, MDR Shorter Bdq Regimen (Table 6.3), and MDR Individualized Longer Regimen validator (Tables 6.4–6.6).
+
+### 2. System & Architectural Guards (5 Files)
+- [`components.test.js`](file:///Users/ntwkkm/er-hub/tests/components.test.js): Thai Buddhist Era date formatting (`fmtDate`), 24h Thai time (`fmtTime`), and standing order title parsing (`parseTitle`).
+- [`id-integrity-guard.test.js`](file:///Users/ntwkkm/er-hub/tests/id-integrity-guard.test.js): AST/Regex scanner validating that every DOM ID referenced in JavaScript across all `orders/*.html` and `tools/*.html` exists in the markup.
+- [`pwa-assets.test.js`](file:///Users/ntwkkm/er-hub/tests/pwa-assets.test.js): Validates that every asset in `service-worker.js` `ASSETS` array exists on disk, ensuring offline installation never fails.
+- [`order-safety-guard.test.js`](file:///Users/ntwkkm/er-hub/tests/order-safety-guard.test.js): Ensures all hard-stop contraindication lock-out branches are followed by a `return;` statement.
+- [`dead-css-guard.test.js`](file:///Users/ntwkkm/er-hub/tests/dead-css-guard.test.js): Static AST/regex scanner that ensures no unused CSS classes are left in stylesheets.
 
 ## Standing Constraints
 
