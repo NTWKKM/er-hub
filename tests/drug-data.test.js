@@ -23,6 +23,16 @@ describe('EMERGENCY_DRUG_DATA structure', () => {
     });
   });
 
+  test('every drug has a valid Tall-man displayName', () => {
+    EMERGENCY_DRUG_DATA.forEach(drug => {
+      assert.ok(drug.displayName, `${drug.id} missing displayName`);
+      assert.equal(typeof drug.displayName, 'string', `${drug.id} displayName must be a string`);
+      assert.ok(drug.displayName.length > 0, `${drug.id} displayName cannot be empty`);
+      // check for at least one uppercase letter
+      assert.match(drug.displayName, /[A-Z]/, `${drug.id} displayName must contain at least one uppercase letter for Tall-man pattern`);
+    });
+  });
+
   test('every preparation has label and concentration', () => {
     EMERGENCY_DRUG_DATA.forEach(drug => {
       drug.preparations.forEach((prep, i) => {

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anaphylaxis Standing Order — ED MNRH</title>
+    <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/base.css">
+    <link rel="stylesheet" href="../shared/print.css">
+    <style>
+        .checklist-group { margin-bottom: 12px; }
+        .treatment-section { background: #fff5f5; border: 1px solid #ffcccc; padding: 12px; border-radius: 6px; margin-bottom: 12px; }
+        .treatment-section h4 { color: #c0392b; margin-top: 0; margin-bottom: 8px; border-bottom: 1px solid #ffcccc; padding-bottom: 4px; }
+        .dose-highlight { font-weight: bold; color: #c0392b; font-size: 1.1em; background: #ffeaa7; padding: 2px 6px; border-radius: 4px; }
+        .refractory-link { display: inline-block; background: #e74c3c; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 14px; margin-top: 8px; font-weight: bold; }
+        .refractory-link:hover { background: #c0392b; }
+        .beta-blocker-alert { background: #ffeb3b; padding: 8px; border-radius: 4px; border: 1px solid #fbc02d; font-size: 13.5px; margin-top: 8px; display: none; }
+        .glucagon-box { display: none; }
+    </style>
+</head>
+<body class="theme-cardiac">
+<div class="container">
+
+    <!-- ══════════════ FORM ══════════════ -->
+    <div class="form-container">
+        <form id="ana-form">
+            <div class="input-layout">
+                <!-- Column 1: Patient -->
+                <div class="input-column">
+                    <h3>1. ข้อมูลผู้ป่วย (Patient Data)</h3>
+                    <div class="inline-input-group">
+                        <label for="hn">HN:</label>
+                        <input type="text" id="hn" required placeholder="กรอก HN">
+                    </div>
+                    <div class="inline-input-group">
+                        <label for="weight">น้ำหนัก (BW kg):</label>
+                        <input type="number" id="weight" step="0.1" min="10" max="200" required placeholder="10-200">
+                    </div>
+                    <div class="inline-input-group">
+                        <label for="age">อายุ (Age yr):</label>
+                        <input type="number" id="age" min="1" max="120" required placeholder="1-120">
+                    </div>
+
+                    <div style="margin-top:12px;">
+                        <label class="flag-label" style="font-weight: normal;">
+                            <input type="checkbox" id="use-current-time" checked>
+                            บันทึกเวลาปัจจุบัน (Use Current Time)
+                        </label>
+                    </div>
+                    
+                    <div style="margin-top:14px; padding:10px; background:#f8f9fa; border-radius:6px;">
+                        <strong style="font-size:14.5px; color:#c0392b;">Allergy & Med History:</strong>
+                        <label class="flag-label" style="margin-top:6px;">
+                            <input type="checkbox" id="hx-bb"> 
+                            Beta-blocker use <small>(เพิ่มความเสี่ยงดื้อต่อ Epi, อาจต้องใช้ Glucagon)</small>
+                        </label>
+                        <label class="flag-label">
+                            <input type="checkbox" id="hx-acei"> 
+                            ACEi use <small>(เพิ่มความเสี่ยงรุนแรง)</small>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Column 2: Indication -->
+                <div class="input-column">
+                    <h3>2. การวินิจฉัยและสิ่งกระตุ้น (Diagnosis & Trigger)</h3>
+                    <div style="margin-bottom:12px;">
+                        <label class="flag-label"><input type="radio" name="ana-dx" value="Anaphylaxis" checked> Anaphylaxis</label>
+                        <label class="flag-label"><input type="radio" name="ana-dx" value="Anaphylactic Shock"> Anaphylactic Shock</label>
+                        <label class="flag-label"><input type="radio" name="ana-dx" value="Severe Allergic Reaction"> Severe Allergic Reaction</label>
+                    </div>
+
+                    <strong style="font-size:14.5px;">สิ่งกระตุ้น (Suspected Triggers):</strong>
+                    <div class="checklist-group" style="margin-top:6px;">
+                        <label class="flag-label"><input type="checkbox" class="ana-trigger" value="Drug"> ยา (Drug)</label>
+                        <label class="flag-label"><input type="checkbox" class="ana-trigger" value="Food"> อาหาร (Food)</label>
+                        <label class="flag-label"><input type="checkbox" class="ana-trigger" value="Insect Sting"> แมลงกัดต่อย (Insect Sting)</label>
+                        <label class="flag-label"><input type="checkbox" class="ana-trigger" value="Unknown"> ไม่ทราบ (Unknown)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Line Meds Selection -->
+            <h3>3. เลือกยาเพิ่มเติม (Adjunctive Treatments)</h3>
+            <div class="treatment-section" style="background:#f8f9fa; border-color:#ddd;">
+                <label class="flag-label"><input type="checkbox" id="chk-ivf" checked> <strong>IV Fluid Resuscitation:</strong> 0.9% NSS <span id="lbl-ivf-vol">1000 mL</span> IV rapid (ในเด็ก 20 mL/kg)</label>
+                <label class="flag-label"><input type="checkbox" id="chk-h1" checked> <strong>H1 Antagonist:</strong> Chlorpheniramine 10 mg IV</label>
+                <label class="flag-label"><input type="checkbox" id="chk-h2" checked> <strong>H2 Antagonist:</strong> Ranitidine 50 mg IV หรือ Famotidine 20 mg IV</label>
+                <label class="flag-label"><input type="checkbox" id="chk-steroid" checked> <strong>Corticosteroid:</strong> Hydrocortisone 200 mg IV หรือ Dexamethasone 8 mg IV</label>
+                <label class="flag-label"><input type="checkbox" id="chk-neb"> <strong>Bronchodilator:</strong> Salbutamol NB 2.5-5 mg (ถ้ามี Bronchospasm)</label>
+                
+                <div id="glucagon-section" class="glucagon-box" style="margin-top:8px; padding-top:8px; border-top:1px dashed #ccc;">
+                    <label class="flag-label"><input type="checkbox" id="chk-glucagon"> <strong>Glucagon (สำหรับผู้ป่วยใช้ Beta-blocker):</strong> 1-5 mg IV</label>
+                </div>
+            </div>
+            
+            <div class="treatment-section">
+                <h4>⚠️ Refractory Anaphylaxis</h4>
+                <p style="margin:0; font-size:13px; color:#555;">หากให้ Epinephrine IM ไปแล้ว 3 doses (ทุก 5-15 นาที) อาการยังไม่ดีขึ้น พิจารณาให้ Epinephrine IV Infusion</p>
+                <a href="drip-calculator.html" target="_blank" class="refractory-link">คำนวณ Epinephrine IV Drip 🧮</a>
+            </div>
+
+            <button type="submit" class="btn btn-calculate">🧮 ตรวจสอบและสร้างใบสั่งยา</button>
+            <button type="button" id="clear-btn" class="btn btn-clear">🗑️ ล้างข้อมูล (Clear)</button>
+        </form>
+    </div>
+
+    <!-- ══════════════ RESULTS ══════════════ -->
+    <div id="results-container" class="results-container hidden">
+        <div class="summary-banner" aria-live="polite">
+            <div class="dose-badge">
+                <div>
+                    <div class="dose-label">Epinephrine 1:1000 IM Dose</div>
+                    <div class="dose-num" id="screen-epi-dose">-- mg</div>
+                </div>
+            </div>
+            <div class="note-pill warn" style="display:inline-block; margin-left:15px; vertical-align:top; margin-top:5px;">🚨 ฉีดเข้ากล้ามเนื้อ (IM) ต้นขาด้านนอก (Mid-outer thigh) ทันที</div>
+            <div id="screen-bb-alert" class="beta-blocker-alert">⚠️ ผู้ป่วยมีประวัติใช้ Beta-blocker: อาจตอบสนองต่อ Epinephrine ลดลง พิจารณาเตรียม Glucagon</div>
+        </div>
+
+        <h3>4. ตรวจสอบและพิมพ์ใบสั่งยา</h3>
+        
+        <div id="print-area">
+            <div id="print-header-target"></div>
+
+            <div class="order-grid-5col">
+                <div class="grid-header">Progress note สหสาขาวิชาชีพ</div>
+                <div class="grid-header">Date/<br>Time</div>
+                <div class="grid-header">Orders for one day</div>
+                <div class="grid-header">Date/<br>Time</div>
+                <div class="grid-header">Order for Continuation</div>
+
+                <!-- Col 1: Progress Note -->
+                <div class="grid-cell">
+                    <strong><span id="p-dx">--</span></strong><br>
+                    HN: <span id="p-hn" class="highlight">--</span><br>
+                    BW: <strong id="p-weight" class="highlight">--</strong> kg, Age: <strong id="p-age">--</strong> yr<br>
+                    
+                    <div style="margin-top:6px;">
+                        <strong>Triggers:</strong> <span id="p-triggers">--</span>
+                    </div>
+                    
+                    <div style="margin-top:6px;">
+                        <strong>History:</strong><br>
+                        Beta-blocker: <span id="p-hx-bb">--</span><br>
+                        ACEi: <span id="p-hx-acei">--</span>
+                    </div>
+
+                    <div class="divider"></div>
+                    <strong style="color:#c0392b;">Epinephrine IM Administration Record</strong><br>
+                    <small>Repeat q 5-15 min if no improvement</small>
+                    <ul class="order-list" style="margin-top:4px;">
+                        <li>☐ Dose 1: _____ น. <small>BP=___/___</small></li>
+                        <li>☐ Dose 2: _____ น. <small>BP=___/___</small></li>
+                        <li>☐ Dose 3: _____ น. <small>BP=___/___</small></li>
+                    </ul>
+
+                    <div class="divider"></div>
+                    ลงชื่อแพทย์ประเมิน: <span class="dotted-line"></span><br>
+                    เลขว.: <span class="dotted-line" style="min-width:45px;"></span>
+                </div>
+
+                <!-- Col 2: Date/Time -->
+                <div class="grid-cell" id="p-dt-1">--</div>
+
+                <!-- Col 3: One day orders -->
+                <div class="grid-cell">
+                    <strong style="font-size:1.1em; color:#c0392b;">🔴 First-Line Treatment:</strong>
+                    <div class="fib-order-box chosen" style="border-color:#c0392b; background:#fff5f5; margin-top:4px;">
+                        ☑ <strong>Epinephrine 1:1000 (1 mg/mL)</strong><br>
+                        Dose 0.01 mg/kg = <span class="dose-highlight"><span id="p-epi-dose">--</span> mg IM</span> ที่ mid-outer thigh ทันที<br>
+                        <small>*(Max dose: <span id="p-epi-max">--</span> mg)*</small><br>
+                        - สามารถซ้ำได้ทุก 5-15 นาที หากอาการไม่ดีขึ้น (Max 3 doses ก่อนพิจารณา IV drip)
+                    </div>
+
+                    <div class="divider"></div>
+                    <strong>Adjunctive Treatments:</strong>
+                    
+                    <div id="p-box-ivf" class="fib-order-box">
+                        <span id="p-chk-ivf">☐</span> <strong>0.9% NSS</strong> <span id="p-ivf-vol">--</span> IV load rapid
+                    </div>
+                    
+                    <div id="p-box-h1" class="fib-order-box">
+                        <span id="p-chk-h1">☐</span> <strong>Chlorpheniramine 10 mg</strong> IV stat
+                    </div>
+                    
+                    <div id="p-box-h2" class="fib-order-box">
+                        <span id="p-chk-h2">☐</span> <strong>Ranitidine 50 mg</strong> IV stat (หรือ Famotidine 20 mg IV stat)
+                    </div>
+                    
+                    <div id="p-box-steroid" class="fib-order-box">
+                        <span id="p-chk-steroid">☐</span> <strong>Hydrocortisone 200 mg</strong> IV stat (หรือ Dexamethasone 8 mg IV stat)
+                    </div>
+                    
+                    <div id="p-box-neb" class="fib-order-box" style="display:none;">
+                        <span id="p-chk-neb">☐</span> <strong>Salbutamol NB</strong> 1 neb (2.5 mg) stat
+                    </div>
+                    
+                    <div id="p-box-glucagon" class="fib-order-box" style="display:none; border-color:#fbc02d; background:#fffde7;">
+                        <span id="p-chk-glucagon">☐</span> <strong>Glucagon 1-5 mg</strong> IV stat (เนื่องจากมีประวัติใช้ Beta-blocker)
+                    </div>
+
+                    <div class="divider"></div>
+                    <strong>Monitoring & Positioning:</strong>
+                    <ul class="order-list">
+                        <li>☑ Recumbent position with elevated lower extremities</li>
+                        <li>☑ Keep O2 sat &ge; 90%</li>
+                        <li>☑ Record VS q 15 min for 1st hour, then q 30 min for next 3 hours</li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Date/Time -->
+                <div class="grid-cell" id="p-dt-2">--</div>
+
+                <!-- Col 5: Continuation -->
+                <div class="grid-cell">
+                    <strong>Continuation / Disposition Plan:</strong>
+                    <ul class="order-list">
+                        <li>☐ Observe for at least 4 hours (6 hours if respiratory symptoms, 12-24 hours if severe or high biphasic risk)</li>
+                        <li>☐ Consult Medicine / Pediatrician for admission (If refractory or high risk)</li>
+                    </ul>
+                    <div class="divider"></div>
+                    <strong>Discharge Plan (If applicable):</strong>
+                    <ul class="order-list">
+                        <li>☐ Prescription for Epinephrine Auto-injector (EpiPen)</li>
+                        <li>☐ Referral to Allergy clinic</li>
+                    </ul>
+                    
+                    <div style="height:40px;"></div>
+                    ลงชื่อแพทย์ (ward): <span class="dotted-line"></span><br>
+                    เลขว.: <span class="dotted-line" style="min-width:45px;"></span>
+                    <br><br>
+                    <div id="sticker-target" style="height:120px; width:100%;"></div>
+                    <small style="color:#777;font-size:9px;">
+                        Version: 1.0.0 | WAO/EAACI 2024 / ACEP 2024<br>
+                        ED MNRH | Generated: <span id="p-generated">--</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <button id="print-btn" class="btn btn-print">🖨️ พิมพ์ใบสั่งยา (Print Order)</button>
+    </div>
+
+</div>
+
+<script src="../shared/components.js"></script>
+<script src="../shared/print-bootstrap.js"></script>
+<script src="../shared/form-validate.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const $ = id => document.getElementById(id);
+
+    // Dynamic UI toggles
+    $('hx-bb').addEventListener('change', (e) => {
+        if (e.target.checked) {
+            $('glucagon-section').style.display = 'block';
+            $('chk-glucagon').checked = true;
+        } else {
+            $('glucagon-section').style.display = 'none';
+            $('chk-glucagon').checked = false;
+        }
+    });
+
+    $('weight').addEventListener('input', (e) => {
+        const wt = parseFloat(e.target.value);
+        if (!isNaN(wt) && wt > 0) {
+            const isPeds = parseFloat($('age').value || 12) < 12 || wt < 40;
+            $('lbl-ivf-vol').textContent = isPeds ? `${(wt * 20).toFixed(0)} mL (20 mL/kg)` : '1000 mL';
+        }
+    });
+
+    $('age').addEventListener('input', (e) => {
+        const wt = parseFloat($('weight').value);
+        if (!isNaN(wt) && wt > 0) {
+            const isPeds = parseFloat(e.target.value) < 12 || wt < 40;
+            $('lbl-ivf-vol').textContent = isPeds ? `${(wt * 20).toFixed(0)} mL (20 mL/kg)` : '1000 mL';
+        }
+    });
+
+    $('ana-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        ED_VALIDATE.clearWarn();
+
+        const hn = $('hn').value.trim() || '...';
+        const weight = parseFloat($('weight').value);
+        const age = parseFloat($('age').value);
+        
+        if (!ED_VALIDATE.range('weight', 10, 200, 'น้ำหนักต้องอยู่ระหว่าง 10-200 kg')) return;
+        if (!ED_VALIDATE.range('age', 1, 120, 'อายุต้องอยู่ระหว่าง 1-120 ปี')) return;
+
+        const isPeds = age < 12 || weight < 40;
+
+        // Epinephrine calculation (0.01 mg/kg)
+        let maxDose = isPeds ? 0.3 : 0.5;
+        let calcDose = weight * 0.01;
+        
+        // Round to nearest 0.05 mg for practical drawing, or limit decimals
+        // Actually, just limit by max and round to 2 decimals
+        calcDose = Math.min(calcDose, maxDose);
+        // Round to 2 decimals, e.g. 0.35, 0.40
+        calcDose = Math.round(calcDose * 100) / 100;
+        
+        // Show beta blocker alert
+        const hxBb = $('hx-bb').checked;
+        $('screen-bb-alert').style.display = hxBb ? 'block' : 'none';
+
+        // Update Screen
+        $('screen-epi-dose').textContent = calcDose.toFixed(2) + ' mg';
+
+        // Update Print Area
+        const useTime = $('use-current-time').checked;
+        const printNow = ED_PRINT_BOOTSTRAP.generateCommonPrintFields(hn, weight, useTime);
+        const dtHtml = ED_PRINT_BOOTSTRAP.getDateTimeHTML(useTime, printNow);
+        $('p-dt-1').innerHTML = dtHtml;
+        $('p-dt-2').innerHTML = dtHtml;
+        
+        $('p-age').textContent = age;
+        
+        // Triggers
+        const triggers = Array.from(document.querySelectorAll('.ana-trigger:checked')).map(cb => cb.value);
+        $('p-triggers').textContent = triggers.length > 0 ? triggers.join(', ') : 'Not specified';
+        
+        // Diagnosis
+        $('p-dx').textContent = document.querySelector('input[name="ana-dx"]:checked').value;
+        
+        // History
+        $('p-hx-bb').textContent = hxBb ? 'Yes ⚠️' : 'No';
+        $('p-hx-acei').textContent = $('hx-acei').checked ? 'Yes ⚠️' : 'No';
+
+        // Orders
+        $('p-epi-dose').textContent = calcDose.toFixed(2);
+        $('p-epi-max').textContent = maxDose.toFixed(1);
+
+        // Optional adjunctive checkmarks
+        const updateBox = (id, isChecked, pedsVol = '') => {
+            const box = $(`p-box-${id}`);
+            const chk = $(`p-chk-${id}`);
+            if (box && chk) {
+                box.className = 'fib-order-box' + (isChecked ? ' chosen' : '');
+                chk.textContent = isChecked ? '☑' : '☐';
+                box.style.display = (id === 'neb' || id === 'glucagon') ? (isChecked ? 'block' : 'none') : 'block';
+                if (id === 'ivf' && isChecked) {
+                    $('p-ivf-vol').textContent = isPeds ? `${(weight * 20).toFixed(0)} mL` : '1000 mL';
+                }
+            }
+        };
+
+        updateBox('ivf', $('chk-ivf').checked);
+        updateBox('h1', $('chk-h1').checked);
+        updateBox('h2', $('chk-h2').checked);
+        updateBox('steroid', $('chk-steroid').checked);
+        updateBox('neb', $('chk-neb').checked);
+        
+        if (hxBb && $('chk-glucagon').checked) {
+            updateBox('glucagon', true);
+        } else {
+            updateBox('glucagon', false);
+        }
+
+        ED_COMPONENTS.injectPrintHeader('print-header-target');
+        ED_COMPONENTS.injectStickerBox('sticker-target', hn);
+
+        ED_PRINT_BOOTSTRAP.showResults();
+        ED_COMPONENTS.showFloatBar();
+    });
+
+    $('clear-btn').addEventListener('click', () => {
+        ED_VALIDATE.clearAll();
+        ED_PRINT_BOOTSTRAP.clearResults('ana-form');
+        $('glucagon-section').style.display = 'none';
+        $('lbl-ivf-vol').textContent = '1000 mL';
+        $('screen-bb-alert').style.display = 'none';
+    });
+
+    ED_COMPONENTS.injectNavBar('../index.html', '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
+    ED_COMPONENTS.setupCommonActions();
+});
+</script>
+</body>
+</html>

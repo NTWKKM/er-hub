@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resuscitation Timer — ED MNRH</title>
+    <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/base.css">
+    <style>
+        :root {
+            --paper-dark: #0a0a0a;
+            --ink-light: #f5f5f5;
+            --accent-red: #e53935;
+            --accent-green: #43a047;
+            --accent-blue: #1e88e5;
+            --accent-yellow: #fdd835;
+            --gray-dark: #222222;
+            --gray-med: #444444;
+            --gray-light: #b8b8b8;
+        }
+
+        body {
+            background-color: var(--paper-dark);
+            color: var(--ink-light);
+            font-family: 'Inter Tight', 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* Timer Area */
+        .timer-section {
+            text-align: center;
+            padding: 24px 0;
+            border-bottom: 2px solid var(--gray-dark);
+            position: relative;
+        }
+        
+        .timer-display {
+            font-size: 72px;
+            font-family: monospace;
+            font-weight: bold;
+            color: var(--ink-light);
+            line-height: 1;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            transition: color 0.3s ease;
+        }
+        .timer-display.flash {
+            color: var(--accent-red);
+            text-shadow: 0 0 20px var(--accent-red);
+        }
+
+        .cycle-display {
+            font-size: 24px;
+            color: var(--accent-red);
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            font-family: 'Inter Tight', 'Sarabun', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 16px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-start { background-color: var(--accent-green); color: #fff; }
+        .btn-stop { background-color: var(--accent-yellow); color: #000; }
+        .btn-reset { background-color: var(--gray-med); color: #fff; }
+        .btn-mute { background-color: var(--gray-dark); color: #fff; font-size: 24px; padding: 8px 16px; }
+
+        /* Actions Grid */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1px));
+            gap: 16px;
+            padding: 24px 0;
+        }
+        @media (min-width: 600px) {
+            .actions-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .action-card {
+            background-color: #111;
+            border: 1px solid var(--gray-dark);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .action-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: var(--gray-light);
+            border-bottom: 1px solid var(--gray-dark);
+            padding-bottom: 8px;
+        }
+
+        .action-card button {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .btn-shockable { background-color: var(--accent-red); color: #fff; }
+        .btn-non-shockable { background-color: var(--accent-blue); color: #fff; }
+        .btn-epi { background-color: #9c27b0; color: #fff; }
+        .btn-shock { background-color: #ff9800; color: #fff; }
+        .btn-amio { background-color: #00bcd4; color: #fff; }
+        .btn-rosc { background-color: var(--accent-green); color: #fff; font-size: 20px; padding: 24px; }
+
+        .epi-warning {
+            color: var(--accent-yellow);
+            font-weight: bold;
+            display: none;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .shock-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .shock-selector select {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            background: var(--gray-dark);
+            color: var(--ink-light);
+            border: 1px solid var(--gray-med);
+            border-radius: 4px;
+        }
+
+        /* Timeline Log */
+        .timeline-section {
+            background-color: #111;
+            border: 1px solid var(--gray-dark);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        .timeline-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-dark);
+            align-items: center;
+        }
+        .timeline-item:last-child { border-bottom: none; }
+        .time-col { font-family: monospace; font-size: 16px; color: var(--gray-light); width: 60px; flex-shrink: 0; }
+        .event-col { flex-grow: 1; font-size: 16px; }
+        
+        /* Event Colors */
+        .event-start { color: var(--accent-green); }
+        .event-rhythm { color: var(--accent-blue); }
+        .event-shock { color: #ff9800; }
+        .event-epi { color: #9c27b0; }
+        .event-amio { color: #00bcd4; }
+        .event-rosc { color: var(--accent-green); font-weight: bold; }
+
+        /* ROSC Checklist */
+        .rosc-checklist {
+            display: none;
+            background-color: #111;
+            border: 2px solid var(--accent-green);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .rosc-checklist h3 { margin-top: 0; color: var(--accent-green); }
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Print Layout */
+        @media print {
+            @page { size: A4 portrait; margin: 20mm; }
+            body { 
+                background: #fff; 
+                color: #000; 
+                display: block !important; 
+            }
+            .no-print, nav, .timer-section, .actions-grid, .rosc-checklist { 
+                display: none !important; 
+            }
+            .timeline-section {
+                background: none;
+                border: none;
+                padding: 0;
+            }
+            .timeline-container {
+                max-height: none;
+                overflow: visible;
+            }
+            .timeline-item {
+                border-bottom: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
+            .time-col, .event-col, .event-start, .event-rhythm, .event-shock, .event-epi, .event-amio, .event-rosc {
+                color: #000 !important;
+            }
+            h1.print-title {
+                display: block !important;
+                text-align: center;
+                font-family: 'Inter Tight', sans-serif;
+                margin-bottom: 20px;
+            }
+            .print-summary {
+                display: block !important;
+                margin-bottom: 20px;
+                border: 1px solid #000;
+                padding: 10px;
+            }
+        }
+        .print-title, .print-summary { display: none; }
+    </style>
+</head>
+<body>
+    <div id="nav-container" class="no-print"></div>
+
+    <div class="container">
+        <!-- Timer Section -->
+        <div class="timer-section no-print">
+            <div class="cycle-display" id="cycle-display">Cycle 1</div>
+            <div class="timer-display" id="timer-display">00:00</div>
+            
+            <div class="controls">
+                <button class="btn-start" id="btn-start" onclick="startTimer()">Start Code</button>
+                <button class="btn-stop" id="btn-stop" onclick="stopTimer()" disabled>Stop</button>
+                <button class="btn-reset" onclick="resetTimer()">Reset</button>
+                <button class="btn-mute" id="btn-mute" onclick="toggleMute()">🔊</button>
+            </div>
+            <button class="btn-rosc" id="btn-rosc" onclick="logROSC()" disabled>ROSC Achieved</button>
+        </div>
+
+        <!-- Action Panel -->
+        <div class="actions-grid no-print">
+            <div class="action-card">
+                <div class="action-title">Rhythm Check (Every 2 min)</div>
+                <button class="btn-shockable" onclick="logRhythm('Shockable (VF/pVT)')" id="btn-shockable" disabled>Shockable (VF/pVT)</button>
+                <button class="btn-non-shockable" onclick="logRhythm('Non-Shockable (Asystole/PEA)')" id="btn-non-shockable" disabled>Non-Shockable (Asystole/PEA)</button>
+            </div>
+            
+            <div class="action-card">
+                <div class="action-title">Defibrillation</div>
+                <div class="shock-selector">
+                    <select id="shock-energy" disabled>
+                        <option value="120J">120J</option>
+                        <option value="150J">150J</option>
+                        <option value="200J" selected>200J</option>
+                        <option value="360J">360J</option>
+                    </select>
+                </div>
+                <button class="btn-shock" onclick="logShock()" id="btn-shock" disabled>Shock Delivered</button>
+            </div>
+
+            <div class="action-card">
+                <div class="action-title">Medications</div>
+                <button class="btn-epi" onclick="logEpi()" id="btn-epi" disabled>Epinephrine 1mg IV/IO</button>
+                <div class="epi-warning" id="epi-warning">⚠️ Give Epinephrine (≥3 min)</div>
+                
+                <button class="btn-amio" onclick="logAmio()" id="btn-amio" disabled>Amiodarone 300mg IV/IO</button>
+            </div>
+
+            <div class="action-card">
+                <div class="action-title">Post-ROSC Checklist</div>
+                <div class="rosc-checklist" id="rosc-checklist" style="display:block;">
+                    <label class="checklist-item"><input type="checkbox"> 12-lead ECG</label>
+                    <label class="checklist-item"><input type="checkbox"> Targeted Temperature Management</label>
+                    <label class="checklist-item"><input type="checkbox"> BP/MAP monitoring (target >65)</label>
+                    <label class="checklist-item"><input type="checkbox"> Labs: ABG, Lactate, Lytes, Trop</label>
+                    <label class="checklist-item"><input type="checkbox"> CT Head if indicated</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Log -->
+        <div class="timeline-section">
+            <div class="action-title" style="display:flex; justify-content:space-between; align-items:center;">
+                Event Timeline
+                <button class="no-print" style="padding: 6px 12px; font-size: 14px; background:var(--gray-med);" onclick="window.print()">Print Log</button>
+            </div>
+            <h1 class="print-title">Resuscitation Record — ED MNRH</h1>
+            <div class="print-summary" id="print-summary">
+                <strong>Summary:</strong><br>
+                Total Duration: <span id="summary-duration">00:00</span><br>
+                Total Epi Doses: <span id="summary-epi">0</span><br>
+                Total Shocks: <span id="summary-shocks">0</span><br>
+                Outcome: <span id="summary-outcome">Ongoing</span>
+            </div>
+            <div class="timeline-container" id="timeline">
+                <!-- Log entries appear here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../shared/components.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            if(window.ED_COMPONENTS) {
+                ED_COMPONENTS.injectNavBar('../index.html', '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
+            }
+            initMuteState();
+        });
+
+        // State
+        let timerInterval = null;
+        let startTime = 0;
+        let elapsedTime = 0; // ms
+        let isRunning = false;
+        let isMuted = false;
+        let lastBeepCycle = 0;
+
+        let stats = {
+            epiCount: 0,
+            lastEpiTime: null,
+            shockCount: 0,
+            amioCount: 0
+        };
+
+        const CYCLE_MS = 120000; // 2 minutes
+
+        function formatTime(ms) {
+            const totalSec = Math.floor(ms / 1000);
+            const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+            const s = String(totalSec % 60).padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function updateDisplay() {
+            const formatted = formatTime(elapsedTime);
+            document.getElementById('timer-display').textContent = formatted;
+            document.getElementById('summary-duration').textContent = formatted;
+
+            const cycle = Math.floor(elapsedTime / CYCLE_MS) + 1;
+            document.getElementById('cycle-display').textContent = `Cycle ${cycle}`;
+
+            // Check if we hit a 2 min mark
+            const currentCycleMark = Math.floor(elapsedTime / CYCLE_MS);
+            if (currentCycleMark > lastBeepCycle && currentCycleMark > 0) {
+                lastBeepCycle = currentCycleMark;
+                triggerCycleAlert();
+            }
+
+            // Epi Reminder (≥3 min)
+            if (stats.lastEpiTime !== null && isRunning) {
+                const msSinceEpi = elapsedTime - stats.lastEpiTime;
+                if (msSinceEpi >= 180000) { // 3 min
+                    document.getElementById('epi-warning').style.display = 'block';
+                } else {
+                    document.getElementById('epi-warning').style.display = 'none';
+                }
+            }
+        }
+
+        function tick() {
+            const now = performance.now();
+            elapsedTime = now - startTime;
+            updateDisplay();
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            if (elapsedTime === 0) {
+                startTime = performance.now();
+                logEvent('Code Started', 'event-start');
+                document.getElementById('summary-outcome').textContent = 'In Progress';
+            } else {
+                startTime = performance.now() - elapsedTime;
+                logEvent('Code Resumed', 'event-start');
+                document.getElementById('summary-outcome').textContent = 'In Progress';
+            }
+            isRunning = true;
+            timerInterval = setInterval(tick, 100);
+            toggleButtons(true);
+        }
+
+        function stopTimer() {
+            if (!isRunning) return;
+            isRunning = false;
+            clearInterval(timerInterval);
+            logEvent('Code Stopped', 'event-start');
+            toggleButtons(false);
+            // document.getElementById('summary-outcome').textContent = 'Stopped';
+        }
+
+        function resetTimer() {
+            stopTimer();
+            elapsedTime = 0;
+            lastBeepCycle = 0;
+            stats = { epiCount: 0, lastEpiTime: null, shockCount: 0, amioCount: 0 };
+            document.getElementById('timeline').innerHTML = '';
+            document.getElementById('timer-display').textContent = '00:00';
+            document.getElementById('cycle-display').textContent = 'Cycle 1';
+            document.getElementById('epi-warning').style.display = 'none';
+            document.getElementById('btn-amio').textContent = 'Amiodarone 300mg IV/IO';
+            updateSummary();
+            document.getElementById('summary-duration').textContent = '00:00';
+            document.getElementById('summary-outcome').textContent = 'Not Started';
+            document.getElementById('rosc-checklist').style.border = '2px solid var(--accent-green)';
+            toggleButtons(false);
+        }
+
+        function toggleButtons(active) {
+            const buttons = ['btn-stop', 'btn-shockable', 'btn-non-shockable', 'btn-shock', 'btn-epi', 'btn-amio', 'btn-rosc'];
+            buttons.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.disabled = !active;
+                    if(active && id === 'btn-amio' && stats.amioCount >= 2) el.disabled = true;
+                }
+            });
+            document.getElementById('btn-start').disabled = active;
+            document.getElementById('shock-energy').disabled = !active;
+        }
+
+        // Logging
+        function logEvent(text, cssClass) {
+            const timeStr = formatTime(elapsedTime);
+            const timeline = document.getElementById('timeline');
+            const div = document.createElement('div');
+            div.className = 'timeline-item';
+            div.innerHTML = `<div class="time-col">${timeStr}</div><div class="event-col ${cssClass}">${text}</div>`;
+            timeline.prepend(div);
+        }
+
+        function logRhythm(rhythm) {
+            logEvent(`Rhythm Check: ${rhythm}`, 'event-rhythm');
+            stopFlash();
+        }
+
+        function logShock() {
+            const energy = document.getElementById('shock-energy').value;
+            stats.shockCount++;
+            logEvent(`Shock #${stats.shockCount} Delivered (${energy})`, 'event-shock');
+            updateSummary();
+        }
+
+        function logEpi() {
+            stats.epiCount++;
+            stats.lastEpiTime = elapsedTime;
+            document.getElementById('epi-warning').style.display = 'none';
+            logEvent(`Epinephrine #${stats.epiCount} Given`, 'event-epi');
+            updateSummary();
+        }
+
+        function logAmio() {
+            stats.amioCount++;
+            let dose = stats.amioCount === 1 ? '300mg' : '150mg';
+            logEvent(`Amiodarone #${stats.amioCount} Given (${dose})`, 'event-amio');
+            
+            if (stats.amioCount >= 2) {
+                document.getElementById('btn-amio').disabled = true;
+                document.getElementById('btn-amio').textContent = 'Amiodarone Max Doses Given';
+            } else {
+                document.getElementById('btn-amio').textContent = 'Amiodarone 150mg IV/IO';
+            }
+        }
+
+        function logROSC() {
+            stopTimer();
+            logEvent(`ROSC Achieved!`, 'event-rosc');
+            document.getElementById('summary-outcome').textContent = 'ROSC Achieved at ' + formatTime(elapsedTime);
+            // Show checklist highlight
+            document.getElementById('rosc-checklist').style.backgroundColor = '#1a3320';
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        function updateSummary() {
+            document.getElementById('summary-epi').textContent = stats.epiCount;
+            document.getElementById('summary-shocks').textContent = stats.shockCount;
+        }
+
+        // Alerts & Audio
+        function triggerCycleAlert() {
+            const display = document.getElementById('timer-display');
+            display.classList.add('flash');
+            playBeep();
+        }
+
+        function stopFlash() {
+            document.getElementById('timer-display').classList.remove('flash');
+        }
+
+        function initMuteState() {
+            const saved = localStorage.getItem('resusMute');
+            if (saved === 'true') {
+                isMuted = true;
+            }
+            updateMuteBtn();
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            localStorage.setItem('resusMute', isMuted);
+            updateMuteBtn();
+            if (!isMuted) playBeep(); // Test beep
+        }
+
+        function updateMuteBtn() {
+            document.getElementById('btn-mute').textContent = isMuted ? '🔇' : '🔊';
+        }
+
+        function playBeep() {
+            if (isMuted) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.2);
+            } catch(e) {
+                console.error("Audio failed", e);
+            }
+        }
+    </script>
+</body>
+</html>

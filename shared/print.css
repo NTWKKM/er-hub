@@ -144,6 +144,11 @@
     box-sizing: border-box;
 }
 
+/* Version attribution default hidden */
+.version-attribution {
+    display: none;
+}
+
 /* ═══════════════════════════════════════════
    PRINT OVERRIDES — A4 (210mm × 297mm)
    ═══════════════════════════════════════════ */
@@ -421,5 +426,14 @@
 
     .grid-header {
         background-color: #e9ecef !important;
+    }
+
+    .version-attribution {
+        display: block !important;
+        font-size: 8pt;
+        color: #666 !important;
+        text-align: left;
+        padding-top: 4px;
+        border-top: 0.5px solid #ccc;
     }
 }

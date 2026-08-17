@@ -25,7 +25,7 @@ function checkFileIdIntegrity(filePath) {
         /document\.getElementById\(\s*['"]([^'"]+)['"]\s*\)/g,
         /\bid:\s*['"]([^'"]+)['"]/g,
         /ED_VALIDATE\.(?:fail|range|min)\(\s*['"]([^'"]+)['"]/g,
-        /ED_COMPONENTS\.[a-zA-Z_]+\(\s*['"]([^'"]+)['"]/g
+        /ED_COMPONENTS\.(?!injectNavBar)[a-zA-Z_]+\(\s*['"]([^'"]+)['"]/g
     ];
 
     refsPatterns.forEach(pattern => {

@@ -2,6 +2,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'epinephrine',
     name: 'Epinephrine (Adrenaline)',
+    displayName: 'ePINEPHrine',
     thaiName: 'เอพิเนฟริน (อะดรีนาลีน)',
     doseUnit: 'mcg/kg/min',
     isWeightBased: true,
@@ -27,6 +28,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'epinephrine-anaphylaxis',
     name: 'Epinephrine (Refractory Anaphylaxis / Bradycardia)',
+    displayName: 'ePINEPHrine (Anaphylaxis)',
     thaiName: 'เอพิเนฟริน (แพ้รุนแรงที่ไม่ตอบสนอง / หัวใจเต้นช้า)',
     doseUnit: 'mcg/min',
     isWeightBased: false,
@@ -59,6 +61,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'norepinephrine',
     name: 'Norepinephrine (Levophed)',
+    displayName: 'NORePINEPHrine',
     thaiName: 'นอร์เอพิเนฟริน (เลโวเฟด)',
     doseUnit: 'mcg/kg/min',
     isWeightBased: true,
@@ -89,6 +92,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'dopamine',
     name: 'Dopamine',
+    displayName: 'DOPamine',
     thaiName: 'โดปามีน',
     doseUnit: 'mcg/kg/min',
     isWeightBased: true,
@@ -125,6 +129,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'dobutamine',
     name: 'Dobutamine',
+    displayName: 'DOBUTamine',
     thaiName: 'โดบูตามีน',
     doseUnit: 'mcg/kg/min',
     isWeightBased: true,
@@ -160,6 +165,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'vasopressin',
     name: 'Vasopressin',
+    displayName: 'Vasopressin',
     thaiName: 'ยากระตุ้นความดัน (Vasopressin)',
     isWeightBased: false,
     doseUnit: 'units/min',
@@ -185,6 +191,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'esmolol',
     name: 'Esmolol (Brevibloc)',
+    displayName: 'ESMOLOL',
     thaiName: 'เอสโมลอล (เบรวิบล็อค)',
     doseUnit: 'mg/kg/min',
     isWeightBased: true,
@@ -212,6 +219,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'labetalol',
     name: 'Labetalol',
+    displayName: 'Labetalol',
     thaiName: 'ลาเบทาลอล',
     doseUnit: 'mg/min',
     isWeightBased: false,
@@ -241,6 +249,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'nicardipine',
     name: 'Nicardipine',
+    displayName: 'niCARDipine',
     thaiName: 'นิคาร์ดิปีน',
     doseUnit: 'mg/hr',
     isWeightBased: false,
@@ -269,6 +278,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'nitroglycerin',
     name: 'Nitroglycerin (NTG)',
+    displayName: 'NITROglycerine',
     thaiName: 'ไนโตรกลีเซอรีน',
     doseUnit: 'mcg/min',
     isWeightBased: false,
@@ -297,6 +307,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'nitroprusside',
     name: 'Sodium Nitroprusside',
+    displayName: 'NITROPRUSside',
     thaiName: 'โซเดียม ไนโตรปรัสไซด์',
     doseUnit: 'mcg/kg/min',
     isWeightBased: true,
@@ -325,6 +336,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'amiodarone',
     name: 'Amiodarone',
+    displayName: 'amIODARone',
     thaiName: 'ยารักษาหัวใจเต้นผิดจังหวะ (Amiodarone)',
     isWeightBased: false,
     doseUnit: 'mg/min',
@@ -351,6 +363,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'lidocaine',
     name: 'Lidocaine',
+    displayName: 'Lidocaine',
     thaiName: 'ยาชา/ยาหัวใจ (Lidocaine)',
     isWeightBased: false,
     doseUnit: 'mg/min',
@@ -374,6 +387,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'midazolam',
     name: 'Midazolam (Dormicum)',
+    displayName: 'Midazolam',
     thaiName: 'ไมดาโซแลม (ดอร์มิคุม)',
     doseUnit: 'mg/kg/hr',
     isWeightBased: true,
@@ -403,6 +417,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'fentanyl',
     name: 'Fentanyl',
+    displayName: 'fentaNYL',
     thaiName: 'เฟนทานิล',
     doseUnit: 'mcg/kg/hr',
     isWeightBased: true,
@@ -433,6 +448,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'dexmedetomidine',
     name: 'Dexmedetomidine (Precedex)',
+    displayName: 'Dexmedetomidine',
     thaiName: 'ยานอนหลับ (Dexmedetomidine)',
     isWeightBased: true,
     doseUnit: 'mcg/kg/hr',
@@ -456,6 +472,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'heparin',
     name: 'Heparin (Unfractionated)',
+    displayName: 'Heparin',
     thaiName: 'เฮปาริน (ยาฉีดป้องกันลิ่มเลือด)',
     doseUnit: 'units/kg/hr',
     isWeightBased: true,

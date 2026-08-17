@@ -538,3 +538,29 @@ input[type="checkbox"] {
         flex-direction: column;
     }
 }
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #1e3c72;
+  color: #F0EDE5;
+  padding: 8px 16px;
+  z-index: 200;
+  font-family: var(--font-ui, 'Inter Tight', sans-serif);
+  font-size: 14px;
+  text-decoration: none;
+  transition: top 200ms ease;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

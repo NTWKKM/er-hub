@@ -7,7 +7,7 @@ ER Standing Order Hub — MNRH Emergency Department clinical standing order syst
 
 ### Standing Order Pages (`orders/*.html`)
 
-Seven specialized clinical worksheets, each a self-contained HTML file with inline `<script>` logic:
+Eight specialized clinical worksheets, each a self-contained HTML file with inline `<script>` logic:
 
 | File | Clinical role |
 | --- | --- |
@@ -18,8 +18,10 @@ Seven specialized clinical worksheets, each a self-contained HTML file with inli
 | `heparin.html` | Heparin Protocol + aPTT Titration |
 | `antivenom.html` | Antivenom Standing Order — hematotoxin/neurotoxin snake categories |
 | `sedation.html` | Post-Intubation Sedation |
+| `anaphylaxis.html` | Anaphylaxis Standing Order — Epinephrine IM weight-based, WAO/EAACI 2024 |
 
-All 7 use `ED_PRINT_BOOTSTRAP` for page lifecycle and `ED_VALIDATE` for non-blocking validation.
+All 8 use `ED_PRINT_BOOTSTRAP` for page lifecycle and `ED_VALIDATE` for non-blocking validation.
+All orders include print-area version/guideline attribution footer (ISMP compliance).
 4 pages (stemi, pe, heparin, sedation) open source PDFs from `docs/` for blank printing.
 3 pages (rtpa, nstemi, antivenom) render blank HTML templates via `ED_BLANK_PRINT`.
 rtpa and nstemi use a floating print action bar as the sole print trigger (no `#print-btn`).
@@ -80,6 +82,34 @@ dynamic radio button choices for medication formulas (vertical 1-per-line layout
 clinical-indication-based guide rendering with per-drug max dose display,
 inline plain text concentration display, sessionStorage weight persistence.
 All input fields in English.
+ISMP Tall-man lettering displayed for all drug names (e.g. DOBUTamine, NORePINEPHrine).
+"Verify Before Print" confirmation card shows drug/weight/dose/rate/concentration/safety status.
+
+### RSI Checklist (`tools/rsi-checklist.html`)
+
+Rapid Sequence Intubation safety checklist and drug dosing calculator.
+Features:
+- SOAP-ME pre-intubation checklist (Suction, Oxygen, Airway, Pharmacy, Monitors/Equipment).
+- Weight-based drug dosing: induction agents (Ketamine 1.5 mg/kg, Etomidate 0.3 mg/kg, Midazolam 0.1-0.3 mg/kg),
+  paralytics (Succinylcholine 1.5 mg/kg, Rocuronium 1.2 mg/kg), pre-treatment (Fentanyl, Lidocaine, Atropine).
+- Equipment size calculator: ETT size/depth, laryngoscope blade, LMA, suction catheter.
+- Post-intubation checklist with ventilator settings and sedation order link.
+- Copy-to-clipboard drug dosing summary.
+- Real-time auto-calculation on weight/age input change.
+
+### Resuscitation Timer (`tools/resus-timer.html`)
+
+Real-time cardiac arrest management timer with ACLS protocol support.
+Dark theme (high-visibility for resus rooms). Features:
+- Large elapsed timer (MM:SS) with 2-minute cycle counter.
+- Audio alerts via Web Audio API (880Hz square wave, 200ms) at each 2-min mark.
+- Silence/mute toggle with localStorage persistence.
+- Epinephrine dose logging with q3-5 min auto-reminder.
+- Defibrillation tracking with energy selector (120/150/200/360J biphasic).
+- Amiodarone tracking (300 mg 1st dose, 150 mg 2nd dose, max 2).
+- Rhythm check prompts: Shockable (VF/pVT) / Non-Shockable (Asystole/PEA).
+- ROSC documentation with post-ROSC checklist.
+- Print summary: full intervention timeline with timestamps.
 
 ### TB Calculator (`tools/tb-calculator.html`)
 

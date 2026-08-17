@@ -246,7 +246,7 @@
             <div id="result-container" class="hidden">
                 <div class="result-box">
                     <div>
-                        <strong style="font-size:15px; color:#2c3e50;">อัตราการบริหารยาทาง Infusion Pump:</strong>
+                        <strong style="font-size:15px; color:#2c3e50;"><span id="res-drug-name"></span> อัตราการบริหารยาทาง Infusion Pump:</strong>
                         <div style="font-size:12px; color:#666; margin-top:4px;">
                             คำนวณสำหรับน้ำหนัก <span id="res-weight">--</span> kg | ขนาดที่ต้องการ <span
                                 id="res-target">--</span>
@@ -257,10 +257,24 @@
                     <div class="rate-large"><span id="res-rate">--</span> mL/hr</div>
                 </div>
 
+                <!-- Verify Before Print Card -->
+                <div id="verify-card" class="no-print" style="background: #e3f2fd; border: 2px solid #2196f3; border-radius: 8px; padding: 15px; margin-top: 15px;">
+                    <h4 style="margin-top:0; color:#1565c0;">Verify Before Print</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                        <div><strong>Drug:</strong> <span id="verify-drug"></span></div>
+                        <div><strong>Weight:</strong> <span id="verify-weight"></span> kg</div>
+                        <div><strong>Target Dose:</strong> <span id="verify-target"></span></div>
+                        <div><strong>Calculated Rate:</strong> <span id="verify-rate"></span> mL/hr</div>
+                        <div style="grid-column: span 2;"><strong>Concentration:</strong> <span id="verify-conc"></span></div>
+                        <div style="grid-column: span 2;"><strong>Safety Status:</strong> <span id="verify-status"></span></div>
+                        <div id="verify-max" style="grid-column: span 2; display: none; color: #c0392b;"><strong>Max Dose:</strong> <span id="verify-max-text"></span></div>
+                    </div>
+                </div>
+
                 <!-- Recommend Guide -->
                 <div id="guide-container" class="guide-box">
                     <strong style="font-size:15px; color:#2c3e50; display:block; margin-bottom:6px;">📝
-                        แนวทางการบริหารยา (Recommend Guide):</strong>
+                        แนวทางการบริหารยา <span id="guide-drug-name"></span>:</strong>
                     <div id="guide-text"
                         style="margin:0; font-size:14px; font-weight:500; color:#2c3e50; line-height:1.5;"></div>
                 </div>
@@ -319,7 +333,7 @@
             EMERGENCY_DRUG_DATA.forEach(drug => {
                 const opt = document.createElement('option');
                 opt.value = drug.id;
-                opt.textContent = drug.name;
+                opt.textContent = drug.displayName || drug.name;
                 // Set norepinephrine as the default selected item
                 if (drug.id === 'norepinephrine') {
                     opt.selected = true;
@@ -630,19 +644,25 @@
                 });
 
                 // Update screen display
+                const displayName = selectedDrug.displayName || selectedDrug.name;
+                $('res-drug-name').textContent = displayName;
+                $('guide-drug-name').textContent = '(' + displayName + ')';
                 $('res-weight').textContent = weightVal;
+                
+                let targetText = `${dose} ${selectedDrug.doseUnit}`;
 
                 // Generalized dual units display formatting (B6)
                 if (selectedDrug.showDualUnits && selectedDrug.altUnit && selectedDrug.altUnitFactor) {
                     const altDose = dose * selectedDrug.altUnitFactor;
                     const altDoseFormatted = altDose % 1 === 0 ? altDose.toFixed(0) : altDose.toFixed(2);
-                    $('res-target').textContent = `${dose} ${selectedDrug.doseUnit} (${altDoseFormatted} ${selectedDrug.altUnit})`;
+                    targetText = `${dose} ${selectedDrug.doseUnit} (${altDoseFormatted} ${selectedDrug.altUnit})`;
+                    $('res-target').textContent = targetText;
 
                     // Mirror on inline display
                     esmololAltValue.textContent = `เทียบเท่ากับ: ${altDoseFormatted} ${selectedDrug.altUnit}`;
                     esmololDualDisplay.style.display = 'block';
                 } else {
-                    $('res-target').textContent = `${dose} ${selectedDrug.doseUnit}`;
+                    $('res-target').textContent = targetText;
                     esmololDualDisplay.style.display = 'none';
                 }
 
@@ -652,6 +672,8 @@
                 const maxDose = selectedDrug.doseRange.max;
                 const ratio = dose / maxDose;
                 const resultBox = document.querySelector('.result-box');
+                let safetyStatus = '';
+                let safetyColor = '';
 
                 // Reset classes
                 resultBox.className = 'result-box';
@@ -662,12 +684,35 @@
                 if (ratio < 0.6) {
                     resultBox.classList.add('safe');
                     if (badge) badge.style.display = 'none';
+                    safetyStatus = 'Safe (Normal range)';
+                    safetyColor = '#27ae60';
                 } else if (ratio <= 0.85) {
                     resultBox.classList.add('amber');
                     if (badge) badge.style.display = 'none';
+                    safetyStatus = 'Warning (High dose)';
+                    safetyColor = '#d35400';
                 } else {
                     resultBox.classList.add('red');
                     if (badge) badge.style.display = 'inline-block';
+                    safetyStatus = 'Critical (Near max dose)';
+                    safetyColor = '#c0392b';
+                }
+                
+                // Update Verify Card
+                $('verify-drug').textContent = displayName;
+                $('verify-weight').textContent = weightVal;
+                $('verify-target').textContent = targetText;
+                $('verify-rate').textContent = rate.toFixed(1);
+                $('verify-conc').textContent = concDisplay.textContent;
+                $('verify-status').textContent = safetyStatus;
+                $('verify-status').style.color = safetyColor;
+                $('verify-status').style.fontWeight = 'bold';
+                
+                if (ceilingWarning) {
+                    $('verify-max').style.display = 'block';
+                    $('verify-max-text').textContent = `${selectedDrug.absoluteMaxPerHour} ${selectedDrug.doseUnit.split('/')[0]}/hr`;
+                } else {
+                    $('verify-max').style.display = 'none';
                 }
 
                 // Render titration guide — clinical-indication breakdown (if available) + explicit max dose

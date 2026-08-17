@@ -7,13 +7,16 @@
     <link rel="icon" type="image/png" href="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f4f2ec">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="docs/icon-512x512.png">
 
     <link rel="stylesheet" href="shared/base.css">
 
     <script>
         // Backward Compatibility Redirection Logic
         // Redirects old URLs/bookmarks/QR codes that pointed to index.html with inputs or hash
-        const ALLOWED_SLUGS = ['rtpa', 'nstemi', 'stemi', 'pe', 'heparin', 'antivenom', 'sedation'];
+        const ALLOWED_SLUGS = ['rtpa', 'nstemi', 'stemi', 'pe', 'heparin', 'antivenom', 'sedation', 'anaphylaxis'];
         const params = new URLSearchParams(window.location.search);
         const rawSlug = params.get('order') || (window.location.hash.includes('rtpa') ? 'rtpa' : null);
         const orderSlug = (rawSlug && ALLOWED_SLUGS.includes(rawSlug)) ? rawSlug : null;
@@ -387,6 +390,24 @@
         .collapsible-content.collapsed::before {
             opacity: 1;
         }
+        @media (prefers-reduced-motion: reduce) {
+            .order-row {
+                transition: none !important;
+                transform: none !important;
+            }
+            .signal-dot.time-critical {
+                animation: none !important;
+            }
+            .collapsible-content {
+                transition: none !important;
+            }
+            .list-section,
+            .order-item-wrap {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -403,7 +424,7 @@
                         <span class="order-title">rt-PA Stroke FAST TRACK</span>
                     </div>
                     <span class="order-status">ACTIVE</span>
-                    <span class="signal-dot time-critical"></span>
+                    <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
                     <span class="order-arrow">→</span>
                 </a>
             </li>
@@ -416,7 +437,7 @@
                         <span class="order-title">NSTEMI Standing Order</span>
                     </div>
                     <span class="order-status">ACTIVE</span>
-                    <span class="signal-dot"></span>
+                    <span class="signal-dot" role="img" aria-label=""></span>
                     <span class="order-arrow">→</span>
                 </a>
             </li>
@@ -429,7 +450,7 @@
                         <span class="order-title">IV Infusion Drip Calculator</span>
                     </div>
                     <span class="order-status">ACTIVE</span>
-                    <span class="signal-dot"></span>
+                    <span class="signal-dot" role="img" aria-label=""></span>
                     <span class="order-arrow">→</span>
                 </a>
             </li>
@@ -442,7 +463,7 @@
                         <span class="order-title">NIHSS Score Sheet</span>
                     </div>
                     <span class="order-status">ACTIVE</span>
-                    <span class="signal-dot"></span>
+                    <span class="signal-dot" role="img" aria-label=""></span>
                     <span class="order-arrow">→</span>
                 </a>
             </li>
@@ -455,10 +476,76 @@
                         <span class="order-title">Urgent Clinic Home Medication</span>
                     </div>
                     <span class="order-status">ACTIVE</span>
-                    <span class="signal-dot"></span>
+                    <span class="signal-dot" role="img" aria-label=""></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>\n                <!-- Clinical Score Hub Tool -->
+                <li class="order-item-wrap">
+                    <a href="tools/score-hub.html" class="order-row">
+                        <span class="order-num">T5</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Calculator</span>
+                            <span class="order-title">Clinical Score & Risk Hub</span>
+                        </div>
+                        <span class="order-status">ACTIVE</span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- TB Weight-Based Dosing Calculator Tool -->
+                <li class="order-item-wrap">
+                    <a href="tools/tb-calculator.html" class="order-row">
+                        <span class="order-num">T6</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Calculator</span>
+                            <span class="order-title">TB Weight-Based Dosing Calculator</span>
+                        </div>
+                        <span class="order-status">ACTIVE</span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+
+            <!-- Anaphylaxis Standing Order -->
+            <li class="order-item-wrap">
+                <a href="orders/anaphylaxis.html" class="order-row">
+                    <span class="order-num">08</span>
+                    <div class="order-main-info">
+                        <span class="order-category">Allergy</span>
+                        <span class="order-title">Anaphylaxis Standing Order</span>
+                    </div>
+                    <span class="order-status">ACTIVE</span>
+                    <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
                     <span class="order-arrow">→</span>
                 </a>
             </li>
+            <!-- RSI Checklist -->
+            <li class="order-item-wrap">
+                <a href="tools/rsi-checklist.html" class="order-row">
+                    <span class="order-num">T8</span>
+                    <div class="order-main-info">
+                        <span class="order-category">Procedural</span>
+                        <span class="order-title">RSI Checklist</span>
+                    </div>
+                    <span class="order-status">ACTIVE</span>
+                    <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>
+            <!-- Resuscitation Timer -->
+            <li class="order-item-wrap">
+                <a href="tools/resus-timer.html" class="order-row">
+                    <span class="order-num">T9</span>
+                    <div class="order-main-info">
+                        <span class="order-category">Resuscitation</span>
+                        <span class="order-title">Resuscitation Timer</span>
+                    </div>
+                    <span class="order-status">ACTIVE</span>
+                    <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>
+
         </ol>
     </div>
 
@@ -478,7 +565,7 @@
                             <span class="order-title">STEMI Standing Order</span>
                         </div>
                         <span class="order-status">PROTOTYPE</span>
-                        <span class="signal-dot time-critical"></span>
+                        <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
                         <span class="order-arrow">→</span>
                     </a>
                 </li>
@@ -491,7 +578,7 @@
                             <span class="order-title">Massive PE Fibrinolysis</span>
                         </div>
                         <span class="order-status">PROTOTYPE</span>
-                        <span class="signal-dot time-critical"></span>
+                        <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
                         <span class="order-arrow">→</span>
                     </a>
                 </li>
@@ -504,7 +591,7 @@
                             <span class="order-title">Heparin Protocol</span>
                         </div>
                         <span class="order-status">PROTOTYPE</span>
-                        <span class="signal-dot"></span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
                         <span class="order-arrow">→</span>
                     </a>
                 </li>
@@ -517,7 +604,7 @@
                             <span class="order-title">Antivenom Standing Order</span>
                         </div>
                         <span class="order-status">PROTOTYPE</span>
-                        <span class="signal-dot"></span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
                         <span class="order-arrow">→</span>
                     </a>
                 </li>
@@ -530,7 +617,7 @@
                             <span class="order-title">Post-Intubation Sedation</span>
                         </div>
                         <span class="order-status">PROTOTYPE</span>
-                        <span class="signal-dot"></span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
                         <span class="order-arrow">→</span>
                     </a>
                 </li>
@@ -543,33 +630,7 @@
                             <span class="order-title">ER NOTE Tool</span>
                         </div>
                         <span class="order-status">PROTOTYPE</span>
-                        <span class="signal-dot"></span>
-                        <span class="order-arrow">→</span>
-                    </a>
-                </li>
-                <!-- Clinical Score Hub Tool -->
-                <li class="order-item-wrap">
-                    <a href="tools/score-hub.html" class="order-row">
-                        <span class="order-num">T5</span>
-                        <div class="order-main-info">
-                            <span class="order-category">Calculator</span>
-                            <span class="order-title">Clinical Score & Risk Hub</span>
-                        </div>
-                        <span class="order-status">PROTOTYPE</span>
-                        <span class="signal-dot"></span>
-                        <span class="order-arrow">→</span>
-                    </a>
-                </li>
-                <!-- TB Weight-Based Dosing Calculator Tool -->
-                <li class="order-item-wrap">
-                    <a href="tools/tb-calculator.html" class="order-row">
-                        <span class="order-num">T6</span>
-                        <div class="order-main-info">
-                            <span class="order-category">Calculator</span>
-                            <span class="order-title">TB Weight-Based Dosing Calculator</span>
-                        </div>
-                        <span class="order-status">PROTOTYPE</span>
-                        <span class="signal-dot"></span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
                         <span class="order-arrow">→</span>
                     </a>
                 </li>
@@ -582,7 +643,7 @@
                             <span class="order-title">MgSO4 Calculator (Pre-eclampsia/Eclampsia)</span>
                         </div>
                         <span class="order-status">PROTOTYPE</span>
-                        <span class="signal-dot time-critical"></span>
+                        <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
                         <span class="order-arrow">→</span>
                     </a>
                 </li>
@@ -613,6 +674,16 @@ nav.innerHTML = `
     <div class="nav-right" id="nav-ver-display">...</div>
 `;
 document.body.insertBefore(nav, document.body.firstChild);
+
+const statusDot = document.createElement('span');
+statusDot.id = 'online-status';
+statusDot.style.cssText = 'width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 8px;';
+statusDot.style.backgroundColor = navigator.onLine ? '#27ae60' : '#c0392b';
+statusDot.setAttribute('aria-label', navigator.onLine ? 'Online' : 'Offline');
+statusDot.setAttribute('role', 'status');
+document.getElementById('nav-ver-display').appendChild(statusDot);
+window.addEventListener('online', () => { statusDot.style.backgroundColor = '#27ae60'; statusDot.setAttribute('aria-label', 'Online'); });
+window.addEventListener('offline', () => { statusDot.style.backgroundColor = '#c0392b'; statusDot.setAttribute('aria-label', 'Offline'); });
 
 // Dynamically sync top bar version with service-worker.js CACHE_VERSION
 fetch('service-worker.js')
@@ -685,9 +756,11 @@ if ('serviceWorker' in navigator) {
 
 <script>
 (function() {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const MAX_TILT = 8;  // deg, at cursor fully to the edge
   const LIFT = 6;      // px translateZ at full tilt
 
+  if (!prefersReducedMotion) {
   document.querySelectorAll('.order-row').forEach(function(row) {
     let ticking = false;
     let lastEvent = null;
@@ -724,6 +797,7 @@ if ('serviceWorker' in navigator) {
       row.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
     });
   });
+  }
 
   // Prototype collapsible logic
   const toggle = document.getElementById('prototype-toggle');

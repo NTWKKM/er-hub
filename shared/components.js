@@ -188,6 +188,23 @@ const ED_COMPONENTS = {
         verBadge.style.cssText = 'margin-left: auto; font-size: 11px; opacity: 0.85; font-family: var(--font-mono, monospace); padding-right: 4px; display: flex; align-items: center;';
         nav.appendChild(verBadge);
 
+        const statusDot = document.createElement('span');
+        statusDot.id = 'online-status';
+        statusDot.style.cssText = 'width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 8px; flex-shrink: 0;';
+        statusDot.style.backgroundColor = navigator.onLine ? '#27ae60' : '#c0392b';
+        statusDot.setAttribute('aria-label', navigator.onLine ? 'Online' : 'Offline');
+        statusDot.setAttribute('role', 'status');
+        verBadge.appendChild(statusDot);
+        
+        window.addEventListener('online', () => {
+            statusDot.style.backgroundColor = '#27ae60';
+            statusDot.setAttribute('aria-label', 'Online');
+        });
+        window.addEventListener('offline', () => {
+            statusDot.style.backgroundColor = '#c0392b';
+            statusDot.setAttribute('aria-label', 'Offline');
+        });
+
         // Determine relative path to service-worker.js based on homeHref
         let swPath = 'service-worker.js';
         if (href.startsWith('../')) {
@@ -210,7 +227,12 @@ const ED_COMPONENTS = {
                 });
         }
 
-        document.body.insertBefore(nav, document.body.firstChild);
+        const skipLink = document.createElement('a');
+        skipLink.href = '#main-content';
+        skipLink.className = 'skip-link';
+        skipLink.textContent = 'Skip to content';
+        document.body.insertBefore(skipLink, document.body.firstChild);
+        document.body.insertBefore(nav, skipLink.nextSibling);
     },
 
     /**

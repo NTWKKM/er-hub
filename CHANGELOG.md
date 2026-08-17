@@ -1,3 +1,40 @@
+## [2.6.0] — 2026-08-17
+
+### Added & Enhanced (ER Department Deep Audit & International Standards Aligned)
+- **Anaphylaxis Standing Order (`orders/anaphylaxis.html`):**
+  - Added new standing order (08 - ACTIVE) based on WAO/EAACI 2024 & ACEP 2024 guidelines.
+  - Weight-based Epinephrine IM 1:1000 calculation (adult 0.3–0.5 mg, peds 0.01 mg/kg max 0.3 mg) with 3-dose repeat tracking and timestamps.
+  - Second-line adjunct medication selection (IVF, H1/H2 blockers, Corticosteroids, Salbutamol) and auto-expanding Glucagon guidance for patients on Beta-blockers.
+  - Standardized 5-column A4 print grid with patient sticker and hospital header.
+- **RSI Checklist (`tools/rsi-checklist.html`):**
+  - Added new high-risk procedure safety tool (T8 - ACTIVE).
+  - Interactive SOAP-ME pre-intubation checklist and post-intubation / ventilator setting checklist.
+  - Real-time weight-based dosing calculator for induction agents (Ketamine, Etomidate, Midazolam), paralytics (Succinylcholine, Rocuronium), and pre-treatment agents with safety contraindication alerts.
+  - Automatic equipment sizing (ETT size/depth, blade, LMA, suction catheter) and IBW calculator.
+  - One-click copy-to-clipboard for the clinical drug dosing summary.
+- **Resuscitation Timer (`tools/resus-timer.html`):**
+  - Added real-time cardiac arrest management timer (T9 - ACTIVE) with dark theme optimized for ER resuscitation room displays.
+  - 2-minute cycle timer with visual flash and Web Audio API beep alert (880Hz square wave) with localStorage-persisted silence/mute toggle.
+  - Interactive tracking for Rhythm checks (Shockable vs Non-Shockable), Defibrillation energy levels, Epinephrine (with auto q3–5m reminder), and Amiodarone (max 2 doses).
+  - ROSC documentation with post-ROSC checklist and comprehensive printable code event timeline.
+- **ISMP High-Alert Drug Safety & Tall-Man Lettering:**
+  - Added `displayName` with ISMP Tall-Man lettering to all 12 HAD entries in `shared/drug-data.js` (e.g. `DOBUTamine`, `DOPamine`, `NORePINEPHrine`, `ePINEPHrine`, `fentaNYL`).
+  - Rendered Tall-Man names across `tools/drip-calculator.html` dropdown, headings, and clinical guide cards.
+  - Injected non-blocking "Verify Before Print" confirmation card in Drip Calculator showing calculation inputs, rates, concentrations, and safety ceilings.
+  - Added unit test coverage in `tests/drug-data.test.js` (358 total tests passing).
+- **Clinical Version Attribution Footer:**
+  - Added standardized print-visible version and CPG guideline attribution footers across all 7 standing order worksheets (`orders/*.html`).
+- **Accessibility & PWA Hardening (WCAG 2.2):**
+  - Injected accessible "Skip to content" link into `shared/components.js` and styled in `shared/base.css`.
+  - Added `@media (prefers-reduced-motion: reduce)` resets in `shared/base.css` and `index.html` (including disabling 3D card tilt).
+  - Added `role="img"` and descriptive `aria-label`s to `.signal-dot` indicators in `index.html`.
+  - Upgraded `manifest.json` with `id`, `categories`, and multi-size icon definitions, and added iOS PWA meta tags in `index.html`.
+  - Integrated dynamic online/offline connectivity indicator dot in top navigation across `shared/components.js` and `index.html`.
+- **Promotion to ACTIVE:**
+  - Promoted Clinical Score & Risk Hub (`tools/score-hub.html`, T5) and TB Weight-Based Dosing Calculator (`tools/tb-calculator.html`, T6) from PROTOTYPE to ACTIVE in `index.html`.
+- **Offline Cache Sync:**
+  - Synchronized PWA offline cache version to `er-hub-v48` with new assets precached in `service-worker.js`.
+
 ## [2.5.4] — 2026-08-13
 
 ### Added & Enhanced (Departmental CPG Protocol Aligned)

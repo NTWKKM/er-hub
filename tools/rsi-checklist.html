@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSI Checklist — ED MNRH</title>
+    <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/base.css">
+    <style>
+        .theme-neutral h1 { color: #2c3e50; }
+        .theme-neutral h3 { border-bottom: 2px solid #2c3e50; padding-bottom: 5px; }
+        
+        .section-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .checklist-group { margin-bottom: 15px; }
+        .checklist-group h4 { margin: 0 0 10px 0; color: #2980b9; }
+        .checkbox-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 14px; }
+        .checkbox-item input[type="checkbox"] { margin-top: 3px; cursor: pointer; }
+
+        .flex-row { display: flex; gap: 15px; flex-wrap: wrap; }
+        .flex-col { flex: 1; min-width: 200px; }
+
+        .result-box {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .drug-card {
+            background: #e8f8f0;
+            border: 2px solid #2cc771;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .drug-card.warning { background: #fdf5e6; border-color: #f39c12; }
+
+        .drug-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+        .drug-calc { font-size: 20px; font-weight: bold; color: #27ae60; margin: 10px 0; }
+        .drug-card.warning .drug-calc { color: #d35400; }
+
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #2c3e50;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .copy-btn:hover { background: #34495e; }
+
+        .radio-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        @media print {
+            @page { size: A4 portrait; margin: 10mm; }
+            body { width: 100%; display: block !important; font-size: 12px; }
+            nav, .top-nav, .no-print, .copy-btn { display: none !important; }
+            .section-card { break-inside: avoid; margin-bottom: 10px; padding: 10px; box-shadow: none; border: 1px solid #000; }
+            .drug-card { break-inside: avoid; border: 1px solid #000; background: none; }
+            .drug-calc { color: #000 !important; }
+        }
+    </style>
+</head>
+<body class="theme-neutral">
+    <div class="container">
+        <div class="form-container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>RSI Checklist & Calculator</h2>
+                <button class="no-print" onclick="window.print()" style="padding: 8px 16px; background: #2c3e50; color: #fff; border: none; border-radius: 4px; cursor: pointer;">🖨️ Print</button>
+            </div>
+
+            <!-- Patient Input Section -->
+            <div class="section-card">
+                <h3>1. Patient Information (ข้อมูลผู้ป่วย)</h3>
+                <div class="flex-row">
+                    <div class="flex-col">
+                        <label>Weight (น้ำหนัก): <input type="number" id="weight" min="3" max="250" value="70" class="form-control" style="width:80px; display:inline-block;"> kg</label>
+                    </div>
+                    <div class="flex-col">
+                        <label>Age (อายุ): <input type="number" id="age" min="0" max="120" value="35" class="form-control" style="width:80px; display:inline-block;"> yrs</label>
+                    </div>
+                    <div class="flex-col">
+                        <label>Height (ส่วนสูง): <input type="number" id="height" min="30" max="250" value="170" class="form-control" style="width:80px; display:inline-block;"> cm</label>
+                    </div>
+                    <div class="flex-col">
+                        <label>Sex (เพศ): 
+                            <select id="sex" class="form-control" style="width:100px; display:inline-block;">
+                                <option value="M">Male (ชาย)</option>
+                                <option value="F">Female (หญิง)</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Indication (ข้อบ่งชี้):</label>
+                    <div class="flex-row" style="gap: 15px; margin-top: 5px;">
+                        <label><input type="radio" name="indication" value="Respiratory Failure" checked> Respiratory Failure</label>
+                        <label><input type="radio" name="indication" value="Decreased LOC"> Decreased LOC</label>
+                        <label><input type="radio" name="indication" value="Airway Protection"> Airway Protection</label>
+                        <label><input type="radio" name="indication" value="Status Epilepticus"> Status Epilepticus</label>
+                        <label><input type="radio" name="indication" value="Other"> Other</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- Equipment Sizes -->
+                <div class="section-card">
+                    <h3>2. Equipment Sizes (ขนาดอุปกรณ์)</h3>
+                    <div class="result-box" id="eq-results">
+                        <!-- Auto calculated -->
+                    </div>
+                </div>
+
+                <!-- IBW & Vent -->
+                <div class="section-card">
+                    <h3>3. Ventilator Prep (ตั้งค่าเครื่องช่วยหายใจ)</h3>
+                    <div class="result-box" id="vent-results">
+                        <!-- Auto calculated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drug Calculator -->
+            <div class="section-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>4. RSI Drugs (ยาที่ใช้)</h3>
+                    <button id="copy-drugs" class="copy-btn">📋 Copy Drugs</button>
+                </div>
+                
+                <div class="grid-2">
+                    <div>
+                        <h4>Induction Agent (เลือก 1 ชนิด)</h4>
+                        <div class="radio-group">
+                            <label><input type="radio" name="induction" value="Ketamine" checked> Ketamine 1.5 mg/kg (50 mg/mL) - Hemodynamically unstable</label>
+                            <label><input type="radio" name="induction" value="Etomidate"> Etomidate 0.3 mg/kg (2 mg/mL) - Hemodynamically stable</label>
+                            <label><input type="radio" name="induction" value="Midazolam"> Midazolam 0.1-0.3 mg/kg (5 mg/mL) - Backup</label>
+                        </div>
+                        <div id="induction-card"></div>
+                    </div>
+                    <div>
+                        <h4>Paralytic Agent (เลือก 1 ชนิด)</h4>
+                        <div class="radio-group">
+                            <label><input type="radio" name="paralytic" value="Succinylcholine" checked> Succinylcholine 1.5 mg/kg (20 mg/mL) - Onset 45-60s</label>
+                            <label><input type="radio" name="paralytic" value="Rocuronium"> Rocuronium 1.2 mg/kg (10 mg/mL) - Onset 60-90s</label>
+                        </div>
+                        <div id="paralytic-card"></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <h4>Pre-treatment (Optional)</h4>
+                    <div class="flex-row">
+                        <label><input type="checkbox" id="pre-fentanyl" value="Fentanyl"> Fentanyl 1-3 mcg/kg (Elevated ICP / Reactive airway)</label>
+                        <label><input type="checkbox" id="pre-lidocaine" value="Lidocaine"> Lidocaine 1.5 mg/kg (Elevated ICP)</label>
+                        <label><input type="checkbox" id="pre-atropine" value="Atropine"> Atropine 0.02 mg/kg (Pediatric bradycardia)</label>
+                    </div>
+                    <div id="pretreatment-cards" class="flex-row" style="margin-top: 10px;"></div>
+                </div>
+            </div>
+
+            <!-- SOAP-ME -->
+            <div class="section-card">
+                <h3>5. SOAP-ME Pre-Intubation Checklist</h3>
+                <div class="grid-2">
+                    <div class="checklist-group">
+                        <h4>S - Suction</h4>
+                        <label class="checkbox-item"><input type="checkbox"> Yankauer ready</label>
+                        <label class="checkbox-item"><input type="checkbox"> Wall suction tested</label>
+                    </div>
+                    <div class="checklist-group">
+                        <h4>O - Oxygen</h4>
+                        <label class="checkbox-item"><input type="checkbox"> Preoxygenation (NRB 15L/min or BVM or HFNC)</label>
+                        <label class="checkbox-item"><input type="checkbox"> Apneic oxygenation NC 15L/min</label>
+                    </div>
+                    <div class="checklist-group">
+                        <h4>A - Airway</h4>
+                        <label class="checkbox-item"><input type="checkbox"> ETT size selected</label>
+                        <label class="checkbox-item"><input type="checkbox"> Backup ETT (0.5 smaller)</label>
+                        <label class="checkbox-item"><input type="checkbox"> Stylet/Bougie</label>
+                        <label class="checkbox-item"><input type="checkbox"> Laryngoscope (Mac/Miller) + video laryngoscope</label>
+                        <label class="checkbox-item"><input type="checkbox"> Supraglottic airway (LMA) backup</label>
+                        <label class="checkbox-item"><input type="checkbox"> Surgical airway kit</label>
+                    </div>
+                    <div class="checklist-group">
+                        <h4>P - Pharmacy/Positioning</h4>
+                        <label class="checkbox-item"><input type="checkbox"> Drugs drawn up</label>
+                        <label class="checkbox-item"><input type="checkbox"> Patient positioned (sniffing position / ramped if obese)</label>
+                    </div>
+                    <div class="checklist-group">
+                        <h4>M - Monitoring</h4>
+                        <label class="checkbox-item"><input type="checkbox"> Pulse oximetry</label>
+                        <label class="checkbox-item"><input type="checkbox"> Capnography/EtCO2 ready</label>
+                        <label class="checkbox-item"><input type="checkbox"> Cardiac monitor</label>
+                        <label class="checkbox-item"><input type="checkbox"> BP cuff</label>
+                    </div>
+                    <div class="checklist-group">
+                        <h4>E - Equipment</h4>
+                        <label class="checkbox-item"><input type="checkbox"> BVM connected to O2</label>
+                        <label class="checkbox-item"><input type="checkbox"> Ventilator settings prepared</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post-Intubation -->
+            <div class="section-card">
+                <h3>6. Post-Intubation Checklist</h3>
+                <div class="grid-2">
+                    <div>
+                        <label class="checkbox-item"><input type="checkbox"> Tube confirmation: Bilateral breath sounds, EtCO2 waveform</label>
+                        <label class="checkbox-item"><input type="checkbox"> CXR ordered</label>
+                        <label class="checkbox-item"><input type="checkbox"> Tube secured</label>
+                        <label class="checkbox-item"><input type="checkbox"> OG/NG tube placed</label>
+                    </div>
+                    <div>
+                        <label class="checkbox-item"><input type="checkbox"> Ventilator connected & functioning</label>
+                        <label class="checkbox-item"><input type="checkbox"> Sedation initiated <a href="../orders/sedation.html" target="_blank">(Link to Sedation Order)</a></label>
+                        <label class="checkbox-item"><input type="checkbox"> Arterial line / Central line if indicated</label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../shared/components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof ED_COMPONENTS !== 'undefined') {
+                ED_COMPONENTS.injectNavBar('../index.html', '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png');
+            }
+
+            const inputs = ['weight', 'age', 'height', 'sex'].map(id => document.getElementById(id));
+            const radios = document.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+            
+            function calculateAll() {
+                const weight = parseFloat(document.getElementById('weight').value) || 70;
+                const age = parseFloat(document.getElementById('age').value) || 35;
+                const height = parseFloat(document.getElementById('height').value) || 170;
+                const sex = document.getElementById('sex').value;
+                const isPediatric = age < 15;
+
+                // Equipment Sizes
+                let ettSize, ettDepth, blade, lma, suction;
+                if (isPediatric) {
+                    ettSize = (age / 4) + 3.5;
+                    ettDepth = ettSize * 3;
+                    blade = age < 1 ? 'Miller 1' : age < 4 ? 'Mac 2 / Miller 2' : 'Mac 2-3';
+                } else {
+                    ettSize = sex === 'M' ? '7.5 - 8.0' : '7.0 - 7.5';
+                    ettDepth = '21 - 23';
+                    blade = 'Mac 3 - 4';
+                }
+                
+                if (weight < 5) lma = '1';
+                else if (weight < 10) lma = '1.5';
+                else if (weight < 20) lma = '2';
+                else if (weight < 30) lma = '2.5';
+                else if (weight < 50) lma = '3';
+                else if (weight < 70) lma = '4';
+                else lma = '5';
+
+                const parsedEtt = parseFloat(ettSize.toString().split(' ')[0]);
+                suction = Math.round(parsedEtt * 2);
+
+                document.getElementById('eq-results').innerHTML = `
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div><strong>ETT Size:</strong> ${typeof ettSize === 'number' ? ettSize.toFixed(1) : ettSize} cuffed</div>
+                        <div><strong>ETT Depth:</strong> ${typeof ettDepth === 'number' ? ettDepth.toFixed(1) : ettDepth} cm at lip</div>
+                        <div><strong>Blade:</strong> ${blade}</div>
+                        <div><strong>LMA Size:</strong> ${lma}</div>
+                        <div><strong>Suction Catheter:</strong> ${suction} Fr</div>
+                    </div>
+                `;
+
+                // IBW & Vent
+                const heightInches = height / 2.54;
+                let ibw;
+                if (sex === 'M') {
+                    ibw = 50 + 2.3 * (heightInches - 60);
+                } else {
+                    ibw = 45.5 + 2.3 * (heightInches - 60);
+                }
+                if (ibw < 1) ibw = weight; // fallback for infants/small kids formula limitation
+                const tvMin = Math.round(ibw * 6);
+                const tvMax = Math.round(ibw * 8);
+
+                document.getElementById('vent-results').innerHTML = `
+                    <div style="display:grid; grid-template-columns: 1fr; gap: 8px;">
+                        <div><strong>Ideal Body Weight (IBW):</strong> ${ibw.toFixed(1)} kg</div>
+                        <div><strong>Tidal Volume (6-8 mL/kg IBW):</strong> ${tvMin} - ${tvMax} mL</div>
+                        <div><strong>Suggested Settings:</strong> Mode AC/VC, RR 14-16, FiO2 100%, PEEP 5</div>
+                    </div>
+                `;
+
+                // Drugs
+                calculateDrugs(weight);
+            }
+
+            function getDrugCard(title, formula, dose, unit, conc, concUnit, maxDose, warning='') {
+                let actualDose = dose;
+                let cardClass = 'drug-card';
+                if (maxDose && actualDose > maxDose) {
+                    actualDose = maxDose;
+                    cardClass += ' warning';
+                    warning = `Max dose capped at ${maxDose} ${unit}. ` + warning;
+                }
+                const volume = (actualDose / conc).toFixed(1);
+                
+                return `
+                    <div class="${cardClass}">
+                        <div class="drug-title">${title}</div>
+                        <div style="font-size:12px; color:#555;">Formula: ${formula} | Conc: ${conc} ${concUnit}</div>
+                        <div class="drug-calc">${actualDose.toFixed(1)} ${unit} &nbsp;👉&nbsp; Draw <span style="text-decoration:underline;">${volume} mL</span></div>
+                        ${warning ? `<div style="font-size:12px; color:#d35400;">⚠️ ${warning}</div>` : ''}
+                    </div>
+                `;
+            }
+
+            function calculateDrugs(w) {
+                // Induction
+                const indType = document.querySelector('input[name="induction"]:checked').value;
+                let indCard = '';
+                if (indType === 'Ketamine') indCard = getDrugCard('Ketamine', '1.5 mg/kg', w * 1.5, 'mg', 50, 'mg/mL', null);
+                else if (indType === 'Etomidate') indCard = getDrugCard('Etomidate', '0.3 mg/kg', w * 0.3, 'mg', 2, 'mg/mL', null);
+                else if (indType === 'Midazolam') indCard = getDrugCard('Midazolam', '0.2 mg/kg (0.1-0.3)', w * 0.2, 'mg', 5, 'mg/mL', null);
+                document.getElementById('induction-card').innerHTML = indCard;
+
+                // Paralytic
+                const paraType = document.querySelector('input[name="paralytic"]:checked').value;
+                let paraCard = '';
+                if (paraType === 'Succinylcholine') paraCard = getDrugCard('Succinylcholine', '1.5 mg/kg', w * 1.5, 'mg', 20, 'mg/mL', null, 'CI: HyperK, crush/burn >48h, neuromuscular dz');
+                else if (paraType === 'Rocuronium') paraCard = getDrugCard('Rocuronium', '1.2 mg/kg', w * 1.2, 'mg', 10, 'mg/mL', null, 'Reversal: Sugammadex 16 mg/kg');
+                document.getElementById('paralytic-card').innerHTML = paraCard;
+
+                // Pre-treatment
+                let preCards = '';
+                if (document.getElementById('pre-fentanyl').checked) {
+                    preCards += `<div class="flex-col">${getDrugCard('Fentanyl', '1 mcg/kg', w * 1, 'mcg', 50, 'mcg/mL', null)}</div>`;
+                }
+                if (document.getElementById('pre-lidocaine').checked) {
+                    preCards += `<div class="flex-col">${getDrugCard('Lidocaine', '1.5 mg/kg', w * 1.5, 'mg', 20, 'mg/mL', 100)}</div>`;
+                }
+                if (document.getElementById('pre-atropine').checked) {
+                    preCards += `<div class="flex-col">${getDrugCard('Atropine', '0.02 mg/kg', w * 0.02, 'mg', 0.6, 'mg/mL', 0.5, 'Min dose 0.1mg')}</div>`;
+                }
+                document.getElementById('pretreatment-cards').innerHTML = preCards;
+            }
+
+            inputs.forEach(el => el.addEventListener('input', calculateAll));
+            radios.forEach(el => el.addEventListener('change', calculateAll));
+            document.getElementById('sex').addEventListener('change', calculateAll);
+
+            // Copy Drugs to Clipboard
+            document.getElementById('copy-drugs').addEventListener('click', () => {
+                const cards = document.querySelectorAll('.drug-card');
+                let text = 'RSI Medications:\\n';
+                cards.forEach(card => {
+                    const title = card.querySelector('.drug-title').innerText;
+                    const calc = card.querySelector('.drug-calc').innerText.replace('👉', '->').replace('Draw', 'Draw');
+                    text += `- ${title}: ${calc}\\n`;
+                });
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Copied to clipboard!');
+                });
+            });
+
+            // Initial Calc
+            calculateAll();
+        });
+    </script>
+</body>
+</html>
