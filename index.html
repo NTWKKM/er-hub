@@ -686,21 +686,28 @@ window.addEventListener('online', () => { statusDot.style.backgroundColor = '#27
 window.addEventListener('offline', () => { statusDot.style.backgroundColor = '#c0392b'; statusDot.setAttribute('aria-label', 'Offline'); });
 
 // Dynamically sync top bar version with service-worker.js CACHE_VERSION
+const verEl = document.getElementById('nav-ver-text');
+try {
+  const cachedVer = localStorage.getItem('er-hub-cached-version');
+  if (cachedVer && verEl) verEl.textContent = cachedVer;
+} catch (_) {}
+
 fetch('service-worker.js')
   .then(res => res.text())
   .then(code => {
     const match = code.match(/CACHE_VERSION\s*=\s*['"]er-hub-(v\d+)['"]/i);
     if (match && match[1]) {
-      const verEl = document.getElementById('nav-ver-text');
       if (verEl) {
-        const today = new Date().toISOString().slice(0, 10);
-        verEl.textContent = `${match[1]} · Updated ${today}`;
+        verEl.textContent = match[1];
       }
+      try { localStorage.setItem('er-hub-cached-version', match[1]); } catch (_) {}
     }
   })
   .catch(() => {
-    const verEl = document.getElementById('nav-ver-text');
-    if (verEl) verEl.textContent = 'Offline';
+    try {
+      const cachedVer = localStorage.getItem('er-hub-cached-version');
+      if (verEl && cachedVer) verEl.textContent = cachedVer;
+    } catch (_) {}
   });
 
 if ('serviceWorker' in navigator) {

@@ -1,3 +1,14 @@
+## [2.6.4] — 2026-08-19
+
+### Fixed & Hardened (Top Navigation Dynamic SW Version Sync & Offline Cache Fallback)
+- **Dynamic Service Worker Version Sync (`shared/components.js`, `index.html`):**
+  - Added `localStorage` caching (`er-hub-cached-version`) for cold-load offline resilience, ensuring version numbers (`v51`) remain visible during offline operation instead of displaying blank or "Offline".
+  - Removed misleading client-side date formatting (`new Date()`) on `index.html`, standardizing on accurate version tags across all portal and order pages.
+  - Refactored relative path resolution in `components.js` using regex replacement to resolve `service-worker.js` safely at arbitrary directory depths.
+  - Hardened `window.navigator.onLine` checks with safe boolean guards for the `#online-status` network connectivity dot.
+- **Automated Test Coverage (`tests/components.test.js`):**
+  - Added unit test suite for `ED_COMPONENTS.injectNavBar()`, verifying DOM injection, version extraction, and online/offline status dot rendering (239 total tests passing across 30 suites).
+
 ## [2.6.3] — 2026-08-18
 
 ### Fixed & Hardened (Full Codebase 4-Week Audit & Resilience Improvements)

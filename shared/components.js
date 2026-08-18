@@ -190,13 +190,18 @@ const ED_COMPONENTS = {
 
         const verText = document.createElement('span');
         verText.id = 'nav-ver-text';
+        try {
+            const cachedVer = localStorage.getItem('er-hub-cached-version');
+            if (cachedVer) verText.textContent = cachedVer;
+        } catch (_) {}
         verBadge.appendChild(verText);
 
         const statusDot = document.createElement('span');
         statusDot.id = 'online-status';
         statusDot.style.cssText = 'width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 8px; flex-shrink: 0;';
-        statusDot.style.backgroundColor = navigator.onLine ? '#27ae60' : '#c0392b';
-        statusDot.setAttribute('aria-label', navigator.onLine ? 'Online' : 'Offline');
+        const isOnline = (typeof window !== 'undefined' && window.navigator && typeof window.navigator.onLine === 'boolean') ? window.navigator.onLine : (typeof navigator !== 'undefined' ? Boolean(navigator.onLine) : true);
+        statusDot.style.backgroundColor = isOnline ? '#27ae60' : '#c0392b';
+        statusDot.setAttribute('aria-label', isOnline ? 'Online' : 'Offline');
         statusDot.setAttribute('role', 'status');
         verBadge.appendChild(statusDot);
         
@@ -210,12 +215,8 @@ const ED_COMPONENTS = {
         });
 
         // Determine relative path to service-worker.js based on homeHref
-        let swPath = 'service-worker.js';
-        if (href.startsWith('../')) {
-            swPath = '../service-worker.js';
-        } else if (href.startsWith('./')) {
-            swPath = './service-worker.js';
-        }
+        let swPath = href ? href.replace(/(^|\/)(index\.html)?(\?.*)?(#.*)?$/, '$1service-worker.js') : 'service-worker.js';
+        if (!swPath.endsWith('service-worker.js')) swPath = 'service-worker.js';
 
         if (typeof fetch === 'function') {
             fetch(swPath)
@@ -224,10 +225,14 @@ const ED_COMPONENTS = {
                     const match = code.match(/CACHE_VERSION\s*=\s*['"]er-hub-(v\d+)['"]/i);
                     if (match && match[1]) {
                         verText.textContent = match[1];
+                        try { localStorage.setItem('er-hub-cached-version', match[1]); } catch (_) {}
                     }
                 })
                 .catch(() => {
-                    // Silent catch in offline or restricted environments
+                    try {
+                        const cachedVer = localStorage.getItem('er-hub-cached-version');
+                        if (cachedVer && !verText.textContent) verText.textContent = cachedVer;
+                    } catch (_) {}
                 });
         }
 

@@ -188,7 +188,7 @@ Redirect script validates `order` slug against allow-list.
 ### Service Worker (`service-worker.js`)
 
 PWA offline cache. Network-first for navigation requests, cache-first for static assets.
-`CACHE_VERSION` is `er-hub-v29` — must stay in sync with `index.html` nav-right version string.
+`CACHE_VERSION` is `er-hub-v51` — dynamically extracted by `index.html` and `shared/components.js` at runtime via `fetch()` and regex parsing, backed by `localStorage` (`er-hub-cached-version`) for cold-load offline resilience.
 Precaches all HTML/CSS/JS + shared engines + ER NOTE templates + drip-calculator + nihss.html + 512×512 app icon + source PDFs + Google Fonts.
 Per-asset retry with exponential backoff via `fetchWithRetry()`. `Promise.allSettled()` ensures one failure doesn't block others.
 
@@ -252,7 +252,7 @@ User enters history, exam, investigations, scoring variables
 
 ## Test Suite Architecture & Quality Guardrails
 
-The ER-Hub test suite is designed with high signal-to-noise ratio and zero clinical false-alarms. It comprises **15 high-value test suites** executing via Node.js native test runner (`node:test`):
+The ER-Hub test suite is designed with high signal-to-noise ratio and zero clinical false-alarms. It comprises **15 high-value test suites** (239 tests total) executing via Node.js native test runner (`node:test`):
 
 ```bash
 node --test tests/*.test.js
@@ -271,7 +271,7 @@ node --test tests/*.test.js
 - [`tb-calculator.test.js`](file:///Users/ntwkkm/er-hub/tests/tb-calculator.test.js): Clinical execution tests via JSDOM for Thailand CPG 2018 & 2022 TB regimens: Adult 4-FDC weight bands, Pediatric dispersible FDCs, TPT 3HP, H-monoresistance 6(H)RZELfx, MDR Shorter Bdq Regimen (Table 6.3), and MDR Individualized Longer Regimen validator (Tables 6.4–6.6).
 
 ### 2. System & Architectural Guards (5 Files)
-- [`components.test.js`](file:///Users/ntwkkm/er-hub/tests/components.test.js): Thai Buddhist Era date formatting (`fmtDate`), 24h Thai time (`fmtTime`), and standing order title parsing (`parseTitle`).
+- [`components.test.js`](file:///Users/ntwkkm/er-hub/tests/components.test.js): Thai Buddhist Era date formatting (`fmtDate`), 24h Thai time (`fmtTime`), standing order title parsing (`parseTitle`), dynamic navbar DOM injection (`injectNavBar`), version badge (`#nav-ver-display`, `#nav-ver-text`), and network status dot (`#online-status`).
 - [`id-integrity-guard.test.js`](file:///Users/ntwkkm/er-hub/tests/id-integrity-guard.test.js): AST/Regex scanner validating that every DOM ID referenced in JavaScript across all `orders/*.html` and `tools/*.html` exists in the markup.
 - [`pwa-assets.test.js`](file:///Users/ntwkkm/er-hub/tests/pwa-assets.test.js): Validates that every asset in `service-worker.js` `ASSETS` array exists on disk, ensuring offline installation never fails.
 - [`order-safety-guard.test.js`](file:///Users/ntwkkm/er-hub/tests/order-safety-guard.test.js): Ensures all hard-stop contraindication lock-out branches are followed by a `return;` statement.
@@ -287,7 +287,7 @@ These are invariant rules the codebase follows. They are not decisions with date
 - **Braun cream theme.** Portal/order pages use Braun palette: `#f4f2ec` background, `#ebe7df` paper, `#F0EDE5` Braun White nav text, `#1a1a1a` ink. ER NOTE uses dark glassmorphism (`#0f1115` bg, `#5E6AD2` accent).
 - **Existing field `id`s preserved.** DOM IDs are the stable contract between HTML and JS. Renaming an ID requires updating all references and running `tests/id-integrity-guard.test.js`.
 - **Print output is plain text.** Print renders black-on-white A4. No color, no shadows, no screen-only UI. `@media print` hides nav, float bar, forms, sidebar.
-- **`CACHE_VERSION` sync.** `service-worker.js` `CACHE_VERSION` must match `index.html` nav-right version string. Bump both together on deploy.
+- **`CACHE_VERSION` sync.** `service-worker.js` `CACHE_VERSION` is the single source of truth for the app version, auto-synced across portal and worksheets via runtime fetch + regex extraction and local cache storage.
 - **SW precache must include all pages.** Every HTML page + every shared JS/CSS + ER NOTE templates + drip-calculator + nihss.html must be in the `ASSETS` array. Offline-first is a stated goal.
 - **No `alert()` calls in `orders/*.html`.** Use `ED_VALIDATE` non-blocking validation instead. (Out of scope: `tools/er-note/` and `tools/nihss.html` are decoupled from `ED_VALIDATE` per the Asset Isolation Rule and legitimately use native `alert()`/`confirm()` for copy-failure and destructive-clear confirmations.)
 - **No `@media print` or `#print-area` changes** without a specific bug fix requiring it.

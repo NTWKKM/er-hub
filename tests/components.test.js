@@ -87,3 +87,34 @@ describe('ED_COMPONENTS.parseTitle', () => {
     assert.equal(parsed.titleShort, title);
   });
 });
+
+describe('ED_COMPONENTS.injectNavBar', () => {
+  test('injects top-nav, logo, title, and nav-ver-display with online indicator', () => {
+    const { JSDOM } = require('jsdom');
+    const dom = new JSDOM('<!DOCTYPE html><html><body><div id="main-content"></div></body></html>');
+    global.document = dom.window.document;
+    global.window = dom.window;
+    Object.defineProperty(dom.window.navigator, 'onLine', { value: true, configurable: true });
+    global.navigator = dom.window.navigator;
+    global.localStorage = { getItem: () => 'v51', setItem: () => {} };
+
+    ED_COMPONENTS.injectNavBar('../index.html', '../docs/logo.png', 'Test Title — Detail | Version 1.0', 'Test V1.0');
+
+    const nav = document.querySelector('nav.top-nav');
+    assert.ok(nav, 'Top nav element should be injected');
+
+    const homeLink = nav.querySelector('.nav-home');
+    assert.equal(homeLink.getAttribute('href'), '../index.html');
+
+    const verDisplay = nav.querySelector('#nav-ver-display');
+    assert.ok(verDisplay, '#nav-ver-display should exist');
+
+    const verText = nav.querySelector('#nav-ver-text');
+    assert.ok(verText, '#nav-ver-text should exist');
+    assert.equal(verText.textContent, 'v51');
+
+    const statusDot = nav.querySelector('#online-status');
+    assert.ok(statusDot, '#online-status should exist');
+    assert.equal(statusDot.style.backgroundColor, 'rgb(39, 174, 96)'); // #27ae60
+  });
+});

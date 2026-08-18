@@ -63,6 +63,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | Investigation module | `ErNote.renderInvestigation()` | `tools/er-note/er-note.js` |
 | Treatment module | `ErNote.renderTreatment()` | `tools/er-note/er-note.js` |
 | Home medication draft | `er-hub-home-med-draft` (localStorage key) | `tools/Urgent-Clinic-Home-Medication.html` |
+| Cached SW version | `er-hub-cached-version` (localStorage key) | `shared/components.js`, `index.html` |
 
 ## Clinical Decision Boundaries
 
