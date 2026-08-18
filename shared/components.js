@@ -188,6 +188,10 @@ const ED_COMPONENTS = {
         verBadge.style.cssText = 'margin-left: auto; font-size: 11px; opacity: 0.85; font-family: var(--font-mono, monospace); padding-right: 4px; display: flex; align-items: center;';
         nav.appendChild(verBadge);
 
+        const verText = document.createElement('span');
+        verText.id = 'nav-ver-text';
+        verBadge.appendChild(verText);
+
         const statusDot = document.createElement('span');
         statusDot.id = 'online-status';
         statusDot.style.cssText = 'width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 8px; flex-shrink: 0;';
@@ -219,7 +223,7 @@ const ED_COMPONENTS = {
                 .then(code => {
                     const match = code.match(/CACHE_VERSION\s*=\s*['"]er-hub-(v\d+)['"]/i);
                     if (match && match[1]) {
-                        verBadge.textContent = match[1];
+                        verText.textContent = match[1];
                     }
                 })
                 .catch(() => {

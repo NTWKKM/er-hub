@@ -736,11 +736,12 @@ function saveDraft() {
     document.querySelectorAll('input[type="checkbox"]').forEach(el => {
         data[el.id] = el.checked;
     });
-    localStorage.setItem(storageKey, JSON.stringify(data));
+    try { localStorage.setItem(storageKey, JSON.stringify(data)); } catch(e) {}
 }
 
 function loadDraft() {
-    const saved = localStorage.getItem(storageKey);
+    let saved = null;
+    try { saved = localStorage.getItem(storageKey); } catch(e) {}
     if (!saved) return;
     try {
         const data = JSON.parse(saved);
@@ -783,7 +784,7 @@ document.getElementById('home-med-weight').addEventListener('input', function() 
 window.clearNote = function() {
   if (confirm('ต้องการล้างข้อมูลทั้งหมดหรือไม่?')) {
     document.getElementById('er-form').reset();
-    localStorage.removeItem(storageKey);
+    try { localStorage.removeItem(storageKey); } catch(e) {}
   }
 };
 

@@ -716,7 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('input[name="horse-allergy"]').forEach(r => {
         r.addEventListener('change', () => {
             $('horse-allergy-detail').style.display =
-                document.querySelector('input[name="horse-allergy"]:checked').value === 'yes' ? 'block' : 'none';
+                document.querySelector('input[name="horse-allergy"]:checked')?.value === 'yes' ? 'block' : 'none';
         });
     });
 

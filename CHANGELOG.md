@@ -1,3 +1,26 @@
+## [2.6.3] — 2026-08-18
+
+### Fixed & Hardened (Full Codebase 4-Week Audit & Resilience Improvements)
+- **Antivenom Standing Order (`orders/antivenom.html`):**
+  - Added optional chaining `?.value` to `horse-allergy` change listener, fixing unhandled `TypeError` when no option is selected.
+- **Top Navigation Bar & Portal Status Indicator (`shared/components.js` & `index.html`):**
+  - Refactored dynamic Service Worker version injection to write into dedicated `#nav-ver-text` span, preventing the `#online-status` network connectivity dot from being deleted.
+- **NIHSS Scoring Tool (`tools/nihss.html`):**
+  - Fixed hardcoded online GitHub Pages URL to relative path `../index.html`, ensuring 100% offline PWA compatibility.
+- **RSI Checklist (`tools/rsi-checklist.html`):**
+  - Fixed escaped `\\n` literals in copy note clipboard compiler to real newline breaks (`\n`).
+- **Heparin Standing Order (`orders/heparin.html`):**
+  - Removed duplicate `id="use-current-time"` checkbox from Column 1.
+- **Sedation Standing Order (`orders/sedation.html`):**
+  - Aligned `#fen-dose` input `max="3.0"` with clinical validation range.
+- **Storage Resilience (`tools/er-note/er-note.js`, `tools/drip-calculator.html`, `tools/Urgent-Clinic-Home-Medication.html`):**
+  - Wrapped `localStorage` and `sessionStorage` access in `try/catch` safety blocks to guarantee zero crashes in sandboxed iframes, private browsing, or opaque origins.
+- **Calculation Engine Hardening (`shared/calc-engine.js`):**
+  - Generalized `doseUnit.includes('/kg')` detection.
+- **Automated Test Coverage (`tests/score-hub.test.js`, `tests/antivenom.test.js`):**
+  - Added full test suites for Clinical Score Hub (10 calculators) and Antivenom Standing Order (238 total unit tests passing across 30 suites).
+- **PWA Cache:** Bumped cache version to `er-hub-v51` in `service-worker.js`.
+
 ## [2.6.2] — 2026-08-17
 
 ### Fixed & Enhanced (Resuscitation Timer Drawer Bug Fix & Braun Theme Alignment)

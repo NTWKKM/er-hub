@@ -372,11 +372,11 @@
             // Copy Drugs to Clipboard
             document.getElementById('copy-drugs').addEventListener('click', () => {
                 const cards = document.querySelectorAll('.drug-card');
-                let text = 'RSI Medications:\\n';
+                let text = 'RSI Medications:\n';
                 cards.forEach(card => {
                     const title = card.querySelector('.drug-title').innerText;
                     const calc = card.querySelector('.drug-calc').innerText.replace('👉', '->').replace('Draw', 'Draw');
-                    text += `- ${title}: ${calc}\\n`;
+                    text += `- ${title}: ${calc}\n`;
                 });
                 navigator.clipboard.writeText(text).then(() => {
                     alert('Copied to clipboard!');

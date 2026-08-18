@@ -314,7 +314,8 @@
             const WEIGHT_MAX = 250;
 
             // Restore weight from sessionStorage if available, defaulting to 50 kg
-            const storedWeight = sessionStorage.getItem('er-hub-weight');
+            let storedWeight = null;
+            try { storedWeight = sessionStorage.getItem('er-hub-weight'); } catch(e) {}
             const parsedWeight = storedWeight ? parseFloat(storedWeight) : NaN;
             const initialWeight = isNaN(parsedWeight) ? 50 : parsedWeight;
             const clampedInitialWeight = Math.max(WEIGHT_MIN, Math.min(WEIGHT_MAX, initialWeight));
@@ -592,7 +593,7 @@
                 }
 
                 // Save valid weight to sessionStorage
-                sessionStorage.setItem('er-hub-weight', weightVal.toString());
+                try { sessionStorage.setItem('er-hub-weight', weightVal.toString()); } catch(e) {}
 
                 if (!selectedDrug || !selectedPrep) {
                     resultContainer.classList.add('hidden');

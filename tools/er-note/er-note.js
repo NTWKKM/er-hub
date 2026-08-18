@@ -51,33 +51,35 @@
 
   /* ---- Migration from v1 (single draft per template) ---- */
   function migrateV1(){
-    var reg = loadRegistry();
-    var oldKeys = [];
-    for (var i = 0; i < localStorage.length; i++){
-      var key = localStorage.key(i);
-      if (!key || key.indexOf(DRAFT_PREFIX) !== 0) continue;
-      var rest = key.slice(DRAFT_PREFIX.length);
-      // New format: <template>-d_<alphanum>  → skip
-      if (/-d_[a-z0-9_]+$/.test(rest)) continue;
-      oldKeys.push({ key:key, template:rest });
-    }
-    if (!oldKeys.length) return;
+    try {
+      var reg = loadRegistry();
+      var oldKeys = [];
+      for (var i = 0; i < localStorage.length; i++){
+        var key = localStorage.key(i);
+        if (!key || key.indexOf(DRAFT_PREFIX) !== 0) continue;
+        var rest = key.slice(DRAFT_PREFIX.length);
+        // New format: <template>-d_<alphanum>  → skip
+        if (/-d_[a-z0-9_]+$/.test(rest)) continue;
+        oldKeys.push({ key:key, template:rest });
+      }
+      if (!oldKeys.length) return;
 
-    for (var j = 0; j < oldKeys.length; j++){
-      var entry = oldKeys[j];
-      try {
-        var data = JSON.parse(localStorage.getItem(entry.key) || '{}');
-        var id = genId();
-        var hn = data['ernote-hn'] || '';
-        var ccInfo = CC_FIELDS[entry.template];
-        var cc = '';
-        if (ccInfo && data[ccInfo.id]) cc = String(data[ccInfo.id]).slice(0, 80);
-        reg.drafts.push({ id:id, template:entry.template, hn:hn, cc:cc, updatedAt:Date.now() });
-        localStorage.setItem(draftKey(entry.template, id), JSON.stringify(data));
-        localStorage.removeItem(entry.key);
-      } catch(e){}
-    }
-    saveRegistry(reg);
+      for (var j = 0; j < oldKeys.length; j++){
+        var entry = oldKeys[j];
+        try {
+          var data = JSON.parse(localStorage.getItem(entry.key) || '{}');
+          var id = genId();
+          var hn = data['ernote-hn'] || '';
+          var ccInfo = CC_FIELDS[entry.template];
+          var cc = '';
+          if (ccInfo && data[ccInfo.id]) cc = String(data[ccInfo.id]).slice(0, 80);
+          reg.drafts.push({ id:id, template:entry.template, hn:hn, cc:cc, updatedAt:Date.now() });
+          localStorage.setItem(draftKey(entry.template, id), JSON.stringify(data));
+          localStorage.removeItem(entry.key);
+        } catch(e){}
+      }
+      saveRegistry(reg);
+    } catch(err){}
   }
 
   /* ---- Draft CRUD ---- */

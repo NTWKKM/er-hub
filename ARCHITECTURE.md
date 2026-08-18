@@ -252,18 +252,20 @@ User enters history, exam, investigations, scoring variables
 
 ## Test Suite Architecture & Quality Guardrails
 
-The ER-Hub test suite is designed with high signal-to-noise ratio and zero clinical false-alarms. It comprises **13 high-value test suites** executing via Node.js native test runner (`node:test`):
+The ER-Hub test suite is designed with high signal-to-noise ratio and zero clinical false-alarms. It comprises **15 high-value test suites** executing via Node.js native test runner (`node:test`):
 
 ```bash
 node --test tests/*.test.js
 ```
 
-### 1. Core Clinical Engines (8 Files)
+### 1. Core Clinical Engines & Order Suites (10 Files)
 - [`anticoag-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/anticoag-engine.test.js): Heparin initial dosing, bolus caps (10,000 U), infusion ceilings (1,800 U/hr), and full aPTT titration table logic.
+- [`antivenom.test.js`](file:///Users/ntwkkm/er-hub/tests/antivenom.test.js): Snake antivenom selection, horse allergy safety, and print order generation.
 - [`calc-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/calc-engine.test.js): Mathematical unit tests for weight-based and non-weight-based drip rates (mL/hr) with strict NaN/0/null/negative guards.
 - [`clinical-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/clinical-engine.test.js): CKD-EPI 2021 eGFR equation, GRACE score calculation, Killip points, and ESC risk stratification.
 - [`drug-data.test.js`](file:///Users/ntwkkm/er-hub/tests/drug-data.test.js): Schema validation & safety constraints for all 17 High-Alert Drugs (HAD), Tall-man spellings, preparations, and absolute ceilings.
 - [`ob-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/ob-engine.test.js): Obstetric emergency engine: MgSO4 4g loading, maintenance infusions, Pritchard IM, toxicity flags (RR, DTR, UO), severe pre-eclampsia criteria, antidotes, and Myasthenia Gravis safety blocks.
+- [`score-hub.test.js`](file:///Users/ntwkkm/er-hub/tests/score-hub.test.js): Clinical execution tests for all 10 emergency clinical calculators (AWS, SIRS, NEWS2, MEWS, Sepsis Abx, ABCD2, HEART, Wells PE, Revised Geneva, PERC Rule).
 - [`stemi-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/stemi-engine.test.js): TNK (Tenecteplase) weight brackets (<60kg to ≥90kg) and elderly halving boundary (age ≥ 75).
 - [`stroke-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/stroke-engine.test.js): rt-PA (Alteplase) 0.9 & 0.6 mg/kg dosing, push vs drip breakdown, 90mg/50mg max caps, and remainder rounding.
 - [`tb-calculator.test.js`](file:///Users/ntwkkm/er-hub/tests/tb-calculator.test.js): Clinical execution tests via JSDOM for Thailand CPG 2018 & 2022 TB regimens: Adult 4-FDC weight bands, Pediatric dispersible FDCs, TPT 3HP, H-monoresistance 6(H)RZELfx, MDR Shorter Bdq Regimen (Table 6.3), and MDR Individualized Longer Regimen validator (Tables 6.4–6.6).

@@ -671,13 +671,13 @@ nav.innerHTML = `
         <img src="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" style="height: 38px; width: auto; display: block;">
     </div>
     <div class="nav-center">MNRH-ED HUB</div>
-    <div class="nav-right" id="nav-ver-display">...</div>
+    <div class="nav-right" id="nav-ver-display"><span id="nav-ver-text">...</span></div>
 `;
 document.body.insertBefore(nav, document.body.firstChild);
 
 const statusDot = document.createElement('span');
 statusDot.id = 'online-status';
-statusDot.style.cssText = 'width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 8px;';
+statusDot.style.cssText = 'width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 8px; flex-shrink: 0;';
 statusDot.style.backgroundColor = navigator.onLine ? '#27ae60' : '#c0392b';
 statusDot.setAttribute('aria-label', navigator.onLine ? 'Online' : 'Offline');
 statusDot.setAttribute('role', 'status');
@@ -691,7 +691,7 @@ fetch('service-worker.js')
   .then(code => {
     const match = code.match(/CACHE_VERSION\s*=\s*['"]er-hub-(v\d+)['"]/i);
     if (match && match[1]) {
-      const verEl = document.getElementById('nav-ver-display');
+      const verEl = document.getElementById('nav-ver-text');
       if (verEl) {
         const today = new Date().toISOString().slice(0, 10);
         verEl.textContent = `${match[1]} · Updated ${today}`;
@@ -699,7 +699,7 @@ fetch('service-worker.js')
     }
   })
   .catch(() => {
-    const verEl = document.getElementById('nav-ver-display');
+    const verEl = document.getElementById('nav-ver-text');
     if (verEl) verEl.textContent = 'Offline';
   });
 
