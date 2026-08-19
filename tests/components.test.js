@@ -96,7 +96,7 @@ describe('ED_COMPONENTS.injectNavBar', () => {
     global.window = dom.window;
     Object.defineProperty(dom.window.navigator, 'onLine', { value: true, configurable: true });
     global.navigator = dom.window.navigator;
-    global.localStorage = { getItem: () => 'v51 · 19/08/2569', setItem: () => {} };
+    global.localStorage = { getItem: () => 'v52 · 19/08/2569', setItem: () => {} };
 
     ED_COMPONENTS.injectNavBar('../index.html', '../docs/logo.png', 'Test Title — Detail | Version 1.0', 'Test V1.0');
 
@@ -112,7 +112,7 @@ describe('ED_COMPONENTS.injectNavBar', () => {
 
     const verText = nav.querySelector('#nav-ver-text');
     assert.ok(verText, '#nav-ver-text should exist');
-    assert.equal(verText.textContent, 'v51 · 19/08/2569');
+    assert.equal(verText.textContent, 'v52 · 19/08/2569');
 
     const statusDot = nav.querySelector('#online-status');
     assert.ok(statusDot, '#online-status should exist');

@@ -1,3 +1,11 @@
+## [2.6.5] — 2026-08-19
+
+### Enhanced & Reordered (Drip Calculator Layout & PWA Cache Bump)
+- **IV Infusion Drip Calculator (`tools/drip-calculator.html`):**
+  - Reordered `#verify-card` ("Verify Before Print" confirmation block) to the bottom of the calculation result container (`#result-container`), placing it below the recommendation guide and safety warnings for a cleaner clinical flow.
+- **PWA Cache (`service-worker.js`, `ARCHITECTURE.md`, `DESIGN.md`):**
+  - Bumped cache version to `er-hub-v52` (`19/08/2569`) ensuring automatic client cache busting on deployment.
+
 ## [2.6.4] — 2026-08-19
 
 ### Fixed & Hardened (Top Navigation Dynamic SW Version & Release Date Sync)

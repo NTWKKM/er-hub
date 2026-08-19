@@ -257,20 +257,6 @@
                     <div class="rate-large"><span id="res-rate">--</span> mL/hr</div>
                 </div>
 
-                <!-- Verify Before Print Card -->
-                <div id="verify-card" class="no-print" style="background: #e3f2fd; border: 2px solid #2196f3; border-radius: 8px; padding: 15px; margin-top: 15px;">
-                    <h4 style="margin-top:0; color:#1565c0;">Verify Before Print</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
-                        <div><strong>Drug:</strong> <span id="verify-drug"></span></div>
-                        <div><strong>Weight:</strong> <span id="verify-weight"></span> kg</div>
-                        <div><strong>Target Dose:</strong> <span id="verify-target"></span></div>
-                        <div><strong>Calculated Rate:</strong> <span id="verify-rate"></span> mL/hr</div>
-                        <div style="grid-column: span 2;"><strong>Concentration:</strong> <span id="verify-conc"></span></div>
-                        <div style="grid-column: span 2;"><strong>Safety Status:</strong> <span id="verify-status"></span></div>
-                        <div id="verify-max" style="grid-column: span 2; display: none; color: #c0392b;"><strong>Max Dose:</strong> <span id="verify-max-text"></span></div>
-                    </div>
-                </div>
-
                 <!-- Recommend Guide -->
                 <div id="guide-container" class="guide-box">
                     <strong style="font-size:15px; color:#2c3e50; display:block; margin-bottom:6px;">📝
@@ -283,6 +269,20 @@
                 <div id="warning-container" class="warning-box">
                     <strong>⚠️ ข้อควรระวังและความปลอดภัย (HAD Safety warnings):</strong>
                     <ul id="warning-list" style="margin:6px 0 0 0; padding-left:20px;"></ul>
+                </div>
+
+                <!-- Verify Before Print Card -->
+                <div id="verify-card" class="no-print" style="background: #e3f2fd; border: 2px solid #2196f3; border-radius: 8px; padding: 15px; margin-top: 15px;">
+                    <h4 style="margin-top:0; color:#1565c0;">Verify Before Print</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                        <div><strong>Drug:</strong> <span id="verify-drug"></span></div>
+                        <div><strong>Weight:</strong> <span id="verify-weight"></span> kg</div>
+                        <div><strong>Target Dose:</strong> <span id="verify-target"></span></div>
+                        <div><strong>Calculated Rate:</strong> <span id="verify-rate"></span> mL/hr</div>
+                        <div style="grid-column: span 2;"><strong>Concentration:</strong> <span id="verify-conc"></span></div>
+                        <div style="grid-column: span 2;"><strong>Safety Status:</strong> <span id="verify-status"></span></div>
+                        <div id="verify-max" style="grid-column: span 2; display: none; color: #c0392b;"><strong>Max Dose:</strong> <span id="verify-max-text"></span></div>
+                    </div>
                 </div>
             </div>
 
