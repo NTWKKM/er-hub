@@ -104,6 +104,9 @@
             text-align: right;
             flex: 1;
             font-family: var(--font-ui);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
         }
 
         .section-eyebrow {
@@ -696,11 +699,13 @@ fetch('service-worker.js')
   .then(res => res.text())
   .then(code => {
     const match = code.match(/CACHE_VERSION\s*=\s*['"]er-hub-(v\d+)['"]/i);
+    const dateMatch = code.match(/CACHE_DATE\s*=\s*['"]([^'"]+)['"]/i);
     if (match && match[1]) {
+      const displayText = dateMatch && dateMatch[1] ? `${match[1]} · ${dateMatch[1]}` : match[1];
       if (verEl) {
-        verEl.textContent = match[1];
+        verEl.textContent = displayText;
       }
-      try { localStorage.setItem('er-hub-cached-version', match[1]); } catch (_) {}
+      try { localStorage.setItem('er-hub-cached-version', displayText); } catch (_) {}
     }
   })
   .catch(() => {

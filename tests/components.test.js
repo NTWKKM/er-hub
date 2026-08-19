@@ -89,14 +89,14 @@ describe('ED_COMPONENTS.parseTitle', () => {
 });
 
 describe('ED_COMPONENTS.injectNavBar', () => {
-  test('injects top-nav, logo, title, and nav-ver-display with online indicator', () => {
+  test('injects top-nav, logo, title, and nav-ver-display with online indicator and white text', () => {
     const { JSDOM } = require('jsdom');
     const dom = new JSDOM('<!DOCTYPE html><html><body><div id="main-content"></div></body></html>');
     global.document = dom.window.document;
     global.window = dom.window;
     Object.defineProperty(dom.window.navigator, 'onLine', { value: true, configurable: true });
     global.navigator = dom.window.navigator;
-    global.localStorage = { getItem: () => 'v51', setItem: () => {} };
+    global.localStorage = { getItem: () => 'v51 · 19/08/2569', setItem: () => {} };
 
     ED_COMPONENTS.injectNavBar('../index.html', '../docs/logo.png', 'Test Title — Detail | Version 1.0', 'Test V1.0');
 
@@ -108,10 +108,11 @@ describe('ED_COMPONENTS.injectNavBar', () => {
 
     const verDisplay = nav.querySelector('#nav-ver-display');
     assert.ok(verDisplay, '#nav-ver-display should exist');
+    assert.equal(verDisplay.style.color, 'rgb(240, 237, 229)');
 
     const verText = nav.querySelector('#nav-ver-text');
     assert.ok(verText, '#nav-ver-text should exist');
-    assert.equal(verText.textContent, 'v51');
+    assert.equal(verText.textContent, 'v51 · 19/08/2569');
 
     const statusDot = nav.querySelector('#online-status');
     assert.ok(statusDot, '#online-status should exist');

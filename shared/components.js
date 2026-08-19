@@ -185,7 +185,7 @@ const ED_COMPONENTS = {
         const verBadge = document.createElement('div');
         verBadge.className = 'nav-right';
         verBadge.id = 'nav-ver-display';
-        verBadge.style.cssText = 'margin-left: auto; font-size: 11px; opacity: 0.85; font-family: var(--font-mono, monospace); padding-right: 4px; display: flex; align-items: center;';
+        verBadge.style.cssText = 'margin-left: auto; font-size: 11px; opacity: 0.85; font-family: var(--font-mono, monospace); padding-right: 4px; display: flex; align-items: center; color: #F0EDE5;';
         nav.appendChild(verBadge);
 
         const verText = document.createElement('span');
@@ -223,9 +223,11 @@ const ED_COMPONENTS = {
                 .then(res => res.text())
                 .then(code => {
                     const match = code.match(/CACHE_VERSION\s*=\s*['"]er-hub-(v\d+)['"]/i);
+                    const dateMatch = code.match(/CACHE_DATE\s*=\s*['"]([^'"]+)['"]/i);
                     if (match && match[1]) {
-                        verText.textContent = match[1];
-                        try { localStorage.setItem('er-hub-cached-version', match[1]); } catch (_) {}
+                        const displayText = dateMatch && dateMatch[1] ? `${match[1]} · ${dateMatch[1]}` : match[1];
+                        verText.textContent = displayText;
+                        try { localStorage.setItem('er-hub-cached-version', displayText); } catch (_) {}
                     }
                 })
                 .catch(() => {

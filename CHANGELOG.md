@@ -1,13 +1,15 @@
 ## [2.6.4] — 2026-08-19
 
-### Fixed & Hardened (Top Navigation Dynamic SW Version Sync & Offline Cache Fallback)
-- **Dynamic Service Worker Version Sync (`shared/components.js`, `index.html`):**
-  - Added `localStorage` caching (`er-hub-cached-version`) for cold-load offline resilience, ensuring version numbers (`v51`) remain visible during offline operation instead of displaying blank or "Offline".
-  - Removed misleading client-side date formatting (`new Date()`) on `index.html`, standardizing on accurate version tags across all portal and order pages.
-  - Refactored relative path resolution in `components.js` using regex replacement to resolve `service-worker.js` safely at arbitrary directory depths.
-  - Hardened `window.navigator.onLine` checks with safe boolean guards for the `#online-status` network connectivity dot.
-- **Automated Test Coverage (`tests/components.test.js`):**
-  - Added unit test suite for `ED_COMPONENTS.injectNavBar()`, verifying DOM injection, version extraction, and online/offline status dot rendering (239 total tests passing across 30 suites).
+### Fixed & Hardened (Top Navigation Dynamic SW Version & Release Date Sync)
+- **Top Navigation Version Color Alignment (`shared/base.css`, `shared/components.js`):**
+  - Fixed dark/black text color bug on standing orders and tool pages by explicitly applying Braun White (`#F0EDE5`) to `.top-nav`, `.nav-right`, and `#nav-ver-display` in both `base.css` and `components.js`.
+- **Dynamic Release Date Display (`service-worker.js`, `shared/components.js`, `index.html`):**
+  - Added `CACHE_DATE` constant (`19/08/2569`) to `service-worker.js`.
+  - Updated runtime version parser on portal (`index.html`) and worksheets (`shared/components.js`) to extract both `CACHE_VERSION` and `CACHE_DATE`, formatting the badge as `v51 · 19/08/2569`.
+  - Persisted combined version and date string to `localStorage` (`er-hub-cached-version`) for cold-load offline resilience.
+- **Automated Test Coverage (`tests/components.test.js`, `tests/dead-css-guard.test.js`):**
+  - Added test assertions for explicit Braun White `#F0EDE5` (`rgb(240, 237, 229)`) text color and version+date display formatting.
+  - Updated CSS selector dead-code guard to bypass shared `nav-right` rules (239 total tests passing across 30 suites).
 
 ## [2.6.3] — 2026-08-18
 
