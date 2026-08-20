@@ -41,8 +41,10 @@
         head_post:       { '0': 9.5,  '1': 8.5,  '5': 6.5,  '10': 5.5,  '15': 4.5,  'adult': 3.5 },
         neck_ant:        { '0': 1.0,  '1': 1.0,  '5': 1.0,  '10': 1.0,  '15': 1.0,  'adult': 1.0 },
         neck_post:       { '0': 1.0,  '1': 1.0,  '5': 1.0,  '10': 1.0,  '15': 1.0,  'adult': 1.0 },
-        trunk_ant:       { '0': 13.0, '1': 13.0, '5': 13.0, '10': 13.0, '15': 13.0, 'adult': 13.0 },
-        trunk_post:      { '0': 13.0, '1': 13.0, '5': 13.0, '10': 13.0, '15': 13.0, 'adult': 13.0 },
+        chest_ant:       { '0': 6.5,  '1': 6.5,  '5': 6.5,  '10': 6.5,  '15': 6.5,  'adult': 6.5 },
+        abdomen_ant:     { '0': 6.5,  '1': 6.5,  '5': 6.5,  '10': 6.5,  '15': 6.5,  'adult': 6.5 },
+        back_upper_post: { '0': 6.5,  '1': 6.5,  '5': 6.5,  '10': 6.5,  '15': 6.5,  'adult': 6.5 },
+        back_lower_post: { '0': 6.5,  '1': 6.5,  '5': 6.5,  '10': 6.5,  '15': 6.5,  'adult': 6.5 },
         buttock_r:       { '0': 2.5,  '1': 2.5,  '5': 2.5,  '10': 2.5,  '15': 2.5,  'adult': 2.5 },
         buttock_l:       { '0': 2.5,  '1': 2.5,  '5': 2.5,  '10': 2.5,  '15': 2.5,  'adult': 2.5 },
         genitalia:       { '0': 1.0,  '1': 1.0,  '5': 1.0,  '10': 1.0,  '15': 1.0,  'adult': 1.0 },
@@ -104,7 +106,19 @@
         const breakdown = {};
 
         if (regions && typeof regions === 'object') {
-            for (const [regKey, val] of Object.entries(regions)) {
+            const normalizedRegions = { ...regions };
+            if (normalizedRegions.trunk_ant !== undefined && normalizedRegions.chest_ant === undefined) {
+                normalizedRegions.chest_ant = normalizedRegions.trunk_ant;
+                normalizedRegions.abdomen_ant = normalizedRegions.trunk_ant;
+                delete normalizedRegions.trunk_ant;
+            }
+            if (normalizedRegions.trunk_post !== undefined && normalizedRegions.back_upper_post === undefined) {
+                normalizedRegions.back_upper_post = normalizedRegions.trunk_post;
+                normalizedRegions.back_lower_post = normalizedRegions.trunk_post;
+                delete normalizedRegions.trunk_post;
+            }
+
+            for (const [regKey, val] of Object.entries(normalizedRegions)) {
                 if (!LUND_BROWDER_TABLE[regKey]) continue;
                 const regMax = LUND_BROWDER_TABLE[regKey][col] || 0;
                 let deg = 0;

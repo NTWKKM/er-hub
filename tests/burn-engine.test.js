@@ -367,12 +367,16 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             const doc = win.document;
             assert.ok(doc.getElementById('svg-anterior'));
             assert.ok(doc.getElementById('svg-posterior'));
-            assert.ok(doc.getElementById('part-trunk_ant'));
+            assert.ok(doc.getElementById('part-chest_ant'));
+            assert.ok(doc.getElementById('part-abdomen_ant'));
+            assert.ok(doc.getElementById('part-back_upper_post'));
+            assert.ok(doc.getElementById('part-back_lower_post'));
+            assert.ok(doc.getElementById('input-direct-tbsa'));
             assert.ok(doc.getElementById('val-resuscitative-tbsa'));
             assert.ok(doc.getElementById('val-first8h-rate'));
         });
 
-        it('Interactively painting trunk_ant updates %TBSA and fluid rates in real time', () => {
+        it('Interactively painting chest and abdomen updates %TBSA and fluid rates in real time', () => {
             const win = loadBurnManagerDom();
             const doc = win.document;
 
@@ -380,15 +384,36 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             assert.equal(doc.getElementById('val-resuscitative-tbsa').textContent, '0.0');
             assert.equal(doc.getElementById('val-first8h-rate').textContent, '0 mL/hr');
 
-            // Click trunk_ant with active degree 2 (13% in adult)
-            const trunk = doc.getElementById('part-trunk_ant');
-            trunk.dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
+            // Click chest_ant with active degree 2 (6.5% in adult)
+            const chest = doc.getElementById('part-chest_ant');
+            chest.dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
+
+            assert.equal(doc.getElementById('val-resuscitative-tbsa').textContent, '6.5');
+
+            // Click abdomen_ant with active degree 2 (+6.5% = 13.0% in adult)
+            const abdomen = doc.getElementById('part-abdomen_ant');
+            abdomen.dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
 
             // 13% of 70kg at 2 mL/kg/% = 2 * 70 * 13 = 1820 mL in 24h
             // 1st 8h target = 910 mL. With 1h elapsed (7h remaining) = 910 / 7 = 130 mL/hr
             assert.equal(doc.getElementById('val-resuscitative-tbsa').textContent, '13.0');
             assert.equal(doc.getElementById('val-total-24h').textContent, '1820 mL');
             assert.equal(doc.getElementById('val-first8h-rate').textContent, '130 mL/hr');
+        });
+
+        it('Direct % TBSA input immediately drives fluid calculations without painting', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            const inputDirect = doc.getElementById('input-direct-tbsa');
+            inputDirect.value = '25';
+            inputDirect.dispatchEvent(new win.Event('input', { bubbles: true }));
+
+            // 25% of 70kg at 2 mL/kg/% = 2 * 70 * 25 = 3500 mL in 24h
+            // 1st 8h target = 1750 mL. With 1h elapsed (7h remaining) = 1750 / 7 = 250 mL/hr
+            assert.equal(doc.getElementById('val-resuscitative-tbsa').textContent, '25.0');
+            assert.equal(doc.getElementById('val-total-24h').textContent, '3500 mL');
+            assert.equal(doc.getElementById('val-first8h-rate').textContent, '250 mL/hr');
         });
 
         it('1st Degree burn painting is tracked visually but excluded from resuscitative TBSA', () => {
@@ -399,13 +424,13 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             const deg1Btn = doc.querySelector('.degree-btn[data-degree="1"]');
             deg1Btn.dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
 
-            // Click anterior trunk
-            const trunk = doc.getElementById('part-trunk_ant');
-            trunk.dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
+            // Click chest
+            const chest = doc.getElementById('part-chest_ant');
+            chest.dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
 
-            // 1st degree is 13%, but resuscitative TBSA must be 0.0%
+            // 1st degree is 6.5%, but resuscitative TBSA must be 0.0%
             assert.equal(doc.getElementById('val-resuscitative-tbsa').textContent, '0.0');
-            assert.equal(doc.getElementById('val-deg1-badge').textContent, '1st Deg (Excl): 13%');
+            assert.equal(doc.getElementById('val-deg1-badge').textContent, '1st Deg (Excl): 6.5%');
             assert.equal(doc.getElementById('val-total-24h').textContent, '0 mL');
         });
 

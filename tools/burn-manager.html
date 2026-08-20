@@ -32,17 +32,32 @@
             background-color: #f1f5f9;
             color: var(--text-main);
             font-family: 'Sarabun', sans-serif;
-            padding: 16px;
+            padding: var(--page-pad, 20px);
             margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .burn-container {
+            width: 100%;
             max-width: 1180px;
             margin: 0 auto;
             background: #ffffff;
             border-radius: 12px;
             box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
             padding: 20px 24px;
+            box-sizing: border-box;
+        }
+
+        .input-age-compact {
+            max-width: 80px;
+            width: 80px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 15px;
         }
 
         /* ══ Header ══ */
@@ -599,13 +614,13 @@
     <!-- Patient Parameter Input Strip -->
     <div class="patient-strip">
         <div class="input-group">
-            <label for="input-age">อายุ (ปี / Age in Years)</label>
-            <input type="number" id="input-age" class="input-control" value="35" min="0" max="120" step="0.5">
-            <span id="lund-column-badge" style="font-size: 11px; font-weight: 700; color: var(--burn-primary-dark); margin-top: 2px;">Lund-Browder: Adult (≥18y)</span>
+            <label for="input-age">Age (Years)</label>
+            <input type="number" id="input-age" class="input-control input-age-compact" value="35" min="0" max="120" step="0.5">
+            <span id="lund-column-badge" style="font-size: 11px; font-weight: 700; color: var(--burn-primary-dark); margin-top: 2px;">Lund-Browder Bracket: Adult (≥18y)</span>
         </div>
 
         <div class="input-group">
-            <label for="input-weight">น้ำหนักตัว (kg / Weight)</label>
+            <label for="input-weight">Weight (kg)</label>
             <input type="number" id="input-weight" class="input-control" value="70" min="1" max="250" step="0.5">
             <div class="slider-row" style="margin-top: 4px;">
                 <input type="range" id="slider-weight" class="slider-control" min="2" max="150" value="70" step="1">
@@ -613,7 +628,7 @@
         </div>
 
         <div class="input-group">
-            <label for="input-elapsed">เวลาตั้งแต่ถูกเผาไหม้ (ชม. / Hours Post-Burn)</label>
+            <label for="input-elapsed">Time Post-Burn (Hours)</label>
             <input type="number" id="input-elapsed" class="input-control" value="1" min="0" max="24" step="0.5">
             <div class="slider-row" style="margin-top: 4px;">
                 <input type="range" id="slider-elapsed" class="slider-control" min="0" max="16" value="1" step="0.5">
@@ -621,19 +636,19 @@
         </div>
 
         <div class="input-group">
-            <label for="input-prehospital">สารน้ำที่ได้รับมาก่อนถึง รพ. (mL)</label>
+            <label for="input-prehospital">Prehospital Fluids (mL)</label>
             <input type="number" id="input-prehospital" class="input-control" value="0" min="0" max="10000" step="50">
         </div>
 
         <div class="input-group">
-            <label for="select-mechanism">กลไกการบาดเจ็บ (Burn Mechanism)</label>
+            <label for="select-mechanism">Burn Mechanism</label>
             <select id="select-mechanism" class="input-control">
-                <option value="thermal">Thermal / Flame / Scald (ไฟไหม้/น้ำร้อนลวก)</option>
-                <option value="electrical">Electrical Burn (ไฟฟ้าแรงสูง / กล้ามเนื้อสลาย)</option>
-                <option value="chemical">Chemical Burn (สารเคมีกัดกร่อน)</option>
+                <option value="thermal">Thermal / Flame / Scald</option>
+                <option value="electrical">High-Voltage Electrical Burn</option>
+                <option value="chemical">Chemical Burn</option>
             </select>
             <label style="margin-top: 6px; font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                <input type="checkbox" id="check-pigmenturia" style="accent-color: var(--burn-primary);"> ปัสสาวะสีแดงเข้ม (Pigmenturia / Myoglobin)
+                <input type="checkbox" id="check-pigmenturia" style="accent-color: var(--burn-primary);"> Dark / Pigmented Urine (Pigmenturia / Myoglobin)
             </label>
         </div>
     </div>
@@ -669,38 +684,40 @@
                 <div class="svg-body-view">
                     <div class="view-label">Anterior (ด้านหน้า)</div>
                     <svg viewBox="0 0 200 400" class="body-svg" id="svg-anterior">
-                        <!-- Head Ant -->
-                        <path id="part-head_ant" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z" />
-                        <!-- Neck Ant -->
-                        <polygon id="part-neck_ant" class="body-part deg-0" points="93,42 107,42 110,52 90,52" />
-                        <!-- Anterior Trunk (Chest & Abdomen) -->
-                        <path id="part-trunk_ant" class="body-part deg-0" d="M 68 55 L 132 55 L 126 175 L 74 175 Z" />
-                        <!-- Genitalia / Perineum -->
-                        <polygon id="part-genitalia" class="body-part deg-0" points="92,176 108,176 100,190" />
-                        <!-- Right Upper Arm Ant -->
-                        <path id="part-arm_upper_r_ant" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z" />
-                        <!-- Left Upper Arm Ant -->
-                        <path id="part-arm_upper_l_ant" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z" />
-                        <!-- Right Lower Arm Ant -->
-                        <path id="part-arm_lower_r_ant" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z" />
-                        <!-- Left Lower Arm Ant -->
-                        <path id="part-arm_lower_l_ant" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z" />
-                        <!-- Right Hand Ant -->
-                        <path id="part-hand_r_ant" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z" />
-                        <!-- Left Hand Ant -->
-                        <path id="part-hand_l_ant" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z" />
-                        <!-- Right Thigh Ant -->
-                        <path id="part-thigh_r_ant" class="body-part deg-0" d="M 73 177 L 97 177 L 93 275 L 67 275 Z" />
-                        <!-- Left Thigh Ant -->
-                        <path id="part-thigh_l_ant" class="body-part deg-0" d="M 103 177 L 127 177 L 133 275 L 107 275 Z" />
-                        <!-- Right Lower Leg Ant -->
-                        <path id="part-leg_lower_r_ant" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z" />
-                        <!-- Left Lower Leg Ant -->
-                        <path id="part-leg_lower_l_ant" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z" />
-                        <!-- Right Foot Ant -->
-                        <path id="part-foot_r_ant" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z" />
-                        <!-- Left Foot Ant -->
-                        <path id="part-foot_l_ant" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z" />
+                        <!-- Head Ant (3.5% adult, up to 9.5% infant) -->
+                        <path id="part-head_ant" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z"><title>Face / Anterior Head</title></path>
+                        <!-- Neck Ant (1.0%) -->
+                        <polygon id="part-neck_ant" class="body-part deg-0" points="93,42 107,42 110,52 90,52"><title>Anterior Neck (1.0%)</title></polygon>
+                        <!-- Chest / Upper Anterior Trunk (6.5%) -->
+                        <path id="part-chest_ant" class="body-part deg-0" d="M 68 55 L 132 55 L 129 114 L 71 114 Z"><title>Chest / Upper Anterior Trunk (6.5%)</title></path>
+                        <!-- Abdomen / Lower Anterior Trunk (6.5%) -->
+                        <path id="part-abdomen_ant" class="body-part deg-0" d="M 71 116 L 129 116 L 126 175 L 74 175 Z"><title>Abdomen / Lower Anterior Trunk (6.5%)</title></path>
+                        <!-- Genitalia / Perineum (1.0%) -->
+                        <polygon id="part-genitalia" class="body-part deg-0" points="92,176 108,176 100,190"><title>Genitalia / Perineum (1.0%)</title></polygon>
+                        <!-- Right Shoulder & Upper Arm (2.0%) -->
+                        <path id="part-arm_upper_r_ant" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z"><title>Right Shoulder / Upper Arm (2.0%)</title></path>
+                        <!-- Left Shoulder & Upper Arm (2.0%) -->
+                        <path id="part-arm_upper_l_ant" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z"><title>Left Shoulder / Upper Arm (2.0%)</title></path>
+                        <!-- Right Forearm (1.5%) -->
+                        <path id="part-arm_lower_r_ant" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z"><title>Right Forearm (1.5%)</title></path>
+                        <!-- Left Forearm (1.5%) -->
+                        <path id="part-arm_lower_l_ant" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z"><title>Left Forearm (1.5%)</title></path>
+                        <!-- Right Hand (1.25%) -->
+                        <path id="part-hand_r_ant" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z"><title>Right Hand (1.25%)</title></path>
+                        <!-- Left Hand (1.25%) -->
+                        <path id="part-hand_l_ant" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z"><title>Left Hand (1.25%)</title></path>
+                        <!-- Right Thigh Ant (4.75% adult) -->
+                        <path id="part-thigh_r_ant" class="body-part deg-0" d="M 73 177 L 97 177 L 93 275 L 67 275 Z"><title>Right Thigh Anterior</title></path>
+                        <!-- Left Thigh Ant (4.75% adult) -->
+                        <path id="part-thigh_l_ant" class="body-part deg-0" d="M 103 177 L 127 177 L 133 275 L 107 275 Z"><title>Left Thigh Anterior</title></path>
+                        <!-- Right Lower Leg / Shin (3.5% adult) -->
+                        <path id="part-leg_lower_r_ant" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z"><title>Right Lower Leg / Shin</title></path>
+                        <!-- Left Lower Leg / Shin (3.5% adult) -->
+                        <path id="part-leg_lower_l_ant" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z"><title>Left Lower Leg / Shin</title></path>
+                        <!-- Right Foot (1.75%) -->
+                        <path id="part-foot_r_ant" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z"><title>Right Foot (1.75%)</title></path>
+                        <!-- Left Foot (1.75%) -->
+                        <path id="part-foot_l_ant" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z"><title>Left Foot (1.75%)</title></path>
                     </svg>
                 </div>
 
@@ -709,39 +726,41 @@
                     <div class="view-label">Posterior (ด้านหลัง)</div>
                     <svg viewBox="0 0 200 400" class="body-svg" id="svg-posterior">
                         <!-- Head Post -->
-                        <path id="part-head_post" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z" />
-                        <!-- Neck Post -->
-                        <polygon id="part-neck_post" class="body-part deg-0" points="93,42 107,42 110,52 90,52" />
-                        <!-- Posterior Trunk (Upper & Lower Back) -->
-                        <path id="part-trunk_post" class="body-part deg-0" d="M 68 55 L 132 55 L 126 175 L 74 175 Z" />
-                        <!-- Right Buttock -->
-                        <path id="part-buttock_r" class="body-part deg-0" d="M 74 176 L 99 176 L 97 210 L 71 210 Z" />
-                        <!-- Left Buttock -->
-                        <path id="part-buttock_l" class="body-part deg-0" d="M 101 176 L 126 176 L 129 210 L 103 210 Z" />
-                        <!-- Right Upper Arm Post -->
-                        <path id="part-arm_upper_r_post" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z" />
-                        <!-- Left Upper Arm Post -->
-                        <path id="part-arm_upper_l_post" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z" />
-                        <!-- Right Lower Arm Post -->
-                        <path id="part-arm_lower_r_post" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z" />
-                        <!-- Left Lower Arm Post -->
-                        <path id="part-arm_lower_l_post" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z" />
-                        <!-- Right Hand Post -->
-                        <path id="part-hand_r_post" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z" />
-                        <!-- Left Hand Post -->
-                        <path id="part-hand_l_post" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z" />
-                        <!-- Right Thigh Post -->
-                        <path id="part-thigh_r_post" class="body-part deg-0" d="M 71 212 L 97 212 L 93 275 L 67 275 Z" />
-                        <!-- Left Thigh Post -->
-                        <path id="part-thigh_l_post" class="body-part deg-0" d="M 103 212 L 129 212 L 133 275 L 107 275 Z" />
-                        <!-- Right Lower Leg Post -->
-                        <path id="part-leg_lower_r_post" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z" />
-                        <!-- Left Lower Leg Post -->
-                        <path id="part-leg_lower_l_post" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z" />
-                        <!-- Right Foot Post -->
-                        <path id="part-foot_r_post" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z" />
-                        <!-- Left Foot Post -->
-                        <path id="part-foot_l_post" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z" />
+                        <path id="part-head_post" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z"><title>Scalp / Posterior Head</title></path>
+                        <!-- Neck Post (1.0%) -->
+                        <polygon id="part-neck_post" class="body-part deg-0" points="93,42 107,42 110,52 90,52"><title>Posterior Neck (1.0%)</title></polygon>
+                        <!-- Upper Back / Thoracic (6.5%) -->
+                        <path id="part-back_upper_post" class="body-part deg-0" d="M 68 55 L 132 55 L 129 114 L 71 114 Z"><title>Upper Back / Thoracic Region (6.5%)</title></path>
+                        <!-- Lower Back / Lumbar (6.5%) -->
+                        <path id="part-back_lower_post" class="body-part deg-0" d="M 71 116 L 129 116 L 126 175 L 74 175 Z"><title>Lower Back / Lumbar Region (6.5%)</title></path>
+                        <!-- Right Buttock (2.5%) -->
+                        <path id="part-buttock_r" class="body-part deg-0" d="M 74 176 L 99 176 L 97 210 L 71 210 Z"><title>Right Buttock (2.5%)</title></path>
+                        <!-- Left Buttock (2.5%) -->
+                        <path id="part-buttock_l" class="body-part deg-0" d="M 101 176 L 126 176 L 129 210 L 103 210 Z"><title>Left Buttock (2.5%)</title></path>
+                        <!-- Right Upper Arm Post (2.0%) -->
+                        <path id="part-arm_upper_r_post" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z"><title>Right Shoulder / Upper Arm Posterior (2.0%)</title></path>
+                        <!-- Left Upper Arm Post (2.0%) -->
+                        <path id="part-arm_upper_l_post" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z"><title>Left Shoulder / Upper Arm Posterior (2.0%)</title></path>
+                        <!-- Right Lower Arm Post (1.5%) -->
+                        <path id="part-arm_lower_r_post" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z"><title>Right Forearm Posterior (1.5%)</title></path>
+                        <!-- Left Lower Arm Post (1.5%) -->
+                        <path id="part-arm_lower_l_post" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z"><title>Left Forearm Posterior (1.5%)</title></path>
+                        <!-- Right Hand Post (1.25%) -->
+                        <path id="part-hand_r_post" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z"><title>Right Hand Posterior (1.25%)</title></path>
+                        <!-- Left Hand Post (1.25%) -->
+                        <path id="part-hand_l_post" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z"><title>Left Hand Posterior (1.25%)</title></path>
+                        <!-- Right Thigh Post (4.75% adult) -->
+                        <path id="part-thigh_r_post" class="body-part deg-0" d="M 71 212 L 97 212 L 93 275 L 67 275 Z"><title>Right Thigh Posterior</title></path>
+                        <!-- Left Thigh Post (4.75% adult) -->
+                        <path id="part-thigh_l_post" class="body-part deg-0" d="M 103 212 L 129 212 L 133 275 L 107 275 Z"><title>Left Thigh Posterior</title></path>
+                        <!-- Right Lower Leg Post (3.5% adult) -->
+                        <path id="part-leg_lower_r_post" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z"><title>Right Lower Leg / Calf Posterior</title></path>
+                        <!-- Left Lower Leg Post (3.5% adult) -->
+                        <path id="part-leg_lower_l_post" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z"><title>Left Lower Leg / Calf Posterior</title></path>
+                        <!-- Right Foot Post (1.75%) -->
+                        <path id="part-foot_r_post" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z"><title>Right Foot Posterior (1.75%)</title></path>
+                        <!-- Left Foot Post (1.75%) -->
+                        <path id="part-foot_l_post" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z"><title>Left Foot Posterior (1.75%)</title></path>
                     </svg>
                 </div>
             </div>
@@ -757,19 +776,34 @@
 
         <!-- Column 2: %TBSA & Fluid Resuscitation Results -->
         <div>
-            <!-- TBSA Banner -->
+            <!-- TBSA Banner with Direct % TBSA Entry -->
             <div class="tbsa-banner">
-                <div>
-                    <div class="tbsa-score-group">
-                        <span class="tbsa-big-num" id="val-resuscitative-tbsa">0.0</span>
-                        <span class="tbsa-unit">% TBSA</span>
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; width: 100%;">
+                    <div>
+                        <div class="tbsa-score-group">
+                            <span class="tbsa-big-num" id="val-resuscitative-tbsa">0.0</span>
+                            <span class="tbsa-unit">% TBSA</span>
+                        </div>
+                        <div class="tbsa-subtext">Resuscitative TBSA (2nd & 3rd Degree Only)</div>
                     </div>
-                    <div class="tbsa-subtext">Resuscitative TBSA (2nd & 3rd Degree Only)</div>
-                </div>
-                <div class="tbsa-breakdown-tags">
-                    <span class="tbsa-tag tag-deg2" id="val-deg2-badge">2nd Deg: 0%</span>
-                    <span class="tbsa-tag tag-deg3" id="val-deg3-badge">3rd Deg: 0%</span>
-                    <span class="tbsa-tag tag-deg1" id="val-deg1-badge">1st Deg (Excl): 0%</span>
+
+                    <!-- Direct % TBSA Input Box -->
+                    <div style="background: rgba(255,255,255,0.92); padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--burn-border); display: flex; align-items: center; gap: 10px;">
+                        <div>
+                            <label for="input-direct-tbsa" style="font-size: 11.5px; font-weight: 700; color: #78350f; display: block;">⚡ Direct % TBSA Entry:</label>
+                            <span style="font-size: 10px; color: #92400e;">(ป้อน % แผลไหม้โดยตรง)</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" id="input-direct-tbsa" class="input-control" value="0" min="0" max="100" step="0.5" style="width: 75px; text-align: center; font-size: 1.15rem; font-weight: 700; color: var(--burn-primary-dark); padding: 4px 6px;">
+                            <span style="font-weight: 700; font-size: 13px; color: #78350f;">%</span>
+                        </div>
+                    </div>
+
+                    <div class="tbsa-breakdown-tags">
+                        <span class="tbsa-tag tag-deg2" id="val-deg2-badge">2nd Deg: 0%</span>
+                        <span class="tbsa-tag tag-deg3" id="val-deg3-badge">3rd Deg: 0%</span>
+                        <span class="tbsa-tag tag-deg1" id="val-deg1-badge">1st Deg (Excl): 0%</span>
+                    </div>
                 </div>
             </div>
 
@@ -1058,6 +1092,7 @@
 
     // TBSA Displays
     const valResuscitativeTbsa = document.getElementById('val-resuscitative-tbsa');
+    const inputDirectTbsa = document.getElementById('input-direct-tbsa');
     const valDeg1Badge = document.getElementById('val-deg1-badge');
     const valDeg2Badge = document.getElementById('val-deg2-badge');
     const valDeg3Badge = document.getElementById('val-deg3-badge');
@@ -1108,7 +1143,7 @@
             const rawId = this.id.replace('part-', '');
             paintedRegions[rawId] = activeDegree;
             this.className.baseVal = `body-part ${DEG_CLASSES[activeDegree] || 'deg-0'}`;
-            recalculateAll();
+            recalculateAll(false);
         });
     });
 
@@ -1118,36 +1153,38 @@
         document.querySelectorAll('.body-part').forEach(part => {
             part.className.baseVal = 'body-part deg-0';
         });
-        recalculateAll();
+        if (inputDirectTbsa) inputDirectTbsa.value = '0';
+        recalculateAll(false);
     });
 
     // Wire +1% Palm Button
     document.getElementById('btn-palm-plus').addEventListener('click', function () {
-        // Quick add 1% to anterior trunk as standard proxy
-        const deg = activeDegree || 2;
-        paintedRegions['trunk_ant'] = deg;
-        const trunk = document.getElementById('part-trunk_ant');
-        if (trunk) trunk.className.baseVal = `body-part ${DEG_CLASSES[deg] || 'deg-2'}`;
-        recalculateAll();
+        const currentDirect = parseFloat(inputDirectTbsa ? inputDirectTbsa.value : 0) || 0;
+        const newDirect = Math.min(100, currentDirect + 1.0);
+        if (inputDirectTbsa) inputDirectTbsa.value = newDirect.toFixed(1);
+        recalculateAll(true);
     });
 
     // Input Synchronization
-    inputWeight.addEventListener('input', () => { sliderWeight.value = inputWeight.value; recalculateAll(); });
-    sliderWeight.addEventListener('input', () => { inputWeight.value = sliderWeight.value; recalculateAll(); });
-    inputElapsed.addEventListener('input', () => { sliderElapsed.value = inputElapsed.value; recalculateAll(); });
-    sliderElapsed.addEventListener('input', () => { inputElapsed.value = sliderElapsed.value; recalculateAll(); });
-    inputAge.addEventListener('input', recalculateAll);
-    inputPrehospital.addEventListener('input', recalculateAll);
-    selectMechanism.addEventListener('change', recalculateAll);
-    checkPigmenturia.addEventListener('change', recalculateAll);
-    inputMeasuredUo.addEventListener('input', recalculateAll);
-    checkHypotensive.addEventListener('change', recalculateAll);
-    inputCohb.addEventListener('input', recalculateAll);
-    checkPregnant.addEventListener('change', recalculateAll);
-    document.querySelectorAll('.inhal-chk').forEach(c => c.addEventListener('change', recalculateAll));
+    if (inputDirectTbsa) {
+        inputDirectTbsa.addEventListener('input', () => recalculateAll(true));
+    }
+    inputWeight.addEventListener('input', () => { sliderWeight.value = inputWeight.value; recalculateAll(false); });
+    sliderWeight.addEventListener('input', () => { inputWeight.value = sliderWeight.value; recalculateAll(false); });
+    inputElapsed.addEventListener('input', () => { sliderElapsed.value = inputElapsed.value; recalculateAll(false); });
+    sliderElapsed.addEventListener('input', () => { inputElapsed.value = sliderElapsed.value; recalculateAll(false); });
+    inputAge.addEventListener('input', () => recalculateAll(false));
+    inputPrehospital.addEventListener('input', () => recalculateAll(false));
+    selectMechanism.addEventListener('change', () => recalculateAll(false));
+    checkPigmenturia.addEventListener('change', () => recalculateAll(false));
+    inputMeasuredUo.addEventListener('input', () => recalculateAll(false));
+    checkHypotensive.addEventListener('change', () => recalculateAll(false));
+    inputCohb.addEventListener('input', () => recalculateAll(false));
+    checkPregnant.addEventListener('change', () => recalculateAll(false));
+    document.querySelectorAll('.inhal-chk').forEach(c => c.addEventListener('change', () => recalculateAll(false)));
 
     // Core Calculation & Render
-    function recalculateAll() {
+    function recalculateAll(isDirectEntry = false) {
         const age = Number(inputAge.value) || 25;
         const weight = Number(inputWeight.value) || 70;
         const elapsed = Number(inputElapsed.value) || 0;
@@ -1160,16 +1197,32 @@
         const colNames = { '0': '<1y (Infant)', '1': '1–4y (Toddler)', '5': '5–9y (Child)', '10': '10–14y', '15': '15–17y (Adolescent)', 'adult': 'Adult (≥18y)' };
         lundColumnBadge.textContent = `Lund-Browder Bracket: ${colNames[col] || col}`;
 
-        const tbsaRes = BurnEngine.calculateTBSA(age, paintedRegions);
-        valResuscitativeTbsa.textContent = tbsaRes.tbsaResuscitative.toFixed(1);
-        valDeg2Badge.textContent = `2nd Deg: ${tbsaRes.deg2Pct}%`;
-        valDeg3Badge.textContent = `3rd Deg: ${tbsaRes.deg3Pct}%`;
-        valDeg1Badge.textContent = `1st Deg (Excl): ${tbsaRes.deg1Pct}%`;
+        let resuscitativeTbsa = 0;
+        let tbsaRes = null;
+
+        if (isDirectEntry && inputDirectTbsa) {
+            const rawVal = parseFloat(inputDirectTbsa.value);
+            resuscitativeTbsa = !isNaN(rawVal) ? Math.max(0, Math.min(100, rawVal)) : 0;
+            valResuscitativeTbsa.textContent = resuscitativeTbsa.toFixed(1);
+            valDeg2Badge.textContent = `Direct Entry: ${resuscitativeTbsa.toFixed(1)}%`;
+            valDeg3Badge.textContent = ``;
+            valDeg1Badge.textContent = ``;
+        } else {
+            tbsaRes = BurnEngine.calculateTBSA(age, paintedRegions);
+            resuscitativeTbsa = tbsaRes.tbsaResuscitative;
+            valResuscitativeTbsa.textContent = resuscitativeTbsa.toFixed(1);
+            if (inputDirectTbsa && document.activeElement !== inputDirectTbsa) {
+                inputDirectTbsa.value = resuscitativeTbsa > 0 ? resuscitativeTbsa.toFixed(1) : '0';
+            }
+            valDeg2Badge.textContent = `2nd Deg: ${tbsaRes.deg2Pct}%`;
+            valDeg3Badge.textContent = `3rd Deg: ${tbsaRes.deg3Pct}%`;
+            valDeg1Badge.textContent = `1st Deg (Excl): ${tbsaRes.deg1Pct}%`;
+        }
 
         // 2. Fluid Resuscitation
         const fluid = BurnEngine.calculateFluidRequirements({
             weightKg: weight,
-            tbsaPct: tbsaRes.tbsaResuscitative,
+            tbsaPct: resuscitativeTbsa,
             ageYears: age,
             isElectrical: isElectrical,
             hoursElapsed: elapsed,
@@ -1213,7 +1266,7 @@
             enclosedSpace: document.getElementById('chk-enclosed').checked,
             sootInMouthOrNose: document.getElementById('chk-soot').checked,
             singedNasalHair: document.getElementById('chk-singed').checked,
-            largeTbsaBurn: tbsaRes.tbsaResuscitative > 40
+            largeTbsaBurn: resuscitativeTbsa > 40
         };
         const inhalEval = BurnEngine.evaluateInhalationRisk(inhalChecklist);
         if (inhalEval.recommendation === 'IMMEDIATE_INTUBATION') {
@@ -1285,9 +1338,10 @@
 
     // Initialize Navigation & First Calc
     if (window.ED_COMPONENTS && typeof window.ED_COMPONENTS.injectNavBar === 'function') {
-        window.ED_COMPONENTS.injectNavBar();
+        window.ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
+            'Burn Management & Resuscitation Hub — ED Clinical Tool', 'Burn Hub');
     }
-    recalculateAll();
+    recalculateAll(false);
 })();
 </script>
 </body>
