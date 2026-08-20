@@ -1,8 +1,8 @@
 // service-worker.js — Offline PWA cache for ER Standing Order Hub
 // Caches all static assets for offline access (ED wifi outages during stroke workup)
 // CRITICAL: Always keep in sync with the nav-right version string in index.html
-const CACHE_VERSION = 'er-hub-v52';
-const CACHE_DATE = '19/08/2569';
+const CACHE_VERSION = 'er-hub-v53';
+const CACHE_DATE = '20/08/2569';
 const ASSETS = [
   './',
   './index.html',
@@ -23,6 +23,7 @@ const ASSETS = [
   './tools/score-hub.html',
   './tools/tb-calculator.html',
   './tools/mgso4-calculator.html',
+  './tools/burn-manager.html',
   './tools/er-note/index.html',
   './tools/er-note/general-er-note.html',
   './tools/er-note/sepsis.html',
@@ -43,11 +44,18 @@ const ASSETS = [
   './shared/stemi-engine.js',
   './shared/drug-data.js',
   './shared/ob-engine.js',
+  './shared/burn-engine.js',
   './shared/print-bootstrap.js',
   './shared/blank-print-engine.js',
   './shared/form-validate.js',
   './docs/icon-512x512.png',
   './docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
+  './docs/burn-assets/airway-burn-atls.png',
+  './docs/burn-assets/burn-depth-atls.png',
+  './docs/burn-assets/escharotomy-atls.png',
+  './docs/burn-assets/escharotomy-chest-tintinalli.png',
+  './docs/burn-assets/escharotomy-hand-tintinalli.png',
+  './docs/burn-assets/rule-of-nines-atls.png',
   './docs/STEMI-PE/STEMI new 26-4doc.pdf',
   './docs/STEMI-PE/PE-Massive-merged.pdf',
   './docs/High alert drug ER/Heparin.pdf',

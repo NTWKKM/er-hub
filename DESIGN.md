@@ -24,6 +24,7 @@ Custom properties declared under `:root` in `base.css` for standing-order form p
 - **Stroke Theme (blue):** `--stroke-primary: #007bff` (stroke page h1/buttons/focus borders), `--stroke-hover: #0056b3` (hover state), `--stroke-bg-highlight: #e6f0ff` (stroke input focus background)
 - **Cardiac Theme (red):** `--cardiac-primary: #c0392b` (cardiac page h1/buttons/focus borders/dose numbers), `--cardiac-hover: #a93226` (hover state), `--cardiac-bg-highlight: #fff5f5` (cardiac input focus background)
 - **Success (green):** `--success-primary: #28a745` (print button background), `--success-hover: #218838` (print button hover)
+- **Burn Theme (fire orange & depth grades):** `--burn-primary: #ea580c` (ATLS flame orange), `--burn-primary-dark: #c2410c`, `--burn-bg-soft: #fff7ed`, `--burn-deg1: #fef08a` (superficial yellow), `--burn-deg2: #fb923c` (partial thickness orange), `--burn-deg3: #dc2626` (full thickness red/crimson).
 
 #### Module Specific Accents (Muted Text-Only Categories)
 
@@ -31,6 +32,7 @@ Custom properties declared under `:root` in `base.css` for standing-order form p
 - **Cardiac / Pulmonary:** Slate `#3a5566`
 - **Anticoagulation / Procedural:** Olive `#5a6b3b`
 - **Toxicology:** Brick `#8a3a2a`
+- **Trauma / Burns:** Flame Orange `#ea580c`
 - **Clinical Tools / Calculator:** Graphite `#4a4a4a`
 
 ### Typography

@@ -36,14 +36,21 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | **SOAP-ME** | Standardized pre-intubation safety checklist acronym: Suction, Oxygen, Airway, Pharmacy/Positioning, Monitoring, Equipment. |
 | **Resuscitation Timer (Code Timer)** | Real-time clinical timer for cardiac arrest resuscitation adhering to ACLS guidelines (2-minute rhythm/pulse checks, q3-5m Epinephrine reminders, defibrillation log). |
 | **Tall-Man Lettering** | Practice of using capitalized letters within drug names (e.g., `DOBUTamine` vs `DOPamine`) to highlight differences in look-alike, sound-alike (LASA) high-alert medications and reduce medication errors (ISMP standard). |
+| **Lund & Browder Chart** | Age-adjusted burn surface area mapping with 6 age columns (`0`, `1`, `5`, `10`, `15`, `adult`). Primary standard for pediatric & adult %TBSA calculation. |
+| **1st Degree Burn Exclusion** | Superficial burns (epidermal erythema without blisters) are excluded from resuscitative fluid calculations per ATLS 11th Edition Box 9-1. |
+| **Modified Brooke / ATLS 11th Consensus** | Standard crystalloid resuscitation formula: $2\text{ mL/kg/\% TBSA}$ for adults & adolescents $\ge 13\text{y}$, $3\text{ mL/kg/\% TBSA}$ for pediatric burns $\le 12\text{y}$, and $4\text{ mL/kg/\% TBSA}$ for electrical burns across all ages. Half given in first 8 hours, half in next 16 hours. |
+| **Parkland Formula** | Classic burn resuscitation formula: $4\text{ mL/kg/\% TBSA}$ of Lactated Ringer's over 24 hours. |
+| **Pediatric Maintenance (D5LR / D5 0.45% NaCl)** | Mandatory dextrose-containing maintenance fluid for burned children $\le 30\text{ kg}$ calculated via Holliday-Segar (4-2-1 rule) due to limited glycogen stores. |
+| **Hydroxocobalamin (Cyanokit)** | First-line cyanide antidote: $5\text{ g}$ IV over 15 min for adults; $70\text{ mg/kg}$ up to $5\text{ g}$ for pediatrics (weight cap boundary $>71.43\text{ kg}$). |
+| **Hyperbaric Oxygen (HBO) Criteria** | Indicated for acute CO poisoning with $COHb > 25\%$ (non-pregnant), $COHb > 15\%$ (pregnant), loss of consciousness, severe acidosis ($pH < 7.1$), or cardiac ischemia. |
 
 ## Ubiquitous Language
 
 | Term | Code Symbol | Location |
 | --- | --- | --- |
 | Patient identifier | `hn` | All order pages, ER NOTE patient strip |
-| Weight | `weight` | drip-calculator, nstemi, rtpa |
-| Age | `age` | nstemi, stemi |
+| Weight | `weight` | drip-calculator, nstemi, rtpa, burn-manager |
+| Age | `age` | nstemi, stemi, burn-manager |
 | Sex | `sex` (radio: `male`/`female`) | nstemi |
 | Creatinine | `creatinine` / `grace-creatinine` | nstemi (two-way sync) |
 | eGFR | `calcEGFR()` | `shared/clinical-engine.js` |
@@ -54,6 +61,13 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | Absolute dose ceiling | `absoluteMaxPerHour` | `shared/drug-data.js` (enforced in `tools/drip-calculator.html`) |
 | Heparin initial dose | `calcHeparinInitialDose()` | `shared/anticoag-engine.js` |
 | Heparin titration | `getHeparinTitration()` | `shared/anticoag-engine.js` |
+| Burn TBSA Calculation | `calculateTBSA()` | `shared/burn-engine.js` |
+| Burn Fluid Requirements | `calculateFluidRequirements()` | `shared/burn-engine.js` |
+| Pediatric Burn Maintenance | `calculatePediatricMaintenance()` | `shared/burn-engine.js` |
+| Urine Output Titration | `getUrineOutputTitration()` | `shared/burn-engine.js` |
+| Cyanide Antidote Dosing | `getCyanideAntidoteDosing()` | `shared/burn-engine.js` |
+| CO Assessment & HBO | `getCOAssessment()` | `shared/burn-engine.js` |
+| Inhalation Risk Triage | `evaluateInhalationRisk()` | `shared/burn-engine.js` |
 | Blank print manifest | `ED_BLANK_PRINT.apply()` | `shared/blank-print-engine.js` |
 | Print lifecycle | `ED_PRINT_BOOTSTRAP` | `shared/print-bootstrap.js` |
 | Form validation | `ED_VALIDATE` | `shared/form-validate.js` |
@@ -79,6 +93,12 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | ERIG auto-calc | 40 IU/kg, max 3000 IU | WHO EML + MIMS Thailand |
 | HRIG auto-calc | 20 IU/kg, max 1500 IU | WHO EML + MIMS Thailand |
 | Fentanyl absolute ceiling | 500 mcg/hr regardless of weight | Drug safety ceiling in `drug-data.js` `absoluteMaxPerHour` |
+| Burn Fluid Age Cutoff | Age $< 13\text{y} \to 3\text{ mL/kg/\%}$; Age $\ge 13\text{y} \to 2\text{ mL/kg/\%}$ | ATLS 11th Edition Table 9-1 |
+| Burn Peds Maintenance | Weight $\le 30\text{ kg} \to$ Add $D_5LR$ via 4-2-1 rule | ATLS 11th p. 139 & Table 9-1 |
+| Adult Urine Output Target | $0.5\text{ mL/kg/hr}$ ($30\text{--}50\text{ mL/hr}$) | ATLS 11th Table 9-1 |
+| Child Urine Output Target | $1.0\text{ mL/kg/hr}$ | ATLS 11th Table 9-1 |
+| Electrical Burn Target UO | $100\text{ mL/hr}$ (Adult), $1.0\text{--}2.0\text{ mL/kg/hr}$ (Child) until pigment clears | ATLS 11th Table 9-1 |
+| Hydroxocobalamin Dosing | $70\text{ mg/kg}$ up to $5000\text{ mg}$ (Capped when weight $>71.43\text{ kg}$) | Goldfrank's Toxicologic Emergencies |
 
 ## Print Conventions
 

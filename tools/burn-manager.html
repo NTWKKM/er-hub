@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burn Management & Resuscitation Hub — ED MNRH</title>
+    <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Sarabun:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/base.css">
+    <style>
+        :root {
+            --burn-primary: #d97706;
+            --burn-primary-dark: #b45309;
+            --burn-bg-light: #fffbeb;
+            --burn-border: #fde68a;
+            --burn-deg1: #fef08a;
+            --burn-deg1-dark: #ca8a04;
+            --burn-deg2: #fb923c;
+            --burn-deg2-dark: #c2410c;
+            --burn-deg3: #ef4444;
+            --burn-deg3-dark: #991b1b;
+            --burn-deg0: #e2e8f0;
+            --surface-bg: #f8fafc;
+            --card-border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        body.theme-neutral {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            font-family: 'Sarabun', sans-serif;
+            padding: 16px;
+            margin: 0;
+        }
+
+        .burn-container {
+            max-width: 1180px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+            padding: 20px 24px;
+        }
+
+        /* ══ Header ══ */
+        .burn-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 14px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .burn-title-group h1 {
+            margin: 0;
+            font-family: 'Inter Tight', 'Sarabun', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .burn-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .badge-atls {
+            font-family: 'Inter Tight', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+
+        /* ══ Patient Variables Strip ══ */
+        .patient-strip {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .input-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .input-control {
+            font-family: 'Inter Tight', 'Sarabun', sans-serif;
+            font-size: 14px;
+            padding: 7px 10px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #0f172a;
+            font-weight: 600;
+            transition: border-color 0.15s;
+        }
+
+        .input-control:focus {
+            outline: none;
+            border-color: var(--burn-primary);
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .slider-control {
+            flex: 1;
+            accent-color: var(--burn-primary);
+            cursor: pointer;
+        }
+
+        /* ══ Grid Layout ══ */
+        .burn-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 960px) {
+            .burn-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ══ Card Common ══ */
+        .burn-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+        }
+
+        .card-header {
+            font-family: 'Inter Tight', 'Sarabun', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1.5px solid #f1f5f9;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* ══ Paint Degree Toolbar ══ */
+        .paint-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .degree-btn {
+            font-family: 'Inter Tight', 'Sarabun', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 2px solid transparent;
+            background: #f8fafc;
+            color: #475569;
+            transition: all 0.15s;
+        }
+
+        .degree-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .degree-btn.active {
+            border-color: #0f172a;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .dot-0 { background: #e2e8f0; }
+        .dot-1 { background: var(--burn-deg1); }
+        .dot-2 { background: var(--burn-deg2); }
+        .dot-3 { background: var(--burn-deg3); }
+
+        /* ══ SVG Body Mapper ══ */
+        .body-mapper-wrapper {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px 10px;
+            margin-bottom: 12px;
+        }
+
+        .svg-body-view {
+            width: 48%;
+            max-width: 240px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .view-label {
+            font-family: 'Inter Tight', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .body-svg {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.06));
+        }
+
+        .body-part {
+            cursor: pointer;
+            stroke: #475569;
+            stroke-width: 1.2;
+            stroke-linejoin: round;
+            fill: #e2e8f0;
+            transition: fill 0.15s, stroke-width 0.15s;
+        }
+
+        .body-part:hover {
+            stroke: #0f172a;
+            stroke-width: 2.0;
+            opacity: 0.9;
+        }
+
+        .body-part.deg-0 { fill: #e2e8f0; }
+        .body-part.deg-1 { fill: #fef08a; }
+        .body-part.deg-2 { fill: #fb923c; }
+        .body-part.deg-3 { fill: #ef4444; }
+
+        /* ══ TBSA Summary Banner ══ */
+        .tbsa-banner {
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tbsa-score-group {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .tbsa-big-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #fbbf24;
+            line-height: 1;
+        }
+
+        .tbsa-unit {
+            font-family: 'Inter Tight', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .tbsa-subtext {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .tbsa-breakdown-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tbsa-tag {
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tbsa-tag.tag-deg1 { border-left: 3px solid #fef08a; }
+        .tbsa-tag.tag-deg2 { border-left: 3px solid #fb923c; }
+        .tbsa-tag.tag-deg3 { border-left: 3px solid #ef4444; }
+
+        /* ══ Fluid Resuscitation Schedule Card ══ */
+        .fluid-schedule-box {
+            background: #fffbeb;
+            border: 1.5px solid #fde68a;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .fluid-title {
+            font-family: 'Inter Tight', 'Sarabun', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #92400e;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .fluid-rate-big {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #b45309;
+            line-height: 1.1;
+        }
+
+        .fluid-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 12.5px;
+        }
+
+        .fluid-stat-item {
+            background: #ffffff;
+            border: 1px solid #fef3c7;
+            border-radius: 6px;
+            padding: 8px 10px;
+        }
+
+        .fluid-stat-label {
+            font-size: 11px;
+            color: #78350f;
+            font-weight: 600;
+        }
+
+        .fluid-stat-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 2px;
+        }
+
+        /* ══ Titration Assistant ══ */
+        .titration-box {
+            background: #f0fdf4;
+            border: 1.5px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 12px;
+            font-size: 12.5px;
+        }
+
+        .titration-box.alert-shock {
+            background: #fef2f2;
+            border-color: #fca5a5;
+        }
+
+        .titration-box.alert-under {
+            background: #fffbe6;
+            border-color: #fcd34d;
+        }
+
+        /* ══ Accordion & Subsections ══ */
+        .accordion-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background: #f8fafc;
+            padding: 10px 14px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+        }
+
+        .accordion-header:hover {
+            background: #f1f5f9;
+        }
+
+        .accordion-content {
+            padding: 14px;
+            display: none;
+            font-size: 12.5px;
+            line-height: 1.5;
+            background: #ffffff;
+        }
+
+        .accordion-item.open .accordion-content {
+            display: block;
+        }
+
+        /* ══ Checklist ══ */
+        .check-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .check-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .check-card:hover {
+            background: #f1f5f9;
+        }
+
+        .check-card input[type="checkbox"] {
+            margin-top: 2px;
+            accent-color: var(--burn-primary);
+        }
+
+        .check-card.critical {
+            border-left: 3px solid #ef4444;
+        }
+
+        /* ══ Clinical Assets Visuals ══ */
+        .clinical-img-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .clinical-img-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .clinical-img-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #f8fafc;
+        }
+
+        .clinical-img-caption {
+            padding: 6px 10px;
+            font-size: 11px;
+            color: #64748b;
+            background: #f8fafc;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        /* ══ Action Buttons ══ */
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            padding-top: 16px;
+            border-top: 1.5px solid #f1f5f9;
+        }
+
+        .btn-action {
+            font-family: 'Inter Tight', 'Sarabun', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 9px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .btn-primary {
+            background: var(--burn-primary);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: var(--burn-primary-dark);
+        }
+
+        .btn-outline {
+            background: #ffffff;
+            border-color: #cbd5e1;
+            color: #0f172a;
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        /* ══ Print Optimization ══ */
+        @media print {
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+            }
+            .burn-container {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+            .action-bar, .paint-toolbar, .btn-action, .slider-control {
+                display: none !important;
+            }
+            .accordion-content {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body class="theme-neutral">
+
+<div class="burn-container">
+    <!-- Header -->
+    <div class="burn-header">
+        <div class="burn-title-group">
+            <h1>
+                <span>🔥 Burn Management & Resuscitation Hub</span>
+                <span class="badge-atls">ATLS 11th Ed / ABA 2023</span>
+            </h1>
+            <div class="burn-subtitle">เครื่องมือประเมินพื้นที่แผลไหม้ (Lund & Browder 6-Age Brackets), คำนวณสารน้ำกู้ชีพ (Parkland & Modified Brooke), สารพิษควันไฟ (CO/Cyanide) และการจัดการทางเดินหายใจ</div>
+        </div>
+    </div>
+
+    <!-- Patient Parameter Input Strip -->
+    <div class="patient-strip">
+        <div class="input-group">
+            <label for="input-age">อายุ (ปี / Age in Years)</label>
+            <input type="number" id="input-age" class="input-control" value="35" min="0" max="120" step="0.5">
+            <span id="lund-column-badge" style="font-size: 11px; font-weight: 700; color: var(--burn-primary-dark); margin-top: 2px;">Lund-Browder: Adult (≥18y)</span>
+        </div>
+
+        <div class="input-group">
+            <label for="input-weight">น้ำหนักตัว (kg / Weight)</label>
+            <input type="number" id="input-weight" class="input-control" value="70" min="1" max="250" step="0.5">
+            <div class="slider-row" style="margin-top: 4px;">
+                <input type="range" id="slider-weight" class="slider-control" min="2" max="150" value="70" step="1">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="input-elapsed">เวลาตั้งแต่ถูกเผาไหม้ (ชม. / Hours Post-Burn)</label>
+            <input type="number" id="input-elapsed" class="input-control" value="1" min="0" max="24" step="0.5">
+            <div class="slider-row" style="margin-top: 4px;">
+                <input type="range" id="slider-elapsed" class="slider-control" min="0" max="16" value="1" step="0.5">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="input-prehospital">สารน้ำที่ได้รับมาก่อนถึง รพ. (mL)</label>
+            <input type="number" id="input-prehospital" class="input-control" value="0" min="0" max="10000" step="50">
+        </div>
+
+        <div class="input-group">
+            <label for="select-mechanism">กลไกการบาดเจ็บ (Burn Mechanism)</label>
+            <select id="select-mechanism" class="input-control">
+                <option value="thermal">Thermal / Flame / Scald (ไฟไหม้/น้ำร้อนลวก)</option>
+                <option value="electrical">Electrical Burn (ไฟฟ้าแรงสูง / กล้ามเนื้อสลาย)</option>
+                <option value="chemical">Chemical Burn (สารเคมีกัดกร่อน)</option>
+            </select>
+            <label style="margin-top: 6px; font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                <input type="checkbox" id="check-pigmenturia" style="accent-color: var(--burn-primary);"> ปัสสาวะสีแดงเข้ม (Pigmenturia / Myoglobin)
+            </label>
+        </div>
+    </div>
+
+    <!-- Main 2-Column Grid -->
+    <div class="burn-grid">
+        <!-- Column 1: Interactive Body Mapper & Lund-Browder Table -->
+        <div class="burn-card">
+            <div class="card-header">
+                <span>1. Interactive Body Surface Area Painter (Lund & Browder)</span>
+                <span id="quick-reset-btn" style="font-size: 11px; color: var(--burn-primary); cursor: pointer; text-decoration: underline;">ล้างทั้งหมด (Reset)</span>
+            </div>
+
+            <!-- Degree Paint Selector -->
+            <div class="paint-toolbar">
+                <button type="button" class="degree-btn" data-degree="0">
+                    <span class="color-dot dot-0"></span> ลบ (0% Unburned)
+                </button>
+                <button type="button" class="degree-btn" data-degree="1">
+                    <span class="color-dot dot-1"></span> 1st Degree (Superficial - ตัดออกจากสูตรน้ำ)
+                </button>
+                <button type="button" class="degree-btn active" data-degree="2">
+                    <span class="color-dot dot-2"></span> 2nd Degree (Partial Thickness)
+                </button>
+                <button type="button" class="degree-btn" data-degree="3">
+                    <span class="color-dot dot-3"></span> 3rd/4th Degree (Full Thickness)
+                </button>
+            </div>
+
+            <!-- SVG Human Body Model (Anterior & Posterior) -->
+            <div class="body-mapper-wrapper">
+                <!-- Anterior View -->
+                <div class="svg-body-view">
+                    <div class="view-label">Anterior (ด้านหน้า)</div>
+                    <svg viewBox="0 0 200 400" class="body-svg" id="svg-anterior">
+                        <!-- Head Ant -->
+                        <path id="part-head_ant" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z" />
+                        <!-- Neck Ant -->
+                        <polygon id="part-neck_ant" class="body-part deg-0" points="93,42 107,42 110,52 90,52" />
+                        <!-- Anterior Trunk (Chest & Abdomen) -->
+                        <path id="part-trunk_ant" class="body-part deg-0" d="M 68 55 L 132 55 L 126 175 L 74 175 Z" />
+                        <!-- Genitalia / Perineum -->
+                        <polygon id="part-genitalia" class="body-part deg-0" points="92,176 108,176 100,190" />
+                        <!-- Right Upper Arm Ant -->
+                        <path id="part-arm_upper_r_ant" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z" />
+                        <!-- Left Upper Arm Ant -->
+                        <path id="part-arm_upper_l_ant" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z" />
+                        <!-- Right Lower Arm Ant -->
+                        <path id="part-arm_lower_r_ant" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z" />
+                        <!-- Left Lower Arm Ant -->
+                        <path id="part-arm_lower_l_ant" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z" />
+                        <!-- Right Hand Ant -->
+                        <path id="part-hand_r_ant" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z" />
+                        <!-- Left Hand Ant -->
+                        <path id="part-hand_l_ant" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z" />
+                        <!-- Right Thigh Ant -->
+                        <path id="part-thigh_r_ant" class="body-part deg-0" d="M 73 177 L 97 177 L 93 275 L 67 275 Z" />
+                        <!-- Left Thigh Ant -->
+                        <path id="part-thigh_l_ant" class="body-part deg-0" d="M 103 177 L 127 177 L 133 275 L 107 275 Z" />
+                        <!-- Right Lower Leg Ant -->
+                        <path id="part-leg_lower_r_ant" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z" />
+                        <!-- Left Lower Leg Ant -->
+                        <path id="part-leg_lower_l_ant" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z" />
+                        <!-- Right Foot Ant -->
+                        <path id="part-foot_r_ant" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z" />
+                        <!-- Left Foot Ant -->
+                        <path id="part-foot_l_ant" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z" />
+                    </svg>
+                </div>
+
+                <!-- Posterior View -->
+                <div class="svg-body-view">
+                    <div class="view-label">Posterior (ด้านหลัง)</div>
+                    <svg viewBox="0 0 200 400" class="body-svg" id="svg-posterior">
+                        <!-- Head Post -->
+                        <path id="part-head_post" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z" />
+                        <!-- Neck Post -->
+                        <polygon id="part-neck_post" class="body-part deg-0" points="93,42 107,42 110,52 90,52" />
+                        <!-- Posterior Trunk (Upper & Lower Back) -->
+                        <path id="part-trunk_post" class="body-part deg-0" d="M 68 55 L 132 55 L 126 175 L 74 175 Z" />
+                        <!-- Right Buttock -->
+                        <path id="part-buttock_r" class="body-part deg-0" d="M 74 176 L 99 176 L 97 210 L 71 210 Z" />
+                        <!-- Left Buttock -->
+                        <path id="part-buttock_l" class="body-part deg-0" d="M 101 176 L 126 176 L 129 210 L 103 210 Z" />
+                        <!-- Right Upper Arm Post -->
+                        <path id="part-arm_upper_r_post" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z" />
+                        <!-- Left Upper Arm Post -->
+                        <path id="part-arm_upper_l_post" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z" />
+                        <!-- Right Lower Arm Post -->
+                        <path id="part-arm_lower_r_post" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z" />
+                        <!-- Left Lower Arm Post -->
+                        <path id="part-arm_lower_l_post" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z" />
+                        <!-- Right Hand Post -->
+                        <path id="part-hand_r_post" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z" />
+                        <!-- Left Hand Post -->
+                        <path id="part-hand_l_post" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z" />
+                        <!-- Right Thigh Post -->
+                        <path id="part-thigh_r_post" class="body-part deg-0" d="M 71 212 L 97 212 L 93 275 L 67 275 Z" />
+                        <!-- Left Thigh Post -->
+                        <path id="part-thigh_l_post" class="body-part deg-0" d="M 103 212 L 129 212 L 133 275 L 107 275 Z" />
+                        <!-- Right Lower Leg Post -->
+                        <path id="part-leg_lower_r_post" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z" />
+                        <!-- Left Lower Leg Post -->
+                        <path id="part-leg_lower_l_post" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z" />
+                        <!-- Right Foot Post -->
+                        <path id="part-foot_r_post" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z" />
+                        <!-- Left Foot Post -->
+                        <path id="part-foot_l_post" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Fast Palmar increment buttons -->
+            <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: 12px; color: #64748b;">
+                <span>💡 คลิกส่วนของร่างกายเพื่อลงสีตามระดับความลึก หรือใช้ฝ่ามือผู้ป่วย (Palmar Surface ≈ 1% TBSA):</span>
+                <button type="button" id="btn-palm-plus" class="btn-action btn-outline" style="padding: 4px 10px; font-size: 11px;">
+                    ✋ +1% Palm
+                </button>
+            </div>
+        </div>
+
+        <!-- Column 2: %TBSA & Fluid Resuscitation Results -->
+        <div>
+            <!-- TBSA Banner -->
+            <div class="tbsa-banner">
+                <div>
+                    <div class="tbsa-score-group">
+                        <span class="tbsa-big-num" id="val-resuscitative-tbsa">0.0</span>
+                        <span class="tbsa-unit">% TBSA</span>
+                    </div>
+                    <div class="tbsa-subtext">Resuscitative TBSA (2nd & 3rd Degree Only)</div>
+                </div>
+                <div class="tbsa-breakdown-tags">
+                    <span class="tbsa-tag tag-deg2" id="val-deg2-badge">2nd Deg: 0%</span>
+                    <span class="tbsa-tag tag-deg3" id="val-deg3-badge">3rd Deg: 0%</span>
+                    <span class="tbsa-tag tag-deg1" id="val-deg1-badge">1st Deg (Excl): 0%</span>
+                </div>
+            </div>
+
+            <!-- Fluid Resuscitation Schedule -->
+            <div class="burn-card">
+                <div class="card-header">
+                    <span>2. Fluid Resuscitation Schedule (24-Hour Plan)</span>
+                    <span class="badge-atls" id="badge-guideline-coeff">2 mL/kg/%</span>
+                </div>
+
+                <div class="fluid-schedule-box">
+                    <div class="fluid-title">
+                        <span>อัตราสารน้ำชั่วโมงที่ 1–8 (First 8 Hours Rate)</span>
+                        <span style="font-size: 11px; color: #78350f;">Warmed Lactated Ringer's (LR)</span>
+                    </div>
+                    <div class="fluid-rate-big" id="val-first8h-rate">0 mL/hr</div>
+                    <div style="font-size: 11.5px; color: #92400e; margin-top: 4px;" id="val-time-remaining-desc">
+                        ให้ต่อเนื่องในเวลาที่เหลือของช่วง 8 ชม. แรก (หักลบสารน้ำก่อนถึง รพ. แล้ว)
+                    </div>
+
+                    <div class="fluid-details-grid">
+                        <div class="fluid-stat-item">
+                            <div class="fluid-stat-label">ยอดรวม 24 ชม. (Modified Brooke)</div>
+                            <div class="fluid-stat-val" id="val-total-24h">0 mL</div>
+                        </div>
+                        <div class="fluid-stat-item">
+                            <div class="fluid-stat-label">ยอดรวม 24 ชม. (Classic Parkland)</div>
+                            <div class="fluid-stat-val" id="val-parkland-total">0 mL</div>
+                        </div>
+                        <div class="fluid-stat-item">
+                            <div class="fluid-stat-label">ยอด 8 ชม. แรก (50% Volume)</div>
+                            <div class="fluid-stat-val" id="val-first8h-target">0 mL</div>
+                        </div>
+                        <div class="fluid-stat-item">
+                            <div class="fluid-stat-label">อัตราช่วง 16 ชม. ถัดไป (Next 16h)</div>
+                            <div class="fluid-stat-val" id="val-next16h-rate">0 mL/hr</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pediatric Maintenance Banner (if <= 30kg) -->
+                <div id="peds-maintenance-banner" style="background: #f5f3ff; border: 1.5px solid #ddd6fe; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; display: none;">
+                    <strong style="color: #6b21a8;">👶 Pediatric Maintenance Fluid (Holliday-Segar 4-2-1):</strong>
+                    <div style="color: #4c1d95; margin-top: 2px;">
+                        ให้ <strong>D5LR หรือ D5 0.45% NaCl</strong> อัตรา <span id="val-peds-rate" style="font-family: monospace; font-weight: 700; font-size: 14px;">0 mL/hr</span> ควบคู่ไปกับสารน้ำกู้ชีพทาง IV อีกเส้น เพื่อป้องกันภาวะน้ำตาลในเลือดต่ำ (Hypoglycemia)
+                    </div>
+                </div>
+
+                <!-- Urine Output Monitoring & Dynamic Titration -->
+                <div style="border-top: 1px solid #f1f5f9; padding-top: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; font-weight: 700;">
+                        <span>เป้าหมาย Urine Output (Target UO):</span>
+                        <span id="val-target-uo-text" style="color: var(--burn-primary-dark); font-family: monospace;">0.5 mL/kg/hr (35–50 mL/hr)</span>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px;">
+                        <span style="font-size: 12px; color: #475569; font-weight: 600;">ปริมาณปัสสาวะ 1 ชม. ล่าสุด:</span>
+                        <input type="number" id="input-measured-uo" class="input-control" value="40" min="0" max="500" step="5" style="width: 80px; padding: 4px 8px;">
+                        <span style="font-size: 12px; color: #64748b;">mL/hr</span>
+                        <label style="font-size: 11.5px; margin-left: auto; color: #991b1b; display: flex; align-items: center; gap: 4px; font-weight: 700; cursor: pointer;">
+                            <input type="checkbox" id="check-hypotensive" style="accent-color: #ef4444;"> ภาวะช็อก/ความดันตก (Shock)
+                        </label>
+                    </div>
+
+                    <!-- Dynamic Titration Advice Box -->
+                    <div class="titration-box" id="titration-advice-box">
+                        <strong id="titration-status-title">On Target:</strong>
+                        <div id="titration-status-desc" style="margin-top: 2px;">Urine output อยู่ในเกณฑ์เป้าหมาย คงอัตราสารน้ำเดิม</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Inhalation Injury, Toxicology, Circumferential & Transfer Criteria -->
+    <div style="margin-top: 14px;">
+        <!-- Inhalation & Airway -->
+        <div class="accordion-item open">
+            <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+                <span>🫁 3. Inhalation Injury & Airway Decision Matrix (การประเมินทางเดินหายใจ)</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <div style="font-size: 12px; color: #475569; margin-bottom: 8px;">
+                    ประเมินสัญญาณเตือนทางเดินหายใจอุดกั้นและพิษจากควันไฟตามแนวทาง <strong>ATLS 11th Edition</strong>:
+                </div>
+
+                <div class="check-grid">
+                    <label class="check-card critical">
+                        <input type="checkbox" id="chk-stridor" class="inhal-chk">
+                        <div><strong>Stridor / Hoarseness:</strong> เสียงหายใจฮืด หรือเสียงแหบลงเรื่อยๆ</div>
+                    </label>
+                    <label class="check-card critical">
+                        <input type="checkbox" id="chk-retraction" class="inhal-chk">
+                        <div><strong>Respiratory Distress:</strong> หายใจหอบเหนื่อย / อกบุ๋ม (Sternal retraction)</div>
+                    </label>
+                    <label class="check-card critical">
+                        <input type="checkbox" id="chk-coma" class="inhal-chk">
+                        <div><strong>Impaired Consciousness:</strong> ซึม หมดสติ ไม่สามารถปกป้องทางเดินหายใจได้</div>
+                    </label>
+                    <label class="check-card critical">
+                        <input type="checkbox" id="chk-faceburn" class="inhal-chk">
+                        <div><strong>Deep Facial/Perioral Burn:</strong> แผลไหม้ระดับลึกบริเวณใบหน้าหรือรอบปาก</div>
+                    </label>
+                    <label class="check-card critical">
+                        <input type="checkbox" id="chk-neckburn" class="inhal-chk">
+                        <div><strong>Circumferential Neck Burn:</strong> แผลไหม้รอบคอ (เสี่ยงกดเบียดหลอดลม)</div>
+                    </label>
+                    <label class="check-card">
+                        <input type="checkbox" id="chk-enclosed" class="inhal-chk">
+                        <div><strong>Closed-Space Fire:</strong> ประวัติติดอยู่ในพื้นที่ปิด / อาคารไฟไหม้</div>
+                    </label>
+                    <label class="check-card">
+                        <input type="checkbox" id="chk-soot" class="inhal-chk">
+                        <div><strong>Soot in Mouth/Nose:</strong> มีเขม่าดำในช่องปาก จมูก หรือเสมหะ (Carbonaceous sputum)</div>
+                    </label>
+                    <label class="check-card">
+                        <input type="checkbox" id="chk-singed" class="inhal-chk">
+                        <div><strong>Singed Nasal Hairs:</strong> ขนจมูกหรือคิ้วไหม้เกรียม</div>
+                    </label>
+                </div>
+
+                <!-- Triage Recommendation Box -->
+                <div id="inhal-triage-box" style="margin-top: 12px; padding: 12px 14px; border-radius: 6px; background: #f8fafc; border: 1.5px solid #cbd5e1;">
+                    <strong id="inhal-triage-title" style="color: #0f172a;">ข้อแนะนำทางคลินิก:</strong>
+                    <div id="inhal-triage-desc" style="margin-top: 3px; color: #334155;">เฝ้าระวังอาการทางเดินหายใจอย่างใกล้ชิด</div>
+                </div>
+
+                <!-- Textbook Clinical References -->
+                <div class="clinical-img-grid">
+                    <div class="clinical-img-card">
+                        <img src="../docs/burn-assets/airway-burn-atls.png" alt="ATLS Airway Compromise">
+                        <div class="clinical-img-caption"><strong>ATLS 11th Fig 9-1:</strong> ภาวะบวมและอุดกั้นของทางเดินหายใจจากแผลไหม้บริเวณใบหน้าและรอบปาก</div>
+                    </div>
+                    <div class="clinical-img-card">
+                        <img src="../docs/burn-assets/burn-depth-atls.png" alt="Burn Depth Histology">
+                        <div class="clinical-img-caption"><strong>ATLS 11th Fig 9-3:</strong> การจำแนกระดับความลึกของแผลไหม้ (1st, 2nd, 3rd Degree)</div>
+                    </div>
+                    <div class="clinical-img-card">
+                        <img src="../docs/burn-assets/rule-of-nines-atls.png" alt="Rule of Nines Reference">
+                        <div class="clinical-img-caption"><strong>ATLS Fig 9-2 (Reference Only):</strong> กฎ Rule of Nines สำหรับประเมินเร็วเบื้องต้น (เครื่องมือนี้ใช้ Lund-Browder 6 Columns เพื่อความแม่นยำสูงสุด)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Smoke Toxicology: CO & Cyanide -->
+        <div class="accordion-item open">
+            <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+                <span>☠️ 4. Smoke Inhalation Toxicology: Carbon Monoxide (CO) & Cyanide (CN)</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <!-- Carbon Monoxide -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+                        <strong style="color: #0f172a; font-size: 13.5px;">🫁 1. Carbon Monoxide (CO) Poisoning</strong>
+                        
+                        <div style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 8px 10px; border-radius: 6px; margin: 8px 0; font-size: 11.5px;">
+                            ⚠️ <strong>Pulse Oximeter ลวง:</strong> SpO2 ทั่วไปจะอ่านได้ 98–100% เสมอเพราะแยก Carboxyhemoglobin ไม่ออก — ต้องส่งตรวจ <strong>COHb จาก Co-oximetry (ABG/VBG)</strong>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px;">
+                            <label style="font-size: 12px; font-weight: 600;">ระดับ Carboxyhemoglobin (% COHb):</label>
+                            <input type="number" id="input-cohb" class="input-control" value="15" min="0" max="100" style="width: 70px; padding: 4px 8px;">
+                            <label style="font-size: 11.5px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                                <input type="checkbox" id="check-pregnant" style="accent-color: var(--burn-primary);"> หญิงตั้งครรภ์
+                            </label>
+                        </div>
+
+                        <div id="co-assessment-result" style="margin-top: 8px; font-size: 12px; color: #334155;">
+                            <!-- Dynamically generated -->
+                        </div>
+                    </div>
+
+                    <!-- Cyanide Poisoning & Hydroxocobalamin -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+                        <strong style="color: #0f172a; font-size: 13.5px;">🧪 2. Cyanide (CN) Poisoning & Antidote</strong>
+
+                        <div style="font-size: 12px; color: #475569; margin: 6px 0;">
+                            <strong>เกณฑ์สงสัย:</strong> ไฟไหม้ในที่ปิด + เขม่าในปาก + ภาวะช็อก/โคม่า + <strong>Lactate ≥ 8–10 mmol/L</strong> หรือ Unexplained Severe Metabolic Acidosis
+                        </div>
+
+                        <!-- Antidote Card -->
+                        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 6px; padding: 10px 12px; margin-top: 8px;">
+                            <div style="font-family: 'Inter Tight', sans-serif; font-size: 12px; font-weight: 700; color: #166534; text-transform: uppercase;">
+                                1st-Line Antidote: Hydroxocobalamin (Cyanokit)
+                            </div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 700; color: #15803d; margin-top: 2px;" id="val-cyanide-dose">
+                                5.0 g IV (70 mg/kg)
+                            </div>
+                            <div style="font-size: 11.5px; color: #166534; margin-top: 4px;">
+                                ผสมใน 0.9% NaCl 200 mL หยดทาง IV ใน 15 นาที (สามารถให้ซ้ำได้อีก 1 Dose หากอาการรุนแรง)
+                            </div>
+                        </div>
+
+                        <div style="font-size: 11px; color: #64748b; margin-top: 8px; line-height: 1.4;">
+                            * <strong>ข้อควรระวัง:</strong> ผิวหนัง เยื่อบุ และปัสสาวะจะเปลี่ยนเป็นสีแดงเข้ม (Reddish-purple) ชั่วคราว 24–72 ชม. | ห้ามให้ Sodium Nitrite เพราะจะก่อให้เกิด Methemoglobin ซ้ำเติมกับ Carbon Monoxide
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Circumferential Burns, Escharotomy & ABA Referral -->
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+                <span>🔪 5. Circumferential Burns, Escharotomy & ABA Referral Criteria (การผ่าตัดคลายความดันและเกณฑ์ส่งต่อ)</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div>
+                        <strong style="color: #0f172a; font-size: 13px;">🔪 สัญญาณเตือน Compartment Syndrome & ข้อบ่งชี้ Escharotomy:</strong>
+                        <ul style="margin: 6px 0; padding-left: 18px; font-size: 12px; color: #334155;">
+                            <li>แผลไหม้ระดับลึกรอบแขนขา (Circumferential full-thickness extremity burn)</li>
+                            <li>ปวดรุนแรงผิดปกติเมื่อขยับกล้ามเนื้อตามแนวยาว (Pain on passive stretch)</li>
+                            <li>ช่องกล้ามเนื้อบวมตึงมาก (Tense swollen compartment), ชาปลายมือปลายเท้า (Paresthesia)</li>
+                            <li>แผลไหม้รอบทรวงอก (Circumferential chest burn) ทำให้ขยายปอดไม่ได้ เกิด Peak inspiratory pressure สูง</li>
+                        </ul>
+
+                        <div class="clinical-img-grid" style="grid-template-columns: 1fr 1fr;">
+                            <div class="clinical-img-card">
+                                <img src="../docs/burn-assets/escharotomy-atls.png" alt="ATLS Escharotomy">
+                                <div class="clinical-img-caption"><strong>ATLS Fig 9-4:</strong> แนวกรีด Escharotomy ด้านข้างแขนขา (Medial & Lateral Incisions)</div>
+                            </div>
+                            <div class="clinical-img-card">
+                                <img src="../docs/burn-assets/escharotomy-chest-tintinalli.png" alt="Chest Escharotomy">
+                                <div class="clinical-img-caption"><strong>Tintinalli Fig 217-9:</strong> แนวกรีดคลายผนังทรวงอกรูปตาราง H-cut</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <strong style="color: #0f172a; font-size: 13px;">🏥 เกณฑ์การส่งต่อศูนย์รักษาแผลไหม้ (ABA 2023 Referral Criteria):</strong>
+                        <div class="check-grid" style="grid-template-columns: 1fr; margin-top: 6px;">
+                            <label class="check-card"><input type="checkbox" checked disabled> 1. Partial-thickness burn ≥ 10% TBSA</label>
+                            <label class="check-card"><input type="checkbox" checked disabled> 2. แผลไหม้บริเวณใบหน้า, มือ, เท้า, อวัยวะเพศ, ฝีเย็บ หรือข้อพับใหญ่</label>
+                            <label class="check-card"><input type="checkbox" checked disabled> 3. Third-degree (full-thickness) burn ในทุกกลุ่มอายุ</label>
+                            <label class="check-card"><input type="checkbox" checked disabled> 4. Electrical burn รวมทั้งฟ้าผ่า (High-voltage / Lightning)</label>
+                            <label class="check-card"><input type="checkbox" checked disabled> 5. Chemical burn (สารเคมีกัดกร่อน)</label>
+                            <label class="check-card"><input type="checkbox" checked disabled> 6. Inhalation injury (การสูดดมควันพิษ/ทางเดินหายใจไหม้)</label>
+                            <label class="check-card"><input type="checkbox" checked disabled> 7. ผู้ป่วยที่มีโรคร่วมซับซ้อน หรือมีอุบัติเหตุร่วม (Concomitant trauma)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+        <button type="button" class="btn-action btn-outline" id="btn-copy-emr">
+            📋 คัดลอกบันทึกเวชระเบียน (Copy EMR Note)
+        </button>
+        <button type="button" class="btn-action btn-primary" onclick="window.print()">
+            🖨️ พิมพ์แผนการกู้ชีพแผลไหม้ (Print Sheet)
+        </button>
+    </div>
+</div>
+
+<script src="../shared/components.js"></script>
+<script src="../shared/burn-engine.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    // State
+    let activeDegree = 2; // Default to 2nd degree
+    const paintedRegions = {}; // regionKey -> degree (0, 1, 2, 3)
+
+    // DOM Elements
+    const inputAge = document.getElementById('input-age');
+    const inputWeight = document.getElementById('input-weight');
+    const sliderWeight = document.getElementById('slider-weight');
+    const inputElapsed = document.getElementById('input-elapsed');
+    const sliderElapsed = document.getElementById('slider-elapsed');
+    const inputPrehospital = document.getElementById('input-prehospital');
+    const selectMechanism = document.getElementById('select-mechanism');
+    const checkPigmenturia = document.getElementById('check-pigmenturia');
+    const lundColumnBadge = document.getElementById('lund-column-badge');
+
+    // TBSA Displays
+    const valResuscitativeTbsa = document.getElementById('val-resuscitative-tbsa');
+    const valDeg1Badge = document.getElementById('val-deg1-badge');
+    const valDeg2Badge = document.getElementById('val-deg2-badge');
+    const valDeg3Badge = document.getElementById('val-deg3-badge');
+
+    // Fluid Displays
+    const valFirst8hRate = document.getElementById('val-first8h-rate');
+    const valTotal24h = document.getElementById('val-total-24h');
+    const valParklandTotal = document.getElementById('val-parkland-total');
+    const valFirst8hTarget = document.getElementById('val-first8h-target');
+    const valNext16hRate = document.getElementById('val-next16h-rate');
+    const badgeGuidelineCoeff = document.getElementById('badge-guideline-coeff');
+    const pedsMaintenanceBanner = document.getElementById('peds-maintenance-banner');
+    const valPedsRate = document.getElementById('val-peds-rate');
+
+    // UO Titration Displays
+    const valTargetUoText = document.getElementById('val-target-uo-text');
+    const inputMeasuredUo = document.getElementById('input-measured-uo');
+    const checkHypotensive = document.getElementById('check-hypotensive');
+    const titrationAdviceBox = document.getElementById('titration-advice-box');
+    const titrationStatusTitle = document.getElementById('titration-status-title');
+    const titrationStatusDesc = document.getElementById('titration-status-desc');
+
+    // Toxicology Displays
+    const inputCohb = document.getElementById('input-cohb');
+    const checkPregnant = document.getElementById('check-pregnant');
+    const coAssessmentResult = document.getElementById('co-assessment-result');
+    const valCyanideDose = document.getElementById('val-cyanide-dose');
+
+    // Inhalation Triage Displays
+    const inhalTriageBox = document.getElementById('inhal-triage-box');
+    const inhalTriageTitle = document.getElementById('inhal-triage-title');
+    const inhalTriageDesc = document.getElementById('inhal-triage-desc');
+
+    // Wire Degree Selector Buttons
+    document.querySelectorAll('.degree-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.degree-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            activeDegree = Number(this.dataset.degree);
+        });
+    });
+
+    const DEG_CLASSES = ['deg-0', 'deg-1', 'deg-2', 'deg-3'];
+
+    // Wire SVG Body Parts Painting
+    document.querySelectorAll('.body-part').forEach(part => {
+        part.addEventListener('click', function () {
+            const rawId = this.id.replace('part-', '');
+            paintedRegions[rawId] = activeDegree;
+            this.className.baseVal = `body-part ${DEG_CLASSES[activeDegree] || 'deg-0'}`;
+            recalculateAll();
+        });
+    });
+
+    // Wire Reset Button
+    document.getElementById('quick-reset-btn').addEventListener('click', function () {
+        for (const k in paintedRegions) delete paintedRegions[k];
+        document.querySelectorAll('.body-part').forEach(part => {
+            part.className.baseVal = 'body-part deg-0';
+        });
+        recalculateAll();
+    });
+
+    // Wire +1% Palm Button
+    document.getElementById('btn-palm-plus').addEventListener('click', function () {
+        // Quick add 1% to anterior trunk as standard proxy
+        const deg = activeDegree || 2;
+        paintedRegions['trunk_ant'] = deg;
+        const trunk = document.getElementById('part-trunk_ant');
+        if (trunk) trunk.className.baseVal = `body-part ${DEG_CLASSES[deg] || 'deg-2'}`;
+        recalculateAll();
+    });
+
+    // Input Synchronization
+    inputWeight.addEventListener('input', () => { sliderWeight.value = inputWeight.value; recalculateAll(); });
+    sliderWeight.addEventListener('input', () => { inputWeight.value = sliderWeight.value; recalculateAll(); });
+    inputElapsed.addEventListener('input', () => { sliderElapsed.value = inputElapsed.value; recalculateAll(); });
+    sliderElapsed.addEventListener('input', () => { inputElapsed.value = sliderElapsed.value; recalculateAll(); });
+    inputAge.addEventListener('input', recalculateAll);
+    inputPrehospital.addEventListener('input', recalculateAll);
+    selectMechanism.addEventListener('change', recalculateAll);
+    checkPigmenturia.addEventListener('change', recalculateAll);
+    inputMeasuredUo.addEventListener('input', recalculateAll);
+    checkHypotensive.addEventListener('change', recalculateAll);
+    inputCohb.addEventListener('input', recalculateAll);
+    checkPregnant.addEventListener('change', recalculateAll);
+    document.querySelectorAll('.inhal-chk').forEach(c => c.addEventListener('change', recalculateAll));
+
+    // Core Calculation & Render
+    function recalculateAll() {
+        const age = Number(inputAge.value) || 25;
+        const weight = Number(inputWeight.value) || 70;
+        const elapsed = Number(inputElapsed.value) || 0;
+        const prehospital = Number(inputPrehospital.value) || 0;
+        const isElectrical = selectMechanism.value === 'electrical';
+        const hasPigmenturia = checkPigmenturia.checked || isElectrical;
+
+        // 1. Lund-Browder Column & TBSA
+        const col = BurnEngine.getLundBrowderAgeColumn(age);
+        const colNames = { '0': '<1y (Infant)', '1': '1–4y (Toddler)', '5': '5–9y (Child)', '10': '10–14y', '15': '15–17y (Adolescent)', 'adult': 'Adult (≥18y)' };
+        lundColumnBadge.textContent = `Lund-Browder Bracket: ${colNames[col] || col}`;
+
+        const tbsaRes = BurnEngine.calculateTBSA(age, paintedRegions);
+        valResuscitativeTbsa.textContent = tbsaRes.tbsaResuscitative.toFixed(1);
+        valDeg2Badge.textContent = `2nd Deg: ${tbsaRes.deg2Pct}%`;
+        valDeg3Badge.textContent = `3rd Deg: ${tbsaRes.deg3Pct}%`;
+        valDeg1Badge.textContent = `1st Deg (Excl): ${tbsaRes.deg1Pct}%`;
+
+        // 2. Fluid Resuscitation
+        const fluid = BurnEngine.calculateFluidRequirements({
+            weightKg: weight,
+            tbsaPct: tbsaRes.tbsaResuscitative,
+            ageYears: age,
+            isElectrical: isElectrical,
+            hoursElapsed: elapsed,
+            prehospitalFluidGivenMl: prehospital
+        });
+
+        badgeGuidelineCoeff.textContent = `${fluid.guidelineCoefficient} mL/kg/%`;
+        valFirst8hRate.textContent = `${fluid.first8hHourlyRate} mL/hr`;
+        valTotal24h.textContent = `${fluid.modifiedBrookeTotalMl} mL`;
+        valParklandTotal.textContent = `${fluid.parklandTotalMl} mL`;
+        valFirst8hTarget.textContent = `${fluid.first8hTargetMl} mL`;
+        valNext16hRate.textContent = `${fluid.next16hHourlyRate} mL/hr`;
+
+        // Pediatric Maintenance
+        if (fluid.requiresMaintenanceDextrose) {
+            pedsMaintenanceBanner.style.display = 'block';
+            valPedsRate.textContent = `${fluid.pediatricMaintenance.hourlyRateMlHr} mL/hr`;
+        } else {
+            pedsMaintenanceBanner.style.display = 'none';
+        }
+
+        // 3. Urine Output & Titration
+        const targetUO = BurnEngine.getTargetUrineOutput(weight, age, isElectrical, hasPigmenturia);
+        valTargetUoText.textContent = `${targetUO.targetMlKgHr} mL/kg/hr (${targetUO.targetMlHrMin}${targetUO.targetMlHrMin !== targetUO.targetMlHrMax ? '–' + targetUO.targetMlHrMax : ''} mL/hr)`;
+
+        const measuredUO = Number(inputMeasuredUo.value) || 0;
+        const isHypo = checkHypotensive.checked;
+        const titration = BurnEngine.getUrineOutputTitration(fluid.first8hHourlyRate, measuredUO, targetUO, isHypo, weight);
+
+        titrationAdviceBox.className = `titration-box ${titration.status === 'SHOCK_HYPOTENSION' ? 'alert-shock' : (titration.status === 'UNDER_RESUSCITATION' ? 'alert-under' : '')}`;
+        titrationStatusTitle.textContent = titration.message;
+        titrationStatusDesc.textContent = `${titration.bolusAdvice} | อัตราสารน้ำที่แนะนำใหม่: ${titration.suggestedRate} mL/hr (ช่วงปรับ ${titration.adjustedRateMin}–${titration.adjustedRateMax} mL/hr)`;
+
+        // 4. Inhalation Injury Triage
+        const inhalChecklist = {
+            stridor: document.getElementById('chk-stridor').checked,
+            respiratoryDistress: document.getElementById('chk-retraction').checked,
+            impairedReflexes: document.getElementById('chk-coma').checked,
+            extensiveDeepFacialBurn: document.getElementById('chk-faceburn').checked,
+            circumferentialNeckBurn: document.getElementById('chk-neckburn').checked,
+            enclosedSpace: document.getElementById('chk-enclosed').checked,
+            sootInMouthOrNose: document.getElementById('chk-soot').checked,
+            singedNasalHair: document.getElementById('chk-singed').checked,
+            largeTbsaBurn: tbsaRes.tbsaResuscitative > 40
+        };
+        const inhalEval = BurnEngine.evaluateInhalationRisk(inhalChecklist);
+        if (inhalEval.recommendation === 'IMMEDIATE_INTUBATION') {
+            inhalTriageBox.style.background = '#fef2f2';
+            inhalTriageBox.style.borderColor = '#fca5a5';
+            inhalTriageTitle.innerHTML = '<span style="color:#991b1b;">🚨 ข้อบ่งชี้ใส่ท่อช่วยหายใจทันที (Immediate Intubation Indicated):</span>';
+            inhalTriageDesc.innerHTML = `<span style="color:#7f1d1d;">พบอาการวิกฤต: ${inhalEval.criticalSigns.join(', ')}<br><strong>คำแนะนำ:</strong> ${inhalEval.ettRecommendation}</span>`;
+        } else if (inhalEval.recommendation === 'CLOSE_SERIAL_MONITORING_OR_EARLY_INTUBATION') {
+            inhalTriageBox.style.background = '#fffbeb';
+            inhalTriageBox.style.borderColor = '#fde68a';
+            inhalTriageTitle.innerHTML = '<span style="color:#92400e;">⚠️ มีความเสี่ยงสูดดมควันพิษ (High Suspicion Inhalation Injury):</span>';
+            inhalTriageDesc.innerHTML = `<span style="color:#78350f;">พบสัญญาณเตือน: ${inhalEval.warningSigns.join(', ')}<br>ให้ 100% Humidified O2 ทาง NRB และประเมินอาการทางเดินหายใจซ้ำทุก 15–30 นาที</span>`;
+        } else {
+            inhalTriageBox.style.background = '#f8fafc';
+            inhalTriageBox.style.borderColor = '#cbd5e1';
+            inhalTriageTitle.innerHTML = '<span style="color:#0f172a;">✅ ไม่พบสัญญาณวิกฤตของทางเดินหายใจส่วนบน:</span>';
+            inhalTriageDesc.innerHTML = '<span style="color:#475569;">เฝ้าระวังอาการตามมาตรฐานและประเมินซ้ำเป็นระยะ</span>';
+        }
+
+        // 5. Toxicology
+        const cohb = Number(inputCohb.value) || 0;
+        const isPreg = checkPregnant.checked;
+        const coAssessment = BurnEngine.getCOAssessment(cohb, isPreg, {
+            syncopeOrComa: inhalChecklist.impairedReflexes
+        });
+        coAssessmentResult.innerHTML = `
+            <div><strong>ระดับความรุนแรง:</strong> ${coAssessment.symptomsDescription}</div>
+            <div><strong>ค่าครึ่งชีวิต CO (100% O2):</strong> ${coAssessment.halfLife100O2Min} (เทียบกับ Room Air ${coAssessment.halfLifeRoomAirMin})</div>
+            <div style="margin-top:4px; font-weight:700; color:${coAssessment.meetsHboCriteria ? '#991b1b' : '#166534'};">
+                ${coAssessment.meetsHboCriteria ? '🚨 เข้าเกณฑ์ส่งพิจารณา Hyperbaric Oxygen Therapy (HBO)' : '✅ ยังไม่เข้าเกณฑ์ข้อบ่งชี้เร่งด่วนสำหรับ HBO'}
+            </div>
+        `;
+
+        const cnDosing = BurnEngine.getCyanideAntidoteDosing(weight);
+        valCyanideDose.textContent = `${cnDosing.hydroxocobalaminG} g IV (${cnDosing.hydroxocobalaminMg} mg)`;
+    }
+
+    // Copy Clinical EMR Note
+    document.getElementById('btn-copy-emr').addEventListener('click', function () {
+        const age = inputAge.value;
+        const weight = inputWeight.value;
+        const elapsed = inputElapsed.value;
+        const prehospital = inputPrehospital.value;
+        const mech = selectMechanism.options[selectMechanism.selectedIndex].text;
+        const tbsa = valResuscitativeTbsa.textContent;
+        const first8h = valFirst8hRate.textContent;
+        const total24h = valTotal24h.textContent;
+        const targetUo = valTargetUoText.textContent;
+        const cyanide = valCyanideDose.textContent;
+
+        const note = `[MNRH ED BURN RESUSCITATION NOTE]
+- Patient: Age ${age} yo, Weight ${weight} kg
+- Burn Mechanism: ${mech} | Time post-burn: ${elapsed} hours | Prehospital fluid: ${prehospital} mL
+- Total Resuscitative %TBSA: ${tbsa}% (2nd & 3rd Degree, Lund & Browder age-adjusted)
+- Fluid Plan (ATLS 11th / Modified Brooke):
+  * Total 24h Volume: ${total24h}
+  * Current 1st 8h Infusion Rate: ${first8h} (Warmed Lactated Ringer's)
+  * Target Urine Output: ${targetUo}
+- Toxicology & Airway:
+  * Inhalation Risk: ${inhalTriageTitle.textContent}
+  * Carboxyhemoglobin: ${inputCohb.value}% | Antidote Cyanokit Dose: ${cyanide}`;
+
+        navigator.clipboard.writeText(note).then(() => {
+            alert('คัดลอกบันทึกเวชระเบียน (EMR Note) เรียบร้อยแล้ว!');
+        }).catch(() => {
+            prompt('คัดลอกข้อความด้านล่าง:', note);
+        });
+    });
+
+    // Initialize Navigation & First Calc
+    if (window.ED_COMPONENTS && typeof window.ED_COMPONENTS.injectNavBar === 'function') {
+        window.ED_COMPONENTS.injectNavBar();
+    }
+    recalculateAll();
+})();
+</script>
+</body>
+</html>

@@ -158,6 +158,17 @@ Features:
 - **Compact Accordions (Default Collapsed):** Accessible toggling for Diagnostic Criteria, Recurrent Seizures (2g bolus + 2nd-line Benzos & Phenytoin), Severe BP Control (Hydralazine, Labetalol, Nifedipine, Nicardipine IV Push/Drip + contraindications and ACEi/ARB pregnancy warnings), and Labour Room Care & Lab Orders checklist (Admit LR, Foley's, VS/UO q1h, DTR q2h).
 - **Dual Concentration Support:** Explicit prep, volume, and pump rate calculations for both 50% MgSO4 (500 mg/mL ampule) and 10% MgSO4 (100 mg/mL diluted form).
 
+### Burn Management & Resuscitation Hub (`tools/burn-manager.html`)
+
+Comprehensive acute burn assessment and resuscitation calculation tool built strictly to **ATLS 11th Edition (2025/2026)**, **ABA 2023 Guidelines**, **Tintinalli 9th/10th Ed**, and **Goldfrank's Toxicologic Emergencies 11th Ed**. Dynamically driven by `shared/burn-engine.js`.
+Features:
+- **Interactive 6-Column Lund & Browder Body Mapper:** Interactive SVG human body model (Anterior & Posterior) supporting 6 age brackets (`0`: <1y, `1`: 1–4y, `5`: 5–9y, `10`: 10–14y, `15`: 15–17y, `adult`: ≥18y) with real-time painting by depth (1st, 2nd, 3rd/4th degree).
+- **1st Degree Burn Exclusion:** Explicitly tracks superficial burns visually while strictly excluding them from resuscitative fluid %TBSA per ATLS 11th Box 9-1.
+- **Fluid Resuscitation Engine (24-Hour Schedule):** Dual calculation of ATLS 11th Consensus / Modified Brooke ($2\text{--}3\text{ mL/kg/\%}$) and Classic Parkland ($4\text{ mL/kg/\%}$), with time-elapsed adjustment in 1st 8h window, prehospital fluid deduction, and Holliday-Segar (4-2-1) pediatric maintenance ($D_5LR$ or $D_5 0.45\%\text{NaCl}$) for children $\le 30\text{ kg}$.
+- **Urine Output & Shock Titration Assistant:** Real-time feedback for adult ($0.5\text{ mL/kg/hr}$), pediatric ($1.0\text{ mL/kg/hr}$), and electrical/pigmenturia ($100\text{ mL/hr}$ adult, $1.0\text{--}2.0\text{ mL/kg/hr}$ child) targets with $\pm 10\%\text{--}30\%$ auto-adjustment and shock fluid bolus guidance ($10\text{--}20\text{ mL/kg}$).
+- **Inhalation Injury & Smoke Toxicology:** Clinical risk checklist, immediate intubation triggers, ETT sizing ($\ge 7.5\text{--}8.0\text{ mm}$), authentic ATLS/Tintinalli clinical photography, Carbon Monoxide ($COHb$, $100\%\text{ O}_2$ half-life, HBO criteria), and Cyanide Hydroxocobalamin ($5\text{ g}$ adult / $70\text{ mg/kg}$ child, capped at $>71.43\text{ kg}$) dosing.
+- **Circumferential Burn & ABA Referral Checklist:** Extremity/chest escharotomy guides with authentic incision diagrams and 10-point ABA 2023 transfer criteria.
+
 ### Shared Engines (`shared/`)
 
 | File | Role | Dependencies |
@@ -170,7 +181,8 @@ Features:
 | `anticoag-engine.js` | Heparin standalone dosing/titration engine. Exports `calcHeparinInitialDose`, `getHeparinTitration`, `HEPARIN_STANDALONE_PROTOCOLS`. | None |
 | `stroke-engine.js` | Stroke rt-PA thrombolytic dosing engine. Exports `calcRtpaDose` for 0.9 mg/kg and 0.6 mg/kg regimens. | None |
 | `stemi-engine.js` | STEMI TNK weight-bracket dosing engine. Exports `calcTNK`. | None |
-| `ob-engine.js` | MgSO4 dosing & pre-eclampsia severity classification engine. Exports functions: `calcMgSO4Loading`, `calcMgSO4MaintenanceIV`, `calcMgSO4IM`, `calcMgSO4RecurrentBolus`, `checkMgSO4Toxicity`, `checkMgSO4Safety`, `classifyBPSeverity`, `evalSevereFeatures`. Exports constants: `MAINTENANCE_FORMULAS`, `BP_PROTOCOLS`, `DIAGNOSTIC_CRITERIA`, `MGSO4_CONTRAINDICATIONS`, `ALTERNATIVE_ANTICONVULSANTS`, `CALCIUM_ANTIDOTES`, `TEXTBOOK_VARIATIONS`, `NURSING_CARE_ORDERS`, `MGSO4_CONC_50PCT`, `MGSO4_CONC_10PCT`. | None |
+| `ob-engine.js` | MgSO4 dosing & pre-eclampsia severity classification engine. | None |
+| `burn-engine.js` | Burn assessment & resuscitation engine. Exports `LUND_BROWDER_TABLE`, `ABA_REFERRAL_CRITERIA`, `getLundBrowderAgeColumn`, `calculateTBSA`, `calculatePediatricMaintenance`, `calculateFluidRequirements`, `getTargetUrineOutput`, `getUrineOutputTitration`, `getCyanideAntidoteDosing`, `getCOAssessment`, `evaluateInhalationRisk`. | None |
 | `drug-data.js` | 17-drug catalog: concentrations, dose limits, safety ceilings, titration instructions, optional `indications` array for per-drug guide rendering, optional `absoluteMaxPerHour` for weight-based drugs with clinical hourly ceilings (e.g. Fentanyl 500 mcg/hr). | None |
 | `print-bootstrap.js` | Print/page lifecycle: `handlePrintBlankDirect()`, `handlePrintBlankDirectPdf()`, `openBlankPdf()`, `showResults()`, `clearResults()`, date/time helpers. | `components.js` |
 | `blank-print-engine.js` | Declarative blank-print reset. Each page registers a manifest of reset rules (`{ id, value }` for textContent, `{ id, html }` for innerHTML, etc.). `apply()` executes all rules. Used by rtpa and nstemi only. | None |
