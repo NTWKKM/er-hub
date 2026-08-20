@@ -374,6 +374,8 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             assert.ok(doc.getElementById('input-direct-tbsa'));
             assert.ok(doc.getElementById('val-resuscitative-tbsa'));
             assert.ok(doc.getElementById('val-first8h-rate'));
+            assert.ok(doc.querySelector('.top-nav'), 'Top nav element must be present in DOM');
+            assert.ok(doc.querySelector('.nav-home'), 'Nav home link must be present');
         });
 
         it('Interactively painting chest and abdomen updates %TBSA and fluid rates in real time', () => {

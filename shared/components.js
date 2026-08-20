@@ -270,6 +270,11 @@ const ED_COMPONENTS = {
     }
 };
 
+// Expose to window for browser script environments
+if (typeof window !== 'undefined') {
+    window.ED_COMPONENTS = ED_COMPONENTS;
+}
+
 // Export for Node testing
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
