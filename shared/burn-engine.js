@@ -260,11 +260,11 @@
         // ATLS 11th secondary survey baseline initial rate = Total / 16 mL/hr
         const secondarySurveyRate = Math.round(modifiedBrookeTotal / 16);
 
-        // Parkland / Scheduled 8h/16h breakdown based on Modified Brooke volume
+        // Schedule 8h/16h breakdown for Modified Brooke volume
         const first8hTarget = modifiedBrookeTotal * 0.5;
         const second16hTarget = modifiedBrookeTotal * 0.5;
 
-        // Calculate remaining volume and hourly rate for 1st 8h window
+        // Calculate remaining volume and hourly rate for Modified Brooke 1st 8h window
         let first8hRemaining = Math.max(0, first8hTarget - prehospital);
         let first8hRate = 0;
         if (elapsed < 8.0) {
@@ -278,8 +278,24 @@
             first8hRemaining = totalRemaining;
         }
 
-        // 2nd 16h baseline hourly rate
+        // 2nd 16h baseline hourly rate for Modified Brooke
         const next16hRate = Math.round(second16hTarget / 16);
+
+        // Schedule 8h/16h breakdown for Classic Parkland volume
+        const parklandFirst8hTarget = parklandTotal * 0.5;
+        const parklandSecond16hTarget = parklandTotal * 0.5;
+        let parklandFirst8hRemaining = Math.max(0, parklandFirst8hTarget - prehospital);
+        let parklandFirst8hRate = 0;
+        if (elapsed < 8.0) {
+            const hoursLeft = 8.0 - elapsed;
+            parklandFirst8hRate = Math.round(parklandFirst8hRemaining / hoursLeft);
+        } else {
+            const totalRemaining = Math.max(0, parklandTotal - prehospital);
+            const hoursLeft = Math.max(1, 24.0 - elapsed);
+            parklandFirst8hRate = Math.round(totalRemaining / hoursLeft);
+            parklandFirst8hRemaining = totalRemaining;
+        }
+        const parklandNext16hRate = Math.round(parklandSecond16hTarget / 16);
 
         // Maintenance calculation
         const pedsMaintenance = calculatePediatricMaintenance(wt);
@@ -304,13 +320,19 @@
             parklandTotalMl: Math.round(parklandTotal),
             total24hMl: Math.round(modifiedBrookeTotal),
 
-            // Schedule & Time-Adjusted Rates
+            // Modified Brooke / ATLS 11th Schedule
             first8hTargetMl: Math.round(first8hTarget),
             first8hRemainingMl: Math.round(first8hRemaining),
             first8hHourlyRate: first8hRate,
             next16hHourlyRate: next16hRate,
             secondarySurveyRateMlHr: secondarySurveyRate,
             prehospitalInitialRateMlHr: prehospitalInitialRate,
+
+            // Classic Parkland Schedule (4 mL/kg/%)
+            parklandFirst8hTargetMl: Math.round(parklandFirst8hTarget),
+            parklandFirst8hRemainingMl: Math.round(parklandFirst8hRemaining),
+            parklandFirst8hHourlyRate: parklandFirst8hRate,
+            parklandNext16hHourlyRate: parklandNext16hRate,
 
             // Pediatric Maintenance
             pediatricMaintenance: pedsMaintenance,

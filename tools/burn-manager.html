@@ -318,63 +318,72 @@
         .tbsa-tag.tag-deg2 { border-left: 3px solid #fb923c; }
         .tbsa-tag.tag-deg3 { border-left: 3px solid #ef4444; }
 
-        /* ══ Fluid Resuscitation Schedule Card ══ */
-        .fluid-schedule-box {
-            background: #fffbeb;
-            border: 1.5px solid #fde68a;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 14px;
+        /* ══ Dual Fluid Resuscitation Schedule Comparison ══ */
+        .fluid-comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
-        .fluid-title {
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            color: #92400e;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            margin-bottom: 8px;
+        @media (max-width: 720px) {
+            .fluid-comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .fluid-formula-card {
+            border-radius: 8px;
+            padding: 12px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .fluid-formula-card.card-modified {
+            background: #fffbeb;
+            border: 2px solid #f59e0b;
+        }
+
+        .fluid-formula-card.card-parkland {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+        }
+
+        .fluid-card-top {
+            display: flex;
             justify-content: space-between;
+            align-items: center;
+            padding-bottom: 6px;
+            border-bottom: 1.5px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .fluid-hero-rate-box {
+            text-align: center;
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 8px 6px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
         }
 
         .fluid-rate-big {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 1.8rem;
             font-weight: 700;
-            color: #b45309;
             line-height: 1.1;
         }
 
-        .fluid-details-grid {
+        .fluid-formula-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
-            font-size: 12.5px;
+            gap: 6px;
+            font-size: 12px;
         }
 
-        .fluid-stat-item {
+        .fluid-mini-stat {
             background: #ffffff;
-            border: 1px solid #fef3c7;
-            border-radius: 6px;
-            padding: 8px 10px;
-        }
-
-        .fluid-stat-label {
-            font-size: 11px;
-            color: #78350f;
-            font-weight: 600;
-        }
-
-        .fluid-stat-val {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 15px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-top: 2px;
+            padding: 6px 8px;
+            border-radius: 5px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
         }
 
         /* ══ Titration Assistant ══ */
@@ -770,32 +779,69 @@
                     <span class="badge-atls" id="badge-guideline-coeff">2 mL/kg/%</span>
                 </div>
 
-                <div class="fluid-schedule-box">
-                    <div class="fluid-title">
-                        <span>อัตราสารน้ำชั่วโมงที่ 1–8 (First 8 Hours Rate)</span>
-                        <span style="font-size: 11px; color: #78350f;">Warmed Lactated Ringer's (LR)</span>
-                    </div>
-                    <div class="fluid-rate-big" id="val-first8h-rate">0 mL/hr</div>
-                    <div style="font-size: 11.5px; color: #92400e; margin-top: 4px;" id="val-time-remaining-desc">
-                        ให้ต่อเนื่องในเวลาที่เหลือของช่วง 8 ชม. แรก (หักลบสารน้ำก่อนถึง รพ. แล้ว)
+                <!-- Dual Formula Comparison Grid -->
+                <div class="fluid-comparison-grid">
+                    <!-- 1. Modified Brooke / ATLS 11th (Recommended) -->
+                    <div class="fluid-formula-card card-modified">
+                        <div class="fluid-card-top">
+                            <div>
+                                <strong style="color: #92400e; font-size: 12.5px; display: block;">Modified Brooke (ATLS 11th)</strong>
+                                <span style="font-size: 10px; color: #b45309; font-weight: 600;">Consensus Standard (Recommended)</span>
+                            </div>
+                            <span class="badge-atls" id="badge-guideline-coeff" style="font-size: 11px; font-weight: 700;">2 mL/kg/%</span>
+                        </div>
+
+                        <div class="fluid-hero-rate-box" style="border-color: #fde68a;">
+                            <div style="font-size: 10.5px; font-weight: 700; color: #78350f; text-transform: uppercase;">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                            <div class="fluid-rate-big" id="val-first8h-rate" style="font-size: 1.85rem; color: #b45309; margin: 2px 0;">0 mL/hr</div>
+                            <div style="font-size: 10px; color: #92400e;" id="val-time-remaining-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
+                        </div>
+
+                        <div class="fluid-formula-grid">
+                            <div class="fluid-mini-stat" style="border-color: #fef08a;">
+                                <div style="color: #78350f; font-size: 10px; font-weight: 600;">ยอดรวม 24 ชม.</div>
+                                <strong style="color: #0f172a; font-size: 13px;" id="val-total-24h">0 mL</strong>
+                            </div>
+                            <div class="fluid-mini-stat" style="border-color: #fef08a;">
+                                <div style="color: #78350f; font-size: 10px; font-weight: 600;">ยอด 8 ชม. แรก (50%)</div>
+                                <strong style="color: #0f172a; font-size: 13px;" id="val-first8h-target">0 mL</strong>
+                            </div>
+                            <div class="fluid-mini-stat" style="grid-column: span 2; border-color: #fef08a; display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: #78350f; font-size: 10.5px; font-weight: 600;">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
+                                <strong style="color: #0f172a; font-size: 13px;" id="val-next16h-rate">0 mL/hr</strong>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="fluid-details-grid">
-                        <div class="fluid-stat-item">
-                            <div class="fluid-stat-label">ยอดรวม 24 ชม. (Modified Brooke)</div>
-                            <div class="fluid-stat-val" id="val-total-24h">0 mL</div>
+                    <!-- 2. Classic Parkland (4 mL/kg/%) -->
+                    <div class="fluid-formula-card card-parkland">
+                        <div class="fluid-card-top">
+                            <div>
+                                <strong style="color: #334155; font-size: 12.5px; display: block;">Classic Parkland (Baxter)</strong>
+                                <span style="font-size: 10px; color: #64748b; font-weight: 600;">Traditional Formula</span>
+                            </div>
+                            <span style="font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #334155;">4 mL/kg/%</span>
                         </div>
-                        <div class="fluid-stat-item">
-                            <div class="fluid-stat-label">ยอดรวม 24 ชม. (Classic Parkland)</div>
-                            <div class="fluid-stat-val" id="val-parkland-total">0 mL</div>
+
+                        <div class="fluid-hero-rate-box" style="border-color: #e2e8f0;">
+                            <div style="font-size: 10.5px; font-weight: 700; color: #475569; text-transform: uppercase;">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                            <div class="fluid-rate-big" id="val-parkland-first8h-rate" style="font-size: 1.85rem; color: #334155; margin: 2px 0;">0 mL/hr</div>
+                            <div style="font-size: 10px; color: #64748b;">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
                         </div>
-                        <div class="fluid-stat-item">
-                            <div class="fluid-stat-label">ยอด 8 ชม. แรก (50% Volume)</div>
-                            <div class="fluid-stat-val" id="val-first8h-target">0 mL</div>
-                        </div>
-                        <div class="fluid-stat-item">
-                            <div class="fluid-stat-label">อัตราช่วง 16 ชม. ถัดไป (Next 16h)</div>
-                            <div class="fluid-stat-val" id="val-next16h-rate">0 mL/hr</div>
+
+                        <div class="fluid-formula-grid">
+                            <div class="fluid-mini-stat" style="border-color: #e2e8f0;">
+                                <div style="color: #64748b; font-size: 10px; font-weight: 600;">ยอดรวม 24 ชม.</div>
+                                <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-total">0 mL</strong>
+                            </div>
+                            <div class="fluid-mini-stat" style="border-color: #e2e8f0;">
+                                <div style="color: #64748b; font-size: 10px; font-weight: 600;">ยอด 8 ชม. แรก (50%)</div>
+                                <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-first8h-target">0 mL</strong>
+                            </div>
+                            <div class="fluid-mini-stat" style="grid-column: span 2; border-color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: #64748b; font-size: 10.5px; font-weight: 600;">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
+                                <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-next16h-rate">0 mL/hr</strong>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1056,9 +1102,12 @@
     // Fluid Displays
     const valFirst8hRate = document.getElementById('val-first8h-rate');
     const valTotal24h = document.getElementById('val-total-24h');
-    const valParklandTotal = document.getElementById('val-parkland-total');
     const valFirst8hTarget = document.getElementById('val-first8h-target');
     const valNext16hRate = document.getElementById('val-next16h-rate');
+    const valParklandFirst8hRate = document.getElementById('val-parkland-first8h-rate');
+    const valParklandTotal = document.getElementById('val-parkland-total');
+    const valParklandFirst8hTarget = document.getElementById('val-parkland-first8h-target');
+    const valParklandNext16hRate = document.getElementById('val-parkland-next16h-rate');
     const badgeGuidelineCoeff = document.getElementById('badge-guideline-coeff');
     const pedsMaintenanceBanner = document.getElementById('peds-maintenance-banner');
     const valPedsRate = document.getElementById('val-peds-rate');
@@ -1188,9 +1237,13 @@
         badgeGuidelineCoeff.textContent = `${fluid.guidelineCoefficient} mL/kg/%`;
         valFirst8hRate.textContent = `${fluid.first8hHourlyRate} mL/hr`;
         valTotal24h.textContent = `${fluid.modifiedBrookeTotalMl} mL`;
-        valParklandTotal.textContent = `${fluid.parklandTotalMl} mL`;
         valFirst8hTarget.textContent = `${fluid.first8hTargetMl} mL`;
         valNext16hRate.textContent = `${fluid.next16hHourlyRate} mL/hr`;
+
+        if (valParklandFirst8hRate) valParklandFirst8hRate.textContent = `${fluid.parklandFirst8hHourlyRate} mL/hr`;
+        if (valParklandTotal) valParklandTotal.textContent = `${fluid.parklandTotalMl} mL`;
+        if (valParklandFirst8hTarget) valParklandFirst8hTarget.textContent = `${fluid.parklandFirst8hTargetMl} mL`;
+        if (valParklandNext16hRate) valParklandNext16hRate.textContent = `${fluid.parklandNext16hHourlyRate} mL/hr`;
 
         // Pediatric Maintenance
         if (fluid.requiresMaintenanceDextrose) {
@@ -1270,6 +1323,9 @@
         const tbsa = valResuscitativeTbsa.textContent;
         const first8h = valFirst8hRate.textContent;
         const total24h = valTotal24h.textContent;
+        const parklandTotal = valParklandTotal.textContent;
+        const parklandFirst8h = valParklandFirst8hRate ? valParklandFirst8hRate.textContent : '--';
+        const parklandNext16h = valParklandNext16hRate ? valParklandNext16hRate.textContent : '--';
         const targetUo = valTargetUoText.textContent;
         const cyanide = valCyanideDose.textContent;
 
@@ -1277,9 +1333,15 @@
 - Patient: Age ${age} yo, Weight ${weight} kg
 - Burn Mechanism: ${mech} | Time post-burn: ${elapsed} hours | Prehospital fluid: ${prehospital} mL
 - Total Resuscitative %TBSA: ${tbsa}% (2nd & 3rd Degree, Lund & Browder age-adjusted)
-- Fluid Plan (ATLS 11th / Modified Brooke):
-  * Total 24h Volume: ${total24h}
-  * Current 1st 8h Infusion Rate: ${first8h} (Warmed Lactated Ringer's)
+- Fluid Resuscitation Plan:
+  * Modified Brooke / ATLS 11th (${badgeGuidelineCoeff.textContent}):
+    - Total 24h: ${total24h}
+    - 1st 8h Infusion Rate: ${first8h} (Warmed Lactated Ringer's)
+    - Next 16h Infusion Rate: ${valNext16hRate.textContent}
+  * Classic Parkland (4 mL/kg/%):
+    - Total 24h: ${parklandTotal}
+    - 1st 8h Infusion Rate: ${parklandFirst8h}
+    - Next 16h Infusion Rate: ${parklandNext16h}
   * Target Urine Output: ${targetUo}
 - Toxicology & Airway:
   * Inhalation Risk: ${inhalTriageTitle.textContent}

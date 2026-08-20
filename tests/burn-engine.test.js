@@ -401,6 +401,8 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             assert.equal(doc.getElementById('val-resuscitative-tbsa').textContent, '13.0');
             assert.equal(doc.getElementById('val-total-24h').textContent, '1820 mL');
             assert.equal(doc.getElementById('val-first8h-rate').textContent, '130 mL/hr');
+            assert.equal(doc.getElementById('val-parkland-total').textContent, '3640 mL');
+            assert.equal(doc.getElementById('val-parkland-first8h-rate').textContent, '260 mL/hr');
         });
 
         it('Direct % TBSA input immediately drives fluid calculations without painting', () => {
@@ -416,6 +418,8 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             assert.equal(doc.getElementById('val-resuscitative-tbsa').textContent, '25.0');
             assert.equal(doc.getElementById('val-total-24h').textContent, '3500 mL');
             assert.equal(doc.getElementById('val-first8h-rate').textContent, '250 mL/hr');
+            assert.equal(doc.getElementById('val-parkland-total').textContent, '7000 mL');
+            assert.equal(doc.getElementById('val-parkland-first8h-rate').textContent, '500 mL/hr');
         });
 
         it('1st Degree burn painting is tracked visually but excluded from resuscitative TBSA', () => {
