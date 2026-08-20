@@ -1,3 +1,19 @@
+## [2.7.1] — 2026-08-20
+
+### Enhanced & Hardened (Burn Hub Shock Bolus Selector, Airway Pearls & Audit Fixes)
+- **Burn Management Hub (`tools/burn-manager.html`, `shared/burn-engine.js`):**
+  - **Interactive Shock / Hypotension Fluid Bolus (ATLS 11th & Tintinalli):** Added real-time bolus dose selector (`10 mL/kg`, `15 mL/kg`, `20 mL/kg`) with dynamic volume computation (e.g., 1,400 mL for 70 kg at 20 mL/kg) and +20–30% ongoing infusion adjustment.
+  - **Dynamic Post-8h Catch-up Schedule:** Added `isPost8h` state and dynamic schedule header labeling (*"อัตราชดเชยหลัง 8 ชม. (Remaining Catch-up Rate)"*) when patient presents $\ge 8$ hours post-burn.
+  - **Strict Pediatric Maintenance Boundary (ATLS Table 9-1):** Aligned D5LR dextrose maintenance indication strictly to children $\le 30\text{ kg}$.
+  - **Direct Entry ABA Referral Sync:** Fixed direct % TBSA entry to immediately sync with ABA 10% TBSA criteria and 3rd-degree burn tracking.
+  - **Airway & Drug Safety Pearls:** Added clinical guidance banner for adult ETT size ($\ge 7.5\text{--}8.0\text{ mm}$) and Succinylcholine contraindication $>24\text{h}$ post-burn (Lethal Hyperkalemia risk).
+  - **Lund & Browder Nomogram Breakdown Card:** Added dynamic age proportion reference under body painter.
+  - **Dead CSS & Whitespace Cleanup:** Purged unreferenced CSS variables in `:root` and formatted markup.
+- **Automated Test Coverage (`tests/burn-engine.test.js`):**
+  - Expanded test suite to 61 tests across 20 suites covering customizable shock bolus, post-8h schedule, strict $\le 30\text{ kg}$ maintenance boundary, and interactive DOM buttons (302 total tests passing across 32 suites with 100% green pass rate).
+- **PWA Cache (`service-worker.js`):**
+  - Bumped cache version to `er-hub-v60` (`20/08/2569`).
+
 ## [2.7.0] — 2026-08-20
 
 ### Added & Hardened (T10 Burn Management & Resuscitation Hub — ATLS 11th / ABA 2023)

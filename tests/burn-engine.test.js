@@ -1,6 +1,33 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { JSDOM } = require('jsdom');
 const BurnEngine = require('../shared/burn-engine.js');
+
+function loadBurnManagerDom() {
+    const htmlPath = path.join(__dirname, '..', 'tools', 'burn-manager.html');
+    let html = fs.readFileSync(htmlPath, 'utf8');
+    const dir = path.dirname(htmlPath);
+
+    // Inline local scripts for deterministic node:test execution
+    html = html.replace(/<script src="([^"]+)"><\/script>/g, (match, src) => {
+        if (src.startsWith('http')) return match;
+        const scriptPath = path.resolve(dir, src);
+        if (fs.existsSync(scriptPath)) {
+            return '<script>' + fs.readFileSync(scriptPath, 'utf8') + '</script>';
+        }
+        return match;
+    });
+
+    const dom = new JSDOM(html, {
+        url: 'file://' + htmlPath,
+        runScripts: 'dangerously'
+    });
+
+    dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+    return dom.window;
+}
 
 describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
 
@@ -238,7 +265,10 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             const titration = BurnEngine.getUrineOutputTitration(400, 25, target, true, 70);
             assert.equal(titration.status, 'SHOCK_HYPOTENSION');
             assert.equal(titration.action, 'FLUID_BOLUS_AND_INCREASE');
-            assert.ok(titration.bolusAdvice.includes('700–1400 mL')); // 10-20 mL/kg for 70kg
+            assert.equal(titration.bolusTotalMl, 1400); // 20 mL/kg default
+            assert.equal(titration.bolusRangeMinMl, 700);
+            assert.equal(titration.bolusRangeMaxMl, 1400);
+            assert.ok(titration.bolusAdvice.includes('1400 mL (20 mL/kg)'));
         });
     });
 
@@ -334,34 +364,6 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
     });
 
     describe('10. DOM Integration Test: tools/burn-manager.html', () => {
-        const fs = require('node:fs');
-        const path = require('node:path');
-        const { JSDOM } = require('jsdom');
-
-        function loadBurnManagerDom() {
-            const htmlPath = path.join(__dirname, '..', 'tools', 'burn-manager.html');
-            let html = fs.readFileSync(htmlPath, 'utf8');
-            const dir = path.dirname(htmlPath);
-
-            // Inline local scripts for deterministic node:test execution
-            html = html.replace(/<script src="([^"]+)"><\/script>/g, (match, src) => {
-                if (src.startsWith('http')) return match;
-                const scriptPath = path.resolve(dir, src);
-                if (fs.existsSync(scriptPath)) {
-                    return '<script>' + fs.readFileSync(scriptPath, 'utf8') + '</script>';
-                }
-                return match;
-            });
-
-            const dom = new JSDOM(html, {
-                url: 'file://' + htmlPath,
-                runScripts: 'dangerously'
-            });
-
-            dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
-            return dom.window;
-        }
-
         it('Loads DOM, SVG body parts, and elements without throwing', () => {
             const win = loadBurnManagerDom();
             const doc = win.document;
@@ -496,7 +498,7 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
 
             // 70kg adult cyanide dose
             assert.ok(doc.getElementById('val-cyanide-dose').textContent.includes('4.9 g IV'));
-            assert.ok(doc.getElementById('val-thiosulfate-dose').textContent.includes('28.9 g (115.5 mL 25%)') || doc.getElementById('val-thiosulfate-dose').textContent.includes('12.5 g (50.0 mL 25%)') || doc.getElementById('val-thiosulfate-dose').textContent.includes('g'));
+            assert.equal(doc.getElementById('val-thiosulfate-dose').textContent, '12.5 g (50 mL 25%)');
 
             // COHb 30% triggers HBO alert
             const inputCohb = doc.getElementById('input-cohb');
@@ -595,6 +597,136 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             const res = BurnEngine.calculateTBSA(25, allBurned);
             assert.equal(res.tbsaResuscitative, 100);
             assert.equal(res.tbsaTotal, 100);
+        });
+    });
+
+    describe('16. Shock / Hypotension Titration with Customizable Bolus (10–20 mL/kg)', () => {
+        it('70kg adult in shock at 20 mL/kg yields 1,400 mL bolus and +25% suggested rate', () => {
+            const target = BurnEngine.getTargetUrineOutput(70, 30, false, false);
+            const titration = BurnEngine.getUrineOutputTitration(400, 10, target, true, 70, 20);
+            assert.equal(titration.status, 'SHOCK_HYPOTENSION');
+            assert.equal(titration.bolusMlKg, 20);
+            assert.equal(titration.bolusTotalMl, 1400);
+            assert.equal(titration.suggestedRate, 500); // 400 * 1.25
+            assert.ok(titration.bolusAdvice.includes('1400 mL (20 mL/kg)'));
+        });
+
+        it('70kg adult in shock at 10 mL/kg yields 700 mL bolus', () => {
+            const target = BurnEngine.getTargetUrineOutput(70, 30, false, false);
+            const titration = BurnEngine.getUrineOutputTitration(400, 10, target, true, 70, 10);
+            assert.equal(titration.bolusMlKg, 10);
+            assert.equal(titration.bolusTotalMl, 700);
+            assert.ok(titration.bolusAdvice.includes('700 mL (10 mL/kg)'));
+        });
+
+        it('70kg adult in shock at 15 mL/kg yields 1,050 mL bolus', () => {
+            const target = BurnEngine.getTargetUrineOutput(70, 30, false, false);
+            const titration = BurnEngine.getUrineOutputTitration(400, 10, target, true, 70, 15);
+            assert.equal(titration.bolusMlKg, 15);
+            assert.equal(titration.bolusTotalMl, 1050);
+            assert.ok(titration.bolusAdvice.includes('1050 mL (15 mL/kg)'));
+        });
+
+        it('Bolus clamping guards against values below 10 or above 20 mL/kg', () => {
+            const target = BurnEngine.getTargetUrineOutput(70, 30, false, false);
+            const under = BurnEngine.getUrineOutputTitration(400, 10, target, true, 70, 5);
+            assert.equal(under.bolusMlKg, 10, 'Clamps minimum to 10 mL/kg');
+            const over = BurnEngine.getUrineOutputTitration(400, 10, target, true, 70, 35);
+            assert.equal(over.bolusMlKg, 20, 'Clamps maximum to 20 mL/kg');
+        });
+    });
+
+    describe('17. Strict Pediatric Maintenance <=30kg Boundary (ATLS Table 9-1)', () => {
+        it('12yo 45kg child (>30kg) does not trigger dextrose maintenance', () => {
+            const fluid = BurnEngine.calculateFluidRequirements({
+                weightKg: 45,
+                tbsaPct: 20,
+                ageYears: 12
+            });
+            assert.equal(fluid.requiresMaintenanceDextrose, false, 'Children >30kg do not require D5LR maintenance');
+        });
+
+        it('6yo 20kg child (<=30kg) triggers dextrose maintenance', () => {
+            const fluid = BurnEngine.calculateFluidRequirements({
+                weightKg: 20,
+                tbsaPct: 20,
+                ageYears: 6
+            });
+            assert.equal(fluid.requiresMaintenanceDextrose, true, 'Children <=30kg require D5LR maintenance');
+            assert.equal(fluid.pediatricMaintenance.hourlyRateMlHr, 60); // 40 + (10 * 2) = 60 mL/hr
+        });
+    });
+
+    describe('18. Post-8h Catch-up Schedule & Flag', () => {
+        it('hoursElapsed >= 8 sets isPost8h to true and calculates remaining hours rate', () => {
+            const fluid = BurnEngine.calculateFluidRequirements({
+                weightKg: 70,
+                tbsaPct: 30,
+                ageYears: 30,
+                hoursElapsed: 10,
+                prehospitalFluidGivenMl: 1000
+            });
+            assert.equal(fluid.isPost8h, true);
+            // Modified Brooke total = 2 * 70 * 30 = 4200 mL
+            // Remaining volume = 4200 - 1000 = 3200 mL
+            // Remaining hours = 24 - 10 = 14 hours
+            // Rate = 3200 / 14 = 228.57 -> 229 mL/hr
+            assert.equal(fluid.first8hHourlyRate, 229);
+        });
+    });
+
+    describe('19. Airway Safety Pearls Export', () => {
+        it('AIRWAY_SAFETY_PEARLS provides succinylcholine and ETT size standards', () => {
+            assert.ok(BurnEngine.AIRWAY_SAFETY_PEARLS);
+            assert.equal(BurnEngine.AIRWAY_SAFETY_PEARLS.succinylcholineWarningHours, 24);
+            assert.ok(BurnEngine.AIRWAY_SAFETY_PEARLS.succinylcholineWarning.includes('Succinylcholine'));
+            assert.equal(BurnEngine.AIRWAY_SAFETY_PEARLS.ettSizeAdultMin, 7.5);
+        });
+    });
+
+    describe('20. DOM Interactive Shock Bolus Buttons & Dynamic Schedule Labels', () => {
+        it('Selecting shock checkbox and clicking 15 mL/kg bolus button updates UI and calculated volume', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            const chkHypo = doc.getElementById('check-hypotensive');
+            chkHypo.checked = true;
+            chkHypo.dispatchEvent(new win.Event('change', { bubbles: true }));
+
+            const panel = doc.getElementById('shock-bolus-panel');
+            assert.equal(panel.style.display, 'block');
+
+            // Default 70kg at 20 mL/kg = 1,400 mL
+            assert.equal(doc.getElementById('val-shock-bolus-vol').textContent, '1,400 mL');
+
+            // Click 15 mL/kg button
+            const btn15 = doc.querySelector('.bolus-btn[data-bolus="15"]');
+            assert.ok(btn15);
+            btn15.dispatchEvent(new win.Event('click', { bubbles: true }));
+
+            // 70kg * 15 = 1,050 mL
+            assert.equal(doc.getElementById('val-shock-bolus-vol').textContent, '1,050 mL');
+
+            // Click 10 mL/kg button
+            const btn10 = doc.querySelector('.bolus-btn[data-bolus="10"]');
+            assert.ok(btn10);
+            btn10.dispatchEvent(new win.Event('click', { bubbles: true }));
+
+            // 70kg * 10 = 700 mL
+            assert.equal(doc.getElementById('val-shock-bolus-vol').textContent, '700 mL');
+        });
+
+        it('Post-8h elapsed time updates dynamic schedule header labels', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            const inputElapsed = doc.getElementById('input-elapsed');
+            inputElapsed.value = '10';
+            inputElapsed.dispatchEvent(new win.Event('input', { bubbles: true }));
+
+            const lblFirst8h = doc.getElementById('lbl-first8h-rate');
+            assert.ok(lblFirst8h.textContent.includes('อัตราชดเชยหลัง 8 ชม.'));
+            assert.ok(lblFirst8h.textContent.includes('14h Left'));
         });
     });
 });

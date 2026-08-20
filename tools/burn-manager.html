@@ -16,14 +16,8 @@
             --burn-bg-light: #fffbeb;
             --burn-border: #fde68a;
             --burn-deg1: #fef08a;
-            --burn-deg1-dark: #ca8a04;
             --burn-deg2: #fb923c;
-            --burn-deg2-dark: #c2410c;
             --burn-deg3: #ef4444;
-            --burn-deg3-dark: #991b1b;
-            --burn-deg0: #e2e8f0;
-            --surface-bg: #f8fafc;
-            --card-border: #e2e8f0;
             --text-main: #0f172a;
             --text-muted: #64748b;
         }
@@ -51,9 +45,6 @@
             padding: 20px 24px;
             box-sizing: border-box;
         }
-
-
-
 
         .badge-atls {
             font-family: 'Inter Tight', sans-serif;
@@ -730,12 +721,28 @@
                 </div>
             </div>
 
-            <!-- Fast Palmar increment buttons -->
+            <!-- Fast Palmar increment buttons & Lund-Browder Reference -->
             <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: 12px; color: #64748b;">
                 <span>💡 คลิกส่วนของร่างกายเพื่อลงสีตามระดับความลึก หรือใช้ฝ่ามือผู้ป่วย (Palmar Surface ≈ 1% TBSA):</span>
                 <button type="button" id="btn-palm-plus" class="btn-action btn-outline" style="padding: 4px 10px; font-size: 11px;">
                     ✋ +1% Palm
                 </button>
+            </div>
+
+            <!-- Lund-Browder Age Proportions Quick Reference -->
+            <div style="margin-top: 10px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #475569;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="color: #0f172a;">📐 Lund & Browder Age Proportions Reference:</strong>
+                    <span id="lund-ref-active-tag" style="font-weight: 700; color: var(--burn-primary-dark);">Adult Bracket</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 4px; margin-top: 6px; font-size: 10.5px;">
+                    <div>• <strong>ศีรษะ (Head):</strong> <span id="ref-val-head">7% (Infant 19%)</span></div>
+                    <div>• <strong>ต้นขา (Thighs):</strong> <span id="ref-val-thigh">19% (Infant 11%)</span></div>
+                    <div>• <strong>หน้าแข้ง (Legs):</strong> <span id="ref-val-leg">14% (Infant 10%)</span></div>
+                    <div>• <strong>ลำตัว (Trunk):</strong> 26% (หน้า 13%, หลัง 13%)</div>
+                    <div>• <strong>แขน (Upper Limbs):</strong> 18% (ข้างละ 9%)</div>
+                    <div>• <strong>อวัยวะเพศ (Genitalia):</strong> 1%</div>
+                </div>
             </div>
         </div>
 
@@ -801,7 +808,7 @@
                         </div>
 
                         <div class="fluid-hero-rate-box" style="border-color: #fde68a;">
-                            <div style="font-size: 10.5px; font-weight: 700; color: #78350f; text-transform: uppercase;">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                            <div style="font-size: 10.5px; font-weight: 700; color: #78350f; text-transform: uppercase;" id="lbl-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
                             <div class="fluid-rate-big" id="val-first8h-rate" style="font-size: 1.85rem; color: #b45309; margin: 2px 0;">0 mL/hr</div>
                             <div style="font-size: 10px; color: #92400e;" id="val-time-remaining-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
                         </div>
@@ -833,7 +840,7 @@
                         </div>
 
                         <div class="fluid-hero-rate-box" style="border-color: #e2e8f0;">
-                            <div style="font-size: 10.5px; font-weight: 700; color: #475569; text-transform: uppercase;">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                            <div style="font-size: 10.5px; font-weight: 700; color: #475569; text-transform: uppercase;" id="lbl-parkland-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
                             <div class="fluid-rate-big" id="val-parkland-first8h-rate" style="font-size: 1.85rem; color: #334155; margin: 2px 0;">0 mL/hr</div>
                             <div style="font-size: 10px; color: #64748b;">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
                         </div>
@@ -859,7 +866,7 @@
                 <div id="peds-maintenance-banner" style="background: #f5f3ff; border: 1.5px solid #ddd6fe; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; display: none;">
                     <strong style="color: #6b21a8;">👶 Pediatric Maintenance Fluid (Holliday-Segar 4-2-1):</strong>
                     <div style="color: #4c1d95; margin-top: 2px;">
-                        ให้ <strong>D5LR หรือ D5 0.45% NaCl</strong> อัตรา <span id="val-peds-rate" style="font-family: monospace; font-weight: 700; font-size: 14px;">0 mL/hr</span> ควบคู่ไปกับสารน้ำกู้ชีพทาง IV อีกเส้น เพื่อป้องกันภาวะน้ำตาลในเลือดต่ำ (Hypoglycemia)
+                        ให้ <strong>D5LR หรือ D5 0.45% NaCl</strong> อัตรา <span id="val-peds-rate" style="font-family: monospace; font-weight: 700; font-size: 14px;">0 mL/hr</span> ควบคู่ไปกับสารน้ำกู้ชีพทาง IV อีกเส้น เพื่อป้องกันภาวะน้ำตาลในเลือดต่ำ (Hypoglycemia) ในเด็ก $\le 30\text{ kg}$
                     </div>
                 </div>
 
@@ -877,6 +884,26 @@
                         <label style="font-size: 11.5px; margin-left: auto; color: #991b1b; display: flex; align-items: center; gap: 4px; font-weight: 700; cursor: pointer;">
                             <input type="checkbox" id="check-hypotensive" style="accent-color: #ef4444;"> ภาวะช็อก/ความดันตก (Shock)
                         </label>
+                    </div>
+
+                    <!-- Shock Bolus Interactive Subpanel -->
+                    <div id="shock-bolus-panel" style="display: none; background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 8px; padding: 10px 12px; margin-top: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                            <div>
+                                <strong style="color: #991b1b; font-size: 12px;">🚨 Shock / Hypotension Fluid Bolus (ATLS 11th & Tintinalli):</strong>
+                                <div style="font-size: 11px; color: #7f1d1d;">เลือกขนาดสารน้ำอุ่น (Warmed Balanced LR) ที่ต้องการให้ IV Bolus ทันที:</div>
+                            </div>
+                            <div class="shock-bolus-selector" style="display: flex; gap: 6px;">
+                                <button type="button" class="bolus-btn btn-action" data-bolus="10" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #ef4444; background: #ffffff; color: #991b1b;">10 mL/kg</button>
+                                <button type="button" class="bolus-btn btn-action" data-bolus="15" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #ef4444; background: #ffffff; color: #991b1b;">15 mL/kg</button>
+                                <button type="button" class="bolus-btn btn-action active" data-bolus="20" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #991b1b; background: #ef4444; color: #ffffff;">20 mL/kg</button>
+                            </div>
+                        </div>
+                        <div style="margin-top: 8px; display: flex; align-items: baseline; gap: 8px; background: #ffffff; padding: 6px 10px; border-radius: 5px; border: 1px solid #fecaca;">
+                            <span style="font-size: 11.5px; font-weight: 600; color: #7f1d1d;">ปริมาณ Bolus ที่คำนวณได้:</span>
+                            <span id="val-shock-bolus-vol" style="font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; color: #991b1b;">1,400 mL</span>
+                            <span style="font-size: 11px; color: #991b1b;">IV over 15–30 min (Warmed LR / Hartmann's)</span>
+                        </div>
                     </div>
 
                     <!-- Dynamic Titration Advice Box -->
@@ -898,6 +925,20 @@
                 <span>▼</span>
             </div>
             <div class="accordion-content">
+                <!-- Airway & Pharmacology Clinical Pearls Box -->
+                <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; font-size: 11.5px; line-height: 1.45;">
+                    <div style="display: flex; gap: 6px; align-items: flex-start;">
+                        <span style="font-size: 14px;">⭐</span>
+                        <div>
+                            <strong style="color: #1e40af;">Airway & Drug Safety Pearls (ATLS 11th & Tintinalli):</strong>
+                            <ul style="margin: 3px 0 0 0; padding-left: 16px; color: #1e3a8a;">
+                                <li><strong>ขนาด ETT ผู้ใหญ่:</strong> ควรใช้ ETT ขนาดใหญ่ (เบอร์ $\ge$ <strong>7.5–8.0 mm</strong>) เพื่อให้สามารถส่องกล้อง Fiberoptic Bronchoscopy และดูดเสมหะเขม่าเหนียวได้</li>
+                                <li><strong>ข้อห้ามใช้ Succinylcholine:</strong> <strong>ห้ามใช้ Succinylcholine หลังเกิดเหตุเกิน 24 ชั่วโมง</strong> เนื่องจากเสี่ยงต่อภาวะ Lethal Hyperkalemia รุนแรงถึงแก่ชีวิตจาก Upregulation ของ Acetylcholine Receptors</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 <div style="font-size: 12px; color: #475569; margin-bottom: 8px;">
                     ประเมินสัญญาณเตือนทางเดินหายใจอุดกั้นและพิษจากควันไฟตามแนวทาง <strong>ATLS 11th Edition</strong>:
                 </div>
@@ -1174,6 +1215,7 @@
 
     // State
     let activeDegree = 2; // Default to 2nd degree
+    let selectedBolusMlKg = 20; // Default shock bolus 20 mL/kg
     const paintedRegions = {}; // regionKey -> degree (0, 1, 2, 3)
 
     // DOM Elements
@@ -1206,11 +1248,15 @@
     const badgeGuidelineCoeff = document.getElementById('badge-guideline-coeff');
     const pedsMaintenanceBanner = document.getElementById('peds-maintenance-banner');
     const valPedsRate = document.getElementById('val-peds-rate');
+    const lblFirst8hRate = document.getElementById('lbl-first8h-rate');
+    const lblParklandFirst8hRate = document.getElementById('lbl-parkland-first8h-rate');
 
-    // UO Titration Displays
+    // UO Titration & Shock Displays
     const valTargetUoText = document.getElementById('val-target-uo-text');
     const inputMeasuredUo = document.getElementById('input-measured-uo');
     const checkHypotensive = document.getElementById('check-hypotensive');
+    const shockBolusPanel = document.getElementById('shock-bolus-panel');
+    const valShockBolusVol = document.getElementById('val-shock-bolus-vol');
     const titrationAdviceBox = document.getElementById('titration-advice-box');
     const titrationStatusTitle = document.getElementById('titration-status-title');
     const titrationStatusDesc = document.getElementById('titration-status-desc');
@@ -1262,6 +1308,24 @@
             document.querySelectorAll('.degree-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             activeDegree = Number(this.dataset.degree);
+        });
+    });
+
+    // Wire Shock Bolus Buttons (10, 15, 20 mL/kg)
+    document.querySelectorAll('.bolus-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.bolus-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = '#ffffff';
+                b.style.color = '#991b1b';
+                b.style.borderColor = '#ef4444';
+            });
+            this.classList.add('active');
+            this.style.background = '#ef4444';
+            this.style.color = '#ffffff';
+            this.style.borderColor = '#991b1b';
+            selectedBolusMlKg = Number(this.dataset.bolus) || 20;
+            recalculateAll(false);
         });
     });
 
@@ -1329,6 +1393,25 @@
         const colNames = { '0': '<1y (Infant)', '1': '1–4y (Toddler)', '5': '5–9y (Child)', '10': '10–14y', '15': '15–17y (Adolescent)', 'adult': 'Adult (≥18y)' };
         lundColumnBadge.textContent = `Lund-Browder Bracket: ${colNames[col] || col}`;
 
+        // Sync Lund-Browder Reference Card
+        const lundRefActiveTag = document.getElementById('lund-ref-active-tag');
+        const refValHead = document.getElementById('ref-val-head');
+        const refValThigh = document.getElementById('ref-val-thigh');
+        const refValLeg = document.getElementById('ref-val-leg');
+        if (lundRefActiveTag) lundRefActiveTag.textContent = `${colNames[col] || col} Bracket`;
+        if (refValHead && BurnEngine.LUND_BROWDER_TABLE) {
+            const headTotal = (BurnEngine.LUND_BROWDER_TABLE.head_ant[col] + BurnEngine.LUND_BROWDER_TABLE.head_post[col]).toFixed(1);
+            refValHead.textContent = `${headTotal}% (Ant ${BurnEngine.LUND_BROWDER_TABLE.head_ant[col]}%, Post ${BurnEngine.LUND_BROWDER_TABLE.head_post[col]}%)`;
+        }
+        if (refValThigh && BurnEngine.LUND_BROWDER_TABLE) {
+            const thighEach = (BurnEngine.LUND_BROWDER_TABLE.thigh_r_ant[col] + BurnEngine.LUND_BROWDER_TABLE.thigh_r_post[col]).toFixed(1);
+            refValThigh.textContent = `${(thighEach * 2).toFixed(1)}% (ข้างละ ${thighEach}%)`;
+        }
+        if (refValLeg && BurnEngine.LUND_BROWDER_TABLE) {
+            const legEach = (BurnEngine.LUND_BROWDER_TABLE.leg_lower_r_ant[col] + BurnEngine.LUND_BROWDER_TABLE.leg_lower_r_post[col]).toFixed(1);
+            refValLeg.textContent = `${(legEach * 2).toFixed(1)}% (ข้างละ ${legEach}%)`;
+        }
+
         let resuscitativeTbsa = 0;
         let tbsaRes = null;
 
@@ -1369,6 +1452,18 @@
         valFirst8hTarget.textContent = `${fluid.first8hTargetMl} mL`;
         valNext16hRate.textContent = `${fluid.next16hHourlyRate} mL/hr`;
 
+        // Update Dynamic Header Labels for Post-8h Catch-up Schedule
+        if (lblFirst8hRate && lblParklandFirst8hRate) {
+            if (elapsed >= 8.0) {
+                const hoursLeft = Math.max(1, 24 - elapsed);
+                lblFirst8hRate.textContent = `อัตราชดเชยหลัง 8 ชม. (Catch-up: ${hoursLeft}h Left)`;
+                lblParklandFirst8hRate.textContent = `อัตราชดเชยหลัง 8 ชม. (Catch-up: ${hoursLeft}h Left)`;
+            } else {
+                lblFirst8hRate.textContent = 'อัตรา 8 ชม. แรก (First 8h Rate)';
+                lblParklandFirst8hRate.textContent = 'อัตรา 8 ชม. แรก (First 8h Rate)';
+            }
+        }
+
         // Prehospital Initial Rate (ATLS 11th Table 8-3)
         const valPrehospitalRate = document.getElementById('val-prehospital-rate');
         if (valPrehospitalRate) valPrehospitalRate.textContent = `${fluid.prehospitalInitialRateMlHr} mL/hr`;
@@ -1378,7 +1473,7 @@
         if (valParklandFirst8hTarget) valParklandFirst8hTarget.textContent = `${fluid.parklandFirst8hTargetMl} mL`;
         if (valParklandNext16hRate) valParklandNext16hRate.textContent = `${fluid.parklandNext16hHourlyRate} mL/hr`;
 
-        // Pediatric Maintenance
+        // Pediatric Maintenance (Holliday-Segar <=30kg)
         if (fluid.requiresMaintenanceDextrose) {
             pedsMaintenanceBanner.style.display = 'block';
             valPedsRate.textContent = `${fluid.pediatricMaintenance.hourlyRateMlHr} mL/hr`;
@@ -1386,13 +1481,20 @@
             pedsMaintenanceBanner.style.display = 'none';
         }
 
-        // 3. Urine Output & Titration
+        // 3. Urine Output & Titration with Shock Bolus
         const targetUO = BurnEngine.getTargetUrineOutput(weight, age, isElectrical, hasPigmenturia);
         valTargetUoText.textContent = `${targetUO.targetMlKgHr} mL/kg/hr (${targetUO.targetMlHrMin}${targetUO.targetMlHrMin !== targetUO.targetMlHrMax ? '–' + targetUO.targetMlHrMax : ''} mL/hr)`;
 
         const measuredUO = Number(inputMeasuredUo.value) || 0;
         const isHypo = checkHypotensive.checked;
-        const titration = BurnEngine.getUrineOutputTitration(fluid.first8hHourlyRate, measuredUO, targetUO, isHypo, weight);
+        const titration = BurnEngine.getUrineOutputTitration(fluid.first8hHourlyRate, measuredUO, targetUO, isHypo, weight, selectedBolusMlKg);
+
+        if (shockBolusPanel) {
+            shockBolusPanel.style.display = isHypo ? 'block' : 'none';
+        }
+        if (valShockBolusVol && isHypo) {
+            valShockBolusVol.textContent = `${titration.bolusTotalMl.toLocaleString()} mL`;
+        }
 
         titrationAdviceBox.className = `titration-box ${titration.status === 'SHOCK_HYPOTENSION' ? 'alert-shock' : (titration.status === 'UNDER_RESUSCITATION' ? 'alert-under' : '')}`;
         titrationStatusTitle.textContent = titration.message;
@@ -1530,7 +1632,7 @@
             if (valThiosulfateDose) valThiosulfateDose.textContent = '--';
         }
 
-        // 6. ABA Referral Criteria Evaluation
+        // 6. ABA Referral Criteria Evaluation (Works for both SVG painted and Direct Entry)
         if (abaContainer && BurnEngine.ABA_REFERRAL_CRITERIA) {
             const hasSpecialAreas = Boolean(
                 paintedRegions.head_ant || paintedRegions.head_post ||
@@ -1538,7 +1640,7 @@
                 paintedRegions.foot_r_ant || paintedRegions.foot_r_post || paintedRegions.foot_l_ant || paintedRegions.foot_l_post ||
                 paintedRegions.genitalia
             );
-            const has3rdDeg = Boolean(tbsaRes && tbsaRes.deg3Pct > 0);
+            const has3rdDeg = Boolean((tbsaRes && tbsaRes.deg3Pct > 0) || (paintedRegions && Object.values(paintedRegions).some(d => d === 3)));
 
             const autoCriteria = {
                 'aba_tbsa10': resuscitativeTbsa >= 10,
@@ -1603,20 +1705,22 @@
         const thiosulfate = document.getElementById('val-thiosulfate-dose') ? document.getElementById('val-thiosulfate-dose').textContent : '--';
         const coSeverity = document.getElementById('co-severity-badge') ? document.getElementById('co-severity-badge').textContent : '--';
         const abaBadge = document.getElementById('aba-referral-badge') ? document.getElementById('aba-referral-badge').textContent : '0/10';
+        const isHypo = checkHypotensive.checked;
+        const shockBolusNote = isHypo ? `\n- 🚨 Resuscitation Shock Bolus: Warmed LR ${Math.round(weight * selectedBolusMlKg).toLocaleString()} mL (${selectedBolusMlKg} mL/kg) IV in 15–30 min` : '';
 
         const note = `[MNRH ED BURN RESUSCITATION NOTE]
 - Patient: Age ${age} yo, Weight ${weight} kg
 - Burn Mechanism: ${mech} | Time post-burn: ${elapsed} hours | Prehospital fluid: ${prehospital} mL
-- Total Resuscitative %TBSA: ${tbsa}% (2nd & 3rd Degree, Lund & Browder age-adjusted)
+- Total Resuscitative %TBSA: ${tbsa}% (2nd & 3rd Degree, Lund & Browder age-adjusted)${shockBolusNote}
 - Fluid Resuscitation Plan:
   * EMS Initial Rate: ${prehospitalRate} (ATLS Table 8-3)
   * Modified Brooke / ATLS 11th (${badgeGuidelineCoeff.textContent}):
     - Total 24h: ${total24h}
-    - 1st 8h Infusion Rate: ${first8h} (Warmed Lactated Ringer's)
+    - 1st 8h / Catch-up Infusion Rate: ${first8h} (Warmed Lactated Ringer's)
     - Next 16h Infusion Rate: ${valNext16hRate.textContent}
   * Classic Parkland (4 mL/kg/%):
     - Total 24h: ${parklandTotal}
-    - 1st 8h Infusion Rate: ${parklandFirst8h}
+    - 1st 8h / Catch-up Infusion Rate: ${parklandFirst8h}
     - Next 16h Infusion Rate: ${parklandNext16h}
   * Target Urine Output: ${targetUo}
 - Toxicology & Airway:

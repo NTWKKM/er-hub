@@ -315,6 +315,8 @@
             isElectrical: isElectrical,
             guidelineCoefficient: coeff,
             isMajorBurn: tbsa >= 20.0,
+            isPost8h: elapsed >= 8.0,
+            hoursElapsed: elapsed,
             
             // Volume Totals
             modifiedBrookeTotalMl: Math.round(modifiedBrookeTotal),
@@ -337,7 +339,7 @@
 
             // Pediatric Maintenance
             pediatricMaintenance: pedsMaintenance,
-            requiresMaintenanceDextrose: wt <= 30.0 || age < 13.0,
+            requiresMaintenanceDextrose: wt <= 30.0,
 
             // Fluid choice
             fluidOfChoice: 'Lactated Ringer\'s (LR) / Hartmann\'s Solution (Warmed)'
@@ -408,37 +410,45 @@
     }
 
     /**
-     * Calculates Hourly Urine Output Titration Advice
+     * Calculates Hourly Urine Output Titration Advice & Shock Resuscitation
      * 
-     * ATLS 11th p. 138:
-     * - Below target UO: Increase hourly fluid rate by 10% to 30%
-     * - Above target UO: Decrease hourly fluid rate by 10% to 30%
-     * - Within target: Maintain rate
-     * - Bolus: Avoid unless patient is hypotensive / in shock (10-20 mL/kg warm LR)
+     * ATLS 11th p. 138-139 & Tintinalli 9th Ch 217:
+     * - Hypotension/Shock: Administer IV bolus of warmed balanced crystalloid (10–20 mL/kg over 15-30 min)
+     *   and increase hourly infusion rate by 20%–30%. Screen for occult hemorrhage / concomitant trauma.
+     * - Below target UO: Increase hourly fluid rate by 10% to 30% (Gradual titration, avoid bolus unless hypotensive).
+     * - Above target UO: Decrease hourly fluid rate by 10% to 30% to prevent fluid creep.
+     * - Within target: Maintain rate.
      * 
      * @param {number} currentRateMlHr - Current infusion rate
      * @param {number} measuredUoMlHr - Measured urine output in last hour
      * @param {Object} target - Target object from getTargetUrineOutput
      * @param {boolean} [isHypotensive=false] - Whether patient is in shock / hypotensive
      * @param {number} [weightKg=70] - Patient weight in kg
+     * @param {number} [bolusMlKg=20] - Chosen bolus dosage (10 to 20 mL/kg, default 20)
      * @returns {Object} Titration recommendation
      */
-    function getUrineOutputTitration(currentRateMlHr, measuredUoMlHr, target, isHypotensive, weightKg) {
+    function getUrineOutputTitration(currentRateMlHr, measuredUoMlHr, target, isHypotensive, weightKg, bolusMlKg) {
         const rate = Number(currentRateMlHr) || 0;
         const uo = Number(measuredUoMlHr) || 0;
         const minTarget = target && target.targetMlHrMin ? target.targetMlHrMin : 30;
         const maxTarget = target && target.targetMlHrMax ? target.targetMlHrMax : 50;
         const wt = Number(weightKg) || 70;
+        const chosenBolusMlKg = typeof bolusMlKg === 'number' && !isNaN(bolusMlKg) ? Math.max(10, Math.min(20, bolusMlKg)) : 20;
 
         if (isHypotensive) {
             const bolusMin = Math.round(wt * 10);
             const bolusMax = Math.round(wt * 20);
+            const exactBolus = Math.round(wt * chosenBolusMlKg);
             const newRate = Math.round(rate * 1.25);
             return {
                 status: 'SHOCK_HYPOTENSION',
                 action: 'FLUID_BOLUS_AND_INCREASE',
                 message: 'ความดันโลหิตตก / ภาวะช็อก: ให้ IV Fluid Bolus ทันที และเพิ่มอัตราสารน้ำขึ้น 20–30%',
-                bolusAdvice: `IV Bolus warmed Balanced Crystalloid (LR): ${bolusMin}–${bolusMax} mL (10–20 mL/kg) และตรวจหาภาวะเลือดออกจากบาดเจ็บร่วม (Occult Hemorrhage)`,
+                bolusAdvice: `IV Bolus Warmed Balanced Crystalloid (LR): ${exactBolus} mL (${chosenBolusMlKg} mL/kg) ใน 15–30 นาที และตรวจหาภาวะเลือดออกจากบาดเจ็บร่วม (Occult Hemorrhage)`,
+                bolusMlKg: chosenBolusMlKg,
+                bolusTotalMl: exactBolus,
+                bolusRangeMinMl: bolusMin,
+                bolusRangeMaxMl: bolusMax,
                 adjustedRateMin: Math.round(rate * 1.10),
                 adjustedRateMax: Math.round(rate * 1.30),
                 suggestedRate: newRate
@@ -687,9 +697,20 @@
         { id: 'aba_special_needs', text: 'Burns requiring special social, emotional, or long-term rehabilitative intervention' }
     ];
 
+    /**
+     * Airway & Pharmacology Clinical Safety Pearls (ATLS 11th & Tintinalli)
+     */
+    const AIRWAY_SAFETY_PEARLS = {
+        succinylcholineWarningHours: 24,
+        succinylcholineWarning: 'ห้ามใช้ Succinylcholine หลังเกิดเหตุเกิน 24 ชั่วโมง เนื่องจากเสี่ยงต่อภาวะโพแทสเซียมในเลือดสูงรุนแรงถึงแก่ชีวิต (Lethal Hyperkalemia จาก upregulation of acetylcholine receptors)',
+        ettSizeAdultMin: 7.5,
+        ettRecommendation: 'ผู้ใหญ่ควรใช้ ETT ขนาดใหญ่ (เบอร์ ≥ 7.5–8.0 mm) เพื่อให้สามารถส่องกล้อง Fiberoptic Bronchoscopy และดูดเสมหะเขม่าเหนียวได้สะดวก'
+    };
+
     return {
         LUND_BROWDER_TABLE,
         ABA_REFERRAL_CRITERIA,
+        AIRWAY_SAFETY_PEARLS,
         getLundBrowderAgeColumn,
         calculateTBSA,
         calculatePediatricMaintenance,
