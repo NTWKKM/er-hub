@@ -225,6 +225,12 @@
         const elapsed = Math.max(0, Number(params.hoursElapsed) || 0);
         const prehospital = Math.max(0, Number(params.prehospitalFluidGivenMl) || 0);
 
+        // Prehospital age-based starting rate (ATLS 11th Table 8-3)
+        let prehospitalInitialRate = 500;
+        if (age <= 5) prehospitalInitialRate = 125;
+        else if (age <= 12) prehospitalInitialRate = 250;
+        else prehospitalInitialRate = 500;
+
         if (wt <= 0 || tbsa <= 0) {
             return {
                 isValid: false,
@@ -236,6 +242,7 @@
                 first8hHourlyRate: 0,
                 next16hHourlyRate: 0,
                 secondarySurveyRateMlHr: 0,
+                prehospitalInitialRateMlHr: prehospitalInitialRate,
                 pediatricMaintenance: calculatePediatricMaintenance(wt),
                 isMajorBurn: false,
                 guidelineCoefficient: 2
@@ -299,12 +306,6 @@
 
         // Maintenance calculation
         const pedsMaintenance = calculatePediatricMaintenance(wt);
-
-        // Prehospital age-based starting rate check (ATLS 11th Table 8-3)
-        let prehospitalInitialRate = 500;
-        if (age <= 5) prehospitalInitialRate = 125;
-        else if (age <= 12) prehospitalInitialRate = 250;
-        else prehospitalInitialRate = 500;
 
         return {
             isValid: true,
@@ -396,7 +397,7 @@
             };
         } else {
             const targetMin = Math.max(30, Math.round(wt * 0.5));
-            const targetMax = Math.max(50, Math.round(wt * 0.5));
+            const targetMax = Math.max(50, Math.round(wt * 1.0));
             return {
                 targetMlHrMin: targetMin,
                 targetMlHrMax: targetMax,
@@ -505,13 +506,17 @@
         if (isNaN(wt) || wt <= 0) {
             return {
                 isValid: false,
-                hydroxocobalaminMg: 5000,
-                hydroxocobalaminG: 5,
+                hydroxocobalaminMg: 0,
+                hydroxocobalaminG: 0,
+                isCapped: false,
+                reconstitutionDiluent: '0.9% Normal Saline (or LR / D5W)',
                 reconstitutionVolumeMl: 200,
-                infusionTimeMin: 15,
-                repeatDoseAvailable: true,
-                sodiumThiosulfateDose: '12.5 g (50 mL 25%)',
-                warnings: []
+                infusionDurationMinutes: 15,
+                secondDoseAvailable: false,
+                secondDoseInstructions: '',
+                sodiumThiosulfateMg: 0,
+                sodiumThiosulfateMl: 0,
+                clinicalWarnings: ['⚠️ กรุณาใส่น้ำหนักผู้ป่วยเพื่อคำนวณขนาดยา']
             };
         }
 

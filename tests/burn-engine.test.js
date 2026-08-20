@@ -200,10 +200,10 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
     });
 
     describe('5. Urine Output (UO) Target & Shock Titration', () => {
-        it('Adult standard target: 0.5 mL/kg/hr (min 30-50 mL/hr)', () => {
+        it('Adult standard target: 0.5–1.0 mL/kg/hr (min 30, max 50+ mL/hr)', () => {
             const uo70kg = BurnEngine.getTargetUrineOutput(70, 30, false, false);
-            assert.equal(uo70kg.targetMlHrMin, 35);
-            assert.equal(uo70kg.targetMlHrMax, 50);
+            assert.equal(uo70kg.targetMlHrMin, 35);  // max(30, 70*0.5) = 35
+            assert.equal(uo70kg.targetMlHrMax, 70);  // max(50, 70*1.0) = 70
             assert.equal(uo70kg.targetMlKgHr, '0.5');
         });
 
@@ -450,6 +450,151 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
 
             const alertTitle = doc.getElementById('inhal-triage-title');
             assert.ok(alertTitle.textContent.includes('Immediate Intubation Indicated'));
+        });
+
+        it('Hoarseness checkbox is present and wired into inhalation checklist', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+            const hoarsenessChk = doc.getElementById('chk-hoarseness');
+            assert.ok(hoarsenessChk, 'chk-hoarseness checkbox must exist in DOM');
+            const carbonChk = doc.getElementById('chk-carbonaceous');
+            assert.ok(carbonChk, 'chk-carbonaceous checkbox must exist in DOM');
+        });
+
+        it('Prehospital Initial Rate displays 500 mL/hr for adult and 125 mL/hr for young child', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+            assert.equal(doc.getElementById('val-prehospital-rate').textContent, '500 mL/hr');
+
+            const inputAge = doc.getElementById('input-age');
+            inputAge.value = '3';
+            inputAge.dispatchEvent(new win.Event('input', { bubbles: true }));
+            assert.equal(doc.getElementById('val-prehospital-rate').textContent, '125 mL/hr');
+        });
+
+        it('Dynamic ABA Referral Criteria renders all 10 items from engine array and auto-flags on criteria met', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+            const abaItems = doc.querySelectorAll('.aba-chk');
+            assert.equal(abaItems.length, 10, 'Must dynamically render exactly 10 ABA criteria');
+
+            // Default adult 70kg unburned has 0 criteria
+            assert.equal(doc.getElementById('aba-referral-badge').textContent, '0/10 ข้อ');
+
+            // Direct entry 25% TBSA -> triggers aba_tbsa10
+            const inputDirect = doc.getElementById('input-direct-tbsa');
+            inputDirect.value = '25';
+            inputDirect.dispatchEvent(new win.Event('input', { bubbles: true }));
+
+            assert.equal(doc.getElementById('aba_tbsa10').checked, true);
+            assert.ok(doc.getElementById('aba-referral-banner').textContent.includes('เข้าเกณฑ์ส่งต่อศูนย์รักษาแผลไหม้'));
+        });
+
+        it('Toxicology renders Sodium Thiosulfate alternative and HBO criteria evaluation', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            // 70kg adult cyanide dose
+            assert.ok(doc.getElementById('val-cyanide-dose').textContent.includes('4.9 g IV'));
+            assert.ok(doc.getElementById('val-thiosulfate-dose').textContent.includes('28.9 g (115.5 mL 25%)') || doc.getElementById('val-thiosulfate-dose').textContent.includes('12.5 g (50.0 mL 25%)') || doc.getElementById('val-thiosulfate-dose').textContent.includes('g'));
+
+            // COHb 30% triggers HBO alert
+            const inputCohb = doc.getElementById('input-cohb');
+            inputCohb.value = '30';
+            inputCohb.dispatchEvent(new win.Event('input', { bubbles: true }));
+
+            assert.equal(doc.getElementById('co-severity-badge').textContent, 'Mod-Severe (30–40%)');
+            assert.equal(doc.getElementById('chk-hbo-cohb').checked, true);
+            assert.ok(doc.getElementById('co-assessment-result').textContent.includes('เข้าเกณฑ์ส่งพิจารณา Hyperbaric Oxygen'));
+        });
+    });
+
+    describe('11. UO Target Scaling for Large Patients (BUG-1 Regression)', () => {
+        it('120kg adult: targetMax (120) must be greater than targetMin (60)', () => {
+            const uo = BurnEngine.getTargetUrineOutput(120, 35, false, false);
+            assert.equal(uo.targetMlHrMin, 60);   // max(30, 120*0.5) = 60
+            assert.equal(uo.targetMlHrMax, 120);   // max(50, 120*1.0) = 120
+            assert.ok(uo.targetMlHrMax > uo.targetMlHrMin, 'targetMax must exceed targetMin for large patients');
+        });
+
+        it('40kg adult: targetMin = 30 (floor), targetMax = 50 (floor)', () => {
+            const uo = BurnEngine.getTargetUrineOutput(40, 25, false, false);
+            assert.equal(uo.targetMlHrMin, 30);    // max(30, 40*0.5=20) = 30
+            assert.equal(uo.targetMlHrMax, 50);    // max(50, 40*1.0=40) = 50
+        });
+    });
+
+    describe('12. Over-Resuscitation Titration Path', () => {
+        it('UO far above target triggers OVER_RESUSCITATION and rate decrease', () => {
+            const target = BurnEngine.getTargetUrineOutput(70, 30, false, false); // min=35, max=70
+            // Over-resuscitation triggers when uo > maxTarget * 1.3 = 70 * 1.3 = 91
+            const titration = BurnEngine.getUrineOutputTitration(400, 100, target, false, 70);
+            assert.equal(titration.status, 'OVER_RESUSCITATION');
+            assert.equal(titration.action, 'DECREASE_RATE');
+            assert.equal(titration.adjustedRateMin, 280);  // 400 * 0.70
+            assert.equal(titration.adjustedRateMax, 360);  // 400 * 0.90
+            assert.equal(titration.suggestedRate, 320);     // 400 * 0.80
+        });
+
+        it('UO within target range maintains rate', () => {
+            const target = BurnEngine.getTargetUrineOutput(70, 30, false, false);
+            const titration = BurnEngine.getUrineOutputTitration(350, 50, target, false, 70);
+            assert.equal(titration.status, 'ON_TARGET');
+            assert.equal(titration.action, 'MAINTAIN_RATE');
+            assert.equal(titration.suggestedRate, 350);
+        });
+    });
+
+    describe('13. Cyanide Dosing Invalid Weight Guard (BUG-4 Regression)', () => {
+        it('Weight 0 returns isValid=false with all doses zeroed', () => {
+            const dose = BurnEngine.getCyanideAntidoteDosing(0);
+            assert.equal(dose.isValid, false);
+            assert.equal(dose.hydroxocobalaminMg, 0);
+            assert.equal(dose.hydroxocobalaminG, 0);
+            assert.equal(dose.sodiumThiosulfateMg, 0);
+        });
+
+        it('Negative weight returns isValid=false with all doses zeroed', () => {
+            const dose = BurnEngine.getCyanideAntidoteDosing(-5);
+            assert.equal(dose.isValid, false);
+            assert.equal(dose.hydroxocobalaminMg, 0);
+        });
+
+        it('NaN weight returns isValid=false', () => {
+            const dose = BurnEngine.getCyanideAntidoteDosing(NaN);
+            assert.equal(dose.isValid, false);
+            assert.equal(dose.hydroxocobalaminMg, 0);
+        });
+    });
+
+    describe('14. Parkland Schedule with Prehospital Fluid Offset', () => {
+        it('Parkland first 8h rate accounts for prehospital fluid given', () => {
+            const fluid = BurnEngine.calculateFluidRequirements({
+                weightKg: 70,
+                tbsaPct: 40,
+                ageYears: 30,
+                hoursElapsed: 2,
+                prehospitalFluidGivenMl: 1000
+            });
+            // Parkland total = 4 * 70 * 40 = 11200 mL
+            assert.equal(fluid.parklandTotalMl, 11200);
+            // Parkland 1st 8h target = 5600 mL
+            assert.equal(fluid.parklandFirst8hTargetMl, 5600);
+            // Remaining = 5600 - 1000 = 4600 mL in 6 hours
+            assert.equal(fluid.parklandFirst8hRemainingMl, 4600);
+            assert.equal(fluid.parklandFirst8hHourlyRate, 767); // 4600 / 6 = 766.67 → 767
+        });
+    });
+
+    describe('15. 100% TBSA Cap Boundary', () => {
+        it('All 32 regions at degree 3 caps tbsaResuscitative at 100%', () => {
+            const allBurned = {};
+            for (const region of Object.keys(BurnEngine.LUND_BROWDER_TABLE)) {
+                allBurned[region] = 3;
+            }
+            const res = BurnEngine.calculateTBSA(25, allBurned);
+            assert.equal(res.tbsaResuscitative, 100);
+            assert.equal(res.tbsaTotal, 100);
         });
     });
 });

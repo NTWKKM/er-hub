@@ -1,3 +1,23 @@
+## [2.7.0] — 2026-08-20
+
+### Added & Hardened (T10 Burn Management & Resuscitation Hub — ATLS 11th / ABA 2023)
+- **Burn Management Hub (`tools/burn-manager.html`, `shared/burn-engine.js`):**
+  - **Lund & Browder Dynamic Nomogram:** Pure 6-age-column calculation engine across 32 anatomical sub-regions with strict sum-to-100% mathematical invariant. Real-time SVG interactive body painter + direct % TBSA input override.
+  - **1st Degree Burn Exclusion:** Explicitly tracks superficial burns visually while strictly excluding them from resuscitative fluid calculations per ATLS 11th Box 9-1.
+  - **Dual Resuscitation Schedules:** Side-by-side comparison of **Modified Brooke / ATLS 11th (2 mL/kg/%)** consensus recommendation vs **Classic Parkland (4 mL/kg/%)** with 8h/16h breakdown, prehospital fluid deduction, and elapsed time adjustment.
+  - **Pediatric Maintenance Fluid:** Integrated Holliday-Segar (4-2-1 Rule) D5LR/D5 0.45% NaCl infusion rate for children $\le 30$ kg.
+  - **EMS Prehospital Initial Rate:** Dynamic display of age-based initial crystalloid rates (125/250/500 mL/hr) per ATLS Table 8-3.
+  - **Urine Output & Shock Titration:** Real-time feedback and hourly rate adjustment ($\pm 10\text{--}30\%$) based on measured UO ($0.5\text{--}1.0$ mL/kg/hr for adults, $1.0\text{--}2.0$ mL/kg/hr for pediatrics/pigmenturia) and $10\text{--}20$ mL/kg warm crystalloid bolus recommendations for hypotensive burn shock.
+  - **Inhalation Injury Decision Matrix:** 11-point risk checklist (stridor, hoarseness, deep facial/perioral burns, carbonaceous sputum, circumferential neck burn, large burn $>40\%$ TBSA) providing definitive airway triage and ETT sizing guidance.
+  - **Smoke Toxicology Module:**
+    - **Carbon Monoxide (CO):** Half-life comparison across room air ($\sim 4\text{--}5$h), 100% $\text{O}_2$ ($40\text{--}80$ min), and HBO ($20\text{--}30$ min); severity grading; and 5-point interactive Hyperbaric Oxygen (HBO) indication evaluation ($\text{COHb} \ge 25\%$, $\ge 15\%$ pregnant, syncope, neuro deficit, cardiac ischemia, refractory acidosis).
+    - **Cyanide (CN):** Weight-adjusted Hydroxocobalamin (Cyanokit) dosing ($70$ mg/kg up to $5$ g IV over 15 min), alternative Sodium Thiosulfate 25% dosing ($412.5$ mg/kg up to $12.5$ g IV), and toxicologic clinical pearls (nitrite contraindication).
+  - **Circumferential Burns & ABA Referral:** Escharotomy incision reference diagrams (chest, extremities, digits) and dynamic 10-point American Burn Association (ABA 2023) transfer criteria with automated clinical state triggers.
+- **Automated Test Coverage (`tests/burn-engine.test.js`):**
+  - 48 automated test cases covering Lund-Browder invariants, fluid calculations, titration paths, toxicology dosing boundaries, and DOM integration (292 total tests passing across 32 test suites with zero failures).
+- **PWA Cache (`service-worker.js`):**
+  - Bumped cache version to `er-hub-v59` (`20/08/2569`) ensuring automatic client cache busting on deployment.
+
 ## [2.6.5] — 2026-08-19
 
 ### Enhanced & Reordered (Drip Calculator Layout & PWA Cache Bump)
