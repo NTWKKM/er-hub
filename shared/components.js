@@ -124,6 +124,9 @@ const ED_COMPONENTS = {
     },
 
     injectNavBar: function(homeHref, logoSrc, pageTitle, shortTitle) {
+        if (typeof document !== 'undefined' && document.querySelector('.top-nav')) {
+            return;
+        }
         const href = homeHref || '../index.html';
         // pageTitle can be: undefined (auto-detect from document.title), empty string (suppress), or explicit string
         let title;

@@ -53,34 +53,7 @@
         }
 
 
-        /* ══ Header ══ */
-        .burn-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 14px;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
 
-        .burn-title-group h1 {
-            margin: 0;
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #0f172a;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .burn-subtitle {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
 
         .badge-atls {
             font-family: 'Inter Tight', sans-serif;
@@ -593,16 +566,6 @@
 <body class="theme-neutral">
 
 <div class="burn-container">
-    <!-- Header -->
-    <div class="burn-header">
-        <div class="burn-title-group">
-            <h1>
-                <span>🔥 Burn Management & Resuscitation Hub</span>
-                <span class="badge-atls">ATLS 11th Ed / ABA 2023</span>
-            </h1>
-            <div class="burn-subtitle">เครื่องมือประเมินพื้นที่แผลไหม้ (Lund & Browder 6-Age Brackets), คำนวณสารน้ำกู้ชีพ (Parkland & Modified Brooke), สารพิษควันไฟ (CO/Cyanide) และการจัดการทางเดินหายใจ</div>
-        </div>
-    </div>
 
     <!-- Patient Parameter Input Strip -->
     <div class="patient-strip">
@@ -1330,15 +1293,9 @@
     });
 
     // Initialize Navigation & First Calc
-    function initNav() {
-        if (typeof ED_COMPONENTS !== 'undefined' && ED_COMPONENTS.injectNavBar) {
-            ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
-                'Burn Management & Resuscitation Hub — ED Clinical Tool', 'Burn Hub');
-        }
-    }
-    initNav();
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initNav);
+    if (typeof ED_COMPONENTS !== 'undefined' && ED_COMPONENTS.injectNavBar) {
+        ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
+            'Burn Management & Resuscitation Hub — ED Clinical Tool', 'Burn Hub');
     }
     recalculateAll(false);
 })();
