@@ -1,3 +1,15 @@
+## [2.7.2] — 2026-08-20
+
+### Enhanced & Unified (Formula Card Direct Shock-Adjusted Rate Sync & Direct Entry Persistence)
+- **Burn Management Hub (`tools/burn-manager.html`, `shared/burn-engine.js`):**
+  - **Single Source of Truth for Shock Rate:** When **ภาวะช็อก/ความดันตก (Shock)** is active, the primary hero rate boxes on the main formula cards (**Modified Brooke** & **Classic Parkland**) directly update to the shock-adjusted rate ($+25\%$) with alert badges (`🚨 Shock +25%`), alert red styling, and clear baseline breakdown, eliminating competing numbers.
+  - **Titration Box Streamlining:** Refactored UO Titration box message to confirm that the main formula rates above have been automatically adjusted to the active shock resuscitation rate.
+  - **Direct Entry Persistence:** Fixed `recalculateAll` to preserve direct % TBSA entry value when adjusting weight, elapsed hours, or shock toggles without SVG painting.
+- **Automated Test Coverage (`tests/burn-engine.test.js`):**
+  - Added assertions for `isHypotensive` in `calculateFluidRequirements` and verified DOM hero rate shock adjustment and badge rendering (304 tests passing across 51 suites, 100% green).
+- **PWA Cache (`service-worker.js`):**
+  - Bumped cache version to `er-hub-v61` (`20/08/2569`).
+
 ## [2.7.1] — 2026-08-20
 
 ### Enhanced & Hardened (Burn Hub Shock Bolus Selector, Airway Pearls & Audit Fixes)

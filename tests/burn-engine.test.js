@@ -634,6 +634,24 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             const over = BurnEngine.getUrineOutputTitration(400, 10, target, true, 70, 35);
             assert.equal(over.bolusMlKg, 20, 'Clamps maximum to 20 mL/kg');
         });
+
+        it('calculateFluidRequirements with isHypotensive=true returns shock-adjusted rate (+25%) and baseline', () => {
+            const fluid = BurnEngine.calculateFluidRequirements({
+                weightKg: 70,
+                tbsaPct: 40,
+                ageYears: 30,
+                isHypotensive: true
+            });
+            assert.equal(fluid.isHypotensive, true);
+            // Modified Brooke total = 2 * 70 * 40 = 5600 mL. Baseline 8h rate = 2800 / 8 = 350 mL/hr
+            assert.equal(fluid.baselineFirst8hRate, 350);
+            assert.equal(fluid.first8hHourlyRate, 438); // 350 * 1.25 = 437.5 -> 438 mL/hr
+            assert.equal(fluid.shockAdjustedFirst8hRate, 438);
+
+            // Parkland total = 4 * 70 * 40 = 11200 mL. Baseline 8h rate = 5600 / 8 = 700 mL/hr
+            assert.equal(fluid.parklandBaselineFirst8hRate, 700);
+            assert.equal(fluid.parklandFirst8hHourlyRate, 875); // 700 * 1.25 = 875 mL/hr
+        });
     });
 
     describe('17. Strict Pediatric Maintenance <=30kg Boundary (ATLS Table 9-1)', () => {
@@ -685,6 +703,45 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
     });
 
     describe('20. DOM Interactive Shock Bolus Buttons & Dynamic Schedule Labels', () => {
+        it('Selecting shock checkbox updates main formula hero rates to shock-adjusted (+25%) and shows badge', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            // Set elapsed hours to 0 to test exact 8-hour window
+            const inputElapsed = doc.getElementById('input-elapsed');
+            inputElapsed.value = '0';
+            inputElapsed.dispatchEvent(new win.Event('input', { bubbles: true }));
+
+            // Direct entry 36% TBSA for 70kg adult (Modified Brooke baseline = 2 * 70 * 36 / 2 / 8 = 315 mL/hr)
+            const inputDirect = doc.getElementById('input-direct-tbsa');
+            inputDirect.value = '36';
+            inputDirect.dispatchEvent(new win.Event('input', { bubbles: true }));
+
+            assert.equal(doc.getElementById('val-first8h-rate').textContent, '315 mL/hr');
+            assert.equal(doc.getElementById('badge-modified-shock').style.display, 'none');
+
+            // Check shock checkbox
+            const chkHypo = doc.getElementById('check-hypotensive');
+            chkHypo.checked = true;
+            chkHypo.dispatchEvent(new win.Event('change', { bubbles: true }));
+
+            // Main hero rate on formula card must directly update to shock-adjusted rate 394 mL/hr (315 * 1.25 = 393.75 -> 394)
+            assert.equal(doc.getElementById('val-first8h-rate').textContent, '394 mL/hr');
+            assert.equal(doc.getElementById('badge-modified-shock').style.display, 'inline-block');
+            assert.ok(doc.getElementById('val-time-remaining-desc').textContent.includes('ปรับเพิ่ม +25% สำหรับภาวะช็อก'));
+
+            // Parkland rate must also be shock-adjusted: baseline 630 * 1.25 = 788 mL/hr
+            assert.equal(doc.getElementById('val-parkland-first8h-rate').textContent, '788 mL/hr');
+            assert.equal(doc.getElementById('badge-parkland-shock').style.display, 'inline-block');
+
+            // Unchecking shock restores baseline rates
+            chkHypo.checked = false;
+            chkHypo.dispatchEvent(new win.Event('change', { bubbles: true }));
+
+            assert.equal(doc.getElementById('val-first8h-rate').textContent, '315 mL/hr');
+            assert.equal(doc.getElementById('badge-modified-shock').style.display, 'none');
+        });
+
         it('Selecting shock checkbox and clicking 15 mL/kg bolus button updates UI and calculated volume', () => {
             const win = loadBurnManagerDom();
             const doc = win.document;

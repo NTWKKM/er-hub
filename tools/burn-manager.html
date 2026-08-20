@@ -807,8 +807,11 @@
                             <span class="badge-atls" id="badge-modified-brooke-coeff" style="font-size: 11px; font-weight: 700;">2 mL/kg/%</span>
                         </div>
 
-                        <div class="fluid-hero-rate-box" style="border-color: #fde68a;">
-                            <div style="font-size: 10.5px; font-weight: 700; color: #78350f; text-transform: uppercase;" id="lbl-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                        <div class="fluid-hero-rate-box" id="box-modified-rate" style="border-color: #fde68a; transition: all 0.2s ease;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="font-size: 10.5px; font-weight: 700; color: #78350f; text-transform: uppercase;" id="lbl-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                                <span id="badge-modified-shock" style="display: none; background: #ef4444; color: #ffffff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">🚨 Shock +25%</span>
+                            </div>
                             <div class="fluid-rate-big" id="val-first8h-rate" style="font-size: 1.85rem; color: #b45309; margin: 2px 0;">0 mL/hr</div>
                             <div style="font-size: 10px; color: #92400e;" id="val-time-remaining-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
                         </div>
@@ -839,10 +842,13 @@
                             <span style="font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #334155;">4 mL/kg/%</span>
                         </div>
 
-                        <div class="fluid-hero-rate-box" style="border-color: #e2e8f0;">
-                            <div style="font-size: 10.5px; font-weight: 700; color: #475569; text-transform: uppercase;" id="lbl-parkland-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                        <div class="fluid-hero-rate-box" id="box-parkland-rate" style="border-color: #e2e8f0; transition: all 0.2s ease;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="font-size: 10.5px; font-weight: 700; color: #475569; text-transform: uppercase;" id="lbl-parkland-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                                <span id="badge-parkland-shock" style="display: none; background: #ef4444; color: #ffffff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">🚨 Shock +25%</span>
+                            </div>
                             <div class="fluid-rate-big" id="val-parkland-first8h-rate" style="font-size: 1.85rem; color: #334155; margin: 2px 0;">0 mL/hr</div>
-                            <div style="font-size: 10px; color: #64748b;">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
+                            <div style="font-size: 10px; color: #64748b;" id="val-parkland-time-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
                         </div>
 
                         <div class="fluid-formula-grid">
@@ -1414,8 +1420,11 @@
 
         let resuscitativeTbsa = 0;
         let tbsaRes = null;
+        const hasPaintedRegions = Object.keys(paintedRegions).length > 0;
+        const directTbsaValue = inputDirectTbsa ? parseFloat(inputDirectTbsa.value) : 0;
+        const useDirectEntry = isDirectEntry || (!hasPaintedRegions && !isNaN(directTbsaValue) && directTbsaValue > 0);
 
-        if (isDirectEntry && inputDirectTbsa) {
+        if (useDirectEntry && inputDirectTbsa) {
             const rawVal = parseFloat(inputDirectTbsa.value);
             resuscitativeTbsa = !isNaN(rawVal) ? Math.max(0, Math.min(100, rawVal)) : 0;
             valResuscitativeTbsa.textContent = resuscitativeTbsa.toFixed(1);
@@ -1434,6 +1443,8 @@
             valDeg1Badge.textContent = `1st Deg (Excl): ${tbsaRes.deg1Pct}%`;
         }
 
+        const isHypo = checkHypotensive.checked;
+
         // 2. Fluid Resuscitation
         const fluid = BurnEngine.calculateFluidRequirements({
             weightKg: weight,
@@ -1441,7 +1452,8 @@
             ageYears: age,
             isElectrical: isElectrical,
             hoursElapsed: elapsed,
-            prehospitalFluidGivenMl: prehospital
+            prehospitalFluidGivenMl: prehospital,
+            isHypotensive: isHypo
         });
 
         badgeGuidelineCoeff.textContent = `${fluid.guidelineCoefficient} mL/kg/%`;
@@ -1451,6 +1463,11 @@
         valTotal24h.textContent = `${fluid.modifiedBrookeTotalMl} mL`;
         valFirst8hTarget.textContent = `${fluid.first8hTargetMl} mL`;
         valNext16hRate.textContent = `${fluid.next16hHourlyRate} mL/hr`;
+
+        if (valParklandFirst8hRate) valParklandFirst8hRate.textContent = `${fluid.parklandFirst8hHourlyRate} mL/hr`;
+        if (valParklandTotal) valParklandTotal.textContent = `${fluid.parklandTotalMl} mL`;
+        if (valParklandFirst8hTarget) valParklandFirst8hTarget.textContent = `${fluid.parklandFirst8hTargetMl} mL`;
+        if (valParklandNext16hRate) valParklandNext16hRate.textContent = `${fluid.parklandNext16hHourlyRate} mL/hr`;
 
         // Update Dynamic Header Labels for Post-8h Catch-up Schedule
         if (lblFirst8hRate && lblParklandFirst8hRate) {
@@ -1464,14 +1481,53 @@
             }
         }
 
+        // Shock Visual State on Formula Cards
+        const boxModifiedRate = document.getElementById('box-modified-rate');
+        const boxParklandRate = document.getElementById('box-parkland-rate');
+        const badgeModifiedShock = document.getElementById('badge-modified-shock');
+        const badgeParklandShock = document.getElementById('badge-parkland-shock');
+        const valTimeRemainingDesc = document.getElementById('val-time-remaining-desc');
+        const valParklandTimeDesc = document.getElementById('val-parkland-time-desc');
+
+        if (isHypo) {
+            if (badgeModifiedShock) badgeModifiedShock.style.display = 'inline-block';
+            if (badgeParklandShock) badgeParklandShock.style.display = 'inline-block';
+            if (boxModifiedRate) {
+                boxModifiedRate.style.borderColor = '#fca5a5';
+                boxModifiedRate.style.background = '#fff5f5';
+            }
+            if (boxParklandRate) {
+                boxParklandRate.style.borderColor = '#fca5a5';
+                boxParklandRate.style.background = '#fff5f5';
+            }
+            if (valTimeRemainingDesc) {
+                valTimeRemainingDesc.innerHTML = `<span style="color: #b91c1c; font-weight: 700;">🚨 ปรับเพิ่ม +25% สำหรับภาวะช็อก (Baseline: ${fluid.baselineFirst8hRate} mL/hr)</span>`;
+            }
+            if (valParklandTimeDesc) {
+                valParklandTimeDesc.innerHTML = `<span style="color: #b91c1c; font-weight: 700;">🚨 ปรับเพิ่ม +25% สำหรับภาวะช็อก (Baseline: ${fluid.parklandBaselineFirst8hRate} mL/hr)</span>`;
+            }
+        } else {
+            if (badgeModifiedShock) badgeModifiedShock.style.display = 'none';
+            if (badgeParklandShock) badgeParklandShock.style.display = 'none';
+            if (boxModifiedRate) {
+                boxModifiedRate.style.borderColor = '#fde68a';
+                boxModifiedRate.style.background = '';
+            }
+            if (boxParklandRate) {
+                boxParklandRate.style.borderColor = '#e2e8f0';
+                boxParklandRate.style.background = '';
+            }
+            if (valTimeRemainingDesc) {
+                valTimeRemainingDesc.textContent = elapsed >= 8.0 ? 'อัตราชดเชยเวลาที่เหลือใน 24 ชม.' : 'เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)';
+            }
+            if (valParklandTimeDesc) {
+                valParklandTimeDesc.textContent = elapsed >= 8.0 ? 'อัตราชดเชยเวลาที่เหลือใน 24 ชม.' : 'เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)';
+            }
+        }
+
         // Prehospital Initial Rate (ATLS 11th Table 8-3)
         const valPrehospitalRate = document.getElementById('val-prehospital-rate');
         if (valPrehospitalRate) valPrehospitalRate.textContent = `${fluid.prehospitalInitialRateMlHr} mL/hr`;
-
-        if (valParklandFirst8hRate) valParklandFirst8hRate.textContent = `${fluid.parklandFirst8hHourlyRate} mL/hr`;
-        if (valParklandTotal) valParklandTotal.textContent = `${fluid.parklandTotalMl} mL`;
-        if (valParklandFirst8hTarget) valParklandFirst8hTarget.textContent = `${fluid.parklandFirst8hTargetMl} mL`;
-        if (valParklandNext16hRate) valParklandNext16hRate.textContent = `${fluid.parklandNext16hHourlyRate} mL/hr`;
 
         // Pediatric Maintenance (Holliday-Segar <=30kg)
         if (fluid.requiresMaintenanceDextrose) {
@@ -1486,8 +1542,7 @@
         valTargetUoText.textContent = `${targetUO.targetMlKgHr} mL/kg/hr (${targetUO.targetMlHrMin}${targetUO.targetMlHrMin !== targetUO.targetMlHrMax ? '–' + targetUO.targetMlHrMax : ''} mL/hr)`;
 
         const measuredUO = Number(inputMeasuredUo.value) || 0;
-        const isHypo = checkHypotensive.checked;
-        const titration = BurnEngine.getUrineOutputTitration(fluid.first8hHourlyRate, measuredUO, targetUO, isHypo, weight, selectedBolusMlKg);
+        const titration = BurnEngine.getUrineOutputTitration(fluid.baselineFirst8hRate, measuredUO, targetUO, isHypo, weight, selectedBolusMlKg);
 
         if (shockBolusPanel) {
             shockBolusPanel.style.display = isHypo ? 'block' : 'none';
@@ -1497,8 +1552,13 @@
         }
 
         titrationAdviceBox.className = `titration-box ${titration.status === 'SHOCK_HYPOTENSION' ? 'alert-shock' : (titration.status === 'UNDER_RESUSCITATION' ? 'alert-under' : '')}`;
-        titrationStatusTitle.textContent = titration.message;
-        titrationStatusDesc.textContent = `${titration.bolusAdvice} | อัตราสารน้ำที่แนะนำใหม่: ${titration.suggestedRate} mL/hr (ช่วงปรับ ${titration.adjustedRateMin}–${titration.adjustedRateMax} mL/hr)`;
+        if (isHypo) {
+            titrationStatusTitle.innerHTML = `<span style="color: #991b1b;">🚨 ภาวะช็อก/ความดันตก: ให้ IV Fluid Bolus ทันที และปรับเพิ่มเรทสูตรหลักด้านบนเป็น ${fluid.first8hHourlyRate} mL/hr (+25%) แล้ว</span>`;
+            titrationStatusDesc.innerHTML = `<strong>${titration.bolusAdvice}</strong><br><span style="color:#b91c1c; font-weight:600;">⚡ อัตราสารน้ำในการ์ดสูตรหลัก (Modified Brooke & Parkland) ด้านบนถูกปรับเพิ่มขึ้น +25% เรียบร้อยแล้ว (ช่วงปรับที่แนะนำ: ${titration.adjustedRateMin}–${titration.adjustedRateMax} mL/hr)</span>`;
+        } else {
+            titrationStatusTitle.textContent = titration.message;
+            titrationStatusDesc.textContent = `${titration.bolusAdvice} | อัตราสารน้ำที่แนะนำ: ${titration.suggestedRate} mL/hr (ช่วงปรับ ${titration.adjustedRateMin}–${titration.adjustedRateMax} mL/hr)`;
+        }
 
         // 4. Inhalation Injury Triage
         const isLargeTbsa = resuscitativeTbsa > 40;

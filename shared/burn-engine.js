@@ -306,6 +306,9 @@
 
         // Maintenance calculation
         const pedsMaintenance = calculatePediatricMaintenance(wt);
+        const isHypo = Boolean(params && params.isHypotensive);
+        const shockAdjustedFirst8hRate = Math.round(first8hRate * 1.25);
+        const shockAdjustedParklandRate = Math.round(parklandFirst8hRate * 1.25);
 
         return {
             isValid: true,
@@ -313,6 +316,7 @@
             tbsaPct: tbsa,
             ageYears: age,
             isElectrical: isElectrical,
+            isHypotensive: isHypo,
             guidelineCoefficient: coeff,
             isMajorBurn: tbsa >= 20.0,
             isPost8h: elapsed >= 8.0,
@@ -326,7 +330,9 @@
             // Modified Brooke / ATLS 11th Schedule
             first8hTargetMl: Math.round(first8hTarget),
             first8hRemainingMl: Math.round(first8hRemaining),
-            first8hHourlyRate: first8hRate,
+            baselineFirst8hRate: first8hRate,
+            shockAdjustedFirst8hRate: shockAdjustedFirst8hRate,
+            first8hHourlyRate: isHypo ? shockAdjustedFirst8hRate : first8hRate,
             next16hHourlyRate: next16hRate,
             secondarySurveyRateMlHr: secondarySurveyRate,
             prehospitalInitialRateMlHr: prehospitalInitialRate,
@@ -334,7 +340,9 @@
             // Classic Parkland Schedule (4 mL/kg/%)
             parklandFirst8hTargetMl: Math.round(parklandFirst8hTarget),
             parklandFirst8hRemainingMl: Math.round(parklandFirst8hRemaining),
-            parklandFirst8hHourlyRate: parklandFirst8hRate,
+            parklandBaselineFirst8hRate: parklandFirst8hRate,
+            parklandShockAdjustedFirst8hRate: shockAdjustedParklandRate,
+            parklandFirst8hHourlyRate: isHypo ? shockAdjustedParklandRate : parklandFirst8hRate,
             parklandNext16hHourlyRate: parklandNext16hRate,
 
             // Pediatric Maintenance
