@@ -26,22 +26,25 @@
             // Default to rtpa if only legacy inputs are present
             window.location.replace('orders/rtpa.html' + window.location.search + window.location.hash);
         }
-    </script>    <style>
+    </script>
+
+    <style>
         :root {
-            --paper: #f8f7f4;
-            --ink: #111827;
-            --graphite: #4b5563;
-            --rule: #e5e7eb;
+            --paper: #ebe7df;
+            --ink: #1a1a1a;
+            --graphite: #4a4a4a;
+            --rule: #d8d4c8;
             --signal-orange: #d84315;
+
             --font-ui: "Inter Tight", "Neue Haas Grotesk", sans-serif;
-            --hover-blue: #3b5998;
+
         }
 
         body {
             --page-pad: 0px;
             background-color: var(--paper);
             color: var(--ink);
-            font-family: "Inter Tight", "Neue Haas Grotesk", "Sarabun", -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: "Inter Tight", "Neue Haas Grotesk", "Sarabun", sans-serif;
             margin: 0;
             padding: 0;
             display: block;
@@ -54,24 +57,24 @@
             width: 100%;
             max-width: 1120px;
             margin: 0 auto;
-            padding: 20px 24px 48px;
+            padding: 16px 24px;
             box-sizing: border-box;
             position: relative;
             z-index: 2;
         }
 
-        /* Sticky top nav bar */
+        /* Sticky top nav override to match Braun theme */
         .top-nav {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
             border-bottom: none !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
-            height: 60px;
+            box-shadow: none !important;
+            height: 64px;
             box-sizing: border-box;
             padding: 0 24px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
-            margin-bottom: 24px !important;
+            margin-bottom: 16px !important;
             width: 100% !important;
             margin-left: 0 !important;
             margin-right: 0 !important;
@@ -87,7 +90,7 @@
         .nav-center {
             font-weight: 700;
             font-size: 16px;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
             color: #F0EDE5;
             text-align: center;
@@ -106,113 +109,101 @@
             justify-content: flex-end;
         }
 
-        .hub-intro {
-            margin-bottom: 28px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--rule);
-        }
-
-        .hub-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--ink);
-            margin: 0 0 4px 0;
-            letter-spacing: -0.01em;
-        }
-
-        .hub-subtitle {
-            font-size: 13.5px;
-            color: var(--graphite);
-            margin: 0;
-        }
-
-        .list-section {
-            margin-bottom: 32px;
-            background: #ffffff;
-            border: 1px solid var(--rule);
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-            overflow: hidden;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            padding: 14px 18px 12px;
-            background: #fbfbfa;
-            border-bottom: 1px solid var(--rule);
-        }
-
         .section-eyebrow {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.12em;
             color: var(--ink);
-            margin: 0;
+            margin: 0 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--ink);
             font-family: var(--font-ui);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .section-sub {
-            font-size: 12px;
-            color: var(--graphite);
-            font-weight: 400;
         }
 
         .order-list {
             list-style: none;
             margin: 0;
             padding: 0;
+            border-top: 1px solid var(--rule);
+        }
+
+        .list-section {
+            margin-bottom: 48px;
+            opacity: 0;
+            transform: translateY(24px);
+            animation: sectionReveal 520ms ease-out forwards;
+        }
+
+        @keyframes sectionReveal {
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .order-item-wrap {
             margin: 0;
             padding: 0;
+            opacity: 0;
+            transform: translateY(14px);
+            animation: rowReveal 360ms ease-out forwards;
         }
+
+        .list-section:nth-child(1) { animation-delay: 80ms; }
+        .list-section:nth-child(2) { animation-delay: 220ms; }
+        .list-section:nth-child(3) { animation-delay: 360ms; }
+
+        .order-item-wrap:nth-child(1) { animation-delay: 120ms; }
+        .order-item-wrap:nth-child(2) { animation-delay: 170ms; }
+        .order-item-wrap:nth-child(3) { animation-delay: 220ms; }
+        .order-item-wrap:nth-child(4) { animation-delay: 270ms; }
+        .order-item-wrap:nth-child(5) { animation-delay: 320ms; }
+        .order-item-wrap:nth-child(6) { animation-delay: 370ms; }
+        .order-item-wrap:nth-child(7) { animation-delay: 420ms; }
+        .order-item-wrap:nth-child(8) { animation-delay: 470ms; }
+        .order-item-wrap:nth-child(9) { animation-delay: 520ms; }
+        .order-item-wrap:nth-child(10) { animation-delay: 570ms; }
 
         .order-row {
             display: flex;
             align-items: center;
-            min-height: 52px;
+            min-height: 56px;
             box-sizing: border-box;
-            padding: 12px 18px 12px 14px;
+            padding: 12px 16px 12px 12px;
             text-decoration: none;
             color: var(--ink);
             border-bottom: 1px solid var(--rule);
             border-left: 4px solid transparent;
-            background-color: #ffffff;
-            transition: background-color 100ms ease, border-left-color 100ms ease, color 100ms ease;
-        }
-
-        .order-item-wrap:last-child .order-row {
-            border-bottom: none;
+            background-color: transparent;
+            transition: background-color 120ms linear, border-left-color 120ms linear, color 120ms linear, transform 400ms ease, box-shadow 400ms ease;
+            transform-style: preserve-3d;
+            will-change: transform;
         }
 
         .order-row:hover {
-            background-color: #f1f5f9;
-            border-left-color: var(--hover-blue);
+            background-color: #49628d;
+            border-left-color: #d84315;
+            color: #F0EDE5;
         }
 
-        .order-row.time-critical-row:hover {
-            border-left-color: var(--signal-orange);
+        .order-row:hover .order-num,
+        .order-row:hover .order-category,
+        .order-row:hover .order-title,
+        .order-row:hover .order-status,
+        .order-row:hover .order-arrow {
+            color: #F0EDE5;
         }
 
-        .order-row:focus-visible {
-            outline: 2px solid var(--hover-blue);
-            outline-offset: -2px;
-            background-color: #f1f5f9;
+        .order-row:focus {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+            border-radius: 2px;
         }
 
         .order-num {
             font-variant-numeric: tabular-nums;
             font-weight: 700;
-            font-size: 13.5px;
+            font-size: 14px;
             color: var(--graphite);
-            width: 44px;
+            width: 48px;
             flex-shrink: 0;
             font-family: var(--font-ui);
         }
@@ -225,18 +216,19 @@
         }
 
         .order-category {
-            font-size: 11.5px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            width: 130px;
+            width: 140px;
             flex-shrink: 0;
-            color: var(--graphite);
             font-family: var(--font-ui);
         }
 
+        /* Category text uses inherited graphite — no per-category colour differentiation */
+
         .order-title {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 500;
             color: var(--ink);
             flex-grow: 1;
@@ -244,29 +236,19 @@
 
         .order-status {
             font-family: monospace;
-            font-size: 10.5px;
+            font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.05em;
-            color: #64748b;
-            background: #f1f5f9;
-            padding: 2px 6px;
-            border-radius: 4px;
+            color: var(--graphite);
             margin-right: 12px;
             flex-shrink: 0;
-            border: 1px solid #e2e8f0;
-        }
-
-        .order-status.active {
-            color: #166534;
-            background: #f0fdf4;
-            border-color: #bbf7d0;
         }
 
         .signal-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            margin-right: 14px;
+            margin-right: 16px;
             flex-shrink: 0;
             background-color: transparent;
         }
@@ -278,28 +260,31 @@
         }
 
         @keyframes ledPulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(216, 67, 21, 0.4); }
-            50% { opacity: 0.75; box-shadow: 0 0 0 3px rgba(216, 67, 21, 0.15); }
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(216, 67, 21, 0.35); }
+            50% { opacity: 0.78; box-shadow: 0 0 0 3px rgba(216, 67, 21, 0.12); }
         }
 
         .order-arrow {
             font-size: 14px;
-            color: #94a3b8;
+            color: var(--graphite);
             flex-shrink: 0;
-            transition: transform 150ms ease, color 150ms ease;
+            transition: transform 200ms ease;
+        }
+
+        @keyframes rowReveal {
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .order-row:hover .order-arrow {
-            transform: translateX(3px);
-            color: var(--ink);
+            transform: translateX(4px);
         }
 
         .portal-footer {
             font-size: 12px;
             color: var(--graphite);
             text-align: center;
-            padding: 24px 0 12px;
-            margin-top: 24px;
+            padding: 32px 24px;
+            margin-top: 48px;
             border-top: 1px solid var(--rule);
             font-family: var(--font-ui);
         }
@@ -308,59 +293,122 @@
         @media (max-width: 768px) {
             .top-nav {
                 padding: 0 16px !important;
-                height: 56px;
             }
             .nav-center {
                 font-size: 14px;
-                letter-spacing: 0.08em;
+                letter-spacing: 0.1em;
             }
             .nav-right {
                 font-size: 11px;
             }
             .portal-container {
-                padding: 16px 14px 36px;
-            }
-            .hub-title {
-                font-size: 19px;
+                padding: 24px 16px;
             }
         }
 
         @media (max-width: 640px) {
             .order-row {
-                padding: 10px 12px 10px 10px;
+                padding: 12px 8px;
             }
             .order-main-info {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 2px;
+                gap: 4px;
             }
             .order-category {
                 width: auto;
-                font-size: 10.5px;
+                font-size: 11px;
             }
             .order-title {
                 font-size: 14px;
             }
             .order-num {
-                width: 30px;
-                font-size: 12px;
-            }
-            .section-header {
-                flex-direction: column;
-                gap: 2px;
-                padding: 12px 14px 10px;
-            }
-            .section-sub {
-                font-size: 11px;
+                width: 32px;
             }
         }
 
+        /* Collapsible Prototype Section (Tactile 3D Braun Design) */
+        .prototype-toggle {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            outline: none;
+            transition: color 180ms ease, border-bottom-color 180ms ease, transform 180ms cubic-bezier(0.19, 1, 0.22, 1);
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+        .prototype-toggle:hover {
+            color: var(--signal-orange);
+            border-bottom-color: var(--signal-orange);
+            transform: translateZ(4px);
+        }
+        .prototype-toggle:active {
+            transform: translateZ(-2px);
+        }
+        .prototype-toggle:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 2px;
+        }
+        .prototype-toggle .toggle-icon {
+            font-size: 11px;
+            font-family: monospace;
+            display: inline-block;
+            transition: transform 450ms cubic-bezier(0.19, 1, 0.22, 1);
+            transform: rotateX(0deg);
+            transform-style: preserve-3d;
+        }
+        .prototype-toggle[aria-expanded="true"] .toggle-icon {
+            transform: rotateX(180deg);
+        }
+        .collapsible-content {
+            transform-origin: top;
+            transform: perspective(1200px) rotateX(0deg) translateZ(0px);
+            opacity: 1;
+            max-height: 1000px;
+            transition: transform 500ms cubic-bezier(0.19, 1, 0.22, 1), 
+                        opacity 350ms ease,
+                        max-height 500ms cubic-bezier(0.19, 1, 0.22, 1);
+            overflow: hidden;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        .collapsible-content::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(26, 26, 26, 0.12), rgba(26, 26, 26, 0.02));
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 500ms cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 10;
+        }
+        .collapsible-content.collapsed {
+            transform: perspective(1200px) rotateX(-90deg) translateZ(-10px);
+            opacity: 0;
+            max-height: 0;
+            pointer-events: none;
+        }
+        .collapsible-content.collapsed::before {
+            opacity: 1;
+        }
         @media (prefers-reduced-motion: reduce) {
+            .order-row {
+                transition: none !important;
+                transform: none !important;
+            }
             .signal-dot.time-critical {
                 animation: none !important;
             }
-            .order-arrow {
+            .collapsible-content {
                 transition: none !important;
+            }
+            .list-section,
+            .order-item-wrap {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
             }
         }
     </style>
@@ -368,297 +416,269 @@
 <body>
 
 <div class="portal-container">
-    <div class="hub-intro">
-        <h1 class="hub-title">Emergency Clinical Standing Order Hub</h1>
-        <p class="hub-subtitle">Maharat Nakhon Ratchasima Hospital · โรงพยาบาลมหาราชนครราชสีมา (Offline-First Clinical System)</p>
-    </div>
-
-    <!-- ══════════════ 1. TIME-CRITICAL FAST TRACK ══════════════ -->
     <div class="list-section">
-        <div class="section-header">
-            <h2 class="section-eyebrow">⚡ Time-Critical Fast-Track &amp; Resuscitation</h2>
-            <span class="section-sub">เส้นทางด่วนและหัตถการวิกฤตฉุกเฉิน</span>
-        </div>
         <ol class="order-list">
-            <!-- 01 rt-PA -->
+            <!-- Neurology rt-PA -->
             <li class="order-item-wrap">
-                <a href="orders/rtpa.html" class="order-row time-critical-row">
+                <a href="orders/rtpa.html" class="order-row">
                     <span class="order-num">01</span>
                     <div class="order-main-info">
                         <span class="order-category">Neurology</span>
                         <span class="order-title">rt-PA Stroke FAST TRACK</span>
                     </div>
-                    <span class="order-status active">ACTIVE</span>
+                    <span class="order-status">ACTIVE</span>
                     <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
                     <span class="order-arrow">→</span>
                 </a>
             </li>
-            <!-- 02 STEMI -->
+            <!-- Cardiac NSTEMI -->
             <li class="order-item-wrap">
-                <a href="orders/stemi.html" class="order-row time-critical-row">
+                <a href="orders/nstemi.html" class="order-row">
                     <span class="order-num">02</span>
                     <div class="order-main-info">
                         <span class="order-category">Cardiac</span>
-                        <span class="order-title">STEMI Standing Order (TNK / SK Fibrinolysis)</span>
+                        <span class="order-title">NSTEMI Standing Order</span>
                     </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- 03 PE -->
-            <li class="order-item-wrap">
-                <a href="orders/pe.html" class="order-row time-critical-row">
-                    <span class="order-num">03</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Pulmonary</span>
-                        <span class="order-title">Massive PE Fibrinolysis (rt-PA / SK Protocol)</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- 04 Anaphylaxis -->
-            <li class="order-item-wrap">
-                <a href="orders/anaphylaxis.html" class="order-row time-critical-row">
-                    <span class="order-num">04</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Allergy</span>
-                        <span class="order-title">Anaphylaxis Standing Order (IM Adrenaline &amp; Fluid)</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- 05 RSI Checklist -->
-            <li class="order-item-wrap">
-                <a href="tools/rsi-checklist.html" class="order-row time-critical-row">
-                    <span class="order-num">05</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Procedural</span>
-                        <span class="order-title">RSI Intubation Assistant &amp; Checklist</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- 06 Resuscitation Timer -->
-            <li class="order-item-wrap">
-                <a href="tools/resus-timer.html" class="order-row time-critical-row">
-                    <span class="order-num">06</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Resuscitation</span>
-                        <span class="order-title">Resuscitation Assistant &amp; CPR Timer</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- 07 MgSO4 Calculator -->
-            <li class="order-item-wrap">
-                <a href="tools/mgso4-calculator.html" class="order-row time-critical-row">
-                    <span class="order-num">07</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Obstetric</span>
-                        <span class="order-title">MgSO4 Calculator (Severe Pre-eclampsia / Eclampsia)</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- 08 Burn Resuscitation Hub -->
-            <li class="order-item-wrap">
-                <a href="tools/burn-manager.html" class="order-row time-critical-row">
-                    <span class="order-num">08</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Trauma / Burns</span>
-                        <span class="order-title">Burn Management &amp; Parkland Resuscitation Hub</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-        </ol>
-    </div>
-
-    <!-- ══════════════ 2. STANDING ORDERS & INPATIENT PATHWAYS ══════════════ -->
-    <div class="list-section">
-        <div class="section-header">
-            <h2 class="section-eyebrow">💊 Standing Orders &amp; Inpatient Pathways</h2>
-            <span class="section-sub">คำสั่งการรักษามาตรฐานและยาความเสี่ยงสูง</span>
-        </div>
-        <ol class="order-list">
-            <!-- 09 NSTEMI -->
-            <li class="order-item-wrap">
-                <a href="orders/nstemi.html" class="order-row">
-                    <span class="order-num">09</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Cardiac</span>
-                        <span class="order-title">NSTEMI Standing Order (GRACE Score &amp; DAPT Protocol)</span>
-                    </div>
-                    <span class="order-status active">ACTIVE</span>
+                    <span class="order-status">ACTIVE</span>
                     <span class="signal-dot" role="img" aria-label=""></span>
                     <span class="order-arrow">→</span>
                 </a>
             </li>
-            <!-- 10 Heparin -->
-            <li class="order-item-wrap">
-                <a href="orders/heparin.html" class="order-row">
-                    <span class="order-num">10</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Anticoag.</span>
-                        <span class="order-title">Heparin Protocol &amp; aPTT Titration</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot" role="img" aria-label=""></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- 11 Antivenom -->
-            <li class="order-item-wrap">
-                <a href="orders/antivenom.html" class="order-row">
-                    <span class="order-num">11</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Toxicology</span>
-                        <span class="order-title">Antivenom Standing Order (Snakebite Protocol)</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot" role="img" aria-label=""></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- 12 Sedation -->
-            <li class="order-item-wrap">
-                <a href="orders/sedation.html" class="order-row">
-                    <span class="order-num">12</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Procedural</span>
-                        <span class="order-title">Post-Intubation Sedation &amp; Analgesia Order</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot" role="img" aria-label=""></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-        </ol>
-    </div>
-
-    <!-- ══════════════ 3. BEDSIDE CLINICAL CALCULATORS ══════════════ -->
-    <div class="list-section">
-        <div class="section-header">
-            <h2 class="section-eyebrow">🧮 Bedside Dosing &amp; Clinical Calculators</h2>
-            <span class="section-sub">เครื่องคิดเลขขนาดยาและการประเมินความเสี่ยง</span>
-        </div>
-        <ol class="order-list">
-            <!-- T1 Drip Calculator -->
+            <!-- Drip Calculator -->
             <li class="order-item-wrap">
                 <a href="tools/drip-calculator.html" class="order-row">
                     <span class="order-num">T1</span>
                     <div class="order-main-info">
                         <span class="order-category">Calculator</span>
-                        <span class="order-title">IV Infusion Drip Calculator (12 HAD Drugs)</span>
+                        <span class="order-title">IV Infusion Drip Calculator</span>
                     </div>
-                    <span class="order-status active">ACTIVE</span>
+                    <span class="order-status">ACTIVE</span>
                     <span class="signal-dot" role="img" aria-label=""></span>
                     <span class="order-arrow">→</span>
                 </a>
             </li>
-            <!-- T2 Clinical Score Hub -->
+            <!-- NIHSS Score -->
             <li class="order-item-wrap">
-                <a href="tools/score-hub.html" class="order-row">
+                <a href="tools/nihss.html" class="order-row">
                     <span class="order-num">T2</span>
                     <div class="order-main-info">
-                        <span class="order-category">Calculator</span>
-                        <span class="order-title">Clinical Score &amp; Risk Hub (CIWA, Sepsis, HEART, PE, PERC)</span>
+                        <span class="order-category">Neurology</span>
+                        <span class="order-title">NIHSS Score Sheet</span>
                     </div>
-                    <span class="order-status active">ACTIVE</span>
+                    <span class="order-status">ACTIVE</span>
                     <span class="signal-dot" role="img" aria-label=""></span>
                     <span class="order-arrow">→</span>
                 </a>
             </li>
-            <!-- T3 TB Calculator -->
+            <!-- Urgent Clinic Home Medication -->
             <li class="order-item-wrap">
-                <a href="tools/tb-calculator.html" class="order-row">
+                <a href="tools/Urgent-Clinic-Home-Medication.html" class="order-row">
                     <span class="order-num">T3</span>
                     <div class="order-main-info">
-                        <span class="order-category">Calculator</span>
-                        <span class="order-title">TB Weight-Based Dosing Calculator (Thailand CPG 2018/2022)</span>
+                        <span class="order-category">Documentation</span>
+                        <span class="order-title">Urgent Clinic Home Medication</span>
                     </div>
-                    <span class="order-status active">ACTIVE</span>
+                    <span class="order-status">ACTIVE</span>
                     <span class="signal-dot" role="img" aria-label=""></span>
                     <span class="order-arrow">→</span>
                 </a>
             </li>
+            <!-- Clinical Score Hub Tool -->
+            <li class="order-item-wrap">
+                <a href="tools/score-hub.html" class="order-row">
+                    <span class="order-num">T5</span>
+                    <div class="order-main-info">
+                        <span class="order-category">Calculator</span>
+                        <span class="order-title">Clinical Score & Risk Hub</span>
+                    </div>
+                    <span class="order-status">ACTIVE</span>
+                    <span class="signal-dot" role="img" aria-label=""></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>
+            <!-- TB Weight-Based Dosing Calculator Tool -->
+            <li class="order-item-wrap">
+                <a href="tools/tb-calculator.html" class="order-row">
+                    <span class="order-num">T6</span>
+                    <div class="order-main-info">
+                        <span class="order-category">Calculator</span>
+                        <span class="order-title">TB Weight-Based Dosing Calculator</span>
+                    </div>
+                    <span class="order-status">ACTIVE</span>
+                    <span class="signal-dot" role="img" aria-label=""></span>
+                    <span class="order-arrow">→</span>
+                </a>
+            </li>
+
         </ol>
     </div>
 
-    <!-- ══════════════ 4. CLINICAL DOCUMENTATION & NOTES ══════════════ -->
-    <div class="list-section">
-        <div class="section-header">
-            <h2 class="section-eyebrow">📋 Clinical Documentation &amp; Notes</h2>
-            <span class="section-sub">แบบบันทึกและประเมินทางคลินิก</span>
+    <div class="list-section" style="perspective: 1000px;">
+        <h3 class="section-eyebrow prototype-toggle" id="prototype-toggle" role="button" aria-expanded="false" tabindex="0">
+            <span>Prototype</span>
+            <span class="toggle-icon">▼</span>
+        </h3>
+        <div class="collapsible-content collapsed" id="prototype-content">
+            <ol class="order-list">
+                <!-- Cardiac STEMI -->
+                <li class="order-item-wrap">
+                    <a href="orders/stemi.html" class="order-row">
+                        <span class="order-num">03</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Cardiac</span>
+                            <span class="order-title">STEMI Standing Order</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- Pulmonary PE -->
+                <li class="order-item-wrap">
+                    <a href="orders/pe.html" class="order-row">
+                        <span class="order-num">04</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Pulmonary</span>
+                            <span class="order-title">Massive PE Fibrinolysis</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- Anticoag Heparin -->
+                <li class="order-item-wrap">
+                    <a href="orders/heparin.html" class="order-row">
+                        <span class="order-num">05</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Anticoag.</span>
+                            <span class="order-title">Heparin Protocol</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- Tox Antivenom -->
+                <li class="order-item-wrap">
+                    <a href="orders/antivenom.html" class="order-row">
+                        <span class="order-num">06</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Toxicology</span>
+                            <span class="order-title">Antivenom Standing Order</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- Procedural Sedation -->
+                <li class="order-item-wrap">
+                    <a href="orders/sedation.html" class="order-row">
+                        <span class="order-num">07</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Procedural</span>
+                            <span class="order-title">Post-Intubation Sedation</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- Anaphylaxis Standing Order -->
+                <li class="order-item-wrap">
+                    <a href="orders/anaphylaxis.html" class="order-row">
+                        <span class="order-num">08</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Allergy</span>
+                            <span class="order-title">Anaphylaxis Standing Order</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- ER NOTE Tool -->
+                <li class="order-item-wrap">
+                    <a href="tools/er-note/index.html" class="order-row">
+                        <span class="order-num">T4</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Documentation</span>
+                            <span class="order-title">ER NOTE Tool</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- Obstetric MgSO4 Calculator Tool -->
+                <li class="order-item-wrap">
+                    <a href="tools/mgso4-calculator.html" class="order-row">
+                        <span class="order-num">T7</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Obstetric</span>
+                            <span class="order-title">MgSO4 Calculator (Pre-eclampsia/Eclampsia)</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- RSI Checklist -->
+                <li class="order-item-wrap">
+                    <a href="tools/rsi-checklist.html" class="order-row">
+                        <span class="order-num">T8</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Procedural</span>
+                            <span class="order-title">RSI Checklist</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- Resuscitation Timer -->
+                <li class="order-item-wrap">
+                    <a href="tools/resus-timer.html" class="order-row">
+                        <span class="order-num">T9</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Resuscitation</span>
+                            <span class="order-title">Resuscitation Timer</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+                <!-- Burn Management & Resuscitation Hub -->
+                <li class="order-item-wrap">
+                    <a href="tools/burn-manager.html" class="order-row">
+                        <span class="order-num">T10</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Trauma / Burns</span>
+                            <span class="order-title">Burn Management & Resuscitation Hub</span>
+                        </div>
+                        <span class="order-status">PROTOTYPE</span>
+                        <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </li>
+            </ol>
         </div>
-        <ol class="order-list">
-            <!-- T4 ER NOTE Suite -->
-            <li class="order-item-wrap">
-                <a href="tools/er-note/index.html" class="order-row">
-                    <span class="order-num">T4</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Documentation</span>
-                        <span class="order-title">ER NOTE Suite (7 Clinical Note Templates)</span>
-                    </div>
-                    <span class="order-status">PROTOTYPE</span>
-                    <span class="signal-dot" role="img" aria-label=""></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- T5 NIHSS -->
-            <li class="order-item-wrap">
-                <a href="tools/nihss.html" class="order-row">
-                    <span class="order-num">T5</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Neurology</span>
-                        <span class="order-title">NIHSS Stroke Scale Score Sheet</span>
-                    </div>
-                    <span class="order-status active">ACTIVE</span>
-                    <span class="signal-dot" role="img" aria-label=""></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- T6 Urgent Clinic Home Medication -->
-            <li class="order-item-wrap">
-                <a href="tools/Urgent-Clinic-Home-Medication.html" class="order-row">
-                    <span class="order-num">T6</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Documentation</span>
-                        <span class="order-title">Urgent Clinic Home Medication Checklist</span>
-                    </div>
-                    <span class="order-status active">ACTIVE</span>
-                    <span class="signal-dot" role="img" aria-label=""></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-        </ol>
     </div>
 
     <footer class="portal-footer">
-        Maharat Nakhon Ratchasima Hospital · Emergency Department · Offline-Ready Clinical Hub
+        Maharat Nakhon Ratchasima Hospital · Emergency Department
     </footer>
 </div>
 
-<div id="sw-update-toast" style="display:none; position:fixed; bottom:24px; right:24px; background:#111827; color:#f8f7f4; padding:14px 20px; border-radius:6px; font-family:var(--font-ui); font-size:13.5px; box-shadow:0 4px 16px rgba(0,0,0,0.25); z-index:1000; align-items:center; gap:14px; transform: translateY(120%); transition: transform 300ms ease; border: 1px solid rgba(255,255,255,0.15);">
+<div id="sw-update-toast" style="display:none; position:fixed; bottom:24px; right:24px; background:#1a1a1a; color:#f4f2ec; padding:16px 24px; border-radius:2px; font-family:var(--font-ui); font-size:14px; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:1000; align-items:center; gap:16px; transform: translateY(120%); transition: transform 300ms ease;">
     <span>พบเวอร์ชันใหม่ (New version available)</span>
-    <button id="sw-refresh-btn" style="background:#d84315; color:#ffffff; border:none; padding:6px 14px; font-family:var(--font-ui); font-weight:700; font-size:12px; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; border-radius:4px;">อัปเดต (Update)</button>
+    <button id="sw-refresh-btn" style="background:#d84315; color:#f4f2ec; border:none; padding:8px 16px; font-family:var(--font-ui); font-weight:700; font-size:12px; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; border-radius:2px;">อัปเดต (Update)</button>
 </div>
 
 <script type="module">
-// Create navigation bar directly to fit the header layout
+// Create navigation bar directly to fit the Braun header layout without redundant helper injection
 const nav = document.createElement('nav');
 nav.className = 'top-nav';
 nav.setAttribute('role', 'navigation');
@@ -757,6 +777,93 @@ if ('serviceWorker' in navigator) {
     })
     .catch(function(e) { console.warn('SW registration failed:', e); });
 }
+</script>
+
+<script>
+(function() {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const MAX_TILT = 8;  // deg, at cursor fully to the edge
+  const LIFT = 6;      // px translateZ at full tilt
+
+  if (!prefersReducedMotion) {
+  document.querySelectorAll('.order-row').forEach(function(row) {
+    let ticking = false;
+    let lastEvent = null;
+
+    function applyTilt(e) {
+      const rect = row.getBoundingClientRect();
+      const px = ((e.clientX - rect.left) / rect.width) - 0.5;  // -0.5 .. 0.5
+      const py = ((e.clientY - rect.top) / rect.height) - 0.5;  // -0.5 .. 0.5
+
+      const rotateY = px * MAX_TILT * 2;   // cursor left/right -> tilt around vertical axis
+      const rotateX = -py * MAX_TILT * 2;  // cursor up/down -> tilt around horizontal axis
+
+      row.style.transform =
+        'perspective(600px) rotateX(' + rotateX.toFixed(2) + 'deg) rotateY(' + rotateY.toFixed(2) + 'deg) translateZ(' + LIFT + 'px)';
+    }
+
+    row.addEventListener('mouseenter', function() {
+      row.style.transitionDuration = '80ms';
+    });
+
+    row.addEventListener('mousemove', function(e) {
+      lastEvent = e;
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(function() {
+          if (lastEvent) applyTilt(lastEvent);
+          ticking = false;
+        });
+      }
+    });
+
+    row.addEventListener('mouseleave', function() {
+      row.style.transitionDuration = '400ms';
+      row.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+    });
+  });
+  }
+
+  // Prototype collapsible logic
+  const toggle = document.getElementById('prototype-toggle');
+  const content = document.getElementById('prototype-content');
+  
+  if (toggle && content) {
+    function toggleSection() {
+      const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+      if (isExpanded) {
+        // Collapsing: restore overflow:hidden so content clips during animation
+        content.style.overflow = 'hidden';
+        toggle.setAttribute('aria-expanded', 'false');
+        content.classList.add('collapsed');
+      } else {
+        // Expanding: keep overflow:hidden during animation, then allow 3D tilt overflow
+        toggle.setAttribute('aria-expanded', 'true');
+        content.classList.remove('collapsed');
+        let done = false;
+        function enableOverflow() {
+          if (done) return;
+          done = true;
+          content.style.overflow = 'visible';
+          content.removeEventListener('transitionend', onTEnd);
+        }
+        function onTEnd(e) {
+          if (e.target === content && e.propertyName === 'transform') enableOverflow();
+        }
+        content.addEventListener('transitionend', onTEnd);
+        setTimeout(enableOverflow, 550);
+      }
+    }
+
+    toggle.addEventListener('click', toggleSection);
+    toggle.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleSection();
+      }
+    });
+  }
+})();
 </script>
 
 </body>
