@@ -1,3 +1,30 @@
+## [2.8.0] — 2026-08-21
+
+### Major UX & Architectural Overhaul (Burn Tool Layout Restructuring, Pediatric Body Model & Paintbrush)
+- **Burn Management Hub (`tools/burn-manager.html`, `shared/burn-engine.js`):**
+  - **Hero Section Layout Restructure:** Replaced 2-column grid with a full-width stacked layout. The **IV Fluid Resuscitation Schedule** is now the prominent **Hero Section** at the top with enlarged `2.2rem` rate numbers.
+  - **Full-Width TBSA Summary Banner:** Compact sticky banner with dynamic severity color transitions (Minor `#0f172a`, Moderate `#78350f`, Major `#9a3412`, Critical `#7f1d1d`), direct numerical % TBSA entry, and a smooth quick-link button (`#link-to-painter`) to the body painter.
+  - **Interactive Drag-to-Paint Body Painter (Moved to Bottom):** Relocated the SVG body painter to the bottom of the page with support for both click-to-paint and continuous pointer/mouse drag-to-paint across body parts.
+  - **Dynamic 6-Column Lund-Browder Pediatric Model Scaling:** SVG body parts visually scale proportions according to age bracket (`model-col-0` infant to `model-col-adult`) with larger head and shorter limbs for younger patients.
+  - **Live % BSA Overlays:** Added real-time text percentage overlays on all SVG anatomical regions dynamically updating with the selected age bracket.
+  - **Engine Helper:** Exported `getRegionPercentages(ageColumn)` in `shared/burn-engine.js`.
+- **Automated Test Coverage (`tests/burn-engine.test.js`, `tests/dead-css-guard.test.js`):**
+  - Expanded test suites to 68 tests across 23 suites covering `getRegionPercentages`, pediatric model scaling, dynamic labels, and dead CSS validation (309 total tests passing across 53 suites, 100% green).
+- **PWA Cache (`service-worker.js`):**
+  - Bumped cache version to `er-hub-v63` (`21/08/2569`).
+
+## [2.7.3] — 2026-08-21
+
+### Enhanced & Hardened (Shock Resuscitation 8h & 24h Total Fluid Volume Synchronization)
+- **Burn Management Hub (`tools/burn-manager.html`, `shared/burn-engine.js`):**
+  - **Dynamic Shock Volume Totals:** When **ภาวะช็อก/ความดันตก (Shock)** is active, the first 8-hour target and total 24-hour projected volumes in both **Modified Brooke** and **Classic Parkland** formula cards dynamically compute and reflect the total shock fluid plan ($+\text{Bolus volume } 10\text{--}20\text{ mL/kg} + \text{Projected Infusion at } +25\%\text{ rate}$).
+  - **Mini-Stat Shock Labels:** Automatically toggles mini-stat labels to *"ยอด 8 ชม. แรก (รวม Bolus)"* and *"ยอดรวม 24 ชม. (แผนกู้ชีพ)"*.
+  - **Invalid Wt/TBSA Early-Return Hardening:** Ensured all calculation baseline and shock properties are completely initialized even on empty initial inputs.
+- **Automated Test Coverage (`tests/burn-engine.test.js`):**
+  - Added mathematical assertions for 8h and 24h shock volume totals and verified DOM label updates (304 tests passing across 51 suites, 100% green).
+- **PWA Cache (`service-worker.js`):**
+  - Bumped cache version to `er-hub-v62` (`21/08/2569`).
+
 ## [2.7.2] — 2026-08-20
 
 ### Enhanced & Unified (Formula Card Direct Shock-Adjusted Rate Sync & Direct Entry Persistence)

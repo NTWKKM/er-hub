@@ -401,9 +401,9 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             // 13% of 70kg at 2 mL/kg/% = 2 * 70 * 13 = 1820 mL in 24h
             // 1st 8h target = 910 mL. With 1h elapsed (7h remaining) = 910 / 7 = 130 mL/hr
             assert.equal(doc.getElementById('val-resuscitative-tbsa').textContent, '13.0');
-            assert.equal(doc.getElementById('val-total-24h').textContent, '1820 mL');
+            assert.equal(doc.getElementById('val-total-24h').textContent, '1,820 mL');
             assert.equal(doc.getElementById('val-first8h-rate').textContent, '130 mL/hr');
-            assert.equal(doc.getElementById('val-parkland-total').textContent, '3640 mL');
+            assert.equal(doc.getElementById('val-parkland-total').textContent, '3,640 mL');
             assert.equal(doc.getElementById('val-parkland-first8h-rate').textContent, '260 mL/hr');
         });
 
@@ -418,9 +418,9 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             // 25% of 70kg at 2 mL/kg/% = 2 * 70 * 25 = 3500 mL in 24h
             // 1st 8h target = 1750 mL. With 1h elapsed (7h remaining) = 1750 / 7 = 250 mL/hr
             assert.equal(doc.getElementById('val-resuscitative-tbsa').textContent, '25.0');
-            assert.equal(doc.getElementById('val-total-24h').textContent, '3500 mL');
+            assert.equal(doc.getElementById('val-total-24h').textContent, '3,500 mL');
             assert.equal(doc.getElementById('val-first8h-rate').textContent, '250 mL/hr');
-            assert.equal(doc.getElementById('val-parkland-total').textContent, '7000 mL');
+            assert.equal(doc.getElementById('val-parkland-total').textContent, '7,000 mL');
             assert.equal(doc.getElementById('val-parkland-first8h-rate').textContent, '500 mL/hr');
         });
 
@@ -635,22 +635,35 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             assert.equal(over.bolusMlKg, 20, 'Clamps maximum to 20 mL/kg');
         });
 
-        it('calculateFluidRequirements with isHypotensive=true returns shock-adjusted rate (+25%) and baseline', () => {
+        it('calculateFluidRequirements with isHypotensive=true returns shock-adjusted rate (+25%), bolus volume, and adjusted 8h/24h totals', () => {
             const fluid = BurnEngine.calculateFluidRequirements({
                 weightKg: 70,
                 tbsaPct: 40,
                 ageYears: 30,
-                isHypotensive: true
+                isHypotensive: true,
+                shockBolusMlKg: 20
             });
             assert.equal(fluid.isHypotensive, true);
+            assert.equal(fluid.shockBolusMl, 1400);
+
             // Modified Brooke total = 2 * 70 * 40 = 5600 mL. Baseline 8h rate = 2800 / 8 = 350 mL/hr
             assert.equal(fluid.baselineFirst8hRate, 350);
             assert.equal(fluid.first8hHourlyRate, 438); // 350 * 1.25 = 437.5 -> 438 mL/hr
             assert.equal(fluid.shockAdjustedFirst8hRate, 438);
 
-            // Parkland total = 4 * 70 * 40 = 11200 mL. Baseline 8h rate = 5600 / 8 = 700 mL/hr
+            // Shock 8h target = 1400 bolus + (438 * 8) = 1400 + 3504 = 4904 mL
+            assert.equal(fluid.first8hTargetMl, 4904);
+            // Shock 24h total = 4904 + 2800 = 7704 mL
+            assert.equal(fluid.modifiedBrookeTotalMl, 7704);
+            assert.equal(fluid.total24hMl, 7704);
+
+            // Parkland baseline 8h rate = 5600 / 8 = 700 mL/hr. Adjusted = 875 mL/hr
             assert.equal(fluid.parklandBaselineFirst8hRate, 700);
-            assert.equal(fluid.parklandFirst8hHourlyRate, 875); // 700 * 1.25 = 875 mL/hr
+            assert.equal(fluid.parklandFirst8hHourlyRate, 875);
+            // Parkland Shock 8h target = 1400 + (875 * 8) = 1400 + 7000 = 8400 mL
+            assert.equal(fluid.parklandFirst8hTargetMl, 8400);
+            // Parkland Shock 24h total = 8400 + 5600 = 14000 mL
+            assert.equal(fluid.parklandTotalMl, 14000);
         });
     });
 
@@ -703,7 +716,7 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
     });
 
     describe('20. DOM Interactive Shock Bolus Buttons & Dynamic Schedule Labels', () => {
-        it('Selecting shock checkbox updates main formula hero rates to shock-adjusted (+25%) and shows badge', () => {
+        it('Selecting shock checkbox updates main formula hero rates and 8h/24h totals to shock resuscitation plan', () => {
             const win = loadBurnManagerDom();
             const doc = win.document;
 
@@ -718,27 +731,40 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             inputDirect.dispatchEvent(new win.Event('input', { bubbles: true }));
 
             assert.equal(doc.getElementById('val-first8h-rate').textContent, '315 mL/hr');
+            assert.equal(doc.getElementById('val-first8h-target').textContent, '2,520 mL');
+            assert.equal(doc.getElementById('val-total-24h').textContent, '5,040 mL');
             assert.equal(doc.getElementById('badge-modified-shock').style.display, 'none');
 
-            // Check shock checkbox
+            // Check shock checkbox (default 20 mL/kg = 1400 mL bolus)
             const chkHypo = doc.getElementById('check-hypotensive');
             chkHypo.checked = true;
             chkHypo.dispatchEvent(new win.Event('change', { bubbles: true }));
 
-            // Main hero rate on formula card must directly update to shock-adjusted rate 394 mL/hr (315 * 1.25 = 393.75 -> 394)
+            // Main hero rate on formula card must directly update to shock-adjusted rate 394 mL/hr
             assert.equal(doc.getElementById('val-first8h-rate').textContent, '394 mL/hr');
             assert.equal(doc.getElementById('badge-modified-shock').style.display, 'inline-block');
             assert.ok(doc.getElementById('val-time-remaining-desc').textContent.includes('ปรับเพิ่ม +25% สำหรับภาวะช็อก'));
 
+            // 8h target with shock = 1400 bolus + (394 * 8) = 4,552 mL
+            assert.equal(doc.getElementById('val-first8h-target').textContent, '4,552 mL');
+            assert.equal(doc.getElementById('lbl-first8h-target').textContent, 'ยอด 8 ชม. แรก (รวม Bolus)');
+
+            // 24h total with shock = 4552 + 2520 = 7,072 mL
+            assert.equal(doc.getElementById('val-total-24h').textContent, '7,072 mL');
+            assert.equal(doc.getElementById('lbl-total-24h').textContent, 'ยอดรวม 24 ชม. (แผนกู้ชีพ)');
+
             // Parkland rate must also be shock-adjusted: baseline 630 * 1.25 = 788 mL/hr
             assert.equal(doc.getElementById('val-parkland-first8h-rate').textContent, '788 mL/hr');
-            assert.equal(doc.getElementById('badge-parkland-shock').style.display, 'inline-block');
+            assert.equal(doc.getElementById('val-parkland-first8h-target').textContent, '7,704 mL');
+            assert.equal(doc.getElementById('val-parkland-total').textContent, '12,744 mL');
 
-            // Unchecking shock restores baseline rates
+            // Unchecking shock restores baseline rates and totals
             chkHypo.checked = false;
             chkHypo.dispatchEvent(new win.Event('change', { bubbles: true }));
 
             assert.equal(doc.getElementById('val-first8h-rate').textContent, '315 mL/hr');
+            assert.equal(doc.getElementById('val-first8h-target').textContent, '2,520 mL');
+            assert.equal(doc.getElementById('val-total-24h').textContent, '5,040 mL');
             assert.equal(doc.getElementById('badge-modified-shock').style.display, 'none');
         });
 
@@ -784,6 +810,66 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             const lblFirst8h = doc.getElementById('lbl-first8h-rate');
             assert.ok(lblFirst8h.textContent.includes('อัตราชดเชยหลัง 8 ชม.'));
             assert.ok(lblFirst8h.textContent.includes('14h Left'));
+        });
+    });
+
+    describe('21. getRegionPercentages() Helper Invariants', () => {
+        it('Returns all 32 region percentages for adult bracket', () => {
+            const adultPcts = BurnEngine.getRegionPercentages('adult');
+            assert.equal(adultPcts.head_ant, 3.5);
+            assert.equal(adultPcts.head_post, 3.5);
+            assert.equal(adultPcts.chest_ant, 6.5);
+            assert.equal(adultPcts.abdomen_ant, 6.5);
+            assert.equal(adultPcts.thigh_r_ant, 4.75);
+            assert.equal(adultPcts.leg_lower_r_ant, 3.5);
+        });
+
+        it('Returns infant (<1y) percentages with 19% head and smaller thighs/legs', () => {
+            const infantPcts = BurnEngine.getRegionPercentages('0');
+            assert.equal(infantPcts.head_ant, 9.5);
+            assert.equal(infantPcts.head_post, 9.5);
+            assert.equal(infantPcts.thigh_r_ant, 2.75);
+            assert.equal(infantPcts.leg_lower_r_ant, 2.5);
+        });
+
+        it('Defaults to adult when invalid or undefined column is provided', () => {
+            const defPcts = BurnEngine.getRegionPercentages();
+            assert.equal(defPcts.head_ant, 3.5);
+        });
+    });
+
+    describe('22. DOM Pediatric Body Model & Dynamic Lund-Browder Label Sync', () => {
+        it('Changing age to infant (0.5y) updates wrapper class to model-col-0 and head label to 9.5%', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            const inputAge = doc.getElementById('input-age');
+            inputAge.value = '0.5';
+            inputAge.dispatchEvent(new win.Event('input', { bubbles: true }));
+
+            const wrapper = doc.getElementById('body-mapper-wrapper');
+            assert.ok(wrapper.classList.contains('model-col-0'), 'Wrapper must have model-col-0 for infant');
+
+            const headLabel = doc.getElementById('lbl-head_ant');
+            assert.equal(headLabel.textContent, '9.5%', 'Infant anterior head label must display 9.5%');
+
+            const thighLabel = doc.getElementById('lbl-thigh_r_ant');
+            assert.equal(thighLabel.textContent, '2.75%', 'Infant anterior right thigh label must display 2.75%');
+        });
+
+        it('Changing age to child (7y) updates wrapper class to model-col-5 and head label to 6.5%', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            const inputAge = doc.getElementById('input-age');
+            inputAge.value = '7';
+            inputAge.dispatchEvent(new win.Event('input', { bubbles: true }));
+
+            const wrapper = doc.getElementById('body-mapper-wrapper');
+            assert.ok(wrapper.classList.contains('model-col-5'), 'Wrapper must have model-col-5 for child');
+
+            const headLabel = doc.getElementById('lbl-head_ant');
+            assert.equal(headLabel.textContent, '6.5%', 'Child anterior head label must display 6.5%');
         });
     });
 });

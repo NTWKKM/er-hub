@@ -231,21 +231,48 @@
         else if (age <= 12) prehospitalInitialRate = 250;
         else prehospitalInitialRate = 500;
 
+        const isHypo = Boolean(params && params.isHypotensive);
+        const bolusMlKg = Math.max(10, Math.min(20, Number(params && params.shockBolusMlKg) || 20));
+        const shockBolusMl = isHypo ? Math.round(wt * bolusMlKg) : 0;
+
         if (wt <= 0 || tbsa <= 0) {
             return {
                 isValid: false,
+                weightKg: wt,
+                tbsaPct: tbsa,
+                ageYears: age,
+                isElectrical: isElectrical,
+                isHypotensive: isHypo,
+                shockBolusMl: shockBolusMl,
+                shockBolusMlKg: bolusMlKg,
                 total24hMl: 0,
                 parklandTotalMl: 0,
                 modifiedBrookeTotalMl: 0,
+                baselineModifiedBrookeTotalMl: 0,
+                baselineParklandTotalMl: 0,
                 first8hTargetMl: 0,
+                baselineFirst8hTargetMl: 0,
                 first8hRemainingMl: 0,
                 first8hHourlyRate: 0,
+                baselineFirst8hRate: 0,
+                shockAdjustedFirst8hRate: 0,
                 next16hHourlyRate: 0,
                 secondarySurveyRateMlHr: 0,
                 prehospitalInitialRateMlHr: prehospitalInitialRate,
+                parklandFirst8hTargetMl: 0,
+                parklandBaselineFirst8hTargetMl: 0,
+                parklandFirst8hRemainingMl: 0,
+                parklandFirst8hHourlyRate: 0,
+                parklandBaselineFirst8hRate: 0,
+                parklandShockAdjustedFirst8hRate: 0,
+                parklandNext16hHourlyRate: 0,
                 pediatricMaintenance: calculatePediatricMaintenance(wt),
+                requiresMaintenanceDextrose: wt <= 30.0,
                 isMajorBurn: false,
-                guidelineCoefficient: 2
+                isPost8h: elapsed >= 8.0,
+                hoursElapsed: elapsed,
+                guidelineCoefficient: 2,
+                fluidOfChoice: 'Lactated Ringer\'s (LR) / Hartmann\'s Solution (Warmed)'
             };
         }
 
@@ -306,9 +333,44 @@
 
         // Maintenance calculation
         const pedsMaintenance = calculatePediatricMaintenance(wt);
-        const isHypo = Boolean(params && params.isHypotensive);
+
         const shockAdjustedFirst8hRate = Math.round(first8hRate * 1.25);
         const shockAdjustedParklandRate = Math.round(parklandFirst8hRate * 1.25);
+
+        // Calculate volumes for shock resuscitation
+        let shockFirst8hTargetMl = Math.round(first8hTarget);
+        let shockFirst8hRemainingMl = Math.round(first8hRemaining);
+        let shockTotal24hMl = Math.round(modifiedBrookeTotal);
+
+        let parklandShockFirst8hTargetMl = Math.round(parklandFirst8hTarget);
+        let parklandShockFirst8hRemainingMl = Math.round(parklandFirst8hRemaining);
+        let parklandShockTotal24hMl = Math.round(parklandTotal);
+
+        if (isHypo) {
+            if (elapsed < 8.0) {
+                const hoursLeft = 8.0 - elapsed;
+                const projectedInfusion8h = Math.round(shockAdjustedFirst8hRate * hoursLeft);
+                shockFirst8hRemainingMl = Math.round(shockBolusMl + projectedInfusion8h);
+                shockFirst8hTargetMl = Math.round(prehospital + shockFirst8hRemainingMl);
+                shockTotal24hMl = Math.round(shockFirst8hTargetMl + second16hTarget);
+
+                const parklandProjectedInfusion8h = Math.round(shockAdjustedParklandRate * hoursLeft);
+                parklandShockFirst8hRemainingMl = Math.round(shockBolusMl + parklandProjectedInfusion8h);
+                parklandShockFirst8hTargetMl = Math.round(prehospital + parklandShockFirst8hRemainingMl);
+                parklandShockTotal24hMl = Math.round(parklandShockFirst8hTargetMl + parklandSecond16hTarget);
+            } else {
+                const hoursLeft = Math.max(1, 24.0 - elapsed);
+                const projectedInfusion24h = Math.round(shockAdjustedFirst8hRate * hoursLeft);
+                shockFirst8hRemainingMl = Math.round(shockBolusMl + projectedInfusion24h);
+                shockFirst8hTargetMl = shockFirst8hRemainingMl;
+                shockTotal24hMl = Math.round(prehospital + shockFirst8hRemainingMl);
+
+                const parklandProjectedInfusion24h = Math.round(shockAdjustedParklandRate * hoursLeft);
+                parklandShockFirst8hRemainingMl = Math.round(shockBolusMl + parklandProjectedInfusion24h);
+                parklandShockFirst8hTargetMl = parklandShockFirst8hRemainingMl;
+                parklandShockTotal24hMl = Math.round(prehospital + parklandShockFirst8hRemainingMl);
+            }
+        }
 
         return {
             isValid: true,
@@ -317,19 +379,26 @@
             ageYears: age,
             isElectrical: isElectrical,
             isHypotensive: isHypo,
+            shockBolusMl: shockBolusMl,
+            shockBolusMlKg: bolusMlKg,
             guidelineCoefficient: coeff,
             isMajorBurn: tbsa >= 20.0,
             isPost8h: elapsed >= 8.0,
             hoursElapsed: elapsed,
             
-            // Volume Totals
-            modifiedBrookeTotalMl: Math.round(modifiedBrookeTotal),
-            parklandTotalMl: Math.round(parklandTotal),
-            total24hMl: Math.round(modifiedBrookeTotal),
+            // Volume Totals (Modified Brooke)
+            baselineModifiedBrookeTotalMl: Math.round(modifiedBrookeTotal),
+            modifiedBrookeTotalMl: isHypo ? shockTotal24hMl : Math.round(modifiedBrookeTotal),
+            total24hMl: isHypo ? shockTotal24hMl : Math.round(modifiedBrookeTotal),
+
+            // Volume Totals (Classic Parkland)
+            baselineParklandTotalMl: Math.round(parklandTotal),
+            parklandTotalMl: isHypo ? parklandShockTotal24hMl : Math.round(parklandTotal),
 
             // Modified Brooke / ATLS 11th Schedule
-            first8hTargetMl: Math.round(first8hTarget),
-            first8hRemainingMl: Math.round(first8hRemaining),
+            baselineFirst8hTargetMl: Math.round(first8hTarget),
+            first8hTargetMl: isHypo ? shockFirst8hTargetMl : Math.round(first8hTarget),
+            first8hRemainingMl: isHypo ? shockFirst8hRemainingMl : Math.round(first8hRemaining),
             baselineFirst8hRate: first8hRate,
             shockAdjustedFirst8hRate: shockAdjustedFirst8hRate,
             first8hHourlyRate: isHypo ? shockAdjustedFirst8hRate : first8hRate,
@@ -338,8 +407,9 @@
             prehospitalInitialRateMlHr: prehospitalInitialRate,
 
             // Classic Parkland Schedule (4 mL/kg/%)
-            parklandFirst8hTargetMl: Math.round(parklandFirst8hTarget),
-            parklandFirst8hRemainingMl: Math.round(parklandFirst8hRemaining),
+            parklandBaselineFirst8hTargetMl: Math.round(parklandFirst8hTarget),
+            parklandFirst8hTargetMl: isHypo ? parklandShockFirst8hTargetMl : Math.round(parklandFirst8hTarget),
+            parklandFirst8hRemainingMl: isHypo ? parklandShockFirst8hRemainingMl : Math.round(parklandFirst8hRemaining),
             parklandBaselineFirst8hRate: parklandFirst8hRate,
             parklandShockAdjustedFirst8hRate: shockAdjustedParklandRate,
             parklandFirst8hHourlyRate: isHypo ? shockAdjustedParklandRate : parklandFirst8hRate,
@@ -715,6 +785,22 @@
         ettRecommendation: 'ผู้ใหญ่ควรใช้ ETT ขนาดใหญ่ (เบอร์ ≥ 7.5–8.0 mm) เพื่อให้สามารถส่องกล้อง Fiberoptic Bronchoscopy และดูดเสมหะเขม่าเหนียวได้สะดวก'
     };
 
+    /**
+     * Returns a map of regionKey → %BSA for the given Lund-Browder age column.
+     * Used by UI to display per-region labels and compute coverage fractions.
+     *
+     * @param {string} ageColumn - One of '0','1','5','10','15','adult'
+     * @returns {Object} Map of regionKey → number (% BSA)
+     */
+    function getRegionPercentages(ageColumn) {
+        const col = ageColumn || 'adult';
+        const result = {};
+        for (const [key, colMap] of Object.entries(LUND_BROWDER_TABLE)) {
+            result[key] = colMap[col] !== undefined ? colMap[col] : (colMap['adult'] || 0);
+        }
+        return result;
+    }
+
     return {
         LUND_BROWDER_TABLE,
         ABA_REFERRAL_CRITERIA,
@@ -727,6 +813,7 @@
         getUrineOutputTitration,
         getCyanideAntidoteDosing,
         getCOAssessment,
-        evaluateInhalationRisk
+        evaluateInhalationRisk,
+        getRegionPercentages
     };
 });

@@ -113,18 +113,88 @@
             cursor: pointer;
         }
 
-        /* ══ Grid Layout ══ */
-        .burn-grid {
-            display: grid;
-            grid-template-columns: 1.15fr 0.85fr;
-            gap: 20px;
-            margin-bottom: 20px;
+        /* ══ TBSA Summary Banner (Full-Width, Severity Colors) ══ */
+        .tbsa-banner {
+            border-radius: 10px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+            transition: background 0.3s ease, border-color 0.3s ease;
+            background: #0f172a;
+            color: #ffffff;
         }
 
-        @media (max-width: 960px) {
-            .burn-grid {
-                grid-template-columns: 1fr;
-            }
+        .tbsa-banner.severity-minor { background: #0f172a; }
+        .tbsa-banner.severity-moderate { background: #78350f; }
+        .tbsa-banner.severity-major { background: #9a3412; }
+        .tbsa-banner.severity-critical { background: #7f1d1d; }
+
+        .tbsa-score-group {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .tbsa-big-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #fbbf24;
+            line-height: 1;
+        }
+
+        .tbsa-unit {
+            font-family: 'Inter Tight', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .tbsa-subtext {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .tbsa-breakdown-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tbsa-tag {
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tbsa-tag.tag-deg1 { border-left: 3px solid #fef08a; }
+        .tbsa-tag.tag-deg2 { border-left: 3px solid #fb923c; }
+        .tbsa-tag.tag-deg3 { border-left: 3px solid #ef4444; }
+
+        .tbsa-quick-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #fbbf24;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 5px;
+            background: rgba(251, 191, 36, 0.12);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            transition: background 0.15s;
+            text-decoration: none;
+        }
+
+        .tbsa-quick-link:hover {
+            background: rgba(251, 191, 36, 0.22);
         }
 
         /* ══ Card Common ══ */
@@ -134,6 +204,7 @@
             border-radius: 10px;
             padding: 16px;
             box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+            margin-bottom: 18px;
         }
 
         .card-header {
@@ -147,6 +218,94 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+        }
+
+        /* ══ Dual Fluid Resuscitation Schedule Comparison ══ */
+        .fluid-comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 720px) {
+            .fluid-comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .fluid-formula-card {
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .fluid-formula-card.card-modified {
+            background: #fffbeb;
+            border: 2px solid #f59e0b;
+        }
+
+        .fluid-formula-card.card-parkland {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+        }
+
+        .fluid-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 6px;
+            border-bottom: 1.5px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .fluid-hero-rate-box {
+            text-align: center;
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 10px 8px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .fluid-rate-big {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .fluid-formula-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            font-size: 12px;
+        }
+
+        .fluid-mini-stat {
+            background: #ffffff;
+            padding: 6px 8px;
+            border-radius: 5px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        /* ══ Titration Assistant ══ */
+        .titration-box {
+            background: #f0fdf4;
+            border: 1.5px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 12px;
+            font-size: 12.5px;
+        }
+
+        .titration-box.alert-shock {
+            background: #fef2f2;
+            border-color: #fca5a5;
+        }
+
+        .titration-box.alert-under {
+            background: #fffbe6;
+            border-color: #fcd34d;
         }
 
         /* ══ Paint Degree Toolbar ══ */
@@ -195,21 +354,25 @@
         .dot-2 { background: var(--burn-deg2); }
         .dot-3 { background: var(--burn-deg3); }
 
-        /* ══ SVG Body Mapper ══ */
+        /* ══ Interactive SVG Body Painter ══ */
+        .body-painter-section {
+            scroll-margin-top: 20px;
+        }
+
         .body-mapper-wrapper {
             display: flex;
-            gap: 14px;
+            gap: 20px;
             justify-content: center;
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
             padding: 16px 10px;
             margin-bottom: 12px;
+            flex-wrap: wrap;
+            user-select: none;
         }
 
-        .svg-body-view {
-            width: 48%;
-            max-width: 240px;
+        .body-view-container {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -226,175 +389,103 @@
         }
 
         .body-svg {
-            width: 100%;
-            height: auto;
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.06));
+            width: 200px;
+            height: 400px;
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            touch-action: none;
+            cursor: crosshair;
         }
 
         .body-part {
-            cursor: pointer;
-            stroke: #475569;
-            stroke-width: 1.2;
-            stroke-linejoin: round;
             fill: #e2e8f0;
-            transition: fill 0.15s, stroke-width 0.15s;
+            stroke: #94a3b8;
+            stroke-width: 1.2px;
+            cursor: pointer;
+            transition: fill 0.12s ease, stroke 0.12s ease;
         }
 
         .body-part:hover {
             stroke: #0f172a;
-            stroke-width: 2.0;
-            opacity: 0.9;
+            stroke-width: 2px;
         }
 
         .body-part.deg-0 { fill: #e2e8f0; }
-        .body-part.deg-1 { fill: #fef08a; }
-        .body-part.deg-2 { fill: #fb923c; }
-        .body-part.deg-3 { fill: #ef4444; }
+        .body-part.deg-1 { fill: var(--burn-deg1); }
+        .body-part.deg-2 { fill: var(--burn-deg2); }
+        .body-part.deg-3 { fill: var(--burn-deg3); }
 
-        /* ══ TBSA Summary Banner ══ */
-        .tbsa-banner {
-            background: #0f172a;
-            color: #ffffff;
-            border-radius: 8px;
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .tbsa-score-group {
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-        }
-
-        .tbsa-big-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #fbbf24;
-            line-height: 1;
-        }
-
-        .tbsa-unit {
+        .region-pct-label {
             font-family: 'Inter Tight', sans-serif;
-            font-size: 1.1rem;
+            font-size: 8px;
             font-weight: 700;
-            color: #f8fafc;
+            fill: #475569;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+            user-select: none;
         }
 
-        .tbsa-subtext {
-            font-size: 12px;
-            color: #94a3b8;
+        /* ══ Pediatric Visual Scaling Transformations ══ */
+        .body-group {
+            transition: transform 0.3s ease;
         }
 
-        .tbsa-breakdown-tags {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+        /* <1y Infant (Column '0'): Head 19% vs 7%, Legs 21% vs 33% */
+        .model-col-0 .group-head {
+            transform: translate(0, 5px) scale(1.38);
+            transform-origin: 100px 25px;
+        }
+        .model-col-0 .group-legs {
+            transform: translate(0, 15px) scale(0.85, 0.82);
+            transform-origin: 100px 270px;
         }
 
-        .tbsa-tag {
-            font-size: 11.5px;
-            font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.1);
+        /* 1–4y Toddler (Column '1'): Head 17% vs 7%, Legs 23% vs 33% */
+        .model-col-1 .group-head {
+            transform: translate(0, 4px) scale(1.30);
+            transform-origin: 100px 25px;
+        }
+        .model-col-1 .group-legs {
+            transform: translate(0, 10px) scale(0.88, 0.86);
+            transform-origin: 100px 270px;
         }
 
-        .tbsa-tag.tag-deg1 { border-left: 3px solid #fef08a; }
-        .tbsa-tag.tag-deg2 { border-left: 3px solid #fb923c; }
-        .tbsa-tag.tag-deg3 { border-left: 3px solid #ef4444; }
-
-        /* ══ Dual Fluid Resuscitation Schedule Comparison ══ */
-        .fluid-comparison-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 12px;
+        /* 5–9y Child (Column '5'): Head 13% vs 7%, Legs 27% vs 33% */
+        .model-col-5 .group-head {
+            transform: translate(0, 2px) scale(1.20);
+            transform-origin: 100px 25px;
+        }
+        .model-col-5 .group-legs {
+            transform: translate(0, 6px) scale(0.92, 0.90);
+            transform-origin: 100px 270px;
         }
 
-        @media (max-width: 720px) {
-            .fluid-comparison-grid {
-                grid-template-columns: 1fr;
-            }
+        /* 10–14y (Column '10'): Head 11% vs 7%, Legs 30% vs 33% */
+        .model-col-10 .group-head {
+            transform: translate(0, 1px) scale(1.10);
+            transform-origin: 100px 25px;
+        }
+        .model-col-10 .group-legs {
+            transform: translate(0, 3px) scale(0.96, 0.95);
+            transform-origin: 100px 270px;
         }
 
-        .fluid-formula-card {
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        /* 15–17y Adolescent (Column '15'): Head 9% vs 7%, Legs 31% vs 33% */
+        .model-col-15 .group-head {
+            transform: scale(1.05);
+            transform-origin: 100px 25px;
+        }
+        .model-col-15 .group-legs {
+            transform: scale(0.98);
+            transform-origin: 100px 270px;
         }
 
-        .fluid-formula-card.card-modified {
-            background: #fffbeb;
-            border: 2px solid #f59e0b;
-        }
-
-        .fluid-formula-card.card-parkland {
-            background: #f8fafc;
-            border: 2px solid #cbd5e1;
-        }
-
-        .fluid-card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 6px;
-            border-bottom: 1.5px solid rgba(0, 0, 0, 0.08);
-        }
-
-        .fluid-hero-rate-box {
-            text-align: center;
-            background: #ffffff;
-            border-radius: 6px;
-            padding: 8px 6px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-        }
-
-        .fluid-rate-big {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            line-height: 1.1;
-        }
-
-        .fluid-formula-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            font-size: 12px;
-        }
-
-        .fluid-mini-stat {
-            background: #ffffff;
-            padding: 6px 8px;
-            border-radius: 5px;
-            border: 1px solid rgba(0, 0, 0, 0.06);
-        }
-
-        /* ══ Titration Assistant ══ */
-        .titration-box {
-            background: #f0fdf4;
-            border: 1.5px solid #bbf7d0;
-            border-radius: 8px;
-            padding: 12px 14px;
-            margin-top: 12px;
-            font-size: 12.5px;
-        }
-
-        .titration-box.alert-shock {
-            background: #fef2f2;
-            border-color: #fca5a5;
-        }
-
-        .titration-box.alert-under {
-            background: #fffbe6;
-            border-color: #fcd34d;
+        /* Adult (≥18y): Baseline scale 1.0 */
+        .model-col-adult .group-head,
+        .model-col-adult .group-legs {
+            transform: none;
         }
 
         /* ══ Accordion & Subsections ══ */
@@ -560,6 +651,9 @@
             .accordion-content {
                 display: block !important;
             }
+            .body-painter-section {
+                break-inside: avoid;
+            }
         }
     </style>
 </head>
@@ -567,7 +661,9 @@
 
 <div class="burn-container">
 
-    <!-- Patient Parameter Input Strip -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- 1. Patient Parameter Input Strip                -->
+    <!-- ═══════════════════════════════════════════════ -->
     <div class="patient-strip">
         <div class="input-group">
             <label for="input-age">Age (Years)</label>
@@ -609,321 +705,189 @@
         </div>
     </div>
 
-    <!-- Main 2-Column Grid -->
-    <div class="burn-grid">
-        <!-- Column 1: Interactive Body Mapper & Lund-Browder Table -->
-        <div class="burn-card">
-            <div class="card-header">
-                <span>1. Interactive Body Surface Area Painter (Lund & Browder)</span>
-                <span id="quick-reset-btn" style="font-size: 11px; color: var(--burn-primary); cursor: pointer; text-decoration: underline;">ล้างทั้งหมด (Reset)</span>
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- 2. TBSA Summary Banner (Full-Width, Severity)   -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="tbsa-banner severity-minor" id="tbsa-banner">
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div class="tbsa-score-group">
+                <span class="tbsa-big-num" id="val-resuscitative-tbsa">0.0</span>
+                <span class="tbsa-unit">% TBSA</span>
             </div>
+            <div class="tbsa-subtext">Resuscitative TBSA (2nd & 3rd Degree Only)</div>
+        </div>
 
-            <!-- Degree Paint Selector -->
-            <div class="paint-toolbar">
-                <button type="button" class="degree-btn" data-degree="0">
-                    <span class="color-dot dot-0"></span> ลบ (0% Unburned)
-                </button>
-                <button type="button" class="degree-btn" data-degree="1">
-                    <span class="color-dot dot-1"></span> 1st Degree (Superficial - ตัดออกจากสูตรน้ำ)
-                </button>
-                <button type="button" class="degree-btn active" data-degree="2">
-                    <span class="color-dot dot-2"></span> 2nd Degree (Partial Thickness)
-                </button>
-                <button type="button" class="degree-btn" data-degree="3">
-                    <span class="color-dot dot-3"></span> 3rd/4th Degree (Full Thickness)
-                </button>
+        <!-- Direct % TBSA Input Box -->
+        <div style="background: rgba(255,255,255,0.92); padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--burn-border); display: flex; align-items: center; gap: 10px;">
+            <div>
+                <label for="input-direct-tbsa" style="font-size: 11.5px; font-weight: 700; color: #78350f; display: block;">⚡ Direct % TBSA Entry:</label>
+                <span style="font-size: 10px; color: #92400e;">(ป้อน % แผลไหม้โดยตรง)</span>
             </div>
+            <div style="display: flex; align-items: center; gap: 4px;">
+                <input type="number" id="input-direct-tbsa" class="input-control" value="0" min="0" max="100" step="0.5" style="width: 75px; text-align: center; font-size: 1.15rem; font-weight: 700; color: var(--burn-primary-dark); padding: 4px 6px;">
+                <span style="font-weight: 700; font-size: 13px; color: #78350f;">%</span>
+            </div>
+        </div>
 
-            <!-- SVG Human Body Model (Anterior & Posterior) -->
-            <div class="body-mapper-wrapper">
-                <!-- Anterior View -->
-                <div class="svg-body-view">
-                    <div class="view-label">Anterior (ด้านหน้า)</div>
-                    <svg viewBox="0 0 200 400" class="body-svg" id="svg-anterior">
-                        <!-- Head Ant (3.5% adult, up to 9.5% infant) -->
-                        <path id="part-head_ant" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z"><title>Face / Anterior Head</title></path>
-                        <!-- Neck Ant (1.0%) -->
-                        <polygon id="part-neck_ant" class="body-part deg-0" points="93,42 107,42 110,52 90,52"><title>Anterior Neck (1.0%)</title></polygon>
-                        <!-- Chest / Upper Anterior Trunk (6.5%) -->
-                        <path id="part-chest_ant" class="body-part deg-0" d="M 68 55 L 132 55 L 129 114 L 71 114 Z"><title>Chest / Upper Anterior Trunk (6.5%)</title></path>
-                        <!-- Abdomen / Lower Anterior Trunk (6.5%) -->
-                        <path id="part-abdomen_ant" class="body-part deg-0" d="M 71 116 L 129 116 L 126 175 L 74 175 Z"><title>Abdomen / Lower Anterior Trunk (6.5%)</title></path>
-                        <!-- Genitalia / Perineum (1.0%) -->
-                        <polygon id="part-genitalia" class="body-part deg-0" points="92,176 108,176 100,190"><title>Genitalia / Perineum (1.0%)</title></polygon>
-                        <!-- Right Shoulder & Upper Arm (2.0%) -->
-                        <path id="part-arm_upper_r_ant" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z"><title>Right Shoulder / Upper Arm (2.0%)</title></path>
-                        <!-- Left Shoulder & Upper Arm (2.0%) -->
-                        <path id="part-arm_upper_l_ant" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z"><title>Left Shoulder / Upper Arm (2.0%)</title></path>
-                        <!-- Right Forearm (1.5%) -->
-                        <path id="part-arm_lower_r_ant" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z"><title>Right Forearm (1.5%)</title></path>
-                        <!-- Left Forearm (1.5%) -->
-                        <path id="part-arm_lower_l_ant" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z"><title>Left Forearm (1.5%)</title></path>
-                        <!-- Right Hand (1.25%) -->
-                        <path id="part-hand_r_ant" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z"><title>Right Hand (1.25%)</title></path>
-                        <!-- Left Hand (1.25%) -->
-                        <path id="part-hand_l_ant" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z"><title>Left Hand (1.25%)</title></path>
-                        <!-- Right Thigh Ant (4.75% adult) -->
-                        <path id="part-thigh_r_ant" class="body-part deg-0" d="M 73 177 L 97 177 L 93 275 L 67 275 Z"><title>Right Thigh Anterior</title></path>
-                        <!-- Left Thigh Ant (4.75% adult) -->
-                        <path id="part-thigh_l_ant" class="body-part deg-0" d="M 103 177 L 127 177 L 133 275 L 107 275 Z"><title>Left Thigh Anterior</title></path>
-                        <!-- Right Lower Leg / Shin (3.5% adult) -->
-                        <path id="part-leg_lower_r_ant" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z"><title>Right Lower Leg / Shin</title></path>
-                        <!-- Left Lower Leg / Shin (3.5% adult) -->
-                        <path id="part-leg_lower_l_ant" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z"><title>Left Lower Leg / Shin</title></path>
-                        <!-- Right Foot (1.75%) -->
-                        <path id="part-foot_r_ant" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z"><title>Right Foot (1.75%)</title></path>
-                        <!-- Left Foot (1.75%) -->
-                        <path id="part-foot_l_ant" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z"><title>Left Foot (1.75%)</title></path>
-                    </svg>
+        <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+            <div class="tbsa-breakdown-tags">
+                <span class="tbsa-tag tag-deg2" id="val-deg2-badge">2nd Deg: 0%</span>
+                <span class="tbsa-tag tag-deg3" id="val-deg3-badge">3rd Deg: 0%</span>
+                <span class="tbsa-tag tag-deg1" id="val-deg1-badge">1st Deg (Excl): 0%</span>
+            </div>
+            <a class="tbsa-quick-link" id="link-to-painter" href="#body-painter-section">
+                🎨 ไปยัง Body Painter ↓
+            </a>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- 3. IV FLUID RESUSCITATION (HERO SECTION)        -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="burn-card">
+        <div class="card-header">
+            <span>💉 Fluid Resuscitation Schedule (24-Hour Plan)</span>
+            <span class="badge-atls" id="badge-guideline-coeff">2 mL/kg/%</span>
+        </div>
+
+        <!-- Prehospital Initial Rate Banner (ATLS 11th Table 8-3) -->
+        <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
+            <div>
+                <strong style="color: #1e40af;">🚑 EMS Prehospital Initial IV Rate (ATLS 11th Table 8-3):</strong>
+                <div style="color: #1e3a8a; font-size: 11px;">อัตราเริ่มให้สารน้ำเบื้องต้นทาง EMS/ER ก่อนคำนวณ % TBSA ละเอียด</div>
+            </div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700; color: #1d4ed8;" id="val-prehospital-rate">500 mL/hr</div>
+        </div>
+
+        <!-- Dual Formula Comparison Grid -->
+        <div class="fluid-comparison-grid">
+            <!-- 1. Modified Brooke / ATLS 11th (Recommended) -->
+            <div class="fluid-formula-card card-modified">
+                <div class="fluid-card-top">
+                    <div>
+                        <strong style="color: #92400e; font-size: 13px; display: block;">Modified Brooke (ATLS 11th)</strong>
+                        <span style="font-size: 10px; color: #b45309; font-weight: 600;">Consensus Standard (Recommended)</span>
+                    </div>
+                    <span class="badge-atls" id="badge-modified-brooke-coeff" style="font-size: 11px; font-weight: 700;">2 mL/kg/%</span>
                 </div>
 
-                <!-- Posterior View -->
-                <div class="svg-body-view">
-                    <div class="view-label">Posterior (ด้านหลัง)</div>
-                    <svg viewBox="0 0 200 400" class="body-svg" id="svg-posterior">
-                        <!-- Head Post -->
-                        <path id="part-head_post" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z"><title>Scalp / Posterior Head</title></path>
-                        <!-- Neck Post (1.0%) -->
-                        <polygon id="part-neck_post" class="body-part deg-0" points="93,42 107,42 110,52 90,52"><title>Posterior Neck (1.0%)</title></polygon>
-                        <!-- Upper Back / Thoracic (6.5%) -->
-                        <path id="part-back_upper_post" class="body-part deg-0" d="M 68 55 L 132 55 L 129 114 L 71 114 Z"><title>Upper Back / Thoracic Region (6.5%)</title></path>
-                        <!-- Lower Back / Lumbar (6.5%) -->
-                        <path id="part-back_lower_post" class="body-part deg-0" d="M 71 116 L 129 116 L 126 175 L 74 175 Z"><title>Lower Back / Lumbar Region (6.5%)</title></path>
-                        <!-- Right Buttock (2.5%) -->
-                        <path id="part-buttock_r" class="body-part deg-0" d="M 74 176 L 99 176 L 97 210 L 71 210 Z"><title>Right Buttock (2.5%)</title></path>
-                        <!-- Left Buttock (2.5%) -->
-                        <path id="part-buttock_l" class="body-part deg-0" d="M 101 176 L 126 176 L 129 210 L 103 210 Z"><title>Left Buttock (2.5%)</title></path>
-                        <!-- Right Upper Arm Post (2.0%) -->
-                        <path id="part-arm_upper_r_post" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z"><title>Right Shoulder / Upper Arm Posterior (2.0%)</title></path>
-                        <!-- Left Upper Arm Post (2.0%) -->
-                        <path id="part-arm_upper_l_post" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z"><title>Left Shoulder / Upper Arm Posterior (2.0%)</title></path>
-                        <!-- Right Lower Arm Post (1.5%) -->
-                        <path id="part-arm_lower_r_post" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z"><title>Right Forearm Posterior (1.5%)</title></path>
-                        <!-- Left Lower Arm Post (1.5%) -->
-                        <path id="part-arm_lower_l_post" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z"><title>Left Forearm Posterior (1.5%)</title></path>
-                        <!-- Right Hand Post (1.25%) -->
-                        <path id="part-hand_r_post" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z"><title>Right Hand Posterior (1.25%)</title></path>
-                        <!-- Left Hand Post (1.25%) -->
-                        <path id="part-hand_l_post" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z"><title>Left Hand Posterior (1.25%)</title></path>
-                        <!-- Right Thigh Post (4.75% adult) -->
-                        <path id="part-thigh_r_post" class="body-part deg-0" d="M 71 212 L 97 212 L 93 275 L 67 275 Z"><title>Right Thigh Posterior</title></path>
-                        <!-- Left Thigh Post (4.75% adult) -->
-                        <path id="part-thigh_l_post" class="body-part deg-0" d="M 103 212 L 129 212 L 133 275 L 107 275 Z"><title>Left Thigh Posterior</title></path>
-                        <!-- Right Lower Leg Post (3.5% adult) -->
-                        <path id="part-leg_lower_r_post" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z"><title>Right Lower Leg / Calf Posterior</title></path>
-                        <!-- Left Lower Leg Post (3.5% adult) -->
-                        <path id="part-leg_lower_l_post" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z"><title>Left Lower Leg / Calf Posterior</title></path>
-                        <!-- Right Foot Post (1.75%) -->
-                        <path id="part-foot_r_post" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z"><title>Right Foot Posterior (1.75%)</title></path>
-                        <!-- Left Foot Post (1.75%) -->
-                        <path id="part-foot_l_post" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z"><title>Left Foot Posterior (1.75%)</title></path>
-                    </svg>
+                <div class="fluid-hero-rate-box" id="box-modified-rate" style="border-color: #fde68a; transition: all 0.2s ease;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-size: 10.5px; font-weight: 700; color: #78350f; text-transform: uppercase;" id="lbl-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                        <span id="badge-modified-shock" style="display: none; background: #ef4444; color: #ffffff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">🚨 Shock +25%</span>
+                    </div>
+                    <div class="fluid-rate-big" id="val-first8h-rate" style="font-size: 2.2rem; color: #b45309; margin: 4px 0;">0 mL/hr</div>
+                    <div style="font-size: 10px; color: #92400e;" id="val-time-remaining-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
+                </div>
+
+                <div class="fluid-formula-grid">
+                    <div class="fluid-mini-stat" style="border-color: #fef08a;">
+                        <div style="color: #78350f; font-size: 10px; font-weight: 600;" id="lbl-total-24h">ยอดรวม 24 ชม.</div>
+                        <strong style="color: #0f172a; font-size: 13px;" id="val-total-24h">0 mL</strong>
+                    </div>
+                    <div class="fluid-mini-stat" style="border-color: #fef08a;">
+                        <div style="color: #78350f; font-size: 10px; font-weight: 600;" id="lbl-first8h-target">ยอด 8 ชม. แรก (50%)</div>
+                        <strong style="color: #0f172a; font-size: 13px;" id="val-first8h-target">0 mL</strong>
+                    </div>
+                    <div class="fluid-mini-stat" style="grid-column: span 2; border-color: #fef08a; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #78350f; font-size: 10.5px; font-weight: 600;" id="lbl-next16h-rate">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
+                        <strong style="color: #0f172a; font-size: 13px;" id="val-next16h-rate">0 mL/hr</strong>
+                    </div>
                 </div>
             </div>
 
-            <!-- Fast Palmar increment buttons & Lund-Browder Reference -->
-            <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: 12px; color: #64748b;">
-                <span>💡 คลิกส่วนของร่างกายเพื่อลงสีตามระดับความลึก หรือใช้ฝ่ามือผู้ป่วย (Palmar Surface ≈ 1% TBSA):</span>
-                <button type="button" id="btn-palm-plus" class="btn-action btn-outline" style="padding: 4px 10px; font-size: 11px;">
-                    ✋ +1% Palm
-                </button>
-            </div>
-
-            <!-- Lund-Browder Age Proportions Quick Reference -->
-            <div style="margin-top: 10px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #475569;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong style="color: #0f172a;">📐 Lund & Browder Age Proportions Reference:</strong>
-                    <span id="lund-ref-active-tag" style="font-weight: 700; color: var(--burn-primary-dark);">Adult Bracket</span>
+            <!-- 2. Classic Parkland (4 mL/kg/%) -->
+            <div class="fluid-formula-card card-parkland">
+                <div class="fluid-card-top">
+                    <div>
+                        <strong style="color: #334155; font-size: 13px; display: block;">Classic Parkland (Baxter)</strong>
+                        <span style="font-size: 10px; color: #64748b; font-weight: 600;">Traditional Formula</span>
+                    </div>
+                    <span style="font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #334155;">4 mL/kg/%</span>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 4px; margin-top: 6px; font-size: 10.5px;">
-                    <div>• <strong>ศีรษะ (Head):</strong> <span id="ref-val-head">7% (Infant 19%)</span></div>
-                    <div>• <strong>ต้นขา (Thighs):</strong> <span id="ref-val-thigh">19% (Infant 11%)</span></div>
-                    <div>• <strong>หน้าแข้ง (Legs):</strong> <span id="ref-val-leg">14% (Infant 10%)</span></div>
-                    <div>• <strong>ลำตัว (Trunk):</strong> 26% (หน้า 13%, หลัง 13%)</div>
-                    <div>• <strong>แขน (Upper Limbs):</strong> 18% (ข้างละ 9%)</div>
-                    <div>• <strong>อวัยวะเพศ (Genitalia):</strong> 1%</div>
+
+                <div class="fluid-hero-rate-box" id="box-parkland-rate" style="border-color: #e2e8f0; transition: all 0.2s ease;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-size: 10.5px; font-weight: 700; color: #475569; text-transform: uppercase;" id="lbl-parkland-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                        <span id="badge-parkland-shock" style="display: none; background: #ef4444; color: #ffffff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">🚨 Shock +25%</span>
+                    </div>
+                    <div class="fluid-rate-big" id="val-parkland-first8h-rate" style="font-size: 2.2rem; color: #334155; margin: 4px 0;">0 mL/hr</div>
+                    <div style="font-size: 10px; color: #64748b;" id="val-parkland-time-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
+                </div>
+
+                <div class="fluid-formula-grid">
+                    <div class="fluid-mini-stat" style="border-color: #e2e8f0;">
+                        <div style="color: #64748b; font-size: 10px; font-weight: 600;" id="lbl-parkland-total">ยอดรวม 24 ชม.</div>
+                        <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-total">0 mL</strong>
+                    </div>
+                    <div class="fluid-mini-stat" style="border-color: #e2e8f0;">
+                        <div style="color: #64748b; font-size: 10px; font-weight: 600;" id="lbl-parkland-first8h-target">ยอด 8 ชม. แรก (50%)</div>
+                        <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-first8h-target">0 mL</strong>
+                    </div>
+                    <div class="fluid-mini-stat" style="grid-column: span 2; border-color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #64748b; font-size: 10.5px; font-weight: 600;" id="lbl-parkland-next16h-rate">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
+                        <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-next16h-rate">0 mL/hr</strong>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Column 2: %TBSA & Fluid Resuscitation Results -->
-        <div>
-            <!-- TBSA Banner with Direct % TBSA Entry -->
-            <div class="tbsa-banner">
-                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; width: 100%;">
+        <!-- Pediatric Maintenance Banner (if <= 30kg) -->
+        <div id="peds-maintenance-banner" style="background: #f5f3ff; border: 1.5px solid #ddd6fe; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; display: none;">
+            <strong style="color: #6b21a8;">👶 Pediatric Maintenance Fluid (Holliday-Segar 4-2-1):</strong>
+            <div style="color: #4c1d95; margin-top: 2px;">
+                ให้ <strong>D5LR หรือ D5 0.45% NaCl</strong> อัตรา <span id="val-peds-rate" style="font-family: monospace; font-weight: 700; font-size: 14px;">0 mL/hr</span> ควบคู่ไปกับสารน้ำกู้ชีพทาง IV อีกเส้น เพื่อป้องกันภาวะน้ำตาลในเลือดต่ำ (Hypoglycemia) ในเด็ก ≤ 30 kg
+            </div>
+        </div>
+
+        <!-- Urine Output Monitoring & Dynamic Titration -->
+        <div style="border-top: 1px solid #f1f5f9; padding-top: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; font-weight: 700;">
+                <span>เป้าหมาย Urine Output (Target UO):</span>
+                <span id="val-target-uo-text" style="color: var(--burn-primary-dark); font-family: monospace;">0.5 mL/kg/hr (35–50 mL/hr)</span>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px;">
+                <span style="font-size: 12px; color: #475569; font-weight: 600;">ปริมาณปัสสาวะ 1 ชม. ล่าสุด:</span>
+                <input type="number" id="input-measured-uo" class="input-control" value="40" min="0" max="500" step="5" style="width: 80px; padding: 4px 8px;">
+                <span style="font-size: 12px; color: #64748b;">mL/hr</span>
+                <label style="font-size: 11.5px; margin-left: auto; color: #991b1b; display: flex; align-items: center; gap: 4px; font-weight: 700; cursor: pointer;">
+                    <input type="checkbox" id="check-hypotensive" style="accent-color: #ef4444;"> ภาวะช็อก/ความดันตก (Shock)
+                </label>
+            </div>
+
+            <!-- Shock Bolus Interactive Subpanel -->
+            <div id="shock-bolus-panel" style="display: none; background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 8px; padding: 10px 12px; margin-top: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <div>
-                        <div class="tbsa-score-group">
-                            <span class="tbsa-big-num" id="val-resuscitative-tbsa">0.0</span>
-                            <span class="tbsa-unit">% TBSA</span>
-                        </div>
-                        <div class="tbsa-subtext">Resuscitative TBSA (2nd & 3rd Degree Only)</div>
+                        <strong style="color: #991b1b; font-size: 12px;">🚨 Shock / Hypotension Fluid Bolus (ATLS 11th & Tintinalli):</strong>
+                        <div style="font-size: 11px; color: #7f1d1d;">เลือกขนาดสารน้ำอุ่น (Warmed Balanced LR) ที่ต้องการให้ IV Bolus ทันที:</div>
                     </div>
-
-                    <!-- Direct % TBSA Input Box -->
-                    <div style="background: rgba(255,255,255,0.92); padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--burn-border); display: flex; align-items: center; gap: 10px;">
-                        <div>
-                            <label for="input-direct-tbsa" style="font-size: 11.5px; font-weight: 700; color: #78350f; display: block;">⚡ Direct % TBSA Entry:</label>
-                            <span style="font-size: 10px; color: #92400e;">(ป้อน % แผลไหม้โดยตรง)</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" id="input-direct-tbsa" class="input-control" value="0" min="0" max="100" step="0.5" style="width: 75px; text-align: center; font-size: 1.15rem; font-weight: 700; color: var(--burn-primary-dark); padding: 4px 6px;">
-                            <span style="font-weight: 700; font-size: 13px; color: #78350f;">%</span>
-                        </div>
+                    <div class="shock-bolus-selector" style="display: flex; gap: 6px;">
+                        <button type="button" class="bolus-btn btn-action" data-bolus="10" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #ef4444; background: #ffffff; color: #991b1b;">10 mL/kg</button>
+                        <button type="button" class="bolus-btn btn-action" data-bolus="15" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #ef4444; background: #ffffff; color: #991b1b;">15 mL/kg</button>
+                        <button type="button" class="bolus-btn btn-action active" data-bolus="20" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #991b1b; background: #ef4444; color: #ffffff;">20 mL/kg</button>
                     </div>
-
-                    <div class="tbsa-breakdown-tags">
-                        <span class="tbsa-tag tag-deg2" id="val-deg2-badge">2nd Deg: 0%</span>
-                        <span class="tbsa-tag tag-deg3" id="val-deg3-badge">3rd Deg: 0%</span>
-                        <span class="tbsa-tag tag-deg1" id="val-deg1-badge">1st Deg (Excl): 0%</span>
-                    </div>
+                </div>
+                <div style="margin-top: 8px; display: flex; align-items: baseline; gap: 8px; background: #ffffff; padding: 6px 10px; border-radius: 5px; border: 1px solid #fecaca;">
+                    <span style="font-size: 11.5px; font-weight: 600; color: #7f1d1d;">ปริมาณ Bolus ที่คำนวณได้:</span>
+                    <span id="val-shock-bolus-vol" style="font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; color: #991b1b;">1,400 mL</span>
+                    <span style="font-size: 11px; color: #991b1b;">IV over 15–30 min (Warmed LR / Hartmann's)</span>
                 </div>
             </div>
 
-            <!-- Fluid Resuscitation Schedule -->
-            <div class="burn-card">
-                <div class="card-header">
-                    <span>2. Fluid Resuscitation Schedule (24-Hour Plan)</span>
-                    <span class="badge-atls" id="badge-guideline-coeff">2 mL/kg/%</span>
-                </div>
-
-                <!-- Prehospital Initial Rate Banner (ATLS 11th Table 8-3) -->
-                <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
-                    <div>
-                        <strong style="color: #1e40af;">🚑 EMS Prehospital Initial IV Rate (ATLS 11th Table 8-3):</strong>
-                        <div style="color: #1e3a8a; font-size: 11px;">อัตราเริ่มให้สารน้ำเบื้องต้นทาง EMS/ER ก่อนคำนวณ % TBSA ละเอียด</div>
-                    </div>
-                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700; color: #1d4ed8;" id="val-prehospital-rate">500 mL/hr</div>
-                </div>
-
-                <!-- Dual Formula Comparison Grid -->
-                <div class="fluid-comparison-grid">
-                    <!-- 1. Modified Brooke / ATLS 11th (Recommended) -->
-                    <div class="fluid-formula-card card-modified">
-                        <div class="fluid-card-top">
-                            <div>
-                                <strong style="color: #92400e; font-size: 12.5px; display: block;">Modified Brooke (ATLS 11th)</strong>
-                                <span style="font-size: 10px; color: #b45309; font-weight: 600;">Consensus Standard (Recommended)</span>
-                            </div>
-                            <span class="badge-atls" id="badge-modified-brooke-coeff" style="font-size: 11px; font-weight: 700;">2 mL/kg/%</span>
-                        </div>
-
-                        <div class="fluid-hero-rate-box" id="box-modified-rate" style="border-color: #fde68a; transition: all 0.2s ease;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div style="font-size: 10.5px; font-weight: 700; color: #78350f; text-transform: uppercase;" id="lbl-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
-                                <span id="badge-modified-shock" style="display: none; background: #ef4444; color: #ffffff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">🚨 Shock +25%</span>
-                            </div>
-                            <div class="fluid-rate-big" id="val-first8h-rate" style="font-size: 1.85rem; color: #b45309; margin: 2px 0;">0 mL/hr</div>
-                            <div style="font-size: 10px; color: #92400e;" id="val-time-remaining-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
-                        </div>
-
-                        <div class="fluid-formula-grid">
-                            <div class="fluid-mini-stat" style="border-color: #fef08a;">
-                                <div style="color: #78350f; font-size: 10px; font-weight: 600;">ยอดรวม 24 ชม.</div>
-                                <strong style="color: #0f172a; font-size: 13px;" id="val-total-24h">0 mL</strong>
-                            </div>
-                            <div class="fluid-mini-stat" style="border-color: #fef08a;">
-                                <div style="color: #78350f; font-size: 10px; font-weight: 600;">ยอด 8 ชม. แรก (50%)</div>
-                                <strong style="color: #0f172a; font-size: 13px;" id="val-first8h-target">0 mL</strong>
-                            </div>
-                            <div class="fluid-mini-stat" style="grid-column: span 2; border-color: #fef08a; display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: #78350f; font-size: 10.5px; font-weight: 600;">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
-                                <strong style="color: #0f172a; font-size: 13px;" id="val-next16h-rate">0 mL/hr</strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 2. Classic Parkland (4 mL/kg/%) -->
-                    <div class="fluid-formula-card card-parkland">
-                        <div class="fluid-card-top">
-                            <div>
-                                <strong style="color: #334155; font-size: 12.5px; display: block;">Classic Parkland (Baxter)</strong>
-                                <span style="font-size: 10px; color: #64748b; font-weight: 600;">Traditional Formula</span>
-                            </div>
-                            <span style="font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #334155;">4 mL/kg/%</span>
-                        </div>
-
-                        <div class="fluid-hero-rate-box" id="box-parkland-rate" style="border-color: #e2e8f0; transition: all 0.2s ease;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div style="font-size: 10.5px; font-weight: 700; color: #475569; text-transform: uppercase;" id="lbl-parkland-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
-                                <span id="badge-parkland-shock" style="display: none; background: #ef4444; color: #ffffff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">🚨 Shock +25%</span>
-                            </div>
-                            <div class="fluid-rate-big" id="val-parkland-first8h-rate" style="font-size: 1.85rem; color: #334155; margin: 2px 0;">0 mL/hr</div>
-                            <div style="font-size: 10px; color: #64748b;" id="val-parkland-time-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
-                        </div>
-
-                        <div class="fluid-formula-grid">
-                            <div class="fluid-mini-stat" style="border-color: #e2e8f0;">
-                                <div style="color: #64748b; font-size: 10px; font-weight: 600;">ยอดรวม 24 ชม.</div>
-                                <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-total">0 mL</strong>
-                            </div>
-                            <div class="fluid-mini-stat" style="border-color: #e2e8f0;">
-                                <div style="color: #64748b; font-size: 10px; font-weight: 600;">ยอด 8 ชม. แรก (50%)</div>
-                                <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-first8h-target">0 mL</strong>
-                            </div>
-                            <div class="fluid-mini-stat" style="grid-column: span 2; border-color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: #64748b; font-size: 10.5px; font-weight: 600;">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
-                                <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-next16h-rate">0 mL/hr</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pediatric Maintenance Banner (if <= 30kg) -->
-                <div id="peds-maintenance-banner" style="background: #f5f3ff; border: 1.5px solid #ddd6fe; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; display: none;">
-                    <strong style="color: #6b21a8;">👶 Pediatric Maintenance Fluid (Holliday-Segar 4-2-1):</strong>
-                    <div style="color: #4c1d95; margin-top: 2px;">
-                        ให้ <strong>D5LR หรือ D5 0.45% NaCl</strong> อัตรา <span id="val-peds-rate" style="font-family: monospace; font-weight: 700; font-size: 14px;">0 mL/hr</span> ควบคู่ไปกับสารน้ำกู้ชีพทาง IV อีกเส้น เพื่อป้องกันภาวะน้ำตาลในเลือดต่ำ (Hypoglycemia) ในเด็ก $\le 30\text{ kg}$
-                    </div>
-                </div>
-
-                <!-- Urine Output Monitoring & Dynamic Titration -->
-                <div style="border-top: 1px solid #f1f5f9; padding-top: 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; font-weight: 700;">
-                        <span>เป้าหมาย Urine Output (Target UO):</span>
-                        <span id="val-target-uo-text" style="color: var(--burn-primary-dark); font-family: monospace;">0.5 mL/kg/hr (35–50 mL/hr)</span>
-                    </div>
-
-                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px;">
-                        <span style="font-size: 12px; color: #475569; font-weight: 600;">ปริมาณปัสสาวะ 1 ชม. ล่าสุด:</span>
-                        <input type="number" id="input-measured-uo" class="input-control" value="40" min="0" max="500" step="5" style="width: 80px; padding: 4px 8px;">
-                        <span style="font-size: 12px; color: #64748b;">mL/hr</span>
-                        <label style="font-size: 11.5px; margin-left: auto; color: #991b1b; display: flex; align-items: center; gap: 4px; font-weight: 700; cursor: pointer;">
-                            <input type="checkbox" id="check-hypotensive" style="accent-color: #ef4444;"> ภาวะช็อก/ความดันตก (Shock)
-                        </label>
-                    </div>
-
-                    <!-- Shock Bolus Interactive Subpanel -->
-                    <div id="shock-bolus-panel" style="display: none; background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 8px; padding: 10px 12px; margin-top: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                            <div>
-                                <strong style="color: #991b1b; font-size: 12px;">🚨 Shock / Hypotension Fluid Bolus (ATLS 11th & Tintinalli):</strong>
-                                <div style="font-size: 11px; color: #7f1d1d;">เลือกขนาดสารน้ำอุ่น (Warmed Balanced LR) ที่ต้องการให้ IV Bolus ทันที:</div>
-                            </div>
-                            <div class="shock-bolus-selector" style="display: flex; gap: 6px;">
-                                <button type="button" class="bolus-btn btn-action" data-bolus="10" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #ef4444; background: #ffffff; color: #991b1b;">10 mL/kg</button>
-                                <button type="button" class="bolus-btn btn-action" data-bolus="15" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #ef4444; background: #ffffff; color: #991b1b;">15 mL/kg</button>
-                                <button type="button" class="bolus-btn btn-action active" data-bolus="20" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #991b1b; background: #ef4444; color: #ffffff;">20 mL/kg</button>
-                            </div>
-                        </div>
-                        <div style="margin-top: 8px; display: flex; align-items: baseline; gap: 8px; background: #ffffff; padding: 6px 10px; border-radius: 5px; border: 1px solid #fecaca;">
-                            <span style="font-size: 11.5px; font-weight: 600; color: #7f1d1d;">ปริมาณ Bolus ที่คำนวณได้:</span>
-                            <span id="val-shock-bolus-vol" style="font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; color: #991b1b;">1,400 mL</span>
-                            <span style="font-size: 11px; color: #991b1b;">IV over 15–30 min (Warmed LR / Hartmann's)</span>
-                        </div>
-                    </div>
-
-                    <!-- Dynamic Titration Advice Box -->
-                    <div class="titration-box" id="titration-advice-box">
-                        <strong id="titration-status-title">On Target:</strong>
-                        <div id="titration-status-desc" style="margin-top: 2px;">Urine output อยู่ในเกณฑ์เป้าหมาย คงอัตราสารน้ำเดิม</div>
-                    </div>
-                </div>
+            <!-- Dynamic Titration Advice Box -->
+            <div class="titration-box" id="titration-advice-box">
+                <strong id="titration-status-title">On Target:</strong>
+                <div id="titration-status-desc" style="margin-top: 2px;">Urine output อยู่ในเกณฑ์เป้าหมาย คงอัตราสารน้ำเดิม</div>
             </div>
         </div>
     </div>
 
-    <!-- Section 3: Inhalation Injury, Toxicology, Circumferential & Transfer Criteria -->
-    <div style="margin-top: 14px;">
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- 4. Inhalation, Toxicology, Escharotomy          -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div style="margin-bottom: 18px;">
         <!-- Inhalation & Airway -->
         <div class="accordion-item open">
             <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
@@ -931,14 +895,13 @@
                 <span>▼</span>
             </div>
             <div class="accordion-content">
-                <!-- Airway & Pharmacology Clinical Pearls Box -->
                 <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; font-size: 11.5px; line-height: 1.45;">
                     <div style="display: flex; gap: 6px; align-items: flex-start;">
                         <span style="font-size: 14px;">⭐</span>
                         <div>
                             <strong style="color: #1e40af;">Airway & Drug Safety Pearls (ATLS 11th & Tintinalli):</strong>
                             <ul style="margin: 3px 0 0 0; padding-left: 16px; color: #1e3a8a;">
-                                <li><strong>ขนาด ETT ผู้ใหญ่:</strong> ควรใช้ ETT ขนาดใหญ่ (เบอร์ $\ge$ <strong>7.5–8.0 mm</strong>) เพื่อให้สามารถส่องกล้อง Fiberoptic Bronchoscopy และดูดเสมหะเขม่าเหนียวได้</li>
+                                <li><strong>ขนาด ETT ผู้ใหญ่:</strong> ควรใช้ ETT ขนาดใหญ่ (เบอร์ ≥ <strong>7.5–8.0 mm</strong>) เพื่อให้สามารถส่องกล้อง Fiberoptic Bronchoscopy และดูดเสมหะเขม่าเหนียวได้</li>
                                 <li><strong>ข้อห้ามใช้ Succinylcholine:</strong> <strong>ห้ามใช้ Succinylcholine หลังเกิดเหตุเกิน 24 ชั่วโมง</strong> เนื่องจากเสี่ยงต่อภาวะ Lethal Hyperkalemia รุนแรงถึงแก่ชีวิตจาก Upregulation ของ Acetylcholine Receptors</li>
                             </ul>
                         </div>
@@ -1032,7 +995,7 @@
                     <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <strong style="color: #0f172a; font-size: 13.5px;">🫁 1. Carbon Monoxide (CO) Poisoning</strong>
-                            <span id="co-severity-badge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #e2e8f0; color: #475569;">Normal</span>
+                            <span id="co-severity-badge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #e2e8f0; color: #475569;">Normal (<10%)</span>
                         </div>
                         
                         <div style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 8px 10px; border-radius: 6px; font-size: 11.5px; line-height: 1.4;">
@@ -1116,7 +1079,7 @@
                                 <span style="font-size: 10px; font-weight: 700; color: #15803d; background: #dcfce7; padding: 1px 6px; border-radius: 4px;">70 mg/kg (Max 5g)</span>
                             </div>
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 700; color: #15803d; margin: 4px 0;" id="val-cyanide-dose">
-                                5.0 g IV (5,000 mg)
+                                4.9 g IV (4,900 mg)
                             </div>
                             <div style="font-size: 11.5px; color: #166534; line-height: 1.4;">
                                 ผสมใน <strong>0.9% NaCl 200 mL</strong> (หรือ LR / D5W) หยดทาง IV ใน <strong>15 นาที</strong> (สามารถให้ซ้ำได้อีก 1 Dose หากอาการรุนแรงหรือ Cardiac Arrest)
@@ -1130,7 +1093,7 @@
                                 <span style="font-size: 10px; color: #64748b;">(หากไม่มี Cyanokit)</span>
                             </div>
                             <div style="margin-top: 4px; display: flex; align-items: baseline; gap: 8px;">
-                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700; color: #334155;" id="val-thiosulfate-dose">12.5 g (50.0 mL 25%)</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700; color: #334155;" id="val-thiosulfate-dose">12.5 g (50 mL 25%)</div>
                                 <span style="font-size: 11px; color: #64748b;">IV over 10–20 min</span>
                             </div>
                             <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
@@ -1202,6 +1165,173 @@
         </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- 5. BODY SURFACE AREA PAINTER (Moved to bottom)  -->
+    <!-- Interactive SVG with drag-to-paint & peds model -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="burn-card body-painter-section" id="body-painter-section">
+        <div class="card-header">
+            <span>🎨 Interactive Body Surface Area Painter (Lund & Browder)</span>
+            <span id="quick-reset-btn" style="font-size: 11px; color: var(--burn-primary); cursor: pointer; text-decoration: underline;">ล้างทั้งหมด (Reset)</span>
+        </div>
+
+        <!-- Degree Paint Selector -->
+        <div class="paint-toolbar">
+            <button type="button" class="degree-btn" data-degree="0">
+                <span class="color-dot dot-0"></span> ลบ (Eraser / 0%)
+            </button>
+            <button type="button" class="degree-btn" data-degree="1">
+                <span class="color-dot dot-1"></span> 1st Degree (Superficial - ตัดออกจากสูตรน้ำ)
+            </button>
+            <button type="button" class="degree-btn active" data-degree="2">
+                <span class="color-dot dot-2"></span> 2nd Degree (Partial Thickness)
+            </button>
+            <button type="button" class="degree-btn" data-degree="3">
+                <span class="color-dot dot-3"></span> 3rd/4th Degree (Full Thickness)
+            </button>
+            <button type="button" id="btn-palm-plus" class="btn-action btn-outline" style="padding: 4px 10px; font-size: 11px; margin-left: auto;">
+                ✋ +1% Palm
+            </button>
+        </div>
+
+        <!-- Dual SVG Body Diagrams (Anterior & Posterior) -->
+        <div class="body-mapper-wrapper model-col-adult" id="body-mapper-wrapper">
+            <!-- Anterior View -->
+            <div class="body-view-container">
+                <div class="view-label">Anterior (ด้านหน้า)</div>
+                <svg viewBox="0 0 200 400" class="body-svg" id="svg-anterior">
+                    <!-- Head & Neck Group -->
+                    <g id="group-head-ant" class="body-group group-head">
+                        <path id="part-head_ant" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z"><title>Face / Anterior Head</title></path>
+                        <text id="lbl-head_ant" class="region-pct-label" x="100" y="24">3.5%</text>
+                        <polygon id="part-neck_ant" class="body-part deg-0" points="93,42 107,42 110,52 90,52"><title>Anterior Neck (1.0%)</title></polygon>
+                        <text id="lbl-neck_ant" class="region-pct-label" x="100" y="48">1%</text>
+                    </g>
+
+                    <!-- Torso Group -->
+                    <g id="group-torso-ant" class="body-group group-torso">
+                        <path id="part-chest_ant" class="body-part deg-0" d="M 68 55 L 132 55 L 129 114 L 71 114 Z"><title>Chest / Upper Anterior Trunk (6.5%)</title></path>
+                        <text id="lbl-chest_ant" class="region-pct-label" x="100" y="85">6.5%</text>
+                        <path id="part-abdomen_ant" class="body-part deg-0" d="M 71 116 L 129 116 L 126 175 L 74 175 Z"><title>Abdomen / Lower Anterior Trunk (6.5%)</title></path>
+                        <text id="lbl-abdomen_ant" class="region-pct-label" x="100" y="145">6.5%</text>
+                        <polygon id="part-genitalia" class="body-part deg-0" points="92,176 108,176 100,190"><title>Genitalia / Perineum (1.0%)</title></polygon>
+                        <text id="lbl-genitalia" class="region-pct-label" x="100" y="183">1%</text>
+                    </g>
+
+                    <!-- Arms Group -->
+                    <g id="group-arms-ant" class="body-group group-arms">
+                        <path id="part-arm_upper_r_ant" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z"><title>Right Shoulder / Upper Arm (2.0%)</title></path>
+                        <text id="lbl-arm_upper_r_ant" class="region-pct-label" x="54" y="90">2%</text>
+                        <path id="part-arm_upper_l_ant" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z"><title>Left Shoulder / Upper Arm (2.0%)</title></path>
+                        <text id="lbl-arm_upper_l_ant" class="region-pct-label" x="146" y="90">2%</text>
+                        <path id="part-arm_lower_r_ant" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z"><title>Right Forearm (1.5%)</title></path>
+                        <text id="lbl-arm_lower_r_ant" class="region-pct-label" x="45" y="148">1.5%</text>
+                        <path id="part-arm_lower_l_ant" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z"><title>Left Forearm (1.5%)</title></path>
+                        <text id="lbl-arm_lower_l_ant" class="region-pct-label" x="155" y="148">1.5%</text>
+                        <path id="part-hand_r_ant" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z"><title>Right Hand (1.25%)</title></path>
+                        <text id="lbl-hand_r_ant" class="region-pct-label" x="36" y="195">1.25%</text>
+                        <path id="part-hand_l_ant" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z"><title>Left Hand (1.25%)</title></path>
+                        <text id="lbl-hand_l_ant" class="region-pct-label" x="164" y="195">1.25%</text>
+                    </g>
+
+                    <!-- Legs Group -->
+                    <g id="group-legs-ant" class="body-group group-legs">
+                        <path id="part-thigh_r_ant" class="body-part deg-0" d="M 73 177 L 97 177 L 93 275 L 67 275 Z"><title>Right Thigh Anterior</title></path>
+                        <text id="lbl-thigh_r_ant" class="region-pct-label" x="82" y="226">4.75%</text>
+                        <path id="part-thigh_l_ant" class="body-part deg-0" d="M 103 177 L 127 177 L 133 275 L 107 275 Z"><title>Left Thigh Anterior</title></path>
+                        <text id="lbl-thigh_l_ant" class="region-pct-label" x="118" y="226">4.75%</text>
+                        <path id="part-leg_lower_r_ant" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z"><title>Right Lower Leg / Shin</title></path>
+                        <text id="lbl-leg_lower_r_ant" class="region-pct-label" x="79" y="320">3.5%</text>
+                        <path id="part-leg_lower_l_ant" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z"><title>Left Lower Leg / Shin</title></path>
+                        <text id="lbl-leg_lower_l_ant" class="region-pct-label" x="121" y="320">3.5%</text>
+                        <path id="part-foot_r_ant" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z"><title>Right Foot (1.75%)</title></path>
+                        <text id="lbl-foot_r_ant" class="region-pct-label" x="76" y="377">1.75%</text>
+                        <path id="part-foot_l_ant" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z"><title>Left Foot (1.75%)</title></path>
+                        <text id="lbl-foot_l_ant" class="region-pct-label" x="124" y="377">1.75%</text>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Posterior View -->
+            <div class="body-view-container">
+                <div class="view-label">Posterior (ด้านหลัง)</div>
+                <svg viewBox="0 0 200 400" class="body-svg" id="svg-posterior">
+                    <!-- Head & Neck Group -->
+                    <g id="group-head-post" class="body-group group-head">
+                        <path id="part-head_post" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z"><title>Scalp / Posterior Head</title></path>
+                        <text id="lbl-head_post" class="region-pct-label" x="100" y="24">3.5%</text>
+                        <polygon id="part-neck_post" class="body-part deg-0" points="93,42 107,42 110,52 90,52"><title>Posterior Neck (1.0%)</title></polygon>
+                        <text id="lbl-neck_post" class="region-pct-label" x="100" y="48">1%</text>
+                    </g>
+
+                    <!-- Torso Group -->
+                    <g id="group-torso-post" class="body-group group-torso">
+                        <path id="part-back_upper_post" class="body-part deg-0" d="M 68 55 L 132 55 L 129 114 L 71 114 Z"><title>Upper Back / Thoracic Region (6.5%)</title></path>
+                        <text id="lbl-back_upper_post" class="region-pct-label" x="100" y="85">6.5%</text>
+                        <path id="part-back_lower_post" class="body-part deg-0" d="M 71 116 L 129 116 L 126 175 L 74 175 Z"><title>Lower Back / Lumbar Region (6.5%)</title></path>
+                        <text id="lbl-back_lower_post" class="region-pct-label" x="100" y="145">6.5%</text>
+                        <path id="part-buttock_r" class="body-part deg-0" d="M 74 176 L 99 176 L 97 210 L 71 210 Z"><title>Right Buttock (2.5%)</title></path>
+                        <text id="lbl-buttock_r" class="region-pct-label" x="86" y="193">2.5%</text>
+                        <path id="part-buttock_l" class="body-part deg-0" d="M 101 176 L 126 176 L 129 210 L 103 210 Z"><title>Left Buttock (2.5%)</title></path>
+                        <text id="lbl-buttock_l" class="region-pct-label" x="114" y="193">2.5%</text>
+                    </g>
+
+                    <!-- Arms Group -->
+                    <g id="group-arms-post" class="body-group group-arms">
+                        <path id="part-arm_upper_r_post" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z"><title>Right Shoulder / Upper Arm Posterior (2.0%)</title></path>
+                        <text id="lbl-arm_upper_r_post" class="region-pct-label" x="54" y="90">2%</text>
+                        <path id="part-arm_upper_l_post" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z"><title>Left Shoulder / Upper Arm Posterior (2.0%)</title></path>
+                        <text id="lbl-arm_upper_l_post" class="region-pct-label" x="146" y="90">2%</text>
+                        <path id="part-arm_lower_r_post" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z"><title>Right Forearm Posterior (1.5%)</title></path>
+                        <text id="lbl-arm_lower_r_post" class="region-pct-label" x="45" y="148">1.5%</text>
+                        <path id="part-arm_lower_l_post" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z"><title>Left Forearm Posterior (1.5%)</title></path>
+                        <text id="lbl-arm_lower_l_post" class="region-pct-label" x="155" y="148">1.5%</text>
+                        <path id="part-hand_r_post" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z"><title>Right Hand Posterior (1.25%)</title></path>
+                        <text id="lbl-hand_r_post" class="region-pct-label" x="36" y="195">1.25%</text>
+                        <path id="part-hand_l_post" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z"><title>Left Hand Posterior (1.25%)</title></path>
+                        <text id="lbl-hand_l_post" class="region-pct-label" x="164" y="195">1.25%</text>
+                    </g>
+
+                    <!-- Legs Group -->
+                    <g id="group-legs-post" class="body-group group-legs">
+                        <path id="part-thigh_r_post" class="body-part deg-0" d="M 71 212 L 97 212 L 93 275 L 67 275 Z"><title>Right Thigh Posterior</title></path>
+                        <text id="lbl-thigh_r_post" class="region-pct-label" x="82" y="243">4.75%</text>
+                        <path id="part-thigh_l_post" class="body-part deg-0" d="M 103 212 L 129 212 L 133 275 L 107 275 Z"><title>Left Thigh Posterior</title></path>
+                        <text id="lbl-thigh_l_post" class="region-pct-label" x="118" y="243">4.75%</text>
+                        <path id="part-leg_lower_r_post" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z"><title>Right Lower Leg / Calf Posterior</title></path>
+                        <text id="lbl-leg_lower_r_post" class="region-pct-label" x="79" y="320">3.5%</text>
+                        <path id="part-leg_lower_l_post" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z"><title>Left Lower Leg / Calf Posterior</title></path>
+                        <text id="lbl-leg_lower_l_post" class="region-pct-label" x="121" y="320">3.5%</text>
+                        <path id="part-foot_r_post" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z"><title>Right Foot (1.75%)</title></path>
+                        <text id="lbl-foot_r_post" class="region-pct-label" x="76" y="377">1.75%</text>
+                        <path id="part-foot_l_post" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z"><title>Left Foot (1.75%)</title></path>
+                        <text id="lbl-foot_l_post" class="region-pct-label" x="124" y="377">1.75%</text>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Instructions & Lund-Browder Quick Reference -->
+        <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 8px;">
+            <span>💡 คลิกหรือลากระบายสีบนร่างกายเพื่อกำหนดระดับความลึกของแผล — คำนวณ % ตามสัดส่วน Lund & Browder อัตโนมัติ</span>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #475569;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong style="color: #0f172a;">📐 Lund & Browder Age Proportions Reference:</strong>
+                <span id="lund-ref-active-tag" style="font-weight: 700; color: var(--burn-primary-dark);">Adult Bracket</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 4px; margin-top: 6px; font-size: 10.5px;">
+                <div>• <strong>ศีรษะ (Head):</strong> <span id="ref-val-head">7% (Infant 19%)</span></div>
+                <div>• <strong>ต้นขา (Thighs):</strong> <span id="ref-val-thigh">19% (Infant 11%)</span></div>
+                <div>• <strong>หน้าแข้ง (Legs):</strong> <span id="ref-val-leg">14% (Infant 10%)</span></div>
+                <div>• <strong>ลำตัว (Trunk):</strong> 26% (หน้า 13%, หลัง 13%)</div>
+                <div>• <strong>แขน (Upper Limbs):</strong> 18% (ข้างละ 9%)</div>
+                <div>• <strong>อวัยวะเพศ (Genitalia):</strong> 1%</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Action Bar -->
     <div class="action-bar">
         <button type="button" class="btn-action btn-outline" id="btn-copy-emr">
@@ -1219,12 +1349,18 @@
 (function () {
     'use strict';
 
+    // ═══════════════════════════════════════════════
     // State
-    let activeDegree = 2; // Default to 2nd degree
-    let selectedBolusMlKg = 20; // Default shock bolus 20 mL/kg
+    // ═══════════════════════════════════════════════
+    let activeDegree = 2; // 0=Unburned, 1=1st deg, 2=2nd deg, 3=3rd deg
     const paintedRegions = {}; // regionKey -> degree (0, 1, 2, 3)
+    let selectedBolusMlKg = 20;
+    const abaManualStates = {};
+    let isPointerDragging = false;
 
+    // ═══════════════════════════════════════════════
     // DOM Elements
+    // ═══════════════════════════════════════════════
     const inputAge = document.getElementById('input-age');
     const inputWeight = document.getElementById('input-weight');
     const sliderWeight = document.getElementById('slider-weight');
@@ -1235,14 +1371,13 @@
     const checkPigmenturia = document.getElementById('check-pigmenturia');
     const lundColumnBadge = document.getElementById('lund-column-badge');
 
-    // TBSA Displays
     const valResuscitativeTbsa = document.getElementById('val-resuscitative-tbsa');
     const inputDirectTbsa = document.getElementById('input-direct-tbsa');
     const valDeg1Badge = document.getElementById('val-deg1-badge');
     const valDeg2Badge = document.getElementById('val-deg2-badge');
     const valDeg3Badge = document.getElementById('val-deg3-badge');
+    const tsbaBanner = document.getElementById('tbsa-banner');
 
-    // Fluid Displays
     const valFirst8hRate = document.getElementById('val-first8h-rate');
     const valTotal24h = document.getElementById('val-total-24h');
     const valFirst8hTarget = document.getElementById('val-first8h-target');
@@ -1257,7 +1392,6 @@
     const lblFirst8hRate = document.getElementById('lbl-first8h-rate');
     const lblParklandFirst8hRate = document.getElementById('lbl-parkland-first8h-rate');
 
-    // UO Titration & Shock Displays
     const valTargetUoText = document.getElementById('val-target-uo-text');
     const inputMeasuredUo = document.getElementById('input-measured-uo');
     const checkHypotensive = document.getElementById('check-hypotensive');
@@ -1267,23 +1401,125 @@
     const titrationStatusTitle = document.getElementById('titration-status-title');
     const titrationStatusDesc = document.getElementById('titration-status-desc');
 
-    // Toxicology Displays
     const inputCohb = document.getElementById('input-cohb');
     const checkPregnant = document.getElementById('check-pregnant');
     const coAssessmentResult = document.getElementById('co-assessment-result');
     const valCyanideDose = document.getElementById('val-cyanide-dose');
 
-    // Inhalation Triage Displays
     const inhalTriageBox = document.getElementById('inhal-triage-box');
     const inhalTriageTitle = document.getElementById('inhal-triage-title');
     const inhalTriageDesc = document.getElementById('inhal-triage-desc');
 
-    // Dynamic ABA Criteria Setup
     const abaContainer = document.getElementById('aba-criteria-container');
     const abaReferralBadge = document.getElementById('aba-referral-badge');
     const abaReferralBanner = document.getElementById('aba-referral-banner');
-    const abaManualStates = {};
+    const bodyMapperWrapper = document.getElementById('body-mapper-wrapper');
 
+    // ═══════════════════════════════════════════════
+    // Body Painter: Click & Drag Paintbrush System
+    // ═══════════════════════════════════════════════
+
+    function paintBodyPart(partEl, deg) {
+        if (!partEl || !partEl.id || !partEl.id.startsWith('part-')) return;
+        const regionId = partEl.id.replace('part-', '');
+        
+        partEl.classList.remove('deg-0', 'deg-1', 'deg-2', 'deg-3');
+        if (deg === 0) {
+            delete paintedRegions[regionId];
+            partEl.classList.add('deg-0');
+        } else {
+            paintedRegions[regionId] = deg;
+            partEl.classList.add(`deg-${deg}`);
+        }
+    }
+
+    // Setup painting listeners on all body parts
+    document.querySelectorAll('.body-part').forEach(part => {
+        // Click to toggle / set degree
+        part.addEventListener('click', function () {
+            const regionId = this.id.replace('part-', '');
+            let newDeg = activeDegree;
+            // If already has activeDegree, clicking again toggles off to 0
+            if (paintedRegions[regionId] === activeDegree) {
+                newDeg = 0;
+            }
+            paintBodyPart(this, newDeg);
+            recalculateAll(false);
+        });
+
+        // Pointer drag support (paintbrush feel)
+        part.addEventListener('pointerenter', function (e) {
+            if (isPointerDragging) {
+                paintBodyPart(this, activeDegree);
+                recalculateAll(false);
+            }
+        });
+    });
+
+    // Track pointer drag across SVGs
+    ['svg-anterior', 'svg-posterior'].forEach(svgId => {
+        const svgEl = document.getElementById(svgId);
+        if (!svgEl) return;
+
+        svgEl.addEventListener('pointerdown', function (e) {
+            isPointerDragging = true;
+            const target = document.elementFromPoint ? document.elementFromPoint(e.clientX, e.clientY) : e.target;
+            if (target && target.classList && target.classList.contains('body-part')) {
+                paintBodyPart(target, activeDegree);
+                recalculateAll(false);
+            }
+        });
+
+        svgEl.addEventListener('pointermove', function (e) {
+            if (isPointerDragging && document.elementFromPoint) {
+                const target = document.elementFromPoint(e.clientX, e.clientY);
+                if (target && target.classList && target.classList.contains('body-part')) {
+                    paintBodyPart(target, activeDegree);
+                    recalculateAll(false);
+                }
+            }
+        });
+    });
+
+    document.addEventListener('pointerup', function () {
+        isPointerDragging = false;
+    });
+
+    // ═══════════════════════════════════════════════
+    // Dynamic % Labels & Pediatric Proportions
+    // ═══════════════════════════════════════════════
+
+    const MODEL_COL_CLASSES = {
+        '0': 'model-col-0',
+        '1': 'model-col-1',
+        '5': 'model-col-5',
+        '10': 'model-col-10',
+        '15': 'model-col-15',
+        'adult': 'model-col-adult'
+    };
+
+    function updateBodyModelAndLabels(ageColumn) {
+        const col = ageColumn || 'adult';
+        const colClass = MODEL_COL_CLASSES[col] || 'model-col-adult';
+
+        // 1. Update body model scale class on wrapper
+        if (bodyMapperWrapper) {
+            bodyMapperWrapper.className = `body-mapper-wrapper ${colClass}`;
+        }
+
+        // 2. Update dynamic % labels on SVG regions
+        const pcts = BurnEngine.getRegionPercentages(col);
+        for (const [regionKey, pct] of Object.entries(pcts)) {
+            const lblEl = document.getElementById(`lbl-${regionKey}`);
+            if (lblEl) {
+                lblEl.textContent = `${pct}%`;
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════════
+    // Initialize ABA Criteria Checklist
+    // ═══════════════════════════════════════════════
     function initAbaCriteriaList() {
         if (!abaContainer || !BurnEngine.ABA_REFERRAL_CRITERIA) return;
         abaContainer.innerHTML = '';
@@ -1308,7 +1544,11 @@
     }
     initAbaCriteriaList();
 
-    // Wire Degree Selector Buttons
+    // ═══════════════════════════════════════════════
+    // Event Wiring
+    // ═══════════════════════════════════════════════
+
+    // Degree Selector Buttons
     document.querySelectorAll('.degree-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             document.querySelectorAll('.degree-btn').forEach(b => b.classList.remove('active'));
@@ -1317,7 +1557,7 @@
         });
     });
 
-    // Wire Shock Bolus Buttons (10, 15, 20 mL/kg)
+    // Shock Bolus Buttons
     document.querySelectorAll('.bolus-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             document.querySelectorAll('.bolus-btn').forEach(b => {
@@ -1335,35 +1575,33 @@
         });
     });
 
-    const DEG_CLASSES = ['deg-0', 'deg-1', 'deg-2', 'deg-3'];
-
-    // Wire SVG Body Parts Painting
-    document.querySelectorAll('.body-part').forEach(part => {
-        part.addEventListener('click', function () {
-            const rawId = this.id.replace('part-', '');
-            paintedRegions[rawId] = activeDegree;
-            this.className.baseVal = `body-part ${DEG_CLASSES[activeDegree] || 'deg-0'}`;
-            recalculateAll(false);
-        });
-    });
-
-    // Wire Reset Button
+    // Reset Button
     document.getElementById('quick-reset-btn').addEventListener('click', function () {
-        for (const k in paintedRegions) delete paintedRegions[k];
-        document.querySelectorAll('.body-part').forEach(part => {
-            part.className.baseVal = 'body-part deg-0';
+        document.querySelectorAll('.body-part').forEach(p => {
+            p.classList.remove('deg-1', 'deg-2', 'deg-3');
+            p.classList.add('deg-0');
         });
+        for (const k in paintedRegions) delete paintedRegions[k];
         if (inputDirectTbsa) inputDirectTbsa.value = '0';
         for (const k in abaManualStates) delete abaManualStates[k];
         recalculateAll(false);
     });
 
-    // Wire +1% Palm Button
+    // Palm +1% Button
     document.getElementById('btn-palm-plus').addEventListener('click', function () {
         const currentDirect = parseFloat(inputDirectTbsa ? inputDirectTbsa.value : 0) || 0;
         const newDirect = Math.min(100, currentDirect + 1.0);
         if (inputDirectTbsa) inputDirectTbsa.value = newDirect.toFixed(1);
         recalculateAll(true);
+    });
+
+    // Quick link smooth scroll
+    document.getElementById('link-to-painter').addEventListener('click', function (e) {
+        e.preventDefault();
+        const painterSec = document.getElementById('body-painter-section');
+        if (painterSec && painterSec.scrollIntoView) {
+            painterSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     });
 
     // Input Synchronization
@@ -1385,8 +1623,11 @@
     document.querySelectorAll('.inhal-chk').forEach(c => c.addEventListener('change', () => recalculateAll(false)));
     document.querySelectorAll('.hbo-manual-chk').forEach(c => c.addEventListener('change', () => recalculateAll(false)));
 
-    // Core Calculation & Render
-    function recalculateAll(isDirectEntry = false) {
+    // ═══════════════════════════════════════════════
+    // Master Recalculation Function
+    // ═══════════════════════════════════════════════
+    function recalculateAll(isDirectEntry) {
+        isDirectEntry = isDirectEntry || false;
         const age = Number(inputAge.value) || 25;
         const weight = Number(inputWeight.value) || 70;
         const elapsed = Number(inputElapsed.value) || 0;
@@ -1394,10 +1635,11 @@
         const isElectrical = selectMechanism.value === 'electrical';
         const hasPigmenturia = checkPigmenturia.checked || isElectrical;
 
-        // 1. Lund-Browder Column & TBSA
+        // 1. Lund-Browder Column & Pediatric Model
         const col = BurnEngine.getLundBrowderAgeColumn(age);
         const colNames = { '0': '<1y (Infant)', '1': '1–4y (Toddler)', '5': '5–9y (Child)', '10': '10–14y', '15': '15–17y (Adolescent)', 'adult': 'Adult (≥18y)' };
         lundColumnBadge.textContent = `Lund-Browder Bracket: ${colNames[col] || col}`;
+        updateBodyModelAndLabels(col);
 
         // Sync Lund-Browder Reference Card
         const lundRefActiveTag = document.getElementById('lund-ref-active-tag');
@@ -1418,6 +1660,7 @@
             refValLeg.textContent = `${(legEach * 2).toFixed(1)}% (ข้างละ ${legEach}%)`;
         }
 
+        // 2. TBSA Calculation
         let resuscitativeTbsa = 0;
         let tbsaRes = null;
         const hasPaintedRegions = Object.keys(paintedRegions).length > 0;
@@ -1443,9 +1686,18 @@
             valDeg1Badge.textContent = `1st Deg (Excl): ${tbsaRes.deg1Pct}%`;
         }
 
+        // TBSA Banner severity color styling
+        if (tsbaBanner) {
+            tsbaBanner.classList.remove('severity-minor', 'severity-moderate', 'severity-major', 'severity-critical');
+            if (resuscitativeTbsa >= 40) tsbaBanner.classList.add('severity-critical');
+            else if (resuscitativeTbsa >= 20) tsbaBanner.classList.add('severity-major');
+            else if (resuscitativeTbsa >= 10) tsbaBanner.classList.add('severity-moderate');
+            else tsbaBanner.classList.add('severity-minor');
+        }
+
         const isHypo = checkHypotensive.checked;
 
-        // 2. Fluid Resuscitation
+        // 3. Fluid Resuscitation Schedule
         const fluid = BurnEngine.calculateFluidRequirements({
             weightKg: weight,
             tbsaPct: resuscitativeTbsa,
@@ -1453,23 +1705,43 @@
             isElectrical: isElectrical,
             hoursElapsed: elapsed,
             prehospitalFluidGivenMl: prehospital,
-            isHypotensive: isHypo
+            isHypotensive: isHypo,
+            shockBolusMlKg: selectedBolusMlKg
         });
 
         badgeGuidelineCoeff.textContent = `${fluid.guidelineCoefficient} mL/kg/%`;
         const badgeModifiedBrooke = document.getElementById('badge-modified-brooke-coeff');
         if (badgeModifiedBrooke) badgeModifiedBrooke.textContent = `${fluid.guidelineCoefficient} mL/kg/%`;
         valFirst8hRate.textContent = `${fluid.first8hHourlyRate} mL/hr`;
-        valTotal24h.textContent = `${fluid.modifiedBrookeTotalMl} mL`;
-        valFirst8hTarget.textContent = `${fluid.first8hTargetMl} mL`;
+        valTotal24h.textContent = `${fluid.modifiedBrookeTotalMl.toLocaleString()} mL`;
+        valFirst8hTarget.textContent = `${fluid.first8hTargetMl.toLocaleString()} mL`;
         valNext16hRate.textContent = `${fluid.next16hHourlyRate} mL/hr`;
 
         if (valParklandFirst8hRate) valParklandFirst8hRate.textContent = `${fluid.parklandFirst8hHourlyRate} mL/hr`;
-        if (valParklandTotal) valParklandTotal.textContent = `${fluid.parklandTotalMl} mL`;
-        if (valParklandFirst8hTarget) valParklandFirst8hTarget.textContent = `${fluid.parklandFirst8hTargetMl} mL`;
+        if (valParklandTotal) valParklandTotal.textContent = `${fluid.parklandTotalMl.toLocaleString()} mL`;
+        if (valParklandFirst8hTarget) valParklandFirst8hTarget.textContent = `${fluid.parklandFirst8hTargetMl.toLocaleString()} mL`;
         if (valParklandNext16hRate) valParklandNext16hRate.textContent = `${fluid.parklandNext16hHourlyRate} mL/hr`;
 
-        // Update Dynamic Header Labels for Post-8h Catch-up Schedule
+        // Mini-stat Labels
+        const lblTotal24h = document.getElementById('lbl-total-24h');
+        const lblFirst8hTarget = document.getElementById('lbl-first8h-target');
+        const lblParklandTotal = document.getElementById('lbl-parkland-total');
+        const lblParklandFirst8hTarget = document.getElementById('lbl-parkland-first8h-target');
+
+        if (lblTotal24h && lblFirst8hTarget && lblParklandTotal && lblParklandFirst8hTarget) {
+            if (isHypo) {
+                lblTotal24h.textContent = 'ยอดรวม 24 ชม. (แผนกู้ชีพ)';
+                lblFirst8hTarget.textContent = `ยอด 8 ชม. แรก (รวม Bolus)`;
+                lblParklandTotal.textContent = 'ยอดรวม 24 ชม. (แผนกู้ชีพ)';
+                lblParklandFirst8hTarget.textContent = `ยอด 8 ชม. แรก (รวม Bolus)`;
+            } else {
+                lblTotal24h.textContent = 'ยอดรวม 24 ชม.';
+                lblFirst8hTarget.textContent = 'ยอด 8 ชม. แรก (50%)';
+                lblParklandTotal.textContent = 'ยอดรวม 24 ชม.';
+                lblParklandFirst8hTarget.textContent = 'ยอด 8 ชม. แรก (50%)';
+            }
+        }
+
         if (lblFirst8hRate && lblParklandFirst8hRate) {
             if (elapsed >= 8.0) {
                 const hoursLeft = Math.max(1, 24 - elapsed);
@@ -1481,7 +1753,7 @@
             }
         }
 
-        // Shock Visual State on Formula Cards
+        // Shock Visual State
         const boxModifiedRate = document.getElementById('box-modified-rate');
         const boxParklandRate = document.getElementById('box-parkland-rate');
         const badgeModifiedShock = document.getElementById('badge-modified-shock');
@@ -1492,44 +1764,24 @@
         if (isHypo) {
             if (badgeModifiedShock) badgeModifiedShock.style.display = 'inline-block';
             if (badgeParklandShock) badgeParklandShock.style.display = 'inline-block';
-            if (boxModifiedRate) {
-                boxModifiedRate.style.borderColor = '#fca5a5';
-                boxModifiedRate.style.background = '#fff5f5';
-            }
-            if (boxParklandRate) {
-                boxParklandRate.style.borderColor = '#fca5a5';
-                boxParklandRate.style.background = '#fff5f5';
-            }
-            if (valTimeRemainingDesc) {
-                valTimeRemainingDesc.innerHTML = `<span style="color: #b91c1c; font-weight: 700;">🚨 ปรับเพิ่ม +25% สำหรับภาวะช็อก (Baseline: ${fluid.baselineFirst8hRate} mL/hr)</span>`;
-            }
-            if (valParklandTimeDesc) {
-                valParklandTimeDesc.innerHTML = `<span style="color: #b91c1c; font-weight: 700;">🚨 ปรับเพิ่ม +25% สำหรับภาวะช็อก (Baseline: ${fluid.parklandBaselineFirst8hRate} mL/hr)</span>`;
-            }
+            if (boxModifiedRate) { boxModifiedRate.style.borderColor = '#fca5a5'; boxModifiedRate.style.background = '#fff5f5'; }
+            if (boxParklandRate) { boxParklandRate.style.borderColor = '#fca5a5'; boxParklandRate.style.background = '#fff5f5'; }
+            if (valTimeRemainingDesc) valTimeRemainingDesc.innerHTML = `<span style="color: #b91c1c; font-weight: 700;">🚨 ปรับเพิ่ม +25% สำหรับภาวะช็อก (Baseline: ${fluid.baselineFirst8hRate} mL/hr)</span>`;
+            if (valParklandTimeDesc) valParklandTimeDesc.innerHTML = `<span style="color: #b91c1c; font-weight: 700;">🚨 ปรับเพิ่ม +25% สำหรับภาวะช็อก (Baseline: ${fluid.parklandBaselineFirst8hRate} mL/hr)</span>`;
         } else {
             if (badgeModifiedShock) badgeModifiedShock.style.display = 'none';
             if (badgeParklandShock) badgeParklandShock.style.display = 'none';
-            if (boxModifiedRate) {
-                boxModifiedRate.style.borderColor = '#fde68a';
-                boxModifiedRate.style.background = '';
-            }
-            if (boxParklandRate) {
-                boxParklandRate.style.borderColor = '#e2e8f0';
-                boxParklandRate.style.background = '';
-            }
-            if (valTimeRemainingDesc) {
-                valTimeRemainingDesc.textContent = elapsed >= 8.0 ? 'อัตราชดเชยเวลาที่เหลือใน 24 ชม.' : 'เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)';
-            }
-            if (valParklandTimeDesc) {
-                valParklandTimeDesc.textContent = elapsed >= 8.0 ? 'อัตราชดเชยเวลาที่เหลือใน 24 ชม.' : 'เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)';
-            }
+            if (boxModifiedRate) { boxModifiedRate.style.borderColor = '#fde68a'; boxModifiedRate.style.background = ''; }
+            if (boxParklandRate) { boxParklandRate.style.borderColor = '#e2e8f0'; boxParklandRate.style.background = ''; }
+            if (valTimeRemainingDesc) valTimeRemainingDesc.textContent = elapsed >= 8.0 ? 'อัตราชดเชยเวลาที่เหลือใน 24 ชม.' : 'เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)';
+            if (valParklandTimeDesc) valParklandTimeDesc.textContent = elapsed >= 8.0 ? 'อัตราชดเชยเวลาที่เหลือใน 24 ชม.' : 'เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)';
         }
 
-        // Prehospital Initial Rate (ATLS 11th Table 8-3)
+        // Prehospital Initial Rate
         const valPrehospitalRate = document.getElementById('val-prehospital-rate');
         if (valPrehospitalRate) valPrehospitalRate.textContent = `${fluid.prehospitalInitialRateMlHr} mL/hr`;
 
-        // Pediatric Maintenance (Holliday-Segar <=30kg)
+        // Pediatric Maintenance Banner
         if (fluid.requiresMaintenanceDextrose) {
             pedsMaintenanceBanner.style.display = 'block';
             valPedsRate.textContent = `${fluid.pediatricMaintenance.hourlyRateMlHr} mL/hr`;
@@ -1537,19 +1789,15 @@
             pedsMaintenanceBanner.style.display = 'none';
         }
 
-        // 3. Urine Output & Titration with Shock Bolus
+        // 4. Urine Output & Titration
         const targetUO = BurnEngine.getTargetUrineOutput(weight, age, isElectrical, hasPigmenturia);
         valTargetUoText.textContent = `${targetUO.targetMlKgHr} mL/kg/hr (${targetUO.targetMlHrMin}${targetUO.targetMlHrMin !== targetUO.targetMlHrMax ? '–' + targetUO.targetMlHrMax : ''} mL/hr)`;
 
         const measuredUO = Number(inputMeasuredUo.value) || 0;
         const titration = BurnEngine.getUrineOutputTitration(fluid.baselineFirst8hRate, measuredUO, targetUO, isHypo, weight, selectedBolusMlKg);
 
-        if (shockBolusPanel) {
-            shockBolusPanel.style.display = isHypo ? 'block' : 'none';
-        }
-        if (valShockBolusVol && isHypo) {
-            valShockBolusVol.textContent = `${titration.bolusTotalMl.toLocaleString()} mL`;
-        }
+        if (shockBolusPanel) shockBolusPanel.style.display = isHypo ? 'block' : 'none';
+        if (valShockBolusVol && isHypo) valShockBolusVol.textContent = `${titration.bolusTotalMl.toLocaleString()} mL`;
 
         titrationAdviceBox.className = `titration-box ${titration.status === 'SHOCK_HYPOTENSION' ? 'alert-shock' : (titration.status === 'UNDER_RESUSCITATION' ? 'alert-under' : '')}`;
         if (isHypo) {
@@ -1560,19 +1808,14 @@
             titrationStatusDesc.textContent = `${titration.bolusAdvice} | อัตราสารน้ำที่แนะนำ: ${titration.suggestedRate} mL/hr (ช่วงปรับ ${titration.adjustedRateMin}–${titration.adjustedRateMax} mL/hr)`;
         }
 
-        // 4. Inhalation Injury Triage
+        // 5. Inhalation Injury Triage
         const isLargeTbsa = resuscitativeTbsa > 40;
         const chkLarge = document.getElementById('chk-largetbsa');
         const badgeLarge = document.getElementById('badge-largetbsa-status');
         const cardLarge = document.getElementById('card-chk-largetbsa');
         if (chkLarge) chkLarge.checked = isLargeTbsa;
-        if (badgeLarge) {
-            badgeLarge.textContent = isLargeTbsa ? '(🔥 Auto-flagged: Score +2)' : '';
-            badgeLarge.style.color = isLargeTbsa ? '#dc2626' : '';
-        }
-        if (cardLarge) {
-            cardLarge.style.borderLeft = isLargeTbsa ? '3px solid #dc2626' : '3px solid #64748b';
-        }
+        if (badgeLarge) { badgeLarge.textContent = isLargeTbsa ? '(🔥 Auto-flagged: Score +2)' : ''; badgeLarge.style.color = isLargeTbsa ? '#dc2626' : ''; }
+        if (cardLarge) cardLarge.style.borderLeft = isLargeTbsa ? '3px solid #dc2626' : '3px solid #64748b';
 
         const inhalChecklist = {
             stridor: document.getElementById('chk-stridor').checked,
@@ -1589,30 +1832,24 @@
         };
         const inhalEval = BurnEngine.evaluateInhalationRisk(inhalChecklist);
         if (inhalEval.recommendation === 'IMMEDIATE_INTUBATION') {
-            inhalTriageBox.style.background = '#fef2f2';
-            inhalTriageBox.style.borderColor = '#fca5a5';
+            inhalTriageBox.style.background = '#fef2f2'; inhalTriageBox.style.borderColor = '#fca5a5';
             inhalTriageTitle.innerHTML = '<span style="color:#991b1b;">🚨 ข้อบ่งชี้ใส่ท่อช่วยหายใจทันที (Immediate Intubation Indicated):</span>';
             inhalTriageDesc.innerHTML = `<span style="color:#7f1d1d;">พบอาการวิกฤต: ${inhalEval.criticalSigns.join(', ')}<br><strong>คำแนะนำ:</strong> ${inhalEval.ettRecommendation}</span>`;
         } else if (inhalEval.recommendation === 'CLOSE_SERIAL_MONITORING_OR_EARLY_INTUBATION') {
-            inhalTriageBox.style.background = '#fffbeb';
-            inhalTriageBox.style.borderColor = '#fde68a';
+            inhalTriageBox.style.background = '#fffbeb'; inhalTriageBox.style.borderColor = '#fde68a';
             inhalTriageTitle.innerHTML = '<span style="color:#92400e;">⚠️ มีความเสี่ยงสูดดมควันพิษ (High Suspicion Inhalation Injury):</span>';
             inhalTriageDesc.innerHTML = `<span style="color:#78350f;">พบสัญญาณเตือน: ${inhalEval.warningSigns.join(', ')}<br>ให้ 100% Humidified O2 ทาง NRB และประเมินอาการทางเดินหายใจซ้ำทุก 15–30 นาที</span>`;
         } else {
-            inhalTriageBox.style.background = '#f8fafc';
-            inhalTriageBox.style.borderColor = '#cbd5e1';
+            inhalTriageBox.style.background = '#f8fafc'; inhalTriageBox.style.borderColor = '#cbd5e1';
             inhalTriageTitle.innerHTML = '<span style="color:#0f172a;">✅ ไม่พบสัญญาณวิกฤตของทางเดินหายใจส่วนบน:</span>';
             inhalTriageDesc.innerHTML = '<span style="color:#475569;">เฝ้าระวังอาการตามมาตรฐานและประเมินซ้ำเป็นระยะ</span>';
         }
 
-        // 5. Smoke Toxicology: CO & Cyanide
+        // 6. Smoke Toxicology: CO & Cyanide
         const cohb = Number(inputCohb.value) || 0;
         const isPreg = checkPregnant.checked;
-
         const hboThresholdLabel = document.getElementById('hbo-threshold-label');
-        if (hboThresholdLabel) {
-            hboThresholdLabel.textContent = isPreg ? 'เกณฑ์ COHb ≥15% (หญิงตั้งครรภ์)' : 'เกณฑ์ COHb ≥25%';
-        }
+        if (hboThresholdLabel) hboThresholdLabel.textContent = isPreg ? 'เกณฑ์ COHb ≥15% (หญิงตั้งครรภ์)' : 'เกณฑ์ COHb ≥25%';
 
         const chkHboCohb = document.getElementById('chk-hbo-cohb');
         const meetsCohbThresh = cohb >= (isPreg ? 15 : 25);
@@ -1623,10 +1860,7 @@
         const chkHboCardiac = document.getElementById('chk-hbo-cardiac');
         const chkHboAcidosis = document.getElementById('chk-hbo-acidosis');
 
-        const manualHboCriteria = (chkHboSyncope && chkHboSyncope.checked) ||
-                                  (chkHboNeuro && chkHboNeuro.checked) ||
-                                  (chkHboCardiac && chkHboCardiac.checked) ||
-                                  (chkHboAcidosis && chkHboAcidosis.checked);
+        const manualHboCriteria = (chkHboSyncope && chkHboSyncope.checked) || (chkHboNeuro && chkHboNeuro.checked) || (chkHboCardiac && chkHboCardiac.checked) || (chkHboAcidosis && chkHboAcidosis.checked);
 
         const coAssessment = BurnEngine.getCOAssessment(cohb, isPreg, {
             syncopeOrComa: inhalChecklist.impairedReflexes || (chkHboSyncope && chkHboSyncope.checked),
@@ -1636,8 +1870,6 @@
         });
 
         const isHboIndicated = coAssessment.meetsHboCriteria || manualHboCriteria;
-
-        // Update CO Severity Badge
         const coSeverityBadge = document.getElementById('co-severity-badge');
         if (coSeverityBadge) {
             const tierColors = {
@@ -1649,32 +1881,14 @@
                 'LETHAL': { bg: '#450a0a', color: '#ffffff', text: 'Lethal (>60%)' }
             };
             const cfg = tierColors[coAssessment.severityTier] || tierColors.NORMAL_OR_LOW;
-            coSeverityBadge.style.background = cfg.bg;
-            coSeverityBadge.style.color = cfg.color;
-            coSeverityBadge.textContent = cfg.text;
+            coSeverityBadge.style.background = cfg.bg; coSeverityBadge.style.color = cfg.color; coSeverityBadge.textContent = cfg.text;
         }
 
         if (coAssessmentResult) {
             if (isHboIndicated) {
-                coAssessmentResult.innerHTML = `
-                    <div style="background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 6px; padding: 8px 10px; color: #991b1b;">
-                        <strong style="display: block; font-size: 12px;">🚨 เข้าเกณฑ์ส่งพิจารณา Hyperbaric Oxygen (HBO)</strong>
-                        <div style="margin-top: 2px; font-size: 11px; color: #7f1d1d;">
-                            • อาการ: ${coAssessment.symptomsDescription}<br>
-                            • แผนรักษา: ให้ 100% High-Flow O2 ทันที และประสานส่งต่อศูนย์ HBO Therapy ที่ใกล้ที่สุด
-                        </div>
-                    </div>
-                `;
+                coAssessmentResult.innerHTML = `<div style="background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 6px; padding: 8px 10px; color: #991b1b;"><strong style="display: block; font-size: 12px;">🚨 เข้าเกณฑ์ส่งพิจารณา Hyperbaric Oxygen (HBO)</strong><div style="margin-top: 2px; font-size: 11px; color: #7f1d1d;">• อาการ: ${coAssessment.symptomsDescription}<br>• แผนรักษา: ให้ 100% High-Flow O2 ทันที และประสานส่งต่อศูนย์ HBO Therapy ที่ใกล้ที่สุด</div></div>`;
             } else {
-                coAssessmentResult.innerHTML = `
-                    <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 6px; padding: 8px 10px; color: #166534;">
-                        <strong style="display: block; font-size: 12px;">✅ ยังไม่เข้าเกณฑ์ข้อบ่งชี้ส่ง HBO Therapy</strong>
-                        <div style="margin-top: 2px; font-size: 11px; color: #15803d;">
-                            • อาการ: ${coAssessment.symptomsDescription}<br>
-                            • แผนรักษา: ให้ 100% High-Flow O2 ผ่าน Non-Rebreather Mask ต่อเนื่องจนระดับ COHb < 5–10%
-                        </div>
-                    </div>
-                `;
+                coAssessmentResult.innerHTML = `<div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 6px; padding: 8px 10px; color: #166534;"><strong style="display: block; font-size: 12px;">✅ ยังไม่เข้าเกณฑ์ข้อบ่งชี้ส่ง HBO Therapy</strong><div style="margin-top: 2px; font-size: 11px; color: #15803d;">• อาการ: ${coAssessment.symptomsDescription}<br>• แผนรักษา: ให้ 100% High-Flow O2 ผ่าน Non-Rebreather Mask ต่อเนื่องจนระดับ COHb < 5–10%</div></div>`;
             }
         }
 
@@ -1692,20 +1906,19 @@
             if (valThiosulfateDose) valThiosulfateDose.textContent = '--';
         }
 
-        // 6. ABA Referral Criteria Evaluation (Works for both SVG painted and Direct Entry)
+        // 7. ABA Referral Criteria
         if (abaContainer && BurnEngine.ABA_REFERRAL_CRITERIA) {
-            const hasSpecialAreas = Boolean(
-                paintedRegions.head_ant || paintedRegions.head_post ||
-                paintedRegions.hand_r_ant || paintedRegions.hand_r_post || paintedRegions.hand_l_ant || paintedRegions.hand_l_post ||
-                paintedRegions.foot_r_ant || paintedRegions.foot_r_post || paintedRegions.foot_l_ant || paintedRegions.foot_l_post ||
-                paintedRegions.genitalia
+            const hasSpecialAreas = hasPaintedRegions && Object.keys(paintedRegions).some(k =>
+                ['head_ant', 'head_post', 'hand_r_ant', 'hand_r_post', 'hand_l_ant', 'hand_l_post',
+                 'foot_r_ant', 'foot_r_post', 'foot_l_ant', 'foot_l_post', 'genitalia'].includes(k) &&
+                paintedRegions[k] > 0
             );
-            const has3rdDeg = Boolean((tbsaRes && tbsaRes.deg3Pct > 0) || (paintedRegions && Object.values(paintedRegions).some(d => d === 3)));
+            const has3rdDeg = hasPaintedRegions && Object.values(paintedRegions).some(deg => deg >= 3);
 
             const autoCriteria = {
                 'aba_tbsa10': resuscitativeTbsa >= 10,
                 'aba_special_areas': hasSpecialAreas,
-                'aba_full_thickness': has3rdDeg,
+                'aba_full_thickness': has3rdDeg || (tbsaRes && tbsaRes.deg3Pct > 0),
                 'aba_electrical': isElectrical,
                 'aba_chemical': selectMechanism.value === 'chemical',
                 'aba_inhalation': inhalEval.recommendation !== 'OBSERVE',
@@ -1732,21 +1945,19 @@
             }
             if (abaReferralBanner) {
                 if (checkedCount > 0) {
-                    abaReferralBanner.style.background = '#fef2f2';
-                    abaReferralBanner.style.borderColor = '#fca5a5';
-                    abaReferralBanner.style.color = '#991b1b';
+                    abaReferralBanner.style.background = '#fef2f2'; abaReferralBanner.style.borderColor = '#fca5a5'; abaReferralBanner.style.color = '#991b1b';
                     abaReferralBanner.innerHTML = `🚨 <strong>เข้าเกณฑ์ส่งต่อศูนย์รักษาแผลไหม้ (Burn Center Referral):</strong> พบข้อบ่งชี้ ${checkedCount} ข้อ — แนะนำเตรียมส่งต่อ`;
                 } else {
-                    abaReferralBanner.style.background = '#f0fdf4';
-                    abaReferralBanner.style.borderColor = '#bbf7d0';
-                    abaReferralBanner.style.color = '#166534';
+                    abaReferralBanner.style.background = '#f0fdf4'; abaReferralBanner.style.borderColor = '#bbf7d0'; abaReferralBanner.style.color = '#166534';
                     abaReferralBanner.innerHTML = `✅ <strong>ยังไม่เข้าเกณฑ์ส่งต่อศูนย์เฉพาะทาง:</strong> ดูแลรักษาตามมาตรฐานในโรงพยาบาลทั่วไป`;
                 }
             }
         }
     }
 
+    // ═══════════════════════════════════════════════
     // Copy Clinical EMR Note
+    // ═══════════════════════════════════════════════
     document.getElementById('btn-copy-emr').addEventListener('click', function () {
         const age = inputAge.value;
         const weight = inputWeight.value;
@@ -1789,14 +2000,20 @@
   * Cyanide Antidotes: Cyanokit ${cyanide} | Alt: Na Thiosulfate 25% ${thiosulfate}
 - ABA 2023 Referral Criteria: ${abaBadge} met`;
 
-        navigator.clipboard.writeText(note).then(() => {
-            alert('คัดลอกบันทึกเวชระเบียน (EMR Note) เรียบร้อยแล้ว!');
-        }).catch(() => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(note).then(() => {
+                alert('คัดลอกบันทึกเวชระเบียน (EMR Note) เรียบร้อยแล้ว!');
+            }).catch(() => {
+                prompt('คัดลอกข้อความด้านล่าง:', note);
+            });
+        } else {
             prompt('คัดลอกข้อความด้านล่าง:', note);
-        });
+        }
     });
 
-    // Initialize Navigation & First Calc
+    // ═══════════════════════════════════════════════
+    // Initialize Navigation & Initial Calculation
+    // ═══════════════════════════════════════════════
     if (typeof ED_COMPONENTS !== 'undefined' && ED_COMPONENTS.injectNavBar) {
         ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
             '🔥 Burn Management & Resuscitation Hub — ATLS 11th Ed / ABA 2023', '🔥 Burn Hub (ATLS 11th)');
