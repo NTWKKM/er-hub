@@ -1002,7 +1002,7 @@
                             ⚠️ <strong>Pulse Oximeter ลวง:</strong> SpO2 ทั่วไปจะอ่านได้ 98–100% เสมอเพราะแยก Carboxyhemoglobin ไม่ออก — ต้องตรวจ <strong>COHb จาก Co-oximetry (ABG/VBG)</strong>
                         </div>
 
-                        <div style="display: flex; gap: 10px; align-items: center; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; gap: 10px; align-items: center; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0; flex-wrap: wrap;">
                             <label style="font-size: 12px; font-weight: 600; color: #334155;">Carboxyhemoglobin (% COHb):</label>
                             <input type="number" id="input-cohb" class="input-control" value="15" min="0" max="100" style="width: 70px; padding: 4px 8px; text-align: center; font-weight: 700;">
                             <label style="font-size: 11.5px; display: flex; align-items: center; gap: 4px; cursor: pointer; color: #6b21a8; font-weight: 600; margin-left: auto;">
@@ -1010,7 +1010,7 @@
                             </label>
                         </div>
 
-                        <!-- Half-life Comparison -->
+                        <!-- Half-life Comparison & Dynamic Estimator -->
                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 11px; text-align: center;">
                             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 5px; padding: 6px 4px;">
                                 <div style="color: #64748b; font-size: 10px;">Room Air T½</div>
@@ -1023,6 +1023,23 @@
                             <div style="background: #fdf4ff; border: 1px solid #f0abfc; border-radius: 5px; padding: 6px 4px;">
                                 <div style="color: #86198f; font-size: 10px;">HBO T½</div>
                                 <strong style="color: #a21caf; font-size: 11.5px;">20–30 นาที</strong>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Clearance Estimator -->
+                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 10px; font-size: 11.5px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                <label for="select-co-o2" style="font-weight: 700; color: #166534;">⏱️ อุปกรณ์ให้ออกซิเจน:</label>
+                                <select id="select-co-o2" class="input-control" style="padding: 2px 6px; font-size: 11px; width: auto;">
+                                    <option value="nrb_100">100% High-Flow O2 (NRB Mask) [T½ ~60m]</option>
+                                    <option value="ett_100">100% O2 via ETT (Ventilator) [T½ ~45m]</option>
+                                    <option value="hbo_3ata">Hyperbaric O2 (HBO 3.0 ATA) [T½ ~23m]</option>
+                                    <option value="room_air">Room Air (21% O2) [T½ ~300m]</option>
+                                </select>
+                            </div>
+                            <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: baseline;">
+                                <span style="color: #15803d; font-size: 11px;">เวลาโดยประมาณสู่ระดับปลอดภัย (COHb &lt;5%):</span>
+                                <strong id="val-co-clearance-time" style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #166534;">--</strong>
                             </div>
                         </div>
 
@@ -1066,8 +1083,15 @@
                     <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
                         <strong style="color: #0f172a; font-size: 13.5px;">🧪 2. Cyanide (CN) Poisoning & Antidotes</strong>
 
-                        <div style="font-size: 11.5px; color: #475569; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                            <strong>เกณฑ์สงสัย:</strong> ไฟไหม้ในที่ปิด + เขม่าในปาก + ภาวะช็อก/โคม่า + <strong>Lactate ≥ 8–10 mmol/L</strong> หรือ Unexplained Severe Metabolic Acidosis
+                        <div style="display: flex; gap: 8px; align-items: center; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                            <label for="input-lactate" style="font-size: 11.5px; font-weight: 600; color: #334155;">Serum Lactate (mmol/L):</label>
+                            <input type="number" id="input-lactate" class="input-control" value="2.0" min="0" max="30" step="0.5" style="width: 65px; padding: 3px 6px; text-align: center; font-weight: 700;">
+                            <span style="font-size: 11px; color: #64748b;">(เกณฑ์สงสัย ≥ 8–10)</span>
+                        </div>
+
+                        <!-- ATLS 11th Presumptive Cyanide Triad Alert -->
+                        <div id="val-cn-presumptive-result" style="font-size: 11px; padding: 8px 10px; border-radius: 6px; background: #f8fafc; border: 1px solid #cbd5e1; line-height: 1.4;">
+                            <!-- Dynamically updated -->
                         </div>
 
                         <!-- 1st Line Antidote: Hydroxocobalamin -->
@@ -1192,6 +1216,17 @@
             <button type="button" id="btn-palm-plus" class="btn-action btn-outline" style="padding: 4px 10px; font-size: 11px; margin-left: auto;">
                 ✋ +1% Palm
             </button>
+        </div>
+
+        <!-- Quick Anatomical Presets -->
+        <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+            <span style="font-size: 11px; font-weight: 700; color: #475569;">⚡ ลัดระบายทั้งส่วน (Quick Presets):</span>
+            <button type="button" class="preset-btn btn-action btn-outline" data-preset="head_all" style="padding: 2px 8px; font-size: 11px;">ทั้งศีรษะ (Head)</button>
+            <button type="button" class="preset-btn btn-action btn-outline" data-preset="trunk_ant_all" style="padding: 2px 8px; font-size: 11px;">ลำตัวหน้า (Ant Trunk)</button>
+            <button type="button" class="preset-btn btn-action btn-outline" data-preset="trunk_post_all" style="padding: 2px 8px; font-size: 11px;">หลัง/ก้น (Post Trunk)</button>
+            <button type="button" class="preset-btn btn-action btn-outline" data-preset="arm_r_all" style="padding: 2px 8px; font-size: 11px;">แขนขวา (R Arm)</button>
+            <button type="button" class="preset-btn btn-action btn-outline" data-preset="arm_l_all" style="padding: 2px 8px; font-size: 11px;">แขนซ้าย (L Arm)</button>
+            <button type="button" class="preset-btn btn-action btn-outline" data-preset="legs_both_all" style="padding: 2px 8px; font-size: 11px;">ขาทั้งสองข้าง (Both Legs)</button>
         </div>
 
         <!-- Dual SVG Body Diagrams (Anterior & Posterior) -->
@@ -1357,6 +1392,7 @@
     let selectedBolusMlKg = 20;
     const abaManualStates = {};
     let isPointerDragging = false;
+    let pointerHandledTarget = null;
 
     // ═══════════════════════════════════════════════
     // DOM Elements
@@ -1376,7 +1412,7 @@
     const valDeg1Badge = document.getElementById('val-deg1-badge');
     const valDeg2Badge = document.getElementById('val-deg2-badge');
     const valDeg3Badge = document.getElementById('val-deg3-badge');
-    const tsbaBanner = document.getElementById('tbsa-banner');
+    const tbsaBanner = document.getElementById('tbsa-banner');
 
     const valFirst8hRate = document.getElementById('val-first8h-rate');
     const valTotal24h = document.getElementById('val-total-24h');
@@ -1403,7 +1439,11 @@
 
     const inputCohb = document.getElementById('input-cohb');
     const checkPregnant = document.getElementById('check-pregnant');
+    const selectCoO2 = document.getElementById('select-co-o2');
+    const valCoClearanceTime = document.getElementById('val-co-clearance-time');
     const coAssessmentResult = document.getElementById('co-assessment-result');
+    const inputLactate = document.getElementById('input-lactate');
+    const valCnPresumptiveResult = document.getElementById('val-cn-presumptive-result');
     const valCyanideDose = document.getElementById('val-cyanide-dose');
 
     const inhalTriageBox = document.getElementById('inhal-triage-box');
@@ -1433,40 +1473,51 @@
         }
     }
 
+    function toggleBodyPart(partEl) {
+        if (!partEl || !partEl.id || !partEl.id.startsWith('part-')) return;
+        const regionId = partEl.id.replace('part-', '');
+        let newDeg = activeDegree;
+        if (paintedRegions[regionId] === activeDegree) {
+            newDeg = 0;
+        }
+        paintBodyPart(partEl, newDeg);
+        recalculateAll(false);
+    }
+
     // Setup painting listeners on all body parts
     document.querySelectorAll('.body-part').forEach(part => {
-        // Click to toggle / set degree
-        part.addEventListener('click', function () {
-            const regionId = this.id.replace('part-', '');
-            let newDeg = activeDegree;
-            // If already has activeDegree, clicking again toggles off to 0
-            if (paintedRegions[regionId] === activeDegree) {
-                newDeg = 0;
-            }
-            paintBodyPart(this, newDeg);
-            recalculateAll(false);
-        });
-
-        // Pointer drag support (paintbrush feel)
-        part.addEventListener('pointerenter', function (e) {
+        // Pointerenter for drag-to-paint
+        part.addEventListener('pointerenter', function () {
             if (isPointerDragging) {
                 paintBodyPart(this, activeDegree);
                 recalculateAll(false);
             }
         });
+
+        // Click handler (handles keyboard/mouse click if not already handled by pointerdown)
+        part.addEventListener('click', function () {
+            if (pointerHandledTarget === this) {
+                pointerHandledTarget = null;
+                return;
+            }
+            toggleBodyPart(this);
+        });
     });
 
-    // Track pointer drag across SVGs
+    // Track pointer drag & clicks across SVGs
     ['svg-anterior', 'svg-posterior'].forEach(svgId => {
         const svgEl = document.getElementById(svgId);
         if (!svgEl) return;
 
         svgEl.addEventListener('pointerdown', function (e) {
             isPointerDragging = true;
-            const target = document.elementFromPoint ? document.elementFromPoint(e.clientX, e.clientY) : e.target;
+            pointerHandledTarget = null;
+            const target = (e.target && e.target.classList && e.target.classList.contains('body-part'))
+                ? e.target
+                : (document.elementFromPoint ? document.elementFromPoint(e.clientX, e.clientY) : null);
             if (target && target.classList && target.classList.contains('body-part')) {
-                paintBodyPart(target, activeDegree);
-                recalculateAll(false);
+                pointerHandledTarget = target;
+                toggleBodyPart(target);
             }
         });
 
@@ -1483,6 +1534,7 @@
 
     document.addEventListener('pointerup', function () {
         isPointerDragging = false;
+        setTimeout(() => { pointerHandledTarget = null; }, 50);
     });
 
     // ═══════════════════════════════════════════════
@@ -1575,6 +1627,23 @@
         });
     });
 
+    // Preset Buttons
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const presetId = this.dataset.preset;
+            const preset = BurnEngine.ANATOMICAL_PRESETS && BurnEngine.ANATOMICAL_PRESETS[presetId];
+            if (preset && Array.isArray(preset.regions)) {
+                preset.regions.forEach(regKey => {
+                    const partEl = document.getElementById(`part-${regKey}`);
+                    if (partEl) {
+                        paintBodyPart(partEl, activeDegree);
+                    }
+                });
+                recalculateAll(false);
+            }
+        });
+    });
+
     // Reset Button
     document.getElementById('quick-reset-btn').addEventListener('click', function () {
         document.querySelectorAll('.body-part').forEach(p => {
@@ -1620,6 +1689,8 @@
     checkHypotensive.addEventListener('change', () => recalculateAll(false));
     inputCohb.addEventListener('input', () => recalculateAll(false));
     checkPregnant.addEventListener('change', () => recalculateAll(false));
+    if (selectCoO2) selectCoO2.addEventListener('change', () => recalculateAll(false));
+    if (inputLactate) inputLactate.addEventListener('input', () => recalculateAll(false));
     document.querySelectorAll('.inhal-chk').forEach(c => c.addEventListener('change', () => recalculateAll(false)));
     document.querySelectorAll('.hbo-manual-chk').forEach(c => c.addEventListener('change', () => recalculateAll(false)));
 
@@ -1687,12 +1758,12 @@
         }
 
         // TBSA Banner severity color styling
-        if (tsbaBanner) {
-            tsbaBanner.classList.remove('severity-minor', 'severity-moderate', 'severity-major', 'severity-critical');
-            if (resuscitativeTbsa >= 40) tsbaBanner.classList.add('severity-critical');
-            else if (resuscitativeTbsa >= 20) tsbaBanner.classList.add('severity-major');
-            else if (resuscitativeTbsa >= 10) tsbaBanner.classList.add('severity-moderate');
-            else tsbaBanner.classList.add('severity-minor');
+        if (tbsaBanner) {
+            tbsaBanner.classList.remove('severity-minor', 'severity-moderate', 'severity-major', 'severity-critical');
+            if (resuscitativeTbsa >= 40) tbsaBanner.classList.add('severity-critical');
+            else if (resuscitativeTbsa >= 20) tbsaBanner.classList.add('severity-major');
+            else if (resuscitativeTbsa >= 10) tbsaBanner.classList.add('severity-moderate');
+            else tbsaBanner.classList.add('severity-minor');
         }
 
         const isHypo = checkHypotensive.checked;
@@ -1869,6 +1940,13 @@
             severeAcidosis: chkHboAcidosis && chkHboAcidosis.checked
         });
 
+        // Dynamic CO Clearance Time
+        if (BurnEngine.estimateCOClearanceTime && valCoClearanceTime) {
+            const o2Mode = selectCoO2 ? selectCoO2.value : 'nrb_100';
+            const clearance = BurnEngine.estimateCOClearanceTime(cohb, 5, o2Mode);
+            valCoClearanceTime.textContent = clearance.timeFormatted;
+        }
+
         const isHboIndicated = coAssessment.meetsHboCriteria || manualHboCriteria;
         const coSeverityBadge = document.getElementById('co-severity-badge');
         if (coSeverityBadge) {
@@ -1892,7 +1970,7 @@
             }
         }
 
-        // Cyanide Dosing
+        // Cyanide Dosing & ATLS 11th Presumptive Criteria
         const cnDosing = BurnEngine.getCyanideAntidoteDosing(weight);
         const valThiosulfateDose = document.getElementById('val-thiosulfate-dose');
         if (cnDosing.isValid) {
@@ -1904,6 +1982,29 @@
         } else {
             valCyanideDose.textContent = '⚠️ กรุณาใส่น้ำหนักผู้ป่วย';
             if (valThiosulfateDose) valThiosulfateDose.textContent = '--';
+        }
+
+        if (BurnEngine.evaluatePresumptiveCyanideToxicity && valCnPresumptiveResult) {
+            const lactateVal = Number(inputLactate ? inputLactate.value : 0) || 0;
+            const cnPresumptive = BurnEngine.evaluatePresumptiveCyanideToxicity({
+                enclosedSpace: inhalChecklist.enclosedSpace,
+                alteredConsciousnessOrCPR: inhalChecklist.impairedReflexes || (chkHboSyncope && chkHboSyncope.checked),
+                persistentHypotension: isHypo,
+                lactateGte10: lactateVal >= 8.0,
+                cohbGt10: cohb > 10
+            });
+
+            if (cnPresumptive.isPresumptiveCyanide) {
+                valCnPresumptiveResult.style.background = '#fef2f2';
+                valCnPresumptiveResult.style.borderColor = '#fca5a5';
+                valCnPresumptiveResult.style.color = '#991b1b';
+                valCnPresumptiveResult.innerHTML = `<strong>🚨 เข้าเกณฑ์สงสัยพิษไซยาไนด์รุนแรง (ATLS 11th Ch 9):</strong> พบข้อบ่งชี้ ${cnPresumptive.criteriaMetCount} ข้อ (${cnPresumptive.criteriaList.join(', ')}) → แนะนำให้ <strong>Hydroxocobalamin (Cyanokit)</strong> ทันที`;
+            } else {
+                valCnPresumptiveResult.style.background = '#f8fafc';
+                valCnPresumptiveResult.style.borderColor = '#cbd5e1';
+                valCnPresumptiveResult.style.color = '#475569';
+                valCnPresumptiveResult.innerHTML = `<strong>เกณฑ์สงสัย ATLS 11th:</strong> เข้าเกณฑ์ ${cnPresumptive.criteriaMetCount}/5 ข้อ (ไฟไหม้ในที่ปิด + โคม่า/CPR + ช็อก + Lactate ≥8-10 + COHb >10%)`;
+            }
         }
 
         // 7. ABA Referral Criteria
@@ -1975,6 +2076,7 @@
         const cyanide = valCyanideDose.textContent;
         const thiosulfate = document.getElementById('val-thiosulfate-dose') ? document.getElementById('val-thiosulfate-dose').textContent : '--';
         const coSeverity = document.getElementById('co-severity-badge') ? document.getElementById('co-severity-badge').textContent : '--';
+        const coClearance = valCoClearanceTime ? valCoClearanceTime.textContent : '--';
         const abaBadge = document.getElementById('aba-referral-badge') ? document.getElementById('aba-referral-badge').textContent : '0/10';
         const isHypo = checkHypotensive.checked;
         const shockBolusNote = isHypo ? `\n- 🚨 Resuscitation Shock Bolus: Warmed LR ${Math.round(weight * selectedBolusMlKg).toLocaleString()} mL (${selectedBolusMlKg} mL/kg) IV in 15–30 min` : '';
@@ -1996,8 +2098,8 @@
   * Target Urine Output: ${targetUo}
 - Toxicology & Airway:
   * Inhalation Risk: ${inhalTriageTitle.textContent}
-  * Carbon Monoxide: COHb ${inputCohb.value}% (${coSeverity})
-  * Cyanide Antidotes: Cyanokit ${cyanide} | Alt: Na Thiosulfate 25% ${thiosulfate}
+  * Carbon Monoxide: COHb ${inputCohb.value}% (${coSeverity}) | Est. 100% O2 Clearance Time: ${coClearance}
+  * Cyanide Antidotes: Cyanokit ${cyanide} | Alt: Na Thiosulfate 25% ${thiosulfate} (Lactate ${inputLactate ? inputLactate.value : '--'} mmol/L)
 - ABA 2023 Referral Criteria: ${abaBadge} met`;
 
         if (navigator.clipboard && navigator.clipboard.writeText) {

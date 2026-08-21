@@ -1,3 +1,18 @@
+## [2.9.0] — 2026-08-21
+
+### Major Hardening & Feature Enhancement (Burn Event Decoupling, Anatomical Presets, Toxicology & ATLS 11th Cyanide Scoring)
+- **Burn Management Hub (`tools/burn-manager.html`, `shared/burn-engine.js`):**
+  - **Critical Event Decoupling & Pointer Safety:** Resolved pointerdown/click collision and unpainting race condition on SVG body parts. Seamless support for both single-click toggling and mouse/touch drag-to-paint across all viewports.
+  - **Direct TBSA State Synchronization:** Fixed ghosting bug when unpainting all regions to 0% TBSA so direct numerical input cleanly updates to 0.0%.
+  - **Rapid Anatomical Region Presets:** Added quick one-click preset buttons (`ทั้งศีรษะ 7%`, `ลำตัวหน้า 13%`, `หลัง/ก้น 13%`, `แขนขวา 9.5%`, `แขนซ้าย 9.5%`, `ขาทั้งสองข้าง 36%`) above the body painter for lightning-fast resuscitation documentation.
+  - **Dynamic $COHb$ Elimination Half-life Estimator:** Added dynamic clearance calculation across 4 oxygen delivery modalities (Room Air 21% T½ ~300m, 100% NRB Mask T½ ~60m, 100% ETT T½ ~45m, HBO 3.0 ATA T½ ~23m) estimating time required to reach safe target ($COHb < 5\%$).
+  - **ATLS 11th Presumptive Cyanide Toxicity Triad Scoring:** Added interactive checklist and clinical alert badge for early empiric Hydroxocobalamin (Cyanokit) in ED based on enclosed-space fire, GCS < 10 / LOC / CPR, unexplained shock, serum lactate $\ge 8\text{--}10\text{ mmol/L}$, and $COHb > 10\%$ (ATLS 11th Chapter 9 p. 137).
+  - **Clinical Engine Hardening:** Corrected shock titration min rate range to $+20\%\text{--}30\%$ (`adjustedRateMin = rate * 1.20`) per ATLS 11th p. 138–139 and guarded zero-weight pediatric maintenance dextrose requirement (`wt > 0 && wt <= 30.0`).
+- **Automated Test Coverage (`tests/burn-engine.test.js`):**
+  - Added 5 new test suites (Suites 23 to 27, 79 burn engine tests total, 320 total repository tests passing with 0 failures, 100% green).
+- **PWA Cache (`service-worker.js`):**
+  - Bumped cache version to `er-hub-v64` (`21/08/2569`).
+
 ## [2.8.0] — 2026-08-21
 
 ### Major UX & Architectural Overhaul (Burn Tool Layout Restructuring, Pediatric Body Model & Paintbrush)

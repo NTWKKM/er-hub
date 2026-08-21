@@ -872,4 +872,149 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             assert.equal(headLabel.textContent, '6.5%', 'Child anterior head label must display 6.5%');
         });
     });
+
+    describe('23. Shock Titration (+20% to +30%) & Zero-Weight Boundary Guard', () => {
+        it('Shock/Hypotension titration sets adjustedRateMin to +20% (ATLS 11th p. 138-139)', () => {
+            const target = BurnEngine.getTargetUrineOutput(70, 30, false, false);
+            const titration = BurnEngine.getUrineOutputTitration(500, 20, target, true, 70);
+            assert.equal(titration.status, 'SHOCK_HYPOTENSION');
+            assert.equal(titration.adjustedRateMin, 600, '500 * 1.20 = 600 mL/hr (+20%)');
+            assert.equal(titration.adjustedRateMax, 650, '500 * 1.30 = 650 mL/hr (+30%)');
+            assert.equal(titration.suggestedRate, 625, '500 * 1.25 = 625 mL/hr (+25%)');
+        });
+
+        it('Zero-weight (wt=0) calculateFluidRequirements does not flag requiresMaintenanceDextrose', () => {
+            const res = BurnEngine.calculateFluidRequirements({
+                weightKg: 0,
+                tbsaPct: 20,
+                ageYears: 2
+            });
+            assert.equal(res.requiresMaintenanceDextrose, false, 'wt=0 must not require pediatric maintenance dextrose');
+        });
+    });
+
+    describe('24. ANATOMICAL_PRESETS Definition & Application', () => {
+        it('ANATOMICAL_PRESETS exports valid region arrays for all presets', () => {
+            assert.ok(BurnEngine.ANATOMICAL_PRESETS, 'ANATOMICAL_PRESETS must be exported');
+            assert.ok(Array.isArray(BurnEngine.ANATOMICAL_PRESETS.head_all.regions));
+            assert.ok(Array.isArray(BurnEngine.ANATOMICAL_PRESETS.trunk_ant_all.regions));
+            assert.ok(Array.isArray(BurnEngine.ANATOMICAL_PRESETS.arm_r_all.regions));
+            assert.ok(Array.isArray(BurnEngine.ANATOMICAL_PRESETS.legs_both_all.regions));
+            assert.equal(BurnEngine.ANATOMICAL_PRESETS.legs_both_all.regions.length, 12);
+        });
+
+        it('DOM Quick Preset button paints entire anatomical unit in single click', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            const btnArmR = doc.querySelector('button[data-preset="arm_r_all"]');
+            assert.ok(btnArmR, 'Preset button for Right Arm must exist');
+            btnArmR.dispatchEvent(new win.Event('click', { bubbles: true }));
+
+            const upperArm = doc.getElementById('part-arm_upper_r_ant');
+            const handR = doc.getElementById('part-hand_r_ant');
+            assert.ok(upperArm.classList.contains('deg-2'), 'Upper arm should be painted deg-2');
+            assert.ok(handR.classList.contains('deg-2'), 'Hand should be painted deg-2');
+
+            const tbsaEl = doc.getElementById('val-resuscitative-tbsa');
+            assert.equal(tbsaEl.textContent, '9.5', 'Adult Right Upper Limb total in Lund-Browder is 9.5% (4% upper + 3% lower + 2.5% hand)');
+        });
+    });
+
+    describe('25. estimateCOClearanceTime() Helper Invariants', () => {
+        it('Calculates clearance time for 100% NRB (T½ = 60 min)', () => {
+            // From 20% to 5% COHb = 2 half-lives = 2 * 60 = 120 minutes = 2 hours
+            const res = BurnEngine.estimateCOClearanceTime(20, 5, 'nrb_100');
+            assert.equal(res.halfLifeMinutes, 60);
+            assert.equal(res.clearanceMinutes, 120);
+            assert.equal(res.timeFormatted, '2 ชม. ');
+        });
+
+        it('Calculates clearance time for HBO 3.0 ATA (T½ = 23 min)', () => {
+            // From 20% to 5% COHb = 2 half-lives = 2 * 23 = 46 minutes
+            const res = BurnEngine.estimateCOClearanceTime(20, 5, 'hbo_3ata');
+            assert.equal(res.halfLifeMinutes, 23);
+            assert.equal(res.clearanceMinutes, 46);
+            assert.equal(res.timeFormatted, '46 นาที');
+        });
+
+        it('Handles initial <= target COHb cleanly with 0 minutes', () => {
+            const res = BurnEngine.estimateCOClearanceTime(3, 5, 'nrb_100');
+            assert.equal(res.clearanceMinutes, 0);
+            assert.ok(res.timeFormatted.includes('0 นาที'));
+        });
+    });
+
+    describe('26. evaluatePresumptiveCyanideToxicity() Criteria Scoring', () => {
+        it('Identifies presumptive cyanide toxicity when enclosed space + lactate >= 10', () => {
+            const evalRes = BurnEngine.evaluatePresumptiveCyanideToxicity({
+                enclosedSpace: true,
+                alteredConsciousnessOrCPR: true,
+                persistentHypotension: true,
+                lactateGte10: true,
+                cohbGt10: true
+            });
+            assert.equal(evalRes.isPresumptiveCyanide, true);
+            assert.equal(evalRes.criteriaMetCount, 5);
+            assert.ok(evalRes.indicationText.includes('Hydroxocobalamin'));
+        });
+
+        it('Returns false when no high-risk criteria are met', () => {
+            const evalRes = BurnEngine.evaluatePresumptiveCyanideToxicity({
+                enclosedSpace: false,
+                alteredConsciousnessOrCPR: false,
+                persistentHypotension: false,
+                lactateGte10: false,
+                cohbGt10: false
+            });
+            assert.equal(evalRes.isPresumptiveCyanide, false);
+            assert.equal(evalRes.criteriaMetCount, 0);
+        });
+    });
+
+    describe('27. Pointer & Click Event Collision & Ghosting Prevention', () => {
+        it('Sequential pointerdown followed by click does not untoggle/erase painted region', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            const chestPart = doc.getElementById('part-chest_ant');
+            const svgAnt = doc.getElementById('svg-anterior');
+
+            // Simulate real browser event sequence on tapping chest
+            const pointerDownEvent = new win.Event('pointerdown', { bubbles: true });
+            pointerDownEvent.clientX = 100;
+            pointerDownEvent.clientY = 100;
+            Object.defineProperty(pointerDownEvent, 'target', { value: chestPart });
+
+            svgAnt.dispatchEvent(pointerDownEvent);
+            assert.ok(chestPart.classList.contains('deg-2'), 'Pointerdown must paint part to deg-2');
+
+            // Browser immediately fires click on the same element
+            chestPart.dispatchEvent(new win.Event('click', { bubbles: true }));
+            assert.ok(chestPart.classList.contains('deg-2'), 'Subsequent click must NOT unpaint to deg-0 due to race condition');
+
+            const tbsaEl = doc.getElementById('val-resuscitative-tbsa');
+            assert.equal(tbsaEl.textContent, '6.5', 'Chest must remain 6.5%');
+        });
+
+        it('Reset button cleanly resets Direct TBSA input to 0', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            // Paint chest
+            const chestPart = doc.getElementById('part-chest_ant');
+            chestPart.dispatchEvent(new win.Event('click', { bubbles: true }));
+
+            const inputDirect = doc.getElementById('input-direct-tbsa');
+            assert.equal(inputDirect.value, '6.5');
+
+            // Reset
+            const resetBtn = doc.getElementById('quick-reset-btn');
+            resetBtn.dispatchEvent(new win.Event('click', { bubbles: true }));
+
+            assert.equal(inputDirect.value, '0');
+            const valTbsa = doc.getElementById('val-resuscitative-tbsa');
+            assert.equal(valTbsa.textContent, '0.0');
+        });
+    });
 });

@@ -267,7 +267,7 @@
                 parklandShockAdjustedFirst8hRate: 0,
                 parklandNext16hHourlyRate: 0,
                 pediatricMaintenance: calculatePediatricMaintenance(wt),
-                requiresMaintenanceDextrose: wt <= 30.0,
+                requiresMaintenanceDextrose: wt > 0 && wt <= 30.0,
                 isMajorBurn: false,
                 isPost8h: elapsed >= 8.0,
                 hoursElapsed: elapsed,
@@ -527,7 +527,7 @@
                 bolusTotalMl: exactBolus,
                 bolusRangeMinMl: bolusMin,
                 bolusRangeMaxMl: bolusMax,
-                adjustedRateMin: Math.round(rate * 1.10),
+                adjustedRateMin: Math.round(rate * 1.20),
                 adjustedRateMax: Math.round(rate * 1.30),
                 suggestedRate: newRate
             };
@@ -786,6 +786,148 @@
     };
 
     /**
+     * Common Anatomical Region Presets for Rapid ER Resuscitation Charting
+     */
+    const ANATOMICAL_PRESETS = {
+        head_all: {
+            id: 'head_all',
+            name: 'ทั้งศีรษะ (Head Ant+Post)',
+            regions: ['head_ant', 'head_post', 'neck_ant', 'neck_post']
+        },
+        trunk_ant_all: {
+            id: 'trunk_ant_all',
+            name: 'ลำตัวหน้า (Ant Trunk)',
+            regions: ['chest_ant', 'abdomen_ant', 'genitalia']
+        },
+        trunk_post_all: {
+            id: 'trunk_post_all',
+            name: 'หลังและก้น (Post Trunk & Buttocks)',
+            regions: ['back_upper_post', 'back_lower_post', 'buttock_r', 'buttock_l']
+        },
+        arm_r_all: {
+            id: 'arm_r_all',
+            name: 'แขนขวาทั้งหมด (R Arm)',
+            regions: ['arm_upper_r_ant', 'arm_upper_r_post', 'arm_lower_r_ant', 'arm_lower_r_post', 'hand_r_ant', 'hand_r_post']
+        },
+        arm_l_all: {
+            id: 'arm_l_all',
+            name: 'แขนซ้ายทั้งหมด (L Arm)',
+            regions: ['arm_upper_l_ant', 'arm_upper_l_post', 'arm_lower_l_ant', 'arm_lower_l_post', 'hand_l_ant', 'hand_l_post']
+        },
+        legs_both_all: {
+            id: 'legs_both_all',
+            name: 'ขาทั้งสองข้าง (Both Legs)',
+            regions: [
+                'thigh_r_ant', 'thigh_r_post', 'leg_lower_r_ant', 'leg_lower_r_post', 'foot_r_ant', 'foot_r_post',
+                'thigh_l_ant', 'thigh_l_post', 'leg_lower_l_ant', 'leg_lower_l_post', 'foot_l_ant', 'foot_l_post'
+            ]
+        }
+    };
+
+    /**
+     * Dynamic Carboxyhemoglobin (COHb) Elimination Clearance Time Estimator
+     * 
+     * Goldfrank 11th Ch 125 & Tintinalli 9th Ch 217:
+     * - Room Air (21% O2): T½ ~300 min (4–5 hours)
+     * - 100% High-Flow O2 via NRB (Non-Rebreather): T½ ~60 min
+     * - 100% O2 via Endotracheal Tube (Mechanical Vent): T½ ~45 min
+     * - Hyperbaric O2 (HBO at 2.5–3.0 ATA): T½ ~23 min
+     * 
+     * Formula:
+     * Time = T½ * log2(COHb_initial / COHb_target)
+     * 
+     * @param {number} initialCOHb - Measured initial COHb %
+     * @param {number} [targetCOHb=5] - Target safe COHb % (default 5%)
+     * @param {string} [o2DeliveryMode='nrb_100'] - 'room_air' | 'nrb_100' | 'ett_100' | 'hbo_3ata'
+     * @returns {Object} Clearance analysis
+     */
+    function estimateCOClearanceTime(initialCOHb, targetCOHb = 5, o2DeliveryMode = 'nrb_100') {
+        const initial = Math.max(0, Number(initialCOHb) || 0);
+        const target = Math.max(1, Math.min(initial || 1, Number(targetCOHb) || 5));
+        const mode = o2DeliveryMode || 'nrb_100';
+
+        const halfLifeMap = {
+            'room_air': { name: 'Room Air (21% O2)', tHalfMin: 300 },
+            'nrb_100':  { name: '100% High-Flow O2 (NRB Mask)', tHalfMin: 60 },
+            'ett_100':  { name: '100% O2 (Intubated / ETT)', tHalfMin: 45 },
+            'hbo_3ata': { name: 'Hyperbaric O2 (HBO 2.5–3.0 ATA)', tHalfMin: 23 }
+        };
+
+        const config = halfLifeMap[mode] || halfLifeMap['nrb_100'];
+        let clearanceMinutes = 0;
+
+        if (initial > target) {
+            const halfLivesNeeded = Math.log2(initial / target);
+            clearanceMinutes = Math.round(halfLivesNeeded * config.tHalfMin);
+        }
+
+        const hours = Math.floor(clearanceMinutes / 60);
+        const mins = clearanceMinutes % 60;
+        const timeFormatted = hours > 0 ? `${hours} ชม. ${mins > 0 ? mins + ' นาที' : ''}` : `${mins} นาที`;
+
+        return {
+            initialCOHb: initial,
+            targetCOHb: target,
+            o2DeliveryMode: mode,
+            o2DeliveryName: config.name,
+            halfLifeMinutes: config.tHalfMin,
+            clearanceMinutes: clearanceMinutes,
+            timeFormatted: clearanceMinutes > 0 ? timeFormatted : '0 นาที (ถึงเป้าหมายแล้ว)'
+        };
+    }
+
+    /**
+     * Presumptive Cyanide Toxicity Triad Evaluator (ATLS 11th Edition Chapter 9 p. 137)
+     * 
+     * Criteria for presumptive treatment of cyanide toxicity in ED / Prehospital setting:
+     * - History of closed/confined-space fire exposure
+     * - CPR in the field, loss of consciousness, or GCS < 10
+     * - Persistent hypotension / unexplained shock
+     * - Serum Lactate >= 10 mmol/L (or severe unexplained metabolic acidosis)
+     * - Carboxyhemoglobin (COHb) > 10%
+     * 
+     * @param {Object} checklist - Object of boolean flags
+     * @returns {Object} Presumptive Cyanide evaluation
+     */
+    function evaluatePresumptiveCyanideToxicity(checklist) {
+        const cl = checklist || {};
+        const criteriaList = [];
+        let metCount = 0;
+
+        if (cl.enclosedSpace) {
+            metCount++;
+            criteriaList.push('ไฟไหม้ในพื้นที่ปิด/อาคาร (Enclosed-space fire exposure)');
+        }
+        if (cl.alteredConsciousnessOrCPR) {
+            metCount++;
+            criteriaList.push('หมดสติ / โคม่า / GCS < 10 หรือ CPR ในที่เกิดเหตุ');
+        }
+        if (cl.persistentHypotension) {
+            metCount++;
+            criteriaList.push('ความดันโลหิตตกคงค้าง / ภาวะช็อกไม่ทราบสาเหตุ (Unexplained shock)');
+        }
+        if (cl.lactateGte10) {
+            metCount++;
+            criteriaList.push('Serum Lactate ≥ 10 mmol/L หรือภาวะเลือดเป็นกรดรุนแรง');
+        }
+        if (cl.cohbGt10) {
+            metCount++;
+            criteriaList.push('ระดับ Carboxyhemoglobin (COHb) > 10%');
+        }
+
+        const isPresumptiveCyanide = (cl.enclosedSpace && (cl.lactateGte10 || (cl.alteredConsciousnessOrCPR && cl.persistentHypotension))) || metCount >= 3;
+
+        return {
+            isPresumptiveCyanide: isPresumptiveCyanide,
+            criteriaMetCount: metCount,
+            criteriaList: criteriaList,
+            indicationText: isPresumptiveCyanide
+                ? '🚨 เข้าเกณฑ์สงสัยพิษไซยาไนด์รุนแรง (Presumptive Cyanide Toxicity) ตาม ATLS 11th Ch 9 → แนะนำให้ Hydroxocobalamin (Cyanokit) 5 g IV ในผู้ใหญ่ (70 mg/kg ในเด็ก) ทันที'
+                : '✅ ยังไม่เข้าเกณฑ์ข้อบ่งชี้ Presumptive Cyanide Treatment'
+        };
+    }
+
+    /**
      * Returns a map of regionKey → %BSA for the given Lund-Browder age column.
      * Used by UI to display per-region labels and compute coverage fractions.
      *
@@ -805,6 +947,7 @@
         LUND_BROWDER_TABLE,
         ABA_REFERRAL_CRITERIA,
         AIRWAY_SAFETY_PEARLS,
+        ANATOMICAL_PRESETS,
         getLundBrowderAgeColumn,
         calculateTBSA,
         calculatePediatricMaintenance,
@@ -813,6 +956,8 @@
         getUrineOutputTitration,
         getCyanideAntidoteDosing,
         getCOAssessment,
+        estimateCOClearanceTime,
+        evaluatePresumptiveCyanideToxicity,
         evaluateInhalationRisk,
         getRegionPercentages
     };
