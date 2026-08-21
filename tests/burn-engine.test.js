@@ -927,7 +927,7 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             const res = BurnEngine.estimateCOClearanceTime(20, 5, 'nrb_100');
             assert.equal(res.halfLifeMinutes, 60);
             assert.equal(res.clearanceMinutes, 120);
-            assert.equal(res.timeFormatted, '2 ชม. ');
+            assert.equal(res.timeFormatted, '2 ชม.');
         });
 
         it('Calculates clearance time for HBO 3.0 ATA (T½ = 23 min)', () => {
@@ -1015,6 +1015,79 @@ describe('Burn Management Clinical Engine (shared/burn-engine.js)', () => {
             assert.equal(inputDirect.value, '0');
             const valTbsa = doc.getElementById('val-resuscitative-tbsa');
             assert.equal(valTbsa.textContent, '0.0');
+        });
+    });
+
+    describe('28. UI Simplification, Section 1 Open Default & Direct Override Persistence', () => {
+        it('Section 1 (IV Fluid Resuscitation) is open by default on DOM load', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+            const secFluid = doc.getElementById('sec-fluid');
+            assert.ok(secFluid.classList.contains('open'), 'Section 1 must be open by default for immediate emergency resuscitation display');
+        });
+
+        it('Direct % TBSA Entry and +1% Palm persist when modifying patient weight or age', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            // 1. Click +1% Palm
+            const btnPalm = doc.getElementById('btn-palm-plus');
+            btnPalm.dispatchEvent(new win.Event('click', { bubbles: true }));
+
+            const inputDirect = doc.getElementById('input-direct-tbsa');
+            assert.equal(inputDirect.value, '1.0');
+
+            const valTbsa = doc.getElementById('val-resuscitative-tbsa');
+            assert.equal(valTbsa.textContent, '1.0');
+
+            // 2. Adjust patient weight
+            const inputWeight = doc.getElementById('input-weight');
+            inputWeight.value = '80';
+            inputWeight.dispatchEvent(new win.Event('input', { bubbles: true }));
+
+            // TBSA must stay 1.0% and not revert to 0
+            assert.equal(valTbsa.textContent, '1.0', 'TBSA must persist across weight adjustments in direct entry mode');
+            assert.equal(inputDirect.value, '1.0');
+        });
+
+        it('Direct Entry hides degree tags to prevent ghost box artifacts', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            const inputDirect = doc.getElementById('input-direct-tbsa');
+            inputDirect.value = '25';
+            inputDirect.dispatchEvent(new win.Event('input', { bubbles: true }));
+
+            const badge3 = doc.getElementById('val-deg3-badge');
+            const badge1 = doc.getElementById('val-deg1-badge');
+            assert.equal(badge3.style.display, 'none', '3rd deg badge must be hidden in direct entry mode');
+            assert.equal(badge1.style.display, 'none', '1st deg badge must be hidden in direct entry mode');
+        });
+
+        it('EMR Note generator includes Pediatric Maintenance Fluid for weight <= 30 kg', () => {
+            const win = loadBurnManagerDom();
+            const doc = win.document;
+
+            // Set pediatric weight (20 kg) and TBSA
+            const inputWeight = doc.getElementById('input-weight');
+            inputWeight.value = '20';
+            inputWeight.dispatchEvent(new win.Event('input', { bubbles: true }));
+
+            const inputDirect = doc.getElementById('input-direct-tbsa');
+            inputDirect.value = '20';
+            inputDirect.dispatchEvent(new win.Event('input', { bubbles: true }));
+
+            // Mock prompt/clipboard
+            let capturedNote = '';
+            win.prompt = function (msg, text) {
+                capturedNote = text;
+            };
+
+            const btnCopy = doc.getElementById('btn-copy-emr');
+            btnCopy.dispatchEvent(new win.Event('click', { bubbles: true }));
+
+            assert.ok(capturedNote.includes('Pediatric Maintenance Fluid: D5LR'), 'EMR note must include pediatric maintenance fluid order');
+            assert.ok(capturedNote.includes('60 mL/hr'), '20 kg child maintenance rate is 60 mL/hr');
         });
     });
 });

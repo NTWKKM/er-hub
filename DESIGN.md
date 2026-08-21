@@ -273,8 +273,8 @@ Standalone worksheets located directly in `tools/` (e.g., `nihss.html`, `Urgent-
 ### Burn Management & Resuscitation Hub (`tools/burn-manager.html`)
 
 - **Theme & Layout**: Responsive card-based layout with a full-width sticky `% TBSA` Hero summary bar (`--burn-primary: #ea580c`) featuring dynamic severity gradient shifts (Amber $\le 19\%$, Orange $20\text{--}39\%$, Crimson $\ge 40\%$), direct numerical input, and automated ABA referral syncing.
-- **High-Contrast Themed Accordions**: All 5 primary clinical sections use a collapsible accordion structure (collapsed on load for minimal cognitive overload) with distinct domain-themed headers and thick left accent bars (`4px solid`):
-  - `sec-fluid` (Fluid Resuscitation): Flame Amber tint (`#fffbeb`, border `#fcd34d`, left `#d97706`, title `#78350f`).
+- **High-Contrast Themed Accordions**: All 5 primary clinical sections use a collapsible accordion structure (Section 1 open by default for immediate emergency resuscitation display) with distinct domain-themed headers and thick left accent bars (`6px solid`):
+  - `sec-fluid` (Fluid Resuscitation): Flame Amber tint (`#fffbeb`, border `#fcd34d`, left `#d97706`, title `#78350f`). Open by default.
   - `sec-airway` (Airway & Inhalation): Clinical Blue tint (`#eff6ff`, border `#bfdbfe`, left `#2563eb`, title `#1e40af`).
   - `sec-toxico` (Smoke Toxicology & Antidotes): Royal Purple tint (`#faf5ff`, border `#e9d5ff`, left `#9333ea`, title `#6b21a8`).
   - `sec-escharotomy` (Escharotomy & ABA Criteria): Surgical Crimson tint (`#fef2f2`, border `#fecaca`, left `#dc2626`, title `#991b1b`).

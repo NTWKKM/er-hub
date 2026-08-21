@@ -863,7 +863,7 @@
 
         const hours = Math.floor(clearanceMinutes / 60);
         const mins = clearanceMinutes % 60;
-        const timeFormatted = hours > 0 ? `${hours} ชม. ${mins > 0 ? mins + ' นาที' : ''}` : `${mins} นาที`;
+        const timeFormatted = hours > 0 ? (mins > 0 ? `${hours} ชม. ${mins} นาที` : `${hours} ชม.`) : `${mins} นาที`;
 
         return {
             initialCOHb: initial,

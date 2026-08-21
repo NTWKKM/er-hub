@@ -1,3 +1,18 @@
+## [2.10.0] — 2026-08-21
+
+### UI Simplification, Image Pruning & Direct % TBSA State Hardening
+- **Burn Management Hub (`tools/burn-manager.html`, `shared/burn-engine.js`):**
+  - **UI Simplification & Cognitive Load Reduction:** Section 1 (Hero Fluid Resuscitation) is now expanded (`open`) by default for immediate emergency resuscitation calculations on page load. Cleaned inline event handlers and replaced with unified JS event delegation.
+  - **Figure Pruning:** Removed redundant textbook figures ATLS Fig 9-3 (`burn-depth-atls.png`) and Fig 9-2 (`rule-of-nines-atls.png`) from Section 2, retaining only focused ATLS Fig 9-1 airway compromise photo in a compact container.
+  - **Direct % TBSA & `+1% Palm` Persistence:** Fixed bug where direct numerical % TBSA and `+1% Palm` additions reverted on patient weight/age change by introducing an explicit `isDirectMode` state flag.
+  - **Ghost Badge Tag Cleanup:** In Direct Entry mode, properly hides empty 1st & 3rd degree badge containers (`display: none`) to eliminate gray rectangular artifacts.
+  - **EMR Note Pediatric Maintenance:** Included Holliday-Segar pediatric maintenance fluid order ($D_5LR$ with hourly infusion rate) in the copied EMR clinical note when patient weight $\le 30$ kg.
+  - **Formatting Precision:** Cleaned `estimateCOClearanceTime()` string formatting to eliminate trailing whitespace.
+- **Automated Test Coverage (`tests/burn-engine.test.js`):**
+  - Added Suite 28 verifying default open state, Direct Entry persistence, badge display toggling, and pediatric EMR note generation (324 tests passing across 59 suites, 100% green).
+- **PWA Cache (`service-worker.js`):**
+  - Removed pruned burn images from static asset cache and bumped cache version to `er-hub-v66` (`21/08/2569`).
+
 ## [2.9.0] — 2026-08-21
 
 ### Major Hardening & Feature Enhancement (Burn Event Decoupling, Anatomical Presets, Toxicology & ATLS 11th Cyanide Scoring)

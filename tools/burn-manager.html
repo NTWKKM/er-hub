@@ -846,8 +846,8 @@
     <!-- ═══════════════════════════════════════════════ -->
     <!-- 1. IV FLUID RESUSCITATION (HERO SECTION)        -->
     <!-- ═══════════════════════════════════════════════ -->
-    <div class="accordion-item sec-fluid" id="sec-fluid">
-        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+    <div class="accordion-item sec-fluid open" id="sec-fluid">
+        <div class="accordion-header">
             <div class="header-left-title">
                 <span>💉 1. สารน้ำกู้ชีพ 24 ชั่วโมง (Fluid Resuscitation Schedule)</span>
             </div>
@@ -996,7 +996,7 @@
     <!-- 2. INHALATION INJURY & AIRWAY MATRIX            -->
     <!-- ═══════════════════════════════════════════════ -->
     <div class="accordion-item sec-airway" id="sec-airway">
-        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="accordion-header">
             <div class="header-left-title">
                 <span>🫁 2. ประเมินทางเดินหายใจและการสูดดมควัน (Inhalation Injury & Airway Matrix)</span>
             </div>
@@ -1075,19 +1075,11 @@
                 <div id="inhal-triage-desc" style="margin-top: 3px; color: #334155;">เฝ้าระวังอาการทางเดินหายใจอย่างใกล้ชิด</div>
             </div>
 
-            <!-- Textbook Clinical References -->
-            <div class="clinical-img-grid">
+            <!-- Focused Airway Visual Reference -->
+            <div style="margin-top: 12px; max-width: 380px;">
                 <div class="clinical-img-card">
                     <img src="../docs/burn-assets/airway-burn-atls.png" alt="ATLS Airway Compromise">
                     <div class="clinical-img-caption"><strong>ATLS 11th Fig 9-1:</strong> ภาวะบวมและอุดกั้นของทางเดินหายใจจากแผลไหม้บริเวณใบหน้าและรอบปาก</div>
-                </div>
-                <div class="clinical-img-card">
-                    <img src="../docs/burn-assets/burn-depth-atls.png" alt="Burn Depth Histology">
-                    <div class="clinical-img-caption"><strong>ATLS 11th Fig 9-3:</strong> การจำแนกระดับความลึกของแผลไหม้ (1st, 2nd, 3rd Degree)</div>
-                </div>
-                <div class="clinical-img-card">
-                    <img src="../docs/burn-assets/rule-of-nines-atls.png" alt="Rule of Nines Reference">
-                    <div class="clinical-img-caption"><strong>ATLS Fig 9-2 (Reference Only):</strong> กฎ Rule of Nines สำหรับประเมินเร็วเบื้องต้น (เครื่องมือนี้ใช้ Lund-Browder 6 Columns เพื่อความแม่นยำสูงสุด)</div>
                 </div>
             </div>
         </div>
@@ -1097,7 +1089,7 @@
     <!-- 3. SMOKE INHALATION TOXICOLOGY (CO & CYANIDE)   -->
     <!-- ═══════════════════════════════════════════════ -->
     <div class="accordion-item sec-toxico" id="sec-toxico">
-        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="accordion-header">
             <div class="header-left-title">
                 <span>☠️ 3. พิษจากควันไฟ: Carbon Monoxide (CO) & Cyanide (CN)</span>
             </div>
@@ -1259,7 +1251,7 @@
     <!-- 4. ESCHAROTOMY & ABA REFERRAL CRITERIA          -->
     <!-- ═══════════════════════════════════════════════ -->
     <div class="accordion-item sec-escharotomy" id="sec-escharotomy">
-        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="accordion-header">
             <div class="header-left-title">
                 <span>🔪 4. แผลไหม้รอบส่วน, การผ่าตัด Escharotomy & เกณฑ์ส่งต่อ ABA (Referral Criteria)</span>
             </div>
@@ -1315,12 +1307,12 @@
     <!-- Interactive SVG with drag-to-paint & peds model -->
     <!-- ═══════════════════════════════════════════════ -->
     <div class="accordion-item sec-painter body-painter-section" id="body-painter-section">
-        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="accordion-header">
             <div class="header-left-title">
                 <span>🎨 5. แผนผังระบายแผลคำนวณ % TBSA (Interactive Lund & Browder Painter)</span>
             </div>
             <div class="header-right-meta">
-                <span id="quick-reset-btn" onclick="event.stopPropagation()" style="font-size: 11px; color: var(--burn-primary); cursor: pointer; text-decoration: underline; padding: 2px 6px;">ล้างทั้งหมด (Reset)</span>
+                <span id="quick-reset-btn" style="font-size: 11px; color: var(--burn-primary); cursor: pointer; text-decoration: underline; padding: 2px 6px;">ล้างทั้งหมด (Reset)</span>
                 <span class="chevron-icon">▼</span>
             </div>
         </div>
@@ -1516,6 +1508,7 @@
     // ═══════════════════════════════════════════════
     let activeDegree = 2; // 0=Unburned, 1=1st deg, 2=2nd deg, 3=3rd deg
     const paintedRegions = {}; // regionKey -> degree (0, 1, 2, 3)
+    let isDirectMode = false;
     let selectedBolusMlKg = 20;
     const abaManualStates = {};
     let isPointerDragging = false;
@@ -1589,6 +1582,7 @@
     function paintBodyPart(partEl, deg) {
         if (!partEl || !partEl.id || !partEl.id.startsWith('part-')) return;
         const regionId = partEl.id.replace('part-', '');
+        isDirectMode = false;
         
         partEl.classList.remove('deg-0', 'deg-1', 'deg-2', 'deg-3');
         if (deg === 0) {
@@ -1603,6 +1597,7 @@
     function toggleBodyPart(partEl) {
         if (!partEl || !partEl.id || !partEl.id.startsWith('part-')) return;
         const regionId = partEl.id.replace('part-', '');
+        isDirectMode = false;
         let newDeg = activeDegree;
         if (paintedRegions[regionId] === activeDegree) {
             newDeg = 0;
@@ -1757,6 +1752,7 @@
     // Preset Buttons
     document.querySelectorAll('.preset-btn').forEach(btn => {
         btn.addEventListener('click', function () {
+            isDirectMode = false;
             const presetId = this.dataset.preset;
             const preset = BurnEngine.ANATOMICAL_PRESETS && BurnEngine.ANATOMICAL_PRESETS[presetId];
             if (preset && Array.isArray(preset.regions)) {
@@ -1772,7 +1768,9 @@
     });
 
     // Reset Button
-    document.getElementById('quick-reset-btn').addEventListener('click', function () {
+    document.getElementById('quick-reset-btn').addEventListener('click', function (e) {
+        if (e && e.stopPropagation) e.stopPropagation();
+        isDirectMode = false;
         document.querySelectorAll('.body-part').forEach(p => {
             p.classList.remove('deg-1', 'deg-2', 'deg-3');
             p.classList.add('deg-0');
@@ -1787,8 +1785,17 @@
     document.getElementById('btn-palm-plus').addEventListener('click', function () {
         const currentDirect = parseFloat(inputDirectTbsa ? inputDirectTbsa.value : 0) || 0;
         const newDirect = Math.min(100, currentDirect + 1.0);
+        isDirectMode = true;
         if (inputDirectTbsa) inputDirectTbsa.value = newDirect.toFixed(1);
         recalculateAll(true);
+    });
+
+    // Accordion Header Toggle Listeners
+    document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', function (e) {
+            if (e.target && e.target.id === 'quick-reset-btn') return;
+            this.parentElement.classList.toggle('open');
+        });
     });
 
     // Expand All / Collapse All Buttons
@@ -1823,7 +1830,10 @@
 
     // Input Synchronization
     if (inputDirectTbsa) {
-        inputDirectTbsa.addEventListener('input', () => recalculateAll(true));
+        inputDirectTbsa.addEventListener('input', () => {
+            isDirectMode = true;
+            recalculateAll(true);
+        });
     }
     inputWeight.addEventListener('input', () => { sliderWeight.value = inputWeight.value; recalculateAll(false); });
     sliderWeight.addEventListener('input', () => { inputWeight.value = sliderWeight.value; recalculateAll(false); });
@@ -1884,15 +1894,17 @@
         let tbsaRes = null;
         const hasPaintedRegions = Object.keys(paintedRegions).length > 0;
         const directTbsaValue = inputDirectTbsa ? parseFloat(inputDirectTbsa.value) : 0;
-        const useDirectEntry = isDirectEntry || (!hasPaintedRegions && !isNaN(directTbsaValue) && directTbsaValue > 0);
+        const useDirectEntry = isDirectMode || isDirectEntry || (!hasPaintedRegions && !isNaN(directTbsaValue) && directTbsaValue > 0);
 
         if (useDirectEntry && inputDirectTbsa) {
             const rawVal = parseFloat(inputDirectTbsa.value);
             resuscitativeTbsa = !isNaN(rawVal) ? Math.max(0, Math.min(100, rawVal)) : 0;
             valResuscitativeTbsa.textContent = resuscitativeTbsa.toFixed(1);
             valDeg2Badge.textContent = `Direct Entry: ${resuscitativeTbsa.toFixed(1)}%`;
-            valDeg3Badge.textContent = ``;
-            valDeg1Badge.textContent = ``;
+            valDeg3Badge.textContent = '';
+            valDeg1Badge.textContent = '';
+            valDeg3Badge.style.display = 'none';
+            valDeg1Badge.style.display = 'none';
         } else {
             tbsaRes = BurnEngine.calculateTBSA(age, paintedRegions);
             resuscitativeTbsa = tbsaRes.tbsaResuscitative;
@@ -1903,6 +1915,8 @@
             valDeg2Badge.textContent = `2nd Deg: ${tbsaRes.deg2Pct}%`;
             valDeg3Badge.textContent = `3rd Deg: ${tbsaRes.deg3Pct}%`;
             valDeg1Badge.textContent = `1st Deg (Excl): ${tbsaRes.deg1Pct}%`;
+            valDeg3Badge.style.display = '';
+            valDeg1Badge.style.display = '';
         }
 
         // TBSA Banner severity color styling
@@ -2228,6 +2242,9 @@
         const abaBadge = document.getElementById('aba-referral-badge') ? document.getElementById('aba-referral-badge').textContent : '0/10';
         const isHypo = checkHypotensive.checked;
         const shockBolusNote = isHypo ? `\n- 🚨 Resuscitation Shock Bolus: Warmed LR ${Math.round(weight * selectedBolusMlKg).toLocaleString()} mL (${selectedBolusMlKg} mL/kg) IV in 15–30 min` : '';
+        const pedsMaintenanceNote = (Number(weight) > 0 && Number(weight) <= 30)
+            ? `\n  * Pediatric Maintenance Fluid: D5LR ${valPedsRate.textContent} (Holliday-Segar for <= 30 kg)`
+            : '';
 
         const note = `[MNRH ED BURN RESUSCITATION NOTE]
 - Patient: Age ${age} yo, Weight ${weight} kg
@@ -2242,7 +2259,7 @@
   * Classic Parkland (4 mL/kg/%):
     - Total 24h: ${parklandTotal}
     - 1st 8h / Catch-up Infusion Rate: ${parklandFirst8h}
-    - Next 16h Infusion Rate: ${parklandNext16h}
+    - Next 16h Infusion Rate: ${parklandNext16h}${pedsMaintenanceNote}
   * Target Urine Output: ${targetUo}
 - Toxicology & Airway:
   * Inhalation Risk: ${inhalTriageTitle.textContent}
