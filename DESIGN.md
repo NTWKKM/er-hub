@@ -270,4 +270,14 @@ Standalone worksheets located directly in `tools/` (e.g., `nihss.html`, `Urgent-
 - **Dynamic Medication Tracker**: Live Epinephrine 3–5 min countdown pill with auto-updating color status (green <3m, amber 3–5m, flashing red >5m). Antiarrhythmic (Amiodarone/Lidocaine) max dose clamping and special resuscitation medication quick logs.
 - **Collapsible Clinical Drawers**: Interactive accessible accordions (`role="button"`, `tabindex="0"`, `aria-expanded`) for (1) Resuscitation Drug Indications Guide, (2) 5 H's & 5 T's Diagnostic Checklist, and (3) Post-Cardiac Arrest Care Protocol (Part 11) with auto-open on ROSC.
 - **Timeline & EMR Export**: Real-time event log with timestamps, quick-event text input, undo function, one-click EMR summary copying, and clean black-and-white A4 print stylesheet.
+### Burn Management & Resuscitation Hub (`tools/burn-manager.html`)
 
+- **Theme & Layout**: Responsive card-based layout with a full-width sticky `% TBSA` Hero summary bar (`--burn-primary: #ea580c`) featuring dynamic severity gradient shifts (Amber $\le 19\%$, Orange $20\text{--}39\%$, Crimson $\ge 40\%$), direct numerical input, and automated ABA referral syncing.
+- **High-Contrast Themed Accordions**: All 5 primary clinical sections use a collapsible accordion structure (collapsed on load for minimal cognitive overload) with distinct domain-themed headers and thick left accent bars (`4px solid`):
+  - `sec-fluid` (Fluid Resuscitation): Flame Amber tint (`#fffbeb`, border `#fcd34d`, left `#d97706`, title `#78350f`).
+  - `sec-airway` (Airway & Inhalation): Clinical Blue tint (`#eff6ff`, border `#bfdbfe`, left `#2563eb`, title `#1e40af`).
+  - `sec-toxico` (Smoke Toxicology & Antidotes): Royal Purple tint (`#faf5ff`, border `#e9d5ff`, left `#9333ea`, title `#6b21a8`).
+  - `sec-escharotomy` (Escharotomy & ABA Criteria): Surgical Crimson tint (`#fef2f2`, border `#fecaca`, left `#dc2626`, title `#991b1b`).
+  - `sec-painter` (Lund & Browder BSA Painter): Forest Emerald tint (`#f0fdf4`, border `#bbf7d0`, left `#16a34a`, title `#166534`).
+- **Global Accordion Toolbar**: Prominent "➕ ขยายทั้งหมด (Expand All)" and "➖ ยุบทั้งหมด (Collapse All)" controls below the TBSA summary banner for fast triage navigation.
+- **Interactive SVG Painter**: Dual anterior/posterior body diagram with dynamic pediatric scaling (6 age columns), multi-degree paint color palette (1st Degree yellow `#fef08a`, 2nd Degree orange `#fb923c`, 3rd/4th Degree crimson `#dc2626`), preset buttons, and smooth scroll auto-expansion.

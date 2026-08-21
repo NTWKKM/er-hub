@@ -197,28 +197,7 @@
             background: rgba(251, 191, 36, 0.22);
         }
 
-        /* ══ Card Common ══ */
-        .burn-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 16px;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
-            margin-bottom: 18px;
-        }
 
-        .card-header {
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-size: 0.92rem;
-            font-weight: 700;
-            color: #0f172a;
-            border-bottom: 1.5px solid #f1f5f9;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
 
         /* ══ Dual Fluid Resuscitation Schedule Comparison ══ */
         .fluid-comparison-grid {
@@ -488,40 +467,148 @@
             transform: none;
         }
 
-        /* ══ Accordion & Subsections ══ */
+        /* ══ Accordion & Subsections with Distinct Theme Headers ══ */
         .accordion-item {
-            border: 1px solid #e2e8f0;
+            border: 1.5px solid #e2e8f0;
             border-radius: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 14px;
             overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+            transition: all 0.2s ease;
         }
 
         .accordion-header {
-            background: #f8fafc;
-            padding: 10px 14px;
+            padding: 11px 16px;
+            font-family: 'Inter Tight', 'Sarabun', sans-serif;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 13.5px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
             user-select: none;
+            transition: background 0.15s ease, color 0.15s ease;
+            gap: 8px;
         }
 
-        .accordion-header:hover {
-            background: #f1f5f9;
+        .accordion-header .header-left-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .accordion-header .header-right-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .accordion-header .chevron-icon {
+            font-size: 11px;
+            transition: transform 0.2s ease;
+            color: currentColor;
+            opacity: 0.85;
+            display: inline-block;
+        }
+
+        .accordion-item.open > .accordion-header .chevron-icon {
+            transform: rotate(180deg);
         }
 
         .accordion-content {
-            padding: 14px;
+            padding: 16px;
             display: none;
             font-size: 12.5px;
-            line-height: 1.5;
+            line-height: 1.55;
             background: #ffffff;
+            border-top: 1.5px solid transparent;
         }
 
-        .accordion-item.open .accordion-content {
+        .accordion-item.open > .accordion-content {
             display: block;
+        }
+
+        /* ══ Theme Colors for Section Headers ══ */
+        /* Section 1: Fluid Resuscitation (Amber / Flame) */
+        .sec-fluid {
+            border-color: #fcd34d;
+        }
+        .sec-fluid > .accordion-header {
+            background: #fffbeb;
+            color: #78350f;
+            border-left: 6px solid #d97706;
+        }
+        .sec-fluid > .accordion-header:hover {
+            background: #fef3c7;
+        }
+        .sec-fluid.open > .accordion-content {
+            border-top-color: #fde68a;
+        }
+
+        /* Section 2: Inhalation & Airway (Clinical Blue) */
+        .sec-airway {
+            border-color: #bfdbfe;
+        }
+        .sec-airway > .accordion-header {
+            background: #eff6ff;
+            color: #1e40af;
+            border-left: 6px solid #2563eb;
+        }
+        .sec-airway > .accordion-header:hover {
+            background: #dbeafe;
+        }
+        .sec-airway.open > .accordion-content {
+            border-top-color: #bfdbfe;
+        }
+
+        /* Section 3: Smoke Toxicology: CO & Cyanide (Royal Purple) */
+        .sec-toxico {
+            border-color: #e9d5ff;
+        }
+        .sec-toxico > .accordion-header {
+            background: #faf5ff;
+            color: #6b21a8;
+            border-left: 6px solid #9333ea;
+        }
+        .sec-toxico > .accordion-header:hover {
+            background: #f3e8ff;
+        }
+        .sec-toxico.open > .accordion-content {
+            border-top-color: #e9d5ff;
+        }
+
+        /* Section 4: Circumferential Burns, Escharotomy & ABA Referral (Crimson Red) */
+        .sec-escharotomy {
+            border-color: #fecaca;
+        }
+        .sec-escharotomy > .accordion-header {
+            background: #fef2f2;
+            color: #991b1b;
+            border-left: 6px solid #dc2626;
+        }
+        .sec-escharotomy > .accordion-header:hover {
+            background: #fee2e2;
+        }
+        .sec-escharotomy.open > .accordion-content {
+            border-top-color: #fecaca;
+        }
+
+        /* Section 5: Body Surface Area Painter (Forest Emerald) */
+        .sec-painter {
+            border-color: #bbf7d0;
+        }
+        .sec-painter > .accordion-header {
+            background: #f0fdf4;
+            color: #166534;
+            border-left: 6px solid #16a34a;
+        }
+        .sec-painter > .accordion-header:hover {
+            background: #dcfce7;
+        }
+        .sec-painter.open > .accordion-content {
+            border-top-color: #bbf7d0;
         }
 
         /* ══ Checklist ══ */
@@ -742,447 +829,426 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════ -->
-    <!-- 3. IV FLUID RESUSCITATION (HERO SECTION)        -->
+    <!-- Global Section Expand / Collapse Control Toolbar -->
     <!-- ═══════════════════════════════════════════════ -->
-    <div class="burn-card">
-        <div class="card-header">
-            <span>💉 Fluid Resuscitation Schedule (24-Hour Plan)</span>
-            <span class="badge-atls" id="badge-guideline-coeff">2 mL/kg/%</span>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; background: #f8fafc; padding: 10px 14px; border-radius: 8px; border: 1.5px solid #cbd5e1;">
+        <span style="font-size: 12.5px; font-weight: 700; color: #334155;">📑 หัวข้อการดูแลผู้ป่วยแผลไหม้ (Clinical Modules):</span>
+        <div style="display: flex; gap: 8px;">
+            <button type="button" id="btn-expand-all" class="btn-action btn-outline" style="padding: 5px 12px; font-size: 11.5px; font-weight: 700; background: #ffffff; border-color: #94a3b8;">
+                ➕ ขยายทั้งหมด (Expand All)
+            </button>
+            <button type="button" id="btn-collapse-all" class="btn-action btn-outline" style="padding: 5px 12px; font-size: 11.5px; font-weight: 700; background: #ffffff; border-color: #94a3b8;">
+                ➖ ยุบทั้งหมด (Collapse All)
+            </button>
         </div>
+    </div>
 
-        <!-- Prehospital Initial Rate Banner (ATLS 11th Table 8-3) -->
-        <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
-            <div>
-                <strong style="color: #1e40af;">🚑 EMS Prehospital Initial IV Rate (ATLS 11th Table 8-3):</strong>
-                <div style="color: #1e3a8a; font-size: 11px;">อัตราเริ่มให้สารน้ำเบื้องต้นทาง EMS/ER ก่อนคำนวณ % TBSA ละเอียด</div>
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- 1. IV FLUID RESUSCITATION (HERO SECTION)        -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="accordion-item sec-fluid" id="sec-fluid">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="header-left-title">
+                <span>💉 1. สารน้ำกู้ชีพ 24 ชั่วโมง (Fluid Resuscitation Schedule)</span>
             </div>
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700; color: #1d4ed8;" id="val-prehospital-rate">500 mL/hr</div>
+            <div class="header-right-meta">
+                <span class="badge-atls" id="badge-guideline-coeff">2 mL/kg/%</span>
+                <span class="chevron-icon">▼</span>
+            </div>
         </div>
+        <div class="accordion-content">
+            <!-- Prehospital Initial Rate Banner (ATLS 11th Table 8-3) -->
+            <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
+                <div>
+                    <strong style="color: #1e40af;">🚑 EMS Prehospital Initial IV Rate (ATLS 11th Table 8-3):</strong>
+                    <div style="color: #1e3a8a; font-size: 11px;">อัตราเริ่มให้สารน้ำเบื้องต้นทาง EMS/ER ก่อนคำนวณ % TBSA ละเอียด</div>
+                </div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700; color: #1d4ed8;" id="val-prehospital-rate">500 mL/hr</div>
+            </div>
 
-        <!-- Dual Formula Comparison Grid -->
-        <div class="fluid-comparison-grid">
-            <!-- 1. Modified Brooke / ATLS 11th (Recommended) -->
-            <div class="fluid-formula-card card-modified">
-                <div class="fluid-card-top">
+            <!-- Dual Formula Comparison Grid -->
+            <div class="fluid-comparison-grid">
+                <!-- 1. Modified Brooke / ATLS 11th (Recommended) -->
+                <div class="fluid-formula-card card-modified">
+                    <div class="fluid-card-top">
+                        <div>
+                            <strong style="color: #92400e; font-size: 13px; display: block;">Modified Brooke (ATLS 11th)</strong>
+                            <span style="font-size: 10px; color: #b45309; font-weight: 600;">Consensus Standard (Recommended)</span>
+                        </div>
+                        <span class="badge-atls" id="badge-modified-brooke-coeff" style="font-size: 11px; font-weight: 700;">2 mL/kg/%</span>
+                    </div>
+
+                    <div class="fluid-hero-rate-box" id="box-modified-rate" style="border-color: #fde68a; transition: all 0.2s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 10.5px; font-weight: 700; color: #78350f; text-transform: uppercase;" id="lbl-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                            <span id="badge-modified-shock" style="display: none; background: #ef4444; color: #ffffff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">🚨 Shock +25%</span>
+                        </div>
+                        <div class="fluid-rate-big" id="val-first8h-rate" style="font-size: 2.2rem; color: #b45309; margin: 4px 0;">0 mL/hr</div>
+                        <div style="font-size: 10px; color: #92400e;" id="val-time-remaining-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
+                    </div>
+
+                    <div class="fluid-formula-grid">
+                        <div class="fluid-mini-stat" style="border-color: #fef08a;">
+                            <div style="color: #78350f; font-size: 10px; font-weight: 600;" id="lbl-total-24h">ยอดรวม 24 ชม.</div>
+                            <strong style="color: #0f172a; font-size: 13px;" id="val-total-24h">0 mL</strong>
+                        </div>
+                        <div class="fluid-mini-stat" style="border-color: #fef08a;">
+                            <div style="color: #78350f; font-size: 10px; font-weight: 600;" id="lbl-first8h-target">ยอด 8 ชม. แรก (50%)</div>
+                            <strong style="color: #0f172a; font-size: 13px;" id="val-first8h-target">0 mL</strong>
+                        </div>
+                        <div class="fluid-mini-stat" style="grid-column: span 2; border-color: #fef08a; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #78350f; font-size: 10.5px; font-weight: 600;" id="lbl-next16h-rate">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
+                            <strong style="color: #0f172a; font-size: 13px;" id="val-next16h-rate">0 mL/hr</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Classic Parkland (4 mL/kg/%) -->
+                <div class="fluid-formula-card card-parkland">
+                    <div class="fluid-card-top">
+                        <div>
+                            <strong style="color: #334155; font-size: 13px; display: block;">Classic Parkland (Baxter)</strong>
+                            <span style="font-size: 10px; color: #64748b; font-weight: 600;">Traditional Formula</span>
+                        </div>
+                        <span style="font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #334155;">4 mL/kg/%</span>
+                    </div>
+
+                    <div class="fluid-hero-rate-box" id="box-parkland-rate" style="border-color: #e2e8f0; transition: all 0.2s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 10.5px; font-weight: 700; color: #475569; text-transform: uppercase;" id="lbl-parkland-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                            <span id="badge-parkland-shock" style="display: none; background: #ef4444; color: #ffffff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">🚨 Shock +25%</span>
+                        </div>
+                        <div class="fluid-rate-big" id="val-parkland-first8h-rate" style="font-size: 2.2rem; color: #334155; margin: 4px 0;">0 mL/hr</div>
+                        <div style="font-size: 10px; color: #64748b;" id="val-parkland-time-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
+                    </div>
+
+                    <div class="fluid-formula-grid">
+                        <div class="fluid-mini-stat" style="border-color: #e2e8f0;">
+                            <div style="color: #64748b; font-size: 10px; font-weight: 600;" id="lbl-parkland-total">ยอดรวม 24 ชม.</div>
+                            <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-total">0 mL</strong>
+                        </div>
+                        <div class="fluid-mini-stat" style="border-color: #e2e8f0;">
+                            <div style="color: #64748b; font-size: 10px; font-weight: 600;" id="lbl-parkland-first8h-target">ยอด 8 ชม. แรก (50%)</div>
+                            <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-first8h-target">0 mL</strong>
+                        </div>
+                        <div class="fluid-mini-stat" style="grid-column: span 2; border-color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #64748b; font-size: 10.5px; font-weight: 600;" id="lbl-parkland-next16h-rate">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
+                            <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-next16h-rate">0 mL/hr</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pediatric Maintenance Banner (if <= 30kg) -->
+            <div id="peds-maintenance-banner" style="background: #f5f3ff; border: 1.5px solid #ddd6fe; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; display: none;">
+                <strong style="color: #6b21a8;">👶 Pediatric Maintenance Fluid (Holliday-Segar 4-2-1):</strong>
+                <div style="color: #4c1d95; margin-top: 2px;">
+                    ให้ <strong>D5LR หรือ D5 0.45% NaCl</strong> อัตรา <span id="val-peds-rate" style="font-family: monospace; font-weight: 700; font-size: 14px;">0 mL/hr</span> ควบคู่ไปกับสารน้ำกู้ชีพทาง IV อีกเส้น เพื่อป้องกันภาวะน้ำตาลในเลือดต่ำ (Hypoglycemia) ในเด็ก ≤ 30 kg
+                </div>
+            </div>
+
+            <!-- Urine Output Monitoring & Dynamic Titration -->
+            <div style="border-top: 1px solid #f1f5f9; padding-top: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; font-weight: 700;">
+                    <span>เป้าหมาย Urine Output (Target UO):</span>
+                    <span id="val-target-uo-text" style="color: var(--burn-primary-dark); font-family: monospace;">0.5 mL/kg/hr (35–50 mL/hr)</span>
+                </div>
+
+                <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px;">
+                    <span style="font-size: 12px; color: #475569; font-weight: 600;">ปริมาณปัสสาวะ 1 ชม. ล่าสุด:</span>
+                    <input type="number" id="input-measured-uo" class="input-control" value="40" min="0" max="500" step="5" style="width: 80px; padding: 4px 8px;">
+                    <span style="font-size: 12px; color: #64748b;">mL/hr</span>
+                    <label style="font-size: 11.5px; margin-left: auto; color: #991b1b; display: flex; align-items: center; gap: 4px; font-weight: 700; cursor: pointer;">
+                        <input type="checkbox" id="check-hypotensive" style="accent-color: #ef4444;"> ภาวะช็อก/ความดันตก (Shock)
+                    </label>
+                </div>
+
+                <!-- Shock Bolus Interactive Subpanel -->
+                <div id="shock-bolus-panel" style="display: none; background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 8px; padding: 10px 12px; margin-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <div>
+                            <strong style="color: #991b1b; font-size: 12px;">🚨 Shock / Hypotension Fluid Bolus (ATLS 11th & Tintinalli):</strong>
+                            <div style="font-size: 11px; color: #7f1d1d;">เลือกขนาดสารน้ำอุ่น (Warmed Balanced LR) ที่ต้องการให้ IV Bolus ทันที:</div>
+                        </div>
+                        <div class="shock-bolus-selector" style="display: flex; gap: 6px;">
+                            <button type="button" class="bolus-btn btn-action" data-bolus="10" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #ef4444; background: #ffffff; color: #991b1b;">10 mL/kg</button>
+                            <button type="button" class="bolus-btn btn-action" data-bolus="15" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #ef4444; background: #ffffff; color: #991b1b;">15 mL/kg</button>
+                            <button type="button" class="bolus-btn btn-action active" data-bolus="20" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #991b1b; background: #ef4444; color: #ffffff;">20 mL/kg</button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 8px; display: flex; align-items: baseline; gap: 8px; background: #ffffff; padding: 6px 10px; border-radius: 5px; border: 1px solid #fecaca;">
+                        <span style="font-size: 11.5px; font-weight: 600; color: #7f1d1d;">ปริมาณ Bolus ที่คำนวณได้:</span>
+                        <span id="val-shock-bolus-vol" style="font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; color: #991b1b;">1,400 mL</span>
+                        <span style="font-size: 11px; color: #991b1b;">IV over 15–30 min (Warmed LR / Hartmann's)</span>
+                    </div>
+                </div>
+
+                <!-- Dynamic Titration Advice Box -->
+                <div class="titration-box" id="titration-advice-box">
+                    <strong id="titration-status-title">On Target:</strong>
+                    <div id="titration-status-desc" style="margin-top: 2px;">Urine output อยู่ในเกณฑ์เป้าหมาย คงอัตราสารน้ำเดิม</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- 2. INHALATION INJURY & AIRWAY MATRIX            -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="accordion-item sec-airway" id="sec-airway">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="header-left-title">
+                <span>🫁 2. ประเมินทางเดินหายใจและการสูดดมควัน (Inhalation Injury & Airway Matrix)</span>
+            </div>
+            <div class="header-right-meta">
+                <span class="chevron-icon">▼</span>
+            </div>
+        </div>
+        <div class="accordion-content">
+            <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; font-size: 11.5px; line-height: 1.45;">
+                <div style="display: flex; gap: 6px; align-items: flex-start;">
+                    <span style="font-size: 14px;">⭐</span>
                     <div>
-                        <strong style="color: #92400e; font-size: 13px; display: block;">Modified Brooke (ATLS 11th)</strong>
-                        <span style="font-size: 10px; color: #b45309; font-weight: 600;">Consensus Standard (Recommended)</span>
-                    </div>
-                    <span class="badge-atls" id="badge-modified-brooke-coeff" style="font-size: 11px; font-weight: 700;">2 mL/kg/%</span>
-                </div>
-
-                <div class="fluid-hero-rate-box" id="box-modified-rate" style="border-color: #fde68a; transition: all 0.2s ease;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div style="font-size: 10.5px; font-weight: 700; color: #78350f; text-transform: uppercase;" id="lbl-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
-                        <span id="badge-modified-shock" style="display: none; background: #ef4444; color: #ffffff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">🚨 Shock +25%</span>
-                    </div>
-                    <div class="fluid-rate-big" id="val-first8h-rate" style="font-size: 2.2rem; color: #b45309; margin: 4px 0;">0 mL/hr</div>
-                    <div style="font-size: 10px; color: #92400e;" id="val-time-remaining-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
-                </div>
-
-                <div class="fluid-formula-grid">
-                    <div class="fluid-mini-stat" style="border-color: #fef08a;">
-                        <div style="color: #78350f; font-size: 10px; font-weight: 600;" id="lbl-total-24h">ยอดรวม 24 ชม.</div>
-                        <strong style="color: #0f172a; font-size: 13px;" id="val-total-24h">0 mL</strong>
-                    </div>
-                    <div class="fluid-mini-stat" style="border-color: #fef08a;">
-                        <div style="color: #78350f; font-size: 10px; font-weight: 600;" id="lbl-first8h-target">ยอด 8 ชม. แรก (50%)</div>
-                        <strong style="color: #0f172a; font-size: 13px;" id="val-first8h-target">0 mL</strong>
-                    </div>
-                    <div class="fluid-mini-stat" style="grid-column: span 2; border-color: #fef08a; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: #78350f; font-size: 10.5px; font-weight: 600;" id="lbl-next16h-rate">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
-                        <strong style="color: #0f172a; font-size: 13px;" id="val-next16h-rate">0 mL/hr</strong>
+                        <strong style="color: #1e40af;">Airway & Drug Safety Pearls (ATLS 11th & Tintinalli):</strong>
+                        <ul style="margin: 3px 0 0 0; padding-left: 16px; color: #1e3a8a;">
+                            <li><strong>ขนาด ETT ผู้ใหญ่:</strong> ควรใช้ ETT ขนาดใหญ่ (เบอร์ ≥ <strong>7.5–8.0 mm</strong>) เพื่อให้สามารถส่องกล้อง Fiberoptic Bronchoscopy และดูดเสมหะเขม่าเหนียวได้</li>
+                            <li><strong>ข้อห้ามใช้ Succinylcholine:</strong> <strong>ห้ามใช้ Succinylcholine หลังเกิดเหตุเกิน 24 ชั่วโมง</strong> เนื่องจากเสี่ยงต่อภาวะ Lethal Hyperkalemia รุนแรงถึงแก่ชีวิตจาก Upregulation ของ Acetylcholine Receptors</li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. Classic Parkland (4 mL/kg/%) -->
-            <div class="fluid-formula-card card-parkland">
-                <div class="fluid-card-top">
-                    <div>
-                        <strong style="color: #334155; font-size: 13px; display: block;">Classic Parkland (Baxter)</strong>
-                        <span style="font-size: 10px; color: #64748b; font-weight: 600;">Traditional Formula</span>
-                    </div>
-                    <span style="font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #334155;">4 mL/kg/%</span>
-                </div>
-
-                <div class="fluid-hero-rate-box" id="box-parkland-rate" style="border-color: #e2e8f0; transition: all 0.2s ease;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div style="font-size: 10.5px; font-weight: 700; color: #475569; text-transform: uppercase;" id="lbl-parkland-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
-                        <span id="badge-parkland-shock" style="display: none; background: #ef4444; color: #ffffff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">🚨 Shock +25%</span>
-                    </div>
-                    <div class="fluid-rate-big" id="val-parkland-first8h-rate" style="font-size: 2.2rem; color: #334155; margin: 4px 0;">0 mL/hr</div>
-                    <div style="font-size: 10px; color: #64748b;" id="val-parkland-time-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
-                </div>
-
-                <div class="fluid-formula-grid">
-                    <div class="fluid-mini-stat" style="border-color: #e2e8f0;">
-                        <div style="color: #64748b; font-size: 10px; font-weight: 600;" id="lbl-parkland-total">ยอดรวม 24 ชม.</div>
-                        <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-total">0 mL</strong>
-                    </div>
-                    <div class="fluid-mini-stat" style="border-color: #e2e8f0;">
-                        <div style="color: #64748b; font-size: 10px; font-weight: 600;" id="lbl-parkland-first8h-target">ยอด 8 ชม. แรก (50%)</div>
-                        <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-first8h-target">0 mL</strong>
-                    </div>
-                    <div class="fluid-mini-stat" style="grid-column: span 2; border-color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: #64748b; font-size: 10.5px; font-weight: 600;" id="lbl-parkland-next16h-rate">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
-                        <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-next16h-rate">0 mL/hr</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pediatric Maintenance Banner (if <= 30kg) -->
-        <div id="peds-maintenance-banner" style="background: #f5f3ff; border: 1.5px solid #ddd6fe; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; display: none;">
-            <strong style="color: #6b21a8;">👶 Pediatric Maintenance Fluid (Holliday-Segar 4-2-1):</strong>
-            <div style="color: #4c1d95; margin-top: 2px;">
-                ให้ <strong>D5LR หรือ D5 0.45% NaCl</strong> อัตรา <span id="val-peds-rate" style="font-family: monospace; font-weight: 700; font-size: 14px;">0 mL/hr</span> ควบคู่ไปกับสารน้ำกู้ชีพทาง IV อีกเส้น เพื่อป้องกันภาวะน้ำตาลในเลือดต่ำ (Hypoglycemia) ในเด็ก ≤ 30 kg
-            </div>
-        </div>
-
-        <!-- Urine Output Monitoring & Dynamic Titration -->
-        <div style="border-top: 1px solid #f1f5f9; padding-top: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; font-weight: 700;">
-                <span>เป้าหมาย Urine Output (Target UO):</span>
-                <span id="val-target-uo-text" style="color: var(--burn-primary-dark); font-family: monospace;">0.5 mL/kg/hr (35–50 mL/hr)</span>
+            <div style="font-size: 12px; color: #475569; margin-bottom: 8px;">
+                ประเมินสัญญาณเตือนทางเดินหายใจอุดกั้นและพิษจากควันไฟตามแนวทาง <strong>ATLS 11th Edition</strong>:
             </div>
 
-            <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px;">
-                <span style="font-size: 12px; color: #475569; font-weight: 600;">ปริมาณปัสสาวะ 1 ชม. ล่าสุด:</span>
-                <input type="number" id="input-measured-uo" class="input-control" value="40" min="0" max="500" step="5" style="width: 80px; padding: 4px 8px;">
-                <span style="font-size: 12px; color: #64748b;">mL/hr</span>
-                <label style="font-size: 11.5px; margin-left: auto; color: #991b1b; display: flex; align-items: center; gap: 4px; font-weight: 700; cursor: pointer;">
-                    <input type="checkbox" id="check-hypotensive" style="accent-color: #ef4444;"> ภาวะช็อก/ความดันตก (Shock)
+            <div class="check-grid">
+                <label class="check-card critical">
+                    <input type="checkbox" id="chk-stridor" class="inhal-chk">
+                    <div><strong>Stridor / Hoarseness:</strong> เสียงหายใจฮืด หรือเสียงแหบลงเรื่อยๆ</div>
+                </label>
+                <label class="check-card critical">
+                    <input type="checkbox" id="chk-retraction" class="inhal-chk">
+                    <div><strong>Respiratory Distress:</strong> หายใจหอบเหนื่อย / อกบุ๋ม (Sternal retraction)</div>
+                </label>
+                <label class="check-card critical">
+                    <input type="checkbox" id="chk-coma" class="inhal-chk">
+                    <div><strong>Impaired Consciousness:</strong> ซึม หมดสติ ไม่สามารถปกป้องทางเดินหายใจได้</div>
+                </label>
+                <label class="check-card critical">
+                    <input type="checkbox" id="chk-faceburn" class="inhal-chk">
+                    <div><strong>Deep Facial/Perioral Burn:</strong> แผลไหม้ระดับลึกบริเวณใบหน้าหรือรอบปาก</div>
+                </label>
+                <label class="check-card critical">
+                    <input type="checkbox" id="chk-neckburn" class="inhal-chk">
+                    <div><strong>Circumferential Neck Burn:</strong> แผลไหม้รอบคอ (เสี่ยงกดเบียดหลอดลม)</div>
+                </label>
+                <label class="check-card">
+                    <input type="checkbox" id="chk-enclosed" class="inhal-chk">
+                    <div><strong>Closed-Space Fire:</strong> ประวัติติดอยู่ในพื้นที่ปิด / อาคารไฟไหม้</div>
+                </label>
+                <label class="check-card">
+                    <input type="checkbox" id="chk-soot" class="inhal-chk">
+                    <div><strong>Soot in Mouth/Nose:</strong> มีเขม่าดำในช่องปาก จมูก หรือเสมหะ (Carbonaceous sputum)</div>
+                </label>
+                <label class="check-card">
+                    <input type="checkbox" id="chk-singed" class="inhal-chk">
+                    <div><strong>Singed Nasal Hairs:</strong> ขนจมูกหรือคิ้วไหม้เกรียม</div>
+                </label>
+                <label class="check-card">
+                    <input type="checkbox" id="chk-hoarseness" class="inhal-chk">
+                    <div><strong>Hoarseness / Voice Change:</strong> เสียงแหบลงเรื่อยๆ หรือเสียงเปลี่ยนอย่างต่อเนื่อง (Progressive voice change)</div>
+                </label>
+                <label class="check-card">
+                    <input type="checkbox" id="chk-carbonaceous" class="inhal-chk">
+                    <div><strong>Carbonaceous Sputum:</strong> เสมหะปนเขม่าดำ (ไอมีเขม่าสีดำปน)</div>
+                </label>
+                <label class="check-card" id="card-chk-largetbsa" style="border-left: 3px solid #64748b;">
+                    <input type="checkbox" id="chk-largetbsa" class="inhal-chk" disabled>
+                    <div><strong>Large TBSA Burn (>40%):</strong> แผลไหม้กว้างเกิน 40% TBSA (เสี่ยงทางเดินหายใจบวมรุนแรง) <span id="badge-largetbsa-status" style="font-size: 10.5px; font-weight: 700;"></span></div>
                 </label>
             </div>
 
-            <!-- Shock Bolus Interactive Subpanel -->
-            <div id="shock-bolus-panel" style="display: none; background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 8px; padding: 10px 12px; margin-top: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <div>
-                        <strong style="color: #991b1b; font-size: 12px;">🚨 Shock / Hypotension Fluid Bolus (ATLS 11th & Tintinalli):</strong>
-                        <div style="font-size: 11px; color: #7f1d1d;">เลือกขนาดสารน้ำอุ่น (Warmed Balanced LR) ที่ต้องการให้ IV Bolus ทันที:</div>
-                    </div>
-                    <div class="shock-bolus-selector" style="display: flex; gap: 6px;">
-                        <button type="button" class="bolus-btn btn-action" data-bolus="10" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #ef4444; background: #ffffff; color: #991b1b;">10 mL/kg</button>
-                        <button type="button" class="bolus-btn btn-action" data-bolus="15" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #ef4444; background: #ffffff; color: #991b1b;">15 mL/kg</button>
-                        <button type="button" class="bolus-btn btn-action active" data-bolus="20" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #991b1b; background: #ef4444; color: #ffffff;">20 mL/kg</button>
-                    </div>
-                </div>
-                <div style="margin-top: 8px; display: flex; align-items: baseline; gap: 8px; background: #ffffff; padding: 6px 10px; border-radius: 5px; border: 1px solid #fecaca;">
-                    <span style="font-size: 11.5px; font-weight: 600; color: #7f1d1d;">ปริมาณ Bolus ที่คำนวณได้:</span>
-                    <span id="val-shock-bolus-vol" style="font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; color: #991b1b;">1,400 mL</span>
-                    <span style="font-size: 11px; color: #991b1b;">IV over 15–30 min (Warmed LR / Hartmann's)</span>
-                </div>
+            <!-- Triage Recommendation Box -->
+            <div id="inhal-triage-box" style="margin-top: 12px; padding: 12px 14px; border-radius: 6px; background: #f8fafc; border: 1.5px solid #cbd5e1;">
+                <strong id="inhal-triage-title" style="color: #0f172a;">ข้อแนะนำทางคลินิก:</strong>
+                <div id="inhal-triage-desc" style="margin-top: 3px; color: #334155;">เฝ้าระวังอาการทางเดินหายใจอย่างใกล้ชิด</div>
             </div>
 
-            <!-- Dynamic Titration Advice Box -->
-            <div class="titration-box" id="titration-advice-box">
-                <strong id="titration-status-title">On Target:</strong>
-                <div id="titration-status-desc" style="margin-top: 2px;">Urine output อยู่ในเกณฑ์เป้าหมาย คงอัตราสารน้ำเดิม</div>
+            <!-- Textbook Clinical References -->
+            <div class="clinical-img-grid">
+                <div class="clinical-img-card">
+                    <img src="../docs/burn-assets/airway-burn-atls.png" alt="ATLS Airway Compromise">
+                    <div class="clinical-img-caption"><strong>ATLS 11th Fig 9-1:</strong> ภาวะบวมและอุดกั้นของทางเดินหายใจจากแผลไหม้บริเวณใบหน้าและรอบปาก</div>
+                </div>
+                <div class="clinical-img-card">
+                    <img src="../docs/burn-assets/burn-depth-atls.png" alt="Burn Depth Histology">
+                    <div class="clinical-img-caption"><strong>ATLS 11th Fig 9-3:</strong> การจำแนกระดับความลึกของแผลไหม้ (1st, 2nd, 3rd Degree)</div>
+                </div>
+                <div class="clinical-img-card">
+                    <img src="../docs/burn-assets/rule-of-nines-atls.png" alt="Rule of Nines Reference">
+                    <div class="clinical-img-caption"><strong>ATLS Fig 9-2 (Reference Only):</strong> กฎ Rule of Nines สำหรับประเมินเร็วเบื้องต้น (เครื่องมือนี้ใช้ Lund-Browder 6 Columns เพื่อความแม่นยำสูงสุด)</div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════ -->
-    <!-- 4. Inhalation, Toxicology, Escharotomy          -->
+    <!-- 3. SMOKE INHALATION TOXICOLOGY (CO & CYANIDE)   -->
     <!-- ═══════════════════════════════════════════════ -->
-    <div style="margin-bottom: 18px;">
-        <!-- Inhalation & Airway -->
-        <div class="accordion-item open">
-            <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
-                <span>🫁 3. Inhalation Injury & Airway Decision Matrix (การประเมินทางเดินหายใจ)</span>
-                <span>▼</span>
+    <div class="accordion-item sec-toxico" id="sec-toxico">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="header-left-title">
+                <span>☠️ 3. พิษจากควันไฟ: Carbon Monoxide (CO) & Cyanide (CN)</span>
             </div>
-            <div class="accordion-content">
-                <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; font-size: 11.5px; line-height: 1.45;">
-                    <div style="display: flex; gap: 6px; align-items: flex-start;">
-                        <span style="font-size: 14px;">⭐</span>
-                        <div>
-                            <strong style="color: #1e40af;">Airway & Drug Safety Pearls (ATLS 11th & Tintinalli):</strong>
-                            <ul style="margin: 3px 0 0 0; padding-left: 16px; color: #1e3a8a;">
-                                <li><strong>ขนาด ETT ผู้ใหญ่:</strong> ควรใช้ ETT ขนาดใหญ่ (เบอร์ ≥ <strong>7.5–8.0 mm</strong>) เพื่อให้สามารถส่องกล้อง Fiberoptic Bronchoscopy และดูดเสมหะเขม่าเหนียวได้</li>
-                                <li><strong>ข้อห้ามใช้ Succinylcholine:</strong> <strong>ห้ามใช้ Succinylcholine หลังเกิดเหตุเกิน 24 ชั่วโมง</strong> เนื่องจากเสี่ยงต่อภาวะ Lethal Hyperkalemia รุนแรงถึงแก่ชีวิตจาก Upregulation ของ Acetylcholine Receptors</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="font-size: 12px; color: #475569; margin-bottom: 8px;">
-                    ประเมินสัญญาณเตือนทางเดินหายใจอุดกั้นและพิษจากควันไฟตามแนวทาง <strong>ATLS 11th Edition</strong>:
-                </div>
-
-                <div class="check-grid">
-                    <label class="check-card critical">
-                        <input type="checkbox" id="chk-stridor" class="inhal-chk">
-                        <div><strong>Stridor / Hoarseness:</strong> เสียงหายใจฮืด หรือเสียงแหบลงเรื่อยๆ</div>
-                    </label>
-                    <label class="check-card critical">
-                        <input type="checkbox" id="chk-retraction" class="inhal-chk">
-                        <div><strong>Respiratory Distress:</strong> หายใจหอบเหนื่อย / อกบุ๋ม (Sternal retraction)</div>
-                    </label>
-                    <label class="check-card critical">
-                        <input type="checkbox" id="chk-coma" class="inhal-chk">
-                        <div><strong>Impaired Consciousness:</strong> ซึม หมดสติ ไม่สามารถปกป้องทางเดินหายใจได้</div>
-                    </label>
-                    <label class="check-card critical">
-                        <input type="checkbox" id="chk-faceburn" class="inhal-chk">
-                        <div><strong>Deep Facial/Perioral Burn:</strong> แผลไหม้ระดับลึกบริเวณใบหน้าหรือรอบปาก</div>
-                    </label>
-                    <label class="check-card critical">
-                        <input type="checkbox" id="chk-neckburn" class="inhal-chk">
-                        <div><strong>Circumferential Neck Burn:</strong> แผลไหม้รอบคอ (เสี่ยงกดเบียดหลอดลม)</div>
-                    </label>
-                    <label class="check-card">
-                        <input type="checkbox" id="chk-enclosed" class="inhal-chk">
-                        <div><strong>Closed-Space Fire:</strong> ประวัติติดอยู่ในพื้นที่ปิด / อาคารไฟไหม้</div>
-                    </label>
-                    <label class="check-card">
-                        <input type="checkbox" id="chk-soot" class="inhal-chk">
-                        <div><strong>Soot in Mouth/Nose:</strong> มีเขม่าดำในช่องปาก จมูก หรือเสมหะ (Carbonaceous sputum)</div>
-                    </label>
-                    <label class="check-card">
-                        <input type="checkbox" id="chk-singed" class="inhal-chk">
-                        <div><strong>Singed Nasal Hairs:</strong> ขนจมูกหรือคิ้วไหม้เกรียม</div>
-                    </label>
-                    <label class="check-card">
-                        <input type="checkbox" id="chk-hoarseness" class="inhal-chk">
-                        <div><strong>Hoarseness / Voice Change:</strong> เสียงแหบลงเรื่อยๆ หรือเสียงเปลี่ยนอย่างต่อเนื่อง (Progressive voice change)</div>
-                    </label>
-                    <label class="check-card">
-                        <input type="checkbox" id="chk-carbonaceous" class="inhal-chk">
-                        <div><strong>Carbonaceous Sputum:</strong> เสมหะปนเขม่าดำ (ไอมีเขม่าสีดำปน)</div>
-                    </label>
-                    <label class="check-card" id="card-chk-largetbsa" style="border-left: 3px solid #64748b;">
-                        <input type="checkbox" id="chk-largetbsa" class="inhal-chk" disabled>
-                        <div><strong>Large TBSA Burn (>40%):</strong> แผลไหม้กว้างเกิน 40% TBSA (เสี่ยงทางเดินหายใจบวมรุนแรง) <span id="badge-largetbsa-status" style="font-size: 10.5px; font-weight: 700;"></span></div>
-                    </label>
-                </div>
-
-                <!-- Triage Recommendation Box -->
-                <div id="inhal-triage-box" style="margin-top: 12px; padding: 12px 14px; border-radius: 6px; background: #f8fafc; border: 1.5px solid #cbd5e1;">
-                    <strong id="inhal-triage-title" style="color: #0f172a;">ข้อแนะนำทางคลินิก:</strong>
-                    <div id="inhal-triage-desc" style="margin-top: 3px; color: #334155;">เฝ้าระวังอาการทางเดินหายใจอย่างใกล้ชิด</div>
-                </div>
-
-                <!-- Textbook Clinical References -->
-                <div class="clinical-img-grid">
-                    <div class="clinical-img-card">
-                        <img src="../docs/burn-assets/airway-burn-atls.png" alt="ATLS Airway Compromise">
-                        <div class="clinical-img-caption"><strong>ATLS 11th Fig 9-1:</strong> ภาวะบวมและอุดกั้นของทางเดินหายใจจากแผลไหม้บริเวณใบหน้าและรอบปาก</div>
-                    </div>
-                    <div class="clinical-img-card">
-                        <img src="../docs/burn-assets/burn-depth-atls.png" alt="Burn Depth Histology">
-                        <div class="clinical-img-caption"><strong>ATLS 11th Fig 9-3:</strong> การจำแนกระดับความลึกของแผลไหม้ (1st, 2nd, 3rd Degree)</div>
-                    </div>
-                    <div class="clinical-img-card">
-                        <img src="../docs/burn-assets/rule-of-nines-atls.png" alt="Rule of Nines Reference">
-                        <div class="clinical-img-caption"><strong>ATLS Fig 9-2 (Reference Only):</strong> กฎ Rule of Nines สำหรับประเมินเร็วเบื้องต้น (เครื่องมือนี้ใช้ Lund-Browder 6 Columns เพื่อความแม่นยำสูงสุด)</div>
-                    </div>
-                </div>
+            <div class="header-right-meta">
+                <span class="chevron-icon">▼</span>
             </div>
         </div>
+        <div class="accordion-content">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <!-- Carbon Monoxide -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong style="color: #0f172a; font-size: 13.5px;">🫁 1. Carbon Monoxide (CO) Poisoning</strong>
+                        <span id="co-severity-badge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #e2e8f0; color: #475569;">Normal (<10%)</span>
+                    </div>
+                    
+                    <div style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 8px 10px; border-radius: 6px; font-size: 11.5px; line-height: 1.4;">
+                        ⚠️ <strong>Pulse Oximeter ลวง:</strong> SpO2 ทั่วไปจะอ่านได้ 98–100% เสมอเพราะแยก Carboxyhemoglobin ไม่ออก — ต้องตรวจ <strong>COHb จาก Co-oximetry (ABG/VBG)</strong>
+                    </div>
 
-        <!-- Smoke Toxicology: CO & Cyanide -->
-        <div class="accordion-item open">
-            <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
-                <span>☠️ 4. Smoke Inhalation Toxicology: Carbon Monoxide (CO) & Cyanide (CN)</span>
-                <span>▼</span>
-            </div>
-            <div class="accordion-content">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <!-- Carbon Monoxide -->
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <strong style="color: #0f172a; font-size: 13.5px;">🫁 1. Carbon Monoxide (CO) Poisoning</strong>
-                            <span id="co-severity-badge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #e2e8f0; color: #475569;">Normal (<10%)</span>
-                        </div>
-                        
-                        <div style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 8px 10px; border-radius: 6px; font-size: 11.5px; line-height: 1.4;">
-                            ⚠️ <strong>Pulse Oximeter ลวง:</strong> SpO2 ทั่วไปจะอ่านได้ 98–100% เสมอเพราะแยก Carboxyhemoglobin ไม่ออก — ต้องตรวจ <strong>COHb จาก Co-oximetry (ABG/VBG)</strong>
-                        </div>
+                    <div style="display: flex; gap: 10px; align-items: center; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0; flex-wrap: wrap;">
+                        <label style="font-size: 12px; font-weight: 600; color: #334155;">Carboxyhemoglobin (% COHb):</label>
+                        <input type="number" id="input-cohb" class="input-control" value="15" min="0" max="100" style="width: 70px; padding: 4px 8px; text-align: center; font-weight: 700;">
+                        <label style="font-size: 11.5px; display: flex; align-items: center; gap: 4px; cursor: pointer; color: #6b21a8; font-weight: 600; margin-left: auto;">
+                            <input type="checkbox" id="check-pregnant" style="accent-color: #9333ea;"> 🤰 หญิงตั้งครรภ์
+                        </label>
+                    </div>
 
-                        <div style="display: flex; gap: 10px; align-items: center; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0; flex-wrap: wrap;">
-                            <label style="font-size: 12px; font-weight: 600; color: #334155;">Carboxyhemoglobin (% COHb):</label>
-                            <input type="number" id="input-cohb" class="input-control" value="15" min="0" max="100" style="width: 70px; padding: 4px 8px; text-align: center; font-weight: 700;">
-                            <label style="font-size: 11.5px; display: flex; align-items: center; gap: 4px; cursor: pointer; color: #6b21a8; font-weight: 600; margin-left: auto;">
-                                <input type="checkbox" id="check-pregnant" style="accent-color: #9333ea;"> 🤰 หญิงตั้งครรภ์
+                    <!-- Half-life Comparison & Dynamic Estimator -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 11px; text-align: center;">
+                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 5px; padding: 6px 4px;">
+                            <div style="color: #64748b; font-size: 10px;">Room Air T½</div>
+                            <strong style="color: #0f172a; font-size: 11.5px;">~4–5 ชม.</strong>
+                        </div>
+                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 5px; padding: 6px 4px;">
+                            <div style="color: #1e40af; font-size: 10px;">100% O2 T½</div>
+                            <strong style="color: #1d4ed8; font-size: 11.5px;">40–80 นาที</strong>
+                        </div>
+                        <div style="background: #fdf4ff; border: 1px solid #f0abfc; border-radius: 5px; padding: 6px 4px;">
+                            <div style="color: #86198f; font-size: 10px;">HBO T½</div>
+                            <strong style="color: #a21caf; font-size: 11.5px;">20–30 นาที</strong>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Clearance Estimator -->
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 10px; font-size: 11.5px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
+                            <label for="select-co-o2" style="font-weight: 700; color: #166534;">⏱️ อุปกรณ์ให้ออกซิเจน:</label>
+                            <select id="select-co-o2" class="input-control" style="padding: 2px 6px; font-size: 11px; width: auto;">
+                                <option value="nrb_100">100% High-Flow O2 (NRB Mask) [T½ ~60m]</option>
+                                <option value="ett_100">100% O2 via ETT (Ventilator) [T½ ~45m]</option>
+                                <option value="hbo_3ata">Hyperbaric O2 (HBO 3.0 ATA) [T½ ~23m]</option>
+                                <option value="room_air">Room Air (21% O2) [T½ ~300m]</option>
+                            </select>
+                        </div>
+                        <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: baseline;">
+                            <span style="color: #15803d; font-size: 11px;">เวลาโดยประมาณสู่ระดับปลอดภัย (COHb &lt;5%):</span>
+                            <strong id="val-co-clearance-time" style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #166534;">--</strong>
+                        </div>
+                    </div>
+
+                    <!-- HBO Indications Checklist -->
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <strong style="font-size: 12px; color: #0f172a;">🤿 เกณฑ์ส่งพิจารณา Hyperbaric O2 (HBO):</strong>
+                            <span id="hbo-threshold-label" style="font-size: 10.5px; font-weight: 700; color: #d97706;">เกณฑ์ COHb ≥25%</span>
+                        </div>
+                        <div class="check-grid" style="grid-template-columns: 1fr; gap: 4px; font-size: 11.5px;">
+                            <label class="check-card" id="card-hbo-cohb" style="padding: 4px 8px;">
+                                <input type="checkbox" id="chk-hbo-cohb" disabled>
+                                <div><strong>COHb สูงเกินเกณฑ์:</strong> ≥25% (หรือ ≥15% ในหญิงตั้งครรภ์)</div>
+                            </label>
+                            <label class="check-card" style="padding: 4px 8px;">
+                                <input type="checkbox" id="chk-hbo-syncope" class="hbo-manual-chk">
+                                <div><strong>ประวัติหมดสติ / โคม่า:</strong> Syncope, Transient LOC or Coma</div>
+                            </label>
+                            <label class="check-card" style="padding: 4px 8px;">
+                                <input type="checkbox" id="chk-hbo-neuro" class="hbo-manual-chk">
+                                <div><strong>อาการทางระบบประสาท:</strong> Focal deficit, ชัก, Ataxia, Confusion</div>
+                            </label>
+                            <label class="check-card" style="padding: 4px 8px;">
+                                <input type="checkbox" id="chk-hbo-cardiac" class="hbo-manual-chk">
+                                <div><strong>กล้ามเนื้อหัวใจขาดเลือด:</strong> Ischemic ECG changes / Elevated Troponin</div>
+                            </label>
+                            <label class="check-card" style="padding: 4px 8px;">
+                                <input type="checkbox" id="chk-hbo-acidosis" class="hbo-manual-chk">
+                                <div><strong>เลือดเป็นกรดรุนแรง:</strong> Severe refractory metabolic acidosis</div>
                             </label>
                         </div>
-
-                        <!-- Half-life Comparison & Dynamic Estimator -->
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 11px; text-align: center;">
-                            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 5px; padding: 6px 4px;">
-                                <div style="color: #64748b; font-size: 10px;">Room Air T½</div>
-                                <strong style="color: #0f172a; font-size: 11.5px;">~4–5 ชม.</strong>
-                            </div>
-                            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 5px; padding: 6px 4px;">
-                                <div style="color: #1e40af; font-size: 10px;">100% O2 T½</div>
-                                <strong style="color: #1d4ed8; font-size: 11.5px;">40–80 นาที</strong>
-                            </div>
-                            <div style="background: #fdf4ff; border: 1px solid #f0abfc; border-radius: 5px; padding: 6px 4px;">
-                                <div style="color: #86198f; font-size: 10px;">HBO T½</div>
-                                <strong style="color: #a21caf; font-size: 11.5px;">20–30 นาที</strong>
-                            </div>
-                        </div>
-
-                        <!-- Dynamic Clearance Estimator -->
-                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 10px; font-size: 11.5px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
-                                <label for="select-co-o2" style="font-weight: 700; color: #166534;">⏱️ อุปกรณ์ให้ออกซิเจน:</label>
-                                <select id="select-co-o2" class="input-control" style="padding: 2px 6px; font-size: 11px; width: auto;">
-                                    <option value="nrb_100">100% High-Flow O2 (NRB Mask) [T½ ~60m]</option>
-                                    <option value="ett_100">100% O2 via ETT (Ventilator) [T½ ~45m]</option>
-                                    <option value="hbo_3ata">Hyperbaric O2 (HBO 3.0 ATA) [T½ ~23m]</option>
-                                    <option value="room_air">Room Air (21% O2) [T½ ~300m]</option>
-                                </select>
-                            </div>
-                            <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: baseline;">
-                                <span style="color: #15803d; font-size: 11px;">เวลาโดยประมาณสู่ระดับปลอดภัย (COHb &lt;5%):</span>
-                                <strong id="val-co-clearance-time" style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #166534;">--</strong>
-                            </div>
-                        </div>
-
-                        <!-- HBO Indications Checklist -->
-                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <strong style="font-size: 12px; color: #0f172a;">🤿 เกณฑ์ส่งพิจารณา Hyperbaric O2 (HBO):</strong>
-                                <span id="hbo-threshold-label" style="font-size: 10.5px; font-weight: 700; color: #d97706;">เกณฑ์ COHb ≥25%</span>
-                            </div>
-                            <div class="check-grid" style="grid-template-columns: 1fr; gap: 4px; font-size: 11.5px;">
-                                <label class="check-card" id="card-hbo-cohb" style="padding: 4px 8px;">
-                                    <input type="checkbox" id="chk-hbo-cohb" disabled>
-                                    <div><strong>COHb สูงเกินเกณฑ์:</strong> ≥25% (หรือ ≥15% ในหญิงตั้งครรภ์)</div>
-                                </label>
-                                <label class="check-card" style="padding: 4px 8px;">
-                                    <input type="checkbox" id="chk-hbo-syncope" class="hbo-manual-chk">
-                                    <div><strong>ประวัติหมดสติ / โคม่า:</strong> Syncope, Transient LOC or Coma</div>
-                                </label>
-                                <label class="check-card" style="padding: 4px 8px;">
-                                    <input type="checkbox" id="chk-hbo-neuro" class="hbo-manual-chk">
-                                    <div><strong>อาการทางระบบประสาท:</strong> Focal deficit, ชัก, Ataxia, Confusion</div>
-                                </label>
-                                <label class="check-card" style="padding: 4px 8px;">
-                                    <input type="checkbox" id="chk-hbo-cardiac" class="hbo-manual-chk">
-                                    <div><strong>กล้ามเนื้อหัวใจขาดเลือด:</strong> Ischemic ECG changes / Elevated Troponin</div>
-                                </label>
-                                <label class="check-card" style="padding: 4px 8px;">
-                                    <input type="checkbox" id="chk-hbo-acidosis" class="hbo-manual-chk">
-                                    <div><strong>เลือดเป็นกรดรุนแรง:</strong> Severe refractory metabolic acidosis</div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- HBO Dynamic Status Banner -->
-                        <div id="co-assessment-result" style="font-size: 12px; color: #334155;">
-                            <!-- Dynamically generated -->
-                        </div>
                     </div>
 
-                    <!-- Cyanide Poisoning & Hydroxocobalamin -->
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
-                        <strong style="color: #0f172a; font-size: 13.5px;">🧪 2. Cyanide (CN) Poisoning & Antidotes</strong>
-
-                        <div style="display: flex; gap: 8px; align-items: center; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                            <label for="input-lactate" style="font-size: 11.5px; font-weight: 600; color: #334155;">Serum Lactate (mmol/L):</label>
-                            <input type="number" id="input-lactate" class="input-control" value="2.0" min="0" max="30" step="0.5" style="width: 65px; padding: 3px 6px; text-align: center; font-weight: 700;">
-                            <span style="font-size: 11px; color: #64748b;">(เกณฑ์สงสัย ≥ 8–10)</span>
-                        </div>
-
-                        <!-- ATLS 11th Presumptive Cyanide Triad Alert -->
-                        <div id="val-cn-presumptive-result" style="font-size: 11px; padding: 8px 10px; border-radius: 6px; background: #f8fafc; border: 1px solid #cbd5e1; line-height: 1.4;">
-                            <!-- Dynamically updated -->
-                        </div>
-
-                        <!-- 1st Line Antidote: Hydroxocobalamin -->
-                        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 6px; padding: 10px 12px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div style="font-family: 'Inter Tight', sans-serif; font-size: 11.5px; font-weight: 700; color: #166534; text-transform: uppercase;">
-                                    ⭐ 1st-Line Antidote: Hydroxocobalamin (Cyanokit)
-                                </div>
-                                <span style="font-size: 10px; font-weight: 700; color: #15803d; background: #dcfce7; padding: 1px 6px; border-radius: 4px;">70 mg/kg (Max 5g)</span>
-                            </div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 700; color: #15803d; margin: 4px 0;" id="val-cyanide-dose">
-                                4.9 g IV (4,900 mg)
-                            </div>
-                            <div style="font-size: 11.5px; color: #166534; line-height: 1.4;">
-                                ผสมใน <strong>0.9% NaCl 200 mL</strong> (หรือ LR / D5W) หยดทาง IV ใน <strong>15 นาที</strong> (สามารถให้ซ้ำได้อีก 1 Dose หากอาการรุนแรงหรือ Cardiac Arrest)
-                            </div>
-                        </div>
-
-                        <!-- 2nd Line / Alternative Antidote: Sodium Thiosulfate 25% -->
-                        <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 10px 12px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <strong style="font-size: 12px; color: #334155;">🔄 Alternative Antidote: Sodium Thiosulfate 25%</strong>
-                                <span style="font-size: 10px; color: #64748b;">(หากไม่มี Cyanokit)</span>
-                            </div>
-                            <div style="margin-top: 4px; display: flex; align-items: baseline; gap: 8px;">
-                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700; color: #334155;" id="val-thiosulfate-dose">12.5 g (50 mL 25%)</div>
-                                <span style="font-size: 11px; color: #64748b;">IV over 10–20 min</span>
-                            </div>
-                            <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
-                                ขนาดเด็ก: 412.5 mg/kg (1.65 mL/kg ของสารละลาย 25%) สูงสุด 12.5 g (50 mL)
-                            </div>
-                        </div>
-
-                        <!-- Clinical Warnings Box -->
-                        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #78350f; line-height: 1.45;">
-                            <strong>⚠️ ข้อควรระวังสำคัญ (Toxicology Pearls):</strong>
-                            <ul style="margin: 4px 0 0 0; padding-left: 16px;">
-                                <li>ผิวหนัง เยื่อบุ และปัสสาวะจะเปลี่ยนเป็นสีแดงเข้ม (Dark Red/Purple) ชั่วคราว 24–72 ชม.</li>
-                                <li>อาจรบกวนผลแล็บ Co-oximetry (COHb), Total Bilirubin, Creatinine ชั่วคราว</li>
-                                <li><strong>ห้ามให้ Sodium Nitrite</strong> ในผู้ป่วยไฟไหม้ควัน เพราะก่อ Methemoglobinemia ซ้ำเติมกับ CO</li>
-                            </ul>
-                        </div>
+                    <!-- HBO Dynamic Status Banner -->
+                    <div id="co-assessment-result" style="font-size: 12px; color: #334155;">
+                        <!-- Dynamically generated -->
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Circumferential Burns, Escharotomy & ABA Referral -->
-        <div class="accordion-item">
-            <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
-                <span>🔪 5. Circumferential Burns, Escharotomy & ABA Referral Criteria (การผ่าตัดคลายความดันและเกณฑ์ส่งต่อ)</span>
-                <span>▼</span>
-            </div>
-            <div class="accordion-content">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div>
-                        <strong style="color: #0f172a; font-size: 13px;">🔪 สัญญาณเตือน Compartment Syndrome & ข้อบ่งชี้ Escharotomy:</strong>
-                        <ul style="margin: 6px 0; padding-left: 18px; font-size: 12px; color: #334155;">
-                            <li>แผลไหม้ระดับลึกรอบแขนขา (Circumferential full-thickness extremity burn)</li>
-                            <li>ปวดรุนแรงผิดปกติเมื่อขยับกล้ามเนื้อตามแนวยาว (Pain on passive stretch)</li>
-                            <li>ช่องกล้ามเนื้อบวมตึงมาก (Tense swollen compartment), ชาปลายมือปลายเท้า (Paresthesia)</li>
-                            <li>แผลไหม้รอบทรวงอก (Circumferential chest burn) ทำให้ขยายปอดไม่ได้ เกิด Peak inspiratory pressure สูง</li>
-                        </ul>
+                <!-- Cyanide Poisoning & Hydroxocobalamin -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+                    <strong style="color: #0f172a; font-size: 13.5px;">🧪 2. Cyanide (CN) Poisoning & Antidotes</strong>
 
-                        <div class="clinical-img-grid" style="grid-template-columns: repeat(3, 1fr);">
-                            <div class="clinical-img-card">
-                                <img src="../docs/burn-assets/escharotomy-atls.png" alt="ATLS Escharotomy">
-                                <div class="clinical-img-caption"><strong>ATLS Fig 9-4:</strong> แนวกรีดข้างแขนขา (Medial/Lateral)</div>
+                    <div style="display: flex; gap: 8px; align-items: center; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                        <label for="input-lactate" style="font-size: 11.5px; font-weight: 600; color: #334155;">Serum Lactate (mmol/L):</label>
+                        <input type="number" id="input-lactate" class="input-control" value="2.0" min="0" max="30" step="0.5" style="width: 65px; padding: 3px 6px; text-align: center; font-weight: 700;">
+                        <span style="font-size: 11px; color: #64748b;">(เกณฑ์สงสัย ≥ 8–10)</span>
+                    </div>
+
+                    <!-- ATLS 11th Presumptive Cyanide Triad Alert -->
+                    <div id="val-cn-presumptive-result" style="font-size: 11px; padding: 8px 10px; border-radius: 6px; background: #f8fafc; border: 1px solid #cbd5e1; line-height: 1.4;">
+                        <!-- Dynamically updated -->
+                    </div>
+
+                    <!-- 1st Line Antidote: Hydroxocobalamin -->
+                    <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 6px; padding: 10px 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-family: 'Inter Tight', sans-serif; font-size: 11.5px; font-weight: 700; color: #166534; text-transform: uppercase;">
+                                ⭐ 1st-Line Antidote: Hydroxocobalamin (Cyanokit)
                             </div>
-                            <div class="clinical-img-card">
-                                <img src="../docs/burn-assets/escharotomy-chest-tintinalli.png" alt="Chest Escharotomy">
-                                <div class="clinical-img-caption"><strong>Tintinalli Fig 217-9:</strong> แนวกรีดทรวงอก (H-cut grid)</div>
-                            </div>
-                            <div class="clinical-img-card">
-                                <img src="../docs/burn-assets/escharotomy-hand-tintinalli.png" alt="Hand Escharotomy">
-                                <div class="clinical-img-caption"><strong>Tintinalli Fig 217-8:</strong> แนวกรีดหลังมือและนิ้วมือ</div>
-                            </div>
+                            <span style="font-size: 10px; font-weight: 700; color: #15803d; background: #dcfce7; padding: 1px 6px; border-radius: 4px;">70 mg/kg (Max 5g)</span>
+                        </div>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 700; color: #15803d; margin: 4px 0;" id="val-cyanide-dose">
+                            4.9 g IV (4,900 mg)
+                        </div>
+                        <div style="font-size: 11.5px; color: #166534; line-height: 1.4;">
+                            ผสมใน <strong>0.9% NaCl 200 mL</strong> (หรือ LR / D5W) หยดทาง IV ใน <strong>15 นาที</strong> (สามารถให้ซ้ำได้อีก 1 Dose หากอาการรุนแรงหรือ Cardiac Arrest)
                         </div>
                     </div>
 
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <strong style="color: #0f172a; font-size: 13px;">🏥 เกณฑ์ส่งต่อศูนย์รักษาแผลไหม้ (ABA 2023 Referral Criteria):</strong>
-                            <span id="aba-referral-badge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #e2e8f0; color: #475569;">0/10 ข้อ</span>
+                    <!-- 2nd Line / Alternative Antidote: Sodium Thiosulfate 25% -->
+                    <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 10px 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="font-size: 12px; color: #334155;">🔄 Alternative Antidote: Sodium Thiosulfate 25%</strong>
+                            <span style="font-size: 10px; color: #64748b;">(หากไม่มี Cyanokit)</span>
                         </div>
-                        <div id="aba-referral-banner" style="padding: 6px 10px; border-radius: 6px; font-size: 11.5px; margin-bottom: 8px; background: #f8fafc; border: 1px solid #cbd5e1; color: #475569;">
-                            ประเมินข้อบ่งชี้ส่งต่อศูนย์เฉพาะทาง Burn Center
+                        <div style="margin-top: 4px; display: flex; align-items: baseline; gap: 8px;">
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700; color: #334155;" id="val-thiosulfate-dose">12.5 g (50 mL 25%)</div>
+                            <span style="font-size: 11px; color: #64748b;">IV over 10–20 min</span>
                         </div>
-                        <div class="check-grid" style="grid-template-columns: 1fr; gap: 4px;" id="aba-criteria-container">
-                            <!-- Populated dynamically from BurnEngine.ABA_REFERRAL_CRITERIA -->
+                        <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
+                            ขนาดเด็ก: 412.5 mg/kg (1.65 mL/kg ของสารละลาย 25%) สูงสุด 12.5 g (50 mL)
                         </div>
+                    </div>
+
+                    <!-- Clinical Warnings Box -->
+                    <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #78350f; line-height: 1.45;">
+                        <strong>⚠️ ข้อควรระวังสำคัญ (Toxicology Pearls):</strong>
+                        <ul style="margin: 4px 0 0 0; padding-left: 16px;">
+                            <li>ผิวหนัง เยื่อบุ และปัสสาวะจะเปลี่ยนเป็นสีแดงเข้ม (Dark Red/Purple) ชั่วคราว 24–72 ชม.</li>
+                            <li>อาจรบกวนผลแล็บ Co-oximetry (COHb), Total Bilirubin, Creatinine ชั่วคราว</li>
+                            <li><strong>ห้ามให้ Sodium Nitrite</strong> ในผู้ป่วยไฟไหม้ควัน เพราะก่อ Methemoglobinemia ซ้ำเติมกับ CO</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -1190,179 +1256,240 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════ -->
-    <!-- 5. BODY SURFACE AREA PAINTER (Moved to bottom)  -->
+    <!-- 4. ESCHAROTOMY & ABA REFERRAL CRITERIA          -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="accordion-item sec-escharotomy" id="sec-escharotomy">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="header-left-title">
+                <span>🔪 4. แผลไหม้รอบส่วน, การผ่าตัด Escharotomy & เกณฑ์ส่งต่อ ABA (Referral Criteria)</span>
+            </div>
+            <div class="header-right-meta">
+                <span class="chevron-icon">▼</span>
+            </div>
+        </div>
+        <div class="accordion-content">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div>
+                    <strong style="color: #0f172a; font-size: 13px;">🔪 สัญญาณเตือน Compartment Syndrome & ข้อบ่งชี้ Escharotomy:</strong>
+                    <ul style="margin: 6px 0; padding-left: 18px; font-size: 12px; color: #334155;">
+                        <li>แผลไหม้ระดับลึกรอบแขนขา (Circumferential full-thickness extremity burn)</li>
+                        <li>ปวดรุนแรงผิดปกติเมื่อขยับกล้ามเนื้อตามแนวยาว (Pain on passive stretch)</li>
+                        <li>ช่องกล้ามเนื้อบวมตึงมาก (Tense swollen compartment), ชาปลายมือปลายเท้า (Paresthesia)</li>
+                        <li>แผลไหม้รอบทรวงอก (Circumferential chest burn) ทำให้ขยายปอดไม่ได้ เกิด Peak inspiratory pressure สูง</li>
+                    </ul>
+
+                    <div class="clinical-img-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="clinical-img-card">
+                            <img src="../docs/burn-assets/escharotomy-atls.png" alt="ATLS Escharotomy">
+                            <div class="clinical-img-caption"><strong>ATLS Fig 9-4:</strong> Extremity Escharotomy (แนวกรีดข้างแขนขา Medial/Lateral)</div>
+                        </div>
+                        <div class="clinical-img-card">
+                            <img src="../docs/burn-assets/escharotomy-chest-tintinalli.png" alt="Chest Escharotomy">
+                            <div class="clinical-img-caption"><strong>Tintinalli Fig 217-9:</strong> Chest & Neck Escharotomy (แนวกรีดทรวงอกและลำคอ joined transversely)</div>
+                        </div>
+                        <div class="clinical-img-card">
+                            <img src="../docs/burn-assets/escharotomy-hand-tintinalli.png" alt="Hand Escharotomy">
+                            <div class="clinical-img-caption"><strong>Tintinalli Fig 217-8:</strong> Hand & Digits Escharotomy (แนวกรีดหลังมือและนิ้วมือ)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: #0f172a; font-size: 13px;">🏥 เกณฑ์ส่งต่อศูนย์รักษาแผลไหม้ (ABA 2023 Referral Criteria):</strong>
+                        <span id="aba-referral-badge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #e2e8f0; color: #475569;">0/10 ข้อ</span>
+                    </div>
+                    <div id="aba-referral-banner" style="padding: 6px 10px; border-radius: 6px; font-size: 11.5px; margin-bottom: 8px; background: #f8fafc; border: 1px solid #cbd5e1; color: #475569;">
+                        ประเมินข้อบ่งชี้ส่งต่อศูนย์เฉพาะทาง Burn Center
+                    </div>
+                    <div class="check-grid" style="grid-template-columns: 1fr; gap: 4px;" id="aba-criteria-container">
+                        <!-- Populated dynamically from BurnEngine.ABA_REFERRAL_CRITERIA -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- 5. BODY SURFACE AREA PAINTER (Lund & Browder)   -->
     <!-- Interactive SVG with drag-to-paint & peds model -->
     <!-- ═══════════════════════════════════════════════ -->
-    <div class="burn-card body-painter-section" id="body-painter-section">
-        <div class="card-header">
-            <span>🎨 Interactive Body Surface Area Painter (Lund & Browder)</span>
-            <span id="quick-reset-btn" style="font-size: 11px; color: var(--burn-primary); cursor: pointer; text-decoration: underline;">ล้างทั้งหมด (Reset)</span>
-        </div>
-
-        <!-- Degree Paint Selector -->
-        <div class="paint-toolbar">
-            <button type="button" class="degree-btn" data-degree="0">
-                <span class="color-dot dot-0"></span> ลบ (Eraser / 0%)
-            </button>
-            <button type="button" class="degree-btn" data-degree="1">
-                <span class="color-dot dot-1"></span> 1st Degree (Superficial - ตัดออกจากสูตรน้ำ)
-            </button>
-            <button type="button" class="degree-btn active" data-degree="2">
-                <span class="color-dot dot-2"></span> 2nd Degree (Partial Thickness)
-            </button>
-            <button type="button" class="degree-btn" data-degree="3">
-                <span class="color-dot dot-3"></span> 3rd/4th Degree (Full Thickness)
-            </button>
-            <button type="button" id="btn-palm-plus" class="btn-action btn-outline" style="padding: 4px 10px; font-size: 11px; margin-left: auto;">
-                ✋ +1% Palm
-            </button>
-        </div>
-
-        <!-- Quick Anatomical Presets -->
-        <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
-            <span style="font-size: 11px; font-weight: 700; color: #475569;">⚡ ลัดระบายทั้งส่วน (Quick Presets):</span>
-            <button type="button" class="preset-btn btn-action btn-outline" data-preset="head_all" style="padding: 2px 8px; font-size: 11px;">ทั้งศีรษะ (Head)</button>
-            <button type="button" class="preset-btn btn-action btn-outline" data-preset="trunk_ant_all" style="padding: 2px 8px; font-size: 11px;">ลำตัวหน้า (Ant Trunk)</button>
-            <button type="button" class="preset-btn btn-action btn-outline" data-preset="trunk_post_all" style="padding: 2px 8px; font-size: 11px;">หลัง/ก้น (Post Trunk)</button>
-            <button type="button" class="preset-btn btn-action btn-outline" data-preset="arm_r_all" style="padding: 2px 8px; font-size: 11px;">แขนขวา (R Arm)</button>
-            <button type="button" class="preset-btn btn-action btn-outline" data-preset="arm_l_all" style="padding: 2px 8px; font-size: 11px;">แขนซ้าย (L Arm)</button>
-            <button type="button" class="preset-btn btn-action btn-outline" data-preset="legs_both_all" style="padding: 2px 8px; font-size: 11px;">ขาทั้งสองข้าง (Both Legs)</button>
-        </div>
-
-        <!-- Dual SVG Body Diagrams (Anterior & Posterior) -->
-        <div class="body-mapper-wrapper model-col-adult" id="body-mapper-wrapper">
-            <!-- Anterior View -->
-            <div class="body-view-container">
-                <div class="view-label">Anterior (ด้านหน้า)</div>
-                <svg viewBox="0 0 200 400" class="body-svg" id="svg-anterior">
-                    <!-- Head & Neck Group -->
-                    <g id="group-head-ant" class="body-group group-head">
-                        <path id="part-head_ant" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z"><title>Face / Anterior Head</title></path>
-                        <text id="lbl-head_ant" class="region-pct-label" x="100" y="24">3.5%</text>
-                        <polygon id="part-neck_ant" class="body-part deg-0" points="93,42 107,42 110,52 90,52"><title>Anterior Neck (1.0%)</title></polygon>
-                        <text id="lbl-neck_ant" class="region-pct-label" x="100" y="48">1%</text>
-                    </g>
-
-                    <!-- Torso Group -->
-                    <g id="group-torso-ant" class="body-group group-torso">
-                        <path id="part-chest_ant" class="body-part deg-0" d="M 68 55 L 132 55 L 129 114 L 71 114 Z"><title>Chest / Upper Anterior Trunk (6.5%)</title></path>
-                        <text id="lbl-chest_ant" class="region-pct-label" x="100" y="85">6.5%</text>
-                        <path id="part-abdomen_ant" class="body-part deg-0" d="M 71 116 L 129 116 L 126 175 L 74 175 Z"><title>Abdomen / Lower Anterior Trunk (6.5%)</title></path>
-                        <text id="lbl-abdomen_ant" class="region-pct-label" x="100" y="145">6.5%</text>
-                        <polygon id="part-genitalia" class="body-part deg-0" points="92,176 108,176 100,190"><title>Genitalia / Perineum (1.0%)</title></polygon>
-                        <text id="lbl-genitalia" class="region-pct-label" x="100" y="183">1%</text>
-                    </g>
-
-                    <!-- Arms Group -->
-                    <g id="group-arms-ant" class="body-group group-arms">
-                        <path id="part-arm_upper_r_ant" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z"><title>Right Shoulder / Upper Arm (2.0%)</title></path>
-                        <text id="lbl-arm_upper_r_ant" class="region-pct-label" x="54" y="90">2%</text>
-                        <path id="part-arm_upper_l_ant" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z"><title>Left Shoulder / Upper Arm (2.0%)</title></path>
-                        <text id="lbl-arm_upper_l_ant" class="region-pct-label" x="146" y="90">2%</text>
-                        <path id="part-arm_lower_r_ant" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z"><title>Right Forearm (1.5%)</title></path>
-                        <text id="lbl-arm_lower_r_ant" class="region-pct-label" x="45" y="148">1.5%</text>
-                        <path id="part-arm_lower_l_ant" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z"><title>Left Forearm (1.5%)</title></path>
-                        <text id="lbl-arm_lower_l_ant" class="region-pct-label" x="155" y="148">1.5%</text>
-                        <path id="part-hand_r_ant" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z"><title>Right Hand (1.25%)</title></path>
-                        <text id="lbl-hand_r_ant" class="region-pct-label" x="36" y="195">1.25%</text>
-                        <path id="part-hand_l_ant" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z"><title>Left Hand (1.25%)</title></path>
-                        <text id="lbl-hand_l_ant" class="region-pct-label" x="164" y="195">1.25%</text>
-                    </g>
-
-                    <!-- Legs Group -->
-                    <g id="group-legs-ant" class="body-group group-legs">
-                        <path id="part-thigh_r_ant" class="body-part deg-0" d="M 73 177 L 97 177 L 93 275 L 67 275 Z"><title>Right Thigh Anterior</title></path>
-                        <text id="lbl-thigh_r_ant" class="region-pct-label" x="82" y="226">4.75%</text>
-                        <path id="part-thigh_l_ant" class="body-part deg-0" d="M 103 177 L 127 177 L 133 275 L 107 275 Z"><title>Left Thigh Anterior</title></path>
-                        <text id="lbl-thigh_l_ant" class="region-pct-label" x="118" y="226">4.75%</text>
-                        <path id="part-leg_lower_r_ant" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z"><title>Right Lower Leg / Shin</title></path>
-                        <text id="lbl-leg_lower_r_ant" class="region-pct-label" x="79" y="320">3.5%</text>
-                        <path id="part-leg_lower_l_ant" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z"><title>Left Lower Leg / Shin</title></path>
-                        <text id="lbl-leg_lower_l_ant" class="region-pct-label" x="121" y="320">3.5%</text>
-                        <path id="part-foot_r_ant" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z"><title>Right Foot (1.75%)</title></path>
-                        <text id="lbl-foot_r_ant" class="region-pct-label" x="76" y="377">1.75%</text>
-                        <path id="part-foot_l_ant" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z"><title>Left Foot (1.75%)</title></path>
-                        <text id="lbl-foot_l_ant" class="region-pct-label" x="124" y="377">1.75%</text>
-                    </g>
-                </svg>
+    <div class="accordion-item sec-painter body-painter-section" id="body-painter-section">
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="header-left-title">
+                <span>🎨 5. แผนผังระบายแผลคำนวณ % TBSA (Interactive Lund & Browder Painter)</span>
             </div>
-
-            <!-- Posterior View -->
-            <div class="body-view-container">
-                <div class="view-label">Posterior (ด้านหลัง)</div>
-                <svg viewBox="0 0 200 400" class="body-svg" id="svg-posterior">
-                    <!-- Head & Neck Group -->
-                    <g id="group-head-post" class="body-group group-head">
-                        <path id="part-head_post" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z"><title>Scalp / Posterior Head</title></path>
-                        <text id="lbl-head_post" class="region-pct-label" x="100" y="24">3.5%</text>
-                        <polygon id="part-neck_post" class="body-part deg-0" points="93,42 107,42 110,52 90,52"><title>Posterior Neck (1.0%)</title></polygon>
-                        <text id="lbl-neck_post" class="region-pct-label" x="100" y="48">1%</text>
-                    </g>
-
-                    <!-- Torso Group -->
-                    <g id="group-torso-post" class="body-group group-torso">
-                        <path id="part-back_upper_post" class="body-part deg-0" d="M 68 55 L 132 55 L 129 114 L 71 114 Z"><title>Upper Back / Thoracic Region (6.5%)</title></path>
-                        <text id="lbl-back_upper_post" class="region-pct-label" x="100" y="85">6.5%</text>
-                        <path id="part-back_lower_post" class="body-part deg-0" d="M 71 116 L 129 116 L 126 175 L 74 175 Z"><title>Lower Back / Lumbar Region (6.5%)</title></path>
-                        <text id="lbl-back_lower_post" class="region-pct-label" x="100" y="145">6.5%</text>
-                        <path id="part-buttock_r" class="body-part deg-0" d="M 74 176 L 99 176 L 97 210 L 71 210 Z"><title>Right Buttock (2.5%)</title></path>
-                        <text id="lbl-buttock_r" class="region-pct-label" x="86" y="193">2.5%</text>
-                        <path id="part-buttock_l" class="body-part deg-0" d="M 101 176 L 126 176 L 129 210 L 103 210 Z"><title>Left Buttock (2.5%)</title></path>
-                        <text id="lbl-buttock_l" class="region-pct-label" x="114" y="193">2.5%</text>
-                    </g>
-
-                    <!-- Arms Group -->
-                    <g id="group-arms-post" class="body-group group-arms">
-                        <path id="part-arm_upper_r_post" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z"><title>Right Shoulder / Upper Arm Posterior (2.0%)</title></path>
-                        <text id="lbl-arm_upper_r_post" class="region-pct-label" x="54" y="90">2%</text>
-                        <path id="part-arm_upper_l_post" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z"><title>Left Shoulder / Upper Arm Posterior (2.0%)</title></path>
-                        <text id="lbl-arm_upper_l_post" class="region-pct-label" x="146" y="90">2%</text>
-                        <path id="part-arm_lower_r_post" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z"><title>Right Forearm Posterior (1.5%)</title></path>
-                        <text id="lbl-arm_lower_r_post" class="region-pct-label" x="45" y="148">1.5%</text>
-                        <path id="part-arm_lower_l_post" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z"><title>Left Forearm Posterior (1.5%)</title></path>
-                        <text id="lbl-arm_lower_l_post" class="region-pct-label" x="155" y="148">1.5%</text>
-                        <path id="part-hand_r_post" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z"><title>Right Hand Posterior (1.25%)</title></path>
-                        <text id="lbl-hand_r_post" class="region-pct-label" x="36" y="195">1.25%</text>
-                        <path id="part-hand_l_post" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z"><title>Left Hand Posterior (1.25%)</title></path>
-                        <text id="lbl-hand_l_post" class="region-pct-label" x="164" y="195">1.25%</text>
-                    </g>
-
-                    <!-- Legs Group -->
-                    <g id="group-legs-post" class="body-group group-legs">
-                        <path id="part-thigh_r_post" class="body-part deg-0" d="M 71 212 L 97 212 L 93 275 L 67 275 Z"><title>Right Thigh Posterior</title></path>
-                        <text id="lbl-thigh_r_post" class="region-pct-label" x="82" y="243">4.75%</text>
-                        <path id="part-thigh_l_post" class="body-part deg-0" d="M 103 212 L 129 212 L 133 275 L 107 275 Z"><title>Left Thigh Posterior</title></path>
-                        <text id="lbl-thigh_l_post" class="region-pct-label" x="118" y="243">4.75%</text>
-                        <path id="part-leg_lower_r_post" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z"><title>Right Lower Leg / Calf Posterior</title></path>
-                        <text id="lbl-leg_lower_r_post" class="region-pct-label" x="79" y="320">3.5%</text>
-                        <path id="part-leg_lower_l_post" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z"><title>Left Lower Leg / Calf Posterior</title></path>
-                        <text id="lbl-leg_lower_l_post" class="region-pct-label" x="121" y="320">3.5%</text>
-                        <path id="part-foot_r_post" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z"><title>Right Foot (1.75%)</title></path>
-                        <text id="lbl-foot_r_post" class="region-pct-label" x="76" y="377">1.75%</text>
-                        <path id="part-foot_l_post" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z"><title>Left Foot (1.75%)</title></path>
-                        <text id="lbl-foot_l_post" class="region-pct-label" x="124" y="377">1.75%</text>
-                    </g>
-                </svg>
+            <div class="header-right-meta">
+                <span id="quick-reset-btn" onclick="event.stopPropagation()" style="font-size: 11px; color: var(--burn-primary); cursor: pointer; text-decoration: underline; padding: 2px 6px;">ล้างทั้งหมด (Reset)</span>
+                <span class="chevron-icon">▼</span>
             </div>
         </div>
-
-        <!-- Instructions & Lund-Browder Quick Reference -->
-        <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 8px;">
-            <span>💡 คลิกหรือลากระบายสีบนร่างกายเพื่อกำหนดระดับความลึกของแผล — คำนวณ % ตามสัดส่วน Lund & Browder อัตโนมัติ</span>
-        </div>
-
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #475569;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <strong style="color: #0f172a;">📐 Lund & Browder Age Proportions Reference:</strong>
-                <span id="lund-ref-active-tag" style="font-weight: 700; color: var(--burn-primary-dark);">Adult Bracket</span>
+        <div class="accordion-content">
+            <!-- Degree Paint Selector -->
+            <div class="paint-toolbar">
+                <button type="button" class="degree-btn" data-degree="0">
+                    <span class="color-dot dot-0"></span> ลบ (Eraser / 0%)
+                </button>
+                <button type="button" class="degree-btn" data-degree="1">
+                    <span class="color-dot dot-1"></span> 1st Degree (Superficial - ตัดออกจากสูตรน้ำ)
+                </button>
+                <button type="button" class="degree-btn active" data-degree="2">
+                    <span class="color-dot dot-2"></span> 2nd Degree (Partial Thickness)
+                </button>
+                <button type="button" class="degree-btn" data-degree="3">
+                    <span class="color-dot dot-3"></span> 3rd/4th Degree (Full Thickness)
+                </button>
+                <button type="button" id="btn-palm-plus" class="btn-action btn-outline" style="padding: 4px 10px; font-size: 11px; margin-left: auto;">
+                    ✋ +1% Palm
+                </button>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 4px; margin-top: 6px; font-size: 10.5px;">
-                <div>• <strong>ศีรษะ (Head):</strong> <span id="ref-val-head">7% (Infant 19%)</span></div>
-                <div>• <strong>ต้นขา (Thighs):</strong> <span id="ref-val-thigh">19% (Infant 11%)</span></div>
-                <div>• <strong>หน้าแข้ง (Legs):</strong> <span id="ref-val-leg">14% (Infant 10%)</span></div>
-                <div>• <strong>ลำตัว (Trunk):</strong> 26% (หน้า 13%, หลัง 13%)</div>
-                <div>• <strong>แขน (Upper Limbs):</strong> 18% (ข้างละ 9%)</div>
-                <div>• <strong>อวัยวะเพศ (Genitalia):</strong> 1%</div>
+
+            <!-- Quick Anatomical Presets -->
+            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                <span style="font-size: 11px; font-weight: 700; color: #475569;">⚡ ลัดระบายทั้งส่วน (Quick Presets):</span>
+                <button type="button" class="preset-btn btn-action btn-outline" data-preset="head_all" style="padding: 2px 8px; font-size: 11px;">ทั้งศีรษะ (Head)</button>
+                <button type="button" class="preset-btn btn-action btn-outline" data-preset="trunk_ant_all" style="padding: 2px 8px; font-size: 11px;">ลำตัวหน้า (Ant Trunk)</button>
+                <button type="button" class="preset-btn btn-action btn-outline" data-preset="trunk_post_all" style="padding: 2px 8px; font-size: 11px;">หลัง/ก้น (Post Trunk)</button>
+                <button type="button" class="preset-btn btn-action btn-outline" data-preset="arm_r_all" style="padding: 2px 8px; font-size: 11px;">แขนขวา (R Arm)</button>
+                <button type="button" class="preset-btn btn-action btn-outline" data-preset="arm_l_all" style="padding: 2px 8px; font-size: 11px;">แขนซ้าย (L Arm)</button>
+                <button type="button" class="preset-btn btn-action btn-outline" data-preset="legs_both_all" style="padding: 2px 8px; font-size: 11px;">ขาทั้งสองข้าง (Both Legs)</button>
+            </div>
+
+            <!-- Dual SVG Body Diagrams (Anterior & Posterior) -->
+            <div class="body-mapper-wrapper model-col-adult" id="body-mapper-wrapper">
+                <!-- Anterior View -->
+                <div class="body-view-container">
+                    <div class="view-label">Anterior (ด้านหน้า)</div>
+                    <svg viewBox="0 0 200 400" class="body-svg" id="svg-anterior">
+                        <!-- Head & Neck Group -->
+                        <g id="group-head-ant" class="body-group group-head">
+                            <path id="part-head_ant" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z"><title>Face / Anterior Head</title></path>
+                            <text id="lbl-head_ant" class="region-pct-label" x="100" y="24">3.5%</text>
+                            <polygon id="part-neck_ant" class="body-part deg-0" points="93,42 107,42 110,52 90,52"><title>Anterior Neck (1.0%)</title></polygon>
+                            <text id="lbl-neck_ant" class="region-pct-label" x="100" y="48">1%</text>
+                        </g>
+
+                        <!-- Torso Group -->
+                        <g id="group-torso-ant" class="body-group group-torso">
+                            <path id="part-chest_ant" class="body-part deg-0" d="M 68 55 L 132 55 L 129 114 L 71 114 Z"><title>Chest / Upper Anterior Trunk (6.5%)</title></path>
+                            <text id="lbl-chest_ant" class="region-pct-label" x="100" y="85">6.5%</text>
+                            <path id="part-abdomen_ant" class="body-part deg-0" d="M 71 116 L 129 116 L 126 175 L 74 175 Z"><title>Abdomen / Lower Anterior Trunk (6.5%)</title></path>
+                            <text id="lbl-abdomen_ant" class="region-pct-label" x="100" y="145">6.5%</text>
+                            <polygon id="part-genitalia" class="body-part deg-0" points="92,176 108,176 100,190"><title>Genitalia / Perineum (1.0%)</title></polygon>
+                            <text id="lbl-genitalia" class="region-pct-label" x="100" y="183">1%</text>
+                        </g>
+
+                        <!-- Arms Group -->
+                        <g id="group-arms-ant" class="body-group group-arms">
+                            <path id="part-arm_upper_r_ant" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z"><title>Right Shoulder / Upper Arm (2.0%)</title></path>
+                            <text id="lbl-arm_upper_r_ant" class="region-pct-label" x="54" y="90">2%</text>
+                            <path id="part-arm_upper_l_ant" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z"><title>Left Shoulder / Upper Arm (2.0%)</title></path>
+                            <text id="lbl-arm_upper_l_ant" class="region-pct-label" x="146" y="90">2%</text>
+                            <path id="part-arm_lower_r_ant" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z"><title>Right Forearm (1.5%)</title></path>
+                            <text id="lbl-arm_lower_r_ant" class="region-pct-label" x="45" y="148">1.5%</text>
+                            <path id="part-arm_lower_l_ant" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z"><title>Left Forearm (1.5%)</title></path>
+                            <text id="lbl-arm_lower_l_ant" class="region-pct-label" x="155" y="148">1.5%</text>
+                            <path id="part-hand_r_ant" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z"><title>Right Hand (1.25%)</title></path>
+                            <text id="lbl-hand_r_ant" class="region-pct-label" x="36" y="195">1.25%</text>
+                            <path id="part-hand_l_ant" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z"><title>Left Hand (1.25%)</title></path>
+                            <text id="lbl-hand_l_ant" class="region-pct-label" x="164" y="195">1.25%</text>
+                        </g>
+
+                        <!-- Legs Group -->
+                        <g id="group-legs-ant" class="body-group group-legs">
+                            <path id="part-thigh_r_ant" class="body-part deg-0" d="M 73 177 L 97 177 L 93 275 L 67 275 Z"><title>Right Thigh Anterior</title></path>
+                            <text id="lbl-thigh_r_ant" class="region-pct-label" x="82" y="226">4.75%</text>
+                            <path id="part-thigh_l_ant" class="body-part deg-0" d="M 103 177 L 127 177 L 133 275 L 107 275 Z"><title>Left Thigh Anterior</title></path>
+                            <text id="lbl-thigh_l_ant" class="region-pct-label" x="118" y="226">4.75%</text>
+                            <path id="part-leg_lower_r_ant" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z"><title>Right Lower Leg / Shin</title></path>
+                            <text id="lbl-leg_lower_r_ant" class="region-pct-label" x="79" y="320">3.5%</text>
+                            <path id="part-leg_lower_l_ant" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z"><title>Left Lower Leg / Shin</title></path>
+                            <text id="lbl-leg_lower_l_ant" class="region-pct-label" x="121" y="320">3.5%</text>
+                            <path id="part-foot_r_ant" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z"><title>Right Foot (1.75%)</title></path>
+                            <text id="lbl-foot_r_ant" class="region-pct-label" x="76" y="377">1.75%</text>
+                            <path id="part-foot_l_ant" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z"><title>Left Foot (1.75%)</title></path>
+                            <text id="lbl-foot_l_ant" class="region-pct-label" x="124" y="377">1.75%</text>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Posterior View -->
+                <div class="body-view-container">
+                    <div class="view-label">Posterior (ด้านหลัง)</div>
+                    <svg viewBox="0 0 200 400" class="body-svg" id="svg-posterior">
+                        <!-- Head & Neck Group -->
+                        <g id="group-head-post" class="body-group group-head">
+                            <path id="part-head_post" class="body-part deg-0" d="M 85 20 C 85 5, 115 5, 115 20 C 115 45, 85 45, 85 20 Z"><title>Scalp / Posterior Head</title></path>
+                            <text id="lbl-head_post" class="region-pct-label" x="100" y="24">3.5%</text>
+                            <polygon id="part-neck_post" class="body-part deg-0" points="93,42 107,42 110,52 90,52"><title>Posterior Neck (1.0%)</title></polygon>
+                            <text id="lbl-neck_post" class="region-pct-label" x="100" y="48">1%</text>
+                        </g>
+
+                        <!-- Torso Group -->
+                        <g id="group-torso-post" class="body-group group-torso">
+                            <path id="part-back_upper_post" class="body-part deg-0" d="M 68 55 L 132 55 L 129 114 L 71 114 Z"><title>Upper Back / Thoracic Region (6.5%)</title></path>
+                            <text id="lbl-back_upper_post" class="region-pct-label" x="100" y="85">6.5%</text>
+                            <path id="part-back_lower_post" class="body-part deg-0" d="M 71 116 L 129 116 L 126 175 L 74 175 Z"><title>Lower Back / Lumbar Region (6.5%)</title></path>
+                            <text id="lbl-back_lower_post" class="region-pct-label" x="100" y="145">6.5%</text>
+                            <path id="part-buttock_r" class="body-part deg-0" d="M 74 176 L 99 176 L 97 210 L 71 210 Z"><title>Right Buttock (2.5%)</title></path>
+                            <text id="lbl-buttock_r" class="region-pct-label" x="86" y="193">2.5%</text>
+                            <path id="part-buttock_l" class="body-part deg-0" d="M 101 176 L 126 176 L 129 210 L 103 210 Z"><title>Left Buttock (2.5%)</title></path>
+                            <text id="lbl-buttock_l" class="region-pct-label" x="114" y="193">2.5%</text>
+                        </g>
+
+                        <!-- Arms Group -->
+                        <g id="group-arms-post" class="body-group group-arms">
+                            <path id="part-arm_upper_r_post" class="body-part deg-0" d="M 66 58 L 50 65 L 42 120 L 60 115 Z"><title>Right Shoulder / Upper Arm Posterior (2.0%)</title></path>
+                            <text id="lbl-arm_upper_r_post" class="region-pct-label" x="54" y="90">2%</text>
+                            <path id="part-arm_upper_l_post" class="body-part deg-0" d="M 134 58 L 150 65 L 158 120 L 140 115 Z"><title>Left Shoulder / Upper Arm Posterior (2.0%)</title></path>
+                            <text id="lbl-arm_upper_l_post" class="region-pct-label" x="146" y="90">2%</text>
+                            <path id="part-arm_lower_r_post" class="body-part deg-0" d="M 41 122 L 32 175 L 48 175 L 59 117 Z"><title>Right Forearm Posterior (1.5%)</title></path>
+                            <text id="lbl-arm_lower_r_post" class="region-pct-label" x="45" y="148">1.5%</text>
+                            <path id="part-arm_lower_l_post" class="body-part deg-0" d="M 159 122 L 168 175 L 152 175 L 141 117 Z"><title>Left Forearm Posterior (1.5%)</title></path>
+                            <text id="lbl-arm_lower_l_post" class="region-pct-label" x="155" y="148">1.5%</text>
+                            <path id="part-hand_r_post" class="body-part deg-0" d="M 31 177 L 24 210 L 44 210 L 47 177 Z"><title>Right Hand Posterior (1.25%)</title></path>
+                            <text id="lbl-hand_r_post" class="region-pct-label" x="36" y="195">1.25%</text>
+                            <path id="part-hand_l_post" class="body-part deg-0" d="M 169 177 L 176 210 L 156 210 L 153 177 Z"><title>Left Hand Posterior (1.25%)</title></path>
+                            <text id="lbl-hand_l_post" class="region-pct-label" x="164" y="195">1.25%</text>
+                        </g>
+
+                        <!-- Legs Group -->
+                        <g id="group-legs-post" class="body-group group-legs">
+                            <path id="part-thigh_r_post" class="body-part deg-0" d="M 71 212 L 97 212 L 93 275 L 67 275 Z"><title>Right Thigh Posterior</title></path>
+                            <text id="lbl-thigh_r_post" class="region-pct-label" x="82" y="243">4.75%</text>
+                            <path id="part-thigh_l_post" class="body-part deg-0" d="M 103 212 L 129 212 L 133 275 L 107 275 Z"><title>Left Thigh Posterior</title></path>
+                            <text id="lbl-thigh_l_post" class="region-pct-label" x="118" y="243">4.75%</text>
+                            <path id="part-leg_lower_r_post" class="body-part deg-0" d="M 67 278 L 92 278 L 88 360 L 68 360 Z"><title>Right Lower Leg / Calf Posterior</title></path>
+                            <text id="lbl-leg_lower_r_post" class="region-pct-label" x="79" y="320">3.5%</text>
+                            <path id="part-leg_lower_l_post" class="body-part deg-0" d="M 108 278 L 133 278 L 132 360 L 112 360 Z"><title>Left Lower Leg / Calf Posterior</title></path>
+                            <text id="lbl-leg_lower_l_post" class="region-pct-label" x="121" y="320">3.5%</text>
+                            <path id="part-foot_r_post" class="body-part deg-0" d="M 67 362 L 87 362 L 85 390 L 63 390 Z"><title>Right Foot (1.75%)</title></path>
+                            <text id="lbl-foot_r_post" class="region-pct-label" x="76" y="377">1.75%</text>
+                            <path id="part-foot_l_post" class="body-part deg-0" d="M 113 362 L 133 362 L 137 390 L 115 390 Z"><title>Left Foot (1.75%)</title></path>
+                            <text id="lbl-foot_l_post" class="region-pct-label" x="124" y="377">1.75%</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Instructions & Lund-Browder Quick Reference -->
+            <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 8px;">
+                <span>💡 คลิกหรือลากระบายสีบนร่างกายเพื่อกำหนดระดับความลึกของแผล — คำนวณ % ตามสัดส่วน Lund & Browder อัตโนมัติ</span>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #475569;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="color: #0f172a;">📐 Lund & Browder Age Proportions Reference:</strong>
+                    <span id="lund-ref-active-tag" style="font-weight: 700; color: var(--burn-primary-dark);">Adult Bracket</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 4px; margin-top: 6px; font-size: 10.5px;">
+                    <div>• <strong>ศีรษะ (Head):</strong> <span id="ref-val-head">7% (Infant 19%)</span></div>
+                    <div>• <strong>ต้นขา (Thighs):</strong> <span id="ref-val-thigh">19% (Infant 11%)</span></div>
+                    <div>• <strong>หน้าแข้ง (Legs):</strong> <span id="ref-val-leg">14% (Infant 10%)</span></div>
+                    <div>• <strong>ลำตัว (Trunk):</strong> 26% (หน้า 13%, หลัง 13%)</div>
+                    <div>• <strong>แขน (Upper Limbs):</strong> 18% (ข้างละ 9%)</div>
+                    <div>• <strong>อวัยวะเพศ (Genitalia):</strong> 1%</div>
+                </div>
             </div>
         </div>
     </div>
@@ -1664,14 +1791,35 @@
         recalculateAll(true);
     });
 
-    // Quick link smooth scroll
-    document.getElementById('link-to-painter').addEventListener('click', function (e) {
-        e.preventDefault();
-        const painterSec = document.getElementById('body-painter-section');
-        if (painterSec && painterSec.scrollIntoView) {
-            painterSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
+    // Expand All / Collapse All Buttons
+    const btnExpandAll = document.getElementById('btn-expand-all');
+    if (btnExpandAll) {
+        btnExpandAll.addEventListener('click', function () {
+            document.querySelectorAll('.accordion-item').forEach(item => item.classList.add('open'));
+        });
+    }
+
+    const btnCollapseAll = document.getElementById('btn-collapse-all');
+    if (btnCollapseAll) {
+        btnCollapseAll.addEventListener('click', function () {
+            document.querySelectorAll('.accordion-item').forEach(item => item.classList.remove('open'));
+        });
+    }
+
+    // Quick link smooth scroll (Auto-expands Section 5)
+    const linkToPainter = document.getElementById('link-to-painter');
+    if (linkToPainter) {
+        linkToPainter.addEventListener('click', function (e) {
+            e.preventDefault();
+            const painterSec = document.getElementById('body-painter-section');
+            if (painterSec) {
+                painterSec.classList.add('open');
+                if (painterSec.scrollIntoView) {
+                    painterSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    }
 
     // Input Synchronization
     if (inputDirectTbsa) {
