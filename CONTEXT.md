@@ -122,3 +122,12 @@ ER NOTE pages must not import `shared/base.css`, `shared/components.js`, or `sha
 Shared style and behavior are provided only by `tools/er-note/er-note.css` and `tools/er-note/er-note.js`.
 This keeps the narrative-note UX decoupled from the standing-order print/float-bar lifecycle.
 Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Home-Medication.html`) are isolated from the standing order validation and lifecycle engines, handling their own printing, copy-to-clipboard, and local draft persistence.
+
+## ADR-27: UI/UX Unification & V2 Standalone Worksheets
+
+- **Context**: The clinical team required a unified, simple, and elegant UI/UX across all clinical calculators, scoring tools, and standing order worksheets.
+- **Decision**: 
+  1. Default all clinical calculators, scoring tools, and standing orders to the Braun Warm Paper palette (`#ebe7df` background, `#ffffff` card containers, `#1a1a1a` typography, `#d8d4c8` borders).
+  2. Preserved all classic original files (`rtpa.html`, `nstemi.html`, `antivenom.html`, `nihss.html`) completely untouched.
+  3. Created standalone V2 worksheets (`rtpa-v2.html`, `nstemi-v2.html`, `antivenom-v2.html`, `nihss-v2.html`) equipped with responsive demographic strips, live HUDs, tactile selectors, and zero-drift A4 medical print grids.
+  4. Updated `service-worker.js` cache manifest to `er-hub-v67` to ensure complete offline availability across all V2 assets.
