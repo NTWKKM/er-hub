@@ -801,7 +801,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const FONDA_MIN_EGFR = 30;
     const ENOX_MIN_EGFR  = 15;
+    const ENOX_OD_EGFR   = 30;
     const MIN_AGE = 18;
+    let currentEgfr = null;
     const $ = id => document.getElementById(id);
 
     // Static DOM Injections on Load
@@ -811,7 +813,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function getSelectedAnticoagPrintHTML() {
         const choice = document.querySelector('input[name="anticoag-choice"]:checked')?.value;
         const weight = parseFloat($('weight').value) || 0;
-        const egfrLive = parseFloat($('screen-egfr').textContent) || null;
+        const egfrLive = currentEgfr;
         const chk = val => (choice === val) ? '☑' : '☐';
         
         const fondaSelected = choice === 'fonda';
@@ -843,7 +845,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const freq = document.querySelector('input[name="enox-freq"]:checked')?.value || 'q12h';
             const chkEnox = chk('enox');
             const chk40 = (choice === 'enox' && enoxDose < 50) ? '☑' : '☐';
-            const chk60 = (choice === 'enox' && enoxDose >= 50) ? '☑' : '☐';
+            const chk60 = (choice === 'enox' && enoxDose >= 50 && enoxDose < 70) ? '☑' : '☐';
+            const chk80 = (choice === 'enox' && enoxDose >= 70 && enoxDose < 90) ? '☑' : '☐';
+            const chk100 = (choice === 'enox' && enoxDose >= 90) ? '☑' : '☐';
             const chkQ12 = (choice === 'enox' && freq === 'q12h') ? '☑' : '☐';
             const chkOD = (choice === 'enox' && freq === 'q24h') ? '☑' : '☐';
             
@@ -855,11 +859,11 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `
             <div class="ac-opt ${enoxRecClass} ${enoxNA ? 'na' : ''}">
                 <strong>${chkEnox} Enoxaparin</strong>${enoxWarning}<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${chk40} 0.4 ml</strong> &nbsp;<strong>${chk60} 0.6 ml</strong><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${chk40} 0.4 ml</strong> &nbsp;<strong>${chk60} 0.6 ml</strong> &nbsp;<strong>${chk80} 0.8 ml</strong> &nbsp;<strong>${chk100} 1.0 ml</strong><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>${chkQ12} q 12 hr</strong> &nbsp;<strong>${chkOD} OD</strong> × 5 Days<br>
-                <span style="font-size:9px;color:#666;">(1 mg/kg = ${weight > 0 ? enoxDose + ' mg' : '............ mg'} — GFR &lt; ${FONDA_MIN_EGFR} → once daily)<br>
+                <span style="font-size:9px;color:#666;">(1 mg/kg = ${weight > 0 ? enoxDose + ' mg' : '............ mg'} — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br>
                 (CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)<br>
-                (0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>
+                (0.4 ml = 40 mg, 0.6 ml = 60 mg, 0.8 ml = 80 mg, 1.0 ml = 100 mg)</span>
             </div>`;
         } else {
             html += `
@@ -926,8 +930,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateAcHints() {
-        const egfrRaw = $('screen-egfr').textContent.trim();
-        const egfrLive = egfrRaw !== '--' ? parseFloat(egfrRaw) : null;
+        const egfrLive = currentEgfr;
         const weight = parseFloat($('weight').value) || 0;
 
         const egfrKnown = egfrLive !== null && !isNaN(egfrLive);
@@ -941,14 +944,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const enoxDose = Math.round(weight * 1.0);
             $('ac-fonda-hint').innerHTML = `(Preferred — eGFR ${egfrLive.toFixed(0)})<br><span style="color:#c0392b;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = `Enoxaparin ${enoxDose} mg SC`;
-            $('ac-enox-hint').innerHTML = `(1 mg/kg = ${enoxDose} mg — GFR &lt; ${FONDA_MIN_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
+            $('ac-enox-hint').innerHTML = `(1 mg/kg = ${enoxDose} mg — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg, 0.8 ml = 80 mg, 1.0 ml = 100 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
         } else {
             $('ac-fonda-hint').innerHTML = `(Preferred — eGFR --)<br><span style="color:#c0392b;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = 'Enoxaparin -- mg SC';
-            $('ac-enox-hint').innerHTML = `(1 mg/kg = -- mg — GFR &lt; ${FONDA_MIN_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
+            $('ac-enox-hint').innerHTML = `(1 mg/kg = -- mg — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg, 0.8 ml = 80 mg, 1.0 ml = 100 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
         }
+
+        _applyAcState('fonda', fondaCI, recFonda, egfrKnown ? `⚠️ CI: eGFR ${egfrLive.toFixed(0)} < ${FONDA_MIN_EGFR} — กดอีกครั้งเพื่อ override` : null);
+        _applyAcState('enox',  enoxCI,  recEnox,  egfrKnown ? `⚠️ CI: eGFR ${egfrLive.toFixed(0)} < ${ENOX_MIN_EGFR} — กดอีกครั้งเพื่อ override` : null);
+        _applyAcState('hep',   false,   recHep, null);
+
+        updateAnticoagOutput();
+    }
 
         _applyAcState('fonda', fondaCI, recFonda, egfrKnown ? `⚠️ CI: eGFR ${egfrLive.toFixed(0)} < ${FONDA_MIN_EGFR} — กดอีกครั้งเพื่อ override` : null);
         _applyAcState('enox',  enoxCI,  recEnox,  egfrKnown ? `⚠️ CI: eGFR ${egfrLive.toFixed(0)} < ${ENOX_MIN_EGFR} — กดอีกครั้งเพื่อ override` : null);
@@ -1077,37 +1087,47 @@ document.addEventListener('DOMContentLoaded', () => {
         // eGFR Calculation
         let egfr = null;
         if (!isNaN(cr) && cr > 0 && !isNaN(age) && age >= MIN_AGE && sex) {
-            egfr = CLINICAL_ENGINE.calcEGFR(cr, age, sex);
-            $('screen-egfr').textContent = egfr.toString();
+            egfr = CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021(cr, age, sex);
+            currentEgfr = egfr;
+            $('screen-egfr').textContent = egfr !== null ? egfr.toString() : '--';
         } else {
+            currentEgfr = null;
             $('screen-egfr').textContent = '--';
         }
 
         updateAcHints();
+
+        // Stratification Flags
+        const vhCount = document.querySelectorAll('.vh-flag:checked').length;
+        const h1Count = document.querySelectorAll('.h1-flag:checked').length;
+        updateDaptHint(vhCount, h1Count);
 
         // GRACE Score Calculation
         const graceResult = CLINICAL_ENGINE.calcGRACE({
             age: !isNaN(age) ? age : null,
             hr: !isNaN(hr) ? hr : null,
             sbp: !isNaN(sbp) ? sbp : null,
-            creatinine: !isNaN(cr) ? cr : null,
+            cr: !isNaN(cr) ? cr : null,
             killip: killip,
-            cardiacArrest,
-            stDeviation,
-            elevatedMarkers
+            cardArr: cardiacArrest,
+            stDev: stDeviation,
+            elevMk: elevatedMarkers
         });
 
+        let risk = 'non-high';
         if (graceResult && graceResult.score !== null) {
-            $('screen-grace').textContent = graceResult.score.toString();
-            $('p-grace').textContent = graceResult.score.toString();
+            const score = graceResult.score;
+            risk = CLINICAL_ENGINE.riskLevel(score, vhCount > 0, h1Count > 0);
+            $('screen-grace').textContent = score.toString();
+            $('p-grace').textContent = score.toString();
             
             const badge = $('screen-risk-badge');
             const label = $('screen-risk-label');
             badge.className = 'risk-badge';
-            if (graceResult.riskLevel === 'Very High') {
+            if (risk === 'very-high') {
                 badge.classList.add('risk-very-high');
                 label.textContent = 'Very High Risk';
-            } else if (graceResult.riskLevel === 'High') {
+            } else if (risk === 'high') {
                 badge.classList.add('risk-high');
                 label.textContent = 'High Risk';
             } else {
@@ -1116,35 +1136,79 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Render breakdown
-            renderGraceBreakdown(graceResult.breakdown, graceResult.score);
+            renderGraceBreakdown(graceResult.bd, score);
         } else {
             $('screen-grace').textContent = '--';
+            $('p-grace').textContent = '--';
             $('screen-risk-label').textContent = '--';
             $('screen-risk-badge').className = 'risk-badge';
             hideGraceBreakdown();
         }
 
-        // Stratification Flags
-        const vhCount = document.querySelectorAll('.vh-flag:checked').length;
-        const h1Count = document.querySelectorAll('.h1-flag:checked').length;
-        updateDaptHint(vhCount, h1Count);
-
         // Update Print Output Fields
         $('p-hn').textContent = hn || '--';
         $('p-weight').textContent = !isNaN(weight) ? weight.toFixed(1) : '--';
         $('p-egfr').textContent = egfr !== null ? egfr.toString() : '--';
-        $('p-asa').textContent = asaAllergy ? 'YES (Allergy)' : 'No';
         $('p-age').textContent = !isNaN(age) ? age.toString() : '--';
         $('p-hr').textContent = !isNaN(hr) ? hr.toString() : '--';
         $('p-sbp').textContent = !isNaN(sbp) ? sbp.toString() : '--';
         $('p-cr').textContent = !isNaN(cr) ? cr.toFixed(2) : '--';
         $('p-killip').textContent = killip;
 
+        const binFlagTxt = [
+            cardiacArrest ? '☑ Cardiac arrest' : null,
+            stDeviation ? '☑ ST deviation' : null,
+            elevatedMarkers ? '☑ Elevated markers' : null,
+        ].filter(Boolean);
+        $('p-bin-flags').innerHTML = binFlagTxt.length ? binFlagTxt.join('<br>') + '<br>' : '';
+
+        const bul = r => risk === r ? '●' : '○';
+        $('p-strat').innerHTML =
+            `${bul('very-high')} Very high risk (coro &lt; 2h)<br>
+             ${bul('high')}      High risk (coro &lt; 24h)<br>
+             ${bul('non-high')}  Non-high risk (selective coro)`;
+
+        const tropValH0 = parseFloat($('troponin-h0').value);
+        const tropValH1 = parseFloat($('troponin-h1').value);
+        const tropValH3 = parseFloat($('troponin-h3').value);
+        const fromRpc = $('troponin-from-rphch').checked;
+
+        let risingH1 = null, risingH3 = null;
+        if (!isNaN(tropValH0) && tropValH0 > 0) {
+            if (!isNaN(tropValH1)) risingH1 = ((tropValH1 - tropValH0) / tropValH0 * 100).toFixed(1);
+            if (!isNaN(tropValH3)) risingH3 = ((tropValH3 - tropValH0) / tropValH0 * 100).toFixed(1);
+        }
+
+        const tropDisplay = [];
+        if (!isNaN(tropValH0)) tropDisplay.push(`H0: ${tropValH0}`);
+        if (!isNaN(tropValH1)) {
+            let h1Line = `H1: ${tropValH1}`;
+            if (risingH1 !== null) h1Line += ` → +${risingH1}%`;
+            tropDisplay.push(h1Line);
+        }
+        if (!isNaN(tropValH3)) {
+            let h3Line = `H3: ${tropValH3}`;
+            if (risingH3 !== null) h3Line += ` → +${risingH3}%`;
+            tropDisplay.push(h3Line);
+        }
+        $('p-troponin-values').innerHTML = tropDisplay.join('<br>') || '(ไม่ได้กรอก)';
+        $('p-rphch-note').textContent = fromRpc ? '(เจาะจาก รพช. แล้ว — ไม่ต้องเจาะซ้ำ)' : '';
+        $('p-troponin-lab').innerHTML = fromRpc
+            ? '☐ hs-troponin I Hr.0 and 3<br><small style="color:#888;">(เจาะจาก รพช. แล้ว — ไม่ต้องซ้ำ)</small>'
+            : '☐ hs-troponin I Hr.0 and 3';
+
         // DAPT Stat print sync
         const daptChoice = document.querySelector('input[name="dapt-p2y12"]:checked')?.value;
         const daptAsa = $('dapt-asa').checked;
-        $('p-asa-stat').textContent = daptAsa ? '☑ ASA (300) 1 tab chew stat' : '☐ ASA (300) 1 tab chew stat';
-        $('p-asa-cont').textContent = daptAsa ? '☑ ASA (81) 1×1 pc' : '☐ ASA (81) 1×1 pc';
+        if (asaAllergy) {
+            $('p-asa').innerHTML = '<strong style="color:red;">YES ⚠️</strong>';
+            $('p-asa-stat').innerHTML = '<strong style="color:red;">☒ ห้ามให้ ASA (Allergy ⚠️)</strong>';
+            $('p-asa-cont').innerHTML = '<strong style="color:red;">☒ ห้ามให้ ASA (Allergy ⚠️)</strong>';
+        } else {
+            $('p-asa').textContent = 'No';
+            $('p-asa-stat').textContent = daptAsa ? '☑ ASA (300) 1 tab chew stat' : '☐ ASA (300) 1 tab chew stat';
+            $('p-asa-cont').textContent = daptAsa ? '☑ ASA (81) 1×1 pc' : '☐ ASA (81) 1×1 pc';
+        }
 
         $('p-clopi300-stat').innerHTML = (daptChoice === 'clopi300') ? '☑ Clopidogrel (75)<br><span style="padding-left: 2em;">4 tabs PO stat (300 mg)</span>' : '☐ Clopidogrel (75)<br><span style="padding-left: 2em;">4 tabs PO stat (300 mg)</span>';
         $('p-clopi600-stat').innerHTML = (daptChoice === 'clopi600') ? '☑ Clopidogrel (75)<br><span style="padding-left: 2em;">8 tabs PO stat (600 mg)</span>' : '☐ Clopidogrel (75)<br><span style="padding-left: 2em;">8 tabs PO stat (600 mg)</span>';
@@ -1153,7 +1217,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         $('p-clopi-cont').textContent = (daptChoice === 'clopi300' || daptChoice === 'clopi600') ? '☑ Clopidogrel GPO (75) 1×1 pc' : '☐ Clopidogrel GPO (75) 1×1 pc';
         $('p-tiga-cont').textContent = (daptChoice === 'tiga180') ? '☑ Ticagrelor (90) 1 x 2 pc' : '☐ Ticagrelor (90) 1 x 2 pc';
-        $('p-prasa-cont').textContent = (daptChoice === 'prasa60') ? '☑ Prasugrel (10) 1×1 pc' : '☐ Prasugrel (10) 1×1 pc';
+
+        const prasaReduced = (weight > 0 && weight < 60) || (age >= 75);
+        const prasaDose = prasaReduced ? 5 : 10;
+        const prasaDoseHint = prasaReduced ? ' <small style="color:#c0392b;">(ลด dose: น้ำหนัก &lt; 60kg หรือ อายุ &ge; 75)</small>' : '';
+        $('p-prasa-cont').innerHTML = (daptChoice === 'prasa60') ? `☑ Prasugrel (${prasaDose}) 1×1 pc` + prasaDoseHint : `☐ Prasugrel (${prasaDose}) 1×1 pc` + prasaDoseHint;
 
         // Date/Time
         const useTime = $('use-current-time').checked;
@@ -1180,14 +1248,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        setRow('age', $('age').value || '--', bd.age);
-        setRow('hr', $('hr').value || '--', bd.hr);
-        setRow('sbp', $('sbp').value || '--', bd.sbp);
-        setRow('cr', $('creatinine').value || '--', bd.creatinine);
-        setRow('killip', `Class ${document.querySelector('input[name="killip"]:checked')?.value || '1'}`, bd.killip);
-        setRow('arrest', $('cardiac-arrest').checked ? 'Yes' : 'No', bd.cardiacArrest);
-        setRow('st', $('st-deviation').checked ? 'Yes' : 'No', bd.stDeviation);
-        setRow('markers', $('elevated-markers').checked ? 'Yes' : 'No', bd.elevatedMarkers);
+        setRow('age', $('age').value || '--', bd.ageP);
+        setRow('hr', $('hr').value || '--', bd.hrP);
+        setRow('sbp', $('sbp').value || '--', bd.sbpP);
+        setRow('cr', $('creatinine').value || '--', bd.crP);
+        setRow('killip', `Class ${document.querySelector('input[name="killip"]:checked')?.value || '1'}`, bd.kilP);
+        setRow('arrest', $('cardiac-arrest').checked ? 'Yes' : 'No', bd.arrP);
+        setRow('st', $('st-deviation').checked ? 'Yes' : 'No', bd.stP);
+        setRow('markers', $('elevated-markers').checked ? 'Yes' : 'No', bd.mkP);
     }
 
     function hideGraceBreakdown() {
@@ -1210,6 +1278,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     $('nstemi-form').addEventListener('input', calculateAndRender);
     $('nstemi-form').addEventListener('change', calculateAndRender);
+    $('dapt-panel').addEventListener('input', calculateAndRender);
+    $('dapt-panel').addEventListener('change', calculateAndRender);
+    $('anticoag-panel').addEventListener('input', calculateAndRender);
+    $('anticoag-panel').addEventListener('change', calculateAndRender);
 
     $('create-order-btn').addEventListener('click', () => {
         window.print();
@@ -1231,7 +1303,46 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'p-hn', value: '....................' },
         { id: 'p-weight', value: '....................' },
         { id: 'p-egfr', value: '....................' },
+        { id: 'p-asa', html: 'No' },
+        { id: 'p-age', value: '....................' },
+        { id: 'p-hr', value: '....................' },
+        { id: 'p-sbp', value: '....................' },
+        { id: 'p-cr', value: '....................' },
+        { id: 'p-bin-flags', html: '' },
+        { id: 'p-killip', html: 'Class I' },
         { id: 'p-grace', value: '....................' },
+        { id: 'p-strat', html: '○ Very high risk (coro &lt; 2h)<br>○ High risk (coro &lt; 24h)<br>○ Non-high risk (selective coro)' },
+        { id: 'p-troponin-values', html: '(ไม่ได้กรอก)' },
+        { id: 'p-rphch-note', html: '' },
+        { id: 'p-troponin-lab', html: '☐ hs-troponin I Hr.0 and 3' },
+        { id: 'p-asa-stat', html: '☐ ASA (300) 1 tab chew stat' },
+        { id: 'p-clopi300-stat', html: '☐ Clopidogrel (75)<br><span style="padding-left: 2em;">4 tabs PO stat (300 mg)</span>' },
+        { id: 'p-clopi600-stat', html: '☐ Clopidogrel (75)<br><span style="padding-left: 2em;">8 tabs PO stat (600 mg)</span>' },
+        { id: 'p-tiga-stat', html: '☐ Ticagrelor (90)<br><span style="padding-left: 2em;">2 tabs PO stat (180 mg)</span>' },
+        { id: 'p-prasa-stat', html: '☐ Prasugrel (10) 6 tabs PO stat (60 mg)<br><span style="padding-left: 2em;">— ให้ใน Cath lab เท่านั้น</span>' },
+        { id: 'p-asa-cont', html: '☐ ASA (81) 1×1 pc' },
+        { id: 'p-clopi-cont', html: '☐ Clopidogrel GPO (75) 1×1 pc' },
+        { id: 'p-tiga-cont', html: '☐ Ticagrelor (90) 1 x 2 pc' },
+        { id: 'p-prasa-cont', html: '☐ Prasugrel (10) 1×1 pc' },
+        { id: 'p-anticoag', html: `
+        <div class="ac-opt">
+            <strong>☐ Fondaparinux</strong>&nbsp;<small>(Preferred)</small><br>
+            2.5 mg SC OD × 5 Days<br>
+            <span style="font-size:9px;color:#666;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>
+        </div>
+        <div class="ac-opt">
+            <strong>☐ Enoxaparin</strong><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>☐ 0.4 ml</strong> &nbsp;<strong>☐ 0.6 ml</strong> &nbsp;<strong>☐ 0.8 ml</strong> &nbsp;<strong>☐ 1.0 ml</strong><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>☐ q 12 hr</strong> &nbsp;<strong>☐ OD</strong> × 5 Days<br>
+            <span style="font-size:9px;color:#666;">(1 mg/kg = ............ mg — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br>
+            (CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)<br>
+            (0.4 ml = 40 mg, 0.6 ml = 60 mg, 0.8 ml = 80 mg, 1.0 ml = 100 mg)</span>
+        </div>
+        <div class="ac-opt">
+            <strong>☐ Heparin IV</strong>
+            &nbsp;<small>(eGFR &lt;${ENOX_MIN_EGFR} mL/min)</small><br>
+            <span style="font-size:9px;">(กรณี GFR &lt; ${ENOX_MIN_EGFR} เท่านั้น)</span>
+        </div>` },
         { id: 'p-dt-1', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
         { id: 'p-dt-2', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() }
     ]);

@@ -628,7 +628,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const neuroSelect = $('neuro-snake-select');
     neuroSelect.addEventListener('change', () => {
         const val = neuroSelect.value;
-        $('ind-krait-bite').checked = (val === 'malayan_krait' || val === 'banded_krait');
+        const isKrait = (val === 'malayan_krait' || val === 'banded_krait');
+        const hint = $('ind-hint-box');
+        if (hint) {
+            hint.style.display = isKrait ? 'block' : 'none';
+            hint.textContent = isKrait
+                ? '⚠️ งูทับสมิงคลา/งูสามเหลี่ยม: หากยืนยันประวัติถูกกัดจริง ให้เซรุ่มทันทีโดยไม่ต้องรอกล้ามเนื้ออ่อนแรง — โปรดเลือกข้อบ่งใช้ด้านขวาเพื่อยืนยัน'
+                : '';
+        }
         calculateAndRender();
     });
 
@@ -762,6 +769,12 @@ document.addEventListener('DOMContentLoaded', () => {
     $('antivenom-form').addEventListener('change', calculateAndRender);
 
     $('create-order-btn').addEventListener('click', () => {
+        const form = $('antivenom-form');
+        if (form.reportValidity && !form.reportValidity()) return;
+        if (getIndicationCount() === 0) {
+            alert('กรุณาเลือกเกณฑ์ข้อบ่งใช้อย่างน้อย 1 ข้อก่อนสร้างใบสั่งยา');
+            return;
+        }
         window.print();
     });
 
@@ -776,6 +789,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     $('clear-btn').addEventListener('click', () => {
         $('antivenom-form').reset();
+        $('horse-allergy-detail').style.display = 'none';
+        const hint = $('ind-hint-box');
+        if (hint) {
+            hint.style.display = 'none';
+            hint.textContent = '';
+        }
         updateSnakeCategoryUI();
         calculateAndRender();
     });

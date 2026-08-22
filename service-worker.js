@@ -64,7 +64,8 @@ const ASSETS = [
   './docs/Toxico/Standing order for Antivenom update.pdf',
   './docs/order Sedation-Fen-dormicum/fen.pdf',
   'https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap',
-  'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700&display=swap'
+  'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700&display=swap',
+  'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap'
 ];
 
 /**
