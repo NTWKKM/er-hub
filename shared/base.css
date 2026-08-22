@@ -2,22 +2,25 @@
 
 /* ===== Design System & Variables ===== */
 :root {
-    --bg-screen: #f0f2f5;
-    --bg-card: #ffffff;
-    --text-primary: #333333;
-    --border-neutral: #dee2e6;
-    --highlight-yellow: #ffeaa7;
-    --highlight-red-bg: #fff5f5;
-
-    /* Braun Analogue Material Palette & Tokens */
+    /* Braun Analogue Material Palette & Universal Tokens */
     --paper: #ebe7df;
     --ink: #1a1a1a;
     --graphite: #4a4a4a;
+    --muted: #737373;
     --rule: #d8d4c8;
+    --rule-light: #e8e5dc;
+    --rule-strong: #1a1a1a;
     --signal-orange: #d84315;
     --braun-white: #F0EDE5;
 
-    /* Theme Accents */
+    --bg-screen: var(--paper);
+    --bg-card: #ffffff;
+    --text-primary: #1a1a1a;
+    --border-neutral: #d8d4c8;
+    --highlight-yellow: #ffeaa7;
+    --highlight-red-bg: #fff5f5;
+
+    /* Domain Theme Accents */
     --stroke-primary: #007bff;
     --stroke-hover: #0056b3;
     --stroke-bg-highlight: #e6f0ff;
@@ -32,6 +35,23 @@
     --neutral-primary: #7f8c8d;
     --neutral-hover: #626c6d;
 
+    /* Safety Tiers */
+    --safety-safe-bg: #f0fdf4;
+    --safety-safe-border: #86efac;
+    --safety-safe-text: #166534;
+
+    --safety-warn-bg: #fffbeb;
+    --safety-warn-border: #fde68a;
+    --safety-warn-text: #92400e;
+
+    --safety-danger-bg: #fef2f2;
+    --safety-danger-border: #fca5a5;
+    --safety-danger-text: #991b1b;
+
+    /* Typography & Fonts */
+    --font-ui: "Inter Tight", "Neue Haas Grotesk", "Sarabun", sans-serif;
+    --font-mono: "JetBrains Mono", "SF Mono", monospace;
+
     /* Body horizontal/vertical padding — .top-nav's breakout math (below)
        reads this var so the nav stays flush regardless of how a page
        overrides body padding (see index.html, which sets this to 0). */
@@ -40,7 +60,7 @@
 
 /* ===== Base Styles ===== */
 body {
-    font-family: 'Sarabun', sans-serif;
+    font-family: var(--font-ui);
     background-color: var(--bg-screen);
     color: var(--text-primary);
     display: flex;
@@ -50,6 +70,8 @@ body {
     margin: 0;
     width: 100%;
     box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .container {
@@ -57,7 +79,8 @@ body {
     max-width: 1100px;
     background: var(--bg-card);
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border: 1px solid var(--rule);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
 }
 
 .form-container {

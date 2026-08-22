@@ -23,9 +23,9 @@
         }
 
         body.theme-neutral {
-            background-color: #f1f5f9;
+            background-color: var(--paper);
             color: var(--text-main);
-            font-family: 'Sarabun', sans-serif;
+            font-family: var(--font-ui), 'Sarabun', sans-serif;
             padding: var(--page-pad, 20px);
             margin: 0;
             display: flex;
@@ -40,8 +40,9 @@
             max-width: 1180px;
             margin: 0 auto;
             background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
             padding: 20px 24px;
             box-sizing: border-box;
         }
