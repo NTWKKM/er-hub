@@ -145,6 +145,21 @@ describe('NIHSS V2 Worksheet (tools/nihss-v2.html) DOM Execution', () => {
         assert.equal(doc.getElementById('total-2').textContent, '1');
     });
 
+    test('Unselected score options default to blank empty string instead of dashes', () => {
+        const win = loadHtmlDom('tools/nihss-v2.html');
+        const doc = win.document;
+
+        const selectCells = doc.querySelectorAll('select.cell');
+        assert.equal(selectCells.length, 45, 'Must have 45 score select cells (15 items x 3 timepoints)');
+
+        selectCells.forEach(select => {
+            const firstOpt = select.options[0];
+            assert.equal(firstOpt.value, '', 'First option value must be empty string');
+            assert.equal(firstOpt.textContent, '', 'First option text must be completely blank');
+            assert.equal(select.value, '', 'Initial select value must be empty string');
+        });
+    });
+
     test('printBlank() temporarily clears all selections and restores them after print', () => {
         const win = loadHtmlDom('tools/nihss-v2.html');
         const doc = win.document;

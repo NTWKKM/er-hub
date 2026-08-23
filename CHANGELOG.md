@@ -1,3 +1,13 @@
+## [2.11.2] — 2026-08-23
+
+### NIHSS V2 Blank Cell Placeholder & Service Worker Update
+- **NIHSS V2 Worksheet (`tools/nihss-v2.html`):**
+  - Updated unselected score placeholder in all 45 select dropdowns from `--` to an empty string (`<option value=""></option>`), ensuring clean blank table cells when no score is selected or when printing blank worksheets.
+- **Automated Test Coverage (`tests/v2-worksheets.test.js`):**
+  - Added assertion verifying all 45 score select elements default to blank empty string options (345/345 tests green).
+- **PWA Cache (`service-worker.js`):**
+  - Bumped offline cache version to `er-hub-v71` (`23/08/2569`).
+
 ## [2.11.1] — 2026-08-23
 
 ### Clinical Text Audit & Typo Corrections
