@@ -2,6 +2,7 @@ const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const vm = require('node:vm');
 
 const SW_PATH = path.join(__dirname, '..', 'service-worker.js');
 const ROOT_DIR = path.join(__dirname, '..');
@@ -59,5 +60,31 @@ describe('PWA Cache Assets Validation', () => {
             `Some files in the PWA cache manifest do not exist on disk:\n` +
             missingFiles.map(f => `- ${f.asset} (resolved to: ${f.absolutePath})`).join('\n')
         );
+    });
+
+    test('service-worker.js ASSETS array contains resolved Google Fonts subresources', () => {
+        const swContent = fs.readFileSync(SW_PATH, 'utf8');
+
+        // Extract ASSETS array literal using VM
+        const match = swContent.match(/const\s+ASSETS\s*=\s*(\[[\s\S]*?\]);/);
+        assert.ok(match, 'ASSETS array declaration found in service-worker.js');
+
+        const context = {};
+        vm.createContext(context);
+        const assets = vm.runInContext(match[1], context);
+
+        assert.ok(Array.isArray(assets), 'ASSETS should evaluate to an array');
+
+        const gstaticUrls = assets.filter(url => typeof url === 'string' && url.startsWith('https://fonts.gstatic.com/'));
+        assert.ok(gstaticUrls.length >= 29, `Expected >= 29 font files in ASSETS, found ${gstaticUrls.length}`);
+
+        // Verify that Inter Tight, Sarabun, and JetBrains Mono fonts are present in the manifest
+        const hasInterTight = gstaticUrls.some(u => u.includes('/intertight/'));
+        const hasSarabun = gstaticUrls.some(u => u.includes('/sarabun/'));
+        const hasJetBrains = gstaticUrls.some(u => u.includes('/jetbrainsmono/'));
+
+        assert.ok(hasInterTight, 'ASSETS manifest must contain Inter Tight font files');
+        assert.ok(hasSarabun, 'ASSETS manifest must contain Sarabun font files');
+        assert.ok(hasJetBrains, 'ASSETS manifest must contain JetBrains Mono font files');
     });
 });

@@ -53,8 +53,11 @@ describe('Portal Index 3D Flip Cards (index.html)', () => {
         const frontRows = doc.querySelectorAll('.flip-card-front');
         assert.equal(frontRows.length, 4);
         frontRows.forEach((row, idx) => {
-            assert.equal(row.getAttribute('href'), expectedV1[idx]);
-            assert.equal(row.getAttribute('tabindex'), null); // Default focusable
+            assert.equal(row.getAttribute('aria-hidden'), 'false');
+            const link = row.querySelector('.order-link-cover');
+            assert.ok(link, 'Front face must have order-link-cover');
+            assert.equal(link.getAttribute('href'), expectedV1[idx]);
+            assert.equal(link.getAttribute('tabindex'), null); // Default focusable
         });
 
         // Verify back links are V2 and initially inert
@@ -67,36 +70,49 @@ describe('Portal Index 3D Flip Cards (index.html)', () => {
         const backRows = doc.querySelectorAll('.flip-card-back');
         assert.equal(backRows.length, 4);
         backRows.forEach((row, idx) => {
-            assert.equal(row.getAttribute('href'), expectedV2[idx]);
-            assert.equal(row.getAttribute('tabindex'), '-1'); // Ignored by tab when unflipped
+            assert.equal(row.getAttribute('aria-hidden'), 'true');
+            const link = row.querySelector('.order-link-cover');
+            assert.ok(link, 'Back face must have order-link-cover');
+            assert.equal(link.getAttribute('href'), expectedV2[idx]);
+            assert.equal(link.getAttribute('tabindex'), '-1'); // Ignored by tab when unflipped
         });
     });
 
-    test('Clicking flip button toggles is-flipped class and swaps tabindex', () => {
+    test('Clicking flip button toggles is-flipped class, swaps aria-hidden, aria-pressed, and tabindex', () => {
         const win = loadIndexDom();
         const doc = win.document;
         const rtpaCard = doc.querySelector('.flip-card-container');
         const inner = rtpaCard.querySelector('.flip-card-inner');
         const frontRow = rtpaCard.querySelector('.flip-card-front');
         const backRow = rtpaCard.querySelector('.flip-card-back');
+        const frontLink = frontRow.querySelector('.order-link-cover');
+        const backLink = backRow.querySelector('.order-link-cover');
         const frontBtn = frontRow.querySelector('.version-flip-btn');
         const backBtn = backRow.querySelector('.version-flip-btn');
 
         // Click front flip button -> flip to V2
         frontBtn.click();
         assert.equal(inner.classList.contains('is-flipped'), true, 'Card should have is-flipped class');
-        assert.equal(frontRow.getAttribute('tabindex'), '-1', 'Front row should be tabindex -1');
-        assert.equal(backRow.getAttribute('tabindex'), '0', 'Back row should be tabindex 0');
+        assert.equal(frontRow.getAttribute('aria-hidden'), 'true');
+        assert.equal(backRow.getAttribute('aria-hidden'), 'false');
+        assert.equal(frontLink.getAttribute('tabindex'), '-1');
+        assert.equal(backLink.getAttribute('tabindex'), '0');
         assert.equal(frontBtn.getAttribute('tabindex'), '-1');
+        assert.equal(frontBtn.getAttribute('aria-pressed'), 'true');
         assert.equal(backBtn.getAttribute('tabindex'), '0');
+        assert.equal(backBtn.getAttribute('aria-pressed'), 'true');
 
         // Click back flip button -> flip back to V1
         backBtn.click();
         assert.equal(inner.classList.contains('is-flipped'), false, 'Card should not have is-flipped class');
-        assert.equal(frontRow.getAttribute('tabindex'), '0', 'Front row should be tabindex 0');
-        assert.equal(backRow.getAttribute('tabindex'), '-1', 'Back row should be tabindex -1');
+        assert.equal(frontRow.getAttribute('aria-hidden'), 'false');
+        assert.equal(backRow.getAttribute('aria-hidden'), 'true');
+        assert.equal(frontLink.getAttribute('tabindex'), '0');
+        assert.equal(backLink.getAttribute('tabindex'), '-1');
         assert.equal(frontBtn.getAttribute('tabindex'), '0');
+        assert.equal(frontBtn.getAttribute('aria-pressed'), 'false');
         assert.equal(backBtn.getAttribute('tabindex'), '-1');
+        assert.equal(backBtn.getAttribute('aria-pressed'), 'false');
     });
 
     test('All non-flippable items retain their active and prototype statuses', () => {

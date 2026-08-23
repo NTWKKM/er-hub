@@ -140,5 +140,5 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   2. Enforced that all flippable cards initialize in **V1 (Classic)** state on page load and refresh by default.
   3. Provided a tactile Braun version switch button (`.version-flip-btn`) on each card face that triggers a 520ms 3D flip animation (`rotateY(180deg)`) while preserving direct navigation on clicking the card body.
   4. Maintained full accessibility via dynamic `tabindex` and `aria-label` updates, with instant non-animated switching under `prefers-reduced-motion: reduce`.
-  5. Updated `service-worker.js` offline cache version to `er-hub-v69`.
+  5. Updated `service-worker.js` offline cache version to `er-hub-v70`.
 

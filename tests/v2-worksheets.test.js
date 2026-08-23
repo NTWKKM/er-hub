@@ -2,7 +2,6 @@ const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const vm = require('node:vm');
 const { JSDOM } = require('jsdom');
 
 function loadHtmlDom(relPath) {
@@ -79,6 +78,7 @@ describe('NSTEMI V2 Worksheet (orders/nstemi-v2.html) DOM Execution', () => {
         assert.equal(doc.getElementById('screen-grace').textContent, '128');
         assert.equal(doc.getElementById('p-grace').textContent, '128');
         assert.equal(doc.getElementById('p-killip').textContent, 'Class II');
+        assert.equal(doc.getElementById('grace-val-killip').textContent, 'Class II');
         assert.equal(doc.getElementById('screen-risk-label').textContent, 'Low-to-Intermediate Risk');
         assert.equal(doc.getElementById('grace-row-total').style.display, '');
     });
@@ -174,33 +174,5 @@ describe('NIHSS V2 Worksheet (tools/nihss-v2.html) DOM Execution', () => {
         win.dispatchEvent(new win.Event('beforeprint'));
 
         assert.equal(cell2.value, '2');
-    });
-});
-
-describe('Service Worker ASSETS Manifest Validation', () => {
-    test('Parses ASSETS array and validates precached Google Fonts subresources', () => {
-        const swContent = fs.readFileSync(path.join(__dirname, '..', 'service-worker.js'), 'utf8');
-
-        // Extract ASSETS array literal using VM
-        const match = swContent.match(/const\s+ASSETS\s*=\s*(\[[\s\S]*?\]);/);
-        assert.ok(match, 'ASSETS array declaration found in service-worker.js');
-
-        const context = {};
-        vm.createContext(context);
-        const assets = vm.runInContext(match[1], context);
-
-        assert.ok(Array.isArray(assets), 'ASSETS should evaluate to an array');
-
-        const gstaticUrls = assets.filter(url => typeof url === 'string' && url.startsWith('https://fonts.gstatic.com/'));
-        assert.ok(gstaticUrls.length >= 29, `Expected >= 29 font files in ASSETS, found ${gstaticUrls.length}`);
-
-        // Verify that Inter Tight, Sarabun, and JetBrains Mono fonts are present in the manifest
-        const hasInterTight = gstaticUrls.some(u => u.includes('/intertight/'));
-        const hasSarabun = gstaticUrls.some(u => u.includes('/sarabun/'));
-        const hasJetBrains = gstaticUrls.some(u => u.includes('/jetbrainsmono/'));
-
-        assert.ok(hasInterTight, 'ASSETS manifest must contain Inter Tight font files');
-        assert.ok(hasSarabun, 'ASSETS manifest must contain Sarabun font files');
-        assert.ok(hasJetBrains, 'ASSETS manifest must contain JetBrains Mono font files');
     });
 });

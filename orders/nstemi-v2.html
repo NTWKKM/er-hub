@@ -1262,7 +1262,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setRow('hr', $('hr').value || '--', bd.hrP);
         setRow('sbp', $('sbp').value || '--', bd.sbpP);
         setRow('cr', $('creatinine').value || '--', bd.crP);
-        setRow('killip', `Class ${document.querySelector('input[name="killip"]:checked')?.value || '1'}`, bd.kilP);
+        const killipVal = document.querySelector('input[name="killip"]:checked')?.value || '1';
+        setRow('killip', `Class ${({'1':'I','2':'II','3':'III','4':'IV'})[killipVal] || 'I'}`, bd.kilP);
         setRow('arrest', $('cardiac-arrest').checked ? 'Yes' : 'No', bd.arrP);
         setRow('st', $('st-deviation').checked ? 'Yes' : 'No', bd.stP);
         setRow('markers', $('elevated-markers').checked ? 'Yes' : 'No', bd.mkP);

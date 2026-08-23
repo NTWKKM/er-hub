@@ -355,10 +355,10 @@
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             box-sizing: border-box;
+            position: relative;
         }
 
         .flip-card-front {
-            position: relative;
             z-index: 2;
             transform: rotateY(0deg);
         }
@@ -380,6 +380,21 @@
         .flip-card-inner.is-flipped .flip-card-back {
             pointer-events: auto;
             z-index: 2;
+        }
+
+        .order-link-cover {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            border-radius: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            outline: none;
+        }
+
+        .order-link-cover:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: -2px;
         }
 
         /* Version Badge & Tactile Switch Button */
@@ -414,6 +429,8 @@
         }
 
         .version-flip-btn {
+            position: relative;
+            z-index: 2;
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -578,70 +595,74 @@
             <li class="order-item-wrap flip-card-container">
                 <div class="flip-card-inner">
                     <!-- Front: V1 (Default) -->
-                    <a href="orders/rtpa.html" class="order-row flip-card-front">
+                    <div class="order-row flip-card-front" aria-hidden="false">
+                        <a href="orders/rtpa.html" class="order-link-cover" aria-label="rt-PA Stroke FAST TRACK V1 (Active)"></a>
                         <span class="order-num">01</span>
                         <div class="order-main-info">
                             <span class="order-category">Neurology</span>
                             <span class="order-title">rt-PA Stroke FAST TRACK <span class="ver-badge">V1</span></span>
                         </div>
-                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V2" title="สลับเป็น V2 (Click to flip)">
+                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V2" aria-pressed="false" title="สลับเป็น V2 (Click to flip)">
                             <span class="flip-icon">↺</span>
                             <span class="flip-text">V2</span>
                         </button>
                         <span class="order-status">ACTIVE</span>
                         <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
                         <span class="order-arrow">→</span>
-                    </a>
+                    </div>
                     <!-- Back: V2 -->
-                    <a href="orders/rtpa-v2.html" class="order-row flip-card-back" tabindex="-1">
+                    <div class="order-row flip-card-back" aria-hidden="true">
+                        <a href="orders/rtpa-v2.html" class="order-link-cover" tabindex="-1" aria-label="rt-PA Stroke FAST TRACK V2 (Active)"></a>
                         <span class="order-num">01</span>
                         <div class="order-main-info">
                             <span class="order-category">Neurology</span>
                             <span class="order-title">rt-PA Stroke FAST TRACK <span class="ver-badge v2-badge">V2</span></span>
                         </div>
-                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V1" title="สลับเป็น V1 (Click to flip)" tabindex="-1">
+                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V1" aria-pressed="true" title="สลับเป็น V1 (Click to flip)" tabindex="-1">
                             <span class="flip-icon">↺</span>
                             <span class="flip-text">V1</span>
                         </button>
                         <span class="order-status">ACTIVE</span>
                         <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
                         <span class="order-arrow">→</span>
-                    </a>
+                    </div>
                 </div>
             </li>
             <!-- Cardiac NSTEMI (Flippable V1 / V2) -->
             <li class="order-item-wrap flip-card-container">
                 <div class="flip-card-inner">
                     <!-- Front: V1 (Default) -->
-                    <a href="orders/nstemi.html" class="order-row flip-card-front">
+                    <div class="order-row flip-card-front" aria-hidden="false">
+                        <a href="orders/nstemi.html" class="order-link-cover" aria-label="NSTEMI Standing Order V1 (Active)"></a>
                         <span class="order-num">02</span>
                         <div class="order-main-info">
                             <span class="order-category">Cardiac</span>
                             <span class="order-title">NSTEMI Standing Order <span class="ver-badge">V1</span></span>
                         </div>
-                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V2" title="สลับเป็น V2 (Click to flip)">
+                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V2" aria-pressed="false" title="สลับเป็น V2 (Click to flip)">
                             <span class="flip-icon">↺</span>
                             <span class="flip-text">V2</span>
                         </button>
                         <span class="order-status">ACTIVE</span>
                         <span class="signal-dot" role="img" aria-label=""></span>
                         <span class="order-arrow">→</span>
-                    </a>
+                    </div>
                     <!-- Back: V2 -->
-                    <a href="orders/nstemi-v2.html" class="order-row flip-card-back" tabindex="-1">
+                    <div class="order-row flip-card-back" aria-hidden="true">
+                        <a href="orders/nstemi-v2.html" class="order-link-cover" tabindex="-1" aria-label="NSTEMI Standing Order V2 (Active)"></a>
                         <span class="order-num">02</span>
                         <div class="order-main-info">
                             <span class="order-category">Cardiac</span>
                             <span class="order-title">NSTEMI Standing Order <span class="ver-badge v2-badge">V2</span></span>
                         </div>
-                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V1" title="สลับเป็น V1 (Click to flip)" tabindex="-1">
+                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V1" aria-pressed="true" title="สลับเป็น V1 (Click to flip)" tabindex="-1">
                             <span class="flip-icon">↺</span>
                             <span class="flip-text">V1</span>
                         </button>
                         <span class="order-status">ACTIVE</span>
                         <span class="signal-dot" role="img" aria-label=""></span>
                         <span class="order-arrow">→</span>
-                    </a>
+                    </div>
                 </div>
             </li>
             <!-- Drip Calculator -->
@@ -661,35 +682,37 @@
             <li class="order-item-wrap flip-card-container">
                 <div class="flip-card-inner">
                     <!-- Front: V1 (Default) -->
-                    <a href="tools/nihss.html" class="order-row flip-card-front">
+                    <div class="order-row flip-card-front" aria-hidden="false">
+                        <a href="tools/nihss.html" class="order-link-cover" aria-label="NIHSS Score Sheet V1 (Active)"></a>
                         <span class="order-num">T2</span>
                         <div class="order-main-info">
                             <span class="order-category">Neurology</span>
                             <span class="order-title">NIHSS Score Sheet <span class="ver-badge">V1</span></span>
                         </div>
-                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V2" title="สลับเป็น V2 (Click to flip)">
+                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V2" aria-pressed="false" title="สลับเป็น V2 (Click to flip)">
                             <span class="flip-icon">↺</span>
                             <span class="flip-text">V2</span>
                         </button>
                         <span class="order-status">ACTIVE</span>
                         <span class="signal-dot" role="img" aria-label=""></span>
                         <span class="order-arrow">→</span>
-                    </a>
+                    </div>
                     <!-- Back: V2 -->
-                    <a href="tools/nihss-v2.html" class="order-row flip-card-back" tabindex="-1">
+                    <div class="order-row flip-card-back" aria-hidden="true">
+                        <a href="tools/nihss-v2.html" class="order-link-cover" tabindex="-1" aria-label="NIHSS Score Sheet V2 (Active)"></a>
                         <span class="order-num">T2</span>
                         <div class="order-main-info">
                             <span class="order-category">Neurology</span>
                             <span class="order-title">NIHSS Score Sheet <span class="ver-badge v2-badge">V2</span></span>
                         </div>
-                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V1" title="สลับเป็น V1 (Click to flip)" tabindex="-1">
+                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V1" aria-pressed="true" title="สลับเป็น V1 (Click to flip)" tabindex="-1">
                             <span class="flip-icon">↺</span>
                             <span class="flip-text">V1</span>
                         </button>
                         <span class="order-status">ACTIVE</span>
                         <span class="signal-dot" role="img" aria-label=""></span>
                         <span class="order-arrow">→</span>
-                    </a>
+                    </div>
                 </div>
             </li>
             <!-- Urgent Clinic Home Medication -->
@@ -785,35 +808,37 @@
                 <li class="order-item-wrap flip-card-container">
                     <div class="flip-card-inner">
                         <!-- Front: V1 (Default) -->
-                        <a href="orders/antivenom.html" class="order-row flip-card-front">
+                        <div class="order-row flip-card-front" aria-hidden="false">
+                            <a href="orders/antivenom.html" class="order-link-cover" aria-label="Antivenom Standing Order V1 (Prototype)"></a>
                             <span class="order-num">06</span>
                             <div class="order-main-info">
                                 <span class="order-category">Toxicology</span>
                                 <span class="order-title">Antivenom Standing Order <span class="ver-badge">V1</span></span>
                             </div>
-                            <button type="button" class="version-flip-btn" aria-label="สลับเป็น V2" title="สลับเป็น V2 (Click to flip)">
+                            <button type="button" class="version-flip-btn" aria-label="สลับเป็น V2" aria-pressed="false" title="สลับเป็น V2 (Click to flip)">
                                 <span class="flip-icon">↺</span>
                                 <span class="flip-text">V2</span>
                             </button>
                             <span class="order-status">PROTOTYPE</span>
                             <span class="signal-dot" role="img" aria-label=""></span>
                             <span class="order-arrow">→</span>
-                        </a>
+                        </div>
                         <!-- Back: V2 -->
-                        <a href="orders/antivenom-v2.html" class="order-row flip-card-back" tabindex="-1">
+                        <div class="order-row flip-card-back" aria-hidden="true">
+                            <a href="orders/antivenom-v2.html" class="order-link-cover" tabindex="-1" aria-label="Antivenom Standing Order V2 (Prototype)"></a>
                             <span class="order-num">06</span>
                             <div class="order-main-info">
                                 <span class="order-category">Toxicology</span>
                                 <span class="order-title">Antivenom Standing Order <span class="ver-badge v2-badge">V2</span></span>
                             </div>
-                            <button type="button" class="version-flip-btn" aria-label="สลับเป็น V1" title="สลับเป็น V1 (Click to flip)" tabindex="-1">
+                            <button type="button" class="version-flip-btn" aria-label="สลับเป็น V1" aria-pressed="true" title="สลับเป็น V1 (Click to flip)" tabindex="-1">
                                 <span class="flip-icon">↺</span>
                                 <span class="flip-text">V1</span>
                             </button>
                             <span class="order-status">PROTOTYPE</span>
                             <span class="signal-dot" role="img" aria-label=""></span>
                             <span class="order-arrow">→</span>
-                        </a>
+                        </div>
                     </div>
                 </li>
                 <!-- Procedural Sedation -->
@@ -1073,10 +1098,10 @@ if ('serviceWorker' in navigator) {
   // Version 3D Flip Card Logic
   document.querySelectorAll('.flip-card-container').forEach(function(cardContainer) {
     const inner = cardContainer.querySelector('.flip-card-inner');
-    const frontRow = cardContainer.querySelector('.flip-card-front');
-    const backRow = cardContainer.querySelector('.flip-card-back');
+    const frontFace = cardContainer.querySelector('.flip-card-front');
+    const backFace = cardContainer.querySelector('.flip-card-back');
     const flipBtns = cardContainer.querySelectorAll('.version-flip-btn');
-    if (!inner || !frontRow || !backRow) return;
+    if (!inner || !frontFace || !backFace) return;
 
     flipBtns.forEach(function(btn) {
       btn.addEventListener('click', function(e) {
@@ -1084,23 +1109,37 @@ if ('serviceWorker' in navigator) {
         e.stopPropagation();
 
         const isFlipped = inner.classList.toggle('is-flipped');
-        const frontBtn = frontRow.querySelector('.version-flip-btn');
-        const backBtn = backRow.querySelector('.version-flip-btn');
+        const frontBtn = frontFace.querySelector('.version-flip-btn');
+        const backBtn = backFace.querySelector('.version-flip-btn');
+        const frontLink = frontFace.querySelector('.order-link-cover') || frontFace;
+        const backLink = backFace.querySelector('.order-link-cover') || backFace;
 
         if (isFlipped) {
-          frontRow.setAttribute('tabindex', '-1');
-          backRow.setAttribute('tabindex', '0');
-          if (frontBtn) frontBtn.setAttribute('tabindex', '-1');
+          frontFace.setAttribute('aria-hidden', 'true');
+          backFace.setAttribute('aria-hidden', 'false');
+          frontLink.setAttribute('tabindex', '-1');
+          backLink.setAttribute('tabindex', '0');
+          if (frontBtn) {
+            frontBtn.setAttribute('tabindex', '-1');
+            frontBtn.setAttribute('aria-pressed', 'true');
+          }
           if (backBtn) {
             backBtn.setAttribute('tabindex', '0');
+            backBtn.setAttribute('aria-pressed', 'true');
             backBtn.focus();
           }
         } else {
-          frontRow.setAttribute('tabindex', '0');
-          backRow.setAttribute('tabindex', '-1');
-          if (backBtn) backBtn.setAttribute('tabindex', '-1');
+          frontFace.setAttribute('aria-hidden', 'false');
+          backFace.setAttribute('aria-hidden', 'true');
+          frontLink.setAttribute('tabindex', '0');
+          backLink.setAttribute('tabindex', '-1');
+          if (backBtn) {
+            backBtn.setAttribute('tabindex', '-1');
+            backBtn.setAttribute('aria-pressed', 'false');
+          }
           if (frontBtn) {
             frontBtn.setAttribute('tabindex', '0');
+            frontBtn.setAttribute('aria-pressed', 'false');
             frontBtn.focus();
           }
         }

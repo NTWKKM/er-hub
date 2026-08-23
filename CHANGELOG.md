@@ -5,12 +5,15 @@
   - **Consolidated Dual-Version Cards:** Merged duplicate V1 and V2 rows for rt-PA (`01`), NSTEMI (`02`), NIHSS (`T2`), and Antivenom (`06`) into unified interactive 3D flip cards (`.flip-card-container`).
   - **Default V1 State:** All flippable cards initialize in **V1 (Classic)** state on page load and refresh by default.
   - **Tactile Braun Version Switch:** Added tactile `.version-flip-btn` (`↺ V2` / `↺ V1`) providing a 520ms `rotateY(180deg)` flip animation (`cubic-bezier(0.2, 0.8, 0.2, 1)`) on click without following the card link. Clicking the card body navigates directly to the active version.
-  - **Full Accessibility:** Synchronized dynamic `tabindex` and `aria-label` across front and back faces with focus shifting, along with instant non-animated switching under `@media (prefers-reduced-motion: reduce)`.
+  - **Full Accessibility & Semantic HTML:** Eliminated nested interactive elements using `.order-link-cover` overlays, synchronized dynamic `aria-hidden` (`false` front / `true` back) and `aria-pressed` states across faces, and ensured focus shifting with instant non-animated switching under `@media (prefers-reduced-motion: reduce)`.
   - **Safe 3D Tilt:** Scoped mouse tilt effect to standalone cards to prevent transform conflicts with the flip animation.
-- **Automated Test Coverage (`tests/index-flip-cards.test.js`):**
-  - Added new comprehensive test suite validating 4 flip card containers, default V1 state, front/back URL correctness, tabindex management, and button interaction (344 tests passing across 63 suites, 100% green).
+- **NSTEMI V2 Worksheet (`orders/nstemi-v2.html`):**
+  - **Score Breakdown Roman Numerals:** Standardized Killip Class in GRACE breakdown table to display Roman numerals (`Class I`–`Class IV`) matching the print order sheet.
+- **Automated Test Coverage (`tests/`):**
+  - Added `tests/index-flip-cards.test.js` validating 4 flip card containers, default V1 state, front/back URL correctness, `aria-hidden`, `aria-pressed`, and keyboard accessibility.
+  - Consolidated Service Worker Google Fonts precache validation into `tests/pwa-assets.test.js`, keeping `tests/v2-worksheets.test.js` strictly focused on clinical worksheet DOM behavior (344 tests passing across 62 suites, 100% green).
 - **PWA Cache (`service-worker.js`):**
-  - Bumped offline cache version to `er-hub-v69` (`23/08/2569`).
+  - Bumped offline cache version to `er-hub-v70` (`23/08/2569`).
 
 ## [2.10.0] — 2026-08-21
 
