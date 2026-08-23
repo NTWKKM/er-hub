@@ -107,72 +107,65 @@ describe('NSTEMI V2 Worksheet (orders/nstemi-v2.html) DOM Execution', () => {
 });
 
 describe('NIHSS V2 Worksheet (tools/nihss-v2.html) DOM Execution', () => {
-    test('inputmode="numeric" is set strictly on score inputs and not on examiner signature fields', () => {
+    test('Score cells are select dropdowns and examiner signature fields are text inputs', () => {
         const win = loadHtmlDom('tools/nihss-v2.html');
         const doc = win.document;
 
-        const scoreCell = doc.querySelector('input[data-key="1a-1"]');
+        const scoreCell = doc.querySelector('.cell[data-key="1a-1"]');
         const sigCell = doc.querySelector('input[data-key="sig-1"]');
 
-        assert.equal(scoreCell.getAttribute('inputmode'), 'numeric');
-        assert.equal(sigCell.getAttribute('inputmode'), null);
+        assert.equal(scoreCell.tagName, 'SELECT');
+        assert.equal(sigCell.tagName, 'INPUT');
+        assert.equal(sigCell.type, 'text');
     });
 
-    test('Score normalization runs on blur and enforces item boundaries', () => {
+    test('Selecting scores updates total sum in real time across columns', () => {
         const win = loadHtmlDom('tools/nihss-v2.html');
         const doc = win.document;
 
-        const cell1a = doc.querySelector('input[data-key="1a-1"]');
-        const cell5a = doc.querySelector('input[data-key="5a-1"]');
+        const cell1a = doc.querySelector('.cell[data-key="1a-1"]');
+        const cell5a = doc.querySelector('.cell[data-key="5a-1"]');
+        const cell6a = doc.querySelector('.cell[data-key="6a-1"]');
 
-        // Item 1a max is 3 -> 99 should cap to 3
-        cell1a.value = '99';
-        cell1a.dispatchEvent(new win.Event('blur'));
-        assert.equal(cell1a.value, '3');
+        cell1a.value = '2';
+        cell1a.dispatchEvent(new win.Event('change'));
 
-        // Non-numeric input -> cleared
-        cell1a.value = '1.5';
-        cell1a.dispatchEvent(new win.Event('blur'));
-        assert.equal(cell1a.value, '');
+        cell5a.value = '3';
+        cell5a.dispatchEvent(new win.Event('change'));
 
-        // Item 5a supports 'UN' -> 'un' becomes 'UN'
-        cell5a.value = 'un';
-        cell5a.dispatchEvent(new win.Event('blur'));
-        assert.equal(cell5a.value, 'UN');
+        cell6a.value = 'UN';
+        cell6a.dispatchEvent(new win.Event('change'));
 
-        // Item 1a does not support UN -> 'un' becomes ''
-        cell1a.value = 'un';
-        cell1a.dispatchEvent(new win.Event('blur'));
-        assert.equal(cell1a.value, '');
+        assert.equal(doc.getElementById('total-1').textContent, '5');
+
+        // Column 2
+        const cell1a_col2 = doc.querySelector('.cell[data-key="1a-2"]');
+        cell1a_col2.value = '1';
+        cell1a_col2.dispatchEvent(new win.Event('change'));
+        assert.equal(doc.getElementById('total-2').textContent, '1');
     });
 
-    test('printWithData() and beforeprint normalize all score cells before printing', () => {
+    test('printBlank() temporarily clears all selections and restores them after print', () => {
         const win = loadHtmlDom('tools/nihss-v2.html');
         const doc = win.document;
 
-        // Mock window.print
         let printCalled = false;
         win.print = () => { printCalled = true; };
 
-        const cell1a = doc.querySelector('input[data-key="1a-1"]');
-        const cell5a = doc.querySelector('input[data-key="5a-1"]');
+        const cell1a = doc.querySelector('.cell[data-key="1a-1"]');
+        const cell5a = doc.querySelector('.cell[data-key="5a-1"]');
 
-        cell1a.value = '10'; // Out of range (max 3)
-        cell5a.value = '20'; // Out of range (max 4)
+        cell1a.value = '3';
+        cell5a.value = '4';
+        cell1a.dispatchEvent(new win.Event('change'));
 
-        // Trigger printWithData without manual blur
-        win.printWithData();
+        assert.equal(doc.getElementById('total-1').textContent, '7');
 
+        win.printBlank();
+
+        assert.equal(printCalled, true);
         assert.equal(cell1a.value, '3');
         assert.equal(cell5a.value, '4');
         assert.equal(doc.getElementById('total-1').textContent, '7');
-        assert.equal(printCalled, true);
-
-        // Test beforeprint event handler
-        const cell2 = doc.querySelector('input[data-key="2-1"]');
-        cell2.value = '50'; // Out of range (max 2)
-        win.dispatchEvent(new win.Event('beforeprint'));
-
-        assert.equal(cell2.value, '2');
     });
 });

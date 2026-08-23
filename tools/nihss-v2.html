@@ -86,8 +86,8 @@
       color: var(--ink);
     }
 
-    .col-cat { width: 26%; }
-    .col-score { width: 44%; }
+    .col-cat { width: 28%; }
+    .col-score { width: 42%; }
     .col-chk { width: 10%; text-align: center; }
 
     .cat-th {
@@ -96,36 +96,42 @@
     }
 
     .cat-en {
-      font-size: 11.5px;
+      font-size: 10.5px;
       font-weight: 400;
+      line-height: 1.25;
       color: var(--graphite);
     }
 
     .score-list div {
       margin: 2px 0;
-      font-size: 12.5px;
+      font-size: 12px;
+      line-height: 1.3;
       color: #333;
     }
 
-    input.cell {
+    select.cell, input.cell {
       width: 100%;
-      border: 1px solid transparent;
+      border: 1px solid var(--rule);
       border-radius: 4px;
       background: #faf8f5;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
       font-family: inherit;
+      color: var(--ink);
       text-align: center;
-      padding: 4px 2px;
+      text-align-last: center;
+      padding: 5px 2px;
+      cursor: pointer;
+      box-sizing: border-box;
       transition: all 150ms ease;
     }
 
-    input.cell:hover {
+    select.cell:hover, input.cell:hover {
       border-color: #cbd5e1;
       background: #fff;
     }
 
-    input.cell:focus {
+    select.cell:focus, input.cell:focus {
       outline: none;
       border-color: var(--cardiac-primary);
       background: #fff5f5;
@@ -261,7 +267,18 @@
       th, td { border: 0.75px solid #000 !important; padding: 2px 4px !important; }
       thead th { font-size: 8pt !important; background: #f0f0f0 !important; -webkit-print-color-adjust: exact !important; }
       .score-list div { font-size: 8pt !important; margin: 0 !important; line-height: 1.15 !important; }
-      input.cell { font-size: 8.5pt !important; background: transparent !important; border: none !important; }
+      select.cell {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        font-size: 8.5pt !important;
+        background: transparent !important;
+        border: none !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        text-align-last: center !important;
+      }
+      input.cell { font-size: 8.5pt !important; background: transparent !important; border: none !important; text-align: center !important; }
       tr.total td { font-size: 9.5pt !important; padding: 3px !important; border-top: 1.5px solid #000 !important; }
       .footer-note { font-size: 7.5pt !important; padding: 2px 4px !important; border-top: 0.75px solid #000 !important; }
     }
@@ -294,7 +311,7 @@
             <th class="col-cat">หัวข้อประเมิน</th>
             <th class="col-score">คะแนน / คำอธิบาย</th>
             <th class="col-chk">แรกรับ<br>(Admission)</th>
-            <th class="col-chk">หลังได้ rt-PA<br>(Post 2h)</th>
+            <th class="col-chk">หลังให้ยา 1 ชม.<br>(Post 1h)</th>
             <th class="col-chk">24 ชั่วโมง<br>(Post 24h)</th>
           </tr>
         </thead>
@@ -310,9 +327,33 @@
               <div>2 = ซึมมาก (Stuporous)</div>
               <div>3 = ไม่รู้สึกตัว (Coma)</div>
             </td>
-            <td><input class="cell" data-key="1a-1" aria-label="1a. Level of Consciousness - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="1a-2" aria-label="1a. Level of Consciousness - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="1a-3" aria-label="1a. Level of Consciousness - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="1a-1" aria-label="1a. Level of Consciousness - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: Alert (ตื่นดี)</option>
+                <option value="1">1: Drowsy (ง่วงซึม)</option>
+                <option value="2">2: Stupor (ซึมมาก)</option>
+                <option value="3">3: Coma (หมดสติ)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="1a-2" aria-label="1a. Level of Consciousness - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: Alert (ตื่นดี)</option>
+                <option value="1">1: Drowsy (ง่วงซึม)</option>
+                <option value="2">2: Stupor (ซึมมาก)</option>
+                <option value="3">3: Coma (หมดสติ)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="1a-3" aria-label="1a. Level of Consciousness - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: Alert (ตื่นดี)</option>
+                <option value="1">1: Drowsy (ง่วงซึม)</option>
+                <option value="2">2: Stupor (ซึมมาก)</option>
+                <option value="3">3: Coma (หมดสติ)</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -325,9 +366,30 @@
               <div>1 = ตอบถูกหนึ่งข้อ</div>
               <div>2 = ตอบผิดทั้งสองข้อ</div>
             </td>
-            <td><input class="cell" data-key="1b-1" aria-label="1b. LOC Questions - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="1b-2" aria-label="1b. LOC Questions - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="1b-3" aria-label="1b. LOC Questions - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="1b-1" aria-label="1b. LOC Questions - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ถูกทั้ง 2 ข้อ</option>
+                <option value="1">1: ถูก 1 ข้อ</option>
+                <option value="2">2: ผิดทั้ง 2 ข้อ</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="1b-2" aria-label="1b. LOC Questions - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ถูกทั้ง 2 ข้อ</option>
+                <option value="1">1: ถูก 1 ข้อ</option>
+                <option value="2">2: ผิดทั้ง 2 ข้อ</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="1b-3" aria-label="1b. LOC Questions - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ถูกทั้ง 2 ข้อ</option>
+                <option value="1">1: ถูก 1 ข้อ</option>
+                <option value="2">2: ผิดทั้ง 2 ข้อ</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -340,9 +402,30 @@
               <div>1 = ทำได้ถูกหนึ่งคำสั่ง</div>
               <div>2 = ทำไม่ได้ทั้งสองคำสั่ง</div>
             </td>
-            <td><input class="cell" data-key="1c-1" aria-label="1c. LOC Commands - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="1c-2" aria-label="1c. LOC Commands - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="1c-3" aria-label="1c. LOC Commands - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="1c-1" aria-label="1c. LOC Commands - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ถูกทั้ง 2 คำสั่ง</option>
+                <option value="1">1: ถูก 1 คำสั่ง</option>
+                <option value="2">2: ทำไม่ได้ทั้ง 2 ข้อ</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="1c-2" aria-label="1c. LOC Commands - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ถูกทั้ง 2 คำสั่ง</option>
+                <option value="1">1: ถูก 1 คำสั่ง</option>
+                <option value="2">2: ทำไม่ได้ทั้ง 2 ข้อ</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="1c-3" aria-label="1c. LOC Commands - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ถูกทั้ง 2 คำสั่ง</option>
+                <option value="1">1: ถูก 1 คำสั่ง</option>
+                <option value="2">2: ทำไม่ได้ทั้ง 2 ข้อ</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -355,9 +438,30 @@
               <div>1 = มองตามได้บางส่วน (Partial gaze palsy)</div>
               <div>2 = ลูกตามองค้างข้างเดียว (Forced deviation)</div>
             </td>
-            <td><input class="cell" data-key="2-1" aria-label="2. Best Gaze - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="2-2" aria-label="2. Best Gaze - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="2-3" aria-label="2. Best Gaze - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="2-1" aria-label="2. Best Gaze - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (Normal)</option>
+                <option value="1">1: บางส่วน (Partial)</option>
+                <option value="2">2: ตาเบือนค้าง (Forced)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="2-2" aria-label="2. Best Gaze - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (Normal)</option>
+                <option value="1">1: บางส่วน (Partial)</option>
+                <option value="2">2: ตาเบือนค้าง (Forced)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="2-3" aria-label="2. Best Gaze - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (Normal)</option>
+                <option value="1">1: บางส่วน (Partial)</option>
+                <option value="2">2: ตาเบือนค้าง (Forced)</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -371,9 +475,33 @@
               <div>2 = ลานสายตาบกพร่องครึ่งซีก (Complete hemianopia)</div>
               <div>3 = มองไม่เห็นสองข้าง/ตาบอด (Bilateral hemianopia/Blind)</div>
             </td>
-            <td><input class="cell" data-key="3-1" aria-label="3. Visual Fields - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="3-2" aria-label="3. Visual Fields - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="3-3" aria-label="3. Visual Fields - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="3-1" aria-label="3. Visual Fields - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (No loss)</option>
+                <option value="1">1: บางส่วน (Partial)</option>
+                <option value="2">2: ครึ่งซีก (Hemianopia)</option>
+                <option value="3">3: ตาบอด/สองข้าง (Blind)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="3-2" aria-label="3. Visual Fields - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (No loss)</option>
+                <option value="1">1: บางส่วน (Partial)</option>
+                <option value="2">2: ครึ่งซีก (Hemianopia)</option>
+                <option value="3">3: ตาบอด/สองข้าง (Blind)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="3-3" aria-label="3. Visual Fields - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (No loss)</option>
+                <option value="1">1: บางส่วน (Partial)</option>
+                <option value="2">2: ครึ่งซีก (Hemianopia)</option>
+                <option value="3">3: ตาบอด/สองข้าง (Blind)</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -387,9 +515,33 @@
               <div>2 = อัมพาตส่วนล่างของใบหน้าชัดเจน</div>
               <div>3 = อัมพาตทั้งหน้าส่วนบนและส่วนล่าง</div>
             </td>
-            <td><input class="cell" data-key="4-1" aria-label="4. Facial Palsy - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="4-2" aria-label="4. Facial Palsy - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="4-3" aria-label="4. Facial Palsy - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="4-1" aria-label="4. Facial Palsy - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (Normal)</option>
+                <option value="1">1: เล็กน้อย (Minor)</option>
+                <option value="2">2: อัมพาตส่วนล่าง (Partial)</option>
+                <option value="3">3: อัมพาตทั้งหน้า (Complete)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="4-2" aria-label="4. Facial Palsy - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (Normal)</option>
+                <option value="1">1: เล็กน้อย (Minor)</option>
+                <option value="2">2: อัมพาตส่วนล่าง (Partial)</option>
+                <option value="3">3: อัมพาตทั้งหน้า (Complete)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="4-3" aria-label="4. Facial Palsy - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (Normal)</option>
+                <option value="1">1: เล็กน้อย (Minor)</option>
+                <option value="2">2: อัมพาตส่วนล่าง (Partial)</option>
+                <option value="3">3: อัมพาตทั้งหน้า (Complete)</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -405,9 +557,39 @@
               <div>4 = ไม่มีการขยับเลย</div>
               <div>UN = ตัดแขน / มีข้อติดแข็ง (Untestable)</div>
             </td>
-            <td><input class="cell" data-key="5a-1" aria-label="5a. Left Arm Motor - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="5a-2" aria-label="5a. Left Arm Motor - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="5a-3" aria-label="5a. Left Arm Motor - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="5a-1" aria-label="5a. Left Arm Motor - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ไม่ตก (10s)</option>
+                <option value="1">1: ตกลง (&lt;10s)</option>
+                <option value="2">2: ต้านแรงได้บ้าง</option>
+                <option value="3">3: ไม่ต้านแรงโน้มถ่วง</option>
+                <option value="4">4: ไม่ขยับเลย</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="5a-2" aria-label="5a. Left Arm Motor - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ไม่ตก (10s)</option>
+                <option value="1">1: ตกลง (&lt;10s)</option>
+                <option value="2">2: ต้านแรงได้บ้าง</option>
+                <option value="3">3: ไม่ต้านแรงโน้มถ่วง</option>
+                <option value="4">4: ไม่ขยับเลย</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="5a-3" aria-label="5a. Left Arm Motor - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ไม่ตก (10s)</option>
+                <option value="1">1: ตกลง (&lt;10s)</option>
+                <option value="2">2: ต้านแรงได้บ้าง</option>
+                <option value="3">3: ไม่ต้านแรงโน้มถ่วง</option>
+                <option value="4">4: ไม่ขยับเลย</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -423,9 +605,39 @@
               <div>4 = ไม่มีการขยับเลย</div>
               <div>UN = ตัดแขน / มีข้อติดแข็ง (Untestable)</div>
             </td>
-            <td><input class="cell" data-key="5b-1" aria-label="5b. Right Arm Motor - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="5b-2" aria-label="5b. Right Arm Motor - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="5b-3" aria-label="5b. Right Arm Motor - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="5b-1" aria-label="5b. Right Arm Motor - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ไม่ตก (10s)</option>
+                <option value="1">1: ตกลง (&lt;10s)</option>
+                <option value="2">2: ต้านแรงได้บ้าง</option>
+                <option value="3">3: ไม่ต้านแรงโน้มถ่วง</option>
+                <option value="4">4: ไม่ขยับเลย</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="5b-2" aria-label="5b. Right Arm Motor - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ไม่ตก (10s)</option>
+                <option value="1">1: ตกลง (&lt;10s)</option>
+                <option value="2">2: ต้านแรงได้บ้าง</option>
+                <option value="3">3: ไม่ต้านแรงโน้มถ่วง</option>
+                <option value="4">4: ไม่ขยับเลย</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="5b-3" aria-label="5b. Right Arm Motor - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ไม่ตก (10s)</option>
+                <option value="1">1: ตกลง (&lt;10s)</option>
+                <option value="2">2: ต้านแรงได้บ้าง</option>
+                <option value="3">3: ไม่ต้านแรงโน้มถ่วง</option>
+                <option value="4">4: ไม่ขยับเลย</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -441,9 +653,39 @@
               <div>4 = ไม่มีการขยับเลย</div>
               <div>UN = ตัดขา / มีข้อติดแข็ง (Untestable)</div>
             </td>
-            <td><input class="cell" data-key="6a-1" aria-label="6a. Left Leg Motor - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="6a-2" aria-label="6a. Left Leg Motor - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="6a-3" aria-label="6a. Left Leg Motor - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="6a-1" aria-label="6a. Left Leg Motor - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ไม่ตก (5s)</option>
+                <option value="1">1: ตกลง (&lt;5s)</option>
+                <option value="2">2: ต้านแรงได้บ้าง</option>
+                <option value="3">3: ไม่ต้านแรงโน้มถ่วง</option>
+                <option value="4">4: ไม่ขยับเลย</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="6a-2" aria-label="6a. Left Leg Motor - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ไม่ตก (5s)</option>
+                <option value="1">1: ตกลง (&lt;5s)</option>
+                <option value="2">2: ต้านแรงได้บ้าง</option>
+                <option value="3">3: ไม่ต้านแรงโน้มถ่วง</option>
+                <option value="4">4: ไม่ขยับเลย</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="6a-3" aria-label="6a. Left Leg Motor - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ไม่ตก (5s)</option>
+                <option value="1">1: ตกลง (&lt;5s)</option>
+                <option value="2">2: ต้านแรงได้บ้าง</option>
+                <option value="3">3: ไม่ต้านแรงโน้มถ่วง</option>
+                <option value="4">4: ไม่ขยับเลย</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -459,9 +701,39 @@
               <div>4 = ไม่มีการขยับเลย</div>
               <div>UN = ตัดขา / มีข้อติดแข็ง (Untestable)</div>
             </td>
-            <td><input class="cell" data-key="6b-1" aria-label="6b. Right Leg Motor - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="6b-2" aria-label="6b. Right Leg Motor - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="6b-3" aria-label="6b. Right Leg Motor - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="6b-1" aria-label="6b. Right Leg Motor - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ไม่ตก (5s)</option>
+                <option value="1">1: ตกลง (&lt;5s)</option>
+                <option value="2">2: ต้านแรงได้บ้าง</option>
+                <option value="3">3: ไม่ต้านแรงโน้มถ่วง</option>
+                <option value="4">4: ไม่ขยับเลย</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="6b-2" aria-label="6b. Right Leg Motor - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ไม่ตก (5s)</option>
+                <option value="1">1: ตกลง (&lt;5s)</option>
+                <option value="2">2: ต้านแรงได้บ้าง</option>
+                <option value="3">3: ไม่ต้านแรงโน้มถ่วง</option>
+                <option value="4">4: ไม่ขยับเลย</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="6b-3" aria-label="6b. Right Leg Motor - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ไม่ตก (5s)</option>
+                <option value="1">1: ตกลง (&lt;5s)</option>
+                <option value="2">2: ต้านแรงได้บ้าง</option>
+                <option value="3">3: ไม่ต้านแรงโน้มถ่วง</option>
+                <option value="4">4: ไม่ขยับเลย</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -475,9 +747,33 @@
               <div>2 = มี ataxia 2 ข้างขึ้นไป</div>
               <div>UN = ตัดแขนขา / ข้อติดแข็ง (Untestable)</div>
             </td>
-            <td><input class="cell" data-key="7-1" aria-label="7. Limb Ataxia - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="7-2" aria-label="7. Limb Ataxia - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="7-3" aria-label="7. Limb Ataxia - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="7-1" aria-label="7. Limb Ataxia - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ไม่มี (No ataxia)</option>
+                <option value="1">1: มี 1 ข้าง (1 limb)</option>
+                <option value="2">2: มี 2 ข้างขึ้นไป</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="7-2" aria-label="7. Limb Ataxia - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ไม่มี (No ataxia)</option>
+                <option value="1">1: มี 1 ข้าง (1 limb)</option>
+                <option value="2">2: มี 2 ข้างขึ้นไป</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="7-3" aria-label="7. Limb Ataxia - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ไม่มี (No ataxia)</option>
+                <option value="1">1: มี 1 ข้าง (1 limb)</option>
+                <option value="2">2: มี 2 ข้างขึ้นไป</option>
+                <option value="UN">UN: ประเมินไม่ได้</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -490,9 +786,30 @@
               <div>1 = ความรู้สึกลดลงเล็กน้อยถึงปานกลาง</div>
               <div>2 = ชามากหรือไม่รู้สึกเลย</div>
             </td>
-            <td><input class="cell" data-key="8-1" aria-label="8. Sensory - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="8-2" aria-label="8. Sensory - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="8-3" aria-label="8. Sensory - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="8-1" aria-label="8. Sensory - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (Normal)</option>
+                <option value="1">1: ชาบางส่วน (Partial)</option>
+                <option value="2">2: ชามาก (Severe)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="8-2" aria-label="8. Sensory - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (Normal)</option>
+                <option value="1">1: ชาบางส่วน (Partial)</option>
+                <option value="2">2: ชามาก (Severe)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="8-3" aria-label="8. Sensory - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (Normal)</option>
+                <option value="1">1: ชาบางส่วน (Partial)</option>
+                <option value="2">2: ชามาก (Severe)</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -506,9 +823,33 @@
               <div>2 = บกพร่องรุนแรง พูดหรือเข้าใจได้น้อยมาก</div>
               <div>3 = ไม่พูดเลย / ไม่เข้าใจภาษาเลย (Global aphasia)</div>
             </td>
-            <td><input class="cell" data-key="9-1" aria-label="9. Best Language - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="9-2" aria-label="9. Best Language - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="9-3" aria-label="9. Best Language - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="9-1" aria-label="9. Best Language - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (Normal)</option>
+                <option value="1">1: บกพร่องเล็กน้อย-ปานกลาง</option>
+                <option value="2">2: บกพร่องรุนแรง (Severe)</option>
+                <option value="3">3: ไม่พูด/ไม่เข้าใจ (Mute)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="9-2" aria-label="9. Best Language - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (Normal)</option>
+                <option value="1">1: บกพร่องเล็กน้อย-ปานกลาง</option>
+                <option value="2">2: บกพร่องรุนแรง (Severe)</option>
+                <option value="3">3: ไม่พูด/ไม่เข้าใจ (Mute)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="9-3" aria-label="9. Best Language - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (Normal)</option>
+                <option value="1">1: บกพร่องเล็กน้อย-ปานกลาง</option>
+                <option value="2">2: บกพร่องรุนแรง (Severe)</option>
+                <option value="3">3: ไม่พูด/ไม่เข้าใจ (Mute)</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -522,9 +863,33 @@
               <div>2 = พูดไม่ชัดมากจนฟังไม่รู้เรื่อง</div>
               <div>UN = ใส่ท่อช่วยหายใจหรือมีสิ่งกีดขวางทางกายภาพ (Untestable)</div>
             </td>
-            <td><input class="cell" data-key="10-1" aria-label="10. Dysarthria - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="10-2" aria-label="10. Dysarthria - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="10-3" aria-label="10. Dysarthria - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="10-1" aria-label="10. Dysarthria - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ชัดเจนปกติ (Normal)</option>
+                <option value="1">1: ไม่ชัดเล็กน้อย-ปานกลาง</option>
+                <option value="2">2: ไม่ชัดมาก/ฟังไม่รู้เรื่อง</option>
+                <option value="UN">UN: ใส่ท่อช่วยหายใจ</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="10-2" aria-label="10. Dysarthria - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ชัดเจนปกติ (Normal)</option>
+                <option value="1">1: ไม่ชัดเล็กน้อย-ปานกลาง</option>
+                <option value="2">2: ไม่ชัดมาก/ฟังไม่รู้เรื่อง</option>
+                <option value="UN">UN: ใส่ท่อช่วยหายใจ</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="10-3" aria-label="10. Dysarthria - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ชัดเจนปกติ (Normal)</option>
+                <option value="1">1: ไม่ชัดเล็กน้อย-ปานกลาง</option>
+                <option value="2">2: ไม่ชัดมาก/ฟังไม่รู้เรื่อง</option>
+                <option value="UN">UN: ใส่ท่อช่วยหายใจ</option>
+              </select>
+            </td>
           </tr>
 
           <tr>
@@ -537,9 +902,30 @@
               <div>1 = ละเลยบางส่วน (Partial neglect)</div>
               <div>2 = ละเลยสมบูรณ์ (Complete neglect)</div>
             </td>
-            <td><input class="cell" data-key="11-1" aria-label="11. Extinction / Inattention - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="11-2" aria-label="11. Extinction / Inattention - หลังได้ rt-PA (Post 2h)"></td>
-            <td><input class="cell" data-key="11-3" aria-label="11. Extinction / Inattention - 24 ชั่วโมง (Post 24h)"></td>
+            <td>
+              <select class="cell" data-key="11-1" aria-label="11. Extinction / Inattention - แรกรับ (Admission)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (No neglect)</option>
+                <option value="1">1: ละเลย 1 มิติ (Partial)</option>
+                <option value="2">2: ละเลยสมบูรณ์ (Complete)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="11-2" aria-label="11. Extinction / Inattention - หลังได้ rt-PA (Post 1h)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (No neglect)</option>
+                <option value="1">1: ละเลย 1 มิติ (Partial)</option>
+                <option value="2">2: ละเลยสมบูรณ์ (Complete)</option>
+              </select>
+            </td>
+            <td>
+              <select class="cell" data-key="11-3" aria-label="11. Extinction / Inattention - 24 ชั่วโมง (Post 24h)">
+                <option value="">--</option>
+                <option value="0">0: ปกติ (No neglect)</option>
+                <option value="1">1: ละเลย 1 มิติ (Partial)</option>
+                <option value="2">2: ละเลยสมบูรณ์ (Complete)</option>
+              </select>
+            </td>
           </tr>
 
           <tr class="total">
@@ -558,7 +944,7 @@
           <tr class="sig-row">
             <td colspan="2"></td>
             <td><input class="cell" data-key="sig-1" placeholder="ลงชื่อ" aria-label="ผู้ตรวจ (Examiner) - แรกรับ (Admission)"></td>
-            <td><input class="cell" data-key="sig-2" placeholder="ลงชื่อ" aria-label="ผู้ตรวจ (Examiner) - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="sig-2" placeholder="ลงชื่อ" aria-label="ผู้ตรวจ (Examiner) - หลังได้ rt-PA (Post 1h)"></td>
             <td><input class="cell" data-key="sig-3" placeholder="ลงชื่อ" aria-label="ผู้ตรวจ (Examiner) - 24 ชั่วโมง (Post 24h)"></td>
           </tr>
         </tbody>
@@ -575,14 +961,13 @@
       "5a": 4, "5b": 4, "6a": 4, "6b": 4, "7": 2, "8": 2,
       "9": 3, "10": 2, "11": 2
     };
-    const unItems = new Set(["5a", "5b", "6a", "6b", "7", "10"]);
 
     function recalc() {
       for (let col = 1; col <= 3; col++) {
         let sum = 0;
         let any = false;
         rowKeys.forEach(k => {
-          const el = document.querySelector(`input[data-key="${k}-${col}"]`);
+          const el = document.querySelector(`.cell[data-key="${k}-${col}"]`);
           if (el) {
             const v = el.value.trim();
             if (/^\d+$/.test(v)) {
@@ -604,80 +989,36 @@
       }
     }
 
-    function normalizeCell(inp) {
-      const key = inp.dataset.key;
-      if (!key || key.startsWith('sig')) return;
-      const itemKey = key.split('-')[0];
-      const max = itemMax[itemKey];
-      const v = inp.value.trim();
-      if (v === '') return;
-      if (/^(un|x)$/i.test(v)) {
-        if (unItems.has(itemKey)) {
-          inp.value = 'UN';
-        } else {
-          inp.value = '';
-        }
-        return;
-      }
-      if (!/^\d+$/.test(v)) {
-        inp.value = '';
-        return;
-      }
-      const n = parseInt(v, 10);
-      if (isNaN(n)) {
-        inp.value = '';
-      } else if (max !== undefined && n > max) {
-        inp.value = String(max);
-      } else if (n < 0) {
-        inp.value = '0';
-      } else {
-        inp.value = String(n);
-      }
-    }
-
-    function normalizeAllCells() {
-      document.querySelectorAll('input.cell').forEach(inp => normalizeCell(inp));
-      recalc();
-    }
-
-    document.querySelectorAll('input.cell').forEach(inp => {
-      if (!inp.dataset.key?.startsWith('sig')) {
-        inp.setAttribute('inputmode', 'numeric');
-      }
-      inp.addEventListener('input', recalc);
-      inp.addEventListener('blur', function() {
-        normalizeCell(this);
-        recalc();
-      });
+    document.querySelectorAll('.cell').forEach(el => {
+      el.addEventListener('change', recalc);
+      el.addEventListener('input', recalc);
     });
 
     function clearAll() {
       if (confirm('ต้องการล้างข้อมูลทั้งหมดในแบบฟอร์มนี้หรือไม่?')) {
-        document.querySelectorAll('input.cell').forEach(inp => inp.value = '');
+        document.querySelectorAll('.cell').forEach(el => el.value = '');
         recalc();
       }
     }
 
     function printWithData() {
-      normalizeAllCells();
+      recalc();
       window.print();
     }
 
     function printBlank() {
       const saved = {};
-      document.querySelectorAll('input.cell').forEach(inp => {
-        saved[inp.dataset.key] = inp.value;
-        inp.value = '';
+      document.querySelectorAll('.cell').forEach(el => {
+        saved[el.dataset.key] = el.value;
+        el.value = '';
       });
       recalc();
       window.print();
-      document.querySelectorAll('input.cell').forEach(inp => {
-        if (saved[inp.dataset.key] !== undefined) inp.value = saved[inp.dataset.key];
+      document.querySelectorAll('.cell').forEach(el => {
+        if (saved[el.dataset.key] !== undefined) el.value = saved[el.dataset.key];
       });
       recalc();
     }
-
-    window.addEventListener('beforeprint', normalizeAllCells);
 
     if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
       printBlank();
