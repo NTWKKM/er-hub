@@ -215,6 +215,15 @@
             font-weight: bold;
         }
 
+        .order-grid-5col {
+            display: grid;
+            grid-template-columns: 1.7fr 0.65fr 3.5fr 0.65fr 3.5fr;
+            border: 1px solid #000;
+            min-width: 900px;
+            background: #fff;
+            color: #000;
+        }
+
         @media (max-width: 900px) {
             .dose-summary { flex-direction: column; }
         }
@@ -223,8 +232,8 @@
             .dose-summary { display: none !important; }
             html, body { height: 297mm !important; box-sizing: border-box; }
             #print-area { height: 285mm; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; }
-            .order-grid-5col { flex-grow: 1; height: calc(100% - 30mm); grid-template-rows: auto 1fr; font-size: 9.5pt !important; }
-            .grid-cell { display: flex; flex-direction: column; height: 100%; box-sizing: border-box; font-size: 9pt !important; line-height: 1.45 !important; }
+            .order-grid-5col { flex-grow: 1; height: calc(100% - 30mm); grid-template-columns: 1.7fr 0.65fr 3.5fr 0.65fr 3.5fr !important; grid-template-rows: auto 1fr; font-size: 9.5pt !important; min-width: auto !important; width: 100% !important; }
+            .grid-cell { display: flex; flex-direction: column; height: 100%; box-sizing: border-box; font-size: 9pt !important; line-height: 1.45 !important; overflow-wrap: break-word; }
             .order-list li { margin-bottom: 4px; }
             .antivenom-opt { font-size: 8pt; padding: 3px 6px; }
             .antivenom-opt.chosen { border: 2px solid #000 !important; background: #f4f4f4 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -439,22 +448,23 @@
                 <!-- Col 1: Progress Note -->
                 <div class="grid-cell">
                     <strong>Venomous Snake Bite</strong><br>
-                    <span style="white-space:nowrap;">HN: <span class="highlight" id="p-hn">--</span></span><br>
-                    <span style="white-space:nowrap;">น้ำหนัก (kg): <strong class="highlight" id="p-weight">--</strong></span><br>
-                    <span style="white-space:nowrap;">อายุ (ปี): <span id="p-age">--</span></span><br>
-                    <span style="white-space:nowrap;">เพศ: <span id="p-sex">--</span></span>
+                    <div>HN: <span class="highlight" id="p-hn">--</span></div>
+                    <div>น้ำหนัก (kg): <strong class="highlight" id="p-weight">--</strong></div>
+                    <div>อายุ (ปี): <span id="p-age">--</span></div>
+                    <div>เพศ: <span id="p-sex">--</span></div>
 
                     <div class="divider"></div>
-                    <strong>ประวัติ:</strong><br>
-                    <span style="white-space:nowrap;">วัคซีนบาดทะยัก: <span id="p-tetanus">--</span></span><br>
-                    <span style="white-space:nowrap;">แพ้เซรุ่มม้า: <span id="p-horse-allergy">No</span></span><br>
-                    <span style="white-space:nowrap;">แพ้ Penicillin: <span id="p-penicillin-allergy">No</span></span>
+                    <strong>ประวัติ:</strong>
+                    <div style="margin-top:2px;">วัคซีนบาดทะยัก:</div>
+                    <div id="p-tetanus" style="padding-left:4px; line-height:1.25; margin-bottom:3px;">--</div>
+                    <div>แพ้เซรุ่มม้า: <span id="p-horse-allergy">No</span></div>
+                    <div>แพ้ Penicillin: <span id="p-penicillin-allergy">No</span></div>
 
                     <div class="divider"></div>
                     <strong>ผลการจำแนกงู:</strong><br>
-                    <span style="white-space:nowrap;">งูที่ระบุ: <strong id="p-snake-name">--</strong></span><br>
-                    <span style="white-space:nowrap;">ชนิดของพิษ: <span id="p-venom-type">--</span></span><br>
-                    <span style="font-size:10px;line-height:1.7;" id="p-indications"></span>
+                    <div>งูที่ระบุ: <strong id="p-snake-name">--</strong></div>
+                    <div>ชนิดของพิษ: <span id="p-venom-type">--</span></div>
+                    <div style="font-size:8.5pt;line-height:1.35;margin-top:2px;" id="p-indications"></div>
 
                     <div class="order-blank-space"></div>
 
@@ -560,9 +570,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const TETANUS_TEXT = {
-        complete_5y:   'ครบ 3 เข็ม ภายใน 5 ปี (ไม่ต้องฉีดเพิ่ม)',
-        complete_gt5y: 'ครบ 3 เข็ม มากกว่า 5 ปี (พิจารณาฉีด Td กระตุ้น 1 เข็ม)',
-        incomplete:    'ไม่ได้รับ/ไม่ทราบ/ไม่ครบ 3 เข็ม (พิจารณาให้ Tetanus vaccine + Tetagam)',
+        complete_5y:   'ครบ 3 เข็ม ภายใน 5 ปี<br><span style="font-size:8pt;color:#444;">(ไม่ต้องฉีดเพิ่ม)</span>',
+        complete_gt5y: 'ครบ 3 เข็ม &gt; 5 ปี<br><span style="font-size:8pt;color:#444;">(พิจารณาฉีด Td 1 เข็ม)</span>',
+        incomplete:    'ไม่ได้รับ / ไม่ครบ 3 เข็ม<br><span style="font-size:8pt;color:#444;">(พิจารณา Td + Tetagam)</span>',
     };
 
     const TETANUS_ORDER = {
@@ -579,7 +589,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'p-weight', value: '........' },
         { id: 'p-age', value: '......' },
         { id: 'p-sex', html: '........' },
-        { id: 'p-tetanus', value: '....................' },
+        { id: 'p-tetanus', html: '....................' },
         { id: 'p-horse-allergy', html: '........' },
         { id: 'p-penicillin-allergy', html: '........' },
         { id: 'p-snake-name', value: '....................' },
@@ -716,7 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-weight').textContent = !isNaN(weight) ? weight.toFixed(1) : '--';
         $('p-age').textContent = !isNaN(age) ? age.toString() : '--';
         $('p-sex').textContent = sex === 'male' ? 'ชาย' : (sex === 'female' ? 'หญิง' : '--');
-        $('p-tetanus').textContent = TETANUS_TEXT[tetanusVal] || '--';
+        $('p-tetanus').innerHTML = TETANUS_TEXT[tetanusVal] || '--';
         $('p-horse-allergy').textContent = horseAllergy ? 'YES (Allergy)' : 'No';
         $('p-penicillin-allergy').textContent = pcnAllergy ? 'YES (Allergy)' : 'No';
 
