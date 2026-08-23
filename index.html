@@ -325,6 +325,156 @@
             .order-num {
                 width: 32px;
             }
+            .version-flip-btn {
+                margin-right: 6px;
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+        }
+
+        /* 3D Flip Card Component (Tactile Braun Dual-Version Switch) */
+        .flip-card-container {
+            perspective: 1200px;
+            position: relative;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            transform-style: preserve-3d;
+            transition: transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .flip-card-inner.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            width: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            box-sizing: border-box;
+        }
+
+        .flip-card-front {
+            position: relative;
+            z-index: 2;
+            transform: rotateY(0deg);
+        }
+
+        .flip-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            z-index: 1;
+            transform: rotateY(180deg);
+            pointer-events: none;
+        }
+
+        .flip-card-inner.is-flipped .flip-card-front {
+            pointer-events: none;
+        }
+
+        .flip-card-inner.is-flipped .flip-card-back {
+            pointer-events: auto;
+            z-index: 2;
+        }
+
+        /* Version Badge & Tactile Switch Button */
+        .ver-badge {
+            font-size: 11px;
+            font-family: monospace;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            padding: 1px 6px;
+            border-radius: 2px;
+            background-color: var(--rule);
+            color: var(--ink);
+            display: inline-block;
+            margin-left: 6px;
+            vertical-align: middle;
+            transition: background-color 120ms linear, color 120ms linear;
+        }
+
+        .ver-badge.v2-badge {
+            background-color: #2a5298;
+            color: #F0EDE5;
+        }
+
+        .order-row:hover .ver-badge {
+            background-color: rgba(240, 237, 229, 0.25);
+            color: #F0EDE5;
+        }
+
+        .order-row:hover .ver-badge.v2-badge {
+            background-color: var(--signal-orange);
+            color: #F0EDE5;
+        }
+
+        .version-flip-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background-color: #dfdbd1;
+            border: 1px solid var(--rule);
+            color: var(--ink);
+            font-family: var(--font-ui);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            padding: 3px 8px;
+            border-radius: 2px;
+            cursor: pointer;
+            margin-right: 12px;
+            flex-shrink: 0;
+            outline: none;
+            transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+            user-select: none;
+        }
+
+        .version-flip-btn:hover {
+            background-color: #ffffff;
+            border-color: var(--ink);
+            color: var(--ink);
+            transform: scale(1.06);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        }
+
+        .version-flip-btn:active {
+            transform: scale(0.95);
+        }
+
+        .version-flip-btn:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 1px;
+        }
+
+        .order-row:hover .version-flip-btn {
+            background-color: rgba(240, 237, 229, 0.2);
+            border-color: rgba(240, 237, 229, 0.4);
+            color: #F0EDE5;
+        }
+
+        .order-row:hover .version-flip-btn:hover {
+            background-color: #F0EDE5;
+            border-color: #F0EDE5;
+            color: #1e3c72;
+        }
+
+        .flip-icon {
+            font-size: 12px;
+            display: inline-block;
+            transition: transform 300ms ease;
+        }
+
+        .version-flip-btn:hover .flip-icon {
+            transform: rotate(180deg);
+        }
+
+        .flip-text {
+            font-variant-numeric: tabular-nums;
         }
 
         /* Collapsible Prototype Section (Tactile 3D Braun Design) */
@@ -410,6 +560,12 @@
                 opacity: 1 !important;
                 transform: none !important;
             }
+            .flip-card-inner {
+                transition: none !important;
+            }
+            .flip-icon {
+                transition: none !important;
+            }
         }
     </style>
 </head>
@@ -418,57 +574,75 @@
 <div class="portal-container">
     <div class="list-section">
         <ol class="order-list">
-            <!-- Neurology rt-PA V2 -->
-            <li class="order-item-wrap">
-                <a href="orders/rtpa-v2.html" class="order-row">
-                    <span class="order-num">01</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Neurology</span>
-                        <span class="order-title">rt-PA Stroke FAST TRACK (V2)</span>
-                    </div>
-                    <span class="order-status">ACTIVE</span>
-                    <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
-                    <span class="order-arrow">→</span>
-                </a>
+            <!-- Neurology rt-PA (Flippable V1 / V2) -->
+            <li class="order-item-wrap flip-card-container">
+                <div class="flip-card-inner">
+                    <!-- Front: V1 (Default) -->
+                    <a href="orders/rtpa.html" class="order-row flip-card-front">
+                        <span class="order-num">01</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Neurology</span>
+                            <span class="order-title">rt-PA Stroke FAST TRACK <span class="ver-badge">V1</span></span>
+                        </div>
+                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V2" title="สลับเป็น V2 (Click to flip)">
+                            <span class="flip-icon">↺</span>
+                            <span class="flip-text">V2</span>
+                        </button>
+                        <span class="order-status">ACTIVE</span>
+                        <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                    <!-- Back: V2 -->
+                    <a href="orders/rtpa-v2.html" class="order-row flip-card-back" tabindex="-1">
+                        <span class="order-num">01</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Neurology</span>
+                            <span class="order-title">rt-PA Stroke FAST TRACK <span class="ver-badge v2-badge">V2</span></span>
+                        </div>
+                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V1" title="สลับเป็น V1 (Click to flip)" tabindex="-1">
+                            <span class="flip-icon">↺</span>
+                            <span class="flip-text">V1</span>
+                        </button>
+                        <span class="order-status">ACTIVE</span>
+                        <span class="signal-dot time-critical" role="img" aria-label="Time-critical emergency"></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </div>
             </li>
-            <!-- Neurology rt-PA (Classic) -->
-            <li class="order-item-wrap">
-                <a href="orders/rtpa.html" class="order-row">
-                    <span class="order-num">01-O</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Neurology</span>
-                        <span class="order-title">rt-PA Stroke FAST TRACK (Classic)</span>
-                    </div>
-                    <span class="order-status">ACTIVE</span>
-                    <span class="signal-dot" role="img" aria-label=""></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- Cardiac NSTEMI V2 -->
-            <li class="order-item-wrap">
-                <a href="orders/nstemi-v2.html" class="order-row">
-                    <span class="order-num">02</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Cardiac</span>
-                        <span class="order-title">NSTEMI Standing Order (V2)</span>
-                    </div>
-                    <span class="order-status">ACTIVE</span>
-                    <span class="signal-dot" role="img" aria-label=""></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- Cardiac NSTEMI (Classic) -->
-            <li class="order-item-wrap">
-                <a href="orders/nstemi.html" class="order-row">
-                    <span class="order-num">02-O</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Cardiac</span>
-                        <span class="order-title">NSTEMI Standing Order (Classic)</span>
-                    </div>
-                    <span class="order-status">ACTIVE</span>
-                    <span class="signal-dot" role="img" aria-label=""></span>
-                    <span class="order-arrow">→</span>
-                </a>
+            <!-- Cardiac NSTEMI (Flippable V1 / V2) -->
+            <li class="order-item-wrap flip-card-container">
+                <div class="flip-card-inner">
+                    <!-- Front: V1 (Default) -->
+                    <a href="orders/nstemi.html" class="order-row flip-card-front">
+                        <span class="order-num">02</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Cardiac</span>
+                            <span class="order-title">NSTEMI Standing Order <span class="ver-badge">V1</span></span>
+                        </div>
+                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V2" title="สลับเป็น V2 (Click to flip)">
+                            <span class="flip-icon">↺</span>
+                            <span class="flip-text">V2</span>
+                        </button>
+                        <span class="order-status">ACTIVE</span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                    <!-- Back: V2 -->
+                    <a href="orders/nstemi-v2.html" class="order-row flip-card-back" tabindex="-1">
+                        <span class="order-num">02</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Cardiac</span>
+                            <span class="order-title">NSTEMI Standing Order <span class="ver-badge v2-badge">V2</span></span>
+                        </div>
+                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V1" title="สลับเป็น V1 (Click to flip)" tabindex="-1">
+                            <span class="flip-icon">↺</span>
+                            <span class="flip-text">V1</span>
+                        </button>
+                        <span class="order-status">ACTIVE</span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </div>
             </li>
             <!-- Drip Calculator -->
             <li class="order-item-wrap">
@@ -483,31 +657,40 @@
                     <span class="order-arrow">→</span>
                 </a>
             </li>
-            <!-- NIHSS Score V2 -->
-            <li class="order-item-wrap">
-                <a href="tools/nihss-v2.html" class="order-row">
-                    <span class="order-num">T2</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Neurology</span>
-                        <span class="order-title">NIHSS Score Sheet (V2)</span>
-                    </div>
-                    <span class="order-status">ACTIVE</span>
-                    <span class="signal-dot" role="img" aria-label=""></span>
-                    <span class="order-arrow">→</span>
-                </a>
-            </li>
-            <!-- NIHSS Score (Classic) -->
-            <li class="order-item-wrap">
-                <a href="tools/nihss.html" class="order-row">
-                    <span class="order-num">T2-O</span>
-                    <div class="order-main-info">
-                        <span class="order-category">Neurology</span>
-                        <span class="order-title">NIHSS Score Sheet (Classic)</span>
-                    </div>
-                    <span class="order-status">ACTIVE</span>
-                    <span class="signal-dot" role="img" aria-label=""></span>
-                    <span class="order-arrow">→</span>
-                </a>
+            <!-- NIHSS Score Sheet (Flippable V1 / V2) -->
+            <li class="order-item-wrap flip-card-container">
+                <div class="flip-card-inner">
+                    <!-- Front: V1 (Default) -->
+                    <a href="tools/nihss.html" class="order-row flip-card-front">
+                        <span class="order-num">T2</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Neurology</span>
+                            <span class="order-title">NIHSS Score Sheet <span class="ver-badge">V1</span></span>
+                        </div>
+                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V2" title="สลับเป็น V2 (Click to flip)">
+                            <span class="flip-icon">↺</span>
+                            <span class="flip-text">V2</span>
+                        </button>
+                        <span class="order-status">ACTIVE</span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                    <!-- Back: V2 -->
+                    <a href="tools/nihss-v2.html" class="order-row flip-card-back" tabindex="-1">
+                        <span class="order-num">T2</span>
+                        <div class="order-main-info">
+                            <span class="order-category">Neurology</span>
+                            <span class="order-title">NIHSS Score Sheet <span class="ver-badge v2-badge">V2</span></span>
+                        </div>
+                        <button type="button" class="version-flip-btn" aria-label="สลับเป็น V1" title="สลับเป็น V1 (Click to flip)" tabindex="-1">
+                            <span class="flip-icon">↺</span>
+                            <span class="flip-text">V1</span>
+                        </button>
+                        <span class="order-status">ACTIVE</span>
+                        <span class="signal-dot" role="img" aria-label=""></span>
+                        <span class="order-arrow">→</span>
+                    </a>
+                </div>
             </li>
             <!-- Urgent Clinic Home Medication -->
             <li class="order-item-wrap">
@@ -598,31 +781,40 @@
                         <span class="order-arrow">→</span>
                     </a>
                 </li>
-                <!-- Tox Antivenom V2 -->
-                <li class="order-item-wrap">
-                    <a href="orders/antivenom-v2.html" class="order-row">
-                        <span class="order-num">06</span>
-                        <div class="order-main-info">
-                            <span class="order-category">Toxicology</span>
-                            <span class="order-title">Antivenom Standing Order (V2)</span>
-                        </div>
-                        <span class="order-status">PROTOTYPE</span>
-                        <span class="signal-dot" role="img" aria-label=""></span>
-                        <span class="order-arrow">→</span>
-                    </a>
-                </li>
-                <!-- Tox Antivenom (Classic) -->
-                <li class="order-item-wrap">
-                    <a href="orders/antivenom.html" class="order-row">
-                        <span class="order-num">06-O</span>
-                        <div class="order-main-info">
-                            <span class="order-category">Toxicology</span>
-                            <span class="order-title">Antivenom Standing Order (Classic)</span>
-                        </div>
-                        <span class="order-status">PROTOTYPE</span>
-                        <span class="signal-dot" role="img" aria-label=""></span>
-                        <span class="order-arrow">→</span>
-                    </a>
+                <!-- Tox Antivenom (Flippable V1 / V2) -->
+                <li class="order-item-wrap flip-card-container">
+                    <div class="flip-card-inner">
+                        <!-- Front: V1 (Default) -->
+                        <a href="orders/antivenom.html" class="order-row flip-card-front">
+                            <span class="order-num">06</span>
+                            <div class="order-main-info">
+                                <span class="order-category">Toxicology</span>
+                                <span class="order-title">Antivenom Standing Order <span class="ver-badge">V1</span></span>
+                            </div>
+                            <button type="button" class="version-flip-btn" aria-label="สลับเป็น V2" title="สลับเป็น V2 (Click to flip)">
+                                <span class="flip-icon">↺</span>
+                                <span class="flip-text">V2</span>
+                            </button>
+                            <span class="order-status">PROTOTYPE</span>
+                            <span class="signal-dot" role="img" aria-label=""></span>
+                            <span class="order-arrow">→</span>
+                        </a>
+                        <!-- Back: V2 -->
+                        <a href="orders/antivenom-v2.html" class="order-row flip-card-back" tabindex="-1">
+                            <span class="order-num">06</span>
+                            <div class="order-main-info">
+                                <span class="order-category">Toxicology</span>
+                                <span class="order-title">Antivenom Standing Order <span class="ver-badge v2-badge">V2</span></span>
+                            </div>
+                            <button type="button" class="version-flip-btn" aria-label="สลับเป็น V1" title="สลับเป็น V1 (Click to flip)" tabindex="-1">
+                                <span class="flip-icon">↺</span>
+                                <span class="flip-text">V1</span>
+                            </button>
+                            <span class="order-status">PROTOTYPE</span>
+                            <span class="signal-dot" role="img" aria-label=""></span>
+                            <span class="order-arrow">→</span>
+                        </a>
+                    </div>
                 </li>
                 <!-- Procedural Sedation -->
                 <li class="order-item-wrap">
@@ -833,48 +1025,88 @@ if ('serviceWorker' in navigator) {
 
 <script>
 (function() {
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReducedMotion = (typeof window.matchMedia === 'function') 
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches 
+    : false;
   const MAX_TILT = 8;  // deg, at cursor fully to the edge
   const LIFT = 6;      // px translateZ at full tilt
 
   if (!prefersReducedMotion) {
-  document.querySelectorAll('.order-row').forEach(function(row) {
-    let ticking = false;
-    let lastEvent = null;
+    document.querySelectorAll('.order-item-wrap:not(.flip-card-container) .order-row').forEach(function(row) {
+      let ticking = false;
+      let lastEvent = null;
 
-    function applyTilt(e) {
-      const rect = row.getBoundingClientRect();
-      const px = ((e.clientX - rect.left) / rect.width) - 0.5;  // -0.5 .. 0.5
-      const py = ((e.clientY - rect.top) / rect.height) - 0.5;  // -0.5 .. 0.5
+      function applyTilt(e) {
+        const rect = row.getBoundingClientRect();
+        const px = ((e.clientX - rect.left) / rect.width) - 0.5;  // -0.5 .. 0.5
+        const py = ((e.clientY - rect.top) / rect.height) - 0.5;  // -0.5 .. 0.5
 
-      const rotateY = px * MAX_TILT * 2;   // cursor left/right -> tilt around vertical axis
-      const rotateX = -py * MAX_TILT * 2;  // cursor up/down -> tilt around horizontal axis
+        const rotateY = px * MAX_TILT * 2;   // cursor left/right -> tilt around vertical axis
+        const rotateX = -py * MAX_TILT * 2;  // cursor up/down -> tilt around horizontal axis
 
-      row.style.transform =
-        'perspective(600px) rotateX(' + rotateX.toFixed(2) + 'deg) rotateY(' + rotateY.toFixed(2) + 'deg) translateZ(' + LIFT + 'px)';
-    }
-
-    row.addEventListener('mouseenter', function() {
-      row.style.transitionDuration = '80ms';
-    });
-
-    row.addEventListener('mousemove', function(e) {
-      lastEvent = e;
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(function() {
-          if (lastEvent) applyTilt(lastEvent);
-          ticking = false;
-        });
+        row.style.transform =
+          'perspective(600px) rotateX(' + rotateX.toFixed(2) + 'deg) rotateY(' + rotateY.toFixed(2) + 'deg) translateZ(' + LIFT + 'px)';
       }
-    });
 
-    row.addEventListener('mouseleave', function() {
-      row.style.transitionDuration = '400ms';
-      row.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+      row.addEventListener('mouseenter', function() {
+        row.style.transitionDuration = '80ms';
+      });
+
+      row.addEventListener('mousemove', function(e) {
+        lastEvent = e;
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(function() {
+            if (lastEvent) applyTilt(lastEvent);
+            ticking = false;
+          });
+        }
+      });
+
+      row.addEventListener('mouseleave', function() {
+        row.style.transitionDuration = '400ms';
+        row.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+      });
+    });
+  }
+
+  // Version 3D Flip Card Logic
+  document.querySelectorAll('.flip-card-container').forEach(function(cardContainer) {
+    const inner = cardContainer.querySelector('.flip-card-inner');
+    const frontRow = cardContainer.querySelector('.flip-card-front');
+    const backRow = cardContainer.querySelector('.flip-card-back');
+    const flipBtns = cardContainer.querySelectorAll('.version-flip-btn');
+    if (!inner || !frontRow || !backRow) return;
+
+    flipBtns.forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const isFlipped = inner.classList.toggle('is-flipped');
+        const frontBtn = frontRow.querySelector('.version-flip-btn');
+        const backBtn = backRow.querySelector('.version-flip-btn');
+
+        if (isFlipped) {
+          frontRow.setAttribute('tabindex', '-1');
+          backRow.setAttribute('tabindex', '0');
+          if (frontBtn) frontBtn.setAttribute('tabindex', '-1');
+          if (backBtn) {
+            backBtn.setAttribute('tabindex', '0');
+            backBtn.focus();
+          }
+        } else {
+          frontRow.setAttribute('tabindex', '0');
+          backRow.setAttribute('tabindex', '-1');
+          if (backBtn) backBtn.setAttribute('tabindex', '-1');
+          if (frontBtn) {
+            frontBtn.setAttribute('tabindex', '0');
+            frontBtn.focus();
+          }
+        }
+      });
     });
   });
-  }
 
   // Prototype collapsible logic
   const toggle = document.getElementById('prototype-toggle');

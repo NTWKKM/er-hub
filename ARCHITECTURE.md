@@ -283,8 +283,9 @@ node --test tests/*.test.js
 - [`stroke-engine.test.js`](file:///Users/ntwkkm/er-hub/tests/stroke-engine.test.js): rt-PA (Alteplase) 0.9 & 0.6 mg/kg dosing, push vs drip breakdown, 90mg/50mg max caps, and remainder rounding.
 - [`tb-calculator.test.js`](file:///Users/ntwkkm/er-hub/tests/tb-calculator.test.js): Clinical execution tests via JSDOM for Thailand CPG 2018 & 2022 TB regimens: Adult 4-FDC weight bands, Pediatric dispersible FDCs, TPT 3HP, H-monoresistance 6(H)RZELfx, MDR Shorter Bdq Regimen (Table 6.3), and MDR Individualized Longer Regimen validator (Tables 6.4–6.6).
 
-### 2. System & Architectural Guards (5 Files)
+### 2. System & Architectural Guards (6 Files)
 - [`components.test.js`](file:///Users/ntwkkm/er-hub/tests/components.test.js): Thai Buddhist Era date formatting (`fmtDate`), 24h Thai time (`fmtTime`), standing order title parsing (`parseTitle`), dynamic navbar DOM injection (`injectNavBar`), version badge (`#nav-ver-display`, `#nav-ver-text`), and network status dot (`#online-status`).
+- [`index-flip-cards.test.js`](file:///Users/ntwkkm/er-hub/tests/index-flip-cards.test.js): Validates portal 3D flip card mechanics (`01`, `02`, `T2`, `06`), default V1 state on initial load, version swap button toggling, and tabindex accessibility.
 - [`id-integrity-guard.test.js`](file:///Users/ntwkkm/er-hub/tests/id-integrity-guard.test.js): AST/Regex scanner validating that every DOM ID referenced in JavaScript across all `orders/*.html` and `tools/*.html` exists in the markup.
 - [`pwa-assets.test.js`](file:///Users/ntwkkm/er-hub/tests/pwa-assets.test.js): Validates that every asset in `service-worker.js` `ASSETS` array exists on disk, ensuring offline installation never fails.
 - [`order-safety-guard.test.js`](file:///Users/ntwkkm/er-hub/tests/order-safety-guard.test.js): Ensures all hard-stop contraindication lock-out branches are followed by a `return;` statement.

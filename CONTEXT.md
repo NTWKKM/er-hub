@@ -131,3 +131,14 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   2. Preserved all classic original files (`rtpa.html`, `nstemi.html`, `antivenom.html`, `nihss.html`) completely untouched.
   3. Created standalone V2 worksheets (`rtpa-v2.html`, `nstemi-v2.html`, `antivenom-v2.html`, `nihss-v2.html`) equipped with responsive demographic strips, live HUDs, tactile selectors, and zero-drift A4 medical print grids.
   4. Updated `service-worker.js` cache manifest to `er-hub-v68` with complete Google Fonts stylesheet and subresource precaching to ensure 100% offline availability across all V2 assets.
+
+## ADR-28: Interactive 3D Flip Cards for Multi-Version Protocols and Tools
+
+- **Context**: The addition of separate V1 and V2 listings on `index.html` introduced visual clutter and duplicate numbers (01/01-O, 02/02-O, T2/T2-O, 06/06-O).
+- **Decision**:
+  1. Consolidated duplicate items into a single, interactive 3D flippable card component (`.flip-card-container`) for rt-PA (`01`), NSTEMI (`02`), NIHSS (`T2`), and Antivenom (`06`).
+  2. Enforced that all flippable cards initialize in **V1 (Classic)** state on page load and refresh by default.
+  3. Provided a tactile Braun version switch button (`.version-flip-btn`) on each card face that triggers a 520ms 3D flip animation (`rotateY(180deg)`) while preserving direct navigation on clicking the card body.
+  4. Maintained full accessibility via dynamic `tabindex` and `aria-label` updates, with instant non-animated switching under `prefers-reduced-motion: reduce`.
+  5. Updated `service-worker.js` offline cache version to `er-hub-v69`.
+
