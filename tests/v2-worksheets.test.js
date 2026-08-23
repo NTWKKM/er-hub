@@ -2,142 +2,205 @@ const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { CLINICAL_ENGINE } = require('../shared/clinical-engine.js');
+const vm = require('node:vm');
+const { JSDOM } = require('jsdom');
 
-describe('NSTEMI V2 Worksheet Logic & Clinical Safety', () => {
-    test('Script in orders/nstemi-v2.html contains no top-level duplicate blocks', () => {
-        const content = fs.readFileSync(path.join(__dirname, '..', 'orders', 'nstemi-v2.html'), 'utf8');
-        
-        // Assert no duplicate top-level _applyAcState outside function
-        const matches = content.match(/_applyAcState\('fonda'/g);
-        assert.equal(matches.length, 1, 'Expected exactly 1 call to _applyAcState("fonda") in nstemi-v2.html');
+function loadHtmlDom(relPath) {
+    const filePath = path.join(__dirname, '..', relPath);
+    let html = fs.readFileSync(filePath, 'utf8');
+    const dir = path.dirname(filePath);
+
+    // Inline local scripts for deterministic node:test execution
+    html = html.replace(/<script src="([^"]+)"><\/script>/g, (match, src) => {
+        if (src.startsWith('http')) return match;
+        const scriptPath = path.resolve(dir, src);
+        if (fs.existsSync(scriptPath)) {
+            return '<script>' + fs.readFileSync(scriptPath, 'utf8') + '</script>';
+        }
+        return match;
     });
 
-    test('GRACE calculation requires complete inputs (avoids null < threshold JS coercion bug)', () => {
-        // Simulating the gating rule
-        const checkComplete = (age, hr, sbp, cr) => {
-            const minAge = 18;
-            return !isNaN(age) && age >= minAge && !isNaN(hr) && hr > 0 && !isNaN(sbp) && sbp > 0 && !isNaN(cr) && cr > 0;
-        };
-
-        // Incomplete forms
-        assert.equal(checkComplete(NaN, 80, 120, 1.0), false);
-        assert.equal(checkComplete(65, NaN, 120, 1.0), false);
-        assert.equal(checkComplete(65, 80, NaN, 1.0), false);
-        assert.equal(checkComplete(65, 80, 120, NaN), false);
-        assert.equal(checkComplete(0, 80, 120, 1.0), false);
-        assert.equal(checkComplete(65, 0, 120, 1.0), false);
-        assert.equal(checkComplete(65, 80, 0, 1.0), false);
-        assert.equal(checkComplete(65, 80, 120, 0), false);
-
-        // Complete form
-        assert.equal(checkComplete(65, 80, 120, 1.0), true);
-
-        // Verify that complete form produces valid GRACE score
-        const res = CLINICAL_ENGINE.calcGRACE({
-            age: 65,
-            hr: 80,
-            sbp: 120,
-            cr: 1.0,
-            killip: '1',
-            cardArr: false,
-            stDev: false,
-            elevMk: false
-        });
-        assert.ok(res.score > 0, 'GRACE score should be positive for complete inputs');
-        assert.equal(res.score, 108); // 58 (age) + 9 (hr) + 34 (sbp) + 7 (cr)
+    const dom = new JSDOM(html, {
+        url: 'file://' + filePath,
+        runScripts: 'dangerously'
     });
 
-    test('Troponin percentage formatter produces correct mathematical signs', () => {
-        const pct = v => `${Number(v) >= 0 ? '+' : ''}${v}%`;
+    // Ensure DOMContentLoaded handlers run
+    dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+    return dom.window;
+}
 
-        assert.equal(pct('25.0'), '+25.0%');
-        assert.equal(pct('-20.0'), '-20.0%');
-        assert.equal(pct('0.0'), '+0.0%');
+describe('NSTEMI V2 Worksheet (orders/nstemi-v2.html) DOM Execution', () => {
+    test('Initializes with empty inputs displaying placeholder "--" without phantom GRACE score', () => {
+        const win = loadHtmlDom('orders/nstemi-v2.html');
+        const doc = win.document;
+
+        assert.equal(doc.getElementById('screen-grace').textContent, '--');
+        assert.equal(doc.getElementById('p-grace').textContent, '--');
+        assert.equal(doc.getElementById('screen-risk-label').textContent, '--');
+        assert.equal(doc.getElementById('screen-risk-badge').className, 'risk-badge');
+        assert.equal(doc.getElementById('grace-row-placeholder').style.display, '');
+        assert.equal(doc.getElementById('grace-row-total').style.display, 'none');
     });
 
-    test('Killip class formatting maps numeric values to Roman numerals', () => {
-        const formatKillip = k => `Class ${({'1':'I','2':'II','3':'III','4':'IV'})[k] || 'I'}`;
+    test('Incomplete form inputs do not trigger GRACE calculation or phantom points', () => {
+        const win = loadHtmlDom('orders/nstemi-v2.html');
+        const doc = win.document;
 
-        assert.equal(formatKillip('1'), 'Class I');
-        assert.equal(formatKillip('2'), 'Class II');
-        assert.equal(formatKillip('3'), 'Class III');
-        assert.equal(formatKillip('4'), 'Class IV');
-        assert.equal(formatKillip('unknown'), 'Class I');
+        // Fill age, hr, sbp but leave creatinine empty
+        doc.getElementById('age').value = '65';
+        doc.getElementById('hr').value = '80';
+        doc.getElementById('sbp').value = '120';
+        doc.getElementById('age').dispatchEvent(new win.Event('input', { bubbles: true }));
+
+        assert.equal(doc.getElementById('screen-grace').textContent, '--');
+        assert.equal(doc.getElementById('p-grace').textContent, '--');
+        assert.equal(doc.getElementById('screen-risk-label').textContent, '--');
+    });
+
+    test('Complete form calculates exact GRACE score and formats Killip as Roman numeral', () => {
+        const win = loadHtmlDom('orders/nstemi-v2.html');
+        const doc = win.document;
+
+        doc.getElementById('age').value = '65';
+        doc.getElementById('hr').value = '80';
+        doc.getElementById('sbp').value = '120';
+        doc.getElementById('creatinine').value = '1.0';
+
+        // Select Killip II
+        const killip2 = doc.querySelector('input[name="killip"][value="2"]');
+        if (killip2) {
+            killip2.checked = true;
+            killip2.dispatchEvent(new win.Event('change', { bubbles: true }));
+        }
+        doc.getElementById('nstemi-form').dispatchEvent(new win.Event('input', { bubbles: true }));
+
+        // Expected score: 58 (age 65) + 9 (hr 80) + 34 (sbp 120) + 7 (cr 1.0) + 20 (Killip II) = 128
+        assert.equal(doc.getElementById('screen-grace').textContent, '128');
+        assert.equal(doc.getElementById('p-grace').textContent, '128');
+        assert.equal(doc.getElementById('p-killip').textContent, 'Class II');
+        assert.equal(doc.getElementById('screen-risk-label').textContent, 'Low-to-Intermediate Risk');
+        assert.equal(doc.getElementById('grace-row-total').style.display, '');
+    });
+
+    test('Troponin delta percentage correctly formats positive and negative signs', () => {
+        const win = loadHtmlDom('orders/nstemi-v2.html');
+        const doc = win.document;
+
+        // Baseline H0 = 100
+        doc.getElementById('troponin-h0').value = '100';
+
+        // Rising delta H1 = 125 (+25.0%)
+        doc.getElementById('troponin-h1').value = '125';
+        doc.getElementById('nstemi-form').dispatchEvent(new win.Event('input', { bubbles: true }));
+        assert.ok(doc.getElementById('p-troponin-values').innerHTML.includes('H1: 125 → +25.0%'),
+            `Expected "+25.0%", got: ${doc.getElementById('p-troponin-values').innerHTML}`);
+
+        // Falling delta H3 = 80 (-20.0%)
+        doc.getElementById('troponin-h3').value = '80';
+        doc.getElementById('nstemi-form').dispatchEvent(new win.Event('input', { bubbles: true }));
+        assert.ok(doc.getElementById('p-troponin-values').innerHTML.includes('H3: 80 → -20.0%'),
+            `Expected "-20.0%", got: ${doc.getElementById('p-troponin-values').innerHTML}`);
+        assert.ok(!doc.getElementById('p-troponin-values').innerHTML.includes('+-20.0%'),
+            'Must not contain "+-20.0%" malformed sign');
     });
 });
 
-describe('NIHSS V2 Worksheet Score Normalization', () => {
-    const itemMax = {
-        "1a": 3, "1b": 2, "1c": 2, "2": 2, "3": 3, "4": 3,
-        "5a": 4, "5b": 4, "6a": 4, "6b": 4, "7": 2, "8": 2,
-        "9": 3, "10": 2, "11": 2
-    };
-    const unItems = new Set(["5a", "5b", "6a", "6b", "7", "10"]);
+describe('NIHSS V2 Worksheet (tools/nihss-v2.html) DOM Execution', () => {
+    test('inputmode="numeric" is set strictly on score inputs and not on examiner signature fields', () => {
+        const win = loadHtmlDom('tools/nihss-v2.html');
+        const doc = win.document;
 
-    function normalizeValue(itemKey, rawValue) {
-        const max = itemMax[itemKey];
-        const v = String(rawValue).trim();
-        if (v === '') return '';
-        if (/^(un|x)$/i.test(v)) {
-            return unItems.has(itemKey) ? 'UN' : '';
-        }
-        if (!/^\d+$/.test(v)) {
-            return '';
-        }
-        const n = parseInt(v, 10);
-        if (isNaN(n)) return '';
-        if (max !== undefined && n > max) return String(max);
-        if (n < 0) return '0';
-        return String(n);
-    }
+        const scoreCell = doc.querySelector('input[data-key="1a-1"]');
+        const sigCell = doc.querySelector('input[data-key="sig-1"]');
 
-    test('Caps scores exceeding item maximum', () => {
-        assert.equal(normalizeValue('1a', '99'), '3');
-        assert.equal(normalizeValue('5a', '10'), '4');
-        assert.equal(normalizeValue('2', '5'), '2');
+        assert.equal(scoreCell.getAttribute('inputmode'), 'numeric');
+        assert.equal(sigCell.getAttribute('inputmode'), null);
     });
 
-    test('Handles UN and X for eligible vs non-eligible items', () => {
-        assert.equal(normalizeValue('5a', 'un'), 'UN');
-        assert.equal(normalizeValue('5a', 'UN'), 'UN');
-        assert.equal(normalizeValue('5b', 'x'), 'UN');
-        assert.equal(normalizeValue('7', 'X'), 'UN');
-        assert.equal(normalizeValue('10', 'un'), 'UN');
+    test('Score normalization runs on blur and enforces item boundaries', () => {
+        const win = loadHtmlDom('tools/nihss-v2.html');
+        const doc = win.document;
 
-        // Non-UN eligible items
-        assert.equal(normalizeValue('1a', 'un'), '');
-        assert.equal(normalizeValue('1a', 'x'), '');
-        assert.equal(normalizeValue('2', 'un'), '');
+        const cell1a = doc.querySelector('input[data-key="1a-1"]');
+        const cell5a = doc.querySelector('input[data-key="5a-1"]');
+
+        // Item 1a max is 3 -> 99 should cap to 3
+        cell1a.value = '99';
+        cell1a.dispatchEvent(new win.Event('blur'));
+        assert.equal(cell1a.value, '3');
+
+        // Non-numeric input -> cleared
+        cell1a.value = '1.5';
+        cell1a.dispatchEvent(new win.Event('blur'));
+        assert.equal(cell1a.value, '');
+
+        // Item 5a supports 'UN' -> 'un' becomes 'UN'
+        cell5a.value = 'un';
+        cell5a.dispatchEvent(new win.Event('blur'));
+        assert.equal(cell5a.value, 'UN');
+
+        // Item 1a does not support UN -> 'un' becomes ''
+        cell1a.value = 'un';
+        cell1a.dispatchEvent(new win.Event('blur'));
+        assert.equal(cell1a.value, '');
     });
 
-    test('Filters malformed or floating point inputs', () => {
-        assert.equal(normalizeValue('1a', '1.5'), '');
-        assert.equal(normalizeValue('1a', 'abc'), '');
-        assert.equal(normalizeValue('1a', '3a'), '');
-    });
+    test('printWithData() and beforeprint normalize all score cells before printing', () => {
+        const win = loadHtmlDom('tools/nihss-v2.html');
+        const doc = win.document;
 
-    test('Preserves valid numeric scores', () => {
-        assert.equal(normalizeValue('1a', '0'), '0');
-        assert.equal(normalizeValue('1a', '2'), '2');
-        assert.equal(normalizeValue('5a', '4'), '4');
+        // Mock window.print
+        let printCalled = false;
+        win.print = () => { printCalled = true; };
+
+        const cell1a = doc.querySelector('input[data-key="1a-1"]');
+        const cell5a = doc.querySelector('input[data-key="5a-1"]');
+
+        cell1a.value = '10'; // Out of range (max 3)
+        cell5a.value = '20'; // Out of range (max 4)
+
+        // Trigger printWithData without manual blur
+        win.printWithData();
+
+        assert.equal(cell1a.value, '3');
+        assert.equal(cell5a.value, '4');
+        assert.equal(doc.getElementById('total-1').textContent, '7');
+        assert.equal(printCalled, true);
+
+        // Test beforeprint event handler
+        const cell2 = doc.querySelector('input[data-key="2-1"]');
+        cell2.value = '50'; // Out of range (max 2)
+        win.dispatchEvent(new win.Event('beforeprint'));
+
+        assert.equal(cell2.value, '2');
     });
 });
 
-describe('Service Worker Google Fonts Offline Precache', () => {
-    test('service-worker.js ASSETS array contains resolved fonts.gstatic.com resources', () => {
+describe('Service Worker ASSETS Manifest Validation', () => {
+    test('Parses ASSETS array and validates precached Google Fonts subresources', () => {
         const swContent = fs.readFileSync(path.join(__dirname, '..', 'service-worker.js'), 'utf8');
-        
-        const gstaticMatches = swContent.match(/https:\/\/fonts\.gstatic\.com\/[^\s'"]+/g) || [];
-        assert.ok(gstaticMatches.length > 20, `Expected >20 gstatic font files precached, found ${gstaticMatches.length}`);
-        
-        // Assert key families are present
-        const hasInterTight = gstaticMatches.some(u => u.includes('intertight'));
-        const hasSarabun = gstaticMatches.some(u => u.includes('sarabun'));
-        const hasJetBrains = gstaticMatches.some(u => u.includes('jetbrainsmono'));
 
-        assert.ok(hasInterTight, 'Precache must include Inter Tight font files');
-        assert.ok(hasSarabun, 'Precache must include Sarabun font files');
-        assert.ok(hasJetBrains, 'Precache must include JetBrains Mono font files');
+        // Extract ASSETS array literal using VM
+        const match = swContent.match(/const\s+ASSETS\s*=\s*(\[[\s\S]*?\]);/);
+        assert.ok(match, 'ASSETS array declaration found in service-worker.js');
+
+        const context = {};
+        vm.createContext(context);
+        const assets = vm.runInContext(match[1], context);
+
+        assert.ok(Array.isArray(assets), 'ASSETS should evaluate to an array');
+
+        const gstaticUrls = assets.filter(url => typeof url === 'string' && url.startsWith('https://fonts.gstatic.com/'));
+        assert.ok(gstaticUrls.length >= 29, `Expected >= 29 font files in ASSETS, found ${gstaticUrls.length}`);
+
+        // Verify that Inter Tight, Sarabun, and JetBrains Mono fonts are present in the manifest
+        const hasInterTight = gstaticUrls.some(u => u.includes('/intertight/'));
+        const hasSarabun = gstaticUrls.some(u => u.includes('/sarabun/'));
+        const hasJetBrains = gstaticUrls.some(u => u.includes('/jetbrainsmono/'));
+
+        assert.ok(hasInterTight, 'ASSETS manifest must contain Inter Tight font files');
+        assert.ok(hasSarabun, 'ASSETS manifest must contain Sarabun font files');
+        assert.ok(hasJetBrains, 'ASSETS manifest must contain JetBrains Mono font files');
     });
 });

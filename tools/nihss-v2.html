@@ -641,7 +641,9 @@
     }
 
     document.querySelectorAll('input.cell').forEach(inp => {
-      inp.setAttribute('inputmode', 'numeric');
+      if (!inp.dataset.key?.startsWith('sig')) {
+        inp.setAttribute('inputmode', 'numeric');
+      }
       inp.addEventListener('input', recalc);
       inp.addEventListener('blur', function() {
         normalizeCell(this);
