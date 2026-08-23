@@ -130,4 +130,4 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   1. Default all clinical calculators, scoring tools, and standing orders to the Braun Warm Paper palette (`#ebe7df` background, `#ffffff` card containers, `#1a1a1a` typography, `#d8d4c8` borders).
   2. Preserved all classic original files (`rtpa.html`, `nstemi.html`, `antivenom.html`, `nihss.html`) completely untouched.
   3. Created standalone V2 worksheets (`rtpa-v2.html`, `nstemi-v2.html`, `antivenom-v2.html`, `nihss-v2.html`) equipped with responsive demographic strips, live HUDs, tactile selectors, and zero-drift A4 medical print grids.
-  4. Updated `service-worker.js` cache manifest to `er-hub-v67` to ensure complete offline availability across all V2 assets.
+  4. Updated `service-worker.js` cache manifest to `er-hub-v68` with complete Google Fonts stylesheet and subresource precaching to ensure 100% offline availability across all V2 assets.

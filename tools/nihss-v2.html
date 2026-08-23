@@ -604,40 +604,47 @@
       }
     }
 
+    function normalizeCell(inp) {
+      const key = inp.dataset.key;
+      if (!key || key.startsWith('sig')) return;
+      const itemKey = key.split('-')[0];
+      const max = itemMax[itemKey];
+      const v = inp.value.trim();
+      if (v === '') return;
+      if (/^(un|x)$/i.test(v)) {
+        if (unItems.has(itemKey)) {
+          inp.value = 'UN';
+        } else {
+          inp.value = '';
+        }
+        return;
+      }
+      if (!/^\d+$/.test(v)) {
+        inp.value = '';
+        return;
+      }
+      const n = parseInt(v, 10);
+      if (isNaN(n)) {
+        inp.value = '';
+      } else if (max !== undefined && n > max) {
+        inp.value = String(max);
+      } else if (n < 0) {
+        inp.value = '0';
+      } else {
+        inp.value = String(n);
+      }
+    }
+
+    function normalizeAllCells() {
+      document.querySelectorAll('input.cell').forEach(inp => normalizeCell(inp));
+      recalc();
+    }
+
     document.querySelectorAll('input.cell').forEach(inp => {
       inp.setAttribute('inputmode', 'numeric');
       inp.addEventListener('input', recalc);
       inp.addEventListener('blur', function() {
-        const key = this.dataset.key;
-        if (!key || key.startsWith('sig')) return;
-        const itemKey = key.split('-')[0];
-        const max = itemMax[itemKey];
-        const v = this.value.trim();
-        if (v === '') return;
-        if (/^(un|x)$/i.test(v)) {
-          if (unItems.has(itemKey)) {
-            this.value = 'UN';
-          } else {
-            this.value = '';
-          }
-          recalc();
-          return;
-        }
-        if (!/^\d+$/.test(v)) {
-          this.value = '';
-          recalc();
-          return;
-        }
-        const n = parseInt(v, 10);
-        if (isNaN(n)) {
-          this.value = '';
-        } else if (max !== undefined && n > max) {
-          this.value = String(max);
-        } else if (n < 0) {
-          this.value = '0';
-        } else {
-          this.value = String(n);
-        }
+        normalizeCell(this);
         recalc();
       });
     });
@@ -650,6 +657,7 @@
     }
 
     function printWithData() {
+      normalizeAllCells();
       window.print();
     }
 
@@ -666,6 +674,8 @@
       });
       recalc();
     }
+
+    window.addEventListener('beforeprint', normalizeAllCells);
 
     if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
       printBlank();

@@ -960,13 +960,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAnticoagOutput();
     }
 
-        _applyAcState('fonda', fondaCI, recFonda, egfrKnown ? `⚠️ CI: eGFR ${egfrLive.toFixed(0)} < ${FONDA_MIN_EGFR} — กดอีกครั้งเพื่อ override` : null);
-        _applyAcState('enox',  enoxCI,  recEnox,  egfrKnown ? `⚠️ CI: eGFR ${egfrLive.toFixed(0)} < ${ENOX_MIN_EGFR} — กดอีกครั้งเพื่อ override` : null);
-        _applyAcState('hep',   false,   recHep, null);
-
-        updateAnticoagOutput();
-    }
-
     function _applyAcState(drug, isCI, isRec, ciMsg) {
         const radio  = $(`ac-radio-${drug}`);
         const label  = $(`ac-label-${drug}`);
@@ -1103,18 +1096,19 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDaptHint(vhCount, h1Count);
 
         // GRACE Score Calculation
-        const graceResult = CLINICAL_ENGINE.calcGRACE({
-            age: !isNaN(age) ? age : null,
-            hr: !isNaN(hr) ? hr : null,
-            sbp: !isNaN(sbp) ? sbp : null,
-            cr: !isNaN(cr) ? cr : null,
+        const graceInputsComplete = !isNaN(age) && age >= MIN_AGE && !isNaN(hr) && hr > 0 && !isNaN(sbp) && sbp > 0 && !isNaN(cr) && cr > 0;
+        const graceResult = graceInputsComplete ? CLINICAL_ENGINE.calcGRACE({
+            age: age,
+            hr: hr,
+            sbp: sbp,
+            cr: cr,
             killip: killip,
             cardArr: cardiacArrest,
             stDev: stDeviation,
             elevMk: elevatedMarkers
-        });
+        }) : null;
 
-        let risk = 'non-high';
+        let risk = null;
         if (graceResult && graceResult.score !== null) {
             const score = graceResult.score;
             risk = CLINICAL_ENGINE.riskLevel(score, vhCount > 0, h1Count > 0);
@@ -1137,6 +1131,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Render breakdown
             renderGraceBreakdown(graceResult.bd, score);
+        } else if (vhCount > 0 || h1Count > 0) {
+            risk = vhCount > 0 ? 'very-high' : 'high';
+            $('screen-grace').textContent = '--';
+            $('p-grace').textContent = '--';
+            const badge = $('screen-risk-badge');
+            const label = $('screen-risk-label');
+            badge.className = 'risk-badge';
+            if (risk === 'very-high') {
+                badge.classList.add('risk-very-high');
+                label.textContent = 'Very High Risk';
+            } else {
+                badge.classList.add('risk-high');
+                label.textContent = 'High Risk';
+            }
+            hideGraceBreakdown();
         } else {
             $('screen-grace').textContent = '--';
             $('p-grace').textContent = '--';
@@ -1153,7 +1162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('p-hr').textContent = !isNaN(hr) ? hr.toString() : '--';
         $('p-sbp').textContent = !isNaN(sbp) ? sbp.toString() : '--';
         $('p-cr').textContent = !isNaN(cr) ? cr.toFixed(2) : '--';
-        $('p-killip').textContent = killip;
+        $('p-killip').textContent = `Class ${({'1':'I','2':'II','3':'III','4':'IV'})[killip] || 'I'}`;
 
         const binFlagTxt = [
             cardiacArrest ? '☑ Cardiac arrest' : null,
@@ -1179,16 +1188,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isNaN(tropValH3)) risingH3 = ((tropValH3 - tropValH0) / tropValH0 * 100).toFixed(1);
         }
 
+        const pct = v => `${Number(v) >= 0 ? '+' : ''}${v}%`;
         const tropDisplay = [];
         if (!isNaN(tropValH0)) tropDisplay.push(`H0: ${tropValH0}`);
         if (!isNaN(tropValH1)) {
             let h1Line = `H1: ${tropValH1}`;
-            if (risingH1 !== null) h1Line += ` → +${risingH1}%`;
+            if (risingH1 !== null) h1Line += ` → ${pct(risingH1)}`;
             tropDisplay.push(h1Line);
         }
         if (!isNaN(tropValH3)) {
             let h3Line = `H3: ${tropValH3}`;
-            if (risingH3 !== null) h3Line += ` → +${risingH3}%`;
+            if (risingH3 !== null) h3Line += ` → ${pct(risingH3)}`;
             tropDisplay.push(h3Line);
         }
         $('p-troponin-values').innerHTML = tropDisplay.join('<br>') || '(ไม่ได้กรอก)';

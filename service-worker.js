@@ -1,7 +1,7 @@
 // service-worker.js — Offline PWA cache for ER Standing Order Hub
 // Caches all static assets for offline access (ED wifi outages during stroke workup)
 // CRITICAL: Always keep in sync with the nav-right version string in index.html
-const CACHE_VERSION = 'er-hub-v67';
+const CACHE_VERSION = 'er-hub-v68';
 const CACHE_DATE = '23/08/2569';
 const ASSETS = [
   './',
@@ -65,7 +65,75 @@ const ASSETS = [
   './docs/order Sedation-Fen-dormicum/fen.pdf',
   'https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap',
   'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700&display=swap',
-  'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap'
+  'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSnv5HMAFg6IuGlBNMjxJEL2VmU3NS7Z2mj0QiqXA.ttf',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSnv5HMAFg6IuGlBNMjxJEL2VmU3NS7Z2mj6AiqXA.ttf',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSnv5HMAFg6IuGlBNMjxJEL2VmU3NS7Z2mjDw-qXA.ttf',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSnv5HMAFg6IuGlBNMjxJEL2VmU3NS7Z2mjPQ-qXA.ttf',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsD8ah8QA.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsD8ahuQ2e8Smg.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsE8ah8QA.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsE8ahuQ2e8Smg.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsH8ag.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsH8ahuQ2e8.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsI8ah8QA.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsI8ahuQ2e8Smg.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsJ8ah8QA.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsJ8ahuQ2e8Smg.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsK8ah8QA.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsK8ahuQ2e8Smg.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsL8ah8QA.woff2',
+  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsL8ahuQ2e8Smg.woff2',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8-qxjPQ.ttf',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8L6tjPQ.ttf',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx3cwgknk-6nFg.woff2',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx3cwhsk.woff2',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx7cwgknk-6nFg.woff2',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx7cwhsk.woff2',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwgknk-4.woff2',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxPcwgknk-6nFg.woff2',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxPcwhsk.woff2',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxTcwgknk-6nFg.woff2',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxTcwhsk.woff2',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx_cwgknk-6nFg.woff2',
+  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx_cwhsk.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9WBI.ttf',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aAFJn2QN.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aAFJn3YO5gjupg.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aBVJn3YO5gg.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aBVJnw.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aBpJn2QN.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aBpJn3YO5gjupg.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aBtJn2QN.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aBtJn3YO5gjupg.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5sik8s6yLUrwB0lw.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5sik8s6zDX.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5silQs6yLUrwB0lw.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5silQs6zDX.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5silUs6yLUrwB0lw.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5silUs6zDX.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5silss6w.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5silss6yLUrwA.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5sulw.ttf',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptik8s6yLUrwB0lw.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptik8s6zDX.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptilQs6yLUrwB0lw.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptilQs6zDX.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptilUs6yLUrwB0lw.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptilUs6zDX.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptilss6w.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptilss6yLUrwA.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptulw.ttf',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqik8s6yLUrwB0lw.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqik8s6zDX.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqilQs6yLUrwB0lw.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqilQs6zDX.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqilUs6yLUrwB0lw.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqilUs6zDX.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqilss6w.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqilss6yLUrwA.woff2',
+  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqulw.ttf'
 ];
 
 /**
@@ -151,8 +219,11 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       caches.match(event.request).then((cached) => {
         return cached || fetch(event.request).then((response) => {
-          // Cache successful responses (same-origin only)
-          if (response.ok && event.request.url.startsWith(self.location.origin)) {
+          // Cache successful responses (same-origin and Google Fonts)
+          if ((response.ok || response.type === 'opaque') &&
+              (event.request.url.startsWith(self.location.origin) ||
+               event.request.url.startsWith('https://fonts.googleapis.com') ||
+               event.request.url.startsWith('https://fonts.gstatic.com'))) {
             const clone = response.clone();
             caches.open(CACHE_VERSION).then((cache) => cache.put(event.request, clone));
           }
