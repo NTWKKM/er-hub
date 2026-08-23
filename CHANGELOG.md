@@ -1,3 +1,15 @@
+## [2.11.1] — 2026-08-23
+
+### Clinical Text Audit & Typo Corrections
+- **Informed Consent Form (`orders/rtpa.html`, `orders/rtpa-v2.html`):**
+  - Removed erroneous phrase `อย่ายินยอม` in legal consent section (`...และจะไม่เรียกร้องหรือฟ้องร้องเพื่อดำเนินคดีกับบุคลากรและส่วนราชการต้นสังกัดของโรงพยาบาลมหาราชนครราชสีมาแต่อย่างใด`).
+- **NSTEMI Worksheets (`orders/nstemi.html`, `orders/nstemi-v2.html`):**
+  - Corrected spelling of `O2 canula` to `O2 cannula`.
+- **Drug Master Data (`shared/drug-data.js`):**
+  - Corrected Nitroglycerin Tall Man displayName from `NITROglycerine` to standard `NITROglycerin`.
+- **Thai Transliteration Normalization (`shared/components.js`, `orders/antivenom.html`, `orders/nstemi.html`, `orders/rtpa.html`, `orders/rtpa-v2.html`):**
+  - Standardized `ติดสติ๊กเกอร์` to Royal Institute standard `ติดสติกเกอร์`.
+
 ## [2.11.0] — 2026-08-23
 
 ### Interactive 3D Flip Cards for V1/V2 Protocols & Tools (ADR-28)

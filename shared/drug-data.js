@@ -278,7 +278,7 @@ const EMERGENCY_DRUG_DATA = [
   {
     id: 'nitroglycerin',
     name: 'Nitroglycerin (NTG)',
-    displayName: 'NITROglycerine',
+    displayName: 'NITROglycerin',
     thaiName: 'ไนโตรกลีเซอรีน',
     doseUnit: 'mcg/min',
     isWeightBased: false,
