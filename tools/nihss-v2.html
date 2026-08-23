@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NIHSS V2 — National Institutes of Health Stroke Scale</title>
+  <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/base.css">
+  <style>
+    :root {
+      --paper: #ebe7df;
+      --ink: #1a1a1a;
+      --graphite: #4a4a4a;
+      --rule: #d8d4c8;
+      --rule-dark: #2b2b2b;
+      --header-bg: #3d5a80;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-ui), "Sarabun", sans-serif;
+      background: var(--paper);
+      margin: 0;
+      padding: 20px 16px 60px;
+      color: var(--ink);
+    }
+
+    .sheet {
+      max-width: 960px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    .title-bar {
+      border-bottom: 2px solid var(--rule-dark);
+      padding: 16px 20px;
+      text-align: center;
+      background: #faf9f6;
+    }
+
+    .title-bar h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      color: var(--ink);
+    }
+
+    .title-bar p {
+      margin: 4px 0 0;
+      font-size: 13.5px;
+      color: var(--graphite);
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+
+    th, td {
+      border: 1px solid var(--rule);
+      padding: 6px 10px;
+      vertical-align: middle;
+    }
+
+    thead th {
+      background: #f4f2eb;
+      font-weight: 700;
+      text-align: center;
+      font-size: 12px;
+      color: var(--ink);
+    }
+
+    .col-cat { width: 26%; }
+    .col-score { width: 44%; }
+    .col-chk { width: 10%; text-align: center; }
+
+    .cat-th {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .cat-en {
+      font-size: 11.5px;
+      font-weight: 400;
+      color: var(--graphite);
+    }
+
+    .score-list div {
+      margin: 2px 0;
+      font-size: 12.5px;
+      color: #333;
+    }
+
+    input.cell {
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      background: #faf8f5;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      text-align: center;
+      padding: 4px 2px;
+      transition: all 150ms ease;
+    }
+
+    input.cell:hover {
+      border-color: #cbd5e1;
+      background: #fff;
+    }
+
+    input.cell:focus {
+      outline: none;
+      border-color: var(--cardiac-primary);
+      background: #fff5f5;
+      box-shadow: 0 0 0 2px rgba(192, 57, 43, 0.15);
+    }
+
+    tr.total td {
+      font-weight: 700;
+      text-align: center;
+      font-size: 15px;
+      padding: 10px;
+      background: #faf8f5;
+      border-top: 2px solid var(--rule-dark);
+    }
+
+    .total-score-badge {
+      display: inline-block;
+      min-width: 32px;
+      font-size: 1.2em;
+      font-weight: 700;
+      color: var(--cardiac-primary);
+    }
+
+    .sig-row th {
+      font-weight: 700;
+      font-size: 12px;
+      background: #faf8f5;
+    }
+
+    .sig-row td {
+      height: 32px;
+      background: #fff;
+    }
+
+    .footer-note {
+      padding: 10px 18px;
+      font-size: 11.5px;
+      text-align: center;
+      color: var(--graphite);
+      border-top: 1px solid var(--rule);
+      background: #faf9f6;
+    }
+
+    .toolbar {
+      max-width: 960px;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toolbar-left a {
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+    }
+
+    .toolbar-left a:hover {
+      background: #f4f2eb;
+    }
+
+    .toolbar-right {
+      display: flex;
+      gap: 8px;
+    }
+
+    .toolbar button {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+
+    .toolbar button.btn-primary {
+      background: var(--header-bg);
+      border-color: var(--header-bg);
+      color: #fff;
+    }
+
+    .toolbar button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 6mm 12mm;
+      }
+
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        color: #000 !important;
+        font-size: 9pt;
+      }
+
+      .no-print, .toolbar {
+        display: none !important;
+      }
+
+      .sheet {
+        max-width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+
+      .title-bar {
+        border-bottom: 1.5px solid #000 !important;
+        padding: 4px 6px !important;
+        background: none !important;
+      }
+
+      .title-bar h1 { font-size: 13pt !important; }
+      .title-bar p { font-size: 8.5pt !important; margin-top: 1px !important; }
+
+      table { font-size: 8.5pt !important; }
+      th, td { border: 0.75px solid #000 !important; padding: 2px 4px !important; }
+      thead th { font-size: 8pt !important; background: #f0f0f0 !important; -webkit-print-color-adjust: exact !important; }
+      .score-list div { font-size: 8pt !important; margin: 0 !important; line-height: 1.15 !important; }
+      input.cell { font-size: 8.5pt !important; background: transparent !important; border: none !important; }
+      tr.total td { font-size: 9.5pt !important; padding: 3px !important; border-top: 1.5px solid #000 !important; }
+      .footer-note { font-size: 7.5pt !important; padding: 2px 4px !important; border-top: 0.75px solid #000 !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="toolbar no-print">
+    <div class="toolbar-left">
+      <a href="../index.html" title="Back to home">← กลับหน้าหลัก</a>
+    </div>
+    <div class="toolbar-right">
+      <button class="btn-primary" onclick="printWithData()">🖨️ Print with data</button>
+      <button onclick="printBlank()">📄 Print blank NIHSS</button>
+      <button onclick="clearAll()">🗑️ Clear all</button>
+    </div>
+  </div>
+
+  <div class="sheet">
+    <div class="title-bar">
+      <h1>NIHSS — National Institutes of Health Stroke Scale</h1>
+      <p>แบบประเมินความรุนแรงของโรคหลอดเลือดสมอง (Stroke Scale Assessment Worksheet)</p>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-cat">หัวข้อประเมิน</th>
+            <th class="col-score">คะแนน / คำอธิบาย</th>
+            <th class="col-chk">แรกรับ<br>(Admission)</th>
+            <th class="col-chk">หลังได้ rt-PA<br>(Post 2h)</th>
+            <th class="col-chk">24 ชั่วโมง<br>(Post 24h)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="cat-th">1a. ระดับความรู้สึกตัว</div>
+              <div class="cat-en">Level of Consciousness (ตื่นดี, ง่วงซึม)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ตื่นดี (Alert)</div>
+              <div>1 = ง่วงซึม (Drowsy)</div>
+              <div>2 = ซึมมาก (Stuporous)</div>
+              <div>3 = ไม่รู้สึกตัว (Coma)</div>
+            </td>
+            <td><input class="cell" data-key="1a-1" aria-label="1a. Level of Consciousness - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="1a-2" aria-label="1a. Level of Consciousness - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="1a-3" aria-label="1a. Level of Consciousness - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">1b. คำถามระดับความรู้สึกตัว</div>
+              <div class="cat-en">LOC Questions (เดือน, อายุ)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ตอบถูกทั้งสองข้อ</div>
+              <div>1 = ตอบถูกหนึ่งข้อ</div>
+              <div>2 = ตอบผิดทั้งสองข้อ</div>
+            </td>
+            <td><input class="cell" data-key="1b-1" aria-label="1b. LOC Questions - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="1b-2" aria-label="1b. LOC Questions - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="1b-3" aria-label="1b. LOC Questions - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">1c. คำสั่งระดับความรู้สึกตัว</div>
+              <div class="cat-en">LOC Commands (ลืม/หลับตา, กำ/แบมือ)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ทำได้ถูกทั้งสองคำสั่ง</div>
+              <div>1 = ทำได้ถูกหนึ่งคำสั่ง</div>
+              <div>2 = ทำไม่ได้ทั้งสองคำสั่ง</div>
+            </td>
+            <td><input class="cell" data-key="1c-1" aria-label="1c. LOC Commands - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="1c-2" aria-label="1c. LOC Commands - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="1c-3" aria-label="1c. LOC Commands - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">2. การเคลื่อนไหวของลูกตา</div>
+              <div class="cat-en">Best Gaze (กลอกตามองตามนิ้ว)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ปกติ (Normal)</div>
+              <div>1 = มองตามได้บางส่วน (Partial gaze palsy)</div>
+              <div>2 = ลูกตามองค้างข้างเดียว (Forced deviation)</div>
+            </td>
+            <td><input class="cell" data-key="2-1" aria-label="2. Best Gaze - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="2-2" aria-label="2. Best Gaze - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="2-3" aria-label="2. Best Gaze - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">3. ลานสายตา</div>
+              <div class="cat-en">Visual Fields (ตรวจลานสายตาทั้ง 4 ด้าน)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ปกติ (No visual loss)</div>
+              <div>1 = ลานสายตาแคบลงบางส่วน (Partial hemianopia)</div>
+              <div>2 = ลานสายตาบกพร่องครึ่งซีก (Complete hemianopia)</div>
+              <div>3 = มองไม่เห็นสองข้าง/ตาบอด (Bilateral hemianopia/Blind)</div>
+            </td>
+            <td><input class="cell" data-key="3-1" aria-label="3. Visual Fields - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="3-2" aria-label="3. Visual Fields - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="3-3" aria-label="3. Visual Fields - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">4. การเคลื่อนไหวกล้ามเนื้อใบหน้า</div>
+              <div class="cat-en">Facial Palsy (ยิ้ม ยิงฟัน หลับตาแน่น)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ใบหน้าเคลื่อนไหวปกติ</div>
+              <div>1 = ปากเบี้ยวหรืออัมพาตเล็กน้อย</div>
+              <div>2 = อัมพาตส่วนล่างของใบหน้าชัดเจน</div>
+              <div>3 = อัมพาตทั้งหน้าส่วนบนและส่วนล่าง</div>
+            </td>
+            <td><input class="cell" data-key="4-1" aria-label="4. Facial Palsy - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="4-2" aria-label="4. Facial Palsy - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="4-3" aria-label="4. Facial Palsy - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">5a. กำลังแขนซ้าย</div>
+              <div class="cat-en">Left Arm Motor (ยกแขนค้าง 10 วินาที)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ยกแขนค้างได้ 10 วินาที</div>
+              <div>1 = แขนค่อยๆ ตกลงมาก่อนครบ 10 วินาที</div>
+              <div>2 = ยกต้านแรงโน้มถ่วงได้บ้างแต่ไม่ครบ 10 วินาที</div>
+              <div>3 = ขยับแขนได้แต่ยกไม่ลอยจากเตียง</div>
+              <div>4 = ไม่มีการขยับเลย</div>
+              <div>UN = ตัดแขน / มีข้อติดแข็ง (Untestable)</div>
+            </td>
+            <td><input class="cell" data-key="5a-1" aria-label="5a. Left Arm Motor - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="5a-2" aria-label="5a. Left Arm Motor - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="5a-3" aria-label="5a. Left Arm Motor - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">5b. กำลังแขนขวา</div>
+              <div class="cat-en">Right Arm Motor (ยกแขนค้าง 10 วินาที)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ยกแขนค้างได้ 10 วินาที</div>
+              <div>1 = แขนค่อยๆ ตกลงมาก่อนครบ 10 วินาที</div>
+              <div>2 = ยกต้านแรงโน้มถ่วงได้บ้างแต่ไม่ครบ 10 วินาที</div>
+              <div>3 = ขยับแขนได้แต่ยกไม่ลอยจากเตียง</div>
+              <div>4 = ไม่มีการขยับเลย</div>
+              <div>UN = ตัดแขน / มีข้อติดแข็ง (Untestable)</div>
+            </td>
+            <td><input class="cell" data-key="5b-1" aria-label="5b. Right Arm Motor - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="5b-2" aria-label="5b. Right Arm Motor - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="5b-3" aria-label="5b. Right Arm Motor - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">6a. กำลังขาซ้าย</div>
+              <div class="cat-en">Left Leg Motor (ยกขา 30 องศาค้าง 5 วินาที)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ยกขาค้างได้ 5 วินาที</div>
+              <div>1 = ขาคอยๆ ตกลงมาก่อน 5 วินาที</div>
+              <div>2 = ขยับต้านแรงโน้มถ่วงได้บ้างแต่ตกลงเร็ว</div>
+              <div>3 = ขยับขาได้แต่ยกไม่ลอยจากเตียง</div>
+              <div>4 = ไม่มีการขยับเลย</div>
+              <div>UN = ตัดขา / มีข้อติดแข็ง (Untestable)</div>
+            </td>
+            <td><input class="cell" data-key="6a-1" aria-label="6a. Left Leg Motor - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="6a-2" aria-label="6a. Left Leg Motor - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="6a-3" aria-label="6a. Left Leg Motor - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">6b. กำลังขาขวา</div>
+              <div class="cat-en">Right Leg Motor (ยกขา 30 องศาค้าง 5 วินาที)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ยกขาค้างได้ 5 วินาที</div>
+              <div>1 = ขาคอยๆ ตกลงมาก่อน 5 วินาที</div>
+              <div>2 = ขยับต้านแรงโน้มถ่วงได้บ้างแต่ตกลงเร็ว</div>
+              <div>3 = ขยับขาได้แต่ยกไม่ลอยจากเตียง</div>
+              <div>4 = ไม่มีการขยับเลย</div>
+              <div>UN = ตัดขา / มีข้อติดแข็ง (Untestable)</div>
+            </td>
+            <td><input class="cell" data-key="6b-1" aria-label="6b. Right Leg Motor - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="6b-2" aria-label="6b. Right Leg Motor - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="6b-3" aria-label="6b. Right Leg Motor - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">7. การประสานงานของแขนขา</div>
+              <div class="cat-en">Limb Ataxia (Finger-to-nose, Heel-to-shin)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ปกติ ไม่มี ataxia</div>
+              <div>1 = มี ataxia 1 ข้าง (แขนหรือขา)</div>
+              <div>2 = มี ataxia 2 ข้างขึ้นไป</div>
+              <div>UN = ตัดแขนขา / ข้อติดแข็ง (Untestable)</div>
+            </td>
+            <td><input class="cell" data-key="7-1" aria-label="7. Limb Ataxia - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="7-2" aria-label="7. Limb Ataxia - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="7-3" aria-label="7. Limb Ataxia - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">8. ความรู้สึกทางผิวหนัง</div>
+              <div class="cat-en">Sensory (Pinprick test)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ปกติ</div>
+              <div>1 = ความรู้สึกลดลงเล็กน้อยถึงปานกลาง</div>
+              <div>2 = ชามากหรือไม่รู้สึกเลย</div>
+            </td>
+            <td><input class="cell" data-key="8-1" aria-label="8. Sensory - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="8-2" aria-label="8. Sensory - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="8-3" aria-label="8. Sensory - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">9. ภาษาและการสื่อความหมาย</div>
+              <div class="cat-en">Best Language (อธิบายรูปภาพ/อ่านคำ)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ปกติ ไม่มี aphasia</div>
+              <div>1 = บกพร่องเล็กน้อยถึงปานกลาง</div>
+              <div>2 = บกพร่องรุนแรง พูดหรือเข้าใจได้น้อยมาก</div>
+              <div>3 = ไม่พูดเลย / ไม่เข้าใจภาษาเลย (Global aphasia)</div>
+            </td>
+            <td><input class="cell" data-key="9-1" aria-label="9. Best Language - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="9-2" aria-label="9. Best Language - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="9-3" aria-label="9. Best Language - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">10. การพูดไม่ชัด</div>
+              <div class="cat-en">Dysarthria (ให้ผู้ป่วยพูดตามคำที่กำหนด)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = พูดชัดเจนปกติ (Normal articulation)</div>
+              <div>1 = พูดไม่ชัดเล็กน้อยถึงปานกลาง</div>
+              <div>2 = พูดไม่ชัดมากจนฟังไม่รู้เรื่อง</div>
+              <div>UN = ใส่ท่อช่วยหายใจหรือมีสิ่งกีดขวางทางกายภาพ (Untestable)</div>
+            </td>
+            <td><input class="cell" data-key="10-1" aria-label="10. Dysarthria - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="10-2" aria-label="10. Dysarthria - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="10-3" aria-label="10. Dysarthria - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="cat-th">11. การละเลยครึ่งซีกและไม่ใส่ใจ</div>
+              <div class="cat-en">Extinction / Inattention (กระตุ้นสองข้างพร้อมกัน)</div>
+            </td>
+            <td class="score-list">
+              <div>0 = ไม่มีการละเลย (No neglect)</div>
+              <div>1 = ละเลยบางส่วน (Partial neglect)</div>
+              <div>2 = ละเลยสมบูรณ์ (Complete neglect)</div>
+            </td>
+            <td><input class="cell" data-key="11-1" aria-label="11. Extinction / Inattention - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="11-2" aria-label="11. Extinction / Inattention - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="11-3" aria-label="11. Extinction / Inattention - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+
+          <tr class="total">
+            <td colspan="2">คะแนนรวม (TOTAL SCORE / max 42)</td>
+            <td><span id="total-1" class="total-score-badge"></span></td>
+            <td><span id="total-2" class="total-score-badge"></span></td>
+            <td><span id="total-3" class="total-score-badge"></span></td>
+          </tr>
+
+          <tr class="sig-row">
+            <th colspan="2">ผู้ตรวจ (Examiner)</th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr class="sig-row">
+            <td colspan="2"></td>
+            <td><input class="cell" data-key="sig-1" placeholder="ลงชื่อ" aria-label="ผู้ตรวจ (Examiner) - แรกรับ (Admission)"></td>
+            <td><input class="cell" data-key="sig-2" placeholder="ลงชื่อ" aria-label="ผู้ตรวจ (Examiner) - หลังได้ rt-PA (Post 2h)"></td>
+            <td><input class="cell" data-key="sig-3" placeholder="ลงชื่อ" aria-label="ผู้ตรวจ (Examiner) - 24 ชั่วโมง (Post 24h)"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer-note">แบบประเมิน NIHSS V2 สำหรับใช้งานทางคลินิก — ศูนย์โรคหลอดเลือดสมอง โรงพยาบาลมหาราชนครราชสีมา</div>
+  </div>
+
+  <script>
+    const rowKeys = ["1a", "1b", "1c", "2", "3", "4", "5a", "5b", "6a", "6b", "7", "8", "9", "10", "11"];
+    const itemMax = {
+      "1a": 3, "1b": 2, "1c": 2, "2": 2, "3": 3, "4": 3,
+      "5a": 4, "5b": 4, "6a": 4, "6b": 4, "7": 2, "8": 2,
+      "9": 3, "10": 2, "11": 2
+    };
+    const unItems = new Set(["5a", "5b", "6a", "6b", "7", "10"]);
+
+    function recalc() {
+      for (let col = 1; col <= 3; col++) {
+        let sum = 0;
+        let any = false;
+        rowKeys.forEach(k => {
+          const el = document.querySelector(`input[data-key="${k}-${col}"]`);
+          if (el) {
+            const v = el.value.trim();
+            if (/^\d+$/.test(v)) {
+              const n = parseInt(v, 10);
+              const max = itemMax[k];
+              if (n >= 0 && (max === undefined || n <= max)) {
+                sum += n;
+                any = true;
+              }
+            } else if (v.toUpperCase() === 'UN') {
+              any = true;
+            }
+          }
+        });
+        const totalEl = document.getElementById(`total-${col}`);
+        if (totalEl) {
+          totalEl.textContent = any ? sum : '';
+        }
+      }
+    }
+
+    function normalizeCell(inp) {
+      const key = inp.dataset.key;
+      if (!key || key.startsWith('sig')) return;
+      const itemKey = key.split('-')[0];
+      const max = itemMax[itemKey];
+      const v = inp.value.trim();
+      if (v === '') return;
+      if (/^(un|x)$/i.test(v)) {
+        if (unItems.has(itemKey)) {
+          inp.value = 'UN';
+        } else {
+          inp.value = '';
+        }
+        return;
+      }
+      if (!/^\d+$/.test(v)) {
+        inp.value = '';
+        return;
+      }
+      const n = parseInt(v, 10);
+      if (isNaN(n)) {
+        inp.value = '';
+      } else if (max !== undefined && n > max) {
+        inp.value = String(max);
+      } else if (n < 0) {
+        inp.value = '0';
+      } else {
+        inp.value = String(n);
+      }
+    }
+
+    function normalizeAllCells() {
+      document.querySelectorAll('input.cell').forEach(inp => normalizeCell(inp));
+      recalc();
+    }
+
+    document.querySelectorAll('input.cell').forEach(inp => {
+      if (!inp.dataset.key?.startsWith('sig')) {
+        inp.setAttribute('inputmode', 'numeric');
+      }
+      inp.addEventListener('input', recalc);
+      inp.addEventListener('blur', function() {
+        normalizeCell(this);
+        recalc();
+      });
+    });
+
+    function clearAll() {
+      if (confirm('ต้องการล้างข้อมูลทั้งหมดในแบบฟอร์มนี้หรือไม่?')) {
+        document.querySelectorAll('input.cell').forEach(inp => inp.value = '');
+        recalc();
+      }
+    }
+
+    function printWithData() {
+      normalizeAllCells();
+      window.print();
+    }
+
+    function printBlank() {
+      const saved = {};
+      document.querySelectorAll('input.cell').forEach(inp => {
+        saved[inp.dataset.key] = inp.value;
+        inp.value = '';
+      });
+      recalc();
+      window.print();
+      document.querySelectorAll('input.cell').forEach(inp => {
+        if (saved[inp.dataset.key] !== undefined) inp.value = saved[inp.dataset.key];
+      });
+      recalc();
+    }
+
+    window.addEventListener('beforeprint', normalizeAllCells);
+
+    if (new URLSearchParams(window.location.search).get('print-blank-direct') === 'true') {
+      printBlank();
+    }
+
+    recalc();
+  </script>
+</body>
+</html>
