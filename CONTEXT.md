@@ -30,7 +30,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | **NIHSS** | National Institutes of Health Stroke Scale. 11-item neurological deficit score (0–42). Standalone scoring worksheet (`tools/nihss.html`), linked from rtpa.html toolbar via "NIHSS เปล่า" popup button. |
 | **Blank Print** | Pre-formatted standing order sheet with all calculated fields as dotted lines and all checkboxes as ☐. Four pathways: PDF open (4 pages: stemi, pe, heparin, sedation), HTML blank via `ED_BLANK_PRINT.apply()` (rtpa/nstemi/antivenom), popup print via `tools/nihss.html?print-blank-direct=true` (NIHSS), or non-destructive print blank button (Home Medication). |
 | **Urgent Clinic Home Medication** | Standalone home medication and emergency immunization checklist worksheet (`tools/Urgent-Clinic-Home-Medication.html`) for discharge clinical documentation, with auto-save, plain-text clipboard copy, and A4 print blank support. |
-| **Active / Prototype Release States** | Classification of portal hub items. Active releases (rt-PA, NSTEMI, Anaphylaxis, T1 Drip Calc, T2 NIHSS, T3 Home Meds, T5 Score Hub, T6 TB Calc, T8 RSI, T9 Resus Timer) are production-ready (displayed directly in the Active section). Prototypes (STEMI, PE, Heparin, Antivenom, Sedation, T4 ER Note, T7 MgSO4) are under evaluation (in the collapsible Prototype section). |
+| **Active / Prototype Release States** | Classification of portal hub items. Active releases (rt-PA, NSTEMI, Anaphylaxis, T1 Drip Calc, T2 NIHSS, T3 Home Meds, T5 Score Hub, T6 TB Calc, T7 MgSO4, T8 RSI, T9 Resus Timer, T10 Burn Hub, T11 Electrolyte Hub) are production-ready (displayed directly in the Active section). Prototypes (STEMI, PE, Heparin, Antivenom, Sedation, T4 ER Note) are under evaluation (in the collapsible Prototype section). |
 | **Anaphylaxis** | Life-threatening systemic hypersensitivity reaction. First-line therapy is immediate Epinephrine IM (1:1000) 0.01 mg/kg (adult 0.3–0.5 mg, peds max 0.3 mg) into mid-outer thigh. |
 | **RSI (Rapid Sequence Intubation)** | High-risk emergency airway management procedure utilizing simultaneous administration of an induction agent and neuromuscular blocking paralytic to rapidly secure the airway while minimizing aspiration risk. |
 | **SOAP-ME** | Standardized pre-intubation safety checklist acronym: Suction, Oxygen, Airway, Pharmacy/Positioning, Monitoring, Equipment. |
@@ -179,3 +179,11 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   3. **Acid-Base Safety Gate**: If blood $\text{pH} \ge 7.45$ (or $\text{HCO}_3^- \ge 28\text{ mEq/L}$ with $\text{pH} \ge 7.40$), blocks IV $\text{NaHCO}_3$ dosing with an alkalemia contraindication warning.
   4. **Mineral Safety Gates**: Explicitly mark IV Calcium, Magnesium, and Phosphate as strictly contraindicated when corresponding hyper-states ($\text{Hypercalcemia}$, $\text{Hypermagnesemia}$, $\text{Hyperphosphatemia}$) are present.
   5. Updated `service-worker.js` cache version to `er-hub-v84`.
+
+## ADR-31: Promotion of T7 (MgSO4), T10 (Burn Hub), and T11 (Electrolyte Hub) to Production Active
+
+- **Context**: Deep clinical and software audit was completed for `T7` (Obstetric MgSO4 Calculator), `T10` (Burn Management & Resuscitation Hub), and `T11` (Electrolyte & Acid-Base Hub) to verify mathematical precision, zero dead code, Zero-PHI privacy compliance, and alignment with August 2026 international guidelines (ACOG, ATLS 11th, ABA 2023, KDIGO 2024, IFCC/IOF/EFLM 2026, ADA 2024/2025, BICAR-ICU).
+- **Decision**:
+  1. Promoted `T7`, `T10`, and `T11` from the collapsible Prototype section to the main Active Tools list in `index.html`.
+  2. Set their visual status badges to `ACTIVE`.
+  3. Bumped `service-worker.js` cache version to `er-hub-v85` to ensure immediate client cache synchronization.

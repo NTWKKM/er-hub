@@ -1,3 +1,15 @@
+## [2.13.0] — 2026-08-24
+
+### Deep Clinical Audit & Production Promotion (T7, T10, T11 Active Release)
+- **Production Active Promotion (`index.html`):**
+  - Completed deep clinical and codebase audit of **T7** (Obstetric $\text{MgSO}_4$ Calculator), **T10** (Burn Management & Resuscitation Hub), and **T11** (Electrolyte & Acid-Base Hub).
+  - Promoted `T7`, `T10`, and `T11` from the collapsible Prototype section to the main **Active Tools** list in `index.html` with status badges set to `ACTIVE`.
+  - Maintained zero dead CSS classes and 100% DOM element ID integrity.
+- **PWA Service Worker Update (`service-worker.js`):**
+  - Bumped offline cache version to `er-hub-v85` (`24/08/2569`) with all production assets precached.
+- **Contract & Architecture Documentation (`CONTEXT.md`, `ARCHITECTURE.md`):**
+  - Added ADR-31 documenting the clinical audit criteria, safety gates, and production promotion.
+
 ## [2.12.0] — 2026-08-24
 
 ### Electrolyte & Acid-Base Suite 2026 Overhaul & UI Polish

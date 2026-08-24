@@ -170,7 +170,7 @@ Comprehensive acute burn assessment and resuscitation calculation tool built str
 - **Inhalation Injury & Smoke Toxicology:** Clinical risk checklist, immediate intubation triggers, airway safety pearls (large ETT $\ge 7.5\text{--}8.0\text{ mm}$, Succinylcholine $>24\text{h}$ hyperkalemia guard), focused ATLS Fig 9-1 airway compromise photography, Carbon Monoxide ($COHb$, $100\%\text{ O}_2$ half-life, HBO criteria), and Cyanide Hydroxocobalamin ($5\text{ g}$ adult / $70\text{ mg/kg}$ child, capped at $>71.43\text{ kg}$) dosing with Sodium Thiosulfate 25% alternative.
 - **Circumferential Burn & ABA Referral Checklist:** Authentic textbook incision diagrams (ATLS 11th Fig 9-4 extremity escharotomy, Tintinalli 9th Ed Fig 217-9 chest/neck escharotomy, Fig 217-8 hand/digits escharotomy) and 10-point ABA 2023 transfer criteria.
 
-### Electrolyte & Acid-Base Hub (`tools/electrolyte-hub.html`) [PROTOTYPE]
+### Electrolyte & Acid-Base Hub (`tools/electrolyte-hub.html`)
 
 Comprehensive electrolyte correction and acid-base decision support tool built strictly to **2026 Critical Care, Nephrology, and Toxicology Consensuses** (KDIGO 2024, IFCC/IOF/EFLM 2026, ADA 2024/2025, BICAR-ICU, SSC, ESE/ERBP). Dynamically powered by `shared/electrolyte-engine.js`.
 Features:
