@@ -124,7 +124,7 @@
             font-weight: 600;
             height: 32px;
             box-sizing: border-box;
-            transition: border-color 150ms ease, box-shadow 150ms ease;
+            transition: all 120ms ease;
         }
 
         .input-control-sm:focus {
@@ -318,13 +318,35 @@
             height: 28px;
             box-sizing: border-box;
             width: 100%;
-            transition: border-color 120ms ease, box-shadow 120ms ease;
+            transition: all 120ms ease;
         }
 
         .fs-input:focus {
             outline: none;
             border-color: var(--signal-orange);
             box-shadow: 0 0 0 2px rgba(200, 59, 14, 0.15);
+        }
+
+        /* ══ Dynamic Lab Value Range Styling (Low / Normal / High) ══ */
+        .lab-low {
+            background-color: #e0f2fe !important; /* Soft clinical sky blue */
+            border-color: #0284c7 !important;
+            color: #0369a1 !important;
+            font-weight: 700 !important;
+        }
+
+        .lab-normal {
+            background-color: #f0fdf4 !important; /* Soft clinical emerald green */
+            border-color: #16a34a !important;
+            color: #15803d !important;
+            font-weight: 700 !important;
+        }
+
+        .lab-high {
+            background-color: #fef2f2 !important; /* Soft clinical rose/red */
+            border-color: #dc2626 !important;
+            color: #b91c1c !important;
+            font-weight: 700 !important;
         }
 
         /* ══ 1-Tap Quick Lab Preset Chips ══ */
@@ -924,25 +946,28 @@
                     </div>
                     <div class="telemetry-item" style="border-left:1px solid var(--rule-dark); padding-left:8px;">
                         <span class="telemetry-label">Renal:</span>
-                        <strong id="disp-renal-tier" class="telemetry-val" style="color:var(--signal-emerald);">eGFR ≥ 90 (Normal)</strong>
+                        <strong id="disp-renal-tier" class="telemetry-val" style="color:var(--signal-emerald);">--</strong>
                     </div>
                     <div class="telemetry-item" style="border-left:1px solid var(--rule-dark); padding-left:8px;">
                         <span class="telemetry-label">Albumin:</span>
-                        <strong id="disp-alb-status" class="telemetry-val" style="color:var(--signal-emerald);">4.0 g/dL (Normal)</strong>
+                        <strong id="disp-alb-status" class="telemetry-val" style="color:var(--signal-emerald);">--</strong>
                     </div>
                 </div>
             </div>
             <div class="pt-header-actions">
-                <button type="button" id="btn-load-normal-labs" class="btn-xs" title="Load Normal Laboratory Values">
+                <button type="button" id="btn-load-normal-labs" class="btn-xs" title="Load Standard Normal Values">
                     ↺ Normal Labs
                 </button>
+                <button type="button" id="btn-clear-labs" class="btn-xs" title="Clear all lab inputs">
+                    🧹 Clear
+                </button>
                 <button type="button" id="btn-toggle-flowsheet" class="btn-xs" title="Expand or Collapse Lab Flowsheet">
-                    <span id="toggle-flowsheet-icon">▲</span> Lab Flowsheet
+                    <span id="toggle-flowsheet-icon">▲</span> Flowsheet
                 </button>
             </div>
         </div>
 
-        <!-- Integrated Inline Lab Flowsheet Panel (Live Two-Way Reactive) -->
+        <!-- Integrated Inline Lab Flowsheet Panel (Live Two-Way Reactive & Range Color Highlighted) -->
         <div id="inline-lab-flowsheet" class="patient-flowsheet-body">
             <div class="flowsheet-grid-3">
                 <!-- 1. Electrolytes & Renal (Chem-8) -->
@@ -954,35 +979,35 @@
                     <div class="flowsheet-fields-grid">
                         <div class="fs-field">
                             <label for="fs-na">Na⁺ (mEq/L)</label>
-                            <input type="number" id="fs-na" class="fs-input" value="125" step="0.5">
+                            <input type="number" id="fs-na" class="fs-input" value="" step="0.5">
                         </div>
                         <div class="fs-field">
                             <label for="fs-k">K⁺ (mEq/L)</label>
-                            <input type="number" id="fs-k" class="fs-input" value="2.8" step="0.1">
+                            <input type="number" id="fs-k" class="fs-input" value="" step="0.1">
                         </div>
                         <div class="fs-field">
                             <label for="fs-cl">Cl⁻ (mEq/L)</label>
-                            <input type="number" id="fs-cl" class="fs-input" value="100" step="0.5">
+                            <input type="number" id="fs-cl" class="fs-input" value="" step="0.5">
                         </div>
                         <div class="fs-field">
                             <label for="fs-hco3">HCO₃⁻ (mEq/L)</label>
-                            <input type="number" id="fs-hco3" class="fs-input" value="15" step="0.5">
+                            <input type="number" id="fs-hco3" class="fs-input" value="" step="0.5">
                         </div>
                         <div class="fs-field">
                             <label for="fs-bun">BUN (mg/dL)</label>
-                            <input type="number" id="fs-bun" class="fs-input" value="28" step="1">
+                            <input type="number" id="fs-bun" class="fs-input" value="" step="1">
                         </div>
                         <div class="fs-field">
                             <label for="fs-cr">Cr (mg/dL)</label>
-                            <input type="number" id="fs-cr" class="fs-input" value="1.0" step="0.1">
+                            <input type="number" id="fs-cr" class="fs-input" value="" step="0.1">
                         </div>
                         <div class="fs-field">
                             <label for="fs-glu">Glucose (mg/dL)</label>
-                            <input type="number" id="fs-glu" class="fs-input" value="120" step="1">
+                            <input type="number" id="fs-glu" class="fs-input" value="" step="1">
                         </div>
                         <div class="fs-field">
                             <label for="fs-egfr">eGFR (mL/min)</label>
-                            <input type="number" id="fs-egfr" class="fs-input" value="90" step="1">
+                            <input type="number" id="fs-egfr" class="fs-input" value="" step="1">
                         </div>
                     </div>
                 </div>
@@ -996,31 +1021,31 @@
                     <div class="flowsheet-fields-grid">
                         <div class="fs-field">
                             <label for="fs-ica" title="Direct Ionized Calcium">iCa²⁺ (mmol/L)</label>
-                            <input type="number" id="fs-ica" class="fs-input" step="0.01" placeholder="1.22">
+                            <input type="number" id="fs-ica" class="fs-input" value="" step="0.01">
                         </div>
                         <div class="fs-field">
                             <label for="fs-total-ca">Total Ca (mg/dL)</label>
-                            <input type="number" id="fs-total-ca" class="fs-input" step="0.1" placeholder="9.0">
+                            <input type="number" id="fs-total-ca" class="fs-input" value="" step="0.1">
                         </div>
                         <div class="fs-field">
                             <label for="fs-alb">Albumin (g/dL)</label>
-                            <input type="number" id="fs-alb" class="fs-input" value="4.0" step="0.1">
+                            <input type="number" id="fs-alb" class="fs-input" value="" step="0.1">
                         </div>
                         <div class="fs-field">
                             <label for="fs-mg">Mg²⁺ (mg/dL)</label>
-                            <input type="number" id="fs-mg" class="fs-input" step="0.1" placeholder="2.0">
+                            <input type="number" id="fs-mg" class="fs-input" value="" step="0.1">
                         </div>
                         <div class="fs-field">
                             <label for="fs-po4">PO₄³⁻ (mg/dL)</label>
-                            <input type="number" id="fs-po4" class="fs-input" step="0.1" placeholder="3.5">
+                            <input type="number" id="fs-po4" class="fs-input" value="" step="0.1">
                         </div>
                         <div class="fs-field">
                             <label for="fs-ph">Blood pH</label>
-                            <input type="number" id="fs-ph" class="fs-input" value="7.12" step="0.01">
+                            <input type="number" id="fs-ph" class="fs-input" value="" step="0.01">
                         </div>
                         <div class="fs-field" style="grid-column: span 2;">
                             <label for="fs-pco2">Blood pCO₂ (mmHg)</label>
-                            <input type="number" id="fs-pco2" class="fs-input" value="35" step="1">
+                            <input type="number" id="fs-pco2" class="fs-input" value="" step="1">
                         </div>
                     </div>
                 </div>
@@ -1034,35 +1059,35 @@
                     <div class="flowsheet-fields-grid">
                         <div class="fs-field">
                             <label for="fs-osm">Serum Osm</label>
-                            <input type="number" id="fs-osm" class="fs-input" value="315">
+                            <input type="number" id="fs-osm" class="fs-input" value="">
                         </div>
                         <div class="fs-field">
                             <label for="fs-ethanol">Ethanol</label>
-                            <input type="number" id="fs-ethanol" class="fs-input" value="0">
+                            <input type="number" id="fs-ethanol" class="fs-input" value="">
                         </div>
                         <div class="fs-field">
                             <label for="fs-u-na">Urine Na⁺</label>
-                            <input type="number" id="fs-u-na" class="fs-input" value="20">
+                            <input type="number" id="fs-u-na" class="fs-input" value="">
                         </div>
                         <div class="fs-field">
                             <label for="fs-u-k">Urine K⁺</label>
-                            <input type="number" id="fs-u-k" class="fs-input" value="15">
+                            <input type="number" id="fs-u-k" class="fs-input" value="">
                         </div>
                         <div class="fs-field">
                             <label for="fs-u-cl">Urine Cl⁻</label>
-                            <input type="number" id="fs-u-cl" class="fs-input" value="60">
+                            <input type="number" id="fs-u-cl" class="fs-input" value="">
                         </div>
                         <div class="fs-field">
                             <label for="fs-u-cr">Urine Cr</label>
-                            <input type="number" id="fs-u-cr" class="fs-input" value="100">
+                            <input type="number" id="fs-u-cr" class="fs-input" value="">
                         </div>
                         <div class="fs-field">
                             <label for="fs-u-urea">Urine Urea</label>
-                            <input type="number" id="fs-u-urea" class="fs-input" value="800">
+                            <input type="number" id="fs-u-urea" class="fs-input" value="">
                         </div>
                         <div class="fs-field">
                             <label for="fs-u-urate">Urine Urate</label>
-                            <input type="number" id="fs-u-urate" class="fs-input" value="35">
+                            <input type="number" id="fs-u-urate" class="fs-input" value="">
                         </div>
                     </div>
                 </div>
@@ -1100,10 +1125,8 @@
             </div>
             <div class="grid-2">
                 <div class="input-group">
-                    <label for="na-measured">
-                        <span>Measured Serum Na⁺ (mEq/L)</span>
-                    </label>
-                    <input type="number" id="na-measured" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="125" step="0.5">
+                    <label for="na-measured">Measured Serum Na⁺ (mEq/L)</label>
+                    <input type="number" id="na-measured" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="" step="0.5">
                     <div class="chip-group">
                         <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
                         <button type="button" class="chip-btn" data-set="na-measured" data-val="110">110</button>
@@ -1115,7 +1138,7 @@
                 </div>
                 <div class="input-group">
                     <label for="na-glucose">Serum Glucose (mg/dL)</label>
-                    <input type="number" id="na-glucose" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="120" step="1">
+                    <input type="number" id="na-glucose" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="" step="1">
                     <div class="chip-group">
                         <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
                         <button type="button" class="chip-btn" data-set="na-glucose" data-val="100">100</button>
@@ -1128,11 +1151,11 @@
             <div class="card-sub" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
                     <span style="font-size:12px; font-weight:700; color:var(--graphite);">Corrected Na⁺ (Hillier 2.4/2.0 factor):</span>
-                    <span id="disp-corr-na-hillier" style="font-family:var(--font-mono); font-size:1.3rem; font-weight:700; color:var(--signal-orange); margin-left:8px;">125.4</span>
+                    <span id="disp-corr-na-hillier" style="font-family:var(--font-mono); font-size:1.3rem; font-weight:700; color:var(--signal-orange); margin-left:8px;">--</span>
                     <span style="font-size:12px; color:var(--graphite);">mEq/L</span>
                 </div>
                 <div style="font-size:12px; color:var(--graphite);">
-                    Katz (1.6 factor): <strong id="disp-corr-na-katz">125.3</strong> mEq/L
+                    Katz (1.6 factor): <strong id="disp-corr-na-katz">--</strong> mEq/L
                 </div>
             </div>
         </div>
@@ -1191,11 +1214,11 @@
                         <div class="stat-label">Expected ΔNa⁺ per 1L Fluid</div>
                         <div class="stat-label" style="font-size:10px; color:#94a3b8;">(Infusate Na - Serum Na) / (TBW + 1)</div>
                     </div>
-                    <div id="disp-delta-na-liter" class="stat-value">+10.5 <span class="stat-unit">mEq/L</span></div>
+                    <div id="disp-delta-na-liter" class="stat-value">-- <span class="stat-unit">mEq/L</span></div>
                 </div>
                 <div class="card-sub" style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="font-size:12px; font-weight:700;">Calculated Infusion Rate:</span>
-                    <span id="disp-adrogue-rate" style="font-family:var(--font-mono); font-weight:700; font-size:1.15rem; color:var(--signal-orange);">23.8 mL/hr</span>
+                    <span id="disp-adrogue-rate" style="font-family:var(--font-mono); font-weight:700; font-size:1.15rem; color:var(--signal-orange);">-- mL/hr</span>
                 </div>
             </div>
         </div>
@@ -1213,7 +1236,7 @@
             <div class="grid-2">
                 <div class="input-group">
                     <label for="hyperna-val">Current Serum Na⁺ (mEq/L)</label>
-                    <input type="number" id="hyperna-val" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="160" min="141" max="190">
+                    <input type="number" id="hyperna-val" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="" min="141" max="190">
                     <div class="chip-group">
                         <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
                         <button type="button" class="chip-btn" data-set="hyperna-val" data-val="150">150</button>
@@ -1228,12 +1251,12 @@
                             <div class="stat-label">Total Free Water Deficit</div>
                             <div style="font-size:11px; color:#93c5fd;">TBW × [(Na / 140) - 1]</div>
                         </div>
-                        <div id="disp-fwd-liters" class="stat-value" style="color:#60a5fa;">5.14 <span class="stat-unit" style="color:#60a5fa;">L</span></div>
+                        <div id="disp-fwd-liters" class="stat-value" style="color:#60a5fa;">-- <span class="stat-unit" style="color:#60a5fa;">L</span></div>
                     </div>
                 </div>
             </div>
             <div class="alert-box alert-info" style="margin-top:10px;">
-                <span><strong>Safe Correction Ceiling:</strong> Decrease serum Na⁺ by <strong>≤ 10 mEq/L in 24 hours</strong> (approx. 0.5 mEq/L/hr) to prevent cerebral edema. Initial D5W infusion: <strong id="disp-fwd-d5w-rate">107 mL/hr</strong> (+ replace ongoing water losses). Enteral water via NG tube is preferred if gut is functional.</span>
+                <span><strong>Safe Correction Ceiling:</strong> Decrease serum Na⁺ by <strong>≤ 10 mEq/L in 24 hours</strong> (approx. 0.5 mEq/L/hr) to prevent cerebral edema. Initial D5W infusion: <strong id="disp-fwd-d5w-rate">-- mL/hr</strong> (+ replace ongoing water losses). Enteral water via NG tube is preferred if gut is functional.</span>
             </div>
         </div>
     </div>
@@ -1261,7 +1284,7 @@
                 <!-- Step 1 -->
                 <div class="card-sub" style="border-left:3px solid #dc2626;">
                     <strong style="color:#dc2626; font-size:12px;">1. Membrane Stabilization (Immediate)</strong>
-                    <p style="font-size:12px; margin:4px 0;"><strong>10% Calcium Gluconate 10-20 mL IV</strong> over 2-5 min (or 10% Calcium Chloride 5-10 mL central/arrest). Onset: 1-3 min, duration: 30-60 min.</p>
+                    <p style="font-size:12px; margin:4px 0;">• <strong>10% Calcium Gluconate 10-20 mL IV</strong> over 2-5 min (or 10% Calcium Chloride 5-10 mL central/arrest). Onset: 1-3 min, duration: 30-60 min.</p>
                 </div>
                 <!-- Step 2 -->
                 <div class="card-sub" style="border-left:3px solid #2563eb;">
@@ -1314,7 +1337,7 @@
                 </div>
                 <div class="input-group" style="margin-bottom:10px;">
                     <label for="hypok-val">Serum K⁺ (mEq/L)</label>
-                    <input type="number" id="hypok-val" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="2.8" step="0.1" min="1.0" max="5.0">
+                    <input type="number" id="hypok-val" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="" step="0.1" min="1.0" max="5.0">
                     <div class="chip-group">
                         <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
                         <button type="button" class="chip-btn" data-set="hypok-val" data-val="2.0">2.0</button>
@@ -1326,9 +1349,9 @@
                 <div class="stat-banner">
                     <div>
                         <div class="stat-label">Estimated Total Body Deficit</div>
-                        <div id="disp-hypok-severity" style="font-size:11px; color:#cbd5e1;">Severe (2.5 - 2.9)</div>
+                        <div id="disp-hypok-severity" style="font-size:11px; color:#cbd5e1;">--</div>
                     </div>
-                    <div id="disp-hypok-deficit" class="stat-value">~300 <span class="stat-unit">mEq</span></div>
+                    <div id="disp-hypok-deficit" class="stat-value">-- <span class="stat-unit">mEq</span></div>
                 </div>
                 <div class="alert-box alert-warning">
                     <span><strong>The ROMK Lock:</strong> Hypomagnesemia disables the ATP-dependent block on ROMK channels, causing uncontrolled renal K⁺ wasting. <strong>Always check and correct Mg²⁺ concurrently!</strong></span>
@@ -1419,7 +1442,7 @@
                 <div class="grid-2">
                     <div class="input-group">
                         <label for="acid-hco3-curr">Current Serum HCO₃⁻ (mEq/L)</label>
-                        <input type="number" id="acid-hco3-curr" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="15" step="0.5">
+                        <input type="number" id="acid-hco3-curr" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="" step="0.5">
                         <div class="chip-group">
                             <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
                             <button type="button" class="chip-btn" data-set="acid-hco3-curr" data-val="6">6</button>
@@ -1442,9 +1465,9 @@
                 <div class="stat-banner" style="margin-top:12px;">
                     <div>
                         <div class="stat-label">Calculated Total Body Deficit</div>
-                        <div id="disp-bicarb-half" style="font-size:11px; color:#cbd5e1;">50% Target: ~45 mEq in 4-8h (~1.0 amp / 50 mL of 7.5%)</div>
+                        <div id="disp-bicarb-half" style="font-size:11px; color:#cbd5e1;">--</div>
                     </div>
-                    <div id="disp-bicarb-total" class="stat-value">90 <span class="stat-unit">mEq</span></div>
+                    <div id="disp-bicarb-total" class="stat-value">-- <span class="stat-unit">mEq</span></div>
                 </div>
                 <!-- Slow IV Push & Continuous Infusion Cards -->
                 <div class="card-sub" style="border-left:3px solid var(--signal-amber);">
@@ -1483,7 +1506,7 @@
                 <div class="grid-2">
                     <div class="input-group">
                         <label for="acid-ph">Blood pH</label>
-                        <input type="number" id="acid-ph" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="7.12" step="0.01" min="6.5" max="7.8">
+                        <input type="number" id="acid-ph" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="" step="0.01" min="6.5" max="7.8">
                         <div class="chip-group">
                             <button type="button" class="chip-btn" data-set="acid-ph" data-val="6.85">6.85</button>
                             <button type="button" class="chip-btn" data-set="acid-ph" data-val="7.05">7.05</button>
@@ -1502,7 +1525,7 @@
                 </div>
                 <div class="input-group" style="margin-top:8px;">
                     <label for="acid-pco2">Blood pCO₂ (mmHg, optional)</label>
-                    <input type="number" id="acid-pco2" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="35" min="10" max="120" placeholder="Optional pCO2">
+                    <input type="number" id="acid-pco2" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="" min="10" max="120">
                 </div>
                 <div id="disp-acid-guidance" class="alert-box alert-success" style="margin-top:12px;">
                     <span><strong>BICAR-ICU Landmark Evidence (Lancet 2018):</strong> In severe acidemia (pH ≤ 7.20) with AKI Stage 2-3 (n=182), NaHCO₃ infusion significantly <strong>reduced 28-day mortality from 63% to 46%</strong> (p=0.0283, ARR 17%, NNT=6), <strong>reduced RRT requirement from 73% to 51%</strong> (p=0.002, ARR 22%, NNT=5), and increased RRT-free days to 24 vs 20 days (p=0.006).</span>
@@ -1582,7 +1605,7 @@
                 </div>
                 <div class="input-group" style="margin-bottom:8px;">
                     <label for="min-ica">Direct Ionized Ca²⁺ (mmol/L) [Priority]</label>
-                    <input type="number" id="min-ica" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px; width:100%;" value="" step="0.01" placeholder="Normal: 1.15 - 1.33">
+                    <input type="number" id="min-ica" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px; width:100%;" value="" step="0.01">
                     <div class="chip-group">
                         <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
                         <button type="button" class="chip-btn" data-set="min-ica" data-val="0.80">0.80</button>
@@ -1594,11 +1617,11 @@
                 <div class="grid-2" style="margin-bottom:8px;">
                     <div class="input-group">
                         <label for="min-total-ca">Total Calcium (mg/dL)</label>
-                        <input type="number" id="min-total-ca" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px; width:100%;" value="" step="0.1" placeholder="Normal: 8.5 - 10.5">
+                        <input type="number" id="min-total-ca" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px; width:100%;" value="" step="0.1">
                     </div>
                     <div class="input-group">
                         <label for="min-ca-alb">Serum Albumin (g/dL)</label>
-                        <input type="number" id="min-ca-alb" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px; width:100%;" value="4.0" step="0.1" placeholder="Normal: 3.5 - 5.0">
+                        <input type="number" id="min-ca-alb" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px; width:100%;" value="" step="0.1">
                     </div>
                 </div>
                 
@@ -1623,7 +1646,7 @@
                 </div>
                 <div class="input-group" style="margin-bottom:8px;">
                     <label for="min-mg">Serum Mg²⁺ (mg/dL)</label>
-                    <input type="number" id="min-mg" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px; width:100%;" value="" step="0.1" placeholder="Normal: 1.7 - 2.4">
+                    <input type="number" id="min-mg" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px; width:100%;" value="" step="0.1">
                     <div class="chip-group">
                         <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
                         <button type="button" class="chip-btn" data-set="min-mg" data-val="0.8">0.8</button>
@@ -1660,7 +1683,7 @@
                 </div>
                 <div class="input-group" style="margin-bottom:8px;">
                     <label for="min-po4">Serum PO₄³⁻ (mg/dL)</label>
-                    <input type="number" id="min-po4" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px; width:100%;" value="" step="0.1" placeholder="Normal: 2.5 - 4.5">
+                    <input type="number" id="min-po4" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px; width:100%;" value="" step="0.1">
                     <div class="chip-group">
                         <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
                         <button type="button" class="chip-btn" data-set="min-po4" data-val="0.8">0.8</button>
@@ -1702,35 +1725,35 @@
                 <div class="grid-2">
                     <div class="input-group">
                         <label for="gap-na">Serum Na⁺ (mEq/L)</label>
-                        <input type="number" id="gap-na" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="125">
+                        <input type="number" id="gap-na" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="">
                     </div>
                     <div class="input-group">
                         <label for="gap-cl">Serum Cl⁻ (mEq/L)</label>
-                        <input type="number" id="gap-cl" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="100">
+                        <input type="number" id="gap-cl" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="">
                     </div>
                     <div class="input-group">
                         <label for="gap-hco3">Serum HCO₃⁻ (mEq/L)</label>
-                        <input type="number" id="gap-hco3" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="15">
+                        <input type="number" id="gap-hco3" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="">
                     </div>
                     <div class="input-group">
                         <label for="gap-alb">Serum Albumin (g/dL)</label>
-                        <input type="number" id="gap-alb" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="4.0" step="0.1">
+                        <input type="number" id="gap-alb" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="" step="0.1">
                     </div>
                 </div>
                 <div class="stat-banner" style="margin-top:12px;">
                     <div>
                         <div class="stat-label">Albumin-Corrected Anion Gap</div>
-                        <div id="disp-gap-interp" style="font-size:11px; color:#fca5a5;">High Anion Gap (HAGMA)</div>
+                        <div id="disp-gap-interp" style="font-size:11px; color:#cbd5e1;">--</div>
                     </div>
-                    <div id="disp-gap-corr" class="stat-value">25.0 <span class="stat-unit">mEq/L</span></div>
+                    <div id="disp-gap-corr" class="stat-value">-- <span class="stat-unit">mEq/L</span></div>
                 </div>
                 <div class="card-sub">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <strong style="font-size:12px;">Delta-Delta Ratio (ΔAG / ΔHCO₃):</strong>
-                        <span id="disp-delta-ratio" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-orange);">1.67</span>
+                        <span id="disp-delta-ratio" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-orange);">--</span>
                     </div>
                     <p id="disp-delta-interp" style="font-size:12px; margin:4px 0 0; color:var(--graphite);">
-                        Pure High Anion Gap Metabolic Acidosis (HAGMA)
+                        Enter Na⁺, Cl⁻, and HCO₃⁻ to calculate Delta-Delta ratio.
                     </p>
                 </div>
             </div>
@@ -1743,19 +1766,19 @@
                 <div class="grid-2">
                     <div class="input-group">
                         <label for="gap-meas-osm">Measured Serum Osmolality</label>
-                        <input type="number" id="gap-meas-osm" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="315" placeholder="mOsm/kg">
+                        <input type="number" id="gap-meas-osm" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="">
                     </div>
                     <div class="input-group">
                         <label for="gap-bun">BUN (mg/dL)</label>
-                        <input type="number" id="gap-bun" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="28">
+                        <input type="number" id="gap-bun" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="">
                     </div>
                     <div class="input-group">
                         <label for="gap-glu">Glucose (mg/dL)</label>
-                        <input type="number" id="gap-glu" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="120">
+                        <input type="number" id="gap-glu" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="">
                     </div>
                     <div class="input-group">
                         <label for="gap-ethanol">Serum Ethanol (mg/dL, optional)</label>
-                        <input type="number" id="gap-ethanol" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="0" placeholder="0 if none">
+                        <input type="number" id="gap-ethanol" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="">
                     </div>
                 </div>
                 <div class="stat-banner" style="background:#1e3a8a; margin-top:10px;">
@@ -1763,23 +1786,23 @@
                         <div class="stat-label">Serum Osmolar Gap</div>
                         <div style="font-size:10px; color:#93c5fd;">Normal ≤ 10 mOsm/kg</div>
                     </div>
-                    <div id="disp-osm-gap" class="stat-value" style="color:#60a5fa;">+18.3 <span class="stat-unit" style="color:#60a5fa;">mOsm</span></div>
+                    <div id="disp-osm-gap" class="stat-value" style="color:#60a5fa;">-- <span class="stat-unit" style="color:#60a5fa;">mOsm</span></div>
                 </div>
                 <div class="card-sub">
                     <strong style="font-size:12px;">Urine Anion Gap (UAG = U_Na + U_K - U_Cl):</strong>
                     <div class="grid-3" style="margin-top:6px;">
-                        <input type="number" id="gap-u-na" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="20" placeholder="U_Na">
-                        <input type="number" id="gap-u-k" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="15" placeholder="U_K">
-                        <input type="number" id="gap-u-cl" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="60" placeholder="U_Cl">
+                        <input type="number" id="gap-u-na" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
+                        <input type="number" id="gap-u-k" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
+                        <input type="number" id="gap-u-cl" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
                     </div>
-                    <p id="disp-uag-interp" style="font-size:12px; margin:6px 0 0; color:var(--signal-emerald); font-weight:600;">
-                        Negative UAG (-25 mEq/L): Intact NH₄⁺ excretion → GI loss (Diarrhea)
+                    <p id="disp-uag-interp" style="font-size:12px; margin:6px 0 0; color:var(--graphite);">
+                        Enter Urine Na⁺, K⁺, and Cl⁻ to calculate Urine Anion Gap.
                     </p>
                 </div>
             </div>
         </div>
 
-        <!-- ══ NEW: Fractional Excretions & Renal Clearance Suite ══ -->
+        <!-- ══ Fractional Excretions & Renal Clearance Suite ══ -->
         <div class="card" style="margin-top:16px; border-top:4px solid var(--signal-orange);">
             <div class="card-header" style="color:var(--signal-orange);">
                 <span>🧪 Fractional Excretions Suite (FE_Na, FE_Urea, FE_Urate, CCCR)</span>
@@ -1789,35 +1812,35 @@
             <div class="grid-4" style="margin-top:8px;">
                 <div class="input-group">
                     <label for="fe-u-cr">Urine Cr (mg/dL)</label>
-                    <input type="number" id="fe-u-cr" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="100" placeholder="U_Cr">
+                    <input type="number" id="fe-u-cr" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
                 </div>
                 <div class="input-group">
                     <label for="fe-s-cr">Serum Cr (mg/dL)</label>
-                    <input type="number" id="fe-s-cr" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="1.0" step="0.1" placeholder="S_Cr">
+                    <input type="number" id="fe-s-cr" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="" step="0.1">
                 </div>
                 <div class="input-group">
                     <label for="fe-u-urea">Urine Urea (mg/dL)</label>
-                    <input type="number" id="fe-u-urea" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="800" placeholder="U_Urea">
+                    <input type="number" id="fe-u-urea" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
                 </div>
                 <div class="input-group">
                     <label for="fe-s-urea">Serum Urea (mg/dL)</label>
-                    <input type="number" id="fe-s-urea" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="30" placeholder="S_Urea">
+                    <input type="number" id="fe-s-urea" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
                 </div>
                 <div class="input-group">
                     <label for="fe-u-urate">Urine Urate (mg/dL)</label>
-                    <input type="number" id="fe-u-urate" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="35" placeholder="U_Urate">
+                    <input type="number" id="fe-u-urate" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
                 </div>
                 <div class="input-group">
                     <label for="fe-s-urate">Serum Urate (mg/dL)</label>
-                    <input type="number" id="fe-s-urate" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="4.0" step="0.1" placeholder="S_Urate">
+                    <input type="number" id="fe-s-urate" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="" step="0.1">
                 </div>
                 <div class="input-group">
                     <label for="fe-u-ca">Urine Ca (mg/dL)</label>
-                    <input type="number" id="fe-u-ca" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="5.0" step="0.1" placeholder="U_Ca">
+                    <input type="number" id="fe-u-ca" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="" step="0.1">
                 </div>
                 <div class="input-group">
                     <label for="fe-s-ca">Serum Ca (mg/dL)</label>
-                    <input type="number" id="fe-s-ca" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="10.0" step="0.1" placeholder="S_Ca">
+                    <input type="number" id="fe-s-ca" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="" step="0.1">
                 </div>
             </div>
 
@@ -1825,33 +1848,33 @@
                 <div class="card-sub" style="border-left:3px solid var(--signal-blue);">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <strong>FE_Na (Sodium):</strong>
-                        <span id="disp-fe-na-val" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-blue); font-size:14px;">0.14 %</span>
+                        <span id="disp-fe-na-val" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-blue); font-size:14px;">-- %</span>
                     </div>
-                    <p id="disp-fe-na-interp" style="font-size:11.5px; margin:4px 0 0; color:var(--graphite);">FE_Na &lt; 1.0%: Prerenal Azotemia</p>
+                    <p id="disp-fe-na-interp" style="font-size:11.5px; margin:4px 0 0; color:var(--graphite);">Requires U_Na, S_Na, U_Cr, S_Cr</p>
                 </div>
 
                 <div class="card-sub" style="border-left:3px solid var(--signal-emerald);">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <strong>FE_Urea (Urea):</strong>
-                        <span id="disp-fe-urea-val" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-emerald); font-size:14px;">26.67 %</span>
+                        <span id="disp-fe-urea-val" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-emerald); font-size:14px;">-- %</span>
                     </div>
-                    <p id="disp-fe-urea-interp" style="font-size:11.5px; margin:4px 0 0; color:var(--graphite);">FE_Urea &lt; 35%: Prerenal (Accurate with Diuretics)</p>
+                    <p id="disp-fe-urea-interp" style="font-size:11.5px; margin:4px 0 0; color:var(--graphite);">Requires U_Urea, S_Urea, U_Cr, S_Cr</p>
                 </div>
 
                 <div class="card-sub" style="border-left:3px solid var(--signal-purple);">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <strong>FE_Urate (SIADH vs CSW):</strong>
-                        <span id="disp-fe-urate-val" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-purple); font-size:14px;">8.75 %</span>
+                        <span id="disp-fe-urate-val" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-purple); font-size:14px;">-- %</span>
                     </div>
-                    <p id="disp-fe-urate-interp" style="font-size:11.5px; margin:4px 0 0; color:var(--graphite);">FE_Urate ≤ 11%: Normal proximal urate reabsorption</p>
+                    <p id="disp-fe-urate-interp" style="font-size:11.5px; margin:4px 0 0; color:var(--graphite);">Requires U_Urate, S_Urate, U_Cr, S_Cr</p>
                 </div>
 
                 <div class="card-sub" style="border-left:3px solid var(--signal-amber);">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <strong>CCCR (Calcium Clearance):</strong>
-                        <span id="disp-fe-cccr-val" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-amber); font-size:14px;">0.005</span>
+                        <span id="disp-fe-cccr-val" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-amber); font-size:14px;">--</span>
                     </div>
-                    <p id="disp-fe-cccr-interp" style="font-size:11.5px; margin:4px 0 0; color:var(--graphite);">CCCR &lt; 0.01: FHH (Avoid Surgery!)</p>
+                    <p id="disp-fe-cccr-interp" style="font-size:11.5px; margin:4px 0 0; color:var(--graphite);">Requires U_Ca, S_Ca, U_Cr, S_Cr</p>
                 </div>
             </div>
         </div>
@@ -2272,6 +2295,106 @@
         });
     });
 
+    // ═══════════════════════════════════════════
+    // CLINICAL LAB REFERENCE RANGES & STYLING
+    // ═══════════════════════════════════════════
+    const LAB_RANGES = {
+        'fs-na': { min: 135, max: 145 },
+        'na-measured': { min: 135, max: 145 },
+        'gap-na': { min: 135, max: 145 },
+        'hyperna-val': { min: 135, max: 145 },
+
+        'fs-k': { min: 3.5, max: 5.0 },
+        'hypok-val': { min: 3.5, max: 5.0 },
+
+        'fs-cl': { min: 96, max: 106 },
+        'gap-cl': { min: 96, max: 106 },
+
+        'fs-hco3': { min: 22, max: 29 },
+        'acid-hco3-curr': { min: 22, max: 29 },
+        'gap-hco3': { min: 22, max: 29 },
+
+        'fs-bun': { min: 7, max: 20 },
+        'gap-bun': { min: 7, max: 20 },
+
+        'fs-cr': { min: 0.6, max: 1.2 },
+        'fe-s-cr': { min: 0.6, max: 1.2 },
+
+        'fs-glu': { min: 70, max: 140 },
+        'na-glucose': { min: 70, max: 140 },
+        'gap-glu': { min: 70, max: 140 },
+
+        'fs-egfr': { min: 90, max: 999 },
+
+        'fs-ica': { min: 1.15, max: 1.33 },
+        'min-ica': { min: 1.15, max: 1.33 },
+
+        'fs-total-ca': { min: 8.5, max: 10.5 },
+        'min-total-ca': { min: 8.5, max: 10.5 },
+        'fe-s-ca': { min: 8.5, max: 10.5 },
+
+        'fs-alb': { min: 3.5, max: 5.0 },
+        'min-ca-alb': { min: 3.5, max: 5.0 },
+        'gap-alb': { min: 3.5, max: 5.0 },
+
+        'fs-mg': { min: 1.7, max: 2.4 },
+        'min-mg': { min: 1.7, max: 2.4 },
+
+        'fs-po4': { min: 2.5, max: 4.5 },
+        'min-po4': { min: 2.5, max: 4.5 },
+
+        'fs-ph': { min: 7.35, max: 7.45 },
+        'acid-ph': { min: 7.35, max: 7.45 },
+
+        'fs-pco2': { min: 35, max: 45 },
+        'acid-pco2': { min: 35, max: 45 },
+
+        'fs-osm': { min: 275, max: 295 },
+        'gap-meas-osm': { min: 275, max: 295 },
+
+        'fs-ethanol': { min: 0, max: 0 },
+
+        'fs-u-na': { min: 20, max: 40 },
+        'gap-u-na': { min: 20, max: 40 },
+
+        'fs-u-k': { min: 20, max: 80 },
+        'gap-u-k': { min: 20, max: 80 },
+
+        'fs-u-cl': { min: 20, max: 40 },
+        'gap-u-cl': { min: 20, max: 40 },
+
+        'fs-u-cr': { min: 20, max: 300 },
+        'fe-u-cr': { min: 20, max: 300 },
+
+        'fs-u-urea': { min: 200, max: 1500 },
+        'fe-u-urea': { min: 200, max: 1500 },
+
+        'fs-u-urate': { min: 15, max: 60 },
+        'fe-u-urate': { min: 15, max: 60 },
+
+        'fe-u-ca': { min: 5, max: 20 },
+        'fe-s-urea': { min: 15, max: 45 },
+        'fe-s-urate': { min: 3.5, max: 7.2 }
+    };
+
+    function updateInputLabColor(el, valStr) {
+        if (!el) return;
+        el.classList.remove('lab-low', 'lab-normal', 'lab-high');
+        if (valStr === '' || valStr === null || valStr === undefined) return;
+        const num = parseFloat(valStr);
+        if (isNaN(num)) return;
+        const range = LAB_RANGES[el.id];
+        if (!range) return;
+
+        if (num < range.min) {
+            el.classList.add('lab-low');
+        } else if (num > range.max) {
+            el.classList.add('lab-high');
+        } else {
+            el.classList.add('lab-normal');
+        }
+    }
+
     // Universal 2-Way Reactive Sync Map
     const syncMap = {
         'fs-na': ['na-measured', 'gap-na'],
@@ -2347,21 +2470,38 @@
     };
 
     function syncAndRecalc(sourceId, value) {
+        const sourceEl = document.getElementById(sourceId);
+        updateInputLabColor(sourceEl, value);
+
         const targets = syncMap[sourceId];
         if (targets) {
             targets.forEach(tId => {
                 const el = document.getElementById(tId);
-                if (el && el.value !== value) el.value = value;
+                if (el && el.value !== value) {
+                    el.value = value;
+                    updateInputLabColor(el, value);
+                }
             });
         }
         recalc();
     }
 
-    // Bind sync to all mapped inputs
+    // Bind sync & color highlight to all mapped inputs
     Object.keys(syncMap).forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.addEventListener('input', (e) => syncAndRecalc(id, e.target.value));
+        }
+    });
+
+    // Other inputs with range styling
+    ['fs-egfr', 'hyperna-val', 'fe-s-urea', 'fe-s-urate', 'fe-u-ca'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', (e) => {
+                updateInputLabColor(el, e.target.value);
+                recalc();
+            });
         }
     });
 
@@ -2374,14 +2514,14 @@
         toggleIcon.textContent = isHidden ? '▲' : '▼';
     });
 
-    // Reset Flowsheet to Normal Physiological Values
+    // Load Normal Template (Soft Green highlighting)
     document.getElementById('btn-load-normal-labs').addEventListener('click', () => {
         const normalVals = {
             'fs-na': '140', 'fs-k': '4.0', 'fs-cl': '102', 'fs-hco3': '24',
             'fs-bun': '15', 'fs-cr': '1.0', 'fs-glu': '100', 'fs-egfr': '90',
             'fs-ica': '1.22', 'fs-total-ca': '9.5', 'fs-alb': '4.0', 'fs-mg': '2.0',
             'fs-po4': '3.5', 'fs-ph': '7.40', 'fs-pco2': '40', 'fs-osm': '290',
-            'fs-ethanol': '0', 'fs-u-na': '40', 'fs-u-k': '20', 'fs-u-cl': '50',
+            'fs-ethanol': '0', 'fs-u-na': '30', 'fs-u-k': '40', 'fs-u-cl': '30',
             'fs-u-cr': '100', 'fs-u-urea': '800', 'fs-u-urate': '35'
         };
         Object.entries(normalVals).forEach(([id, val]) => {
@@ -2392,6 +2532,29 @@
             }
         });
         showToast('↺ Loaded Normal Laboratory Template');
+    });
+
+    // Clear All Labs (Reset to empty & clean white)
+    document.getElementById('btn-clear-labs').addEventListener('click', () => {
+        const allLabIds = [
+            'fs-na', 'fs-k', 'fs-cl', 'fs-hco3', 'fs-bun', 'fs-cr', 'fs-glu', 'fs-egfr',
+            'fs-ica', 'fs-total-ca', 'fs-alb', 'fs-mg', 'fs-po4', 'fs-ph', 'fs-pco2',
+            'fs-osm', 'fs-ethanol', 'fs-u-na', 'fs-u-k', 'fs-u-cl', 'fs-u-cr', 'fs-u-urea', 'fs-u-urate',
+            'na-measured', 'na-glucose', 'hyperna-val', 'hypok-val', 'acid-hco3-curr', 'acid-ph', 'acid-pco2',
+            'min-ica', 'min-total-ca', 'min-ca-alb', 'min-mg', 'min-po4',
+            'gap-na', 'gap-cl', 'gap-hco3', 'gap-alb', 'gap-meas-osm', 'gap-bun', 'gap-glu', 'gap-ethanol',
+            'gap-u-na', 'gap-u-k', 'gap-u-cl', 'fe-u-cr', 'fe-s-cr', 'fe-u-urea', 'fe-s-urea',
+            'fe-u-urate', 'fe-s-urate', 'fe-u-ca', 'fe-s-ca'
+        ];
+        allLabIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = '';
+                el.classList.remove('lab-low', 'lab-normal', 'lab-high');
+            }
+        });
+        recalc();
+        showToast('🧹 Cleared All Lab Inputs');
     });
 
     function showToast(msg) {
@@ -2408,84 +2571,119 @@
         const weight = parseFloat(document.getElementById('pt-weight').value) || 60;
         const age = parseInt(document.getElementById('pt-age').value) || 60;
         const sex = document.querySelector('input[name="pt-sex"]:checked')?.value || 'male';
-        const egfr = parseFloat(document.getElementById('fs-egfr').value) || 90;
-        const alb = parseFloat(document.getElementById('fs-alb').value) || 4.0;
-        const glu = parseFloat(document.getElementById('fs-glu').value) || 120;
+        const egfrStr = document.getElementById('fs-egfr').value.trim();
+        const albStr = document.getElementById('fs-alb').value.trim();
+        const gluStr = document.getElementById('fs-glu').value.trim();
+
+        const egfr = egfrStr !== '' ? parseFloat(egfrStr) : null;
+        const alb = albStr !== '' ? parseFloat(albStr) : null;
+        const glu = gluStr !== '' ? parseFloat(gluStr) : 100; // default for glucose shift if needed
 
         // 1. TBW & Patient Context Sub-strip
         const tbw = ELECTROLYTE_ENGINE.calcTBW(weight, sex, age);
         document.getElementById('disp-tbw').textContent = `${tbw} L`;
 
         const renalTierEl = document.getElementById('disp-renal-tier');
-        if (egfr < 30) {
-            renalTierEl.textContent = `eGFR ${egfr} mL/min (Severe AKI/ESRD - Dose Adjust!)`;
-            renalTierEl.style.color = 'var(--signal-red)';
-        } else if (egfr < 60) {
-            renalTierEl.textContent = `eGFR ${egfr} mL/min (Moderate CKD)`;
-            renalTierEl.style.color = 'var(--signal-amber)';
+        if (egfr !== null) {
+            if (egfr < 30) {
+                renalTierEl.textContent = `eGFR ${egfr} mL/min (Severe AKI/ESRD - Dose Adjust!)`;
+                renalTierEl.style.color = 'var(--signal-red)';
+            } else if (egfr < 60) {
+                renalTierEl.textContent = `eGFR ${egfr} mL/min (Moderate CKD)`;
+                renalTierEl.style.color = 'var(--signal-amber)';
+            } else {
+                renalTierEl.textContent = `eGFR ${egfr} mL/min (Normal / Mild)`;
+                renalTierEl.style.color = 'var(--signal-emerald)';
+            }
         } else {
-            renalTierEl.textContent = `eGFR ${egfr} mL/min (Normal / Mild)`;
-            renalTierEl.style.color = 'var(--signal-emerald)';
+            renalTierEl.textContent = '--';
+            renalTierEl.style.color = 'var(--graphite)';
         }
 
         const albStatusEl = document.getElementById('disp-alb-status');
-        if (alb < 3.0) {
-            albStatusEl.textContent = `${alb} g/dL (Severe Hypoalbuminemia)`;
-            albStatusEl.style.color = 'var(--signal-amber)';
+        if (alb !== null) {
+            if (alb < 3.0) {
+                albStatusEl.textContent = `${alb} g/dL (Severe Hypoalbuminemia)`;
+                albStatusEl.style.color = 'var(--signal-amber)';
+            } else {
+                albStatusEl.textContent = `${alb} g/dL (Normal)`;
+                albStatusEl.style.color = 'var(--signal-emerald)';
+            }
         } else {
-            albStatusEl.textContent = `${alb} g/dL (Normal)`;
-            albStatusEl.style.color = 'var(--signal-emerald)';
+            albStatusEl.textContent = '--';
+            albStatusEl.style.color = 'var(--graphite)';
         }
 
         // 2. Sodium Calculations
-        const measNa = parseFloat(document.getElementById('na-measured').value) || 125;
-        const corrHillier = ELECTROLYTE_ENGINE.calcCorrectedSodium(measNa, glu, 'hillier');
-        const corrKatz = ELECTROLYTE_ENGINE.calcCorrectedSodium(measNa, glu, 'katz');
-        document.getElementById('disp-corr-na-hillier').textContent = corrHillier;
-        document.getElementById('disp-corr-na-katz').textContent = corrKatz;
+        const measNaStr = document.getElementById('na-measured').value.trim();
+        const measNa = measNaStr !== '' ? parseFloat(measNaStr) : null;
+        const naGlu = gluStr !== '' ? parseFloat(gluStr) : 100;
 
-        // 3% Bolus
-        const isPediatric = age < 15;
-        const bolus = ELECTROLYTE_ENGINE.calcHyponatremiaBolus(weight, isPediatric);
-        document.getElementById('disp-3pct-bolus').textContent = `${bolus.bolusRange || bolus.bolusMl + ' mL'}`;
-        document.getElementById('disp-3pct-bolus-subtitle').textContent = isPediatric ? 'Pediatric 2 mL/kg over 10-20 min' : 'Adult fixed bolus over 10-20 min';
+        if (measNa !== null) {
+            const corrHillier = ELECTROLYTE_ENGINE.calcCorrectedSodium(measNa, naGlu, 'hillier');
+            const corrKatz = ELECTROLYTE_ENGINE.calcCorrectedSodium(measNa, naGlu, 'katz');
+            document.getElementById('disp-corr-na-hillier').textContent = corrHillier;
+            document.getElementById('disp-corr-na-katz').textContent = corrKatz;
 
-        // Adrogue-Madias
-        const fluid = document.getElementById('na-fluid-choice').value;
-        const deltaTarget = parseFloat(document.getElementById('na-target-delta').value) || 6;
-        const deltaLiter = ELECTROLYTE_ENGINE.calcAdrogueMadias(measNa, fluid, tbw);
-        document.getElementById('disp-delta-na-liter').textContent = `${deltaLiter > 0 ? '+' : ''}${deltaLiter} mEq/L`;
+            // 3% Bolus
+            const isPediatric = age < 15;
+            const bolus = ELECTROLYTE_ENGINE.calcHyponatremiaBolus(weight, isPediatric);
+            document.getElementById('disp-3pct-bolus').textContent = `${bolus.bolusRange || bolus.bolusMl + ' mL'}`;
+            document.getElementById('disp-3pct-bolus-subtitle').textContent = isPediatric ? 'Pediatric 2 mL/kg over 10-20 min' : 'Adult fixed bolus over 10-20 min';
 
-        const fluidAlert = document.getElementById('na-fluid-alert');
-        if (deltaLiter <= 0) {
-            fluidAlert.style.display = 'flex';
+            // Adrogue-Madias
+            const fluid = document.getElementById('na-fluid-choice').value;
+            const deltaTarget = parseFloat(document.getElementById('na-target-delta').value) || 6;
+            const deltaLiter = ELECTROLYTE_ENGINE.calcAdrogueMadias(measNa, fluid, tbw);
+            document.getElementById('disp-delta-na-liter').textContent = `${deltaLiter > 0 ? '+' : ''}${deltaLiter} mEq/L`;
+
+            const fluidAlert = document.getElementById('na-fluid-alert');
+            if (deltaLiter <= 0) {
+                fluidAlert.style.display = 'flex';
+            } else {
+                fluidAlert.style.display = 'none';
+            }
+
+            const infusion = ELECTROLYTE_ENGINE.calcHyponatremiaInfusionRate(deltaTarget, deltaLiter);
+            if (infusion && infusion.mlPerHour > 0) {
+                document.getElementById('disp-adrogue-rate').textContent = `${infusion.mlPerHour} mL/hr`;
+            } else {
+                document.getElementById('disp-adrogue-rate').textContent = '-- mL/hr';
+            }
         } else {
-            fluidAlert.style.display = 'none';
-        }
-
-        const infusion = ELECTROLYTE_ENGINE.calcHyponatremiaInfusionRate(deltaTarget, deltaLiter);
-        if (infusion && infusion.mlPerHour > 0) {
-            document.getElementById('disp-adrogue-rate').textContent = `${infusion.mlPerHour} mL/hr`;
-        } else {
+            document.getElementById('disp-corr-na-hillier').textContent = '--';
+            document.getElementById('disp-corr-na-katz').textContent = '--';
+            document.getElementById('disp-delta-na-liter').textContent = '-- mEq/L';
             document.getElementById('disp-adrogue-rate').textContent = '-- mL/hr';
+            document.getElementById('na-fluid-alert').style.display = 'none';
         }
 
         // Hypernatremia FWD
-        const hyperNa = parseFloat(document.getElementById('hyperna-val').value) || 160;
-        if (hyperNa > 140) {
+        const hyperNaStr = document.getElementById('hyperna-val').value.trim();
+        const hyperNa = hyperNaStr !== '' ? parseFloat(hyperNaStr) : null;
+        if (hyperNa !== null && hyperNa > 140) {
             const fwd = ELECTROLYTE_ENGINE.calcFreeWaterDeficit(hyperNa, tbw, 140);
             document.getElementById('disp-fwd-liters').textContent = `${fwd.totalFwdLiters} L`;
             document.getElementById('disp-fwd-d5w-rate').textContent = `${fwd.d5wHourlyRateMlHr} mL/hr`;
-        } else {
+        } else if (hyperNa !== null) {
             document.getElementById('disp-fwd-liters').textContent = `0.0 L`;
-            document.getElementById('disp-fwd-d5w-rate').textContent = `0 mL/hr (No FWD, Na ≤ 140 mEq/L)`;
+            document.getElementById('disp-fwd-d5w-rate').textContent = `0 mL/hr (Na ≤ 140 mEq/L)`;
+        } else {
+            document.getElementById('disp-fwd-liters').textContent = `-- L`;
+            document.getElementById('disp-fwd-d5w-rate').textContent = `-- mL/hr`;
         }
 
         // 3. Potassium Calculations
-        const hypok = parseFloat(document.getElementById('hypok-val').value) || 2.8;
-        const kDef = ELECTROLYTE_ENGINE.calcPotassiumDeficit(hypok);
-        document.getElementById('disp-hypok-severity').textContent = kDef.severity;
-        document.getElementById('disp-hypok-deficit').textContent = `~${kDef.deficitMeq} mEq`;
+        const hypokStr = document.getElementById('hypok-val').value.trim();
+        const hypok = hypokStr !== '' ? parseFloat(hypokStr) : null;
+        if (hypok !== null) {
+            const kDef = ELECTROLYTE_ENGINE.calcPotassiumDeficit(hypok);
+            document.getElementById('disp-hypok-severity').textContent = kDef.severity;
+            document.getElementById('disp-hypok-deficit').textContent = `~${kDef.deficitMeq} mEq`;
+        } else {
+            document.getElementById('disp-hypok-severity').textContent = '--';
+            document.getElementById('disp-hypok-deficit').textContent = '-- mEq';
+        }
 
         // IV Drip Auto-Generator with Route Switch
         const kRoute = document.querySelector('input[name="k-iv-route"]:checked')?.value || 'peripheral';
@@ -2520,37 +2718,42 @@
         }
 
         // 4. Acidosis & Bicarbonate
-        const currHco3 = parseFloat(document.getElementById('acid-hco3-curr').value) || 15;
+        const currHco3Str = document.getElementById('acid-hco3-curr').value.trim();
+        const currHco3 = currHco3Str !== '' ? parseFloat(currHco3Str) : null;
         const targetHco3 = parseFloat(document.getElementById('acid-hco3-target').value) || 18;
         const isSevereAcid = document.getElementById('acid-severe-switch').checked;
         const bicarbForm = document.getElementById('acid-formulation').value;
-        const bicarbDef = ELECTROLYTE_ENGINE.calcBicarbonateDeficit(weight, currHco3, targetHco3, isSevereAcid);
 
-        if (bicarbDef) {
-            document.getElementById('disp-bicarb-total').textContent = `${bicarbDef.deficitMeq}`;
-            if (bicarbForm === '75') {
-                document.getElementById('disp-bicarb-half').textContent = `50% Target: ~${bicarbDef.halfDeficitMeq} mEq in 4-8h (~${bicarbDef.ampules75HalfExact} amp / ${bicarbDef.volume75MlHalf} mL of 7.5%)`;
-                document.getElementById('disp-bicarb-push-dose').innerHTML = `Give <strong>1 - 2 ampules (50 - 100 mL = 44.6 - 89.2 mEq of 7.5% NaHCO₃)</strong> slow IV push over 2 - 5 min in severe cardiac instability.`;
-                document.getElementById('disp-bicarb-form-badge').textContent = '7.5% GPO (44.6 mEq/amp)';
-                document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3.5 ampules (175 mL = 156 mEq) of 7.5% NaHCO₃</strong> into <strong>825-850 mL D5W</strong> (or <strong>2 ampules in 400-500 mL D5W</strong>) to yield ~150 mEq/L. Infuse at <strong>100 - 250 mL/hr</strong>.`;
+        if (currHco3 !== null) {
+            const bicarbDef = ELECTROLYTE_ENGINE.calcBicarbonateDeficit(weight, currHco3, targetHco3, isSevereAcid);
+            if (bicarbDef) {
+                document.getElementById('disp-bicarb-total').textContent = `${bicarbDef.deficitMeq}`;
+                if (bicarbForm === '75') {
+                    document.getElementById('disp-bicarb-half').textContent = `50% Target: ~${bicarbDef.halfDeficitMeq} mEq in 4-8h (~${bicarbDef.ampules75HalfExact} amp / ${bicarbDef.volume75MlHalf} mL of 7.5%)`;
+                    document.getElementById('disp-bicarb-push-dose').innerHTML = `Give <strong>1 - 2 ampules (50 - 100 mL = 44.6 - 89.2 mEq of 7.5% NaHCO₃)</strong> slow IV push over 2 - 5 min in severe cardiac instability.`;
+                    document.getElementById('disp-bicarb-form-badge').textContent = '7.5% GPO (44.6 mEq/amp)';
+                    document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3.5 ampules (175 mL = 156 mEq) of 7.5% NaHCO₃</strong> into <strong>825-850 mL D5W</strong> (or <strong>2 ampules in 400-500 mL D5W</strong>) to yield ~150 mEq/L. Infuse at <strong>100 - 250 mL/hr</strong>.`;
+                } else {
+                    document.getElementById('disp-bicarb-half').textContent = `50% Target: ~${bicarbDef.halfDeficitMeq} mEq in 4-8h (~${bicarbDef.ampules84HalfExact} amp / ${bicarbDef.volume84MlHalf} mL of 8.4%)`;
+                    document.getElementById('disp-bicarb-push-dose').innerHTML = `Give <strong>1 - 2 ampules (50 - 100 mL = 50 - 100 mEq of 8.4% NaHCO₃)</strong> slow IV push over 2 - 5 min in severe cardiac instability.`;
+                    document.getElementById('disp-bicarb-form-badge').textContent = '8.4% Int (50 mEq/amp)';
+                    document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3 ampules (150 mL = 150 mEq) of 8.4% NaHCO₃</strong> into <strong>850-1000 mL D5W</strong> to yield ~150 mEq/L. Infuse at <strong>100 - 250 mL/hr</strong>.`;
+                }
             } else {
-                document.getElementById('disp-bicarb-half').textContent = `50% Target: ~${bicarbDef.halfDeficitMeq} mEq in 4-8h (~${bicarbDef.ampules84HalfExact} amp / ${bicarbDef.volume84MlHalf} mL of 8.4%)`;
-                document.getElementById('disp-bicarb-push-dose').innerHTML = `Give <strong>1 - 2 ampules (50 - 100 mL = 50 - 100 mEq of 8.4% NaHCO₃)</strong> slow IV push over 2 - 5 min in severe cardiac instability.`;
-                document.getElementById('disp-bicarb-form-badge').textContent = '8.4% Int (50 mEq/amp)';
-                document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3 ampules (150 mL = 150 mEq) of 8.4% NaHCO₃</strong> into <strong>850-1000 mL D5W</strong> to yield ~150 mEq/L. Infuse at <strong>100 - 250 mL/hr</strong>.`;
+                document.getElementById('disp-bicarb-total').textContent = `0`;
+                document.getElementById('disp-bicarb-half').textContent = `Target reached (No deficit, Current HCO₃⁻ ≥ Target)`;
             }
         } else {
-            document.getElementById('disp-bicarb-total').textContent = `0`;
-            document.getElementById('disp-bicarb-half').textContent = `Target reached (No deficit, Current HCO₃⁻ ≥ Target)`;
-            document.getElementById('disp-bicarb-push-dose').textContent = `No bicarbonate push indicated (Current HCO₃⁻ is at or above target).`;
-            document.getElementById('disp-bicarb-recipe').textContent = `No continuous bicarbonate infusion required.`;
+            document.getElementById('disp-bicarb-total').textContent = `--`;
+            document.getElementById('disp-bicarb-half').textContent = `Enter serum HCO₃⁻`;
         }
 
         const etiology = document.getElementById('acid-etiology').value;
-        const ph = parseFloat(document.getElementById('acid-ph').value) || 7.12;
+        const phStr = document.getElementById('acid-ph').value.trim();
+        const ph = phStr !== '' ? parseFloat(phStr) : 7.12;
         const pco2 = parseFloat(document.getElementById('acid-pco2').value) || 35;
         const akiStage = parseInt(document.getElementById('acid-aki-stage').value) || 0;
-        const bicarbInd = ELECTROLYTE_ENGINE.evaluateBicarbonateIndication({ etiology, ph, hco3: currHco3, akinStage: akiStage, pco2 });
+        const bicarbInd = ELECTROLYTE_ENGINE.evaluateBicarbonateIndication({ etiology, ph, hco3: currHco3 || 15, akinStage: akiStage, pco2 });
         const bicarbIndEl = document.getElementById('disp-acid-guidance');
         const salicylateCard = document.getElementById('salicylate-protocol-card');
 
@@ -2596,7 +2799,7 @@
         const caTreatBox = document.getElementById('disp-ca-treatment-box');
 
         if (ica !== null || totCa !== null) {
-            const caEval = ELECTROLYTE_ENGINE.evaluateCalcium(ica || 0, totCa || 0, alb);
+            const caEval = ELECTROLYTE_ENGINE.evaluateCalcium(ica || 0, totCa || 0, alb || 4.0);
             if (caEval.status.includes('hypo')) {
                 const isSev = caEval.status.includes('severe');
                 caStatEl.textContent = isSev ? 'SEVERE HYPO' : 'HYPOCALCEMIA';
@@ -2634,16 +2837,16 @@
         const mgTreatBox = document.getElementById('disp-mg-treatment-box');
 
         if (mg !== null) {
-            const mgRep = ELECTROLYTE_ENGINE.calcMgRepletion(mg, isArrhythmia, egfr);
+            const mgRep = ELECTROLYTE_ENGINE.calcMgRepletion(mg, isArrhythmia, egfr || 90);
             if (isArrhythmia || mg < 1.0) {
                 mgStatEl.textContent = 'SEVERE HYPO / ARREST';
                 mgStatEl.style.color = '#f87171';
-                mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (eGFR ${egfr} mL/min)`;
+                mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (eGFR ${egfr || 90} mL/min)`;
                 mgTreatBox.innerHTML = `<strong>Emergency MgSO₄ Dosing:</strong><p style="margin:4px 0 0; color:var(--ink);">• <strong>${mgRep.emergencyPush}</strong>.<br>• Maintenance: <strong>${mgRep.maintenanceInfusion}</strong>.<br>• ${mgRep.monitoring}</p>`;
             } else if (mg < 1.7) {
                 mgStatEl.textContent = 'HYPOMAGNESEMIA';
                 mgStatEl.style.color = '#fbbf24';
-                mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (eGFR ${egfr} mL/min)`;
+                mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (eGFR ${egfr || 90} mL/min)`;
                 mgTreatBox.innerHTML = `<strong>MgSO₄ Repletion Regimen:</strong><p style="margin:4px 0 0; color:var(--ink);">• IV Option: <strong>${mgRep.ivOption}</strong>.<br>• Oral Option: <strong>${mgRep.oralRegimen}</strong>.</p>`;
             } else if (mg > 2.4) {
                 mgStatEl.textContent = 'HYPERMAGNESEMIA';
@@ -2710,29 +2913,48 @@
         }
 
         // 6. Acid-Base, Gaps & Fractional Excretions (Tab 5)
-        const naGap = parseFloat(document.getElementById('gap-na').value) || 125;
-        const clGap = parseFloat(document.getElementById('gap-cl').value) || 100;
-        const hco3Gap = parseFloat(document.getElementById('gap-hco3').value) || 15;
-        const agResult = ELECTROLYTE_ENGINE.calcAnionGap(naGap, clGap, hco3Gap, alb);
-        if (agResult) {
-            document.getElementById('disp-gap-corr').textContent = agResult.correctedAg;
-            document.getElementById('disp-gap-interp').textContent = agResult.interpretation;
-            const dd = ELECTROLYTE_ENGINE.calcDeltaDelta(agResult.correctedAg, hco3Gap);
-            if (dd && dd.deltaRatio !== null) {
-                document.getElementById('disp-delta-ratio').textContent = dd.deltaRatio;
-                document.getElementById('disp-delta-interp').textContent = dd.interpretation;
-            } else {
-                document.getElementById('disp-delta-ratio').textContent = '--';
-                document.getElementById('disp-delta-interp').textContent = dd ? dd.interpretation : '--';
+        const naGapStr = document.getElementById('gap-na').value.trim();
+        const clGapStr = document.getElementById('gap-cl').value.trim();
+        const hco3GapStr = document.getElementById('gap-hco3').value.trim();
+
+        if (naGapStr !== '' && clGapStr !== '' && hco3GapStr !== '') {
+            const naGap = parseFloat(naGapStr);
+            const clGap = parseFloat(clGapStr);
+            const hco3Gap = parseFloat(hco3GapStr);
+            const agResult = ELECTROLYTE_ENGINE.calcAnionGap(naGap, clGap, hco3Gap, alb || 4.0);
+            if (agResult) {
+                document.getElementById('disp-gap-corr').textContent = agResult.correctedAg;
+                document.getElementById('disp-gap-interp').textContent = agResult.interpretation;
+                const dd = ELECTROLYTE_ENGINE.calcDeltaDelta(agResult.correctedAg, hco3Gap);
+                if (dd && dd.deltaRatio !== null) {
+                    document.getElementById('disp-delta-ratio').textContent = dd.deltaRatio;
+                    document.getElementById('disp-delta-interp').textContent = dd.interpretation;
+                } else {
+                    document.getElementById('disp-delta-ratio').textContent = '--';
+                    document.getElementById('disp-delta-interp').textContent = dd ? dd.interpretation : '--';
+                }
             }
+        } else {
+            document.getElementById('disp-gap-corr').textContent = '--';
+            document.getElementById('disp-gap-interp').textContent = '--';
+            document.getElementById('disp-delta-ratio').textContent = '--';
+            document.getElementById('disp-delta-interp').textContent = 'Enter Na⁺, Cl⁻, and HCO₃⁻ to calculate Delta-Delta ratio.';
         }
 
-        const measOsm = parseFloat(document.getElementById('gap-meas-osm').value) || 315;
-        const bun = parseFloat(document.getElementById('gap-bun').value) || 28;
-        const ethanol = parseFloat(document.getElementById('gap-ethanol').value) || 0;
-        const osmGap = ELECTROLYTE_ENGINE.calcOsmolarGap(measOsm, naGap, glu, bun, ethanol);
-        if (osmGap) {
-            document.getElementById('disp-osm-gap').textContent = `${osmGap.osmolarGap > 0 ? '+' : ''}${osmGap.osmolarGap}`;
+        const measOsmStr = document.getElementById('gap-meas-osm').value.trim();
+        const bunStr = document.getElementById('gap-bun').value.trim();
+        const ethanolStr = document.getElementById('gap-ethanol').value.trim();
+        if (measOsmStr !== '' && naGapStr !== '') {
+            const measOsm = parseFloat(measOsmStr);
+            const naGap = parseFloat(naGapStr);
+            const bun = bunStr !== '' ? parseFloat(bunStr) : 15;
+            const ethanol = ethanolStr !== '' ? parseFloat(ethanolStr) : 0;
+            const osmGap = ELECTROLYTE_ENGINE.calcOsmolarGap(measOsm, naGap, glu, bun, ethanol);
+            if (osmGap) {
+                document.getElementById('disp-osm-gap').textContent = `${osmGap.osmolarGap > 0 ? '+' : ''}${osmGap.osmolarGap}`;
+            }
+        } else {
+            document.getElementById('disp-osm-gap').textContent = '--';
         }
 
         const uNaStr = document.getElementById('gap-u-na').value.trim();
@@ -2748,32 +2970,54 @@
         }
 
         // Fractional Excretions Suite
-        const uCr = parseFloat(document.getElementById('fe-u-cr').value) || 0;
-        const sCr = parseFloat(document.getElementById('fe-s-cr').value) || 0;
-        const uUrea = parseFloat(document.getElementById('fe-u-urea').value) || 0;
-        const sUrea = parseFloat(document.getElementById('fe-s-urea').value) || 0;
-        const uUrate = parseFloat(document.getElementById('fe-u-urate').value) || 0;
-        const sUrate = parseFloat(document.getElementById('fe-s-urate').value) || 0;
-        const uCa = parseFloat(document.getElementById('fe-u-ca').value) || 0;
-        const sCa = parseFloat(document.getElementById('fe-s-ca').value) || 0;
-        const uNa = uNaStr !== '' ? parseFloat(uNaStr) : 0;
-        const uK = uKStr !== '' ? parseFloat(uKStr) : 0;
+        const uCrStr = document.getElementById('fe-u-cr').value.trim();
+        const sCrStr = document.getElementById('fe-s-cr').value.trim();
+        const uUreaStr = document.getElementById('fe-u-urea').value.trim();
+        const sUreaStr = document.getElementById('fe-s-urea').value.trim();
+        const uUrateStr = document.getElementById('fe-u-urate').value.trim();
+        const sUrateStr = document.getElementById('fe-s-urate').value.trim();
+        const uCaStr = document.getElementById('fe-u-ca').value.trim();
+        const sCaStr = document.getElementById('fe-s-ca').value.trim();
 
-        const fe = ELECTROLYTE_ENGINE.calcFractionalExcretions({
-            uNa, sNa: naGap, uK, sK: hypok, uUrea, sUrea, uUrate, sUrate, uCr, sCr, uCa, sCa
-        });
+        if (uCrStr !== '' && sCrStr !== '') {
+            const uCr = parseFloat(uCrStr);
+            const sCr = parseFloat(sCrStr);
+            const uNa = uNaStr !== '' ? parseFloat(uNaStr) : 0;
+            const sNa = naGapStr !== '' ? parseFloat(naGapStr) : 0;
+            const uK = uKStr !== '' ? parseFloat(uKStr) : 0;
+            const sK = hypokStr !== '' ? parseFloat(hypokStr) : 0;
+            const uUrea = uUreaStr !== '' ? parseFloat(uUreaStr) : 0;
+            const sUrea = sUreaStr !== '' ? parseFloat(sUreaStr) : 0;
+            const uUrate = uUrateStr !== '' ? parseFloat(uUrateStr) : 0;
+            const sUrate = sUrateStr !== '' ? parseFloat(sUrateStr) : 0;
+            const uCa = uCaStr !== '' ? parseFloat(uCaStr) : 0;
+            const sCa = sCaStr !== '' ? parseFloat(sCaStr) : 0;
 
-        document.getElementById('disp-fe-na-val').textContent = fe.feNa !== undefined ? `${fe.feNa} %` : '-- %';
-        document.getElementById('disp-fe-na-interp').textContent = fe.feNaInterp || 'Requires U_Na, S_Na, U_Cr, S_Cr';
+            const fe = ELECTROLYTE_ENGINE.calcFractionalExcretions({
+                uNa, sNa, uK, sK, uUrea, sUrea, uUrate, sUrate, uCr, sCr, uCa, sCa
+            });
 
-        document.getElementById('disp-fe-urea-val').textContent = fe.feUrea !== undefined ? `${fe.feUrea} %` : '-- %';
-        document.getElementById('disp-fe-urea-interp').textContent = fe.feUreaInterp || 'Requires U_Urea, S_Urea, U_Cr, S_Cr';
+            document.getElementById('disp-fe-na-val').textContent = fe.feNa !== undefined ? `${fe.feNa} %` : '-- %';
+            document.getElementById('disp-fe-na-interp').textContent = fe.feNaInterp || 'Requires U_Na, S_Na, U_Cr, S_Cr';
 
-        document.getElementById('disp-fe-urate-val').textContent = fe.feUrate !== undefined ? `${fe.feUrate} %` : '-- %';
-        document.getElementById('disp-fe-urate-interp').textContent = fe.feUrateInterp || 'Requires U_Urate, S_Urate, U_Cr, S_Cr';
+            document.getElementById('disp-fe-urea-val').textContent = fe.feUrea !== undefined ? `${fe.feUrea} %` : '-- %';
+            document.getElementById('disp-fe-urea-interp').textContent = fe.feUreaInterp || 'Requires U_Urea, S_Urea, U_Cr, S_Cr';
 
-        document.getElementById('disp-fe-cccr-val').textContent = fe.cccr !== undefined ? `${fe.cccr}` : '--';
-        document.getElementById('disp-fe-cccr-interp').textContent = fe.cccrInterp || 'Requires U_Ca, S_Ca, U_Cr, S_Cr';
+            document.getElementById('disp-fe-urate-val').textContent = fe.feUrate !== undefined ? `${fe.feUrate} %` : '-- %';
+            document.getElementById('disp-fe-urate-interp').textContent = fe.feUrateInterp || 'Requires U_Urate, S_Urate, U_Cr, S_Cr';
+
+            document.getElementById('disp-fe-cccr-val').textContent = fe.cccr !== undefined ? `${fe.cccr}` : '--';
+            document.getElementById('disp-fe-cccr-interp').textContent = fe.cccrInterp || 'Requires U_Ca, S_Ca, U_Cr, S_Cr';
+        } else {
+            document.getElementById('disp-fe-na-val').textContent = '-- %';
+            document.getElementById('disp-fe-na-interp').textContent = 'Requires U_Na, S_Na, U_Cr, S_Cr';
+            document.getElementById('disp-fe-urea-val').textContent = '-- %';
+            document.getElementById('disp-fe-urea-interp').textContent = 'Requires U_Urea, S_Urea, U_Cr, S_Cr';
+            document.getElementById('disp-fe-urate-val').textContent = '-- %';
+            document.getElementById('disp-fe-urate-interp').textContent = 'Requires U_Urate, S_Urate, U_Cr, S_Cr';
+            document.getElementById('disp-fe-cccr-val').textContent = '--';
+            document.getElementById('disp-fe-cccr-interp').textContent = 'Requires U_Ca, S_Ca, U_Cr, S_Cr';
+        }
 
         // 7. Diagnostic Workup Wizards (Tab 6)
         // Hyponatremia
@@ -2831,7 +3075,7 @@
             anionGap: wAcidoAg === 'high' ? 18 : 8,
             uag: wAcidoUag === 'neg' ? -15 : 15,
             urinePh: wAcidoUph === 'alk' ? 6.2 : 5.0,
-            serumK: hypok
+            serumK: hypok || 4.0
         });
         document.getElementById('disp-w-acido-result').innerHTML = `<div><strong>${acidoWorkup.category}</strong><br>${acidoWorkup.primaryCauses ? acidoWorkup.primaryCauses.join(', ') : ''}<br><em>${acidoWorkup.nextAction || acidoWorkup.treatment || ''}</em></div>`;
 
@@ -2870,48 +3114,50 @@
         const weight = document.getElementById('pt-weight').value;
         const age = document.getElementById('pt-age').value;
         const sex = document.querySelector('input[name="pt-sex"]:checked')?.value || 'male';
-        const egfr = document.getElementById('fs-egfr').value;
-        const alb = document.getElementById('fs-alb').value;
-        const glu = document.getElementById('fs-glu').value;
+        const egfr = document.getElementById('fs-egfr').value || '--';
+        const alb = document.getElementById('fs-alb').value || '--';
+        const glu = document.getElementById('fs-glu').value || '--';
         const tbw = document.getElementById('disp-tbw').textContent;
 
         const sections = [];
         sections.push(`[ER CLINICAL ELECTROLYTE & ACID-BASE ASSESSMENT]\nPatient HN: ${hn} | Age: ${age}y | Sex: ${sex} | Weight: ${weight} kg | TBW: ${tbw} | eGFR: ${egfr} mL/min\n--------------------------------------------------------`);
 
         // 1. Sodium
-        const measNa = document.getElementById('na-measured').value;
+        const measNa = document.getElementById('na-measured').value.trim();
         const corrNa = document.getElementById('disp-corr-na-hillier').textContent;
-        const hyperNa = document.getElementById('hyperna-val').value;
-        if (measNa < 135) {
+        const hyperNa = document.getElementById('hyperna-val').value.trim();
+        if (measNa !== '' && parseFloat(measNa) < 135) {
             sections.push(`1. SODIUM (Hyponatremia):
    - Measured Na⁺: ${measNa} mEq/L (Glucose: ${glu} mg/dL)
    - Corrected Na⁺ (Hillier): ${corrNa} mEq/L
    - Emergency 3% NaCl Bolus: ${document.getElementById('disp-3pct-bolus').textContent} over 10-20 min if herniation/seizures
    - Slow Infusion Plan: ${document.getElementById('na-fluid-choice').selectedOptions[0].text} at ${document.getElementById('disp-adrogue-rate').textContent} (Max 8 mEq/L/24h)`);
-        } else if (measNa > 145 || hyperNa > 145) {
+        } else if ((measNa !== '' && parseFloat(measNa) > 145) || (hyperNa !== '' && parseFloat(hyperNa) > 145)) {
             sections.push(`1. SODIUM (Hypernatremia):
-   - Serum Na⁺: ${hyperNa} mEq/L
+   - Serum Na⁺: ${hyperNa || measNa} mEq/L
    - Free Water Deficit (FWD): ${document.getElementById('disp-fwd-liters').textContent}
    - Infusion Order: D5W at ${document.getElementById('disp-fwd-d5w-rate').textContent} (Max drop ≤ 10 mEq/L/24h)`);
         }
 
         // 2. Potassium
-        const kVal = document.getElementById('hypok-val').value;
+        const kVal = document.getElementById('hypok-val').value.trim();
         const kDef = document.getElementById('disp-hypok-deficit').textContent;
         const kRate = document.getElementById('disp-k-delivery-rate').textContent;
         const kRoute = document.querySelector('input[name="k-iv-route"]:checked')?.value || 'peripheral';
-        sections.push(`2. POTASSIUM:
+        if (kVal !== '') {
+            sections.push(`2. POTASSIUM:
    - Serum K⁺: ${kVal} mEq/L | Deficit: ${kDef}
    - Infusion: KCl delivered at ${kRate} via ${kRoute.toUpperCase()} line. Mg²⁺ checked concurrently.`);
+        }
 
         // 3. Acid-Base & Bicarbonate
-        const hco3Val = document.getElementById('acid-hco3-curr').value;
+        const hco3Val = document.getElementById('acid-hco3-curr').value.trim();
         const bDef = document.getElementById('disp-bicarb-total').textContent;
         const corrAg = document.getElementById('disp-gap-corr').textContent;
         const bForm = document.getElementById('acid-formulation').value;
-        if (hco3Val < 22 || corrAg > 10) {
+        if (hco3Val !== '' || corrAg !== '--') {
             sections.push(`3. ACID-BASE & BICARBONATE:
-   - Serum HCO₃⁻: ${hco3Val} mEq/L | Blood pH: ${document.getElementById('acid-ph').value}
+   - Serum HCO₃⁻: ${hco3Val || '--'} mEq/L | Blood pH: ${document.getElementById('acid-ph').value || '--'}
    - Bicarbonate Deficit: ${bDef} mEq (${bForm === '75' ? '7.5% Thailand / GPO' : '8.4% Int'})
    - Albumin-Corrected Anion Gap: ${corrAg} mEq/L (Modern ISE baseline 4-10)
    - Delta-Delta Ratio: ${document.getElementById('disp-delta-ratio').textContent} (${document.getElementById('disp-delta-interp').textContent})`);
@@ -2963,8 +3209,8 @@
         const weight = document.getElementById('pt-weight').value;
         const age = document.getElementById('pt-age').value;
         const sex = document.querySelector('input[name="pt-sex"]:checked')?.value || 'male';
-        const egfr = document.getElementById('fs-egfr').value;
-        const alb = document.getElementById('fs-alb').value;
+        const egfr = document.getElementById('fs-egfr').value || '--';
+        const alb = document.getElementById('fs-alb').value || '--';
         const tbw = document.getElementById('disp-tbw').textContent;
 
         document.getElementById('p-hn-disp').textContent = hn;
@@ -3010,31 +3256,31 @@
         assessBody.innerHTML = `
             <tr>
                 <td><strong>Serum Sodium</strong></td>
-                <td>${document.getElementById('na-measured').value} mEq/L</td>
+                <td>${document.getElementById('na-measured').value || '--'} mEq/L</td>
                 <td>Corrected: ${document.getElementById('disp-corr-na-hillier').textContent} mEq/L</td>
-                <td>${document.getElementById('na-measured').value < 135 ? 'Hyponatremia' : 'Normo/Hypernatremia'}</td>
+                <td>${document.getElementById('na-measured').value !== '' && parseFloat(document.getElementById('na-measured').value) < 135 ? 'Hyponatremia' : (document.getElementById('na-measured').value !== '' ? 'Normo/Hypernatremia' : '--')}</td>
             </tr>
             <tr>
                 <td><strong>Serum Potassium</strong></td>
-                <td>${document.getElementById('hypok-val').value} mEq/L</td>
+                <td>${document.getElementById('hypok-val').value || '--'} mEq/L</td>
                 <td>Deficit: ${document.getElementById('disp-hypok-deficit').textContent}</td>
                 <td>${document.getElementById('disp-hypok-severity').textContent}</td>
             </tr>
             <tr>
                 <td><strong>Anion Gap</strong></td>
-                <td>Na ${document.getElementById('gap-na').value} | Cl ${document.getElementById('gap-cl').value} | HCO₃ ${document.getElementById('gap-hco3').value}</td>
+                <td>Na ${document.getElementById('gap-na').value || '--'} | Cl ${document.getElementById('gap-cl').value || '--'} | HCO₃ ${document.getElementById('gap-hco3').value || '--'}</td>
                 <td>Corrected AG: ${document.getElementById('disp-gap-corr').textContent} mEq/L</td>
                 <td>${document.getElementById('disp-gap-interp').textContent} (ΔΔ = ${document.getElementById('disp-delta-ratio').textContent})</td>
             </tr>
             <tr>
                 <td><strong>Osmolar Gap</strong></td>
-                <td>Meas: ${document.getElementById('gap-meas-osm').value} mOsm/kg</td>
+                <td>Meas: ${document.getElementById('gap-meas-osm').value || '--'} mOsm/kg</td>
                 <td>Gap: ${document.getElementById('disp-osm-gap').textContent} mOsm/kg</td>
-                <td>${parseFloat(document.getElementById('disp-osm-gap').textContent) > 10 ? 'High Osmolar Gap (>10)' : 'Normal'}</td>
+                <td>${document.getElementById('disp-osm-gap').textContent !== '--' && parseFloat(document.getElementById('disp-osm-gap').textContent) > 10 ? 'High Osmolar Gap (>10)' : (document.getElementById('disp-osm-gap').textContent !== '--' ? 'Normal' : '--')}</td>
             </tr>
             <tr>
                 <td><strong>Fractional Excretions</strong></td>
-                <td>U_Cr ${document.getElementById('fe-u-cr').value} | S_Cr ${document.getElementById('fe-s-cr').value}</td>
+                <td>U_Cr ${document.getElementById('fe-u-cr').value || '--'} | S_Cr ${document.getElementById('fe-s-cr').value || '--'}</td>
                 <td>FE_Na: ${document.getElementById('disp-fe-na-val').textContent} | FE_Urea: ${document.getElementById('disp-fe-urea-val').textContent}</td>
                 <td>${document.getElementById('disp-fe-na-interp').textContent}</td>
             </tr>

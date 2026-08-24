@@ -3,7 +3,9 @@
 ### Electrolyte & Acid-Base Suite 2026 Overhaul & UI Polish
 - **Electrolyte Hub (`tools/electrolyte-hub.html`):**
   - **Unified Patient & Quick Lab Command Board:** Embedded the entire **Quick Lab Flowsheet** directly inline below the patient demographics header (eliminating the modal popup), providing a seamless 3-panel dashboard (`Chem-8`, `ABG/Minerals`, `Osmolality & Urine Profile`) with instant two-way live reactivity across all 6 tabs.
-  - Added collapsible panel toggle (`▲ / ▼ Lab Flowsheet`) and 1-tap template loader (`↺ Normal Labs`).
+  - **Clean Initial State & Dynamic Range Highlighting:** Defaulted all lab input fields to clean empty strings without phantom numbers or placeholder hints. Added real-time physiological range coloring (`.lab-low` soft sky blue, `.lab-normal` soft emerald green, `.lab-high` soft rose red) with instant feedback across the entire suite.
+  - Added 1-tap template actions: `↺ Normal Labs` (populates standard normal physiological values and greens all inputs) and `🧹 Clear` (resets all lab fields to clean neutral state).
+  - Added collapsible panel toggle (`▲ / ▼ Flowsheet`).
   - Added bedside 1-tap quick preset chips for critical electrolyte values.
   - Added explicit **Administration Route switch** (`Peripheral IV` vs `Central Line`) for Potassium drip calculations with clinical safety enforcement.
   - Implemented **Fractional Excretions Suite** in Tab 5 ($\text{FE}_{\text{Na}}$, $\text{FE}_{\text{Urea}}$, $\text{FE}_{\text{Urate}}$, $\text{CCCR}$) with two-way link to diagnostic decision workup.
