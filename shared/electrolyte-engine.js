@@ -636,6 +636,49 @@ const ELECTROLYTE_ENGINE = {
         };
     },
 
+    calcPotassiumInfusion: function({ fluidVolumeMl = 1000, kclMeqAdded = 40, pumpRateMlHr = 100, isCentralLine = false }) {
+        if (!(fluidVolumeMl > 0) || !(kclMeqAdded > 0) || !(pumpRateMlHr > 0)) return null;
+        const concMeqL = Math.round((kclMeqAdded / (fluidVolumeMl / 1000)) * 10) / 10;
+        const rateMeqHr = Math.round((concMeqL * (pumpRateMlHr / 1000)) * 10) / 10;
+        const bottleDurationHrs = Math.round((fluidVolumeMl / pumpRateMlHr) * 10) / 10;
+        const safety = this.evaluatePotassiumSafety(rateMeqHr, concMeqL, isCentralLine);
+
+        return {
+            concMeqL: concMeqL,
+            rateMeqHr: rateMeqHr,
+            bottleDurationHrs: bottleDurationHrs,
+            fluidVolumeMl: fluidVolumeMl,
+            kclMeqAdded: kclMeqAdded,
+            pumpRateMlHr: pumpRateMlHr,
+            isCentralLine: isCentralLine,
+            safety: safety
+        };
+    },
+
+    calcSalicylateAlkalinization: function({ weightKg = 60, formulation = '75' }) {
+        const isThai = formulation === '75';
+        const recipe = isThai
+            ? '3.5 ampules (175 mL = 156 mEq) 7.5% NaHCO3 + 20 - 40 mEq KCl in 825-850 mL D5W (Total 1,000 mL)'
+            : '3 ampules (150 mL = 150 mEq) 8.4% NaHCO3 + 20 - 40 mEq KCl in 850-1000 mL D5W (Total 1,000 mL)';
+        const rateMlHr = Math.round(weightKg * 2.0); // 1.5 - 2.0 mL/kg/hr -> ~150-250 mL/hr
+
+        return {
+            targetUrinePh: '7.5 - 8.0',
+            targetBloodPh: '≤ 7.55 (Do not exceed 7.55-7.60)',
+            recipe: recipe,
+            recommendedRateMlHr: `${Math.max(120, Math.min(250, rateMlHr))} mL/hr (1.5 - 2.0 mL/kg/hr)`,
+            potassiumMandate: 'MANDATORY: Keep serum K+ ≥ 4.0 - 4.5 mEq/L. Hypokalemia triggers renal H+/K+ ATPase exchange, causing paradoxical aciduria and failure of alkalinization.',
+            monitoringSchedule: 'Urine pH q1-2h, ABG/VBG q2h, Serum K+/Na+ q2-4h, Salicylate level q2-4h until falling.',
+            dialysisTriggers: [
+                'Acute Salicylate level > 100 mg/dL (7.2 mmol/L)',
+                'Chronic Salicylate level > 60 mg/dL with severe clinical signs',
+                'Presence of altered mental status, seizures, or cerebral edema',
+                'Non-cardiogenic pulmonary edema (ARDS) or acute renal failure (AKI)',
+                'Severe refractory acidemia (pH < 7.20) despite alkalinization'
+            ]
+        };
+    },
+
     evaluateHypokalemiaWorkup: function({ spotUKCrRatio, bpStatus, acidBaseStatus, uCl }) {
         if (spotUKCrRatio !== undefined && spotUKCrRatio !== null && spotUKCrRatio < 1.5) {
             return {
@@ -683,6 +726,198 @@ const ELECTROLYTE_ENGINE = {
             category: 'Renal Potassium Wasting (Incomplete parameters)',
             nextAction: 'Measure Blood Pressure, Serum Bicarbonate / Acid-Base, and Urine Chloride.'
         };
+    },
+
+    evaluateHypernatremiaWorkup: function({ uOsm, responseToDdavp, urineVolume }) {
+        if (uOsm < 300) {
+            if (responseToDdavp === 'good') {
+                return {
+                    category: 'Complete Central Diabetes Insipidus (CDI)',
+                    primaryCauses: ['Pituitary surgery / Neurosurgery', 'Head trauma', 'Hypoxic-ischemic encephalopathy', 'Infections (Meningitis/Encephalitis)', 'Idiopathic'],
+                    nextAction: 'Desmopressin (DDAVP) 1-2 mcg IV/SC or 10-20 mcg intranasal q12-24h + Free water deficit replacement.'
+                };
+            } else if (responseToDdavp === 'poor') {
+                return {
+                    category: 'Complete Nephrogenic Diabetes Insipidus (NDI)',
+                    primaryCauses: ['Lithium therapy', 'Hypercalcemia', 'Severe hypokalemia', 'Post-obstructive diuresis', 'Congenital V2 receptor defect'],
+                    nextAction: 'Discontinue offending drugs, low-sodium diet, Thiazide diuretics + Amiloride, NSAIDs.'
+                };
+            }
+            return {
+                category: 'Diabetes Insipidus (Unclassified)',
+                primaryCauses: ['Central DI vs Nephrogenic DI'],
+                nextAction: 'Perform Desmopressin (DDAVP) Challenge Test (Check UOsm 1-2h post 2-4 mcg DDAVP: >50% increase = Central DI; <50% = Nephrogenic DI).'
+            };
+        } else if (uOsm <= 800) {
+            return {
+                category: 'Partial Diabetes Insipidus OR Osmotic Diuresis',
+                primaryCauses: ['Osmotic Diuresis (Hyperglycemia / Glucosuria, High Urea / Recovery phase of AKI, Mannitol)', 'Partial Central/Nephrogenic DI'],
+                nextAction: 'Calculate total urine solute excretion (UOsm × 24h Volume: >1000 mOsm/day = Osmotic diuresis).'
+            };
+        } else {
+            return {
+                category: 'Extrarenal Water Loss OR Sodium Overload',
+                primaryCauses: ['Hypodipsia / Lack of access to water (Elderly, Debilitated)', 'Insensible cutaneous/respiratory water loss (Sweating, Burns, Fever)', 'Gastrointestinal osmotic diarrhea', 'Exogenous Sodium Overload (Hypertonic saline, NaHCO3 ampules, Salt tablet poisoning)'],
+                nextAction: 'Calculate Free Water Deficit (FWD) and infuse D5W or enteral water via NG tube.'
+            };
+        }
+    },
+
+    evaluateHyperkalemiaWorkup: function({ isHemolyzed, gfr, transcellularTrigger, spotUKCrRatio }) {
+        if (isHemolyzed) {
+            return {
+                category: 'Pseudohyperkalemia (Factitious Hyperkalemia)',
+                primaryCauses: ['In vitro hemolysis (traumatic venipuncture / fist clenching)', 'Thrombocytosis (Platelets > 500,000/μL)', 'Marked Leukocytosis (WBC > 50,000/μL)'],
+                nextAction: 'Repeat blood draw with free-flowing non-tourniquet technique; order plasma potassium.'
+            };
+        }
+
+        if (transcellularTrigger) {
+            return {
+                category: 'Transcellular Potassium Shift (Extracellular Shift)',
+                primaryCauses: ['Metabolic Acidemia (Inorganic)', 'Insulin deficiency / Hyperglycemia (DKA/HHS)', 'Beta-blocker overdose', 'Digoxin toxicity', 'Succinylcholine administration', 'Tissue breakdown / Rhabdomyolysis / Tumor Lysis Syndrome'],
+                nextAction: 'Treat underlying condition; administer Insulin + D50W and Salbutamol.'
+            };
+        }
+
+        if (gfr !== undefined && gfr !== null && gfr < 30) {
+            return {
+                category: 'Reduced GFR-Mediated Hyperkalemia',
+                primaryCauses: ['Acute Kidney Injury (AKI Stage 2-3 / Oliguric)', 'End-Stage Renal Disease (ESRD / Missed Dialysis)'],
+                nextAction: 'Assess for emergency RRT/Dialysis (AEIOU); administer potassium binders (Lokelma/SZC) and loop diuretics if non-oliguric.'
+            };
+        }
+
+        if (spotUKCrRatio !== undefined && spotUKCrRatio !== null && spotUKCrRatio < 2.0) {
+            return {
+                category: 'Impaired Tubular Potassium Secretion (Normal/Mild GFR reduction)',
+                primaryCauses: ['Hypoaldosteronism (Type 4 RTA)', 'Renin-Angiotensin-Aldosterone System Inhibitors (ACEi, ARB, MRA/Spironolactone)', 'ENaC Blockers (Trimethoprim, Amiloride, Triamterene)', 'Calcineurin Inhibitors (Tacrolimus, Cyclosporine)', 'Heparin (aldosterone suppression)'],
+                nextAction: 'Review and discontinue offending medications, consider Fludrocortisone or loop diuretics.'
+            };
+        }
+
+        return {
+            category: 'Hyperkalemia (Multifactorial / Unspecified)',
+            nextAction: 'Check repeat free-flowing sample, serum creatinine / eGFR, medication list, and Spot UK/UCr ratio.'
+        };
+    },
+
+    evaluateMetabolicAcidosisWorkup: function({ anionGap, uag, deltaRatio, urinePh, serumK }) {
+        if (anionGap > 10) {
+            let desc = 'High Anion Gap Metabolic Acidosis (HAGMA - GOLD MARK / MUDPILES)';
+            const causes = ['L-Lactic Acidosis (Sepsis, Shock, Hypoperfusion)', 'Ketoacidosis (DKA, Alcoholic AKA, Starvation)', 'Renal Failure / Uremic acid accumulation', 'Toxic Alcohols (Methanol, Ethylene Glycol - Check Osmolar Gap)', 'Salicylate Poisoning', '5-Oxoproline (Chronic Acetaminophen)', 'D-Lactic Acidosis (Short Bowel Syndrome)'];
+            if (deltaRatio !== null && deltaRatio !== undefined) {
+                if (deltaRatio < 0.8) desc += ' + Concurrent NAGMA';
+                else if (deltaRatio > 2.0) desc += ' + Concurrent Metabolic Alkalosis / Pre-existing HCO3 retention';
+            }
+            return {
+                category: desc,
+                primaryCauses: causes,
+                nextAction: 'Check serum Lactate, Ketones, Creatinine, Osmolar Gap, and Salicylate level.'
+            };
+        } else {
+            if (uag !== null && uag !== undefined && uag < 0) {
+                return {
+                    category: 'Normal Anion Gap Metabolic Acidosis (NAGMA: Gastrointestinal HCO3- Loss)',
+                    primaryCauses: ['Severe Diarrhea', 'Enterostomy / Fistula drainage', 'Ureteral diversions (Ureterosigmoidostomy)'],
+                    treatment: 'Negative UAG confirms intact renal ammonium (NH4+) excretion. Treat with volume and bicarbonate repletion.'
+                };
+            } else if (uag !== null && uag !== undefined && uag > 0) {
+                if (urinePh > 5.5) {
+                    return {
+                        category: 'NAGMA: Distal Renal Tubular Acidosis (Classic Type 1 RTA)',
+                        primaryCauses: ['Autoimmune diseases (Sjögren\'s, SLE)', 'Amphotericin B toxicity', 'Hypercalciuria / Nephrocalcinosis'],
+                        nextAction: 'Positive UAG + alkaline urine (pH > 5.5) indicates impaired distal H+ secretion. Treat with oral Sodium/Potassium Citrate.'
+                    };
+                } else {
+                    if (serumK > 5.0) {
+                        return {
+                            category: 'NAGMA: Hyperkalemic RTA (Type 4 RTA / Aldosterone Deficiency or Resistance)',
+                            primaryCauses: ['Diabetic Nephropathy', 'Drugs (ACEi, ARB, Spironolactone, NSAIDs, Trimethoprim)', 'Primary Adrenal Insufficiency'],
+                            treatment: 'Low potassium diet, loop diuretics, Fludrocortisone.'
+                        };
+                    } else {
+                        return {
+                            category: 'NAGMA: Proximal RTA (Type 2 RTA)',
+                            primaryCauses: ['Fanconi Syndrome', 'Multiple Myeloma (Light chain toxicity)', 'Acetazolamide / Topiramate', 'Tenofovir / Heavy metals'],
+                            treatment: 'Impaired proximal HCO3- reabsorption. Large doses of oral bicarbonate + potassium.'
+                        };
+                    }
+                }
+            }
+            return {
+                category: 'Normal Anion Gap Metabolic Acidosis (NAGMA / Hyperchloremic)',
+                nextAction: 'Measure Urine Na+, K+, Cl- to calculate Urine Anion Gap (UAG = UNa + UK - UCl).'
+            };
+        }
+    },
+
+    evaluateMetabolicAlkalosisWorkup: function({ uCl, bpStatus, reninAldoStatus }) {
+        if (uCl !== undefined && uCl !== null && uCl < 15) {
+            return {
+                category: 'Chloride-Responsive Metabolic Alkalosis (UCl < 15-20 mEq/L)',
+                primaryCauses: ['Gastric loss (Vomiting, Nasogastric suction)', 'Remote Diuretic Therapy (post-diuretic)', 'Congenital Chloridorrhea', 'Cystic Fibrosis / Sweat loss', 'Post-hypercapnic state'],
+                treatment: 'Volume expansion with 0.9% NaCl Normal Saline + Potassium replacement.'
+            };
+        } else if (uCl !== undefined && uCl !== null && uCl >= 20) {
+            const bp = String(bpStatus || '').toLowerCase();
+            if (bp === 'hypertensive') {
+                return {
+                    category: 'Chloride-Resistant Metabolic Alkalosis with Hypertension (Mineralocorticoid Excess)',
+                    primaryCauses: ['Primary Hyperaldosteronism (Conn\'s syndrome - High Aldo, Low Renin)', 'Renovascular HTN / Renal Artery Stenosis (High Aldo, High Renin)', 'Cushing Syndrome / Ectopic ACTH', 'Liddle Syndrome (Low Aldo, Low Renin)', 'Apparent Mineralocorticoid Excess (Licorice)'],
+                    nextAction: 'Measure Plasma Renin Activity (PRA) and Plasma Aldosterone Concentration (PAC).'
+                };
+            } else {
+                return {
+                    category: 'Chloride-Resistant Metabolic Alkalosis with Normal/Low BP',
+                    primaryCauses: ['Ongoing Loop or Thiazide Diuretics', 'Gitelman Syndrome (Hypocalciuria: UCa/UCr < 0.2)', 'Bartter Syndrome (Hypercalciuria: UCa/UCr > 0.2)', 'Severe Hypomagnesemia'],
+                    nextAction: 'Check spot Urine Calcium/Creatinine ratio and serum Magnesium.'
+                };
+            }
+        }
+        return {
+            category: 'Metabolic Alkalosis (Unclassified)',
+            nextAction: 'Measure Urine Chloride (UCl) to differentiate Chloride-Responsive vs Chloride-Resistant.'
+        };
+    },
+
+    evaluateCalciumWorkup: function({ isHypercalcemia, pthStatus, cccr, vitDStatus }) {
+        if (isHypercalcemia) {
+            if (pthStatus === 'elevated' || pthStatus === 'normal') {
+                if (cccr !== undefined && cccr !== null && cccr < 0.01) {
+                    return {
+                        category: 'Familial Hypocalciuric Hypercalcemia (FHH)',
+                        primaryCauses: ['Inactivating mutation of Calcium-Sensing Receptor (CASR) gene'],
+                        nextAction: 'Benign condition; PARATHYROIDECTOMY IS CONTRAINDICATED. Check family members.'
+                    };
+                }
+                return {
+                    category: 'PTH-Dependent Hypercalcemia (Primary Hyperparathyroidism)',
+                    primaryCauses: ['Parathyroid Adenoma (85%)', 'Parathyroid Hyperplasia (15%)', 'Parathyroid Carcinoma (<1%)', 'Tertiary Hyperparathyroidism (ESRD)'],
+                    nextAction: 'Parathyroid localization (Sestamibi/SPECT, Neck US, 4D-CT) for surgical referral; maintain hydration.'
+                };
+            } else {
+                return {
+                    category: 'PTH-Independent Hypercalcemia (PTH Suppressed)',
+                    primaryCauses: ['Malignancy (Humoral Hypercalcemia of Malignancy via PTHrP - Squamous cell CA, Renal, Breast)', 'Osteolytic Bone Metastases (Multiple Myeloma, Breast)', 'Vitamin D Toxicity or Granulomatous Disease (Sarcoidosis, TB via 1,25(OH)2D)', 'Milk-Alkali Syndrome', 'Immobilization / Thyrotoxicosis'],
+                    nextAction: 'Check PTHrP, 25-OH Vitamin D, 1,25-(OH)2 Vitamin D, and serum protein electrophoresis (SPEP).'
+                };
+            }
+        } else {
+            if (pthStatus === 'low' || pthStatus === 'suppressed') {
+                return {
+                    category: 'Hypoparathyroidism',
+                    primaryCauses: ['Post-surgical (Thyroidectomy / Parathyroidectomy)', 'Autoimmune polyglandular syndrome', 'Severe Hypomagnesemia (impairs PTH release and induces end-organ resistance)'],
+                    treatment: 'Calcium supplementation + Calcitriol (Active Vit D). Correct Magnesium.'
+                };
+            } else {
+                return {
+                    category: 'Secondary Hyperparathyroidism / High-PTH Hypocalcemia',
+                    primaryCauses: ['Vitamin D Deficiency (Nutritional / Malabsorption)', 'Chronic Kidney Disease (CKD - loss of 1α-hydroxylase)', 'Acute Pancreatitis (Calcium saponification)', 'Hyperphosphatemia / Tumor Lysis', 'Bisphosphonate / Denosumab therapy'],
+                    treatment: 'Vitamin D repletion, Phosphate binders if indicated, Calcium repletion.'
+                };
+            }
+        }
     }
 };
 

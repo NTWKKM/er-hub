@@ -226,4 +226,50 @@ describe('ELECTROLYTE_ENGINE: Diagnostic Decision Trees', () => {
         assert.ok(gitelman.category.includes('Chloride-Resistant'));
         assert.ok(gitelman.primaryCauses.some(c => c.includes('Gitelman')));
     });
+
+    test('Hypernatremia & Hyperkalemia Decision Trees', () => {
+        const cdi = ELECTROLYTE_ENGINE.evaluateHypernatremiaWorkup({ uOsm: 150, responseToDdavp: 'good' });
+        assert.ok(cdi.category.includes('Central Diabetes Insipidus'));
+
+        const ndi = ELECTROLYTE_ENGINE.evaluateHypernatremiaWorkup({ uOsm: 200, responseToDdavp: 'poor' });
+        assert.ok(ndi.category.includes('Nephrogenic Diabetes Insipidus'));
+
+        const pseudoK = ELECTROLYTE_ENGINE.evaluateHyperkalemiaWorkup({ isHemolyzed: true });
+        assert.ok(pseudoK.category.includes('Pseudohyperkalemia'));
+
+        const rta4 = ELECTROLYTE_ENGINE.evaluateHyperkalemiaWorkup({ isHemolyzed: false, gfr: 65, spotUKCrRatio: 1.2 });
+        assert.ok(rta4.category.includes('Impaired Tubular Potassium Secretion'));
+    });
+
+    test('Metabolic Acidosis & Alkalosis Decision Trees', () => {
+        const hagma = ELECTROLYTE_ENGINE.evaluateMetabolicAcidosisWorkup({ anionGap: 18, deltaRatio: 1.2 });
+        assert.ok(hagma.category.includes('HAGMA'));
+
+        const nagmaDiarrhea = ELECTROLYTE_ENGINE.evaluateMetabolicAcidosisWorkup({ anionGap: 8, uag: -20 });
+        assert.ok(nagmaDiarrhea.category.includes('Gastrointestinal'));
+
+        const rta1 = ELECTROLYTE_ENGINE.evaluateMetabolicAcidosisWorkup({ anionGap: 8, uag: 15, urinePh: 6.5, serumK: 3.0 });
+        assert.ok(rta1.category.includes('Type 1 RTA'));
+
+        const metAlkResp = ELECTROLYTE_ENGINE.evaluateMetabolicAlkalosisWorkup({ uCl: 10 });
+        assert.ok(metAlkResp.category.includes('Chloride-Responsive'));
+
+        const metAlkResistHTN = ELECTROLYTE_ENGINE.evaluateMetabolicAlkalosisWorkup({ uCl: 35, bpStatus: 'hypertensive' });
+        assert.ok(metAlkResistHTN.category.includes('Mineralocorticoid Excess'));
+    });
+
+    test('Calcium Workup & IV Infusion Auto-Calculators', () => {
+        const fhh = ELECTROLYTE_ENGINE.evaluateCalciumWorkup({ isHypercalcemia: true, pthStatus: 'normal', cccr: 0.006 });
+        assert.ok(fhh.category.includes('FHH'));
+
+        const kInfusion = ELECTROLYTE_ENGINE.calcPotassiumInfusion({ fluidVolumeMl: 1000, kclMeqAdded: 40, pumpRateMlHr: 100, isCentralLine: false });
+        assert.equal(kInfusion.concMeqL, 40);
+        assert.equal(kInfusion.rateMeqHr, 4);
+        assert.equal(kInfusion.bottleDurationHrs, 10);
+        assert.equal(kInfusion.safety.isSafe, true);
+
+        const salicylate = ELECTROLYTE_ENGINE.calcSalicylateAlkalinization({ weightKg: 60, formulation: '75' });
+        assert.ok(salicylate.recipe.includes('7.5%'));
+        assert.ok(salicylate.potassiumMandate.includes('MANDATORY'));
+    });
 });

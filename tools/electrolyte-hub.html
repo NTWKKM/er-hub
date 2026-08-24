@@ -22,6 +22,8 @@
             --signal-emerald: #047857;
             --signal-amber: #b45309;
             --signal-red: #b91c1c;
+            --signal-cyan: #0284c7;
+            --signal-purple: #6d28d9;
             --surface-card: #ffffff;
             --surface-sub: #f8f7f4;
             --font-ui: "Inter Tight", "Sarabun", sans-serif;
@@ -63,6 +65,33 @@
             text-transform: uppercase;
             letter-spacing: 0.03em;
             white-space: nowrap;
+        }
+
+        /* ══ Section Dividers (Hypo vs Hyper Partitions) ══ */
+        .partition-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin: 16px 0 12px 0;
+            font-weight: 700;
+            font-size: 13.5px;
+            letter-spacing: 0.02em;
+        }
+
+        .partition-hypo {
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-left: 5px solid var(--signal-blue);
+        }
+
+        .partition-hyper {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            border-left: 5px solid var(--signal-red);
         }
 
         /* ══ Patient Variables Strip ══ */
@@ -384,7 +413,7 @@
             padding: 10px;
             width: 100%;
             box-sizing: border-box;
-            height: 180px;
+            height: 200px;
             white-space: pre-wrap;
             resize: vertical;
         }
@@ -460,6 +489,11 @@
          TAB 1: SODIUM (Na+)
     ════════════════════════════════════════ -->
     <div id="tab-sodium" class="tab-panel active">
+        <!-- 🔵 PART A: HYPONATREMIA MANAGEMENT -->
+        <div class="partition-header partition-hypo">
+            <span>🔵 PART A: HYPONATREMIA MANAGEMENT (Na⁺ &lt; 135 mEq/L)</span>
+        </div>
+
         <!-- Hyperglycemia Sodium Correction -->
         <div class="card" style="margin-bottom:16px;">
             <div class="card-header">
@@ -473,17 +507,17 @@
                 </div>
                 <div class="input-group">
                     <label for="na-glucose">Serum Glucose (mg/dL)</label>
-                    <input type="number" id="na-glucose" class="input-control" value="450" step="1">
+                    <input type="number" id="na-glucose" class="input-control" value="120" step="1">
                 </div>
             </div>
             <div class="card-sub" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
                     <span style="font-size:12px; font-weight:700; color:var(--graphite);">Corrected Na⁺ (Hillier 2.4 factor):</span>
-                    <span id="disp-corr-na-hillier" style="font-family:var(--font-mono); font-size:1.3rem; font-weight:700; color:var(--signal-orange); margin-left:8px;">133.4</span>
+                    <span id="disp-corr-na-hillier" style="font-family:var(--font-mono); font-size:1.3rem; font-weight:700; color:var(--signal-orange); margin-left:8px;">125.5</span>
                     <span style="font-size:12px; color:var(--graphite);">mEq/L</span>
                 </div>
                 <div style="font-size:12px; color:var(--graphite);">
-                    Katz (1.6 factor): <strong id="disp-corr-na-katz">130.6</strong> mEq/L
+                    Katz (1.6 factor): <strong id="disp-corr-na-katz">125.3</strong> mEq/L
                 </div>
             </div>
         </div>
@@ -492,10 +526,10 @@
             <!-- Acute Severe Hyponatremia Bolus -->
             <div class="card">
                 <div class="card-header" style="color:var(--signal-red);">
-                    <span>🚨 Severe Symptomatic Hyponatremia (Herniation / Seizure)</span>
+                    <span>🚨 Severe Symptomatic Hyponatremia (Herniation / Seizures / Coma)</span>
                 </div>
                 <div class="alert-box alert-danger">
-                    <span><strong>2026 Emergency Guideline:</strong> For active seizures, coma, GCS &lt; 8, or herniation: <strong>DO NOT use slow infusion equations</strong>. Give fixed 3% NaCl bolus to raise Na⁺ acutely by +4 to +6 mEq/L, then stop.</span>
+                    <span><strong>2026 Consensus Protocol:</strong> For active seizures, coma, GCS &lt; 8, or signs of herniation: <strong>DO NOT use slow infusion formulas</strong>. Give fixed 3% NaCl bolus to raise Na⁺ acutely by +4 to +6 mEq/L, then stop immediately.</span>
                 </div>
                 <div class="stat-banner" style="background:#7f1d1d;">
                     <div>
@@ -539,19 +573,24 @@
                         <div class="stat-label">Expected ΔNa⁺ per 1L Fluid</div>
                         <div class="stat-label" style="font-size:10px; color:#94a3b8;">(Infusate Na - Serum Na) / (TBW + 1)</div>
                     </div>
-                    <div id="disp-delta-na-liter" class="stat-value">+10.8 <span class="stat-unit">mEq/L</span></div>
+                    <div id="disp-delta-na-liter" class="stat-value">+10.5 <span class="stat-unit">mEq/L</span></div>
                 </div>
                 <div class="card-sub" style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="font-size:12px; font-weight:700;">Calculated Infusion Rate:</span>
-                    <span id="disp-adrogue-rate" style="font-family:var(--font-mono); font-weight:700; font-size:1.15rem; color:var(--signal-orange);">23.1 mL/hr</span>
+                    <span id="disp-adrogue-rate" style="font-family:var(--font-mono); font-weight:700; font-size:1.15rem; color:var(--signal-orange);">23.8 mL/hr</span>
                 </div>
             </div>
         </div>
 
-        <!-- Hypernatremia Free Water Deficit -->
-        <div class="card" style="margin-top:16px;">
+        <!-- 🔴 PART B: HYPERNATREMIA MANAGEMENT -->
+        <div class="partition-header partition-hyper" style="margin-top:24px;">
+            <span>🔴 PART B: HYPERNATREMIA MANAGEMENT (Na⁺ &gt; 145 mEq/L)</span>
+        </div>
+
+        <div class="card">
             <div class="card-header">
                 <span>Hypernatremia &amp; Free Water Deficit (FWD)</span>
+                <span style="font-size:11px; color:var(--graphite);">Target Na⁺: 140 mEq/L</span>
             </div>
             <div class="grid-2">
                 <div class="input-group">
@@ -569,7 +608,7 @@
                 </div>
             </div>
             <div class="alert-box alert-info" style="margin-top:10px;">
-                <span><strong>Safe Correction Ceiling:</strong> Decrease serum Na⁺ by <strong>≤ 10 mEq/L in 24 hours</strong> (approx. 0.5 mEq/L/hr) to avoid cerebral edema. Recommended initial D5W infusion: <strong id="disp-fwd-d5w-rate">107 mL/hr</strong> (+ replace ongoing water losses). Enteral water via NG tube is preferred if gut is functional.</span>
+                <span><strong>Safe Correction Ceiling:</strong> Decrease serum Na⁺ by <strong>≤ 10 mEq/L in 24 hours</strong> (approx. 0.5 mEq/L/hr) to prevent cerebral edema. Initial D5W infusion: <strong id="disp-fwd-d5w-rate">107 mL/hr</strong> (+ replace ongoing water losses). Enteral water via NG tube is preferred if gut is functional.</span>
             </div>
         </div>
     </div>
@@ -578,10 +617,15 @@
          TAB 2: POTASSIUM (K+)
     ════════════════════════════════════════ -->
     <div id="tab-potassium" class="tab-panel">
-        <!-- Emergency Hyperkalemia Protocol -->
+        <!-- 🔴 PART A: HYPERKALEMIA PROTOCOL -->
+        <div class="partition-header partition-hyper">
+            <span>🔴 PART A: HYPERKALEMIA MANAGEMENT (K⁺ &gt; 5.0 mEq/L)</span>
+        </div>
+
+        <!-- Emergency Protocol -->
         <div class="card" style="border-left: 4px solid var(--signal-red); margin-bottom:16px;">
             <div class="card-header" style="color:var(--signal-red);">
-                <span>🚨 Emergency Hyperkalemia Protocol ("C-BIG-K-Drop") — K⁺ ≥ 6.5 or ECG Changes</span>
+                <span>1. Emergency Hyperkalemia Protocol ("C-BIG-K-Drop") — K⁺ ≥ 6.5 or ECG Changes</span>
             </div>
             
             <div class="alert-box alert-info">
@@ -597,7 +641,7 @@
                 <!-- Step 2 -->
                 <div class="card-sub" style="border-left:3px solid #2563eb;">
                     <strong style="color:#2563eb; font-size:12px;">2. Intracellular Shifting (Rapid)</strong>
-                    <p style="font-size:12px; margin:4px 0;">• <strong>Regular Insulin 10 units IV + D50W 50 mL (25g)</strong> over 5 min.<br>• <strong>Salbutamol 10-20 mg</strong> nebulized.<br>• <strong>7.5% NaHCO₃ 50-100 mL (1-2 amp = 44.6-89.2 mEq)</strong> [TH standard] or <strong>8.4% NaHCO₃ 50-100 mEq</strong> (if pH &lt; 7.20).</p>
+                    <p style="font-size:12px; margin:4px 0;">• <strong>Regular Insulin 10 units IV + D50W 50 mL (25g)</strong> over 5 min.<br>• <strong>Salbutamol 10-20 mg</strong> nebulized.<br>• <strong>7.5% NaHCO₃ 50-100 mL (1-2 amp = 44.6-89.2 mEq)</strong> [TH] or <strong>8.4% NaHCO₃ 50-100 mEq</strong> (if pH &lt; 7.20).</p>
                 </div>
                 <!-- Step 3 -->
                 <div class="card-sub" style="border-left:3px solid #059669;">
@@ -605,6 +649,36 @@
                     <p style="font-size:12px; margin:4px 0;">• <strong>Furosemide 40-80 mg IV</strong>.<br>• <strong>Lokelma (SZC) 10g PO</strong> TID (Avoid Kayexalate/SPS due to colonic necrosis).<br>• <strong>Emergent Hemodialysis</strong> if refractory.</p>
                 </div>
             </div>
+        </div>
+
+        <!-- General / Non-Emergent Hyperkalemia Card -->
+        <div class="card" style="margin-bottom:20px;">
+            <div class="card-header">
+                <span>2. General / Non-Emergent Hyperkalemia Management (K⁺ 5.5 - 6.4 mEq/L without ECG changes)</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px; font-size:12px;">
+                <div class="card-sub">
+                    <strong>1. Stop Offending Agents:</strong><br>
+                    Discontinue ACEi, ARB, MRA (Spironolactone/Eplerenone), NSAIDs, Trimethoprim, Calcineurin inhibitors, and K⁺ supplements.
+                </div>
+                <div class="card-sub">
+                    <strong>2. Dietary &amp; Glycemic Control:</strong><br>
+                    Strict low-K⁺ diet (&lt; 2-3 g/day). Administer subcutaneous insulin if patient is hyperglycemic.
+                </div>
+                <div class="card-sub">
+                    <strong>3. Kaliuretic Diuretics:</strong><br>
+                    <strong>Furosemide 40 - 80 mg PO/IV</strong> to enhance renal potassium excretion (ensure adequate volume status).
+                </div>
+                <div class="card-sub">
+                    <strong>4. Novel K⁺ Binders:</strong><br>
+                    <strong>Sodium Zirconium Cyclosilicate (Lokelma / SZC) 10g PO TID</strong> for 24-48h, then 5-10g daily. <em>Avoid SPS (Kayexalate).</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🔵 PART B: HYPOKALEMIA MANAGEMENT -->
+        <div class="partition-header partition-hypo">
+            <span>🔵 PART B: HYPOKALEMIA MANAGEMENT &amp; IV DRIP CALCULATOR (K⁺ &lt; 3.5 mEq/L)</span>
         </div>
 
         <div class="grid-2">
@@ -629,30 +703,48 @@
                 </div>
             </div>
 
-            <!-- Potassium Administration Safety Limits -->
+            <!-- IV Drip Auto-Generator (Per 1,000 mL Bottle) -->
             <div class="card">
                 <div class="card-header">
-                    <span>IV Potassium Administration Safety Gate</span>
+                    <span>IV Potassium Drip Auto-Generator (1,000 mL Bottle)</span>
+                </div>
+                <div class="grid-2" style="margin-bottom:8px;">
+                    <div class="input-group">
+                        <label for="k-iv-fluid">Carrier Fluid (1,000 mL)</label>
+                        <select id="k-iv-fluid" class="input-control">
+                            <option value="1000_nss" selected>0.9% NaCl (NSS) 1,000 mL</option>
+                            <option value="1000_half_nss">0.45% NaCl 1,000 mL</option>
+                            <option value="1000_d5w">D5W 1,000 mL</option>
+                            <option value="500_nss">0.9% NaCl 500 mL</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="k-iv-meq">KCl Added to Bottle (mEq)</label>
+                        <select id="k-iv-meq" class="input-control">
+                            <option value="20">20 mEq (Peripheral standard)</option>
+                            <option value="30">30 mEq (Peripheral)</option>
+                            <option value="40" selected>40 mEq (Peripheral maximum ceiling)</option>
+                            <option value="60">60 mEq (Central line only)</option>
+                            <option value="80">80 mEq (Central line only)</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="input-group" style="margin-bottom:10px;">
-                    <label>Route of Administration</label>
-                    <div class="radio-group">
-                        <label class="radio-label"><input type="radio" name="k-route" value="peripheral" checked> Peripheral IV Line</label>
-                        <label class="radio-label"><input type="radio" name="k-route" value="central"> Central Line (ICU/ECG)</label>
+                    <label for="k-iv-rate-input">IV Pump Infusion Rate (mL/hr)</label>
+                    <div class="slider-row">
+                        <input type="range" id="k-iv-rate-slider" class="slider-control" min="20" max="250" value="100" step="10">
+                        <input type="number" id="k-iv-rate-input" class="input-control" value="100" min="10" max="300" style="width:80px;">
                     </div>
                 </div>
-                <div class="grid-2">
-                    <div class="input-group">
-                        <label for="k-rate-input">Infusion Rate (mEq/hr)</label>
-                        <input type="number" id="k-rate-input" class="input-control" value="10" min="1" max="60">
+                <div class="stat-banner" style="background:#0f766e;">
+                    <div>
+                        <div class="stat-label">Delivered K⁺ Rate &amp; Duration</div>
+                        <div id="disp-k-duration" style="font-size:11px; color:#ccfbf1;">10.0 hours per 1,000 mL bottle</div>
                     </div>
-                    <div class="input-group">
-                        <label for="k-conc-input">Concentration (mEq/L)</label>
-                        <input type="number" id="k-conc-input" class="input-control" value="40" min="10" max="120">
-                    </div>
+                    <div id="disp-k-delivery-rate" class="stat-value" style="color:#5eead4;">4.0 <span class="stat-unit" style="color:#5eead4;">mEq/hr</span></div>
                 </div>
-                <div id="k-safety-alert" class="alert-box alert-success" style="margin-top:12px;">
-                    <span>✓ Parameters within safe clinical limits.</span>
+                <div id="k-safety-alert" class="alert-box alert-success" style="margin-top:6px;">
+                    <span>✓ Parameters within safe clinical limits for Peripheral line.</span>
                 </div>
             </div>
         </div>
@@ -666,8 +758,8 @@
             <!-- Bicarbonate Deficit Calculator -->
             <div class="card">
                 <div class="card-header">
-                    <span>Bicarbonate Deficit &amp; Formulation Preparation</span>
-                    <span style="font-size:11px; color:var(--graphite);">f_VD: 0.5 (Standard) / 0.8 (Severe)</span>
+                    <span>Bicarbonate Deficit &amp; Dosing Planner</span>
+                    <span style="font-size:11px; color:var(--graphite);">f_VD: 0.5 (Std) / 0.8 (Severe)</span>
                 </div>
                 <div class="input-group" style="margin-bottom:12px;">
                     <label for="acid-formulation">Select NaHCO₃ Formulation</label>
@@ -691,26 +783,33 @@
                 </div>
                 <div class="stat-banner" style="margin-top:12px;">
                     <div>
-                        <div class="stat-label">Calculated Deficit (50% Target Initially)</div>
-                        <div id="disp-bicarb-half" style="font-size:11px; color:#cbd5e1;">Replace ~108 mEq in first 4-8 hours</div>
+                        <div class="stat-label">Calculated Total Body Deficit</div>
+                        <div id="disp-bicarb-half" style="font-size:11px; color:#cbd5e1;">50% Target: ~90 mEq in 4-8h (~2.0 amp / 100 mL of 7.5%)</div>
                     </div>
-                    <div id="disp-bicarb-total" class="stat-value">216 <span class="stat-unit">mEq</span></div>
+                    <div id="disp-bicarb-total" class="stat-value">180 <span class="stat-unit">mEq</span></div>
                 </div>
-                <div class="card-sub">
+                <!-- Slow IV Push & Continuous Infusion Cards -->
+                <div class="card-sub" style="border-left:3px solid var(--signal-amber);">
+                    <strong style="font-size:12px; color:var(--ink);">⚡ Acute / Slow IV Push (Undiluted in Emergencies):</strong>
+                    <p id="disp-bicarb-push-dose" style="font-size:12px; margin:4px 0 0; color:var(--graphite);">
+                        Give <strong>1 - 2 ampules (50 - 100 mL = 44.6 - 89.2 mEq of 7.5% NaHCO₃)</strong> slow IV push over 2 - 5 min for acute severe instability.
+                    </p>
+                </div>
+                <div class="card-sub" style="border-left:3px solid var(--signal-blue); margin-top:8px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-                        <strong style="font-size:12px; color:var(--ink);">Isotonic Bicarbonate Infusion Recipe (~150 mEq/L):</strong>
+                        <strong style="font-size:12px; color:var(--ink);">💧 Isotonic Continuous Infusion Recipe (~150 mEq/L):</strong>
                         <span id="disp-bicarb-form-badge" style="font-size:11px; font-weight:700; color:var(--signal-orange);">7.5% GPO</span>
                     </div>
-                    <p id="disp-bicarb-recipe" style="font-size:12px; margin:6px 0 0; color:var(--graphite); line-height:1.45;">
-                        Add <strong>3.5 ampules (175 mL = 156 mEq) of 7.5% NaHCO₃</strong> into <strong>825-850 mL D5W</strong> (or <strong>2 ampules in 400-500 mL D5W</strong>) to yield ~150 mEq/L (~280-300 mOsm/L). Infuse at <strong>100 - 250 mL/hr</strong>.
+                    <p id="disp-bicarb-recipe" style="font-size:12px; margin:4px 0 0; color:var(--graphite); line-height:1.45;">
+                        Add <strong>3.5 ampules (175 mL = 156 mEq) of 7.5% NaHCO₃</strong> into <strong>825-850 mL D5W</strong> (or <strong>2 ampules in 400-500 mL D5W</strong>) to yield ~150 mEq/L. Infuse at <strong>100 - 250 mL/hr</strong>.
                     </p>
                 </div>
             </div>
 
-            <!-- Evidence-Based Indications & BICAR-ICU -->
+            <!-- Evidence-Based Indications & BICAR-ICU Statistics -->
             <div class="card">
                 <div class="card-header">
-                    <span>Evidence-Based Indication Filter</span>
+                    <span>Evidence-Based Indication Filter &amp; BICAR-ICU</span>
                 </div>
                 <div class="input-group" style="margin-bottom:10px;">
                     <label for="acid-etiology">Clinical Syndrome</label>
@@ -732,27 +831,67 @@
                         <select id="acid-aki-stage" class="input-control">
                             <option value="0">No AKI</option>
                             <option value="1">Stage 1</option>
-                            <option value="2" selected>Stage 2-3 (BICAR-ICU Subgroup)</option>
+                            <option value="2" selected>Stage 2-3 (BICAR-ICU Stratum)</option>
                         </select>
                     </div>
                 </div>
                 <div id="disp-acid-guidance" class="alert-box alert-success" style="margin-top:12px;">
-                    <span><strong>BICAR-ICU Evidence:</strong> NaHCO₃ infusion significantly reduced 28-day mortality and RRT requirement in patients with severe acidemia (pH ≤ 7.20) and AKI (Stage 2-3).</span>
+                    <span><strong>BICAR-ICU Landmark Trial (Lancet 2018):</strong> In severe acidemia (pH ≤ 7.20) with AKI Stage 2-3 (n=182), NaHCO₃ infusion significantly <strong>reduced 28-day mortality from 63% to 46%</strong> (p=0.0283, ARR 17%, NNT=6), <strong>reduced RRT requirement from 73% to 51%</strong> (p=0.002, ARR 22%, NNT=5), and increased RRT-free days to 24 vs 20 days (p=0.006).</span>
+                </div>
+
+                <!-- Salicylate Urinary Alkalinization Sub-card -->
+                <div id="salicylate-protocol-card" class="card-sub" style="display:none; border-left:3px solid #7c3aed; background:#faf5ff;">
+                    <strong style="color:#6b21a8; font-size:12px;">🧪 Salicylate Urinary Alkalinization Protocol (Aspirin Toxicity):</strong>
+                    <ul style="font-size:12px; margin:4px 0 0; padding-left:18px; color:#4c1d95; line-height:1.45;">
+                        <li><strong>Target:</strong> Urine pH <strong>7.5 - 8.0</strong> (Blood pH ≤ 7.55).</li>
+                        <li><strong>Recipe:</strong> 3.5 amp (156 mEq) 7.5% (or 3 amp 8.4%) NaHCO₃ + <strong>20 - 40 mEq KCl</strong> in 1,000 mL D5W at <strong>150 - 250 mL/hr</strong>.</li>
+                        <li><strong>⚠️ Mandatory Potassium:</strong> Maintain serum K⁺ ≥ 4.0 - 4.5 mEq/L. Hypokalemia triggers renal H⁺ excretion via H⁺/K⁺ ATPase, causing paradoxical aciduria and treatment failure.</li>
+                        <li><strong>Hemodialysis Triggers:</strong> Salicylate &gt; 100 mg/dL (acute), &gt; 60 mg/dL (chronic with AKI), altered mental status, pulmonary edema, or severe refractory acidosis.</li>
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <!-- 5 Hazards of Bicarbonate -->
+        <!-- Emergent Dialysis Indications (AEIOU) -->
+        <div class="card" style="margin-top:16px;">
+            <div class="card-header" style="color:var(--signal-red);">
+                <span>🚨 Emergent Indications for Renal Replacement Therapy (RRT / Dialysis) — "AEIOU" Criteria</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; font-size:12px;">
+                <div class="card-sub" style="border-left:3px solid #dc2626;"><strong>A - Acidemia:</strong> Severe metabolic acidosis (pH &lt; 7.15 - 7.20) refractory to medical treatment.</div>
+                <div class="card-sub" style="border-left:3px solid #dc2626;"><strong>E - Electrolytes:</strong> Severe hyperkalemia (K⁺ &gt; 6.5 mEq/L or ECG changes) unresponsive to shifting/binders.</div>
+                <div class="card-sub" style="border-left:3px solid #dc2626;"><strong>I - Ingestions:</strong> Toxic alcohols (Methanol, Ethylene glycol), Salicylate (&gt; 100 mg/dL), Lithium, Theophylline.</div>
+                <div class="card-sub" style="border-left:3px solid #dc2626;"><strong>O - Overload:</strong> Acute pulmonary edema / severe volume overload refractory to diuretics.</div>
+                <div class="card-sub" style="border-left:3px solid #dc2626;"><strong>U - Uremia:</strong> Uremic encephalopathy, pericarditis, pleuritis, or uremic bleeding (BUN &gt; 100 mg/dL).</div>
+            </div>
+        </div>
+
+        <!-- ⚠️ 5 Critical Hazards of Bicarbonate (Redesigned Cards) -->
         <div class="card" style="margin-top:16px;">
             <div class="card-header" style="color:var(--signal-amber);">
                 <span>⚠️ 5 Critical Hazards of IV Sodium Bicarbonate</span>
             </div>
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; font-size:12px;">
-                <div class="card-sub"><strong>1. Paradoxical CNS Acidosis:</strong> CO₂ diffuses across BBB faster than HCO₃⁻. Worsens intracellular acidosis if hypoventilating.</div>
-                <div class="card-sub"><strong>2. Acute Hypokalemia:</strong> Alkalinization shifts K⁺ rapidly into cells, precipitating arrhythmias.</div>
-                <div class="card-sub"><strong>3. Ionized Hypocalcemia:</strong> Alkalemia increases albumin-binding, dropping iCa²⁺ and myocardial contractility.</div>
-                <div class="card-sub"><strong>4. Hyperosmolar Overload:</strong> 8.4% NaHCO₃ is 2,000 mOsm/L; high sodium load causes pulmonary edema.</div>
-                <div class="card-sub"><strong>5. Left Oxyhemoglobin Shift:</strong> Decreases P50, impairing tissue oxygen unloading.</div>
+                <div class="card-sub" style="border-left:3px solid #d97706;">
+                    <strong>🧠 1. Paradoxical CNS Acidosis</strong>
+                    <p style="margin:4px 0 0; color:var(--graphite);">CO₂ crosses BBB rapidly while HCO₃⁻ crosses slowly, worsening intracellular acidosis if hypoventilating.</p>
+                </div>
+                <div class="card-sub" style="border-left:3px solid #d97706;">
+                    <strong>⚡ 2. Acute Severe Hypokalemia</strong>
+                    <p style="margin:4px 0 0; color:var(--graphite);">Alkalinization drives K⁺ rapidly into cells, precipitating fatal cardiac arrhythmias. Keep K⁺ &gt; 4.0.</p>
+                </div>
+                <div class="card-sub" style="border-left:3px solid #d97706;">
+                    <strong>🦴 3. Ionized Hypocalcemia</strong>
+                    <p style="margin:4px 0 0; color:var(--graphite);">Higher pH increases calcium binding to albumin, sharply dropping ionized Ca²⁺ and depressing cardiac inotropy.</p>
+                </div>
+                <div class="card-sub" style="border-left:3px solid #d97706;">
+                    <strong>🌊 4. Hyperosmolar Overload</strong>
+                    <p style="margin:4px 0 0; color:var(--graphite);">7.5% (1,785 mOsm/L) and 8.4% (2,000 mOsm/L) carry heavy sodium loads; can cause pulmonary edema.</p>
+                </div>
+                <div class="card-sub" style="border-left:3px solid #d97706;">
+                    <strong>🩸 5. Impaired O₂ Delivery</strong>
+                    <p style="margin:4px 0 0; color:var(--graphite);">Alkalemia shifts the oxyhemoglobin curve to the left (decreases P50), impairing oxygen unloading to ischemic tissues.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -773,19 +912,19 @@
                 <div class="grid-2">
                     <div class="input-group">
                         <label for="min-ica">Direct Ionized Ca²⁺ (mmol/L)</label>
-                        <input type="number" id="min-ica" class="input-control" value="0.95" step="0.01" placeholder="Normal: 1.15 - 1.33">
+                        <input type="number" id="min-ica" class="input-control" value="" step="0.01" placeholder="Normal: 1.15 - 1.33">
                     </div>
                     <div class="input-group">
                         <label for="min-total-ca">Total Calcium (mg/dL) [Screening]</label>
-                        <input type="number" id="min-total-ca" class="input-control" value="7.5" step="0.1">
+                        <input type="number" id="min-total-ca" class="input-control" value="" step="0.1" placeholder="Normal: 8.5 - 10.5">
                     </div>
                 </div>
                 <div class="stat-banner" style="margin-top:12px;">
                     <div>
                         <div class="stat-label">Calcium Clinical Status</div>
-                        <div id="disp-ca-status-desc" style="font-size:11px; color:#fca5a5;">Hypocalcemia (iCa &lt; 1.15 mmol/L)</div>
+                        <div id="disp-ca-status-desc" style="font-size:11px; color:#94a3b8;">Enter values to evaluate</div>
                     </div>
-                    <div id="disp-ca-status" class="stat-value" style="color:#f87171;">HYPO</div>
+                    <div id="disp-ca-status" class="stat-value" style="color:#94a3b8;">--</div>
                 </div>
                 <div class="card-sub">
                     <strong style="font-size:12px;">Acute Symptomatic Hypocalcemia Protocol:</strong>
@@ -801,11 +940,11 @@
                 <div class="grid-2">
                     <div class="input-group">
                         <label for="min-mg">Serum Mg²⁺ (mg/dL)</label>
-                        <input type="number" id="min-mg" class="input-control" value="1.2" step="0.1">
+                        <input type="number" id="min-mg" class="input-control" value="" step="0.1" placeholder="Normal: 1.7 - 2.4">
                     </div>
                     <div class="input-group">
                         <label for="min-po4">Serum PO₄³⁻ (mg/dL)</label>
-                        <input type="number" id="min-po4" class="input-control" value="1.4" step="0.1">
+                        <input type="number" id="min-po4" class="input-control" value="" step="0.1" placeholder="Normal: 2.5 - 4.5">
                     </div>
                 </div>
                 <div class="card-sub" style="margin-top:10px;">
@@ -818,10 +957,10 @@
                 <div class="card-sub" style="margin-top:10px;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <strong style="font-size:12px; color:var(--ink);">Phosphate &amp; Precipitation Safety Gate:</strong>
-                        <span id="disp-ca-po4-product" style="font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--signal-emerald);">Ca × PO₄ = 10.5</span>
+                        <span id="disp-ca-po4-product" style="font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--signal-emerald);">Ca × PO₄ = --</span>
                     </div>
                     <p id="disp-po4-guidance" style="font-size:12px; margin:4px 0 0; color:var(--graphite);">
-                        Dose: <strong>0.16 - 0.24 mmol/kg</strong> Sodium/Potassium Phosphate IV over 4-6 hours. Safe product (&lt; 55 mg²/dL²).
+                        Dose: <strong>0.16 - 0.24 mmol/kg</strong> Sodium/Potassium Phosphate IV over 4-6 hours. Ensure [Ca × PO₄] &lt; 55 mg²/dL².
                     </p>
                 </div>
             </div>
@@ -916,12 +1055,12 @@
     ════════════════════════════════════════ -->
     <div id="tab-workup" class="tab-panel">
         <div class="grid-2">
-            <!-- Hyponatremia Step Wizard -->
-            <div class="card">
-                <div class="card-header">
-                    <span>Hyponatremia Step-by-Step Diagnostic Wizard</span>
+            <!-- 1. Hyponatremia Wizard (Blue Theme) -->
+            <div class="card" style="border-top:4px solid var(--signal-blue);">
+                <div class="card-header" style="color:var(--signal-blue);">
+                    <span>💧 1. Hyponatremia Diagnostic Wizard</span>
                 </div>
-                <div class="decision-step">
+                <div class="decision-step" style="border-left-color:var(--signal-blue);">
                     <h4>Step 1: Serum Tonicity</h4>
                     <select id="w-na-tonicity" class="input-control">
                         <option value="hypo" selected>Hypotonic (Serum Osm &lt; 275 mOsm/kg)</option>
@@ -929,14 +1068,14 @@
                         <option value="iso">Isotonic / Pseudohyponatremia (Osm 275-295 — Lipids, Proteins)</option>
                     </select>
                 </div>
-                <div class="decision-step">
+                <div class="decision-step" style="border-left-color:var(--signal-blue);">
                     <h4>Step 2: Urine Osmolality</h4>
                     <select id="w-na-uosm" class="input-control">
                         <option value="concentrated" selected>U_Osm ≥ 100 mOsm/kg (Impaired water excretion)</option>
                         <option value="dilute">U_Osm &lt; 100 mOsm/kg (Polydipsia, Beer Potomania, Tea &amp; Toast)</option>
                     </select>
                 </div>
-                <div class="decision-step">
+                <div class="decision-step" style="border-left-color:var(--signal-blue);">
                     <h4>Step 3: Volume Status &amp; Urine Na⁺</h4>
                     <div class="grid-2">
                         <select id="w-na-vol" class="input-control">
@@ -953,31 +1092,61 @@
                 <div id="disp-w-na-result" class="alert-box alert-info" style="margin-top:12px;">
                     <div>
                         <strong>Etiology: Euvolemic Hyponatremia</strong><br>
-                        SIADH (Malignancy, CNS, Pulmonary, SSRIs), Hypothyroidism, Secondary Adrenal Insufficiency. <em>Differentiate SIADH vs CSW via FE_Urate.</em>
+                        SIADH (Malignancy, CNS, Pulmonary, SSRIs), Hypothyroidism, Secondary Adrenal Insufficiency.
                     </div>
                 </div>
             </div>
 
-            <!-- Hypokalemia Step Wizard -->
-            <div class="card">
-                <div class="card-header">
-                    <span>Hypokalemia Diagnostic Wizard (Spot U_K/U_Cr)</span>
+            <!-- 2. Hypernatremia Wizard (Red Theme) -->
+            <div class="card" style="border-top:4px solid var(--signal-red);">
+                <div class="card-header" style="color:var(--signal-red);">
+                    <span>🔥 2. Hypernatremia Diagnostic Wizard</span>
                 </div>
-                <div class="decision-step">
+                <div class="decision-step" style="border-left-color:var(--signal-red);">
+                    <h4>Step 1: Urine Osmolality</h4>
+                    <select id="w-hyperna-uosm" class="input-control">
+                        <option value="dilute" selected>U_Osm &lt; 300 mOsm/kg (Diabetes Insipidus)</option>
+                        <option value="intermediate">U_Osm 300 - 800 mOsm/kg (Partial DI / Osmotic Diuresis)</option>
+                        <option value="concentrated">U_Osm &gt; 800 mOsm/kg (Extrarenal Loss / Sodium Overload)</option>
+                    </select>
+                </div>
+                <div class="decision-step" style="border-left-color:var(--signal-red);">
+                    <h4>Step 2: Desmopressin (DDAVP) Challenge Response</h4>
+                    <select id="w-hyperna-ddavp" class="input-control">
+                        <option value="good" selected>&gt; 50% Increase in U_Osm (Central DI)</option>
+                        <option value="poor">&lt; 50% Increase in U_Osm (Nephrogenic DI - Lithium/HyperCa)</option>
+                    </select>
+                </div>
+                <div id="disp-w-hyperna-result" class="alert-box alert-danger" style="margin-top:12px;">
+                    <div>
+                        <strong>Etiology: Complete Central Diabetes Insipidus (CDI)</strong><br>
+                        Neurosurgery, Pituitary lesion, Head trauma, Hypoxic injury. Treat with DDAVP + free water replacement.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:16px;">
+            <!-- 3. Hypokalemia Wizard (Teal Theme) -->
+            <div class="card" style="border-top:4px solid var(--signal-cyan);">
+                <div class="card-header" style="color:var(--signal-cyan);">
+                    <span>⚡ 3. Hypokalemia Diagnostic Wizard (Spot U_K/U_Cr)</span>
+                </div>
+                <div class="decision-step" style="border-left-color:var(--signal-cyan);">
                     <h4>Step 1: Spot Urine K⁺/Cr Ratio (Replaces TTKG)</h4>
                     <select id="w-k-spot" class="input-control">
                         <option value="high" selected>Spot U_K/U_Cr ≥ 1.5 mmol/mmol (Renal K⁺ Wasting)</option>
                         <option value="low">Spot U_K/U_Cr &lt; 1.5 mmol/mmol (Extrarenal loss / GI / Shift)</option>
                     </select>
                 </div>
-                <div class="decision-step">
+                <div class="decision-step" style="border-left-color:var(--signal-cyan);">
                     <h4>Step 2: Blood Pressure Status</h4>
                     <select id="w-k-bp" class="input-control">
                         <option value="normal" selected>Normal or Low BP</option>
                         <option value="hypertensive">Hypertension (Renin/Aldosterone pathway)</option>
                     </select>
                 </div>
-                <div class="decision-step">
+                <div class="decision-step" style="border-left-color:var(--signal-cyan);">
                     <h4>Step 3: Acid-Base &amp; Urine Chloride</h4>
                     <div class="grid-2">
                         <select id="w-k-ab" class="input-control">
@@ -994,6 +1163,128 @@
                     <div>
                         <strong>Etiology: Chloride-Resistant Metabolic Alkalosis</strong><br>
                         Ongoing Diuretics, Gitelman Syndrome (Hypocalciuria), Bartter Syndrome (Hypercalciuria), Severe Hypomagnesemia.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Hyperkalemia Wizard (Amber Theme) -->
+            <div class="card" style="border-top:4px solid var(--signal-amber);">
+                <div class="card-header" style="color:var(--signal-amber);">
+                    <span>⚡ 4. Hyperkalemia Diagnostic Wizard</span>
+                </div>
+                <div class="decision-step" style="border-left-color:var(--signal-amber);">
+                    <h4>Step 1: Artifact &amp; Shift Screen</h4>
+                    <select id="w-hyperk-shift" class="input-control">
+                        <option value="none" selected>No Hemolysis / True Sample</option>
+                        <option value="hemolysis">Hemolyzed sample / Fist clenching (Pseudohyperkalemia)</option>
+                        <option value="shift">Acidosis / Hyperglycemia / Rhabdomyolysis (Transcellular Shift)</option>
+                    </select>
+                </div>
+                <div class="decision-step" style="border-left-color:var(--signal-amber);">
+                    <h4>Step 2: Renal Function &amp; Spot U_K/U_Cr</h4>
+                    <div class="grid-2">
+                        <select id="w-hyperk-gfr" class="input-control">
+                            <option value="normal" selected>Normal / Mild GFR (&gt; 30 mL/min)</option>
+                            <option value="low">Severe AKI / ESRD (eGFR &lt; 30 mL/min)</option>
+                        </select>
+                        <select id="w-hyperk-spot" class="input-control">
+                            <option value="low" selected>Spot U_K/U_Cr &lt; 2.0 (Impaired secretion)</option>
+                            <option value="high">Spot U_K/U_Cr &gt; 2.0 (Intact secretion)</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="disp-w-hyperk-result" class="alert-box alert-warning" style="margin-top:12px;">
+                    <div>
+                        <strong>Etiology: Impaired Tubular K⁺ Secretion</strong><br>
+                        Hypoaldosteronism (Type 4 RTA), RAAS inhibitors (ACEi, ARB, MRA), ENaC blockers (Trimethoprim), Calcineurin inhibitors.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:16px;">
+            <!-- 5. Metabolic Acidosis Wizard (Purple Theme) -->
+            <div class="card" style="border-top:4px solid var(--signal-purple);">
+                <div class="card-header" style="color:var(--signal-purple);">
+                    <span>🧪 5. Metabolic Acidosis Diagnostic Wizard</span>
+                </div>
+                <div class="decision-step" style="border-left-color:var(--signal-purple);">
+                    <h4>Step 1: Modern ISE Anion Gap</h4>
+                    <select id="w-acido-ag" class="input-control">
+                        <option value="high" selected>High AG (&gt; 10 mEq/L) — GOLD MARK / MUDPILES</option>
+                        <option value="normal">Normal AG (≤ 10 mEq/L) — NAGMA / Hyperchloremic</option>
+                    </select>
+                </div>
+                <div class="decision-step" style="border-left-color:var(--signal-purple);">
+                    <h4>Step 2: Urine Anion Gap (UAG) &amp; Urine pH</h4>
+                    <div class="grid-2">
+                        <select id="w-acido-uag" class="input-control">
+                            <option value="neg" selected>Negative UAG (&lt; 0) — Intact NH₄⁺ excretion</option>
+                            <option value="pos">Positive UAG (&gt; 0) — Impaired NH₄⁺ excretion</option>
+                        </select>
+                        <select id="w-acido-uph" class="input-control">
+                            <option value="alk" selected>Urine pH &gt; 5.5 (Distal RTA Type 1)</option>
+                            <option value="acid">Urine pH &lt; 5.5 (Proximal / Type 4 RTA)</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="disp-w-acido-result" class="alert-box alert-info" style="margin-top:12px;">
+                    <div>
+                        <strong>Etiology: High Anion Gap Metabolic Acidosis (HAGMA)</strong><br>
+                        Lactic acidosis, Ketoacidosis (DKA/AKA), Uremia, Toxic alcohols (Methanol/Ethylene glycol), Salicylates.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Metabolic Alkalosis Wizard (Emerald Theme) -->
+            <div class="card" style="border-top:4px solid var(--signal-emerald);">
+                <div class="card-header" style="color:var(--signal-emerald);">
+                    <span>🧪 6. Metabolic Alkalosis Diagnostic Wizard</span>
+                </div>
+                <div class="decision-step" style="border-left-color:var(--signal-emerald);">
+                    <h4>Step 1: Urine Chloride (U_Cl)</h4>
+                    <select id="w-alkalo-ucl" class="input-control">
+                        <option value="low" selected>U_Cl &lt; 15-20 mEq/L (Chloride-Responsive)</option>
+                        <option value="high">U_Cl &gt; 20-25 mEq/L (Chloride-Resistant)</option>
+                    </select>
+                </div>
+                <div class="decision-step" style="border-left-color:var(--signal-emerald);">
+                    <h4>Step 2: Blood Pressure &amp; Volume</h4>
+                    <select id="w-alkalo-bp" class="input-control">
+                        <option value="normal" selected>Normal / Low BP (Vomiting, Diuretics, Gitelman/Bartter)</option>
+                        <option value="hypertensive">Hypertensive (Mineralocorticoid excess, Conn's, Cushing)</option>
+                    </select>
+                </div>
+                <div id="disp-w-alkalo-result" class="alert-box alert-success" style="margin-top:12px;">
+                    <div>
+                        <strong>Etiology: Chloride-Responsive Metabolic Alkalosis</strong><br>
+                        Vomiting, Nasogastric suction, Remote diuretics, Dehydration. Expand volume with 0.9% NaCl Normal Saline.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Optional Sub-Card: Calcium, Mg & PO₄ Diagnostic Work-up -->
+        <div class="card" style="margin-top:20px; border-top:4px solid #64748b;">
+            <div class="card-header">
+                <span>🦴 7. Calcium, Magnesium &amp; Phosphate Work-up (Optional Reference)</span>
+                <button type="button" id="btn-toggle-mineral-workup" class="btn btn-secondary" style="padding:2px 10px; font-size:11px;">👁️ Toggle View</button>
+            </div>
+            <div id="mineral-workup-content" style="display:none; margin-top:12px;">
+                <div class="grid-2">
+                    <div class="card-sub">
+                        <strong style="color:#b91c1c;">Hypercalcemia Work-up:</strong>
+                        <ul style="font-size:12px; margin:4px 0 0; padding-left:18px; color:var(--graphite); line-height:1.45;">
+                            <li><strong>PTH High / Normal:</strong> Primary Hyperparathyroidism (CCCR &gt; 0.02) vs FHH (CCCR &lt; 0.01 - No surgery!).</li>
+                            <li><strong>PTH Suppressed (&lt; 15 pg/mL):</strong> Malignancy (PTHrP / Lytic bone metastases), Vitamin D toxicity, Granulomatous disease (Sarcoidosis/TB via 1,25-OH₂D), Milk-alkali, Immobilization.</li>
+                        </ul>
+                    </div>
+                    <div class="card-sub">
+                        <strong style="color:#1d4ed8;">Hypocalcemia Work-up:</strong>
+                        <ul style="font-size:12px; margin:4px 0 0; padding-left:18px; color:var(--graphite); line-height:1.45;">
+                            <li><strong>PTH Low / Inappropriate:</strong> Hypoparathyroidism (Post-neck surgery, Autoimmune), Severe Hypomagnesemia.</li>
+                            <li><strong>PTH High:</strong> Vitamin D deficiency, CKD, Acute pancreatitis (saponification), Hyperphosphatemia, Bisphosphonates.</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -1034,6 +1325,17 @@
         });
     });
 
+    // Mineral workup toggle
+    const toggleMineralBtn = document.getElementById('btn-toggle-mineral-workup');
+    const mineralContent = document.getElementById('mineral-workup-content');
+    if (toggleMineralBtn && mineralContent) {
+        toggleMineralBtn.addEventListener('click', () => {
+            const isHidden = mineralContent.style.display === 'none';
+            mineralContent.style.display = isHidden ? 'block' : 'none';
+            toggleMineralBtn.textContent = isHidden ? '🙈 Hide View' : '👁️ Toggle View';
+        });
+    }
+
     // Main Recalculate Controller
     function recalc() {
         const weight = parseFloat(document.getElementById('pt-weight').value) || 60;
@@ -1046,7 +1348,7 @@
 
         // 2. Sodium
         const measNa = parseFloat(document.getElementById('na-measured').value) || 125;
-        const glu = parseFloat(document.getElementById('na-glucose').value) || 100;
+        const glu = parseFloat(document.getElementById('na-glucose').value) || 120;
         const corrHillier = ELECTROLYTE_ENGINE.calcCorrectedSodium(measNa, glu, 'hillier');
         const corrKatz = ELECTROLYTE_ENGINE.calcCorrectedSodium(measNa, glu, 'katz');
         document.getElementById('disp-corr-na-hillier').textContent = corrHillier;
@@ -1078,26 +1380,40 @@
         }
 
         // 3. Potassium
-        const hypok = parseFloat(document.getElementById('hypok-val').value) || 3.0;
+        const hypok = parseFloat(document.getElementById('hypok-val').value) || 2.8;
         const kDef = ELECTROLYTE_ENGINE.calcPotassiumDeficit(hypok);
         document.getElementById('disp-hypok-severity').textContent = kDef.severity;
         document.getElementById('disp-hypok-deficit').textContent = `~${kDef.deficitMeq} mEq`;
 
-        // K Safety
-        const kRoute = document.querySelector('input[name="k-route"]:checked')?.value || 'peripheral';
-        const kRate = parseFloat(document.getElementById('k-rate-input').value) || 10;
-        const kConc = parseFloat(document.getElementById('k-conc-input').value) || 40;
-        const kSafe = ELECTROLYTE_ENGINE.evaluatePotassiumSafety(kRate, kConc, kRoute === 'central');
-        const kAlertEl = document.getElementById('k-safety-alert');
-        if (kSafe.isBlocked) {
-            kAlertEl.className = 'alert-box alert-danger';
-            kAlertEl.innerHTML = `<span><strong>BLOCKED:</strong> ${kSafe.warnings.join('<br>')}</span>`;
-        } else if (!kSafe.isSafe) {
-            kAlertEl.className = 'alert-box alert-warning';
-            kAlertEl.innerHTML = `<span><strong>CAUTION:</strong> ${kSafe.warnings.join('<br>')}</span>`;
-        } else {
-            kAlertEl.className = 'alert-box alert-success';
-            kAlertEl.innerHTML = `<span>✓ Parameters within safe clinical limits for ${kRoute} line.</span>`;
+        // IV Drip Auto-Generator (Per 1,000 mL bottle)
+        const kFluidSel = document.getElementById('k-iv-fluid').value;
+        const kFluidVol = kFluidSel.startsWith('500') ? 500 : 1000;
+        const kclMeqAdded = parseFloat(document.getElementById('k-iv-meq').value) || 40;
+        const kPumpRate = parseFloat(document.getElementById('k-iv-rate-input').value) || 100;
+        const isCentralK = kclMeqAdded > 40;
+
+        const kInfusionResult = ELECTROLYTE_ENGINE.calcPotassiumInfusion({
+            fluidVolumeMl: kFluidVol,
+            kclMeqAdded: kclMeqAdded,
+            pumpRateMlHr: kPumpRate,
+            isCentralLine: isCentralK
+        });
+
+        if (kInfusionResult) {
+            document.getElementById('disp-k-delivery-rate').textContent = `${kInfusionResult.rateMeqHr} mEq/hr`;
+            document.getElementById('disp-k-duration').textContent = `${kInfusionResult.bottleDurationHrs} hrs per ${kFluidVol} mL bottle (${kInfusionResult.concMeqL} mEq/L)`;
+
+            const kAlertEl = document.getElementById('k-safety-alert');
+            if (kInfusionResult.safety.isBlocked) {
+                kAlertEl.className = 'alert-box alert-danger';
+                kAlertEl.innerHTML = `<span><strong>BLOCKED:</strong> ${kInfusionResult.safety.warnings.join('<br>')}</span>`;
+            } else if (!kInfusionResult.safety.isSafe) {
+                kAlertEl.className = 'alert-box alert-warning';
+                kAlertEl.innerHTML = `<span><strong>CAUTION:</strong> ${kInfusionResult.safety.warnings.join('<br>')}</span>`;
+            } else {
+                kAlertEl.className = 'alert-box alert-success';
+                kAlertEl.innerHTML = `<span>✓ Safe infusion for ${isCentralK ? 'Central line' : 'Peripheral line'} (${kInfusionResult.rateMeqHr} mEq/hr, ${kInfusionResult.concMeqL} mEq/L).</span>`;
+            }
         }
 
         // 4. Acidosis
@@ -1110,55 +1426,91 @@
             document.getElementById('disp-bicarb-total').textContent = `${bicarbDef.deficitMeq}`;
             if (bicarbForm === '75') {
                 document.getElementById('disp-bicarb-half').textContent = `50% Target: ~${bicarbDef.halfDeficitMeq} mEq in 4-8h (~${bicarbDef.ampules75HalfExact} amp / ${bicarbDef.volume75MlHalf} mL of 7.5%)`;
+                document.getElementById('disp-bicarb-push-dose').innerHTML = `Give <strong>1 - 2 ampules (50 - 100 mL = 44.6 - 89.2 mEq of 7.5% NaHCO₃)</strong> slow IV push over 2 - 5 min in severe cardiac instability.`;
                 document.getElementById('disp-bicarb-form-badge').textContent = '7.5% GPO (44.6 mEq/amp)';
-                document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3.5 ampules (175 mL = 156 mEq) of 7.5% NaHCO₃</strong> into <strong>825-850 mL D5W</strong> (or <strong>2 ampules in 400-500 mL D5W</strong>) to yield ~150 mEq/L (~280-300 mOsm/L). Infuse at <strong>100 - 250 mL/hr</strong>.`;
+                document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3.5 ampules (175 mL = 156 mEq) of 7.5% NaHCO₃</strong> into <strong>825-850 mL D5W</strong> (or <strong>2 ampules in 400-500 mL D5W</strong>) to yield ~150 mEq/L. Infuse at <strong>100 - 250 mL/hr</strong>.`;
             } else {
                 document.getElementById('disp-bicarb-half').textContent = `50% Target: ~${bicarbDef.halfDeficitMeq} mEq in 4-8h (~${bicarbDef.ampules84HalfExact} amp / ${bicarbDef.volume84MlHalf} mL of 8.4%)`;
+                document.getElementById('disp-bicarb-push-dose').innerHTML = `Give <strong>1 - 2 ampules (50 - 100 mL = 50 - 100 mEq of 8.4% NaHCO₃)</strong> slow IV push over 2 - 5 min in severe cardiac instability.`;
                 document.getElementById('disp-bicarb-form-badge').textContent = '8.4% Int (50 mEq/amp)';
-                document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3 ampules (150 mL = 150 mEq) of 8.4% NaHCO₃</strong> into <strong>850-1000 mL D5W</strong> to yield ~150 mEq/L (~300 mOsm/L). Infuse at <strong>100 - 250 mL/hr</strong>.`;
+                document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3 ampules (150 mL = 150 mEq) of 8.4% NaHCO₃</strong> into <strong>850-1000 mL D5W</strong> to yield ~150 mEq/L. Infuse at <strong>100 - 250 mL/hr</strong>.`;
             }
         }
 
         const etiology = document.getElementById('acid-etiology').value;
-        const ph = parseFloat(document.getElementById('acid-ph').value) || 7.20;
+        const ph = parseFloat(document.getElementById('acid-ph').value) || 7.12;
         const akiStage = parseInt(document.getElementById('acid-aki-stage').value) || 0;
         const bicarbInd = ELECTROLYTE_ENGINE.evaluateBicarbonateIndication({ etiology, ph, hco3: currHco3, akinStage: akiStage });
         const bicarbIndEl = document.getElementById('disp-acid-guidance');
+        const salicylateCard = document.getElementById('salicylate-protocol-card');
+
+        if (etiology === 'toxicology_salicylate') {
+            salicylateCard.style.display = 'block';
+        } else {
+            salicylateCard.style.display = 'none';
+        }
+
         if (bicarbInd.contraindicated) {
             bicarbIndEl.className = 'alert-box alert-danger';
+            bicarbIndEl.innerHTML = `<span><strong>${bicarbInd.summary}</strong></span>`;
         } else if (bicarbInd.recommended) {
             bicarbIndEl.className = 'alert-box alert-success';
+            if (etiology === 'lactic_sepsis' && akiStage >= 2) {
+                bicarbIndEl.innerHTML = `<span><strong>BICAR-ICU Landmark Evidence (Lancet 2018):</strong> In severe acidemia (pH ≤ 7.20) with AKI Stage 2-3 (n=182), NaHCO₃ infusion significantly <strong>reduced 28-day mortality from 63% to 46%</strong> (p=0.0283, ARR 17%, NNT=6), <strong>reduced RRT requirement from 73% to 51%</strong> (p=0.002, ARR 22%, NNT=5), and increased RRT-free days to 24 vs 20 days (p=0.006).</span>`;
+            } else {
+                bicarbIndEl.innerHTML = `<span><strong>${bicarbInd.summary}</strong></span>`;
+            }
         } else {
             bicarbIndEl.className = 'alert-box alert-warning';
+            bicarbIndEl.innerHTML = `<span><strong>${bicarbInd.summary}</strong></span>`;
         }
-        bicarbIndEl.innerHTML = `<span><strong>${bicarbInd.summary}</strong></span>`;
 
-        // 5. Calcium & Minerals
-        const ica = parseFloat(document.getElementById('min-ica').value) || 0;
-        const totCa = parseFloat(document.getElementById('min-total-ca').value) || 0;
-        const alb = parseFloat(document.getElementById('gap-alb').value) || 4.0;
-        const caEval = ELECTROLYTE_ENGINE.evaluateCalcium(ica, totCa, alb);
+        // 5. Calcium & Minerals (Handles blank inputs gracefully)
+        const icaVal = document.getElementById('min-ica').value.trim();
+        const totCaVal = document.getElementById('min-total-ca').value.trim();
+        const mgVal = document.getElementById('min-mg').value.trim();
+        const po4Val = document.getElementById('min-po4').value.trim();
+        const albVal = document.getElementById('gap-alb').value.trim();
+
+        const ica = icaVal !== '' ? parseFloat(icaVal) : null;
+        const totCa = totCaVal !== '' ? parseFloat(totCaVal) : null;
+        const alb = albVal !== '' ? parseFloat(albVal) : 4.0;
+        const mg = mgVal !== '' ? parseFloat(mgVal) : null;
+        const po4 = po4Val !== '' ? parseFloat(po4Val) : null;
+
         const caDescEl = document.getElementById('disp-ca-status-desc');
         const caStatEl = document.getElementById('disp-ca-status');
-        if (caEval.status.includes('hypo')) {
-            caStatEl.textContent = 'HYPO';
-            caStatEl.style.color = '#f87171';
-            caDescEl.textContent = `Hypocalcemia (${caEval.primaryType === 'ionized' ? 'iCa ' + ica + ' mmol/L' : 'Total Ca ' + totCa + ' mg/dL'})`;
-        } else if (caEval.status.includes('hyper')) {
-            caStatEl.textContent = 'HYPER';
-            caStatEl.style.color = '#fbbf24';
-            caDescEl.textContent = `Hypercalcemia (${caEval.primaryType === 'ionized' ? 'iCa ' + ica + ' mmol/L' : 'Total Ca ' + totCa + ' mg/dL'})`;
+
+        if (ica !== null || totCa !== null) {
+            const caEval = ELECTROLYTE_ENGINE.evaluateCalcium(ica || 0, totCa || 0, alb);
+            if (caEval.status.includes('hypo')) {
+                caStatEl.textContent = 'HYPO';
+                caStatEl.style.color = '#f87171';
+                caDescEl.textContent = `Hypocalcemia (${caEval.primaryType === 'ionized' ? 'iCa ' + ica + ' mmol/L' : 'Total Ca ' + totCa + ' mg/dL'})`;
+            } else if (caEval.status.includes('hyper')) {
+                caStatEl.textContent = 'HYPER';
+                caStatEl.style.color = '#fbbf24';
+                caDescEl.textContent = `Hypercalcemia (${caEval.primaryType === 'ionized' ? 'iCa ' + ica + ' mmol/L' : 'Total Ca ' + totCa + ' mg/dL'})`;
+            } else {
+                caStatEl.textContent = 'NORMAL';
+                caStatEl.style.color = '#34d399';
+                caDescEl.textContent = 'Calcium within physiological range';
+            }
         } else {
-            caStatEl.textContent = 'NORMAL';
-            caStatEl.style.color = '#34d399';
-            caDescEl.textContent = 'Calcium within physiological range';
+            caStatEl.textContent = '--';
+            caStatEl.style.color = '#94a3b8';
+            caDescEl.textContent = 'Enter values to evaluate';
         }
 
-        const po4 = parseFloat(document.getElementById('min-po4').value) || 2.5;
-        const po4Rep = ELECTROLYTE_ENGINE.calcPhosphateRepletion(po4, totCa || 9.0, weight);
-        if (po4Rep) {
-            document.getElementById('disp-ca-po4-product').textContent = `Ca × PO₄ = ${po4Rep.caPo4Product || '--'}`;
-            document.getElementById('disp-po4-guidance').innerHTML = `Dose: <strong>${po4Rep.recommendedDoseMmol || 0} mmol</strong> IV. ${po4Rep.safetyGate}`;
+        if (po4 !== null) {
+            const po4Rep = ELECTROLYTE_ENGINE.calcPhosphateRepletion(po4, totCa || 9.0, weight);
+            if (po4Rep) {
+                document.getElementById('disp-ca-po4-product').textContent = `Ca × PO₄ = ${po4Rep.caPo4Product || '--'}`;
+                document.getElementById('disp-po4-guidance').innerHTML = `Dose: <strong>${po4Rep.recommendedDoseMmol || 0} mmol</strong> IV. ${po4Rep.safetyGate}`;
+            }
+        } else {
+            document.getElementById('disp-ca-po4-product').textContent = 'Ca × PO₄ = --';
+            document.getElementById('disp-po4-guidance').innerHTML = 'Enter PO₄ to calculate deficit and [Ca × PO₄] safety product.';
         }
 
         // 6. Acid-Base Gaps
@@ -1193,6 +1545,7 @@
         }
 
         // 7. Work-up Wizards
+        // Hyponatremia
         const wNaTon = document.getElementById('w-na-tonicity').value;
         const wNaUOsm = document.getElementById('w-na-uosm').value;
         const wNaVol = document.getElementById('w-na-vol').value;
@@ -1205,6 +1558,16 @@
         });
         document.getElementById('disp-w-na-result').innerHTML = `<div><strong>${naWorkup.category}</strong><br>${naWorkup.primaryCauses ? naWorkup.primaryCauses.join(', ') : naWorkup.nextAction || ''}</div>`;
 
+        // Hypernatremia
+        const wHyperNaUOsm = document.getElementById('w-hyperna-uosm').value;
+        const wHyperNaDdavp = document.getElementById('w-hyperna-ddavp').value;
+        const hyperNaWorkup = ELECTROLYTE_ENGINE.evaluateHypernatremiaWorkup({
+            uOsm: wHyperNaUOsm === 'dilute' ? 150 : (wHyperNaUOsm === 'intermediate' ? 500 : 900),
+            responseToDdavp: wHyperNaDdavp
+        });
+        document.getElementById('disp-w-hyperna-result').innerHTML = `<div><strong>${hyperNaWorkup.category}</strong><br>${hyperNaWorkup.primaryCauses ? hyperNaWorkup.primaryCauses.join(', ') : ''}<br><em>${hyperNaWorkup.nextAction || ''}</em></div>`;
+
+        // Hypokalemia
         const wKSpot = document.getElementById('w-k-spot').value;
         const wKBp = document.getElementById('w-k-bp').value;
         const wKAb = document.getElementById('w-k-ab').value;
@@ -1216,6 +1579,39 @@
             uCl: wKUCl === 'low' ? 10 : 30
         });
         document.getElementById('disp-w-k-result').innerHTML = `<div><strong>${kWorkup.category}</strong><br>${kWorkup.primaryCauses ? kWorkup.primaryCauses.join(', ') : kWorkup.nextAction || ''}</div>`;
+
+        // Hyperkalemia
+        const wHyperKShift = document.getElementById('w-hyperk-shift').value;
+        const wHyperKGfr = document.getElementById('w-hyperk-gfr').value;
+        const wHyperKSpot = document.getElementById('w-hyperk-spot').value;
+        const hyperKWorkup = ELECTROLYTE_ENGINE.evaluateHyperkalemiaWorkup({
+            isHemolyzed: wHyperKShift === 'hemolysis',
+            transcellularTrigger: wHyperKShift === 'shift',
+            gfr: wHyperKGfr === 'low' ? 20 : 70,
+            spotUKCrRatio: wHyperKSpot === 'low' ? 1.2 : 3.0
+        });
+        document.getElementById('disp-w-hyperk-result').innerHTML = `<div><strong>${hyperKWorkup.category}</strong><br>${hyperKWorkup.primaryCauses ? hyperKWorkup.primaryCauses.join(', ') : ''}<br><em>${hyperKWorkup.nextAction || ''}</em></div>`;
+
+        // Metabolic Acidosis
+        const wAcidoAg = document.getElementById('w-acido-ag').value;
+        const wAcidoUag = document.getElementById('w-acido-uag').value;
+        const wAcidoUph = document.getElementById('w-acido-uph').value;
+        const acidoWorkup = ELECTROLYTE_ENGINE.evaluateMetabolicAcidosisWorkup({
+            anionGap: wAcidoAg === 'high' ? 18 : 8,
+            uag: wAcidoUag === 'neg' ? -15 : 15,
+            urinePh: wAcidoUph === 'alk' ? 6.2 : 5.0,
+            serumK: 3.5
+        });
+        document.getElementById('disp-w-acido-result').innerHTML = `<div><strong>${acidoWorkup.category}</strong><br>${acidoWorkup.primaryCauses ? acidoWorkup.primaryCauses.join(', ') : ''}<br><em>${acidoWorkup.nextAction || acidoWorkup.treatment || ''}</em></div>`;
+
+        // Metabolic Alkalosis
+        const wAlkaloUcl = document.getElementById('w-alkalo-ucl').value;
+        const wAlkaloBp = document.getElementById('w-alkalo-bp').value;
+        const alkaloWorkup = ELECTROLYTE_ENGINE.evaluateMetabolicAlkalosisWorkup({
+            uCl: wAlkaloUcl === 'low' ? 10 : 35,
+            bpStatus: wAlkaloBp
+        });
+        document.getElementById('disp-w-alkalo-result').innerHTML = `<div><strong>${alkaloWorkup.category}</strong><br>${alkaloWorkup.primaryCauses ? alkaloWorkup.primaryCauses.join(', ') : ''}<br><em>${alkaloWorkup.nextAction || alkaloWorkup.treatment || ''}</em></div>`;
     }
 
     // Event Listeners
@@ -1224,11 +1620,16 @@
         el.addEventListener('change', recalc);
     });
 
-    // Slider sync
+    // Slider syncs
     const targetSlider = document.getElementById('na-target-slider');
     const targetInput = document.getElementById('na-target-delta');
     targetSlider.addEventListener('input', () => { targetInput.value = targetSlider.value; recalc(); });
     targetInput.addEventListener('input', () => { targetSlider.value = targetInput.value; recalc(); });
+
+    const kRateSlider = document.getElementById('k-iv-rate-slider');
+    const kRateInput = document.getElementById('k-iv-rate-input');
+    kRateSlider.addEventListener('input', () => { kRateInput.value = kRateSlider.value; recalc(); });
+    kRateInput.addEventListener('input', () => { kRateSlider.value = kRateInput.value; recalc(); });
 
     // Note Generator
     document.getElementById('btn-gen-note').addEventListener('click', () => {
@@ -1241,6 +1642,7 @@
         const corrNa = document.getElementById('disp-corr-na-hillier').textContent;
         const kVal = document.getElementById('hypok-val').value;
         const kDef = document.getElementById('disp-hypok-deficit').textContent;
+        const kDelivRate = document.getElementById('disp-k-delivery-rate').textContent;
         const hco3Val = document.getElementById('acid-hco3-curr').value;
         const bDef = document.getElementById('disp-bicarb-total').textContent;
         const corrAg = document.getElementById('disp-gap-corr').textContent;
@@ -1252,10 +1654,12 @@
         const bicarbText = bicarbForm === '75'
             ? `   - Selected Formulation: 7.5% NaHCO₃ (Thailand / GPO — 44.6 mEq / 50 mL amp)
    - Calculated Deficit: ${bDef} mEq (50% replacement: ~${bicarbDef ? bicarbDef.halfDeficitMeq : '--'} mEq = ~${bicarbDef ? bicarbDef.ampules75HalfExact : '--'} amp / ${bicarbDef ? bicarbDef.volume75MlHalf : '--'} mL in 4-8h)
-   - Isotonic Recipe: 3.5 amp (175 mL) 7.5% NaHCO₃ in 825-850 mL D5W (or 2 amp in 400-500 mL D5W) at 100-250 mL/hr.`
+   - Emergent Slow Push: 1-2 amp (50-100 mL = 44.6-89.2 mEq) over 2-5 min if indicated.
+   - Isotonic Infusion: 3.5 amp (175 mL) in 825-850 mL D5W at 100-250 mL/hr.`
             : `   - Selected Formulation: 8.4% NaHCO₃ (International — 50.0 mEq / 50 mL amp)
    - Calculated Deficit: ${bDef} mEq (50% replacement: ~${bicarbDef ? bicarbDef.halfDeficitMeq : '--'} mEq = ~${bicarbDef ? bicarbDef.ampules84HalfExact : '--'} amp / ${bicarbDef ? bicarbDef.volume84MlHalf : '--'} mL in 4-8h)
-   - Isotonic Recipe: 3 amp (150 mL) 8.4% NaHCO₃ in 850-1000 mL D5W at 100-250 mL/hr.`;
+   - Emergent Slow Push: 1-2 amp (50-100 mL = 50-100 mEq) over 2-5 min if indicated.
+   - Isotonic Infusion: 3 amp (150 mL) in 850-1000 mL D5W at 100-250 mL/hr.`;
 
         const note = `[ER CLINICAL ELECTROLYTE & ACID-BASE ASSESSMENT]
 HN: ${hn} | Age: ${age}y | Sex: ${sex} | Weight: ${weight} kg
@@ -1268,7 +1672,7 @@ HN: ${hn} | Age: ${age}y | Sex: ${sex} | Weight: ${weight} kg
 
 2. POTASSIUM:
    - Serum K⁺: ${kVal} mEq/L | Estimated Deficit: ${kDef}
-   - Route safety verified; Mg²⁺ checked concurrently.
+   - Infusion Order: Delivered at ${kDelivRate} via IV fluid bottle. Mg²⁺ checked concurrently.
 
 3. ACID-BASE & BICARBONATE:
    - Serum HCO₃⁻: ${hco3Val} mEq/L
