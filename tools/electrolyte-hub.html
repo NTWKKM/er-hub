@@ -2397,9 +2397,10 @@
 
     // Universal 2-Way Reactive Sync Map
     const syncMap = {
-        'fs-na': ['na-measured', 'gap-na'],
-        'na-measured': ['fs-na', 'gap-na'],
-        'gap-na': ['fs-na', 'na-measured'],
+        'fs-na': ['na-measured', 'gap-na', 'hyperna-val'],
+        'na-measured': ['fs-na', 'gap-na', 'hyperna-val'],
+        'gap-na': ['fs-na', 'na-measured', 'hyperna-val'],
+        'hyperna-val': ['fs-na', 'na-measured', 'gap-na'],
 
         'fs-k': ['hypok-val'],
         'hypok-val': ['fs-k'],
@@ -2495,7 +2496,7 @@
     });
 
     // Other inputs with range styling
-    ['fs-egfr', 'hyperna-val', 'fe-s-urea', 'fe-s-urate', 'fe-u-ca'].forEach(id => {
+    ['fs-egfr', 'fe-s-urea', 'fe-s-urate', 'fe-u-ca'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.addEventListener('input', (e) => {
@@ -2524,7 +2525,8 @@
             'fs-ica': '1.22', 'fs-total-ca': '9.5', 'fs-alb': '4.0', 'fs-mg': '2.0',
             'fs-po4': '3.5', 'fs-ph': '7.40', 'fs-pco2': '40', 'fs-osm': '290',
             'fs-ethanol': '0', 'fs-u-na': '30', 'fs-u-k': '40', 'fs-u-cl': '30',
-            'fs-u-cr': '100', 'fs-u-urea': '800', 'fs-u-urate': '35'
+            'fs-u-cr': '100', 'fs-u-urea': '800', 'fs-u-urate': '35',
+            'fe-s-urea': '32', 'fe-s-urate': '5.0', 'fe-u-ca': '10'
         };
         Object.entries(normalVals).forEach(([id, val]) => {
             const el = document.getElementById(id);
@@ -2676,7 +2678,7 @@
 
         // Hypernatremia FWD
         const hyperNaStr = document.getElementById('hyperna-val').value.trim();
-        const hyperNa = hyperNaStr !== '' ? parseFloat(hyperNaStr) : null;
+        const hyperNa = hyperNaStr !== '' ? parseFloat(hyperNaStr) : (measNa !== null && measNa > 140 ? measNa : null);
         if (hyperNa !== null && hyperNa > 140) {
             const fwd = ELECTROLYTE_ENGINE.calcFreeWaterDeficit(hyperNa, tbw, 140);
             document.getElementById('disp-fwd-liters').textContent = `${fwd.totalFwdLiters} L`;
@@ -2694,8 +2696,13 @@
         const hypok = hypokStr !== '' ? parseFloat(hypokStr) : null;
         if (hypok !== null) {
             const kDef = ELECTROLYTE_ENGINE.calcPotassiumDeficit(hypok);
-            document.getElementById('disp-hypok-severity').textContent = kDef.severity;
-            document.getElementById('disp-hypok-deficit').textContent = `~${kDef.deficitMeq} mEq`;
+            if (hypok > 5.0) {
+                document.getElementById('disp-hypok-severity').innerHTML = '<span style="color:#fca5a5; font-weight:700;">⚠️ Hyperkalemic (>5.0) — See Part A Protocol</span>';
+                document.getElementById('disp-hypok-deficit').textContent = '0 mEq';
+            } else {
+                document.getElementById('disp-hypok-severity').textContent = kDef.severity;
+                document.getElementById('disp-hypok-deficit').textContent = `~${kDef.deficitMeq} mEq`;
+            }
         } else {
             document.getElementById('disp-hypok-severity').textContent = '--';
             document.getElementById('disp-hypok-deficit').textContent = '-- mEq';
@@ -3003,11 +3010,13 @@
             const uK = uKStr !== '' ? parseFloat(uKStr) : 0;
             const sK = hypokStr !== '' ? parseFloat(hypokStr) : 0;
             const uUrea = uUreaStr !== '' ? parseFloat(uUreaStr) : 0;
-            const sUrea = sUreaStr !== '' ? parseFloat(sUreaStr) : 0;
+            const bunVal = document.getElementById('fs-bun').value.trim();
+            const sUrea = sUreaStr !== '' ? parseFloat(sUreaStr) : (bunVal !== '' ? Math.round(parseFloat(bunVal) * 2.14 * 10) / 10 : 0);
             const uUrate = uUrateStr !== '' ? parseFloat(uUrateStr) : 0;
             const sUrate = sUrateStr !== '' ? parseFloat(sUrateStr) : 0;
             const uCa = uCaStr !== '' ? parseFloat(uCaStr) : 0;
-            const sCa = sCaStr !== '' ? parseFloat(sCaStr) : 0;
+            const totCaInput = document.getElementById('fs-total-ca').value.trim();
+            const sCa = sCaStr !== '' ? parseFloat(sCaStr) : (totCaInput !== '' ? parseFloat(totCaInput) : 0);
 
             const fe = ELECTROLYTE_ENGINE.calcFractionalExcretions({
                 uNa, sNa, uK, sK, uUrea, sUrea, uUrate, sUrate, uCr, sCr, uCa, sCa
@@ -3238,32 +3247,160 @@
         document.getElementById('p-alb-disp').textContent = alb;
         document.getElementById('p-time-disp').textContent = new Date().toLocaleString('th-TH');
 
-        // Populate Orders Table
+        // Populate Orders Table (Smart Indication-Based Clinical Generation)
         const ordersBody = document.getElementById('print-orders-body');
-        ordersBody.innerHTML = `
+        const ordersList = [];
+
+        // 1. Sodium Order
+        const measNa = parseFloat(document.getElementById('na-measured').value.trim() || document.getElementById('fs-na').value.trim());
+        if (!isNaN(measNa)) {
+            if (measNa < 135) {
+                const bolusVal = document.getElementById('disp-3pct-bolus').textContent;
+                const adrogueRate = document.getElementById('disp-adrogue-rate').textContent;
+                const fluidText = document.getElementById('na-fluid-choice').selectedOptions[0].text;
+                ordersList.push(`
+                    <tr>
+                        <td><strong style="color:#b91c1c;">Hyponatremia</strong> (Na⁺ ${measNa} mEq/L)</td>
+                        <td>• <strong>Acute Emergency:</strong> 3% NaCl ${bolusVal} IV over 10-20 min (for seizures/herniation)<br>• <strong>Maintenance:</strong> ${fluidText} at ${adrogueRate}</td>
+                        <td>Bolus ${bolusVal} / Drip ${adrogueRate}</td>
+                        <td>Recheck Na⁺ in 20m post-bolus, then q4h (Max +8 mEq/L/24h)</td>
+                    </tr>
+                `);
+            } else if (measNa > 145) {
+                const fwdLiters = document.getElementById('disp-fwd-liters').textContent;
+                const d5wRate = document.getElementById('disp-fwd-d5w-rate').textContent;
+                ordersList.push(`
+                    <tr>
+                        <td><strong style="color:#b91c1c;">Hypernatremia</strong> (Na⁺ ${measNa} mEq/L)</td>
+                        <td>5% Dextrose in Water (D5W) IV infusion + Enteral free water via NG tube (FWD: ${fwdLiters})</td>
+                        <td><strong>${d5wRate}</strong></td>
+                        <td>Serum Na⁺ q4h (Max drop ≤ 10 mEq/L in 24h)</td>
+                    </tr>
+                `);
+            } else {
+                ordersList.push(`
+                    <tr>
+                        <td><strong>Serum Sodium</strong></td>
+                        <td>Normal range (135 - 145 mEq/L) — No hypertonic / hypotonic sodium correction indicated</td>
+                        <td>--</td>
+                        <td>Routine daily labs</td>
+                    </tr>
+                `);
+            }
+        }
+
+        // 2. Potassium Order
+        const kVal = parseFloat(document.getElementById('hypok-val').value.trim() || document.getElementById('fs-k').value.trim());
+        if (!isNaN(kVal)) {
+            if (kVal < 3.5) {
+                const kFluidName = document.getElementById('k-iv-fluid').selectedOptions[0].text;
+                const kMeq = document.getElementById('k-iv-meq').value;
+                const kRate = document.getElementById('k-iv-rate-input').value;
+                const kRoute = document.querySelector('input[name="k-iv-route"]:checked')?.value.toUpperCase() || 'PERIPHERAL';
+                const kDelivery = document.getElementById('disp-k-delivery-rate').textContent;
+                ordersList.push(`
+                    <tr>
+                        <td><strong style="color:#b45309;">Hypokalemia</strong> (K⁺ ${kVal} mEq/L)</td>
+                        <td>${kFluidName} + KCl ${kMeq} mEq via <strong>${kRoute}</strong> line (Deficit: ${document.getElementById('disp-hypok-deficit').textContent})</td>
+                        <td><strong>${kRate} mL/hr</strong> (${kDelivery})</td>
+                        <td>Continuous ECG / Telemetry; K⁺ &amp; Mg²⁺ q4h</td>
+                    </tr>
+                `);
+            } else if (kVal >= 5.5) {
+                ordersList.push(`
+                    <tr>
+                        <td><strong style="color:#b91c1c;">Hyperkalemia</strong> (K⁺ ${kVal} mEq/L)</td>
+                        <td>• <strong>10% Calcium Gluconate 10-20 mL IV</strong> over 2-5 min<br>• <strong>Regular Insulin 10 units IV + D50W 50 mL</strong> over 5 min<br>• <strong>Lokelma 10g PO TID</strong></td>
+                        <td>Emergency STAT Protocol</td>
+                        <td>Continuous ECG monitor; Repeat K⁺ in 1-2h</td>
+                    </tr>
+                `);
+            } else {
+                ordersList.push(`
+                    <tr>
+                        <td><strong>Serum Potassium</strong></td>
+                        <td>Target range (3.5 - 5.0 mEq/L) — No acute potassium intervention required</td>
+                        <td>--</td>
+                        <td>Routine monitoring</td>
+                    </tr>
+                `);
+            }
+        }
+
+        // 3. Metabolic Acidosis Order
+        const hco3Val = parseFloat(document.getElementById('acid-hco3-curr').value.trim() || document.getElementById('fs-hco3').value.trim());
+        const phVal = parseFloat(document.getElementById('acid-ph').value.trim() || document.getElementById('fs-ph').value.trim());
+        const bDefVal = document.getElementById('disp-bicarb-total').textContent;
+        const bFormBadge = document.getElementById('disp-bicarb-form-badge').textContent;
+        const bHalfDesc = document.getElementById('disp-bicarb-half').textContent;
+        const akiStage = parseInt(document.getElementById('acid-aki-stage').value) || 0;
+        const etiology = document.getElementById('acid-etiology').value;
+
+        if (!isNaN(hco3Val) || !isNaN(phVal)) {
+            if ((!isNaN(phVal) && phVal <= 7.20 && akiStage >= 2) || (etiology === 'toxicology_tca' || etiology === 'toxicology_salicylate') || (!isNaN(hco3Val) && hco3Val < 15 && bDefVal !== '0' && bDefVal !== '--')) {
+                ordersList.push(`
+                    <tr>
+                        <td><strong style="color:#6d28d9;">Metabolic Acidosis</strong> (pH ${phVal || '--'}, HCO₃⁻ ${hco3Val || '--'})</td>
+                        <td>${bFormBadge}: Isotonic NaHCO₃ in D5W (~150 mEq/L)<br><em>${bHalfDesc}</em></td>
+                        <td><strong>100 - 250 mL/hr</strong> (titrated)</td>
+                        <td>ABG / VBG, Serum K⁺, and Ionized Ca²⁺ q2-4h</td>
+                    </tr>
+                `);
+            } else {
+                ordersList.push(`
+                    <tr>
+                        <td><strong>Acid-Base Status</strong></td>
+                        <td>pH ${phVal || '7.40'} | HCO₃⁻ ${hco3Val || '24'} mEq/L — No IV Bicarbonate indicated (BICAR-ICU/ADA Criteria)</td>
+                        <td>--</td>
+                        <td>Monitor underlying condition</td>
+                    </tr>
+                `);
+            }
+        }
+
+        // 4. Minerals (Calcium / Magnesium / Phosphate)
+        const mgVal = parseFloat(document.getElementById('min-mg').value.trim() || document.getElementById('fs-mg').value.trim());
+        const isArrhythmia = document.getElementById('min-mg-arrhythmia').checked;
+        const icaVal = parseFloat(document.getElementById('min-ica').value.trim() || document.getElementById('fs-ica').value.trim());
+        const totCaVal = parseFloat(document.getElementById('min-total-ca').value.trim() || document.getElementById('fs-total-ca').value.trim());
+
+        if (!isNaN(mgVal) && (mgVal < 1.7 || isArrhythmia)) {
+            const mgTreatText = isArrhythmia || mgVal < 1.0 
+                ? 'MgSO₄ 2g IV in 100 mL D5W over 15-60 min (STAT)' 
+                : 'MgSO₄ 2-4g IV in 250 mL D5W over 4 hours (Rate ≤ 1.0 g/hr; 0.5 g/hr if eGFR < 30)';
+            ordersList.push(`
+                <tr>
+                    <td><strong style="color:#0284c7;">Hypomagnesemia</strong> (Mg²⁺ ${mgVal} mg/dL)</td>
+                    <td>${mgTreatText}</td>
+                    <td>Rate ≤ 1.0 g/hr (0.5 g/hr if eGFR &lt; 30)</td>
+                    <td>Deep tendon reflexes, RR, and Mg²⁺ q4h</td>
+                </tr>
+            `);
+        } else if ((!isNaN(icaVal) && icaVal < 1.15) || (!isNaN(totCaVal) && totCaVal < 8.5)) {
+            ordersList.push(`
+                <tr>
+                    <td><strong style="color:#0284c7;">Hypocalcemia</strong> (${!isNaN(icaVal) ? 'iCa ' + icaVal + ' mmol/L' : 'Total Ca ' + totCaVal + ' mg/dL'})</td>
+                    <td>10% Calcium Gluconate 10-20 mL in 100 mL D5W IV over 10-20 min</td>
+                    <td>10 - 20 mL IV infusion</td>
+                    <td>Continuous ECG; Ionized Ca²⁺ q4h</td>
+                </tr>
+            `);
+        } else {
+            ordersList.push(`
+                <tr>
+                    <td><strong>Minerals (Ca / Mg / PO₄)</strong></td>
+                    <td>${document.getElementById('disp-mg-status').textContent !== '--' ? 'Mg²⁺ ' + (mgVal || '--') + ' mg/dL | ' : ''}Values within physiological range</td>
+                    <td>--</td>
+                    <td>Routine monitoring</td>
+                </tr>
+            `);
+        }
+
+        ordersBody.innerHTML = ordersList.length > 0 ? ordersList.join('') : `
             <tr>
-                <td><strong>Hyponatremia</strong></td>
-                <td>3% NaCl Hypertonic Saline (513 mEq/L) — Acute Bolus for seizures/herniation</td>
-                <td><strong>${document.getElementById('disp-3pct-bolus').textContent}</strong> IV over 10-20 min</td>
-                <td>Recheck Na⁺ in 20 min (Max +8 mEq/L/24h)</td>
-            </tr>
-            <tr>
-                <td><strong>Potassium Repletion</strong></td>
-                <td>${document.getElementById('k-iv-fluid').selectedOptions[0].text} + KCl ${document.getElementById('k-iv-meq').value} mEq (${document.querySelector('input[name="k-iv-route"]:checked')?.value.toUpperCase()})</td>
-                <td><strong>${document.getElementById('k-iv-rate-input').value} mL/hr</strong> (${document.getElementById('disp-k-delivery-rate').textContent})</td>
-                <td>ECG &amp; Serum K⁺/Mg²⁺ q4h</td>
-            </tr>
-            <tr>
-                <td><strong>Metabolic Acidosis</strong></td>
-                <td>${document.getElementById('disp-bicarb-form-badge').textContent} (${document.getElementById('disp-bicarb-half').textContent})</td>
-                <td>Isotonic D5W drip at <strong>100 - 250 mL/hr</strong></td>
-                <td>ABG/VBG &amp; K⁺ q2-4h</td>
-            </tr>
-            <tr>
-                <td><strong>Magnesium / Minerals</strong></td>
-                <td>${document.getElementById('disp-mg-status').textContent} Plan (eGFR ${egfr} mL/min)</td>
-                <td>Rate ≤ 1.0 g/hr (0.5 g/hr if eGFR &lt; 30)</td>
-                <td>Reflexes &amp; Resp Rate q4h</td>
+                <td colspan="4" style="text-align:center; color:#666; padding:12px;">
+                    ✓ All electrolytes and acid-base parameters are within physiological limits. No acute intravenous electrolyte intervention required.
+                </td>
             </tr>
         `;
 
@@ -3315,7 +3452,30 @@
 
     document.getElementById('btn-reset').addEventListener('click', () => {
         if (confirm('Reset all values to defaults?')) {
-            location.reload();
+            document.getElementById('pt-hn').value = '';
+            document.getElementById('pt-weight').value = '';
+            document.getElementById('pt-age').value = '';
+            const allLabIds = [
+                'fs-na', 'fs-k', 'fs-cl', 'fs-hco3', 'fs-bun', 'fs-cr', 'fs-glu', 'fs-egfr',
+                'fs-ica', 'fs-total-ca', 'fs-alb', 'fs-mg', 'fs-po4', 'fs-ph', 'fs-pco2',
+                'fs-osm', 'fs-ethanol', 'fs-u-na', 'fs-u-k', 'fs-u-cl', 'fs-u-cr', 'fs-u-urea', 'fs-u-urate',
+                'na-measured', 'na-glucose', 'hyperna-val', 'hypok-val', 'acid-hco3-curr', 'acid-ph', 'acid-pco2',
+                'min-ica', 'min-total-ca', 'min-ca-alb', 'min-mg', 'min-po4',
+                'gap-na', 'gap-cl', 'gap-hco3', 'gap-alb', 'gap-meas-osm', 'gap-bun', 'gap-glu', 'gap-ethanol',
+                'gap-u-na', 'gap-u-k', 'gap-u-cl', 'fe-u-cr', 'fe-s-cr', 'fe-u-urea', 'fe-s-urea',
+                'fe-u-urate', 'fe-s-urate', 'fe-u-ca', 'fe-s-ca'
+            ];
+            allLabIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.value = '';
+                    el.classList.remove('lab-low', 'lab-normal', 'lab-high');
+                }
+            });
+            document.getElementById('his-note-card').style.display = 'none';
+            document.getElementById('his-note-text').value = '';
+            recalc();
+            showToast('↺ Form reset to default empty state');
         }
     });
 

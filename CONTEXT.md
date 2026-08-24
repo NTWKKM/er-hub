@@ -160,3 +160,15 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   4. Maintained full accessibility via dynamic `tabindex` and `aria-label` updates, with instant non-animated switching under `prefers-reduced-motion: reduce`.
   5. Updated `service-worker.js` offline cache version to `er-hub-v70`.
 
+## ADR-29: Electrolyte & Acid-Base Hub Clinical Safety, Reactive Sync & Indication-Based Orders
+
+- **Context**: Deep audit of [`tools/electrolyte-hub.html`](file:///Users/ntwkkm/er-hub/tools/electrolyte-hub.html) and [`shared/electrolyte-engine.js`](file:///Users/ntwkkm/er-hub/shared/electrolyte-engine.js) identified state desync in hypernatremia, unconditioned IV medication prescribing on print worksheets, incomplete normal lab templates for fractional excretions, and ambiguous potassium deficit displays during hyperkalemia.
+- **Decision**:
+  1. **Unified Reactive Hypernatremia Sync**: Integrated `hyperna-val` into the universal 2-way sync map (`syncMap`) and auto-calculated Free Water Deficit (FWD) and D5W infusion rates whenever $\text{Na}^+ > 140\text{ mEq/L}$.
+  2. **Smart Indication-Based Doctor's Orders**: Replaced hardcoded print orders with dynamic clinical algorithms that only generate IV orders (3% NaCl, D5W, KCl, $\text{NaHCO}_3$, $\text{MgSO}_4$, Calcium Gluconate) when verified clinical indications exist, preventing accidental order errors.
+  3. **Complete Normal Labs & Fractional Excretion Auto-Derivation**: Populated `fe-s-urea`, `fe-s-urate`, and `fe-u-ca` in normal template, with automatic fallback $\text{Serum Urea} \approx \text{BUN} \times 2.14$.
+  4. **Hyperkalemia Safeguard**: Updated `calcPotassiumDeficit` to explicitly return `Hyperkalemia (>5.0 mEq/L)` with a direct pointer to the emergency protocol instead of returning normal deficit.
+  5. **Smooth In-Page Reset**: Replaced `location.reload()` with non-destructive in-memory DOM reset.
+
+
+

@@ -66,6 +66,9 @@ describe('ELECTROLYTE_ENGINE: TBW & Sodium Calculations', () => {
 describe('ELECTROLYTE_ENGINE: Potassium & Acidosis Modules', () => {
     test('Potassium deficit estimations', () => {
         assert.equal(ELECTROLYTE_ENGINE.calcPotassiumDeficit(4.2).deficitMeq, 0);
+        assert.equal(ELECTROLYTE_ENGINE.calcPotassiumDeficit(4.2).severity, 'Normal (4.0-5.0)');
+        assert.equal(ELECTROLYTE_ENGINE.calcPotassiumDeficit(6.5).severity, 'Hyperkalemia (>5.0 mEq/L)');
+        assert.equal(ELECTROLYTE_ENGINE.calcPotassiumDeficit(6.5).isHyperkalemic, true);
         assert.equal(ELECTROLYTE_ENGINE.calcPotassiumDeficit(3.8).severity, 'Mild (3.5-3.9)');
         assert.equal(ELECTROLYTE_ENGINE.calcPotassiumDeficit(2.3).severity, 'Life-Threatening (<2.5)');
     });

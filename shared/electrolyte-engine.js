@@ -126,7 +126,8 @@ const ELECTROLYTE_ENGINE = {
 
     calcPotassiumDeficit: function(serumK) {
         if (!(serumK > 0)) return null;
-        if (serumK >= 4.0) return { deficitMeq: 0, severity: 'Normal', note: 'No potassium deficit' };
+        if (serumK > 5.0) return { deficitMeq: 0, severity: 'Hyperkalemia (>5.0 mEq/L)', note: 'Hyperkalemic: Potassium repletion contraindicated', isHyperkalemic: true };
+        if (serumK >= 4.0) return { deficitMeq: 0, severity: 'Normal (4.0-5.0)', note: 'No potassium deficit' };
         if (serumK >= 3.5) {
             const drop = (4.0 - serumK) * 10;
             const def = drop * 20; // ~20 mEq per 0.1
