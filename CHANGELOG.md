@@ -1,9 +1,9 @@
 ## [2.12.0] — 2026-08-24
 
-### Electrolyte & Acid-Base Suite 2026 Overhaul
+### Electrolyte & Acid-Base Suite 2026 Overhaul & UI Polish
 - **Electrolyte Hub (`tools/electrolyte-hub.html`):**
-  - Upgraded Patient Variables strip with eGFR, Serum Albumin, and Blood Glucose.
-  - Implemented 1-tap **Quick Lab Batch Entry Modal** (`#quick-lab-modal`) for all 18 clinical parameters with universal two-way reactive state synchronization across all 6 tabs.
+  - **Refined Patient Command Card:** Replaced bloated wrapping grid and disconnected sub-bar with a single, unified 1-row Command Card featuring compact segmented sex controls (`♂ Male` / `♀ Female`), integrated telemetry strip (TBW, Renal Status, Albumin), and full-height `🧪 Quick Lab Entry` button.
+  - **Refined Quick Lab Flowsheet Modal:** Reorganized 18 lab inputs into a structured 3-panel clinical flowsheet (`Chem-8`, `ABG / Minerals`, `Osmolality & Urine Profile`) in 2-column key-value grids with a 1-tap template reset button (`↺ Reset to Normal Labs`).
   - Added bedside 1-tap quick preset chips for critical electrolyte values.
   - Added explicit **Administration Route switch** (`Peripheral IV` vs `Central Line`) for Potassium drip calculations with clinical safety enforcement.
   - Implemented **Fractional Excretions Suite** in Tab 5 ($\text{FE}_{\text{Na}}$, $\text{FE}_{\text{Urea}}$, $\text{FE}_{\text{Urate}}$, $\text{CCCR}$) with two-way link to diagnostic decision workup.
@@ -17,7 +17,7 @@
 - **Automated Tests (`tests/electrolyte-engine.test.js`):**
   - Updated and expanded unit tests covering new engine capabilities (20/20 green).
 - **PWA Cache (`service-worker.js`):**
-  - Bumped offline cache version to `er-hub-v77` (`24/08/2569`).
+  - Bumped offline cache version to `er-hub-v78` (`24/08/2569`).
 
 ## [2.11.2] — 2026-08-23
 

@@ -69,31 +69,37 @@
             white-space: nowrap;
         }
 
-        /* ══ Top Patient Strip (Universal Lab Context) ══ */
-        .patient-strip {
+        /* ══ Integrated Patient Command Card ══ */
+        .patient-card {
             background: var(--surface-sub);
             border: 1px solid var(--rule);
             border-radius: 8px;
-            padding: 14px 16px;
             margin-bottom: 18px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        }
+
+        .patient-card-main {
+            padding: 12px 16px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
+            grid-template-columns: 1.4fr 0.9fr 0.9fr 1.3fr 0.9fr 0.9fr 0.9fr 1.4fr;
+            gap: 10px;
             align-items: end;
         }
 
-        .input-group {
+        .pt-field {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
 
-        .input-group label {
-            font-size: 11px;
+        .pt-field label {
+            font-size: 10.5px;
             font-weight: 700;
             color: var(--graphite);
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.03em;
+            white-space: nowrap;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -101,15 +107,17 @@
 
         .input-control {
             font-family: var(--font-ui);
-            font-size: 13.5px;
-            padding: 7px 10px;
+            font-size: 13px;
+            padding: 6px 10px;
             border: 1px solid var(--rule-dark);
             border-radius: 5px;
             background: #ffffff;
             color: var(--ink);
             font-weight: 600;
+            height: 38px;
             min-height: 38px;
             box-sizing: border-box;
+            width: 100%;
             transition: border-color 150ms ease, box-shadow 150ms ease;
         }
 
@@ -117,6 +125,118 @@
             outline: none;
             border-color: var(--signal-orange);
             box-shadow: 0 0 0 2px rgba(200, 59, 14, 0.15);
+        }
+
+        /* Compact Segmented Control for Sex */
+        .segmented-control {
+            display: flex;
+            background: #ded9cd;
+            border-radius: 5px;
+            padding: 2px;
+            height: 38px;
+            box-sizing: border-box;
+            gap: 2px;
+        }
+
+        .segmented-option {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 120ms ease;
+            user-select: none;
+            color: var(--graphite);
+            padding: 0 4px;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .segmented-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+
+        .segmented-option:has(input:checked) {
+            background: #ffffff;
+            color: var(--signal-orange);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-batch-lab {
+            background: #0f766e;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 0 12px;
+            font-size: 12px;
+            font-weight: 700;
+            height: 38px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 140ms ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 1px 3px rgba(15, 118, 110, 0.2);
+            white-space: nowrap;
+            user-select: none;
+            box-sizing: border-box;
+        }
+
+        .btn-batch-lab:hover {
+            background: #115e59;
+            box-shadow: 0 2px 6px rgba(15, 118, 110, 0.35);
+        }
+
+        /* Integrated Telemetry Bar */
+        .patient-card-telemetry {
+            background: #e7e3d8;
+            border-top: 1px solid var(--rule);
+            padding: 7px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 11.5px;
+            color: var(--ink);
+            flex-wrap: wrap;
+        }
+
+        .telemetry-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .telemetry-label {
+            color: var(--graphite);
+            font-weight: 600;
+        }
+
+        .telemetry-val {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .telemetry-divider {
+            width: 1px;
+            height: 14px;
+            background: var(--rule-dark);
+        }
+
+        .telemetry-hint {
+            margin-left: auto;
+            font-size: 11px;
+            color: #526071;
+            font-weight: 500;
         }
 
         /* ══ 1-Tap Quick Lab Preset Chips ══ */
@@ -484,40 +604,33 @@
             background: #cfc8b8;
         }
 
-        .btn-teal {
-            background: #0f766e;
-            color: #ffffff;
-        }
-        .btn-teal:hover {
-            background: #115e59;
-        }
-
-        /* ══ Quick Lab Batch Modal (Accessible Native Dialog) ══ */
+        /* ══ Quick Lab Batch Modal (Refined Clinical Flowsheet) ══ */
         dialog#quick-lab-modal {
             border: 1px solid var(--rule-dark);
-            border-radius: 10px;
-            padding: 20px 24px;
-            max-width: 860px;
-            width: 95%;
+            border-radius: 12px;
+            padding: 0;
+            max-width: 920px;
+            width: 96%;
             background: #ffffff;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
             font-family: var(--font-ui);
             color: var(--ink);
             box-sizing: border-box;
+            overflow: hidden;
         }
 
         dialog#quick-lab-modal::backdrop {
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(2px);
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(3px);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--rule);
-            padding-bottom: 12px;
-            margin-bottom: 16px;
+            align-items: flex-start;
+            padding: 14px 20px;
+            background: var(--surface-sub);
+            border-bottom: 1px solid var(--rule);
         }
 
         .modal-header h3 {
@@ -525,6 +638,114 @@
             font-size: 16px;
             font-weight: 700;
             color: var(--signal-orange);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .modal-close-btn {
+            background: #ded9cd;
+            border: 1px solid var(--rule-dark);
+            color: var(--ink);
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 120ms ease;
+        }
+
+        .modal-close-btn:hover {
+            background: #cfc8b8;
+            color: var(--signal-red);
+        }
+
+        .modal-body {
+            padding: 16px 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        .modal-panel {
+            background: #fdfdfc;
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .modal-panel-header {
+            font-size: 12px;
+            font-weight: 700;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--rule);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 10px;
+        }
+
+        .modal-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .modal-input-group label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--graphite);
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .modal-input-control {
+            font-family: var(--font-mono);
+            font-size: 12.5px;
+            padding: 4px 8px;
+            border: 1px solid var(--rule-dark);
+            border-radius: 4px;
+            background: #ffffff;
+            color: var(--ink);
+            font-weight: 600;
+            height: 32px;
+            box-sizing: border-box;
+            width: 100%;
+            transition: border-color 120ms ease, box-shadow 120ms ease;
+        }
+
+        .modal-input-control:focus {
+            outline: none;
+            border-color: var(--signal-orange);
+            box-shadow: 0 0 0 2px rgba(200, 59, 14, 0.15);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: var(--surface-sub);
+            border-top: 1px solid var(--rule);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         /* ══ Toast Notification ══ */
@@ -579,10 +800,21 @@
             display: none;
         }
 
+        @media (max-width: 1024px) {
+            .patient-card-main {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .nav-subtitle { display: none; }
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-            .patient-strip { grid-template-columns: 1fr 1fr; }
+            .patient-card-main {
+                grid-template-columns: 1fr 1fr;
+            }
+            .telemetry-hint {
+                display: none;
+            }
         }
 
         /* ═══════════════════════════════════════════
@@ -709,56 +941,72 @@
 </nav>
 
 <div class="container">
-    <!-- ══ Universal Patient Variables Strip ══ -->
-    <div class="patient-strip">
-        <div class="input-group">
-            <label for="pt-hn">Patient HN</label>
-            <input type="text" id="pt-hn" class="input-control" placeholder="PATIENT_MOCK_001">
-        </div>
-        <div class="input-group">
-            <label for="pt-weight">Weight (kg)</label>
-            <input type="number" id="pt-weight" class="input-control" value="60" min="5" max="250" step="0.5">
-        </div>
-        <div class="input-group">
-            <label for="pt-age">Age (yr)</label>
-            <input type="number" id="pt-age" class="input-control" value="60" min="0" max="120">
-        </div>
-        <div class="input-group">
-            <label>Sex</label>
-            <div class="radio-group" style="margin-top:0;">
-                <label class="radio-label"><input type="radio" name="pt-sex" value="male" checked> Male</label>
-                <label class="radio-label"><input type="radio" name="pt-sex" value="female"> Female</label>
+    <!-- ══ Unified Patient Command Card ══ -->
+    <div class="patient-card">
+        <div class="patient-card-main">
+            <div class="pt-field">
+                <label for="pt-hn">Patient HN</label>
+                <input type="text" id="pt-hn" class="input-control" placeholder="PATIENT_MOCK_001">
+            </div>
+            <div class="pt-field">
+                <label for="pt-weight">Weight (kg)</label>
+                <input type="number" id="pt-weight" class="input-control" value="60" min="5" max="250" step="0.5">
+            </div>
+            <div class="pt-field">
+                <label for="pt-age">Age (yr)</label>
+                <input type="number" id="pt-age" class="input-control" value="60" min="0" max="120">
+            </div>
+            <div class="pt-field">
+                <label>Sex</label>
+                <div class="segmented-control" role="radiogroup" aria-label="Biological Sex">
+                    <label class="segmented-option">
+                        <input type="radio" name="pt-sex" value="male" checked>
+                        <span>♂ Male</span>
+                    </label>
+                    <label class="segmented-option">
+                        <input type="radio" name="pt-sex" value="female">
+                        <span>♀ Female</span>
+                    </label>
+                </div>
+            </div>
+            <div class="pt-field">
+                <label for="pt-egfr" title="Used for Mg dose reduction & AKI stratification">eGFR (mL/min)</label>
+                <input type="number" id="pt-egfr" class="input-control" value="90" min="0" max="200" step="1">
+            </div>
+            <div class="pt-field">
+                <label for="pt-alb" title="Used for Ca & Anion Gap correction">Albumin (g/dL)</label>
+                <input type="number" id="pt-alb" class="input-control" value="4.0" min="0.5" max="6.0" step="0.1">
+            </div>
+            <div class="pt-field">
+                <label for="pt-glu" title="Used for Na correction & Osmolar gap">Glucose (mg/dL)</label>
+                <input type="number" id="pt-glu" class="input-control" value="120" min="10" max="1500" step="1">
+            </div>
+            <div class="pt-field">
+                <button type="button" id="btn-open-lab-modal" class="btn-batch-lab">
+                    <span>🧪 Quick Lab Entry</span>
+                </button>
             </div>
         </div>
-        <div class="input-group">
-            <label for="pt-egfr">eGFR (mL/min)</label>
-            <input type="number" id="pt-egfr" class="input-control" value="90" min="0" max="200" step="1" title="Used for Mg dose reduction & AKI stratification">
-        </div>
-        <div class="input-group">
-            <label for="pt-alb">Albumin (g/dL)</label>
-            <input type="number" id="pt-alb" class="input-control" value="4.0" min="0.5" max="6.0" step="0.1" title="Used for Ca & Anion Gap correction">
-        </div>
-        <div class="input-group">
-            <label for="pt-glu">Glucose (mg/dL)</label>
-            <input type="number" id="pt-glu" class="input-control" value="120" min="10" max="1500" step="1" title="Used for Na correction & Osmolar gap">
-        </div>
-        <div class="input-group" style="align-self: center;">
-            <button type="button" id="btn-open-lab-modal" class="btn btn-teal" style="width:100%; font-size:12px; padding:6px 10px;">
-                🧪 Quick Lab Batch Entry
-            </button>
-        </div>
-    </div>
-
-    <!-- Live Calculated Patient Context Sub-strip -->
-    <div style="display:flex; justify-content:space-between; align-items:center; background:#f1ede4; border-radius:6px; padding:6px 14px; margin-bottom:16px; font-size:12px; color:var(--graphite); flex-wrap:wrap; gap:8px;">
-        <div>
-            Estimated TBW: <strong id="disp-tbw" style="font-family:var(--font-mono); color:var(--signal-blue); font-size:13px;">36.0 L</strong>
-        </div>
-        <div>
-            Renal Status: <strong id="disp-renal-tier" style="font-family:var(--font-mono); color:var(--signal-emerald);">eGFR ≥ 90 (Normal)</strong>
-        </div>
-        <div>
-            Albumin Status: <strong id="disp-alb-status" style="font-family:var(--font-mono); color:var(--signal-emerald);">4.0 g/dL (Normal)</strong>
+        
+        <!-- Integrated Telemetry Sub-bar -->
+        <div class="patient-card-telemetry">
+            <div class="telemetry-item">
+                <span class="telemetry-label">Estimated TBW:</span>
+                <strong id="disp-tbw" class="telemetry-val" style="color:var(--signal-blue);">36.0 L</strong>
+            </div>
+            <div class="telemetry-divider"></div>
+            <div class="telemetry-item">
+                <span class="telemetry-label">Renal Status:</span>
+                <strong id="disp-renal-tier" class="telemetry-val" style="color:var(--signal-emerald);">eGFR ≥ 90 (Normal)</strong>
+            </div>
+            <div class="telemetry-divider"></div>
+            <div class="telemetry-item">
+                <span class="telemetry-label">Albumin Status:</span>
+                <strong id="disp-alb-status" class="telemetry-val" style="color:var(--signal-emerald);">4.0 g/dL (Normal)</strong>
+            </div>
+            <div class="telemetry-hint">
+                <span>⚡ Labs auto-sync across all 6 clinical modules</span>
+            </div>
         </div>
     </div>
 
@@ -1819,108 +2067,158 @@
     </div>
 </div>
 
-<!-- ══ Quick Lab Batch Entry Native Modal Dialog ══ -->
+<!-- ══ Quick Lab Batch Entry Modern Flowsheet Modal ══ -->
 <dialog id="quick-lab-modal" aria-labelledby="modal-title">
     <div class="modal-header">
-        <h3 id="modal-title">🧪 Comprehensive Quick Lab Batch Entry (Two-Way Synced)</h3>
-        <button type="button" id="btn-close-lab-modal" class="btn btn-secondary" style="padding:4px 10px; font-size:12px; min-height:auto;">✕ Close</button>
+        <div>
+            <h3 id="modal-title">🧪 Quick Lab Batch Entry</h3>
+            <p style="font-size:11.5px; color:var(--graphite); margin:2px 0 0;">
+                Enter patient lab values once to synchronize across all 6 clinical modules automatically.
+            </p>
+        </div>
+        <button type="button" id="btn-close-lab-modal" class="modal-close-btn" aria-label="Close">✕</button>
     </div>
     
-    <p style="font-size:12px; color:var(--graphite); margin:0 0 14px;">
-        Enter all available patient lab values here. All fields will instantly synchronize across all 6 clinical tabs.
-    </p>
+    <div class="modal-body">
+        <div class="modal-grid-3">
+            <!-- 1. Serum Electrolytes & Renal (Chem-8) -->
+            <div class="modal-panel" style="border-top:3px solid var(--signal-blue);">
+                <div class="modal-panel-header">
+                    <span style="color:var(--signal-blue);">1. Electrolytes &amp; Renal</span>
+                    <span style="font-size:10px; color:var(--graphite);">Chem-8</span>
+                </div>
+                <div class="modal-form-grid">
+                    <div class="modal-input-group">
+                        <label for="m-na">Na⁺ (mEq/L)</label>
+                        <input type="number" id="m-na" class="modal-input-control" step="0.5" placeholder="140">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-k">K⁺ (mEq/L)</label>
+                        <input type="number" id="m-k" class="modal-input-control" step="0.1" placeholder="4.0">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-cl">Cl⁻ (mEq/L)</label>
+                        <input type="number" id="m-cl" class="modal-input-control" step="0.5" placeholder="102">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-hco3">HCO₃⁻ (mEq/L)</label>
+                        <input type="number" id="m-hco3" class="modal-input-control" step="0.5" placeholder="24">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-bun">BUN (mg/dL)</label>
+                        <input type="number" id="m-bun" class="modal-input-control" step="1" placeholder="15">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-cr">Cr (mg/dL)</label>
+                        <input type="number" id="m-cr" class="modal-input-control" step="0.1" placeholder="1.0">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-glu">Glucose (mg/dL)</label>
+                        <input type="number" id="m-glu" class="modal-input-control" step="1" placeholder="100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-egfr">eGFR (mL/min)</label>
+                        <input type="number" id="m-egfr" class="modal-input-control" step="1" placeholder="90">
+                    </div>
+                </div>
+            </div>
 
-    <div class="grid-3" style="font-size:12px;">
-        <!-- Serum Electrolytes & Renal -->
-        <div class="card-sub" style="border-top:3px solid var(--signal-blue);">
-            <strong style="color:var(--signal-blue);">Serum Electrolytes &amp; Renal</strong>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Serum Na⁺ (mEq/L)</label>
-                <input type="number" id="m-na" class="input-control" step="0.5">
+            <!-- 2. Minerals & Blood Gas (ABG/VBG) -->
+            <div class="modal-panel" style="border-top:3px solid var(--signal-purple);">
+                <div class="modal-panel-header">
+                    <span style="color:var(--signal-purple);">2. Minerals &amp; Blood Gas</span>
+                    <span style="font-size:10px; color:var(--graphite);">ABG / VBG</span>
+                </div>
+                <div class="modal-form-grid">
+                    <div class="modal-input-group">
+                        <label for="m-ica" title="Direct Ionized Calcium">iCa²⁺ (mmol/L)</label>
+                        <input type="number" id="m-ica" class="modal-input-control" step="0.01" placeholder="1.22">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-total-ca">Total Ca (mg/dL)</label>
+                        <input type="number" id="m-total-ca" class="modal-input-control" step="0.1" placeholder="9.0">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-alb">Albumin (g/dL)</label>
+                        <input type="number" id="m-alb" class="modal-input-control" step="0.1" placeholder="4.0">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-mg">Mg²⁺ (mg/dL)</label>
+                        <input type="number" id="m-mg" class="modal-input-control" step="0.1" placeholder="2.0">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-po4">PO₄³⁻ (mg/dL)</label>
+                        <input type="number" id="m-po4" class="modal-input-control" step="0.1" placeholder="3.5">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-ph">Blood pH</label>
+                        <input type="number" id="m-ph" class="modal-input-control" step="0.01" placeholder="7.40">
+                    </div>
+                    <div class="modal-input-group" style="grid-column: span 2;">
+                        <label for="m-pco2">Blood pCO₂ (mmHg)</label>
+                        <input type="number" id="m-pco2" class="modal-input-control" step="1" placeholder="40">
+                    </div>
+                </div>
             </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Serum K⁺ (mEq/L)</label>
-                <input type="number" id="m-k" class="input-control" step="0.1">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Serum Cl⁻ (mEq/L)</label>
-                <input type="number" id="m-cl" class="input-control" step="0.5">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Serum HCO₃⁻ (mEq/L)</label>
-                <input type="number" id="m-hco3" class="input-control" step="0.5">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>BUN (mg/dL)</label>
-                <input type="number" id="m-bun" class="input-control" step="1">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Serum Cr (mg/dL)</label>
-                <input type="number" id="m-cr" class="input-control" step="0.1">
-            </div>
-        </div>
 
-        <!-- Minerals & Gases -->
-        <div class="card-sub" style="border-top:3px solid var(--signal-purple);">
-            <strong style="color:var(--signal-purple);">Minerals &amp; Blood Gas</strong>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Direct Ionized Ca²⁺ (mmol/L)</label>
-                <input type="number" id="m-ica" class="input-control" step="0.01">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Total Calcium (mg/dL)</label>
-                <input type="number" id="m-total-ca" class="input-control" step="0.1">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Serum Albumin (g/dL)</label>
-                <input type="number" id="m-alb" class="input-control" step="0.1">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Serum Mg²⁺ (mg/dL)</label>
-                <input type="number" id="m-mg" class="input-control" step="0.1">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Serum PO₄³⁻ (mg/dL)</label>
-                <input type="number" id="m-po4" class="input-control" step="0.1">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Blood pH</label>
-                <input type="number" id="m-ph" class="input-control" step="0.01">
-            </div>
-        </div>
-
-        <!-- Osmolality & Urine Studies -->
-        <div class="card-sub" style="border-top:3px solid var(--signal-emerald);">
-            <strong style="color:var(--signal-emerald);">Osmolality &amp; Urine Profile</strong>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Measured Serum Osm (mOsm/kg)</label>
-                <input type="number" id="m-osm" class="input-control">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Blood Glucose (mg/dL)</label>
-                <input type="number" id="m-glu" class="input-control">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Urine Na⁺ (mEq/L)</label>
-                <input type="number" id="m-u-na" class="input-control">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Urine K⁺ (mEq/L)</label>
-                <input type="number" id="m-u-k" class="input-control">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Urine Cl⁻ (mEq/L)</label>
-                <input type="number" id="m-u-cl" class="input-control">
-            </div>
-            <div class="input-group" style="margin-top:6px;">
-                <label>Urine Cr (mg/dL)</label>
-                <input type="number" id="m-u-cr" class="input-control">
+            <!-- 3. Osmolality & Urinalysis Profile -->
+            <div class="modal-panel" style="border-top:3px solid var(--signal-emerald);">
+                <div class="modal-panel-header">
+                    <span style="color:var(--signal-emerald);">3. Osmolality &amp; Urine</span>
+                    <span style="font-size:10px; color:var(--graphite);">Clearance Profile</span>
+                </div>
+                <div class="modal-form-grid">
+                    <div class="modal-input-group">
+                        <label for="m-osm" title="Measured Serum Osmolality">Serum Osm</label>
+                        <input type="number" id="m-osm" class="modal-input-control" placeholder="290">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-ethanol">Ethanol (mg/dL)</label>
+                        <input type="number" id="m-ethanol" class="modal-input-control" placeholder="0">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-u-na">Urine Na⁺</label>
+                        <input type="number" id="m-u-na" class="modal-input-control" placeholder="40">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-u-k">Urine K⁺</label>
+                        <input type="number" id="m-u-k" class="modal-input-control" placeholder="20">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-u-cl">Urine Cl⁻</label>
+                        <input type="number" id="m-u-cl" class="modal-input-control" placeholder="50">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-u-cr">Urine Cr</label>
+                        <input type="number" id="m-u-cr" class="modal-input-control" placeholder="100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-u-urea">Urine Urea</label>
+                        <input type="number" id="m-u-urea" class="modal-input-control" placeholder="800">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="m-u-urate">Urine Urate</label>
+                        <input type="number" id="m-u-urate" class="modal-input-control" placeholder="35">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px; border-top:1px solid var(--rule); padding-top:12px;">
-        <button type="button" id="btn-apply-lab-modal" class="btn btn-primary">✓ Apply Labs &amp; Recalculate</button>
+    <div class="modal-footer">
+        <div>
+            <button type="button" id="btn-reset-modal-labs" class="btn btn-secondary" style="font-size:12px; padding:6px 12px; min-height:36px;">
+                ↺ Reset to Normal Labs
+            </button>
+        </div>
+        <div style="display:flex; gap:8px;">
+            <button type="button" id="btn-cancel-lab-modal" class="btn btn-secondary" style="font-size:12px; padding:6px 14px; min-height:36px;">
+                Cancel
+            </button>
+            <button type="button" id="btn-apply-lab-modal" class="btn btn-primary" style="font-size:12px; padding:6px 18px; min-height:36px;">
+                ✓ Apply &amp; Recalculate
+            </button>
+        </div>
     </div>
 </dialog>
 
@@ -2112,18 +2410,23 @@
         document.getElementById('m-hco3').value = document.getElementById('acid-hco3-curr').value;
         document.getElementById('m-bun').value = document.getElementById('gap-bun').value;
         document.getElementById('m-cr').value = document.getElementById('fe-s-cr').value;
+        document.getElementById('m-egfr').value = document.getElementById('pt-egfr').value;
         document.getElementById('m-ica').value = document.getElementById('min-ica').value;
         document.getElementById('m-total-ca').value = document.getElementById('min-total-ca').value;
         document.getElementById('m-alb').value = document.getElementById('pt-alb').value;
         document.getElementById('m-mg').value = document.getElementById('min-mg').value;
         document.getElementById('m-po4').value = document.getElementById('min-po4').value;
         document.getElementById('m-ph').value = document.getElementById('acid-ph').value;
+        document.getElementById('m-pco2').value = document.getElementById('acid-pco2').value;
         document.getElementById('m-osm').value = document.getElementById('gap-meas-osm').value;
+        document.getElementById('m-ethanol').value = document.getElementById('gap-ethanol').value;
         document.getElementById('m-glu').value = document.getElementById('pt-glu').value;
         document.getElementById('m-u-na').value = document.getElementById('gap-u-na').value;
         document.getElementById('m-u-k').value = document.getElementById('gap-u-k').value;
         document.getElementById('m-u-cl').value = document.getElementById('gap-u-cl').value;
         document.getElementById('m-u-cr').value = document.getElementById('fe-u-cr').value;
+        document.getElementById('m-u-urea').value = document.getElementById('fe-u-urea').value;
+        document.getElementById('m-u-urate').value = document.getElementById('fe-u-urate').value;
 
         if (typeof labModal.showModal === 'function') {
             labModal.showModal();
@@ -2132,9 +2435,40 @@
         }
     });
 
-    document.getElementById('btn-close-lab-modal').addEventListener('click', () => {
+    const closeModal = () => {
         if (typeof labModal.close === 'function') labModal.close();
         else labModal.style.display = 'none';
+    };
+
+    document.getElementById('btn-close-lab-modal').addEventListener('click', closeModal);
+    document.getElementById('btn-cancel-lab-modal').addEventListener('click', closeModal);
+
+    // Reset modal to normal physiological values
+    document.getElementById('btn-reset-modal-labs').addEventListener('click', () => {
+        document.getElementById('m-na').value = '140';
+        document.getElementById('m-k').value = '4.0';
+        document.getElementById('m-cl').value = '102';
+        document.getElementById('m-hco3').value = '24';
+        document.getElementById('m-bun').value = '15';
+        document.getElementById('m-cr').value = '1.0';
+        document.getElementById('m-egfr').value = '90';
+        document.getElementById('m-ica').value = '1.22';
+        document.getElementById('m-total-ca').value = '9.5';
+        document.getElementById('m-alb').value = '4.0';
+        document.getElementById('m-mg').value = '2.0';
+        document.getElementById('m-po4').value = '3.5';
+        document.getElementById('m-ph').value = '7.40';
+        document.getElementById('m-pco2').value = '40';
+        document.getElementById('m-osm').value = '290';
+        document.getElementById('m-ethanol').value = '0';
+        document.getElementById('m-glu').value = '100';
+        document.getElementById('m-u-na').value = '40';
+        document.getElementById('m-u-k').value = '20';
+        document.getElementById('m-u-cl').value = '50';
+        document.getElementById('m-u-cr').value = '100';
+        document.getElementById('m-u-urea').value = '800';
+        document.getElementById('m-u-urate').value = '35';
+        showToast('↺ Loaded Normal Lab Template');
     });
 
     document.getElementById('btn-apply-lab-modal').addEventListener('click', () => {
@@ -2146,22 +2480,25 @@
         setVal('acid-hco3-curr', document.getElementById('m-hco3').value);
         setVal('gap-bun', document.getElementById('m-bun').value);
         setVal('fe-s-cr', document.getElementById('m-cr').value);
+        setVal('pt-egfr', document.getElementById('m-egfr').value);
         setVal('min-ica', document.getElementById('m-ica').value);
         setVal('min-total-ca', document.getElementById('m-total-ca').value);
         setVal('pt-alb', document.getElementById('m-alb').value);
         setVal('min-mg', document.getElementById('m-mg').value);
         setVal('min-po4', document.getElementById('m-po4').value);
         setVal('acid-ph', document.getElementById('m-ph').value);
+        setVal('acid-pco2', document.getElementById('m-pco2').value);
         setVal('gap-meas-osm', document.getElementById('m-osm').value);
+        setVal('gap-ethanol', document.getElementById('m-ethanol').value);
         setVal('pt-glu', document.getElementById('m-glu').value);
         setVal('gap-u-na', document.getElementById('m-u-na').value);
         setVal('gap-u-k', document.getElementById('m-u-k').value);
         setVal('gap-u-cl', document.getElementById('m-u-cl').value);
         setVal('fe-u-cr', document.getElementById('m-u-cr').value);
+        setVal('fe-u-urea', document.getElementById('m-u-urea').value);
+        setVal('fe-u-urate', document.getElementById('m-u-urate').value);
 
-        if (typeof labModal.close === 'function') labModal.close();
-        else labModal.style.display = 'none';
-
+        closeModal();
         recalc();
         showToast('✓ Batch Labs Applied & Recalculated!');
     });
@@ -2726,7 +3063,7 @@
         });
     });
 
-    // ═══════════════════════════════════════════
+    // ═══════════════════════════════════════
     // A4 PRINT WORKSHEET GENERATOR (Option B)
     // ═══════════════════════════════════════════
     document.getElementById('btn-print').addEventListener('click', () => {
