@@ -26,6 +26,7 @@
             --signal-purple: #6d28d9;
             --surface-card: #ffffff;
             --surface-sub: #f8f7f4;
+            --surface-hover: #f1ede4;
             --font-ui: "Inter Tight", "Sarabun", sans-serif;
             --font-mono: "JetBrains Mono", monospace;
         }
@@ -40,15 +41,16 @@
             flex-direction: column;
             align-items: center;
             box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
             width: 100%;
-            max-width: 1140px;
+            max-width: 1160px;
             background: var(--surface-card);
             border: 1px solid var(--rule);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            border-radius: 10px;
             padding: 20px 24px;
             box-sizing: border-box;
             margin-bottom: 24px;
@@ -67,11 +69,162 @@
             white-space: nowrap;
         }
 
+        /* ══ Top Patient Strip (Universal Lab Context) ══ */
+        .patient-strip {
+            background: var(--surface-sub);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            align-items: end;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .input-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--graphite);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .input-control {
+            font-family: var(--font-ui);
+            font-size: 13.5px;
+            padding: 7px 10px;
+            border: 1px solid var(--rule-dark);
+            border-radius: 5px;
+            background: #ffffff;
+            color: var(--ink);
+            font-weight: 600;
+            min-height: 38px;
+            box-sizing: border-box;
+            transition: border-color 150ms ease, box-shadow 150ms ease;
+        }
+
+        .input-control:focus {
+            outline: none;
+            border-color: var(--signal-orange);
+            box-shadow: 0 0 0 2px rgba(200, 59, 14, 0.15);
+        }
+
+        /* ══ 1-Tap Quick Lab Preset Chips ══ */
+        .chip-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .chip-btn {
+            background: var(--surface-sub);
+            border: 1px solid var(--rule-dark);
+            border-radius: 4px;
+            padding: 2px 7px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: var(--graphite);
+            cursor: pointer;
+            transition: all 120ms ease;
+            user-select: none;
+        }
+
+        .chip-btn:hover {
+            background: #e2ddd3;
+            color: var(--ink);
+            border-color: var(--signal-orange);
+        }
+
+        .chip-btn.active {
+            background: var(--signal-orange);
+            color: #ffffff;
+            border-color: var(--signal-orange);
+        }
+
+        /* ══ Segmented Accessible Navigation Tabs ══ */
+        .tab-bar-container {
+            position: relative;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--rule);
+        }
+
+        .tab-bar-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 6px;
+            min-width: max-content;
+            padding-bottom: 2px;
+        }
+
+        .tab-btn {
+            background: #ded9cd;
+            border: 1px solid var(--rule);
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            padding: 9px 16px;
+            font-family: var(--font-ui);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--graphite);
+            cursor: pointer;
+            transition: all 150ms ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 42px;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        .tab-btn:hover {
+            background: #d4cec0;
+            color: var(--ink);
+        }
+
+        .tab-btn.active {
+            background: var(--signal-orange);
+            color: #ffffff;
+            border-color: var(--signal-orange);
+            box-shadow: 0 2px 6px rgba(200, 59, 14, 0.25);
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 180ms ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(2px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* ══ Section Dividers (Hypo vs Hyper Partitions) ══ */
         .partition-header {
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
             padding: 10px 14px;
             border-radius: 6px;
             margin: 16px 0 12px 0;
@@ -94,101 +247,6 @@
             border-left: 5px solid var(--signal-red);
         }
 
-        /* ══ Patient Variables Strip ══ */
-        .patient-strip {
-            background: var(--surface-sub);
-            border: 1px solid var(--rule);
-            border-radius: 6px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .input-group label {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--graphite);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .input-control {
-            font-family: var(--font-ui);
-            font-size: 13.5px;
-            padding: 6px 10px;
-            border: 1px solid var(--rule-dark);
-            border-radius: 4px;
-            background: #ffffff;
-            color: var(--ink);
-            font-weight: 600;
-        }
-
-        .input-control:focus {
-            outline: none;
-            border-color: var(--signal-orange);
-            box-shadow: 0 0 0 2px rgba(200, 59, 14, 0.15);
-        }
-
-        /* ══ Navigation Tabs ══ */
-        .tab-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            border-bottom: 2px solid var(--rule);
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            background: #ded9cd;
-            border: 1px solid var(--rule);
-            border-bottom: none;
-            border-radius: 6px 6px 0 0;
-            padding: 8px 14px;
-            font-family: var(--font-ui);
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--graphite);
-            cursor: pointer;
-            transition: all 150ms ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .tab-btn:hover {
-            background: #d4cec0;
-            color: var(--ink);
-        }
-
-        .tab-btn.active {
-            background: var(--signal-orange);
-            color: #ffffff;
-            border-color: var(--signal-orange);
-            box-shadow: 0 2px 6px rgba(200, 59, 14, 0.25);
-        }
-
-        .tab-panel {
-            display: none;
-        }
-
-        .tab-panel.active {
-            display: block;
-            animation: fadeIn 200ms ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(3px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         /* ══ Grid Layouts & Cards ══ */
         .grid-2 {
             display: grid;
@@ -204,16 +262,24 @@
             margin-bottom: 16px;
         }
 
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
         .card {
             background: var(--surface-card);
             border: 1px solid var(--rule);
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 16px;
             position: relative;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
         .card-header {
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 700;
             color: var(--ink);
             border-bottom: 1px solid var(--rule);
@@ -222,6 +288,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .card-sub {
@@ -236,7 +304,7 @@
         .alert-box {
             padding: 10px 14px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 12.5px;
             line-height: 1.45;
             margin-bottom: 12px;
             display: flex;
@@ -278,6 +346,7 @@
             padding: 12px 16px;
             border-radius: 6px;
             margin-bottom: 12px;
+            gap: 10px;
         }
 
         .stat-label {
@@ -288,9 +357,12 @@
 
         .stat-value {
             font-family: var(--font-mono);
-            font-size: 1.5rem;
+            font-size: 1.45rem;
             font-weight: 700;
             color: #38bdf8;
+            font-variant-numeric: tabular-nums;
+            text-align: right;
+            white-space: nowrap;
         }
 
         .stat-unit {
@@ -300,7 +372,7 @@
             margin-left: 4px;
         }
 
-        /* ══ Sliders ══ */
+        /* ══ Sliders & Controls ══ */
         .slider-row {
             display: flex;
             align-items: center;
@@ -311,13 +383,50 @@
             flex: 1;
             accent-color: var(--signal-orange);
             cursor: pointer;
+            min-height: 32px;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .radio-label {
+            background: #ffffff;
+            border: 1px solid var(--rule-dark);
+            border-radius: 5px;
+            padding: 7px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 120ms ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+            min-height: 36px;
+            box-sizing: border-box;
+        }
+
+        .radio-label:hover {
+            border-color: var(--signal-orange);
+            background: var(--surface-sub);
+        }
+
+        .radio-label input[type="radio"],
+        .radio-label input[type="checkbox"] {
+            accent-color: var(--signal-orange);
+            margin: 0;
+            cursor: pointer;
         }
 
         /* ══ Step Decision Wizard ══ */
         .decision-step {
             background: var(--surface-sub);
             border-left: 4px solid var(--signal-blue);
-            padding: 12px 16px;
+            padding: 12px 14px;
             border-radius: 0 6px 6px 0;
             margin-bottom: 12px;
         }
@@ -326,35 +435,6 @@
             margin: 0 0 6px 0;
             font-size: 13px;
             color: var(--ink);
-        }
-
-        .radio-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 6px;
-        }
-
-        .radio-label {
-            background: #ffffff;
-            border: 1px solid var(--rule-dark);
-            border-radius: 4px;
-            padding: 6px 12px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 150ms ease;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .radio-label:hover {
-            border-color: var(--signal-orange);
-        }
-
-        .radio-label input[type="radio"] {
-            accent-color: var(--signal-orange);
         }
 
         /* ══ Bottom Action Bar ══ */
@@ -372,14 +452,17 @@
             font-family: var(--font-ui);
             font-size: 13px;
             font-weight: 700;
-            padding: 8px 18px;
-            border-radius: 4px;
+            padding: 9px 18px;
+            border-radius: 5px;
             cursor: pointer;
             border: 1px solid transparent;
-            transition: all 150ms ease;
+            transition: all 140ms ease;
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            min-height: 40px;
+            box-sizing: border-box;
+            user-select: none;
         }
 
         .btn-primary {
@@ -401,34 +484,207 @@
             background: #cfc8b8;
         }
 
-        /* ══ HIS Note Modal / Card ══ */
+        .btn-teal {
+            background: #0f766e;
+            color: #ffffff;
+        }
+        .btn-teal:hover {
+            background: #115e59;
+        }
+
+        /* ══ Quick Lab Batch Modal (Accessible Native Dialog) ══ */
+        dialog#quick-lab-modal {
+            border: 1px solid var(--rule-dark);
+            border-radius: 10px;
+            padding: 20px 24px;
+            max-width: 860px;
+            width: 95%;
+            background: #ffffff;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            font-family: var(--font-ui);
+            color: var(--ink);
+            box-sizing: border-box;
+        }
+
+        dialog#quick-lab-modal::backdrop {
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--rule);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--signal-orange);
+        }
+
+        /* ══ Toast Notification ══ */
+        #toast-msg {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            display: none;
+            z-index: 9999;
+            animation: toastIn 180ms ease-out;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ══ HIS Note Card ══ */
         #his-note-card {
             display: none;
             margin-top: 16px;
-            background: #f1f5f9;
+            background: #f8fafc;
             border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 14px;
+            border-radius: 8px;
+            padding: 16px;
         }
 
         #his-note-text {
             font-family: var(--font-mono);
-            font-size: 12px;
+            font-size: 12.5px;
             background: #ffffff;
             border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            padding: 10px;
+            border-radius: 5px;
+            padding: 12px;
             width: 100%;
             box-sizing: border-box;
-            height: 200px;
+            height: 240px;
             white-space: pre-wrap;
             resize: vertical;
+            line-height: 1.45;
+        }
+
+        /* ══ Print Worksheet Container (Screen Hidden) ══ */
+        #print-worksheet-area {
+            display: none;
         }
 
         @media (max-width: 768px) {
             .nav-subtitle { display: none; }
-            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
             .patient-strip { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* ═══════════════════════════════════════════
+           PRINT OVERRIDES — A4 DOCTOR ORDER WORKSHEET
+           ═══════════════════════════════════════════ */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm 12mm;
+            }
+
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 0 !important;
+            }
+
+            .top-nav,
+            .tab-bar-container,
+            .action-bar,
+            #his-note-card,
+            #toast-msg,
+            dialog,
+            .chip-group {
+                display: none !important;
+            }
+
+            .container {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+                display: none !important; /* Hide interactive screen UI */
+            }
+
+            #print-worksheet-area {
+                display: block !important;
+                font-family: "Sarabun", "Inter Tight", sans-serif;
+                color: #000000;
+            }
+
+            .print-header-mnrh {
+                text-align: center;
+                border-bottom: 2px solid #000000;
+                padding-bottom: 8px;
+                margin-bottom: 12px;
+            }
+
+            .print-header-mnrh h2 {
+                margin: 0;
+                font-size: 16pt;
+                font-weight: 700;
+            }
+
+            .print-header-mnrh p {
+                margin: 2px 0 0;
+                font-size: 10pt;
+                color: #333333;
+            }
+
+            .print-patient-box {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                border: 1px solid #000000;
+                padding: 8px 12px;
+                margin-bottom: 14px;
+                font-size: 10pt;
+            }
+
+            .print-section {
+                border: 1px solid #000000;
+                border-radius: 4px;
+                padding: 10px 12px;
+                margin-bottom: 12px;
+                page-break-inside: avoid;
+            }
+
+            .print-section-title {
+                font-weight: 700;
+                font-size: 11pt;
+                border-bottom: 1px solid #cccccc;
+                padding-bottom: 4px;
+                margin-bottom: 6px;
+            }
+
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 6px;
+                font-size: 9.5pt;
+            }
+
+            .print-table th, .print-table td {
+                border: 1px solid #333333;
+                padding: 5px 8px;
+                text-align: left;
+            }
+
+            .print-table th {
+                background: #f0f0f0 !important;
+                -webkit-print-color-adjust: exact;
+            }
         }
     </style>
 </head>
@@ -453,52 +709,79 @@
 </nav>
 
 <div class="container">
-    <!-- Patient Variables Strip -->
+    <!-- ══ Universal Patient Variables Strip ══ -->
     <div class="patient-strip">
         <div class="input-group">
             <label for="pt-hn">Patient HN</label>
-            <input type="text" id="pt-hn" class="input-control" placeholder="Optional HN">
+            <input type="text" id="pt-hn" class="input-control" placeholder="PATIENT_MOCK_001">
         </div>
         <div class="input-group">
             <label for="pt-weight">Weight (kg)</label>
-            <div class="slider-row">
-                <input type="number" id="pt-weight" class="input-control" value="60" min="5" max="250" step="0.5">
-            </div>
+            <input type="number" id="pt-weight" class="input-control" value="60" min="5" max="250" step="0.5">
         </div>
         <div class="input-group">
-            <label for="pt-age">Age (years)</label>
+            <label for="pt-age">Age (yr)</label>
             <input type="number" id="pt-age" class="input-control" value="60" min="0" max="120">
         </div>
         <div class="input-group">
             <label>Sex</label>
-            <div class="radio-group" style="margin-top:2px;">
+            <div class="radio-group" style="margin-top:0;">
                 <label class="radio-label"><input type="radio" name="pt-sex" value="male" checked> Male</label>
                 <label class="radio-label"><input type="radio" name="pt-sex" value="female"> Female</label>
             </div>
         </div>
         <div class="input-group">
-            <label>TBW (Estimated)</label>
-            <div id="disp-tbw" style="font-family:var(--font-mono); font-weight:700; font-size:1.1rem; color:var(--signal-blue); padding-top:4px;">36.0 L</div>
+            <label for="pt-egfr">eGFR (mL/min)</label>
+            <input type="number" id="pt-egfr" class="input-control" value="90" min="0" max="200" step="1" title="Used for Mg dose reduction & AKI stratification">
+        </div>
+        <div class="input-group">
+            <label for="pt-alb">Albumin (g/dL)</label>
+            <input type="number" id="pt-alb" class="input-control" value="4.0" min="0.5" max="6.0" step="0.1" title="Used for Ca & Anion Gap correction">
+        </div>
+        <div class="input-group">
+            <label for="pt-glu">Glucose (mg/dL)</label>
+            <input type="number" id="pt-glu" class="input-control" value="120" min="10" max="1500" step="1" title="Used for Na correction & Osmolar gap">
+        </div>
+        <div class="input-group" style="align-self: center;">
+            <button type="button" id="btn-open-lab-modal" class="btn btn-teal" style="width:100%; font-size:12px; padding:6px 10px;">
+                🧪 Quick Lab Batch Entry
+            </button>
         </div>
     </div>
 
-    <!-- Navigation Tabs -->
-    <div class="tab-bar">
-        <button type="button" class="tab-btn active" data-tab="tab-sodium">💧 Sodium (Na⁺)</button>
-        <button type="button" class="tab-btn" data-tab="tab-potassium">⚡ Potassium (K⁺)</button>
-        <button type="button" class="tab-btn" data-tab="tab-acidosis">🧪 Metabolic Acidosis</button>
-        <button type="button" class="tab-btn" data-tab="tab-minerals">🦴 Calcium, Mg &amp; PO₄</button>
-        <button type="button" class="tab-btn" data-tab="tab-gaps">📐 Acid-Base &amp; Gaps</button>
-        <button type="button" class="tab-btn" data-tab="tab-workup">🧭 Diagnostic Work-up</button>
+    <!-- Live Calculated Patient Context Sub-strip -->
+    <div style="display:flex; justify-content:space-between; align-items:center; background:#f1ede4; border-radius:6px; padding:6px 14px; margin-bottom:16px; font-size:12px; color:var(--graphite); flex-wrap:wrap; gap:8px;">
+        <div>
+            Estimated TBW: <strong id="disp-tbw" style="font-family:var(--font-mono); color:var(--signal-blue); font-size:13px;">36.0 L</strong>
+        </div>
+        <div>
+            Renal Status: <strong id="disp-renal-tier" style="font-family:var(--font-mono); color:var(--signal-emerald);">eGFR ≥ 90 (Normal)</strong>
+        </div>
+        <div>
+            Albumin Status: <strong id="disp-alb-status" style="font-family:var(--font-mono); color:var(--signal-emerald);">4.0 g/dL (Normal)</strong>
+        </div>
+    </div>
+
+    <!-- ══ Accessible Navigation Tabs (Segmented Control) ══ -->
+    <div class="tab-bar-container">
+        <div class="tab-bar" role="tablist" aria-label="Electrolyte and Acid-Base Disorder Modules">
+            <button type="button" role="tab" aria-selected="true" aria-controls="tab-sodium" id="tab-btn-sodium" class="tab-btn active" data-tab="tab-sodium">💧 Sodium (Na⁺)</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-potassium" id="tab-btn-potassium" class="tab-btn" data-tab="tab-potassium">⚡ Potassium (K⁺)</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-acidosis" id="tab-btn-acidosis" class="tab-btn" data-tab="tab-acidosis">🧪 Metabolic Acidosis</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-minerals" id="tab-btn-minerals" class="tab-btn" data-tab="tab-minerals">🦴 Calcium, Mg &amp; PO₄</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-gaps" id="tab-btn-gaps" class="tab-btn" data-tab="tab-gaps">📐 Gaps &amp; Excretions</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-workup" id="tab-btn-workup" class="tab-btn" data-tab="tab-workup">🧭 Diagnostic Work-up</button>
+        </div>
     </div>
 
     <!-- ═══════════════════════════════════════
          TAB 1: SODIUM (Na+)
     ════════════════════════════════════════ -->
-    <div id="tab-sodium" class="tab-panel active">
+    <div id="tab-sodium" role="tabpanel" aria-labelledby="tab-btn-sodium" class="tab-panel active">
         <!-- 🔵 PART A: HYPONATREMIA MANAGEMENT -->
         <div class="partition-header partition-hypo">
             <span>🔵 PART A: HYPONATREMIA MANAGEMENT (Na⁺ &lt; 135 mEq/L)</span>
+            <span style="font-size:11px; font-weight:600;">2026 ESE / ERBP Guidelines</span>
         </div>
 
         <!-- Hyperglycemia Sodium Correction -->
@@ -509,18 +792,35 @@
             </div>
             <div class="grid-2">
                 <div class="input-group">
-                    <label for="na-measured">Measured Serum Na⁺ (mEq/L)</label>
+                    <label for="na-measured">
+                        <span>Measured Serum Na⁺ (mEq/L)</span>
+                    </label>
                     <input type="number" id="na-measured" class="input-control" value="125" step="0.5">
+                    <div class="chip-group">
+                        <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
+                        <button type="button" class="chip-btn" data-set="na-measured" data-val="110">110</button>
+                        <button type="button" class="chip-btn" data-set="na-measured" data-val="115">115</button>
+                        <button type="button" class="chip-btn" data-set="na-measured" data-val="120">120</button>
+                        <button type="button" class="chip-btn" data-set="na-measured" data-val="125">125</button>
+                        <button type="button" class="chip-btn" data-set="na-measured" data-val="130">130</button>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label for="na-glucose">Serum Glucose (mg/dL)</label>
                     <input type="number" id="na-glucose" class="input-control" value="120" step="1">
+                    <div class="chip-group">
+                        <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
+                        <button type="button" class="chip-btn" data-set="na-glucose" data-val="100">100</button>
+                        <button type="button" class="chip-btn" data-set="na-glucose" data-val="250">250</button>
+                        <button type="button" class="chip-btn" data-set="na-glucose" data-val="450">450</button>
+                        <button type="button" class="chip-btn" data-set="na-glucose" data-val="650">650</button>
+                    </div>
                 </div>
             </div>
             <div class="card-sub" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
-                    <span style="font-size:12px; font-weight:700; color:var(--graphite);">Corrected Na⁺ (Hillier 2.4 factor):</span>
-                    <span id="disp-corr-na-hillier" style="font-family:var(--font-mono); font-size:1.3rem; font-weight:700; color:var(--signal-orange); margin-left:8px;">125.5</span>
+                    <span style="font-size:12px; font-weight:700; color:var(--graphite);">Corrected Na⁺ (Hillier 2.4/2.0 factor):</span>
+                    <span id="disp-corr-na-hillier" style="font-family:var(--font-mono); font-size:1.3rem; font-weight:700; color:var(--signal-orange); margin-left:8px;">125.4</span>
                     <span style="font-size:12px; color:var(--graphite);">mEq/L</span>
                 </div>
                 <div style="font-size:12px; color:var(--graphite);">
@@ -541,11 +841,11 @@
                 <div class="stat-banner" style="background:#7f1d1d;">
                     <div>
                         <div class="stat-label">Initial 3% NaCl Bolus</div>
-                        <div style="font-size:12px; color:#fca5a5;">Infuse over 10-20 minutes</div>
+                        <div id="disp-3pct-bolus-subtitle" style="font-size:12px; color:#fca5a5;">Infuse over 10-20 minutes</div>
                     </div>
                     <div id="disp-3pct-bolus" class="stat-value" style="color:#fef08a;">100 - 150 <span class="stat-unit" style="color:#fef08a;">mL</span></div>
                 </div>
-                <ul style="font-size:12px; color:var(--ink); padding-left:18px; margin:8px 0;">
+                <ul style="font-size:12px; color:var(--ink); padding-left:18px; margin:8px 0; line-height:1.45;">
                     <li>Recheck serum Na⁺ 20 minutes post-infusion.</li>
                     <li>Repeat up to 2 times (total 3 boluses) if severe neurological symptoms persist.</li>
                     <li>Target acute increase: <strong>+4 to +6 mEq/L</strong>.</li>
@@ -564,8 +864,8 @@
                         <option value="nacl_3" selected>3% NaCl (Hypertonic) — 513 mEq/L</option>
                         <option value="nacl_09">0.9% NaCl (Normal Saline) — 154 mEq/L</option>
                         <option value="lr">Lactated Ringer's — 130 mEq/L</option>
-                        <option value="nacl_045">0.45% NaCl — 77 mEq/L</option>
-                        <option value="d5w">5% Dextrose in Water (D5W) — 0 mEq/L</option>
+                        <option value="nacl_045">0.45% NaCl — 77 mEq/L (Caution: Hypotonic)</option>
+                        <option value="d5w">5% Dextrose in Water (D5W) — 0 mEq/L (Contraindicated in Hyponatremia)</option>
                     </select>
                 </div>
                 <div class="input-group" style="margin-bottom:10px;">
@@ -574,6 +874,9 @@
                         <input type="range" id="na-target-slider" class="slider-control" min="2" max="10" value="6" step="1">
                         <input type="number" id="na-target-delta" class="input-control" value="6" min="2" max="10" style="width:70px;">
                     </div>
+                </div>
+                <div id="na-fluid-alert" class="alert-box alert-warning" style="display:none; margin-bottom:8px;">
+                    <span>⚠️ Selected fluid is hypotonic relative to serum sodium and will lower Na⁺ further. Use hypertonic 3% NaCl or 0.9% NaCl for hyponatremia.</span>
                 </div>
                 <div class="stat-banner">
                     <div>
@@ -603,6 +906,13 @@
                 <div class="input-group">
                     <label for="hyperna-val">Current Serum Na⁺ (mEq/L)</label>
                     <input type="number" id="hyperna-val" class="input-control" value="160" min="141" max="190">
+                    <div class="chip-group">
+                        <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
+                        <button type="button" class="chip-btn" data-set="hyperna-val" data-val="150">150</button>
+                        <button type="button" class="chip-btn" data-set="hyperna-val" data-val="155">155</button>
+                        <button type="button" class="chip-btn" data-set="hyperna-val" data-val="160">160</button>
+                        <button type="button" class="chip-btn" data-set="hyperna-val" data-val="170">170</button>
+                    </div>
                 </div>
                 <div>
                     <div class="stat-banner" style="background:#1e3a8a;">
@@ -623,7 +933,7 @@
     <!-- ═══════════════════════════════════════
          TAB 2: POTASSIUM (K+)
     ════════════════════════════════════════ -->
-    <div id="tab-potassium" class="tab-panel">
+    <div id="tab-potassium" role="tabpanel" aria-labelledby="tab-btn-potassium" class="tab-panel">
         <!-- 🔴 PART A: HYPERKALEMIA PROTOCOL -->
         <div class="partition-header partition-hyper">
             <span>🔴 PART A: HYPERKALEMIA MANAGEMENT (K⁺ &gt; 5.0 mEq/L)</span>
@@ -648,7 +958,7 @@
                 <!-- Step 2 -->
                 <div class="card-sub" style="border-left:3px solid #2563eb;">
                     <strong style="color:#2563eb; font-size:12px;">2. Intracellular Shifting (Rapid)</strong>
-                    <p style="font-size:12px; margin:4px 0;">• <strong>Regular Insulin 10 units IV + D50W 50 mL (25g)</strong> over 5 min.<br>• <strong>Salbutamol 10-20 mg</strong> nebulized.<br>• <strong>7.5% NaHCO₃ 50-100 mL (1-2 amp = 44.6-89.2 mEq)</strong> [TH] or <strong>8.4% NaHCO₃ 50-100 mEq</strong> (if pH &lt; 7.20).</p>
+                    <p style="font-size:12px; margin:4px 0;">• <strong>Regular Insulin 10 units IV + D50W 50 mL (25g)</strong> over 5 min.<br>• <strong>Salbutamol 10-20 mg</strong> nebulized.<br>• <strong>7.5% NaHCO₃ 50-100 mL (44.6-89.2 mEq)</strong> [TH] or <strong>8.4% NaHCO₃ 50-100 mEq</strong> (if pH &lt; 7.20).</p>
                 </div>
                 <!-- Step 3 -->
                 <div class="card-sub" style="border-left:3px solid #059669;">
@@ -666,7 +976,7 @@
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px; font-size:12px;">
                 <div class="card-sub">
                     <strong>1. Stop Offending Agents:</strong><br>
-                    Discontinue ACEi, ARB, MRA (Spironolactone/Eplerenone), NSAIDs, Trimethoprim, Calcineurin inhibitors, and K⁺ supplements.
+                    Discontinue ACEi, ARB, MRA (Spironolactone), NSAIDs, Trimethoprim, Calcineurin inhibitors, and K⁺ supplements.
                 </div>
                 <div class="card-sub">
                     <strong>2. Dietary &amp; Glycemic Control:</strong><br>
@@ -678,7 +988,7 @@
                 </div>
                 <div class="card-sub">
                     <strong>4. Novel K⁺ Binders:</strong><br>
-                    <strong>Sodium Zirconium Cyclosilicate (Lokelma / SZC) 10g PO TID</strong> for 24-48h, then 5-10g daily. <em>Avoid SPS (Kayexalate).</em>
+                    <strong>Sodium Zirconium Cyclosilicate (Lokelma / SZC) 10g PO TID</strong> for 24-48h, then 5-10g daily. <em>Avoid SPS.</em>
                 </div>
             </div>
         </div>
@@ -697,6 +1007,13 @@
                 <div class="input-group" style="margin-bottom:10px;">
                     <label for="hypok-val">Serum K⁺ (mEq/L)</label>
                     <input type="number" id="hypok-val" class="input-control" value="2.8" step="0.1" min="1.0" max="5.0">
+                    <div class="chip-group">
+                        <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
+                        <button type="button" class="chip-btn" data-set="hypok-val" data-val="2.0">2.0</button>
+                        <button type="button" class="chip-btn" data-set="hypok-val" data-val="2.5">2.5</button>
+                        <button type="button" class="chip-btn" data-set="hypok-val" data-val="2.8">2.8</button>
+                        <button type="button" class="chip-btn" data-set="hypok-val" data-val="3.2">3.2</button>
+                    </div>
                 </div>
                 <div class="stat-banner">
                     <div>
@@ -710,14 +1027,30 @@
                 </div>
             </div>
 
-            <!-- IV Drip Auto-Generator (Per 1,000 mL Bottle) -->
+            <!-- IV Drip Auto-Generator with Route Switch -->
             <div class="card">
                 <div class="card-header">
-                    <span>IV Potassium Drip Auto-Generator (1,000 mL Bottle)</span>
+                    <span>IV Potassium Drip Auto-Generator</span>
                 </div>
+                
+                <!-- Explicit Route Switch -->
+                <div class="input-group" style="margin-bottom:10px;">
+                    <label>Administration Route</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="k-iv-route" value="peripheral" checked>
+                            <span>Peripheral IV (Max 40 mEq/L, 10-20 mEq/hr)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="k-iv-route" value="central">
+                            <span>Central Line / CVC (Max 100 mEq/L, 20-40 mEq/hr)</span>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="grid-2" style="margin-bottom:8px;">
                     <div class="input-group">
-                        <label for="k-iv-fluid">Carrier Fluid (1,000 mL)</label>
+                        <label for="k-iv-fluid">Carrier Fluid Bottle</label>
                         <select id="k-iv-fluid" class="input-control">
                             <option value="1000_nss" selected>0.9% NaCl (NSS) 1,000 mL</option>
                             <option value="1000_half_nss">0.45% NaCl 1,000 mL</option>
@@ -728,10 +1061,10 @@
                     <div class="input-group">
                         <label for="k-iv-meq">KCl Added to Bottle (mEq)</label>
                         <select id="k-iv-meq" class="input-control">
-                            <option value="20">20 mEq (Peripheral standard)</option>
-                            <option value="30">30 mEq (Peripheral)</option>
-                            <option value="40" selected>40 mEq (Peripheral maximum ceiling)</option>
-                            <option value="60">60 mEq (Central line only)</option>
+                            <option value="20">20 mEq</option>
+                            <option value="30">30 mEq</option>
+                            <option value="40" selected>40 mEq (Peripheral ceiling in 1,000 mL)</option>
+                            <option value="60">60 mEq (Central line recommended)</option>
                             <option value="80">80 mEq (Central line only)</option>
                         </select>
                     </div>
@@ -760,7 +1093,7 @@
     <!-- ═══════════════════════════════════════
          TAB 3: METABOLIC ACIDOSIS
     ════════════════════════════════════════ -->
-    <div id="tab-acidosis" class="tab-panel">
+    <div id="tab-acidosis" role="tabpanel" aria-labelledby="tab-btn-acidosis" class="tab-panel">
         <div class="grid-2">
             <!-- Bicarbonate Deficit Calculator -->
             <div class="card">
@@ -779,6 +1112,13 @@
                     <div class="input-group">
                         <label for="acid-hco3-curr">Current Serum HCO₃⁻ (mEq/L)</label>
                         <input type="number" id="acid-hco3-curr" class="input-control" value="8" step="0.5">
+                        <div class="chip-group">
+                            <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
+                            <button type="button" class="chip-btn" data-set="acid-hco3-curr" data-val="6">6</button>
+                            <button type="button" class="chip-btn" data-set="acid-hco3-curr" data-val="8">8</button>
+                            <button type="button" class="chip-btn" data-set="acid-hco3-curr" data-val="12">12</button>
+                            <button type="button" class="chip-btn" data-set="acid-hco3-curr" data-val="15">15</button>
+                        </div>
                     </div>
                     <div class="input-group">
                         <label for="acid-hco3-target">Target HCO₃⁻ (mEq/L)</label>
@@ -786,7 +1126,10 @@
                     </div>
                 </div>
                 <div class="input-group" style="margin-top:10px;">
-                    <label><input type="checkbox" id="acid-severe-switch"> Severe Acidemia (pH &lt; 7.10 / Intracellular buffer saturated, f_VD = 0.8)</label>
+                    <label class="radio-label" style="display:inline-flex;">
+                        <input type="checkbox" id="acid-severe-switch">
+                        <span>Severe Acidemia (pH &lt; 7.10 / Intracellular buffer saturated, f_VD = 0.8)</span>
+                    </label>
                 </div>
                 <div class="stat-banner" style="margin-top:12px;">
                     <div>
@@ -826,12 +1169,19 @@
                         <option value="nagma_diarrhea_rta">NAGMA (Severe Diarrhea / RTA)</option>
                         <option value="toxicology_tca">Sodium Channel Blocker / TCA Toxicity</option>
                         <option value="toxicology_salicylate">Salicylate Toxicity (Urinary Alkalinization)</option>
+                        <option value="toxicology_toxic_alcohol">Toxic Alcohol (Methanol / Ethylene Glycol)</option>
                     </select>
                 </div>
                 <div class="grid-2">
                     <div class="input-group">
                         <label for="acid-ph">Blood pH</label>
                         <input type="number" id="acid-ph" class="input-control" value="7.12" step="0.01" min="6.5" max="7.8">
+                        <div class="chip-group">
+                            <button type="button" class="chip-btn" data-set="acid-ph" data-val="6.85">6.85</button>
+                            <button type="button" class="chip-btn" data-set="acid-ph" data-val="7.05">7.05</button>
+                            <button type="button" class="chip-btn" data-set="acid-ph" data-val="7.12">7.12</button>
+                            <button type="button" class="chip-btn" data-set="acid-ph" data-val="7.25">7.25</button>
+                        </div>
                     </div>
                     <div class="input-group">
                         <label for="acid-aki-stage">AKI Stage (KDIGO/AKIN)</label>
@@ -842,16 +1192,21 @@
                         </select>
                     </div>
                 </div>
+                <div class="input-group" style="margin-top:8px;">
+                    <label for="acid-pco2">Blood pCO₂ (mmHg, optional)</label>
+                    <input type="number" id="acid-pco2" class="input-control" value="35" min="10" max="120" placeholder="Optional pCO2">
+                </div>
                 <div id="disp-acid-guidance" class="alert-box alert-success" style="margin-top:12px;">
                     <span><strong>BICAR-ICU Landmark Evidence (Lancet 2018):</strong> In severe acidemia (pH ≤ 7.20) with AKI Stage 2-3 (n=182), NaHCO₃ infusion significantly <strong>reduced 28-day mortality from 63% to 46%</strong> (p=0.0283, ARR 17%, NNT=6), <strong>reduced RRT requirement from 73% to 51%</strong> (p=0.002, ARR 22%, NNT=5), and increased RRT-free days to 24 vs 20 days (p=0.006).</span>
                 </div>
 
-                <!-- Salicylate Urinary Alkalinization Sub-card -->
+                <!-- Salicylate Urinary Alkalinization Dynamic Card -->
                 <div id="salicylate-protocol-card" class="card-sub" style="display:none; border-left:3px solid #7c3aed; background:#faf5ff;">
                     <strong style="color:#6b21a8; font-size:12px;">🧪 Salicylate Urinary Alkalinization Protocol (Aspirin Toxicity):</strong>
                     <ul style="font-size:12px; margin:4px 0 0; padding-left:18px; color:#4c1d95; line-height:1.45;">
                         <li><strong>Target:</strong> Urine pH <strong>7.5 - 8.0</strong> (Blood pH ≤ 7.55).</li>
-                        <li><strong>Recipe:</strong> 3.5 amp (156 mEq) 7.5% (or 3 amp 8.4%) NaHCO₃ + <strong>20 - 40 mEq KCl</strong> in 1,000 mL D5W at <strong>150 - 250 mL/hr</strong>.</li>
+                        <li><strong>Recipe:</strong> <span id="disp-salicylate-recipe">3.5 amp (156 mEq) 7.5% NaHCO₃ + 20 - 40 mEq KCl in 850 mL D5W</span>.</li>
+                        <li><strong>Calculated Infusion Rate:</strong> <strong id="disp-salicylate-rate">120 mL/hr</strong> (1.5 - 2.0 mL/kg/hr).</li>
                         <li><strong>⚠️ Mandatory Potassium:</strong> Maintain serum K⁺ ≥ 4.0 - 4.5 mEq/L. Hypokalemia triggers renal H⁺ excretion via H⁺/K⁺ ATPase, causing paradoxical aciduria and treatment failure.</li>
                         <li><strong>Hemodialysis Triggers:</strong> Salicylate &gt; 100 mg/dL (acute), &gt; 60 mg/dL (chronic with AKI), altered mental status, pulmonary edema, or severe refractory acidosis.</li>
                     </ul>
@@ -873,7 +1228,7 @@
             </div>
         </div>
 
-        <!-- ⚠️ 5 Critical Hazards of Bicarbonate (Redesigned Cards) -->
+        <!-- ⚠️ 5 Critical Hazards of Bicarbonate -->
         <div class="card" style="margin-top:16px;">
             <div class="card-header" style="color:var(--signal-amber);">
                 <span>⚠️ 5 Critical Hazards of IV Sodium Bicarbonate</span>
@@ -906,7 +1261,7 @@
     <!-- ═══════════════════════════════════════
          TAB 4: CALCIUM, MAGNESIUM & PHOSPHATE
     ════════════════════════════════════════ -->
-    <div id="tab-minerals" class="tab-panel">
+    <div id="tab-minerals" role="tabpanel" aria-labelledby="tab-btn-minerals" class="tab-panel">
         <div class="alert-box alert-danger" style="margin-bottom:16px;">
             <span><strong>IFCC/IOF/EFLM 2026 &amp; KDIGO Consensus:</strong> Albumin-corrected calcium (Payne formula) has a 20-40% error rate. <strong>Direct Ionized Calcium (iCa²⁺ via blood gas)</strong> is the sole reliable critical care standard.</span>
         </div>
@@ -920,6 +1275,13 @@
                 <div class="input-group" style="margin-bottom:8px;">
                     <label for="min-ica">Direct Ionized Ca²⁺ (mmol/L) [Priority]</label>
                     <input type="number" id="min-ica" class="input-control" value="" step="0.01" placeholder="Normal: 1.15 - 1.33">
+                    <div class="chip-group">
+                        <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
+                        <button type="button" class="chip-btn" data-set="min-ica" data-val="0.80">0.80</button>
+                        <button type="button" class="chip-btn" data-set="min-ica" data-val="1.00">1.00</button>
+                        <button type="button" class="chip-btn" data-set="min-ica" data-val="1.22">1.22</button>
+                        <button type="button" class="chip-btn" data-set="min-ica" data-val="1.50">1.50</button>
+                    </div>
                 </div>
                 <div class="grid-2" style="margin-bottom:8px;">
                     <div class="input-group">
@@ -928,7 +1290,7 @@
                     </div>
                     <div class="input-group">
                         <label for="min-ca-alb">Serum Albumin (g/dL)</label>
-                        <input type="number" id="min-ca-alb" class="input-control" value="2.5" step="0.1" placeholder="Normal: 3.5 - 5.0">
+                        <input type="number" id="min-ca-alb" class="input-control" value="4.0" step="0.1" placeholder="Normal: 3.5 - 5.0">
                     </div>
                 </div>
                 
@@ -954,9 +1316,19 @@
                 <div class="input-group" style="margin-bottom:8px;">
                     <label for="min-mg">Serum Mg²⁺ (mg/dL)</label>
                     <input type="number" id="min-mg" class="input-control" value="" step="0.1" placeholder="Normal: 1.7 - 2.4">
+                    <div class="chip-group">
+                        <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
+                        <button type="button" class="chip-btn" data-set="min-mg" data-val="0.8">0.8</button>
+                        <button type="button" class="chip-btn" data-set="min-mg" data-val="1.2">1.2</button>
+                        <button type="button" class="chip-btn" data-set="min-mg" data-val="1.9">1.9</button>
+                        <button type="button" class="chip-btn" data-set="min-mg" data-val="2.8">2.8</button>
+                    </div>
                 </div>
                 <div class="input-group" style="margin-bottom:8px;">
-                    <label><input type="checkbox" id="min-mg-arrhythmia"> Torsades / Malignant Arrhythmia present</label>
+                    <label class="radio-label" style="display:inline-flex;">
+                        <input type="checkbox" id="min-mg-arrhythmia">
+                        <span>Torsades / Malignant Arrhythmia present</span>
+                    </label>
                 </div>
 
                 <div class="stat-banner" style="margin-top:12px; background:#0f766e; min-height:48px;">
@@ -981,6 +1353,13 @@
                 <div class="input-group" style="margin-bottom:8px;">
                     <label for="min-po4">Serum PO₄³⁻ (mg/dL)</label>
                     <input type="number" id="min-po4" class="input-control" value="" step="0.1" placeholder="Normal: 2.5 - 4.5">
+                    <div class="chip-group">
+                        <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
+                        <button type="button" class="chip-btn" data-set="min-po4" data-val="0.8">0.8</button>
+                        <button type="button" class="chip-btn" data-set="min-po4" data-val="1.5">1.5</button>
+                        <button type="button" class="chip-btn" data-set="min-po4" data-val="3.2">3.2</button>
+                        <button type="button" class="chip-btn" data-set="min-po4" data-val="5.8">5.8</button>
+                    </div>
                 </div>
                 
                 <div class="stat-banner" style="margin-top:12px; background:#581c87; min-height:48px;">
@@ -1003,9 +1382,9 @@
     </div>
 
     <!-- ═══════════════════════════════════════
-         TAB 5: ACID-BASE & GAPS
+         TAB 5: ACID-BASE, GAPS & EXCRETIONS
     ════════════════════════════════════════ -->
-    <div id="tab-gaps" class="tab-panel">
+    <div id="tab-gaps" role="tabpanel" aria-labelledby="tab-btn-gaps" class="tab-panel">
         <div class="grid-2">
             <!-- Serum Anion Gap & Delta-Delta -->
             <div class="card">
@@ -1027,7 +1406,7 @@
                     </div>
                     <div class="input-group">
                         <label for="gap-alb">Serum Albumin (g/dL)</label>
-                        <input type="number" id="gap-alb" class="input-control" value="2.5" step="0.1">
+                        <input type="number" id="gap-alb" class="input-control" value="4.0" step="0.1">
                     </div>
                 </div>
                 <div class="stat-banner" style="margin-top:12px;">
@@ -1035,15 +1414,15 @@
                         <div class="stat-label">Albumin-Corrected Anion Gap</div>
                         <div id="disp-gap-interp" style="font-size:11px; color:#fca5a5;">High Anion Gap (HAGMA)</div>
                     </div>
-                    <div id="disp-gap-corr" class="stat-value">28.8 <span class="stat-unit">mEq/L</span></div>
+                    <div id="disp-gap-corr" class="stat-value">25.0 <span class="stat-unit">mEq/L</span></div>
                 </div>
                 <div class="card-sub">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <strong style="font-size:12px;">Delta-Delta Ratio (ΔAG / ΔHCO₃):</strong>
-                        <span id="disp-delta-ratio" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-orange);">2.09</span>
+                        <span id="disp-delta-ratio" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-orange);">1.67</span>
                     </div>
                     <p id="disp-delta-interp" style="font-size:12px; margin:4px 0 0; color:var(--graphite);">
-                        Mixed HAGMA + Concurrent Metabolic Alkalosis
+                        Pure High Anion Gap Metabolic Acidosis (HAGMA)
                     </p>
                 </div>
             </div>
@@ -1062,17 +1441,25 @@
                         <label for="gap-bun">BUN (mg/dL)</label>
                         <input type="number" id="gap-bun" class="input-control" value="28">
                     </div>
+                    <div class="input-group">
+                        <label for="gap-glu">Glucose (mg/dL)</label>
+                        <input type="number" id="gap-glu" class="input-control" value="120">
+                    </div>
+                    <div class="input-group">
+                        <label for="gap-ethanol">Serum Ethanol (mg/dL, optional)</label>
+                        <input type="number" id="gap-ethanol" class="input-control" value="0" placeholder="0 if none">
+                    </div>
                 </div>
                 <div class="stat-banner" style="background:#1e3a8a; margin-top:10px;">
                     <div>
                         <div class="stat-label">Serum Osmolar Gap</div>
                         <div style="font-size:10px; color:#93c5fd;">Normal ≤ 10 mOsm/kg</div>
                     </div>
-                    <div id="disp-osm-gap" class="stat-value" style="color:#60a5fa;">+20.0 <span class="stat-unit" style="color:#60a5fa;">mOsm</span></div>
+                    <div id="disp-osm-gap" class="stat-value" style="color:#60a5fa;">+18.3 <span class="stat-unit" style="color:#60a5fa;">mOsm</span></div>
                 </div>
                 <div class="card-sub">
                     <strong style="font-size:12px;">Urine Anion Gap (UAG = U_Na + U_K - U_Cl):</strong>
-                    <div class="grid-2" style="margin-top:6px;">
+                    <div class="grid-3" style="margin-top:6px;">
                         <input type="number" id="gap-u-na" class="input-control" value="20" placeholder="U_Na">
                         <input type="number" id="gap-u-k" class="input-control" value="15" placeholder="U_K">
                         <input type="number" id="gap-u-cl" class="input-control" value="60" placeholder="U_Cl">
@@ -1083,12 +1470,89 @@
                 </div>
             </div>
         </div>
+
+        <!-- ══ NEW: Fractional Excretions & Renal Clearance Suite ══ -->
+        <div class="card" style="margin-top:16px; border-top:4px solid var(--signal-orange);">
+            <div class="card-header" style="color:var(--signal-orange);">
+                <span>🧪 Fractional Excretions Suite (FE_Na, FE_Urea, FE_Urate, CCCR)</span>
+                <span style="font-size:11px; color:var(--graphite);">KDIGO &amp; Endocrine Society Reference</span>
+            </div>
+            
+            <div class="grid-4" style="margin-top:8px;">
+                <div class="input-group">
+                    <label for="fe-u-cr">Urine Cr (mg/dL)</label>
+                    <input type="number" id="fe-u-cr" class="input-control" value="100" placeholder="U_Cr">
+                </div>
+                <div class="input-group">
+                    <label for="fe-s-cr">Serum Cr (mg/dL)</label>
+                    <input type="number" id="fe-s-cr" class="input-control" value="1.0" step="0.1" placeholder="S_Cr">
+                </div>
+                <div class="input-group">
+                    <label for="fe-u-urea">Urine Urea (mg/dL)</label>
+                    <input type="number" id="fe-u-urea" class="input-control" value="800" placeholder="U_Urea">
+                </div>
+                <div class="input-group">
+                    <label for="fe-s-urea">Serum Urea (mg/dL)</label>
+                    <input type="number" id="fe-s-urea" class="input-control" value="30" placeholder="S_Urea">
+                </div>
+                <div class="input-group">
+                    <label for="fe-u-urate">Urine Urate (mg/dL)</label>
+                    <input type="number" id="fe-u-urate" class="input-control" value="35" placeholder="U_Urate">
+                </div>
+                <div class="input-group">
+                    <label for="fe-s-urate">Serum Urate (mg/dL)</label>
+                    <input type="number" id="fe-s-urate" class="input-control" value="4.0" step="0.1" placeholder="S_Urate">
+                </div>
+                <div class="input-group">
+                    <label for="fe-u-ca">Urine Ca (mg/dL)</label>
+                    <input type="number" id="fe-u-ca" class="input-control" value="5.0" step="0.1" placeholder="U_Ca">
+                </div>
+                <div class="input-group">
+                    <label for="fe-s-ca">Serum Ca (mg/dL)</label>
+                    <input type="number" id="fe-s-ca" class="input-control" value="10.0" step="0.1" placeholder="S_Ca">
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; margin-top:12px;">
+                <div class="card-sub" style="border-left:3px solid var(--signal-blue);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong>FE_Na (Sodium):</strong>
+                        <span id="disp-fe-na-val" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-blue); font-size:14px;">0.14 %</span>
+                    </div>
+                    <p id="disp-fe-na-interp" style="font-size:11.5px; margin:4px 0 0; color:var(--graphite);">FE_Na &lt; 1.0%: Prerenal Azotemia</p>
+                </div>
+
+                <div class="card-sub" style="border-left:3px solid var(--signal-emerald);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong>FE_Urea (Urea):</strong>
+                        <span id="disp-fe-urea-val" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-emerald); font-size:14px;">26.67 %</span>
+                    </div>
+                    <p id="disp-fe-urea-interp" style="font-size:11.5px; margin:4px 0 0; color:var(--graphite);">FE_Urea &lt; 35%: Prerenal (Accurate with Diuretics)</p>
+                </div>
+
+                <div class="card-sub" style="border-left:3px solid var(--signal-purple);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong>FE_Urate (SIADH vs CSW):</strong>
+                        <span id="disp-fe-urate-val" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-purple); font-size:14px;">8.75 %</span>
+                    </div>
+                    <p id="disp-fe-urate-interp" style="font-size:11.5px; margin:4px 0 0; color:var(--graphite);">FE_Urate ≤ 11%: Normal proximal urate reabsorption</p>
+                </div>
+
+                <div class="card-sub" style="border-left:3px solid var(--signal-amber);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong>CCCR (Calcium Clearance):</strong>
+                        <span id="disp-fe-cccr-val" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-amber); font-size:14px;">0.005</span>
+                    </div>
+                    <p id="disp-fe-cccr-interp" style="font-size:11.5px; margin:4px 0 0; color:var(--graphite);">CCCR &lt; 0.01: FHH (Avoid Surgery!)</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- ═══════════════════════════════════════
          TAB 6: DIAGNOSTIC WORK-UP ENGINE
     ════════════════════════════════════════ -->
-    <div id="tab-workup" class="tab-panel">
+    <div id="tab-workup" role="tabpanel" aria-labelledby="tab-btn-workup" class="tab-panel">
         <div class="grid-2">
             <!-- 1. Hyponatremia Wizard (Blue Theme) -->
             <div class="card" style="border-top:4px solid var(--signal-blue);">
@@ -1299,28 +1763,39 @@
             </div>
         </div>
 
-        <!-- 7. Calcium, Mg & PO₄ Diagnostic Work-up (Always Visible Directly) -->
+        <!-- 7. Interactive Calcium & Mineral Diagnostic Wizard -->
         <div class="card" style="margin-top:20px; border-top:4px solid #64748b;">
             <div class="card-header">
-                <span>🦴 7. Calcium, Magnesium &amp; Phosphate Etiology Work-up</span>
-                <span style="font-size:11px; color:var(--graphite);">Clinical Decision Reference</span>
+                <span>🦴 7. Calcium, Magnesium &amp; Phosphate Diagnostic Wizard</span>
+                <span style="font-size:11px; color:var(--graphite);">Interactive Decision Engine</span>
             </div>
-            <div id="mineral-workup-content" style="margin-top:12px;">
-                <div class="grid-2">
-                    <div class="card-sub">
-                        <strong style="color:#b91c1c;">Hypercalcemia Work-up:</strong>
-                        <ul style="font-size:12px; margin:4px 0 0; padding-left:18px; color:var(--graphite); line-height:1.45;">
-                            <li><strong>PTH High / Normal:</strong> Primary Hyperparathyroidism (CCCR &gt; 0.02) vs FHH (CCCR &lt; 0.01 - No surgery!).</li>
-                            <li><strong>PTH Suppressed (&lt; 15 pg/mL):</strong> Malignancy (PTHrP / Lytic bone metastases), Vitamin D toxicity, Granulomatous disease (Sarcoidosis/TB via 1,25-OH₂D), Milk-alkali, Immobilization.</li>
-                        </ul>
-                    </div>
-                    <div class="card-sub">
-                        <strong style="color:#1d4ed8;">Hypocalcemia Work-up:</strong>
-                        <ul style="font-size:12px; margin:4px 0 0; padding-left:18px; color:var(--graphite); line-height:1.45;">
-                            <li><strong>PTH Low / Inappropriate:</strong> Hypoparathyroidism (Post-neck surgery, Autoimmune), Severe Hypomagnesemia.</li>
-                            <li><strong>PTH High:</strong> Vitamin D deficiency, CKD, Acute pancreatitis (saponification), Hyperphosphatemia, Bisphosphonates.</li>
-                        </ul>
-                    </div>
+            <div class="grid-3" style="margin-top:10px;">
+                <div class="decision-step" style="border-left-color:#64748b;">
+                    <h4>Step 1: Primary Calcium Disorder</h4>
+                    <select id="w-ca-type" class="input-control">
+                        <option value="hyper" selected>Hypercalcemia (iCa &gt; 1.33 or Ca &gt; 10.5)</option>
+                        <option value="hypo">Hypocalcemia (iCa &lt; 1.15 or Ca &lt; 8.5)</option>
+                    </select>
+                </div>
+                <div class="decision-step" style="border-left-color:#64748b;">
+                    <h4>Step 2: Intact PTH (pg/mL)</h4>
+                    <select id="w-ca-pth" class="input-control">
+                        <option value="high" selected>Elevated / Inappropriately Normal PTH (&gt; 20 pg/mL)</option>
+                        <option value="suppressed">Suppressed PTH (&lt; 15-20 pg/mL)</option>
+                    </select>
+                </div>
+                <div class="decision-step" style="border-left-color:#64748b;">
+                    <h4>Step 3: CCCR / Vitamin D</h4>
+                    <select id="w-ca-cccr" class="input-control">
+                        <option value="high" selected>CCCR &gt; 0.02 (Renal Ca Excretion High)</option>
+                        <option value="low">CCCR &lt; 0.01 (Hypocalciuric / FHH pattern)</option>
+                    </select>
+                </div>
+            </div>
+            <div id="disp-w-ca-result" class="alert-box alert-warning" style="margin-top:10px;">
+                <div>
+                    <strong>Etiology: Primary Hyperparathyroidism (PHPT)</strong><br>
+                    Parathyroid Adenoma (85%), Hyperplasia (15%). Order Neck US / Sestamibi SPECT and refer for surgery.
                 </div>
             </div>
         </div>
@@ -1328,9 +1803,11 @@
 
     <!-- ══ HIS Clinical Note Generator & Action Bar ══ -->
     <div id="his-note-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <strong style="font-size:12px; color:var(--ink);">Generated HIS Clinical Documentation (Plain Text / Markdown)</strong>
-            <button type="button" id="btn-copy-note" class="btn btn-primary" style="padding:4px 12px; font-size:11px;">📋 Copy to Clipboard</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+            <strong style="font-size:12.5px; color:var(--ink);">Generated HIS Clinical Documentation (Smart Sparse Output)</strong>
+            <div style="display:flex; gap:6px;">
+                <button type="button" id="btn-copy-note" class="btn btn-primary" style="padding:5px 14px; font-size:11.5px;">📋 Copy to Clipboard</button>
+            </div>
         </div>
         <textarea id="his-note-text" readonly></textarea>
     </div>
@@ -1342,21 +1819,222 @@
     </div>
 </div>
 
+<!-- ══ Quick Lab Batch Entry Native Modal Dialog ══ -->
+<dialog id="quick-lab-modal" aria-labelledby="modal-title">
+    <div class="modal-header">
+        <h3 id="modal-title">🧪 Comprehensive Quick Lab Batch Entry (Two-Way Synced)</h3>
+        <button type="button" id="btn-close-lab-modal" class="btn btn-secondary" style="padding:4px 10px; font-size:12px; min-height:auto;">✕ Close</button>
+    </div>
+    
+    <p style="font-size:12px; color:var(--graphite); margin:0 0 14px;">
+        Enter all available patient lab values here. All fields will instantly synchronize across all 6 clinical tabs.
+    </p>
+
+    <div class="grid-3" style="font-size:12px;">
+        <!-- Serum Electrolytes & Renal -->
+        <div class="card-sub" style="border-top:3px solid var(--signal-blue);">
+            <strong style="color:var(--signal-blue);">Serum Electrolytes &amp; Renal</strong>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Serum Na⁺ (mEq/L)</label>
+                <input type="number" id="m-na" class="input-control" step="0.5">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Serum K⁺ (mEq/L)</label>
+                <input type="number" id="m-k" class="input-control" step="0.1">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Serum Cl⁻ (mEq/L)</label>
+                <input type="number" id="m-cl" class="input-control" step="0.5">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Serum HCO₃⁻ (mEq/L)</label>
+                <input type="number" id="m-hco3" class="input-control" step="0.5">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>BUN (mg/dL)</label>
+                <input type="number" id="m-bun" class="input-control" step="1">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Serum Cr (mg/dL)</label>
+                <input type="number" id="m-cr" class="input-control" step="0.1">
+            </div>
+        </div>
+
+        <!-- Minerals & Gases -->
+        <div class="card-sub" style="border-top:3px solid var(--signal-purple);">
+            <strong style="color:var(--signal-purple);">Minerals &amp; Blood Gas</strong>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Direct Ionized Ca²⁺ (mmol/L)</label>
+                <input type="number" id="m-ica" class="input-control" step="0.01">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Total Calcium (mg/dL)</label>
+                <input type="number" id="m-total-ca" class="input-control" step="0.1">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Serum Albumin (g/dL)</label>
+                <input type="number" id="m-alb" class="input-control" step="0.1">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Serum Mg²⁺ (mg/dL)</label>
+                <input type="number" id="m-mg" class="input-control" step="0.1">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Serum PO₄³⁻ (mg/dL)</label>
+                <input type="number" id="m-po4" class="input-control" step="0.1">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Blood pH</label>
+                <input type="number" id="m-ph" class="input-control" step="0.01">
+            </div>
+        </div>
+
+        <!-- Osmolality & Urine Studies -->
+        <div class="card-sub" style="border-top:3px solid var(--signal-emerald);">
+            <strong style="color:var(--signal-emerald);">Osmolality &amp; Urine Profile</strong>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Measured Serum Osm (mOsm/kg)</label>
+                <input type="number" id="m-osm" class="input-control">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Blood Glucose (mg/dL)</label>
+                <input type="number" id="m-glu" class="input-control">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Urine Na⁺ (mEq/L)</label>
+                <input type="number" id="m-u-na" class="input-control">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Urine K⁺ (mEq/L)</label>
+                <input type="number" id="m-u-k" class="input-control">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Urine Cl⁻ (mEq/L)</label>
+                <input type="number" id="m-u-cl" class="input-control">
+            </div>
+            <div class="input-group" style="margin-top:6px;">
+                <label>Urine Cr (mg/dL)</label>
+                <input type="number" id="m-u-cr" class="input-control">
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px; border-top:1px solid var(--rule); padding-top:12px;">
+        <button type="button" id="btn-apply-lab-modal" class="btn btn-primary">✓ Apply Labs &amp; Recalculate</button>
+    </div>
+</dialog>
+
+<!-- Toast Notification Element -->
+<div id="toast-msg">✓ Copied to Clipboard!</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     DEDICATED A4 PRINT WORKSHEET (ACTIVATED VIA @media print)
+═════════════════════════════════════════════════════════════ -->
+<div id="print-worksheet-area">
+    <div class="print-header-mnrh">
+        <h2>MAHARAT NAKHON RATCHASIMA HOSPITAL</h2>
+        <p>EMERGENCY DEPARTMENT &amp; CRITICAL CARE CLINICAL PROTOCOL</p>
+        <p style="font-weight:700; margin-top:4px;">⚡ Electrolyte &amp; Acid-Base Clinical Management Worksheet</p>
+    </div>
+
+    <div class="print-patient-box">
+        <div>
+            <strong>Patient HN:</strong> <span id="p-hn-disp">--</span> &nbsp;|&nbsp; 
+            <strong>Age:</strong> <span id="p-age-disp">--</span> yr &nbsp;|&nbsp; 
+            <strong>Sex:</strong> <span id="p-sex-disp">--</span> &nbsp;|&nbsp; 
+            <strong>Weight:</strong> <span id="p-wt-disp">--</span> kg<br>
+            <strong>Estimated TBW:</strong> <span id="p-tbw-disp">--</span> L &nbsp;|&nbsp; 
+            <strong>eGFR:</strong> <span id="p-egfr-disp">--</span> mL/min &nbsp;|&nbsp; 
+            <strong>Albumin:</strong> <span id="p-alb-disp">--</span> g/dL
+        </div>
+        <div style="text-align:right; border-left:1px dashed #666; padding-left:10px;">
+            <div style="border:1px dashed #000; padding:6px; font-size:8pt; text-align:center;">
+                [ ติดสติกเกอร์ผู้ป่วย ]<br>Patient Sticker
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Doctor's Orders Table -->
+    <div class="print-section">
+        <div class="print-section-title">📋 1. ACTIVE DOCTOR'S ORDERS &amp; INFUSION PRESCRIPTION</div>
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th style="width:20%;">Target Condition</th>
+                    <th style="width:45%;">Doctor's Order / Solution Recipe</th>
+                    <th style="width:20%;">Infusion Rate / Dosing</th>
+                    <th style="width:15%;">Monitoring</th>
+                </tr>
+            </thead>
+            <tbody id="print-orders-body">
+                <!-- Dynamically populated -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Comprehensive Calculated Assessment Summary -->
+    <div class="print-section">
+        <div class="print-section-title">📊 2. CLINICAL ASSESSMENT &amp; GAP PROFILE</div>
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th>Electrolyte / Gas</th>
+                    <th>Measured Lab</th>
+                    <th>Calculated Metric / Deficit</th>
+                    <th>Clinical Interpretation</th>
+                </tr>
+            </thead>
+            <tbody id="print-assess-body">
+                <!-- Dynamically populated -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Diagnostic Decision Summary -->
+    <div class="print-section">
+        <div class="print-section-title">🧭 3. DIAGNOSTIC WORK-UP CONCLUSIONS</div>
+        <div id="print-workup-summary" style="font-size:9.5pt; line-height:1.45;">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; margin-top:24px; font-size:10pt;">
+        <div>
+            <strong>Worksheet Generated:</strong> <span id="p-time-disp">--</span><br>
+            <span style="font-size:8pt; color:#666;">2026 Evidence-Based Critical Care Architecture</span>
+        </div>
+        <div style="text-align:center; width:220px; border-top:1px solid #000; padding-top:4px;">
+            Attending Physician Signature &amp; License No.
+        </div>
+    </div>
+</div>
+
 <script src="../shared/components.js"></script>
 <script src="../shared/electrolyte-engine.js"></script>
 <script>
-    // Tab switching logic
+    // Tab switching with View Transitions support
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabPanels = document.querySelectorAll('.tab-panel');
 
+    function switchTab(targetId) {
+        tabBtns.forEach(b => {
+            const isMatch = b.dataset.tab === targetId;
+            b.classList.toggle('active', isMatch);
+            b.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+        });
+        tabPanels.forEach(p => {
+            p.classList.toggle('active', p.id === targetId);
+        });
+    }
+
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            tabBtns.forEach(b => b.classList.remove('active'));
-            tabPanels.forEach(p => p.classList.remove('active'));
-            btn.classList.add('active');
             const target = btn.dataset.tab;
-            const panel = document.getElementById(target);
-            if (panel) panel.classList.add('active');
+            if (document.startViewTransition) {
+                document.startViewTransition(() => switchTab(target));
+            } else {
+                switchTab(target);
+            }
         });
     });
 
@@ -1378,41 +2056,184 @@
     bindSliderInput('na-target-slider', 'na-target-delta');
     bindSliderInput('k-iv-rate-slider', 'k-iv-rate-input');
 
-    // Albumin 2-way sync between Tab 4 and Tab 5
-    const minCaAlb = document.getElementById('min-ca-alb');
-    const gapAlb = document.getElementById('gap-alb');
-    if (minCaAlb && gapAlb) {
-        minCaAlb.addEventListener('input', (e) => { gapAlb.value = e.target.value; recalc(); });
-        gapAlb.addEventListener('input', (e) => { minCaAlb.value = e.target.value; recalc(); });
+    // 1-Tap Preset Chip Handlers
+    document.querySelectorAll('.chip-btn').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+            const targetInputId = e.target.dataset.set;
+            const targetVal = e.target.dataset.val;
+            const inputEl = document.getElementById(targetInputId);
+            if (inputEl) {
+                inputEl.value = targetVal;
+                inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+                recalc();
+            }
+        });
+    });
+
+    // Universal 2-Way Reactive Sync for Key Lab Variables
+    function bindTwoWaySync(primaryId, linkedIds) {
+        const primary = document.getElementById(primaryId);
+        if (!primary) return;
+        primary.addEventListener('input', (e) => {
+            const val = e.target.value;
+            linkedIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.value !== val) el.value = val;
+            });
+            recalc();
+        });
     }
 
-    // Main Recalculate Controller
+    bindTwoWaySync('pt-alb', ['min-ca-alb', 'gap-alb']);
+    bindTwoWaySync('min-ca-alb', ['pt-alb', 'gap-alb']);
+    bindTwoWaySync('gap-alb', ['pt-alb', 'min-ca-alb']);
+
+    bindTwoWaySync('pt-glu', ['na-glucose', 'gap-glu']);
+    bindTwoWaySync('na-glucose', ['pt-glu', 'gap-glu']);
+    bindTwoWaySync('gap-glu', ['pt-glu', 'na-glucose']);
+
+    bindTwoWaySync('na-measured', ['gap-na']);
+    bindTwoWaySync('gap-na', ['na-measured']);
+
+    bindTwoWaySync('acid-hco3-curr', ['gap-hco3']);
+    bindTwoWaySync('gap-hco3', ['acid-hco3-curr']);
+
+    bindTwoWaySync('gap-u-na', ['m-u-na']);
+    bindTwoWaySync('gap-u-k', ['m-u-k']);
+    bindTwoWaySync('gap-u-cl', ['m-u-cl']);
+
+    // Modal Opening and Synchronization
+    const labModal = document.getElementById('quick-lab-modal');
+    document.getElementById('btn-open-lab-modal').addEventListener('click', () => {
+        // Populate modal with current active values
+        document.getElementById('m-na').value = document.getElementById('na-measured').value;
+        document.getElementById('m-k').value = document.getElementById('hypok-val').value;
+        document.getElementById('m-cl').value = document.getElementById('gap-cl').value;
+        document.getElementById('m-hco3').value = document.getElementById('acid-hco3-curr').value;
+        document.getElementById('m-bun').value = document.getElementById('gap-bun').value;
+        document.getElementById('m-cr').value = document.getElementById('fe-s-cr').value;
+        document.getElementById('m-ica').value = document.getElementById('min-ica').value;
+        document.getElementById('m-total-ca').value = document.getElementById('min-total-ca').value;
+        document.getElementById('m-alb').value = document.getElementById('pt-alb').value;
+        document.getElementById('m-mg').value = document.getElementById('min-mg').value;
+        document.getElementById('m-po4').value = document.getElementById('min-po4').value;
+        document.getElementById('m-ph').value = document.getElementById('acid-ph').value;
+        document.getElementById('m-osm').value = document.getElementById('gap-meas-osm').value;
+        document.getElementById('m-glu').value = document.getElementById('pt-glu').value;
+        document.getElementById('m-u-na').value = document.getElementById('gap-u-na').value;
+        document.getElementById('m-u-k').value = document.getElementById('gap-u-k').value;
+        document.getElementById('m-u-cl').value = document.getElementById('gap-u-cl').value;
+        document.getElementById('m-u-cr').value = document.getElementById('fe-u-cr').value;
+
+        if (typeof labModal.showModal === 'function') {
+            labModal.showModal();
+        } else {
+            labModal.style.display = 'block';
+        }
+    });
+
+    document.getElementById('btn-close-lab-modal').addEventListener('click', () => {
+        if (typeof labModal.close === 'function') labModal.close();
+        else labModal.style.display = 'none';
+    });
+
+    document.getElementById('btn-apply-lab-modal').addEventListener('click', () => {
+        // Sync values back from modal
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el && val !== '') el.value = val; };
+        setVal('na-measured', document.getElementById('m-na').value);
+        setVal('hypok-val', document.getElementById('m-k').value);
+        setVal('gap-cl', document.getElementById('m-cl').value);
+        setVal('acid-hco3-curr', document.getElementById('m-hco3').value);
+        setVal('gap-bun', document.getElementById('m-bun').value);
+        setVal('fe-s-cr', document.getElementById('m-cr').value);
+        setVal('min-ica', document.getElementById('m-ica').value);
+        setVal('min-total-ca', document.getElementById('m-total-ca').value);
+        setVal('pt-alb', document.getElementById('m-alb').value);
+        setVal('min-mg', document.getElementById('m-mg').value);
+        setVal('min-po4', document.getElementById('m-po4').value);
+        setVal('acid-ph', document.getElementById('m-ph').value);
+        setVal('gap-meas-osm', document.getElementById('m-osm').value);
+        setVal('pt-glu', document.getElementById('m-glu').value);
+        setVal('gap-u-na', document.getElementById('m-u-na').value);
+        setVal('gap-u-k', document.getElementById('m-u-k').value);
+        setVal('gap-u-cl', document.getElementById('m-u-cl').value);
+        setVal('fe-u-cr', document.getElementById('m-u-cr').value);
+
+        if (typeof labModal.close === 'function') labModal.close();
+        else labModal.style.display = 'none';
+
+        recalc();
+        showToast('✓ Batch Labs Applied & Recalculated!');
+    });
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2200);
+    }
+
+    // ═══════════════════════════════════════════
+    // MAIN RECALCULATION CONTROLLER
+    // ═══════════════════════════════════════════
     function recalc() {
         const weight = parseFloat(document.getElementById('pt-weight').value) || 60;
         const age = parseInt(document.getElementById('pt-age').value) || 60;
         const sex = document.querySelector('input[name="pt-sex"]:checked')?.value || 'male';
+        const egfr = parseFloat(document.getElementById('pt-egfr').value) || 90;
+        const alb = parseFloat(document.getElementById('pt-alb').value) || 4.0;
+        const glu = parseFloat(document.getElementById('pt-glu').value) || 120;
 
-        // 1. TBW
+        // 1. TBW & Patient Context Sub-strip
         const tbw = ELECTROLYTE_ENGINE.calcTBW(weight, sex, age);
         document.getElementById('disp-tbw').textContent = `${tbw} L`;
 
-        // 2. Sodium
+        const renalTierEl = document.getElementById('disp-renal-tier');
+        if (egfr < 30) {
+            renalTierEl.textContent = `eGFR ${egfr} mL/min (Severe AKI/ESRD - Dose Adjust!)`;
+            renalTierEl.style.color = 'var(--signal-red)';
+        } else if (egfr < 60) {
+            renalTierEl.textContent = `eGFR ${egfr} mL/min (Moderate CKD)`;
+            renalTierEl.style.color = 'var(--signal-amber)';
+        } else {
+            renalTierEl.textContent = `eGFR ${egfr} mL/min (Normal / Mild)`;
+            renalTierEl.style.color = 'var(--signal-emerald)';
+        }
+
+        const albStatusEl = document.getElementById('disp-alb-status');
+        if (alb < 3.0) {
+            albStatusEl.textContent = `${alb} g/dL (Severe Hypoalbuminemia)`;
+            albStatusEl.style.color = 'var(--signal-amber)';
+        } else {
+            albStatusEl.textContent = `${alb} g/dL (Normal)`;
+            albStatusEl.style.color = 'var(--signal-emerald)';
+        }
+
+        // 2. Sodium Calculations
         const measNa = parseFloat(document.getElementById('na-measured').value) || 125;
-        const glu = parseFloat(document.getElementById('na-glucose').value) || 120;
         const corrHillier = ELECTROLYTE_ENGINE.calcCorrectedSodium(measNa, glu, 'hillier');
         const corrKatz = ELECTROLYTE_ENGINE.calcCorrectedSodium(measNa, glu, 'katz');
         document.getElementById('disp-corr-na-hillier').textContent = corrHillier;
         document.getElementById('disp-corr-na-katz').textContent = corrKatz;
 
         // 3% Bolus
-        const bolus = ELECTROLYTE_ENGINE.calcHyponatremiaBolus(weight, age < 15);
+        const isPediatric = age < 15;
+        const bolus = ELECTROLYTE_ENGINE.calcHyponatremiaBolus(weight, isPediatric);
         document.getElementById('disp-3pct-bolus').textContent = `${bolus.bolusRange || bolus.bolusMl + ' mL'}`;
+        document.getElementById('disp-3pct-bolus-subtitle').textContent = isPediatric ? 'Pediatric 2 mL/kg over 10-20 min' : 'Adult fixed bolus over 10-20 min';
 
         // Adrogue-Madias
         const fluid = document.getElementById('na-fluid-choice').value;
         const deltaTarget = parseFloat(document.getElementById('na-target-delta').value) || 6;
         const deltaLiter = ELECTROLYTE_ENGINE.calcAdrogueMadias(measNa, fluid, tbw);
         document.getElementById('disp-delta-na-liter').textContent = `${deltaLiter > 0 ? '+' : ''}${deltaLiter} mEq/L`;
+
+        const fluidAlert = document.getElementById('na-fluid-alert');
+        if (deltaLiter <= 0) {
+            fluidAlert.style.display = 'flex';
+        } else {
+            fluidAlert.style.display = 'none';
+        }
 
         const infusion = ELECTROLYTE_ENGINE.calcHyponatremiaInfusionRate(deltaTarget, deltaLiter);
         if (infusion && infusion.mlPerHour > 0) {
@@ -1432,18 +2253,19 @@
             document.getElementById('disp-fwd-d5w-rate').textContent = `0 mL/hr (No FWD, Na ≤ 140 mEq/L)`;
         }
 
-        // 3. Potassium
+        // 3. Potassium Calculations
         const hypok = parseFloat(document.getElementById('hypok-val').value) || 2.8;
         const kDef = ELECTROLYTE_ENGINE.calcPotassiumDeficit(hypok);
         document.getElementById('disp-hypok-severity').textContent = kDef.severity;
         document.getElementById('disp-hypok-deficit').textContent = `~${kDef.deficitMeq} mEq`;
 
-        // IV Drip Auto-Generator (Per 1,000 mL bottle)
+        // IV Drip Auto-Generator with Route Switch
+        const kRoute = document.querySelector('input[name="k-iv-route"]:checked')?.value || 'peripheral';
+        const isCentralK = kRoute === 'central';
         const kFluidSel = document.getElementById('k-iv-fluid').value;
         const kFluidVol = kFluidSel.startsWith('500') ? 500 : 1000;
         const kclMeqAdded = parseFloat(document.getElementById('k-iv-meq').value) || 40;
         const kPumpRate = parseFloat(document.getElementById('k-iv-rate-input').value) || parseFloat(document.getElementById('k-iv-rate-slider').value) || 100;
-        const isCentralK = kclMeqAdded > 40;
 
         const kInfusionResult = ELECTROLYTE_ENGINE.calcPotassiumInfusion({
             fluidVolumeMl: kFluidVol,
@@ -1465,16 +2287,17 @@
                 kAlertEl.innerHTML = `<span><strong>CAUTION:</strong> ${kInfusionResult.safety.warnings.join('<br>')}</span>`;
             } else {
                 kAlertEl.className = 'alert-box alert-success';
-                kAlertEl.innerHTML = `<span>✓ Safe infusion for ${isCentralK ? 'Central line' : 'Peripheral line'} (${kInfusionResult.rateMeqHr} mEq/hr, ${kInfusionResult.concMeqL} mEq/L).</span>`;
+                kAlertEl.innerHTML = `<span>✓ Safe infusion for ${isCentralK ? 'Central Venous Line' : 'Peripheral line'} (${kInfusionResult.rateMeqHr} mEq/hr, ${kInfusionResult.concMeqL} mEq/L).</span>`;
             }
         }
 
-        // 4. Acidosis
+        // 4. Acidosis & Bicarbonate
         const currHco3 = parseFloat(document.getElementById('acid-hco3-curr').value) || 8;
         const targetHco3 = parseFloat(document.getElementById('acid-hco3-target').value) || 14;
         const isSevereAcid = document.getElementById('acid-severe-switch').checked;
         const bicarbForm = document.getElementById('acid-formulation').value;
         const bicarbDef = ELECTROLYTE_ENGINE.calcBicarbonateDeficit(weight, currHco3, targetHco3, isSevereAcid);
+
         if (bicarbDef) {
             document.getElementById('disp-bicarb-total').textContent = `${bicarbDef.deficitMeq}`;
             if (bicarbForm === '75') {
@@ -1491,17 +2314,23 @@
         } else {
             document.getElementById('disp-bicarb-total').textContent = `0`;
             document.getElementById('disp-bicarb-half').textContent = `Target reached (No deficit, Current HCO₃⁻ ≥ Target)`;
+            document.getElementById('disp-bicarb-push-dose').textContent = `No bicarbonate push indicated (Current HCO₃⁻ is at or above target).`;
+            document.getElementById('disp-bicarb-recipe').textContent = `No continuous bicarbonate infusion required.`;
         }
 
         const etiology = document.getElementById('acid-etiology').value;
         const ph = parseFloat(document.getElementById('acid-ph').value) || 7.12;
+        const pco2 = parseFloat(document.getElementById('acid-pco2').value) || 35;
         const akiStage = parseInt(document.getElementById('acid-aki-stage').value) || 0;
-        const bicarbInd = ELECTROLYTE_ENGINE.evaluateBicarbonateIndication({ etiology, ph, hco3: currHco3, akinStage: akiStage });
+        const bicarbInd = ELECTROLYTE_ENGINE.evaluateBicarbonateIndication({ etiology, ph, hco3: currHco3, akinStage: akiStage, pco2 });
         const bicarbIndEl = document.getElementById('disp-acid-guidance');
         const salicylateCard = document.getElementById('salicylate-protocol-card');
 
         if (etiology === 'toxicology_salicylate') {
             salicylateCard.style.display = 'block';
+            const salRep = ELECTROLYTE_ENGINE.calcSalicylateAlkalinization({ weightKg: weight, formulation: bicarbForm });
+            document.getElementById('disp-salicylate-recipe').textContent = salRep.recipe;
+            document.getElementById('disp-salicylate-rate').textContent = salRep.recommendedRateMlHr;
         } else {
             salicylateCard.style.display = 'none';
         }
@@ -1526,12 +2355,10 @@
         const totCaVal = document.getElementById('min-total-ca').value.trim();
         const mgVal = document.getElementById('min-mg').value.trim();
         const po4Val = document.getElementById('min-po4').value.trim();
-        const albVal = (document.getElementById('min-ca-alb')?.value.trim() || document.getElementById('gap-alb')?.value.trim() || '');
         const isArrhythmia = document.getElementById('min-mg-arrhythmia').checked;
 
         const ica = icaVal !== '' ? parseFloat(icaVal) : null;
         const totCa = totCaVal !== '' ? parseFloat(totCaVal) : null;
-        const alb = albVal !== '' ? parseFloat(albVal) : 4.0;
         const mg = mgVal !== '' ? parseFloat(mgVal) : null;
         const po4 = po4Val !== '' ? parseFloat(po4Val) : null;
 
@@ -1546,19 +2373,25 @@
                 const isSev = caEval.status.includes('severe');
                 caStatEl.textContent = isSev ? 'SEVERE HYPO' : 'HYPOCALCEMIA';
                 caStatEl.style.color = '#f87171';
-                caDescEl.textContent = caEval.primaryType === 'ionized' ? `iCa ${ica} mmol/L (Normal 1.15 - 1.33)` : `Total Ca ${totCa} mg/dL (Normal 8.5 - 10.5)`;
+                caDescEl.textContent = caEval.primaryType === 'ionized' 
+                    ? `iCa ${ica} mmol/L (Normal 1.15 - 1.33)` 
+                    : `Total Ca ${totCa} mg/dL (Payne Corrected: ${caEval.payneCorrectedCa || totCa} mg/dL)`;
                 caTreatBox.innerHTML = `<strong>Acute Hypocalcemia Protocol:</strong><p style="margin:4px 0 0; color:var(--ink);">• <strong>10% Calcium Gluconate 10-20 mL (1-2g) in 100 mL D5W</strong> IV over 10-20 min.<br>• Follow with infusion: <strong>10-20g in 1,000 mL D5W at 0.5 - 1.5 mg elemental Ca/kg/hr</strong>.</p>`;
             } else if (caEval.status.includes('hyper')) {
                 const isCrisis = caEval.status.includes('crisis');
                 caStatEl.textContent = isCrisis ? 'HYPER CRISIS' : 'HYPERCALCEMIA';
                 caStatEl.style.color = '#fbbf24';
-                caDescEl.textContent = caEval.primaryType === 'ionized' ? `iCa ${ica} mmol/L (High > 1.33)` : `Total Ca ${totCa} mg/dL (High > 10.5)`;
+                caDescEl.textContent = caEval.primaryType === 'ionized' 
+                    ? `iCa ${ica} mmol/L (High > 1.33)` 
+                    : `Total Ca ${totCa} mg/dL (Payne Corrected: ${caEval.payneCorrectedCa || totCa} mg/dL)`;
                 caTreatBox.innerHTML = `<strong>Hypercalcemia Protocol:</strong><p style="margin:4px 0 0; color:var(--ink);">• <strong>0.9% NaCl Normal Saline 200 - 500 mL/hr</strong> (target UO 100-150 mL/hr).<br>• <strong>Calcitonin 4 - 8 IU/kg SC/IM q12h</strong> (rapid onset in 4-6h).<br>• <strong>Zoledronic acid 4 mg IV</strong> over 15 min (or Pamidronate 60-90 mg).</p>`;
             } else {
                 caStatEl.textContent = 'NORMAL';
                 caStatEl.style.color = '#34d399';
-                caDescEl.textContent = caEval.primaryType === 'ionized' ? `iCa ${ica} mmol/L (Normal)` : `Total Ca ${totCa} mg/dL (Normal)`;
-                caTreatBox.innerHTML = `<strong>Clinical Action:</strong><p style="margin:4px 0 0; color:var(--signal-emerald);">✓ Serum Calcium is within physiological normal range.</p>`;
+                caDescEl.textContent = caEval.primaryType === 'ionized' 
+                    ? `iCa ${ica} mmol/L (Normal)` 
+                    : `Total Ca ${totCa} mg/dL (Payne Corrected: ${caEval.payneCorrectedCa || totCa} mg/dL)`;
+                caTreatBox.innerHTML = `<strong>Clinical Action:</strong><p style="margin:4px 0 0; color:var(--signal-emerald);">✓ Serum Calcium is within physiological normal range${caEval.isPseudohypocalcemia ? ' (Pseudohypocalcemia normalized by Albumin correction)' : ''}.</p>`;
             }
         } else {
             caStatEl.textContent = '--';
@@ -1567,23 +2400,23 @@
             caTreatBox.innerHTML = `<strong>Clinical Action:</strong><p style="margin:4px 0 0; color:var(--graphite);">Enter Direct Ionized Calcium or Total Calcium to see real-time protocol.</p>`;
         }
 
-        // Magnesium Output
+        // Magnesium Output (Linked with eGFR)
         const mgDescEl = document.getElementById('disp-mg-status-desc');
         const mgStatEl = document.getElementById('disp-mg-status');
         const mgTreatBox = document.getElementById('disp-mg-treatment-box');
 
         if (mg !== null) {
-            const mgRep = ELECTROLYTE_ENGINE.calcMgRepletion(mg, isArrhythmia, 90);
+            const mgRep = ELECTROLYTE_ENGINE.calcMgRepletion(mg, isArrhythmia, egfr);
             if (isArrhythmia || mg < 1.0) {
                 mgStatEl.textContent = 'SEVERE HYPO / ARREST';
                 mgStatEl.style.color = '#f87171';
-                mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (Normal 1.7 - 2.4)`;
+                mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (eGFR ${egfr} mL/min)`;
                 mgTreatBox.innerHTML = `<strong>Emergency MgSO₄ Dosing:</strong><p style="margin:4px 0 0; color:var(--ink);">• <strong>${mgRep.emergencyPush}</strong>.<br>• Maintenance: <strong>${mgRep.maintenanceInfusion}</strong>.<br>• ${mgRep.monitoring}</p>`;
             } else if (mg < 1.7) {
                 mgStatEl.textContent = 'HYPOMAGNESEMIA';
                 mgStatEl.style.color = '#fbbf24';
-                mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (Mild/Moderate)`;
-                mgTreatBox.innerHTML = `<strong>MgSO₄ Repletion Regimen:</strong><p style="margin:4px 0 0; color:var(--ink);">• IV Option: <strong>${mgRep.ivOption}</strong> (rate ≤ 1.0 g/hr prevents urinary dumping).<br>• Oral Option: <strong>${mgRep.oralRegimen}</strong>.</p>`;
+                mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (eGFR ${egfr} mL/min)`;
+                mgTreatBox.innerHTML = `<strong>MgSO₄ Repletion Regimen:</strong><p style="margin:4px 0 0; color:var(--ink);">• IV Option: <strong>${mgRep.ivOption}</strong>.<br>• Oral Option: <strong>${mgRep.oralRegimen}</strong>.</p>`;
             } else if (mg > 2.4) {
                 mgStatEl.textContent = 'HYPERMAGNESEMIA';
                 mgStatEl.style.color = '#f87171';
@@ -1634,7 +2467,7 @@
                 if (po4 < 2.5) {
                     po4GuidanceEl.innerHTML = `<strong>Dose:</strong> ${po4Rep.recommendedDoseMmol} mmol IV (${po4Rep.infusionDuration}).<br><strong>Safety:</strong> ${po4Rep.safetyGate}`;
                 } else if (po4 > 4.5) {
-                    po4GuidanceEl.innerHTML = `<strong>Management:</strong> Restrict dietary phosphate, administer oral phosphate binders. Avoid IV calcium unless severe symptomatic tetany.`;
+                    po4GuidanceEl.innerHTML = `<strong>Management:</strong> ${po4Rep.management}<br><strong>Safety:</strong> ${po4Rep.safetyGate}`;
                 } else {
                     po4GuidanceEl.innerHTML = `✓ Serum Phosphate is within normal range (2.5 - 4.5 mg/dL).`;
                 }
@@ -1648,12 +2481,11 @@
             po4GuidanceEl.innerHTML = 'Enter PO₄ to evaluate precipitation gate and weight-adjusted dose.';
         }
 
-        // 6. Acid-Base Gaps
+        // 6. Acid-Base, Gaps & Fractional Excretions (Tab 5)
         const naGap = parseFloat(document.getElementById('gap-na').value) || 140;
         const clGap = parseFloat(document.getElementById('gap-cl').value) || 100;
         const hco3Gap = parseFloat(document.getElementById('gap-hco3').value) || 15;
-        const albGap = parseFloat(document.getElementById('gap-alb').value) || 4.0;
-        const agResult = ELECTROLYTE_ENGINE.calcAnionGap(naGap, clGap, hco3Gap, albGap);
+        const agResult = ELECTROLYTE_ENGINE.calcAnionGap(naGap, clGap, hco3Gap, alb);
         if (agResult) {
             document.getElementById('disp-gap-corr').textContent = agResult.correctedAg;
             document.getElementById('disp-gap-interp').textContent = agResult.interpretation;
@@ -1665,33 +2497,57 @@
                 document.getElementById('disp-delta-ratio').textContent = '--';
                 document.getElementById('disp-delta-interp').textContent = dd ? dd.interpretation : '--';
             }
-        } else {
-            document.getElementById('disp-gap-corr').textContent = '--';
-            document.getElementById('disp-gap-interp').textContent = 'Enter Na⁺, Cl⁻, and HCO₃⁻ to calculate';
-            document.getElementById('disp-delta-ratio').textContent = '--';
-            document.getElementById('disp-delta-interp').textContent = '--';
         }
 
         const measOsm = parseFloat(document.getElementById('gap-meas-osm').value) || 315;
         const bun = parseFloat(document.getElementById('gap-bun').value) || 28;
-        const osmGap = ELECTROLYTE_ENGINE.calcOsmolarGap(measOsm, naGap, glu, bun);
+        const ethanol = parseFloat(document.getElementById('gap-ethanol').value) || 0;
+        const osmGap = ELECTROLYTE_ENGINE.calcOsmolarGap(measOsm, naGap, glu, bun, ethanol);
         if (osmGap) {
             document.getElementById('disp-osm-gap').textContent = `${osmGap.osmolarGap > 0 ? '+' : ''}${osmGap.osmolarGap}`;
-        } else {
-            document.getElementById('disp-osm-gap').textContent = '--';
         }
 
-        const uNa = parseFloat(document.getElementById('gap-u-na').value) || 20;
-        const uK = parseFloat(document.getElementById('gap-u-k').value) || 15;
-        const uCl = parseFloat(document.getElementById('gap-u-cl').value) || 60;
-        const uGaps = ELECTROLYTE_ENGINE.calcUrineGaps(uNa, uK, uCl);
-        if (uGaps) {
-            document.getElementById('disp-uag-interp').textContent = `${uGaps.uagInterpretation} (UAG = ${uGaps.urineAnionGap} mEq/L)`;
+        const uNaStr = document.getElementById('gap-u-na').value.trim();
+        const uKStr = document.getElementById('gap-u-k').value.trim();
+        const uClStr = document.getElementById('gap-u-cl').value.trim();
+        if (uNaStr !== '' && uKStr !== '' && uClStr !== '') {
+            const uGaps = ELECTROLYTE_ENGINE.calcUrineGaps(parseFloat(uNaStr), parseFloat(uKStr), parseFloat(uClStr));
+            if (uGaps) {
+                document.getElementById('disp-uag-interp').textContent = `${uGaps.uagInterpretation} (UAG = ${uGaps.urineAnionGap} mEq/L)`;
+            }
         } else {
-            document.getElementById('disp-uag-interp').textContent = '--';
+            document.getElementById('disp-uag-interp').textContent = 'Enter Urine Na⁺, K⁺, and Cl⁻ to calculate Urine Anion Gap';
         }
 
-        // 7. Work-up Wizards
+        // Fractional Excretions Suite
+        const uCr = parseFloat(document.getElementById('fe-u-cr').value) || 0;
+        const sCr = parseFloat(document.getElementById('fe-s-cr').value) || 0;
+        const uUrea = parseFloat(document.getElementById('fe-u-urea').value) || 0;
+        const sUrea = parseFloat(document.getElementById('fe-s-urea').value) || 0;
+        const uUrate = parseFloat(document.getElementById('fe-u-urate').value) || 0;
+        const sUrate = parseFloat(document.getElementById('fe-s-urate').value) || 0;
+        const uCa = parseFloat(document.getElementById('fe-u-ca').value) || 0;
+        const sCa = parseFloat(document.getElementById('fe-s-ca').value) || 0;
+        const uNa = uNaStr !== '' ? parseFloat(uNaStr) : 0;
+        const uK = uKStr !== '' ? parseFloat(uKStr) : 0;
+
+        const fe = ELECTROLYTE_ENGINE.calcFractionalExcretions({
+            uNa, sNa: naGap, uK, sK: hypok, uUrea, sUrea, uUrate, sUrate, uCr, sCr, uCa, sCa
+        });
+
+        document.getElementById('disp-fe-na-val').textContent = fe.feNa !== undefined ? `${fe.feNa} %` : '-- %';
+        document.getElementById('disp-fe-na-interp').textContent = fe.feNaInterp || 'Requires U_Na, S_Na, U_Cr, S_Cr';
+
+        document.getElementById('disp-fe-urea-val').textContent = fe.feUrea !== undefined ? `${fe.feUrea} %` : '-- %';
+        document.getElementById('disp-fe-urea-interp').textContent = fe.feUreaInterp || 'Requires U_Urea, S_Urea, U_Cr, S_Cr';
+
+        document.getElementById('disp-fe-urate-val').textContent = fe.feUrate !== undefined ? `${fe.feUrate} %` : '-- %';
+        document.getElementById('disp-fe-urate-interp').textContent = fe.feUrateInterp || 'Requires U_Urate, S_Urate, U_Cr, S_Cr';
+
+        document.getElementById('disp-fe-cccr-val').textContent = fe.cccr !== undefined ? `${fe.cccr}` : '--';
+        document.getElementById('disp-fe-cccr-interp').textContent = fe.cccrInterp || 'Requires U_Ca, S_Ca, U_Cr, S_Cr';
+
+        // 7. Diagnostic Workup Wizards (Tab 6)
         // Hyponatremia
         const wNaTon = document.getElementById('w-na-tonicity').value;
         const wNaUOsm = document.getElementById('w-na-uosm').value;
@@ -1703,7 +2559,7 @@
             volumeStatus: wNaVol,
             uNa: wNaUNa === 'high' ? 45 : 15
         });
-        document.getElementById('disp-w-na-result').innerHTML = `<div><strong>${naWorkup.category}</strong><br>${naWorkup.primaryCauses ? naWorkup.primaryCauses.join(', ') : naWorkup.nextAction || ''}</div>`;
+        document.getElementById('disp-w-na-result').innerHTML = `<div><strong>${naWorkup.category}</strong><br>${naWorkup.primaryCauses ? naWorkup.primaryCauses.join(', ') : ''}<br><em>${naWorkup.treatment || naWorkup.nextAction || ''}</em></div>`;
 
         // Hypernatremia
         const wHyperNaUOsm = document.getElementById('w-hyperna-uosm').value;
@@ -1725,7 +2581,7 @@
             acidBaseStatus: wKAb,
             uCl: wKUCl === 'low' ? 10 : 30
         });
-        document.getElementById('disp-w-k-result').innerHTML = `<div><strong>${kWorkup.category}</strong><br>${kWorkup.primaryCauses ? kWorkup.primaryCauses.join(', ') : kWorkup.nextAction || ''}</div>`;
+        document.getElementById('disp-w-k-result').innerHTML = `<div><strong>${kWorkup.category}</strong><br>${kWorkup.primaryCauses ? kWorkup.primaryCauses.join(', ') : ''}<br><em>${kWorkup.treatment || kWorkup.nextAction || ''}</em></div>`;
 
         // Hyperkalemia
         const wHyperKShift = document.getElementById('w-hyperk-shift').value;
@@ -1747,7 +2603,7 @@
             anionGap: wAcidoAg === 'high' ? 18 : 8,
             uag: wAcidoUag === 'neg' ? -15 : 15,
             urinePh: wAcidoUph === 'alk' ? 6.2 : 5.0,
-            serumK: 3.5
+            serumK: hypok
         });
         document.getElementById('disp-w-acido-result').innerHTML = `<div><strong>${acidoWorkup.category}</strong><br>${acidoWorkup.primaryCauses ? acidoWorkup.primaryCauses.join(', ') : ''}<br><em>${acidoWorkup.nextAction || acidoWorkup.treatment || ''}</em></div>`;
 
@@ -1759,6 +2615,17 @@
             bpStatus: wAlkaloBp
         });
         document.getElementById('disp-w-alkalo-result').innerHTML = `<div><strong>${alkaloWorkup.category}</strong><br>${alkaloWorkup.primaryCauses ? alkaloWorkup.primaryCauses.join(', ') : ''}<br><em>${alkaloWorkup.nextAction || alkaloWorkup.treatment || ''}</em></div>`;
+
+        // Calcium Diagnostic Wizard
+        const wCaType = document.getElementById('w-ca-type').value;
+        const wCaPth = document.getElementById('w-ca-pth').value;
+        const wCaCccr = document.getElementById('w-ca-cccr').value;
+        const caWorkup = ELECTROLYTE_ENGINE.evaluateCalciumWorkup({
+            isHypercalcemia: wCaType === 'hyper',
+            pthStatus: wCaPth === 'high' ? 'elevated' : 'suppressed',
+            cccr: wCaCccr === 'low' ? 0.005 : 0.03
+        });
+        document.getElementById('disp-w-ca-result').innerHTML = `<div><strong>${caWorkup.category}</strong><br>${caWorkup.primaryCauses ? caWorkup.primaryCauses.join(', ') : ''}<br><em>${caWorkup.nextAction || caWorkup.treatment || ''}</em></div>`;
     }
 
     // General Event Listeners
@@ -1767,56 +2634,86 @@
         el.addEventListener('change', recalc);
     });
 
-    // Note Generator
+    // ═══════════════════════════════════════════
+    // SMART SPARSE HIS NOTE GENERATOR (Option A)
+    // ═══════════════════════════════════════════
     document.getElementById('btn-gen-note').addEventListener('click', () => {
-        const hn = document.getElementById('pt-hn').value || 'PATIENT_MOCK';
+        const hn = document.getElementById('pt-hn').value.trim() || 'PATIENT_MOCK_001';
         const weight = document.getElementById('pt-weight').value;
         const age = document.getElementById('pt-age').value;
-        const sex = document.querySelector('input[name="pt-sex"]:checked')?.value;
+        const sex = document.querySelector('input[name="pt-sex"]:checked')?.value || 'male';
+        const egfr = document.getElementById('pt-egfr').value;
+        const alb = document.getElementById('pt-alb').value;
+        const glu = document.getElementById('pt-glu').value;
+        const tbw = document.getElementById('disp-tbw').textContent;
+
+        const sections = [];
+        sections.push(`[ER CLINICAL ELECTROLYTE & ACID-BASE ASSESSMENT]\nPatient HN: ${hn} | Age: ${age}y | Sex: ${sex} | Weight: ${weight} kg | TBW: ${tbw} | eGFR: ${egfr} mL/min\n--------------------------------------------------------`);
+
+        // 1. Sodium
         const measNa = document.getElementById('na-measured').value;
-        const glu = document.getElementById('na-glucose').value;
         const corrNa = document.getElementById('disp-corr-na-hillier').textContent;
+        const hyperNa = document.getElementById('hyperna-val').value;
+        if (measNa < 135) {
+            sections.push(`1. SODIUM (Hyponatremia):
+   - Measured Na⁺: ${measNa} mEq/L (Glucose: ${glu} mg/dL)
+   - Corrected Na⁺ (Hillier): ${corrNa} mEq/L
+   - Emergency 3% NaCl Bolus: ${document.getElementById('disp-3pct-bolus').textContent} over 10-20 min if herniation/seizures
+   - Slow Infusion Plan: ${document.getElementById('na-fluid-choice').selectedOptions[0].text} at ${document.getElementById('disp-adrogue-rate').textContent} (Max 8 mEq/L/24h)`);
+        } else if (measNa > 145 || hyperNa > 145) {
+            sections.push(`1. SODIUM (Hypernatremia):
+   - Serum Na⁺: ${hyperNa} mEq/L
+   - Free Water Deficit (FWD): ${document.getElementById('disp-fwd-liters').textContent}
+   - Infusion Order: D5W at ${document.getElementById('disp-fwd-d5w-rate').textContent} (Max drop ≤ 10 mEq/L/24h)`);
+        }
+
+        // 2. Potassium
         const kVal = document.getElementById('hypok-val').value;
         const kDef = document.getElementById('disp-hypok-deficit').textContent;
-        const kDelivRate = document.getElementById('disp-k-delivery-rate').textContent;
+        const kRate = document.getElementById('disp-k-delivery-rate').textContent;
+        const kRoute = document.querySelector('input[name="k-iv-route"]:checked')?.value || 'peripheral';
+        sections.push(`2. POTASSIUM:
+   - Serum K⁺: ${kVal} mEq/L | Deficit: ${kDef}
+   - Infusion: KCl delivered at ${kRate} via ${kRoute.toUpperCase()} line. Mg²⁺ checked concurrently.`);
+
+        // 3. Acid-Base & Bicarbonate
         const hco3Val = document.getElementById('acid-hco3-curr').value;
         const bDef = document.getElementById('disp-bicarb-total').textContent;
         const corrAg = document.getElementById('disp-gap-corr').textContent;
-        const bicarbForm = document.getElementById('acid-formulation').value;
-        const isSevereAcid = document.getElementById('acid-severe-switch').checked;
-        const targetHco3 = parseFloat(document.getElementById('acid-hco3-target').value) || 14;
-        const bicarbDef = ELECTROLYTE_ENGINE.calcBicarbonateDeficit(weight, hco3Val, targetHco3, isSevereAcid);
-
-        const bicarbText = bicarbForm === '75'
-            ? `   - Selected Formulation: 7.5% NaHCO₃ (Thailand / GPO — 44.6 mEq / 50 mL amp)
-   - Calculated Deficit: ${bDef} mEq (50% replacement: ~${bicarbDef ? bicarbDef.halfDeficitMeq : '--'} mEq = ~${bicarbDef ? bicarbDef.ampules75HalfExact : '--'} amp / ${bicarbDef ? bicarbDef.volume75MlHalf : '--'} mL in 4-8h)
-   - Emergent Slow Push: 1-2 amp (50-100 mL = 44.6-89.2 mEq) over 2-5 min if indicated.
-   - Isotonic Infusion: 3.5 amp (175 mL) in 825-850 mL D5W at 100-250 mL/hr.`
-            : `   - Selected Formulation: 8.4% NaHCO₃ (International — 50.0 mEq / 50 mL amp)
-   - Calculated Deficit: ${bDef} mEq (50% replacement: ~${bicarbDef ? bicarbDef.halfDeficitMeq : '--'} mEq = ~${bicarbDef ? bicarbDef.ampules84HalfExact : '--'} amp / ${bicarbDef ? bicarbDef.volume84MlHalf : '--'} mL in 4-8h)
-   - Emergent Slow Push: 1-2 amp (50-100 mL = 50-100 mEq) over 2-5 min if indicated.
-   - Isotonic Infusion: 3 amp (150 mL) in 850-1000 mL D5W at 100-250 mL/hr.`;
-
-        const note = `[ER CLINICAL ELECTROLYTE & ACID-BASE ASSESSMENT]
-HN: ${hn} | Age: ${age}y | Sex: ${sex} | Weight: ${weight} kg
---------------------------------------------------------
-1. SODIUM:
-   - Measured Na⁺: ${measNa} mEq/L (Glucose ${glu} mg/dL)
-   - Corrected Na⁺ (Hillier): ${corrNa} mEq/L
-   - Acute 3% Bolus: 100-150 mL over 10-20 min if herniation/seizures (Target +4-6 mEq/L)
-   - 24h Ceiling: ≤ 8 mEq/L/day (4-6 mEq/L if high ODS risk)
-
-2. POTASSIUM:
-   - Serum K⁺: ${kVal} mEq/L | Estimated Deficit: ${kDef}
-   - Infusion Order: Delivered at ${kDelivRate} via IV fluid bottle. Mg²⁺ checked concurrently.
-
-3. ACID-BASE & BICARBONATE:
-   - Serum HCO₃⁻: ${hco3Val} mEq/L
-${bicarbText}
+        const bForm = document.getElementById('acid-formulation').value;
+        if (hco3Val < 22 || corrAg > 10) {
+            sections.push(`3. ACID-BASE & BICARBONATE:
+   - Serum HCO₃⁻: ${hco3Val} mEq/L | Blood pH: ${document.getElementById('acid-ph').value}
+   - Bicarbonate Deficit: ${bDef} mEq (${bForm === '75' ? '7.5% Thailand / GPO' : '8.4% Int'})
    - Albumin-Corrected Anion Gap: ${corrAg} mEq/L (Modern ISE baseline 4-10)
+   - Delta-Delta Ratio: ${document.getElementById('disp-delta-ratio').textContent} (${document.getElementById('disp-delta-interp').textContent})`);
+        }
 
-Assessment & Protocol Grounded in 2026 Critical Care Consensus.`;
+        // 4. Minerals (Calcium, Magnesium, Phosphate)
+        const icaVal = document.getElementById('min-ica').value.trim();
+        const totCaVal = document.getElementById('min-total-ca').value.trim();
+        const mgVal = document.getElementById('min-mg').value.trim();
+        const po4Val = document.getElementById('min-po4').value.trim();
+        if (icaVal !== '' || totCaVal !== '' || mgVal !== '' || po4Val !== '') {
+            let minText = '4. MINERALS (Ca / Mg / PO₄):';
+            if (icaVal !== '' || totCaVal !== '') minText += `\n   - Calcium: ${icaVal !== '' ? 'iCa ' + icaVal + ' mmol/L' : 'Total Ca ' + totCaVal + ' mg/dL (Albumin ' + alb + ' g/dL)'} [${document.getElementById('disp-ca-status').textContent}]`;
+            if (mgVal !== '') minText += `\n   - Magnesium: ${mgVal} mg/dL [${document.getElementById('disp-mg-status').textContent}, eGFR ${egfr} mL/min]`;
+            if (po4Val !== '') minText += `\n   - Phosphate: ${po4Val} mg/dL [${document.getElementById('disp-po4-status').textContent}, ${document.getElementById('disp-ca-po4-product').textContent}]`;
+            sections.push(minText);
+        }
 
+        // 5. Gaps & Clearance
+        const osmGapVal = document.getElementById('disp-osm-gap').textContent;
+        const feNaVal = document.getElementById('disp-fe-na-val').textContent;
+        if (feNaVal !== '-- %' || osmGapVal !== '--') {
+            sections.push(`5. GAPS & RENAL EXCRETION:
+   - Serum Osmolar Gap: ${osmGapVal} mOsm/kg
+   - FE_Na: ${feNaVal} | FE_Urea: ${document.getElementById('disp-fe-urea-val').textContent} | CCCR: ${document.getElementById('disp-fe-cccr-val').textContent}`);
+        }
+
+        sections.push(`--------------------------------------------------------\nGrounded in 2026 Evidence-Based Critical Care Consensus (KDIGO/IFCC/BICAR-ICU).`);
+
+        const note = sections.join('\n\n');
         document.getElementById('his-note-text').value = note;
         document.getElementById('his-note-card').style.display = 'block';
         document.getElementById('his-note-card').scrollIntoView({ behavior: 'smooth' });
@@ -1825,13 +2722,106 @@ Assessment & Protocol Grounded in 2026 Critical Care Consensus.`;
     document.getElementById('btn-copy-note').addEventListener('click', () => {
         const text = document.getElementById('his-note-text').value;
         navigator.clipboard.writeText(text).then(() => {
-            const btn = document.getElementById('btn-copy-note');
-            btn.textContent = '✓ Copied!';
-            setTimeout(() => btn.textContent = '📋 Copy to Clipboard', 2000);
+            showToast('✓ HIS Note Copied to Clipboard!');
         });
     });
 
-    document.getElementById('btn-print').addEventListener('click', () => window.print());
+    // ═══════════════════════════════════════════
+    // A4 PRINT WORKSHEET GENERATOR (Option B)
+    // ═══════════════════════════════════════════
+    document.getElementById('btn-print').addEventListener('click', () => {
+        // Populate Print Area with Live Values
+        const hn = document.getElementById('pt-hn').value.trim() || 'PATIENT_MOCK_001';
+        const weight = document.getElementById('pt-weight').value;
+        const age = document.getElementById('pt-age').value;
+        const sex = document.querySelector('input[name="pt-sex"]:checked')?.value || 'male';
+        const egfr = document.getElementById('pt-egfr').value;
+        const alb = document.getElementById('pt-alb').value;
+        const tbw = document.getElementById('disp-tbw').textContent;
+
+        document.getElementById('p-hn-disp').textContent = hn;
+        document.getElementById('p-age-disp').textContent = age;
+        document.getElementById('p-sex-disp').textContent = sex.toUpperCase();
+        document.getElementById('p-wt-disp').textContent = weight;
+        document.getElementById('p-tbw-disp').textContent = tbw;
+        document.getElementById('p-egfr-disp').textContent = egfr;
+        document.getElementById('p-alb-disp').textContent = alb;
+        document.getElementById('p-time-disp').textContent = new Date().toLocaleString('th-TH');
+
+        // Populate Orders Table
+        const ordersBody = document.getElementById('print-orders-body');
+        ordersBody.innerHTML = `
+            <tr>
+                <td><strong>Hyponatremia</strong></td>
+                <td>3% NaCl Hypertonic Saline (513 mEq/L) — Acute Bolus for seizures/herniation</td>
+                <td><strong>${document.getElementById('disp-3pct-bolus').textContent}</strong> IV over 10-20 min</td>
+                <td>Recheck Na⁺ in 20 min (Max +8 mEq/L/24h)</td>
+            </tr>
+            <tr>
+                <td><strong>Potassium Repletion</strong></td>
+                <td>${document.getElementById('k-iv-fluid').selectedOptions[0].text} + KCl ${document.getElementById('k-iv-meq').value} mEq (${document.querySelector('input[name="k-iv-route"]:checked')?.value.toUpperCase()})</td>
+                <td><strong>${document.getElementById('k-iv-rate-input').value} mL/hr</strong> (${document.getElementById('disp-k-delivery-rate').textContent})</td>
+                <td>ECG &amp; Serum K⁺/Mg²⁺ q4h</td>
+            </tr>
+            <tr>
+                <td><strong>Metabolic Acidosis</strong></td>
+                <td>${document.getElementById('disp-bicarb-form-badge').textContent} (${document.getElementById('disp-bicarb-half').textContent})</td>
+                <td>Isotonic D5W drip at <strong>100 - 250 mL/hr</strong></td>
+                <td>ABG/VBG &amp; K⁺ q2-4h</td>
+            </tr>
+            <tr>
+                <td><strong>Magnesium / Minerals</strong></td>
+                <td>${document.getElementById('disp-mg-status').textContent} Plan (eGFR ${egfr} mL/min)</td>
+                <td>Rate ≤ 1.0 g/hr (0.5 g/hr if eGFR &lt; 30)</td>
+                <td>Reflexes &amp; Resp Rate q4h</td>
+            </tr>
+        `;
+
+        // Populate Assessment Summary
+        const assessBody = document.getElementById('print-assess-body');
+        assessBody.innerHTML = `
+            <tr>
+                <td><strong>Serum Sodium</strong></td>
+                <td>${document.getElementById('na-measured').value} mEq/L</td>
+                <td>Corrected: ${document.getElementById('disp-corr-na-hillier').textContent} mEq/L</td>
+                <td>${document.getElementById('na-measured').value < 135 ? 'Hyponatremia' : 'Normo/Hypernatremia'}</td>
+            </tr>
+            <tr>
+                <td><strong>Serum Potassium</strong></td>
+                <td>${document.getElementById('hypok-val').value} mEq/L</td>
+                <td>Deficit: ${document.getElementById('disp-hypok-deficit').textContent}</td>
+                <td>${document.getElementById('disp-hypok-severity').textContent}</td>
+            </tr>
+            <tr>
+                <td><strong>Anion Gap</strong></td>
+                <td>Na ${document.getElementById('gap-na').value} | Cl ${document.getElementById('gap-cl').value} | HCO₃ ${document.getElementById('gap-hco3').value}</td>
+                <td>Corrected AG: ${document.getElementById('disp-gap-corr').textContent} mEq/L</td>
+                <td>${document.getElementById('disp-gap-interp').textContent} (ΔΔ = ${document.getElementById('disp-delta-ratio').textContent})</td>
+            </tr>
+            <tr>
+                <td><strong>Osmolar Gap</strong></td>
+                <td>Meas: ${document.getElementById('gap-meas-osm').value} mOsm/kg</td>
+                <td>Gap: ${document.getElementById('disp-osm-gap').textContent} mOsm/kg</td>
+                <td>${parseFloat(document.getElementById('disp-osm-gap').textContent) > 10 ? 'High Osmolar Gap (>10)' : 'Normal'}</td>
+            </tr>
+            <tr>
+                <td><strong>Fractional Excretions</strong></td>
+                <td>U_Cr ${document.getElementById('fe-u-cr').value} | S_Cr ${document.getElementById('fe-s-cr').value}</td>
+                <td>FE_Na: ${document.getElementById('disp-fe-na-val').textContent} | FE_Urea: ${document.getElementById('disp-fe-urea-val').textContent}</td>
+                <td>${document.getElementById('disp-fe-na-interp').textContent}</td>
+            </tr>
+        `;
+
+        // Populate Workup Summary
+        document.getElementById('print-workup-summary').innerHTML = `
+            <p><strong>• Hyponatremia:</strong> ${document.getElementById('disp-w-na-result').textContent}</p>
+            <p><strong>• Hypokalemia:</strong> ${document.getElementById('disp-w-k-result').textContent}</p>
+            <p><strong>• Acid-Base Disorder:</strong> ${document.getElementById('disp-w-acido-result').textContent}</p>
+            <p><strong>• Calcium Disorder:</strong> ${document.getElementById('disp-w-ca-result').textContent}</p>
+        `;
+
+        window.print();
+    });
 
     document.getElementById('btn-reset').addEventListener('click', () => {
         if (confirm('Reset all values to defaults?')) {

@@ -341,10 +341,13 @@ const ELECTROLYTE_ENGINE = {
         const result = {
             primaryType: ionizedCaMmol > 0 ? 'ionized' : (totalCaMgDl > 0 ? 'total' : 'none'),
             status: 'normal',
+            uncorrectedStatus: 'normal',
+            correctedStatus: 'normal',
             ionizedCa: ionizedCaMmol,
             totalCa: totalCaMgDl,
             albumin: albuminGDl,
             payneCorrectedCa: null,
+            isPseudohypocalcemia: false,
             evidenceAlert: null
         };
 
@@ -363,11 +366,26 @@ const ELECTROLYTE_ENGINE = {
             }
             result.evidenceAlert = 'CLINICAL ALERT (IFCC/IOF/EFLM 2026 & KDIGO): Albumin-corrected calcium equations (Payne formula) have a 20-40% misclassification rate and systematically overestimate calcium in hypoalbuminemia. Direct Ionized Calcium (iCa²⁺ via blood gas) is strongly recommended for clinical decision-making.';
             
+            // Uncorrected evaluation
             if (totalCaMgDl < 8.5) {
-                result.status = totalCaMgDl < 7.0 ? 'severe_hypocalcemia' : 'hypocalcemia';
+                result.uncorrectedStatus = totalCaMgDl < 7.0 ? 'severe_hypocalcemia' : 'hypocalcemia';
             } else if (totalCaMgDl > 10.5) {
-                result.status = totalCaMgDl > 14.0 ? 'hypercalcemic_crisis' : 'hypercalcemia';
+                result.uncorrectedStatus = totalCaMgDl > 14.0 ? 'hypercalcemic_crisis' : 'hypercalcemia';
             }
+
+            // Corrected evaluation (Payne)
+            const evalTarget = result.payneCorrectedCa !== null ? result.payneCorrectedCa : totalCaMgDl;
+            if (evalTarget < 8.5) {
+                result.correctedStatus = evalTarget < 7.0 ? 'severe_hypocalcemia' : 'hypocalcemia';
+            } else if (evalTarget > 10.5) {
+                result.correctedStatus = evalTarget > 14.0 ? 'hypercalcemic_crisis' : 'hypercalcemia';
+            }
+
+            if (totalCaMgDl < 8.5 && evalTarget >= 8.5 && evalTarget <= 10.5) {
+                result.isPseudohypocalcemia = true;
+            }
+
+            result.status = result.correctedStatus;
         }
 
         return result;
@@ -411,8 +429,26 @@ const ELECTROLYTE_ENGINE = {
         const caPo4Product = (serumCaMgDl > 0 && serumPo4MgDl > 0) ? Math.round(serumCaMgDl * serumPo4MgDl * 10) / 10 : null;
         const isHighProduct = caPo4Product !== null && caPo4Product >= 55;
 
+        if (serumPo4MgDl > 4.5) {
+            return {
+                severity: 'Hyperphosphatemia (>4.5 mg/dL)',
+                caPo4Product: caPo4Product,
+                isPrecipitationRisk: isHighProduct,
+                recommendedDoseMmol: 0,
+                safetyGate: isHighProduct ? 'CRITICAL WARNING: Ca × PO4 product ≥ 55 mg²/dL². High risk of metastatic tissue calcification and acute renal failure. Correct severe hypocalcemia first or administer with extreme caution.' : 'Safe Ca × PO4 product (< 55 mg²/dL²).',
+                management: 'Restrict dietary phosphate, administer oral phosphate binders (Sevelamer, Calcium acetate). Avoid IV calcium unless severe symptomatic tetany.'
+            };
+        }
+
         if (serumPo4MgDl >= 2.5) {
-            return { severity: 'Normal', note: 'Phosphate within normal range (2.5 - 4.5 mg/dL)' };
+            return {
+                severity: 'Normal (2.5 - 4.5 mg/dL)',
+                caPo4Product: caPo4Product,
+                isPrecipitationRisk: isHighProduct,
+                recommendedDoseMmol: 0,
+                safetyGate: 'Safe physiological range.',
+                note: 'Phosphate within normal range (2.5 - 4.5 mg/dL)'
+            };
         }
 
         const isSevere = serumPo4MgDl < 1.0;

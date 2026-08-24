@@ -1,3 +1,24 @@
+## [2.12.0] — 2026-08-24
+
+### Electrolyte & Acid-Base Suite 2026 Overhaul
+- **Electrolyte Hub (`tools/electrolyte-hub.html`):**
+  - Upgraded Patient Variables strip with eGFR, Serum Albumin, and Blood Glucose.
+  - Implemented 1-tap **Quick Lab Batch Entry Modal** (`#quick-lab-modal`) for all 18 clinical parameters with universal two-way reactive state synchronization across all 6 tabs.
+  - Added bedside 1-tap quick preset chips for critical electrolyte values.
+  - Added explicit **Administration Route switch** (`Peripheral IV` vs `Central Line`) for Potassium drip calculations with clinical safety enforcement.
+  - Implemented **Fractional Excretions Suite** in Tab 5 ($\text{FE}_{\text{Na}}$, $\text{FE}_{\text{Urea}}$, $\text{FE}_{\text{Urate}}$, $\text{CCCR}$) with two-way link to diagnostic decision workup.
+  - Added interactive Calcium Disorder diagnostic wizard connected to `evaluateCalciumWorkup`.
+  - Added smart sparse HIS clinical note generator with Zero-PHI compliance and toast copy feedback.
+  - Added dedicated A4 Doctor's Order Print Worksheet layout (`#print-worksheet-area`) with hospital header, sticker area, 4-column order prescription table, and physician signature block.
+- **Electrolyte Engine (`shared/electrolyte-engine.js`):**
+  - Fixed `calcPhosphateRepletion` hyperphosphatemia bug and properly evaluated $[\text{Ca} \times \text{PO}_4]$ precipitation risk gate ($\ge 55\text{ mg}^2/\text{dL}^2$).
+  - Enhanced `evaluateCalcium` with dual status output and pseudohypocalcemia detection.
+  - Verified eGFR dose reduction for Magnesium repletion.
+- **Automated Tests (`tests/electrolyte-engine.test.js`):**
+  - Updated and expanded unit tests covering new engine capabilities (20/20 green).
+- **PWA Cache (`service-worker.js`):**
+  - Bumped offline cache version to `er-hub-v77` (`24/08/2569`).
+
 ## [2.11.2] — 2026-08-23
 
 ### NIHSS V2 Blank Cell Placeholder & Service Worker Update

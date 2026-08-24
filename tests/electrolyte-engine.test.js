@@ -154,12 +154,29 @@ describe('ELECTROLYTE_ENGINE: Calcium, Magnesium & Gaps', () => {
     });
 
     test('Phosphate & Calcium Precipitation Gate ([Ca x PO4] < 55)', () => {
-        // Ca = 10, PO4 = 6.0 -> Product = 60 >= 55 -> Precipitation risk!
-        const highRisk = ELECTROLYTE_ENGINE.calcPhosphateRepletion(2.0, 10.0, 70);
-        assert.ok(highRisk.isPrecipitationRisk === false || highRisk.caPo4Product < 55);
+        // Ca = 9.0, PO4 = 2.0 -> Product = 18 < 55 -> Safe
+        const safeModerate = ELECTROLYTE_ENGINE.calcPhosphateRepletion(2.0, 9.0, 70);
+        assert.equal(safeModerate.isPrecipitationRisk, false);
+        assert.equal(safeModerate.caPo4Product, 18.0);
+        assert.equal(safeModerate.severity, 'Moderate (1.0 - 2.4 mg/dL)');
 
+        // Ca = 10.0, PO4 = 6.0 -> Product = 60 >= 55 -> Hyperphosphatemia with Precipitation Risk!
         const dangerProduct = ELECTROLYTE_ENGINE.calcPhosphateRepletion(6.0, 10.0, 70);
-        assert.equal(dangerProduct.severity, 'Normal'); // PO4 6.0 is hyperphosphatemic
+        assert.equal(dangerProduct.severity, 'Hyperphosphatemia (>4.5 mg/dL)');
+        assert.equal(dangerProduct.caPo4Product, 60.0);
+        assert.equal(dangerProduct.isPrecipitationRisk, true);
+        assert.ok(dangerProduct.safetyGate.includes('CRITICAL WARNING'));
+    });
+
+    test('Magnesium Repletion with eGFR adjustment', () => {
+        // Normal eGFR 90: full rate 1.0 g/hr
+        const normalEgfr = ELECTROLYTE_ENGINE.calcMgRepletion(0.8, false, 90);
+        assert.ok(normalEgfr.maintenanceInfusion.includes('1.0 g/hr'));
+
+        // Impaired eGFR 20: 50% reduced rate 0.5 g/hr
+        const renalEgfr = ELECTROLYTE_ENGINE.calcMgRepletion(0.8, false, 20);
+        assert.ok(renalEgfr.maintenanceInfusion.includes('0.5 g/hr'));
+        assert.ok(renalEgfr.maintenanceInfusion.includes('reduced by 50%'));
     });
 
     test('Modern ISE Anion Gap & Delta-Delta Ratio', () => {
