@@ -914,16 +914,16 @@
             <div class="patient-demographics-row">
                 <div class="pt-field">
                     <label for="pt-hn">HN:</label>
-                    <input type="text" id="pt-hn" class="input-control-sm" style="width:130px;" placeholder="PATIENT_MOCK_001">
+                    <input type="text" id="pt-hn" class="input-control-sm" style="width:130px;" value="" placeholder="">
                 </div>
                 <div class="pt-field">
                     <label for="pt-weight">Wt:</label>
-                    <input type="number" id="pt-weight" class="input-control-sm" style="width:65px;" value="60" min="5" max="250" step="0.5">
+                    <input type="number" id="pt-weight" class="input-control-sm" style="width:65px;" value="" min="5" max="250" step="0.5">
                     <span style="font-size:11px; color:var(--graphite); font-weight:600;">kg</span>
                 </div>
                 <div class="pt-field">
                     <label for="pt-age">Age:</label>
-                    <input type="number" id="pt-age" class="input-control-sm" style="width:55px;" value="60" min="0" max="120">
+                    <input type="number" id="pt-age" class="input-control-sm" style="width:55px;" value="" min="0" max="120">
                     <span style="font-size:11px; color:var(--graphite); font-weight:600;">yr</span>
                 </div>
                 <div class="pt-field">
@@ -942,7 +942,7 @@
                 <div class="pt-telemetry-badge">
                     <div class="telemetry-item">
                         <span class="telemetry-label">TBW:</span>
-                        <strong id="disp-tbw" class="telemetry-val" style="color:var(--signal-blue);">36.0 L</strong>
+                        <strong id="disp-tbw" class="telemetry-val" style="color:var(--signal-blue);">--</strong>
                     </div>
                     <div class="telemetry-item" style="border-left:1px solid var(--rule-dark); padding-left:8px;">
                         <span class="telemetry-label">Renal:</span>
@@ -2516,6 +2516,8 @@
 
     // Load Normal Template (Soft Green highlighting)
     document.getElementById('btn-load-normal-labs').addEventListener('click', () => {
+        document.getElementById('pt-weight').value = '60';
+        document.getElementById('pt-age').value = '60';
         const normalVals = {
             'fs-na': '140', 'fs-k': '4.0', 'fs-cl': '102', 'fs-hco3': '24',
             'fs-bun': '15', 'fs-cr': '1.0', 'fs-glu': '100', 'fs-egfr': '90',
@@ -2531,11 +2533,15 @@
                 syncAndRecalc(id, val);
             }
         });
+        recalc();
         showToast('↺ Loaded Normal Laboratory Template');
     });
 
-    // Clear All Labs (Reset to empty & clean white)
+    // Clear All Labs & Demographics (Reset to empty & clean white)
     document.getElementById('btn-clear-labs').addEventListener('click', () => {
+        document.getElementById('pt-hn').value = '';
+        document.getElementById('pt-weight').value = '';
+        document.getElementById('pt-age').value = '';
         const allLabIds = [
             'fs-na', 'fs-k', 'fs-cl', 'fs-hco3', 'fs-bun', 'fs-cr', 'fs-glu', 'fs-egfr',
             'fs-ica', 'fs-total-ca', 'fs-alb', 'fs-mg', 'fs-po4', 'fs-ph', 'fs-pco2',
@@ -2554,7 +2560,7 @@
             }
         });
         recalc();
-        showToast('🧹 Cleared All Lab Inputs');
+        showToast('🧹 Cleared All Inputs');
     });
 
     function showToast(msg) {
@@ -2568,8 +2574,10 @@
     // MAIN RECALCULATION CONTROLLER
     // ═══════════════════════════════════════════
     function recalc() {
-        const weight = parseFloat(document.getElementById('pt-weight').value) || 60;
-        const age = parseInt(document.getElementById('pt-age').value) || 60;
+        const weightStr = document.getElementById('pt-weight').value.trim();
+        const ageStr = document.getElementById('pt-age').value.trim();
+        const weight = weightStr !== '' ? parseFloat(weightStr) : null;
+        const age = ageStr !== '' ? parseInt(ageStr) : null;
         const sex = document.querySelector('input[name="pt-sex"]:checked')?.value || 'male';
         const egfrStr = document.getElementById('fs-egfr').value.trim();
         const albStr = document.getElementById('fs-alb').value.trim();
@@ -2580,8 +2588,16 @@
         const glu = gluStr !== '' ? parseFloat(gluStr) : 100; // default for glucose shift if needed
 
         // 1. TBW & Patient Context Sub-strip
-        const tbw = ELECTROLYTE_ENGINE.calcTBW(weight, sex, age);
-        document.getElementById('disp-tbw').textContent = `${tbw} L`;
+        let tbw = 36;
+        if (weight !== null && age !== null) {
+            tbw = ELECTROLYTE_ENGINE.calcTBW(weight, sex, age);
+            document.getElementById('disp-tbw').textContent = `${tbw} L`;
+        } else if (weight !== null) {
+            tbw = ELECTROLYTE_ENGINE.calcTBW(weight, sex, 60);
+            document.getElementById('disp-tbw').textContent = `${tbw} L`;
+        } else {
+            document.getElementById('disp-tbw').textContent = '--';
+        }
 
         const renalTierEl = document.getElementById('disp-renal-tier');
         if (egfr !== null) {
@@ -2626,8 +2642,8 @@
             document.getElementById('disp-corr-na-katz').textContent = corrKatz;
 
             // 3% Bolus
-            const isPediatric = age < 15;
-            const bolus = ELECTROLYTE_ENGINE.calcHyponatremiaBolus(weight, isPediatric);
+            const isPediatric = (age || 60) < 15;
+            const bolus = ELECTROLYTE_ENGINE.calcHyponatremiaBolus(weight || 60, isPediatric);
             document.getElementById('disp-3pct-bolus').textContent = `${bolus.bolusRange || bolus.bolusMl + ' mL'}`;
             document.getElementById('disp-3pct-bolus-subtitle').textContent = isPediatric ? 'Pediatric 2 mL/kg over 10-20 min' : 'Adult fixed bolus over 10-20 min';
 
@@ -2725,7 +2741,7 @@
         const bicarbForm = document.getElementById('acid-formulation').value;
 
         if (currHco3 !== null) {
-            const bicarbDef = ELECTROLYTE_ENGINE.calcBicarbonateDeficit(weight, currHco3, targetHco3, isSevereAcid);
+            const bicarbDef = ELECTROLYTE_ENGINE.calcBicarbonateDeficit(weight || 60, currHco3, targetHco3, isSevereAcid);
             if (bicarbDef) {
                 document.getElementById('disp-bicarb-total').textContent = `${bicarbDef.deficitMeq}`;
                 if (bicarbForm === '75') {
@@ -2759,7 +2775,7 @@
 
         if (etiology === 'toxicology_salicylate') {
             salicylateCard.style.display = 'block';
-            const salRep = ELECTROLYTE_ENGINE.calcSalicylateAlkalinization({ weightKg: weight, formulation: bicarbForm });
+            const salRep = ELECTROLYTE_ENGINE.calcSalicylateAlkalinization({ weightKg: weight || 60, formulation: bicarbForm });
             document.getElementById('disp-salicylate-recipe').textContent = salRep.recipe;
             document.getElementById('disp-salicylate-rate').textContent = salRep.recommendedRateMlHr;
         } else {
@@ -2873,7 +2889,7 @@
         const caPo4ProdEl = document.getElementById('disp-ca-po4-product');
 
         if (po4 !== null) {
-            const po4Rep = ELECTROLYTE_ENGINE.calcPhosphateRepletion(po4, totCa || 9.0, weight);
+            const po4Rep = ELECTROLYTE_ENGINE.calcPhosphateRepletion(po4, totCa || 9.0, weight || 60);
             if (po4 < 1.0) {
                 po4StatEl.textContent = 'SEVERE HYPO';
                 po4StatEl.style.color = '#f87171';

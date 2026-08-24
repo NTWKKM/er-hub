@@ -2,6 +2,7 @@
 
 ### Electrolyte & Acid-Base Suite 2026 Overhaul & UI Polish
 - **Electrolyte Hub (`tools/electrolyte-hub.html`):**
+  - **Clean Initial Demographics & Labs State:** Defaulted all patient demographic inputs (`HN`, `Wt`, `Age`) and Telemetry indicators (`TBW`, `Renal`, `Albumin`) to clean empty states (`--`) with no placeholder hints, matching the empty lab flowsheet concept.
   - **Adjusted Default Target $\text{HCO}_3^-$ to $15\text{ mEq/L}$:** Updated initial Target $\text{HCO}_3^-$ input from $18$ to $15\text{ mEq/L}$ to align with conservative initial resuscitation safety margins and prevent post-resuscitation overshoot alkalosis.
   - **Unified Patient & Quick Lab Command Board:** Embedded the entire **Quick Lab Flowsheet** directly inline below the patient demographics header (eliminating the modal popup), providing a seamless 3-panel dashboard (`Chem-8`, `ABG/Minerals`, `Osmolality & Urine Profile`) with instant two-way live reactivity across all 6 tabs.
   - **Clean Initial State & Dynamic Range Highlighting:** Defaulted all lab input fields to clean empty strings without phantom numbers or placeholder hints. Added real-time physiological range coloring (`.lab-low` soft sky blue, `.lab-normal` soft emerald green, `.lab-high` soft rose red) with instant feedback across the entire suite.
