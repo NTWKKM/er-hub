@@ -68,6 +68,13 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | Cyanide Antidote Dosing | `getCyanideAntidoteDosing()` | `shared/burn-engine.js` |
 | CO Assessment & HBO | `getCOAssessment()` | `shared/burn-engine.js` |
 | Inhalation Risk Triage | `evaluateInhalationRisk()` | `shared/burn-engine.js` |
+| Sodium Correction (Hillier/Katz) | `calcCorrectedSodium()` | `shared/electrolyte-engine.js` |
+| Hyponatremia Adrogué-Madias | `calcAdrogueMadias()` | `shared/electrolyte-engine.js` |
+| Free Water Deficit (FWD) | `calcFreeWaterDeficit()` | `shared/electrolyte-engine.js` |
+| Spot UK/UCr Ratio (ex-TTKG) | `calcSpotUKCr()` | `shared/electrolyte-engine.js` |
+| Bicarbonate Deficit | `calcBicarbonateDeficit()` | `shared/electrolyte-engine.js` |
+| Direct Ionized Calcium Eval | `evaluateCalcium()` | `shared/electrolyte-engine.js` |
+| Modern Anion Gap & Delta-Delta | `calcAnionGap()`, `calcDeltaDelta()` | `shared/electrolyte-engine.js` |
 | Blank print manifest | `ED_BLANK_PRINT.apply()` | `shared/blank-print-engine.js` |
 | Print lifecycle | `ED_PRINT_BOOTSTRAP` | `shared/print-bootstrap.js` |
 | Form validation | `ED_VALIDATE` | `shared/form-validate.js` |
@@ -99,6 +106,16 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | Child Urine Output Target | $1.0\text{ mL/kg/hr}$ | ATLS 11th Table 9-1 |
 | Electrical Burn Target UO | $100\text{ mL/hr}$ (Adult), $1.0\text{--}2.0\text{ mL/kg/hr}$ (Child) until pigment clears | ATLS 11th Table 9-1 |
 | Hydroxocobalamin Dosing | $70\text{ mg/kg}$ up to $5000\text{ mg}$ (Capped when weight $>71.43\text{ kg}$) | Goldfrank's Toxicologic Emergencies |
+| Hyponatremia 24h Ceiling | Max $\le 8\text{ mEq/L/24h}$ (Standard) / $4\text{--}6\text{ mEq/L/24h}$ (High ODS risk) | ESE/ERBP & US Hyponatremia Guidelines |
+| Hyponatremia Emergency Bolus | $3\%\text{ NaCl } 100\text{--}150\text{ mL IV}$ over 10-20m (target acute $+4\text{--}6\text{ mEq/L}$) | European / US Hyponatremia Guidelines |
+| Peripheral Potassium Limit | Max rate $\le 20\text{ mEq/hr}$, Max concentration $\le 40\text{ mEq/L}$ | ISMP & Clinical Practice Guidelines |
+| Central Line Potassium Limit | Max rate $\le 40\text{ mEq/hr}$, Max concentration $\le 100\text{ mEq/L}$ (Telemetry) | ISMP High-Alert Drug Standards |
+| DKA Bicarbonate Threshold | Bicarbonate CONTRAINDICATED if $pH \ge 6.90$; only given if $pH < 6.90$ | ADA 2024/2025 Standards of Care |
+| Lactic Acidosis Bicarbonate | SSC recommends against if $pH > 7.15$; Indicated in Severe Acidemia + AKI Stage 2-3 | BICAR-ICU (Lancet 2018) & SSC 2026 |
+| Calcium Measurement Standard | Direct Ionized Calcium ($iCa^{2+}$) is gold standard; Payne formula deprecated | IFCC/IOF/EFLM 2026 & KDIGO 2024 |
+| Modern ISE Anion Gap Baseline | Normal reference range is $4\text{--}10\text{ mEq/L}$ ($6 \pm 3\text{ mEq/L}$) | Modern ISE Analyzers (Sadler 2020) |
+| Magnesium Repletion Rate | Max infusion rate $\le 1.0\text{ g/hr}$ (except TdP/Arrest) to prevent renal loss | Clinical Pharmacokinetics & Nephrology |
+| Phosphate Precipitation Gate | $[Ca \times PO_4] \text{ product } < 55\text{ mg}^2/\text{dL}^2$ | Critical Care Nephrology Standards |
 
 ## Print Conventions
 

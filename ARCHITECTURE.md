@@ -170,6 +170,41 @@ Comprehensive acute burn assessment and resuscitation calculation tool built str
 - **Inhalation Injury & Smoke Toxicology:** Clinical risk checklist, immediate intubation triggers, airway safety pearls (large ETT $\ge 7.5\text{--}8.0\text{ mm}$, Succinylcholine $>24\text{h}$ hyperkalemia guard), focused ATLS Fig 9-1 airway compromise photography, Carbon Monoxide ($COHb$, $100\%\text{ O}_2$ half-life, HBO criteria), and Cyanide Hydroxocobalamin ($5\text{ g}$ adult / $70\text{ mg/kg}$ child, capped at $>71.43\text{ kg}$) dosing with Sodium Thiosulfate 25% alternative.
 - **Circumferential Burn & ABA Referral Checklist:** Authentic textbook incision diagrams (ATLS 11th Fig 9-4 extremity escharotomy, Tintinalli 9th Ed Fig 217-9 chest/neck escharotomy, Fig 217-8 hand/digits escharotomy) and 10-point ABA 2023 transfer criteria.
 
+### Electrolyte & Acid-Base Hub (`tools/electrolyte-hub.html`) [PROTOTYPE]
+
+Comprehensive electrolyte correction and acid-base decision support tool built strictly to **2026 Critical Care, Nephrology, and Toxicology Consensuses** (KDIGO 2024, IFCC/IOF/EFLM 2026, ADA 2024/2025, BICAR-ICU, SSC, ESE/ERBP). Dynamically powered by `shared/electrolyte-engine.js`.
+Features:
+- **Sodium ($Na^+$) Management:**
+  - Dynamic Hyperglycemia Correction: Hillier ($2.4$ factor for $>400\text{ mg/dL}$) & Katz ($1.6$ factor).
+  - Severe Symptomatic Hyponatremia: Fixed 3% NaCl bolus ($100\text{--}150\text{ mL}$ adult, $2\text{ mL/kg}$ peds) over 10-20 min to target acute $+4\text{ to }+6\text{ mEq/L}$ rise; strict $\le 8\text{ mEq/L/24h}$ safety ceiling ($4\text{--}6\text{ mEq/L}$ if high ODS risk).
+  - Adrogué-Madias Infusion Rate Calculator for non-severe/chronic hyponatremia.
+  - Hypernatremia Free Water Deficit (FWD) with max $10\text{ mEq/L/24h}$ safe lowering rate.
+  - Overcorrection & DDAVP Proactive Clamp / Reactive Rescue protocols.
+- **Potassium ($K^+$) Emergency & Repletion:**
+  - Emergency Hyperkalemia "C-BIG-K-Drop" interactive protocol (Calcium Gluconate with debunked Digoxin "Stone Heart" safety pearl, Insulin+D50, Salbutamol, Bicarbonate, Lokelma/SZC, Emergent Dialysis).
+  - Potassium Deficit estimation curve and IV rate/concentration safety validator (Peripheral line max $20\text{ mEq/hr}, 40\text{ mEq/L}$; Central line max $40\text{ mEq/hr}, 100\text{ mEq/L}$).
+  - Mandatory ROMK Lock: Simultaneous Magnesium check gate.
+- **Metabolic Acidosis & Sodium Bicarbonate:**
+  - Bicarbonate Deficit Calculator with dynamic $f_{VD}$ ($0.5$ standard, $0.8$ severe acidemia).
+  - Evidence-Based Indication Filter: BICAR-ICU criteria for severe acidemia with AKI Stage 2-3 (reducing 28-day mortality & RRT), ADA 2024/2025 DKA threshold ($pH < 6.90$), Toxicology TCA & Salicylate alkalinization.
+  - Isotonic $150\text{ mEq/L}$ Infusion Recipe (3 amp 8.4% NaHCO₃ in 1000 mL D5W at 100-250 mL/hr).
+  - 5 Critical Hazards callout (Paradoxical CNS acidosis, hypokalemia, ionized hypocalcemia, volume overload, oxyhemoglobin shift).
+  - Emergent Dialysis "AEIOU" criteria.
+- **Calcium, Magnesium & Phosphate:**
+  - Direct Ionized Calcium ($iCa^{2+}$) Priority Panel with high-visibility alert on Payne formula inaccuracies (20-40% misclassification).
+  - Acute Hypocalcemia Bolus & Infusion ($0.5\text{--}1.5\text{ mg elemental Ca/kg/hr}$).
+  - Hypercalcemic Crisis Saline Diuresis ($200\text{--}500\text{ mL/hr}$), Calcitonin, and Bisphosphonates.
+  - Slow $MgSO_4$ Infusion ($\le 1.0\text{ g/hr}$) to avoid $>50\%$ renal wasting, with 50% renal reduction for $eGFR < 30$.
+  - Phosphate weight-based dosing ($0.08\text{--}0.50\text{ mmol/kg}$) with $[Ca \times PO_4] < 55\text{ mg}^2/\text{dL}^2$ precipitation safety gate.
+- **Acid-Base & Renal Gaps:**
+  - Modern ISE Anion Gap (Normal $4\text{--}10\text{ mEq/L}$) + Figge Albumin-corrected AG.
+  - Delta-Delta ($\Delta AG / \Delta HCO_3$) mixed disorder interpreter.
+  - Serum Osmolar Gap, Urine Anion Gap ($UAG$), Urine Osmolal Gap ($UOG$), $FE_{Na}, FE_{\text{Urea}}, FE_{\text{Urate}}, CCCR$.
+- **Diagnostic Work-up Engine:**
+  - Interactive branching decision trees for Hyponatremia (Osmolality $\to$ Urine Osm $\to$ Volume $\to$ $U_{Na} \to FE_{\text{Urate}}$ SIADH vs CSW), Hypokalemia (Shift $\to$ Spot $U_K/U_{\text{Cr}} \to$ BP $\to$ Acid-Base $\to$ Renin/Aldo/$U_{Cl}$), and Hypercalcemia.
+- **Documentation & Printing:**
+  - One-click "Generate HIS Clinical Note" with clipboard copy and A4 print support.
+
 ### Shared Engines (`shared/`)
 
 | File | Role | Dependencies |
@@ -183,7 +218,8 @@ Comprehensive acute burn assessment and resuscitation calculation tool built str
 | `stroke-engine.js` | Stroke rt-PA thrombolytic dosing engine. Exports `calcRtpaDose` for 0.9 mg/kg and 0.6 mg/kg regimens. | None |
 | `stemi-engine.js` | STEMI TNK weight-bracket dosing engine. Exports `calcTNK`. | None |
 | `ob-engine.js` | MgSO4 dosing & pre-eclampsia severity classification engine. | None |
-| `burn-engine.js` | Burn assessment & resuscitation engine. Exports `LUND_BROWDER_TABLE`, `ABA_REFERRAL_CRITERIA`, `AIRWAY_SAFETY_PEARLS`, `ANATOMICAL_PRESETS`, `getLundBrowderAgeColumn`, `calculateTBSA`, `calculatePediatricMaintenance`, `calculateFluidRequirements`, `getTargetUrineOutput`, `getUrineOutputTitration`, `getCyanideAntidoteDosing`, `getCOAssessment`, `estimateCOClearanceTime`, `evaluatePresumptiveCyanideToxicity`, `evaluateInhalationRisk`, `getRegionPercentages`. | None |
+| `burn-engine.js` | Burn assessment & resuscitation engine. | None |
+| `electrolyte-engine.js` | Electrolyte and acid-base calculation and diagnostic tree engine. Grounded in 2026 international consensus. Exports `calcTBW`, `calcCorrectedSodium`, `calcAdrogueMadias`, `calcHyponatremiaInfusionRate`, `calcHyponatremiaBolus`, `calcFreeWaterDeficit`, `calcPotassiumDeficit`, `calcSpotUKCr`, `evaluatePotassiumSafety`, `calcBicarbonateDeficit`, `evaluateBicarbonateIndication`, `evaluateCalcium`, `calcHypercalcemiaHydration`, `calcMgRepletion`, `calcPhosphateRepletion`, `calcAnionGap`, `calcDeltaDelta`, `calcOsmolarGap`, `calcUrineGaps`, `calcFractionalExcretions`, `evaluateHyponatremiaWorkup`, `evaluateHypokalemiaWorkup`. | None |
 | `drug-data.js` | 17-drug catalog: concentrations, dose limits, safety ceilings, titration instructions, optional `indications` array for per-drug guide rendering, optional `absoluteMaxPerHour` for weight-based drugs with clinical hourly ceilings (e.g. Fentanyl 500 mcg/hr). | None |
 | `print-bootstrap.js` | Print/page lifecycle: `handlePrintBlankDirect()`, `handlePrintBlankDirectPdf()`, `openBlankPdf()`, `showResults()`, `clearResults()`, date/time helpers. | `components.js` |
 | `blank-print-engine.js` | Declarative blank-print reset. Each page registers a manifest of reset rules (`{ id, value }` for textContent, `{ id, html }` for innerHTML, etc.). `apply()` executes all rules. Used by rtpa and nstemi only. | None |
