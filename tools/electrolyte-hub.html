@@ -197,6 +197,13 @@
             margin-bottom: 16px;
         }
 
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
         .card {
             background: var(--surface-card);
             border: 1px solid var(--rule);
@@ -420,7 +427,7 @@
 
         @media (max-width: 768px) {
             .nav-subtitle { display: none; }
-            .grid-2 { grid-template-columns: 1fr; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
             .patient-strip { grid-template-columns: 1fr 1fr; }
         }
     </style>
@@ -836,7 +843,7 @@
                     </div>
                 </div>
                 <div id="disp-acid-guidance" class="alert-box alert-success" style="margin-top:12px;">
-                    <span><strong>BICAR-ICU Landmark Trial (Lancet 2018):</strong> In severe acidemia (pH ≤ 7.20) with AKI Stage 2-3 (n=182), NaHCO₃ infusion significantly <strong>reduced 28-day mortality from 63% to 46%</strong> (p=0.0283, ARR 17%, NNT=6), <strong>reduced RRT requirement from 73% to 51%</strong> (p=0.002, ARR 22%, NNT=5), and increased RRT-free days to 24 vs 20 days (p=0.006).</span>
+                    <span><strong>BICAR-ICU Landmark Evidence (Lancet 2018):</strong> In severe acidemia (pH ≤ 7.20) with AKI Stage 2-3 (n=182), NaHCO₃ infusion significantly <strong>reduced 28-day mortality from 63% to 46%</strong> (p=0.0283, ARR 17%, NNT=6), <strong>reduced RRT requirement from 73% to 51%</strong> (p=0.002, ARR 22%, NNT=5), and increased RRT-free days to 24 vs 20 days (p=0.006).</span>
                 </div>
 
                 <!-- Salicylate Urinary Alkalinization Sub-card -->
@@ -900,68 +907,90 @@
          TAB 4: CALCIUM, MAGNESIUM & PHOSPHATE
     ════════════════════════════════════════ -->
     <div id="tab-minerals" class="tab-panel">
-        <div class="grid-2">
-            <!-- Calcium Evaluation (Direct iCa Priority) -->
-            <div class="card">
-                <div class="card-header">
-                    <span>1. Calcium Assessment (Direct iCa²⁺ Priority)</span>
+        <div class="alert-box alert-danger" style="margin-bottom:16px;">
+            <span><strong>IFCC/IOF/EFLM 2026 &amp; KDIGO Consensus:</strong> Albumin-corrected calcium (Payne formula) has a 20-40% error rate. <strong>Direct Ionized Calcium (iCa²⁺ via blood gas)</strong> is the sole reliable critical care standard.</span>
+        </div>
+
+        <div class="grid-3">
+            <!-- 1. Calcium Module Card -->
+            <div class="card" style="border-top:4px solid var(--signal-blue);">
+                <div class="card-header" style="color:var(--signal-blue);">
+                    <span>🦴 1. Calcium (Ca²⁺) Assessment</span>
                 </div>
-                <div class="alert-box alert-danger">
-                    <span><strong>IFCC/IOF/EFLM 2026 &amp; KDIGO:</strong> Payne corrected calcium has a 20-40% error rate. <strong>Direct Ionized Calcium (iCa²⁺)</strong> via blood gas is the sole gold standard in critical care.</span>
+                <div class="input-group" style="margin-bottom:8px;">
+                    <label for="min-ica">Direct Ionized Ca²⁺ (mmol/L) [Priority]</label>
+                    <input type="number" id="min-ica" class="input-control" value="" step="0.01" placeholder="Normal: 1.15 - 1.33">
                 </div>
-                <div class="grid-2">
-                    <div class="input-group">
-                        <label for="min-ica">Direct Ionized Ca²⁺ (mmol/L)</label>
-                        <input type="number" id="min-ica" class="input-control" value="" step="0.01" placeholder="Normal: 1.15 - 1.33">
-                    </div>
-                    <div class="input-group">
-                        <label for="min-total-ca">Total Calcium (mg/dL) [Screening]</label>
-                        <input type="number" id="min-total-ca" class="input-control" value="" step="0.1" placeholder="Normal: 8.5 - 10.5">
-                    </div>
+                <div class="input-group" style="margin-bottom:8px;">
+                    <label for="min-total-ca">Total Calcium (mg/dL) [Screening]</label>
+                    <input type="number" id="min-total-ca" class="input-control" value="" step="0.1" placeholder="Normal: 8.5 - 10.5">
                 </div>
-                <div class="stat-banner" style="margin-top:12px;">
+                
+                <div class="stat-banner" style="margin-top:12px; min-height:48px;">
                     <div>
-                        <div class="stat-label">Calcium Clinical Status</div>
-                        <div id="disp-ca-status-desc" style="font-size:11px; color:#94a3b8;">Enter values to evaluate</div>
+                        <div class="stat-label">Calcium Status</div>
+                        <div id="disp-ca-status-desc" style="font-size:11px; color:#cbd5e1;">Enter lab values</div>
                     </div>
-                    <div id="disp-ca-status" class="stat-value" style="color:#94a3b8;">--</div>
+                    <div id="disp-ca-status" class="stat-value" style="color:#94a3b8; font-size:1.15rem;">--</div>
                 </div>
-                <div class="card-sub">
-                    <strong style="font-size:12px;">Acute Symptomatic Hypocalcemia Protocol:</strong>
-                    <p style="font-size:12px; margin:4px 0 0;"><strong>10% Calcium Gluconate 10-20 mL (1-2g) in 100 mL D5W</strong> IV over 10-20 min. Follow with infusion: 10-20g in 1,000 mL D5W at <strong>0.5 - 1.5 mg elemental Ca/kg/hr</strong>.</p>
+
+                <div id="disp-ca-treatment-box" class="card-sub" style="font-size:12px;">
+                    <strong>Clinical Action:</strong>
+                    <p style="margin:4px 0 0; color:var(--graphite);">Enter Direct Ionized Calcium or Total Calcium to see real-time clinical protocol.</p>
                 </div>
             </div>
 
-            <!-- Magnesium & Phosphate Modules -->
-            <div class="card">
-                <div class="card-header">
-                    <span>2. Magnesium &amp; Phosphate Replacement</span>
+            <!-- 2. Magnesium Module Card -->
+            <div class="card" style="border-top:4px solid var(--signal-cyan);">
+                <div class="card-header" style="color:var(--signal-cyan);">
+                    <span>⚡ 2. Magnesium (Mg²⁺) Assessment</span>
                 </div>
-                <div class="grid-2">
-                    <div class="input-group">
-                        <label for="min-mg">Serum Mg²⁺ (mg/dL)</label>
-                        <input type="number" id="min-mg" class="input-control" value="" step="0.1" placeholder="Normal: 1.7 - 2.4">
+                <div class="input-group" style="margin-bottom:8px;">
+                    <label for="min-mg">Serum Mg²⁺ (mg/dL)</label>
+                    <input type="number" id="min-mg" class="input-control" value="" step="0.1" placeholder="Normal: 1.7 - 2.4">
+                </div>
+                <div class="input-group" style="margin-bottom:8px;">
+                    <label><input type="checkbox" id="min-mg-arrhythmia"> Torsades / Malignant Arrhythmia present</label>
+                </div>
+
+                <div class="stat-banner" style="margin-top:12px; background:#0f766e; min-height:48px;">
+                    <div>
+                        <div class="stat-label">Magnesium Status</div>
+                        <div id="disp-mg-status-desc" style="font-size:11px; color:#ccfbf1;">Enter lab values</div>
                     </div>
-                    <div class="input-group">
-                        <label for="min-po4">Serum PO₄³⁻ (mg/dL)</label>
-                        <input type="number" id="min-po4" class="input-control" value="" step="0.1" placeholder="Normal: 2.5 - 4.5">
+                    <div id="disp-mg-status" class="stat-value" style="color:#94a3b8; font-size:1.15rem;">--</div>
+                </div>
+
+                <div id="disp-mg-treatment-box" class="card-sub" style="font-size:12px;">
+                    <strong>Clinical Action:</strong>
+                    <p style="margin:4px 0 0; color:var(--graphite);">Enter Serum Magnesium to calculate infusion rate and dosing.</p>
+                </div>
+            </div>
+
+            <!-- 3. Phosphate Module Card -->
+            <div class="card" style="border-top:4px solid var(--signal-purple);">
+                <div class="card-header" style="color:var(--signal-purple);">
+                    <span>🧪 3. Phosphate (PO₄³⁻) Assessment</span>
+                </div>
+                <div class="input-group" style="margin-bottom:8px;">
+                    <label for="min-po4">Serum PO₄³⁻ (mg/dL)</label>
+                    <input type="number" id="min-po4" class="input-control" value="" step="0.1" placeholder="Normal: 2.5 - 4.5">
+                </div>
+                
+                <div class="stat-banner" style="margin-top:12px; background:#581c87; min-height:48px;">
+                    <div>
+                        <div class="stat-label">Phosphate Status</div>
+                        <div id="disp-po4-status-desc" style="font-size:11px; color:#e9d5ff;">Enter lab values</div>
                     </div>
+                    <div id="disp-po4-status" class="stat-value" style="color:#94a3b8; font-size:1.15rem;">--</div>
                 </div>
-                <div class="card-sub" style="margin-top:10px;">
-                    <strong style="font-size:12px; color:var(--ink);">MgSO₄ Administration Protocol:</strong>
-                    <p style="font-size:12px; margin:4px 0 0; color:var(--graphite);">
-                        • <strong>Torsades / Cardiac Arrest:</strong> 1-2g IV push over 1-2 min.<br>
-                        • <strong>Repletion:</strong> MgSO₄ 2-4g IV in D5W at <strong>≤ 1.0 g/hr</strong> (slow rate prevents &gt;50% urinary dumping; reduce dose by 50% if eGFR &lt; 30).
-                    </p>
-                </div>
-                <div class="card-sub" style="margin-top:10px;">
+
+                <div id="disp-po4-treatment-box" class="card-sub" style="font-size:12px;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <strong style="font-size:12px; color:var(--ink);">Phosphate &amp; Precipitation Safety Gate:</strong>
-                        <span id="disp-ca-po4-product" style="font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--signal-emerald);">Ca × PO₄ = --</span>
+                        <strong>Precipitation Gate:</strong>
+                        <span id="disp-ca-po4-product" style="font-family:var(--font-mono); font-weight:700; color:var(--signal-emerald);">Ca × PO₄ = --</span>
                     </div>
-                    <p id="disp-po4-guidance" style="font-size:12px; margin:4px 0 0; color:var(--graphite);">
-                        Dose: <strong>0.16 - 0.24 mmol/kg</strong> Sodium/Potassium Phosphate IV over 4-6 hours. Ensure [Ca × PO₄] &lt; 55 mg²/dL².
-                    </p>
+                    <p id="disp-po4-guidance" style="margin:4px 0 0; color:var(--graphite);">Enter PO₄ to evaluate precipitation gate and weight-adjusted dose.</p>
                 </div>
             </div>
         </div>
@@ -1264,13 +1293,13 @@
             </div>
         </div>
 
-        <!-- 7. Optional Sub-Card: Calcium, Mg & PO₄ Diagnostic Work-up -->
+        <!-- 7. Calcium, Mg & PO₄ Diagnostic Work-up (Always Visible Directly) -->
         <div class="card" style="margin-top:20px; border-top:4px solid #64748b;">
             <div class="card-header">
-                <span>🦴 7. Calcium, Magnesium &amp; Phosphate Work-up (Optional Reference)</span>
-                <button type="button" id="btn-toggle-mineral-workup" class="btn btn-secondary" style="padding:2px 10px; font-size:11px;">👁️ Toggle View</button>
+                <span>🦴 7. Calcium, Magnesium &amp; Phosphate Etiology Work-up</span>
+                <span style="font-size:11px; color:var(--graphite);">Clinical Decision Reference</span>
             </div>
-            <div id="mineral-workup-content" style="display:none; margin-top:12px;">
+            <div id="mineral-workup-content" style="margin-top:12px;">
                 <div class="grid-2">
                     <div class="card-sub">
                         <strong style="color:#b91c1c;">Hypercalcemia Work-up:</strong>
@@ -1325,16 +1354,23 @@
         });
     });
 
-    // Mineral workup toggle
-    const toggleMineralBtn = document.getElementById('btn-toggle-mineral-workup');
-    const mineralContent = document.getElementById('mineral-workup-content');
-    if (toggleMineralBtn && mineralContent) {
-        toggleMineralBtn.addEventListener('click', () => {
-            const isHidden = mineralContent.style.display === 'none';
-            mineralContent.style.display = isHidden ? 'block' : 'none';
-            toggleMineralBtn.textContent = isHidden ? '🙈 Hide View' : '👁️ Toggle View';
+    // Slider & Input 2-way Binding helper
+    function bindSliderInput(sliderId, inputId) {
+        const slider = document.getElementById(sliderId);
+        const input = document.getElementById(inputId);
+        if (!slider || !input) return;
+        slider.addEventListener('input', (e) => {
+            input.value = e.target.value;
+            recalc();
+        });
+        input.addEventListener('input', (e) => {
+            slider.value = e.target.value;
+            recalc();
         });
     }
+
+    bindSliderInput('na-target-slider', 'na-target-delta');
+    bindSliderInput('k-iv-rate-slider', 'k-iv-rate-input');
 
     // Main Recalculate Controller
     function recalc() {
@@ -1389,7 +1425,7 @@
         const kFluidSel = document.getElementById('k-iv-fluid').value;
         const kFluidVol = kFluidSel.startsWith('500') ? 500 : 1000;
         const kclMeqAdded = parseFloat(document.getElementById('k-iv-meq').value) || 40;
-        const kPumpRate = parseFloat(document.getElementById('k-iv-rate-input').value) || 100;
+        const kPumpRate = parseFloat(document.getElementById('k-iv-rate-input').value) || parseFloat(document.getElementById('k-iv-rate-slider').value) || 100;
         const isCentralK = kclMeqAdded > 40;
 
         const kInfusionResult = ELECTROLYTE_ENGINE.calcPotassiumInfusion({
@@ -1465,12 +1501,13 @@
             bicarbIndEl.innerHTML = `<span><strong>${bicarbInd.summary}</strong></span>`;
         }
 
-        // 5. Calcium & Minerals (Handles blank inputs gracefully)
+        // 5. Calcium, Magnesium & Phosphate (Tab 4)
         const icaVal = document.getElementById('min-ica').value.trim();
         const totCaVal = document.getElementById('min-total-ca').value.trim();
         const mgVal = document.getElementById('min-mg').value.trim();
         const po4Val = document.getElementById('min-po4').value.trim();
         const albVal = document.getElementById('gap-alb').value.trim();
+        const isArrhythmia = document.getElementById('min-mg-arrhythmia').checked;
 
         const ica = icaVal !== '' ? parseFloat(icaVal) : null;
         const totCa = totCaVal !== '' ? parseFloat(totCaVal) : null;
@@ -1478,39 +1515,117 @@
         const mg = mgVal !== '' ? parseFloat(mgVal) : null;
         const po4 = po4Val !== '' ? parseFloat(po4Val) : null;
 
+        // Calcium Output
         const caDescEl = document.getElementById('disp-ca-status-desc');
         const caStatEl = document.getElementById('disp-ca-status');
+        const caTreatBox = document.getElementById('disp-ca-treatment-box');
 
         if (ica !== null || totCa !== null) {
             const caEval = ELECTROLYTE_ENGINE.evaluateCalcium(ica || 0, totCa || 0, alb);
             if (caEval.status.includes('hypo')) {
-                caStatEl.textContent = 'HYPO';
+                const isSev = caEval.status.includes('severe');
+                caStatEl.textContent = isSev ? 'SEVERE HYPO' : 'HYPOCALCEMIA';
                 caStatEl.style.color = '#f87171';
-                caDescEl.textContent = `Hypocalcemia (${caEval.primaryType === 'ionized' ? 'iCa ' + ica + ' mmol/L' : 'Total Ca ' + totCa + ' mg/dL'})`;
+                caDescEl.textContent = caEval.primaryType === 'ionized' ? `iCa ${ica} mmol/L (Normal 1.15 - 1.33)` : `Total Ca ${totCa} mg/dL (Normal 8.5 - 10.5)`;
+                caTreatBox.innerHTML = `<strong>Acute Hypocalcemia Protocol:</strong><p style="margin:4px 0 0; color:var(--ink);">• <strong>10% Calcium Gluconate 10-20 mL (1-2g) in 100 mL D5W</strong> IV over 10-20 min.<br>• Follow with infusion: <strong>10-20g in 1,000 mL D5W at 0.5 - 1.5 mg elemental Ca/kg/hr</strong>.</p>`;
             } else if (caEval.status.includes('hyper')) {
-                caStatEl.textContent = 'HYPER';
+                const isCrisis = caEval.status.includes('crisis');
+                caStatEl.textContent = isCrisis ? 'HYPER CRISIS' : 'HYPERCALCEMIA';
                 caStatEl.style.color = '#fbbf24';
-                caDescEl.textContent = `Hypercalcemia (${caEval.primaryType === 'ionized' ? 'iCa ' + ica + ' mmol/L' : 'Total Ca ' + totCa + ' mg/dL'})`;
+                caDescEl.textContent = caEval.primaryType === 'ionized' ? `iCa ${ica} mmol/L (High > 1.33)` : `Total Ca ${totCa} mg/dL (High > 10.5)`;
+                caTreatBox.innerHTML = `<strong>Hypercalcemia Protocol:</strong><p style="margin:4px 0 0; color:var(--ink);">• <strong>0.9% NaCl Normal Saline 200 - 500 mL/hr</strong> (target UO 100-150 mL/hr).<br>• <strong>Calcitonin 4 - 8 IU/kg SC/IM q12h</strong> (rapid onset in 4-6h).<br>• <strong>Zoledronic acid 4 mg IV</strong> over 15 min (or Pamidronate 60-90 mg).</p>`;
             } else {
                 caStatEl.textContent = 'NORMAL';
                 caStatEl.style.color = '#34d399';
-                caDescEl.textContent = 'Calcium within physiological range';
+                caDescEl.textContent = caEval.primaryType === 'ionized' ? `iCa ${ica} mmol/L (Normal)` : `Total Ca ${totCa} mg/dL (Normal)`;
+                caTreatBox.innerHTML = `<strong>Clinical Action:</strong><p style="margin:4px 0 0; color:var(--signal-emerald);">✓ Serum Calcium is within physiological normal range.</p>`;
             }
         } else {
             caStatEl.textContent = '--';
             caStatEl.style.color = '#94a3b8';
-            caDescEl.textContent = 'Enter values to evaluate';
+            caDescEl.textContent = 'Enter lab values';
+            caTreatBox.innerHTML = `<strong>Clinical Action:</strong><p style="margin:4px 0 0; color:var(--graphite);">Enter Direct Ionized Calcium or Total Calcium to see real-time protocol.</p>`;
         }
+
+        // Magnesium Output
+        const mgDescEl = document.getElementById('disp-mg-status-desc');
+        const mgStatEl = document.getElementById('disp-mg-status');
+        const mgTreatBox = document.getElementById('disp-mg-treatment-box');
+
+        if (mg !== null) {
+            const mgRep = ELECTROLYTE_ENGINE.calcMgRepletion(mg, isArrhythmia, 90);
+            if (isArrhythmia || mg < 1.0) {
+                mgStatEl.textContent = 'SEVERE HYPO / ARREST';
+                mgStatEl.style.color = '#f87171';
+                mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (Normal 1.7 - 2.4)`;
+                mgTreatBox.innerHTML = `<strong>Emergency MgSO₄ Dosing:</strong><p style="margin:4px 0 0; color:var(--ink);">• <strong>${mgRep.emergencyPush}</strong>.<br>• Maintenance: <strong>${mgRep.maintenanceInfusion}</strong>.<br>• ${mgRep.monitoring}</p>`;
+            } else if (mg < 1.7) {
+                mgStatEl.textContent = 'HYPOMAGNESEMIA';
+                mgStatEl.style.color = '#fbbf24';
+                mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (Mild/Moderate)`;
+                mgTreatBox.innerHTML = `<strong>MgSO₄ Repletion Regimen:</strong><p style="margin:4px 0 0; color:var(--ink);">• IV Option: <strong>${mgRep.ivOption}</strong> (rate ≤ 1.0 g/hr prevents urinary dumping).<br>• Oral Option: <strong>${mgRep.oralRegimen}</strong>.</p>`;
+            } else if (mg > 2.4) {
+                mgStatEl.textContent = 'HYPERMAGNESEMIA';
+                mgStatEl.style.color = '#f87171';
+                mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (Elevated > 2.4)`;
+                mgTreatBox.innerHTML = `<strong>Hypermagnesemia Protocol:</strong><p style="margin:4px 0 0; color:var(--ink);">Discontinue all Magnesium sources. If symptomatic (hypotension/arrhythmia), give <strong>10% Calcium Gluconate 10-20 mL IV</strong> over 5-10 min to antagonize neuromuscular effects.</p>`;
+            } else {
+                mgStatEl.textContent = 'NORMAL';
+                mgStatEl.style.color = '#34d399';
+                mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (Normal 1.7 - 2.4)`;
+                mgTreatBox.innerHTML = `<strong>Clinical Action:</strong><p style="margin:4px 0 0; color:var(--signal-emerald);">✓ Serum Magnesium is within normal physiological range.</p>`;
+            }
+        } else {
+            mgStatEl.textContent = '--';
+            mgStatEl.style.color = '#94a3b8';
+            mgDescEl.textContent = 'Enter lab values';
+            mgTreatBox.innerHTML = `<strong>Clinical Action:</strong><p style="margin:4px 0 0; color:var(--graphite);">Enter Serum Magnesium to calculate infusion rate and dosing.</p>`;
+        }
+
+        // Phosphate Output
+        const po4DescEl = document.getElementById('disp-po4-status-desc');
+        const po4StatEl = document.getElementById('disp-po4-status');
+        const po4GuidanceEl = document.getElementById('disp-po4-guidance');
+        const caPo4ProdEl = document.getElementById('disp-ca-po4-product');
 
         if (po4 !== null) {
             const po4Rep = ELECTROLYTE_ENGINE.calcPhosphateRepletion(po4, totCa || 9.0, weight);
-            if (po4Rep) {
-                document.getElementById('disp-ca-po4-product').textContent = `Ca × PO₄ = ${po4Rep.caPo4Product || '--'}`;
-                document.getElementById('disp-po4-guidance').innerHTML = `Dose: <strong>${po4Rep.recommendedDoseMmol || 0} mmol</strong> IV. ${po4Rep.safetyGate}`;
+            if (po4 < 1.0) {
+                po4StatEl.textContent = 'SEVERE HYPO';
+                po4StatEl.style.color = '#f87171';
+                po4DescEl.textContent = `PO₄³⁻ ${po4} mg/dL (Critical < 1.0)`;
+            } else if (po4 < 2.5) {
+                po4StatEl.textContent = 'HYPOPHOSPHATEMIA';
+                po4StatEl.style.color = '#fbbf24';
+                po4DescEl.textContent = `PO₄³⁻ ${po4} mg/dL (Moderate 1.0 - 2.4)`;
+            } else if (po4 > 4.5) {
+                po4StatEl.textContent = 'HYPERPHOSPHATEMIA';
+                po4StatEl.style.color = '#f87171';
+                po4DescEl.textContent = `PO₄³⁻ ${po4} mg/dL (Elevated > 4.5)`;
+            } else {
+                po4StatEl.textContent = 'NORMAL';
+                po4StatEl.style.color = '#34d399';
+                po4DescEl.textContent = `PO₄³⁻ ${po4} mg/dL (Normal 2.5 - 4.5)`;
+            }
+
+            if (po4Rep && po4Rep.caPo4Product !== null) {
+                caPo4ProdEl.textContent = `Ca × PO₄ = ${po4Rep.caPo4Product} mg²/dL²`;
+                caPo4ProdEl.style.color = po4Rep.isPrecipitationRisk ? 'var(--signal-red)' : 'var(--signal-emerald)';
+                if (po4 < 2.5) {
+                    po4GuidanceEl.innerHTML = `<strong>Dose:</strong> ${po4Rep.recommendedDoseMmol} mmol IV (${po4Rep.infusionDuration}).<br><strong>Safety:</strong> ${po4Rep.safetyGate}`;
+                } else if (po4 > 4.5) {
+                    po4GuidanceEl.innerHTML = `<strong>Management:</strong> Restrict dietary phosphate, administer oral phosphate binders. Avoid IV calcium unless severe symptomatic tetany.`;
+                } else {
+                    po4GuidanceEl.innerHTML = `✓ Serum Phosphate is within normal range (2.5 - 4.5 mg/dL).`;
+                }
             }
         } else {
-            document.getElementById('disp-ca-po4-product').textContent = 'Ca × PO₄ = --';
-            document.getElementById('disp-po4-guidance').innerHTML = 'Enter PO₄ to calculate deficit and [Ca × PO₄] safety product.';
+            po4StatEl.textContent = '--';
+            po4StatEl.style.color = '#94a3b8';
+            po4DescEl.textContent = 'Enter lab values';
+            caPo4ProdEl.textContent = 'Ca × PO₄ = --';
+            caPo4ProdEl.style.color = 'var(--signal-emerald)';
+            po4GuidanceEl.innerHTML = 'Enter PO₄ to evaluate precipitation gate and weight-adjusted dose.';
         }
 
         // 6. Acid-Base Gaps
@@ -1614,22 +1729,11 @@
         document.getElementById('disp-w-alkalo-result').innerHTML = `<div><strong>${alkaloWorkup.category}</strong><br>${alkaloWorkup.primaryCauses ? alkaloWorkup.primaryCauses.join(', ') : ''}<br><em>${alkaloWorkup.nextAction || alkaloWorkup.treatment || ''}</em></div>`;
     }
 
-    // Event Listeners
+    // General Event Listeners
     document.querySelectorAll('input, select').forEach(el => {
         el.addEventListener('input', recalc);
         el.addEventListener('change', recalc);
     });
-
-    // Slider syncs
-    const targetSlider = document.getElementById('na-target-slider');
-    const targetInput = document.getElementById('na-target-delta');
-    targetSlider.addEventListener('input', () => { targetInput.value = targetSlider.value; recalc(); });
-    targetInput.addEventListener('input', () => { targetSlider.value = targetInput.value; recalc(); });
-
-    const kRateSlider = document.getElementById('k-iv-rate-slider');
-    const kRateInput = document.getElementById('k-iv-rate-input');
-    kRateSlider.addEventListener('input', () => { kRateInput.value = kRateSlider.value; recalc(); });
-    kRateInput.addEventListener('input', () => { kRateSlider.value = kRateInput.value; recalc(); });
 
     // Note Generator
     document.getElementById('btn-gen-note').addEventListener('click', () => {
