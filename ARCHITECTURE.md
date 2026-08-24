@@ -186,8 +186,11 @@ Features:
   - Mandatory ROMK Lock: Simultaneous Magnesium check gate.
 - **Metabolic Acidosis & Sodium Bicarbonate:**
   - Bicarbonate Deficit Calculator with dynamic $f_{VD}$ ($0.5$ standard, $0.8$ severe acidemia).
+  - Dual Formulation Support: **7.5% NaHCO₃ (Thailand / GPO Standard — $44.6\text{ mEq}$ / $50\text{ mL}$ ampule, $\approx 1,785\text{ mOsm/L}$)** and **8.4% NaHCO₃ (International — $50.0\text{ mEq}$ / $50\text{ mL}$ ampule, $\approx 2,000\text{ mOsm/L}$)**.
   - Evidence-Based Indication Filter: BICAR-ICU criteria for severe acidemia with AKI Stage 2-3 (reducing 28-day mortality & RRT), ADA 2024/2025 DKA threshold ($pH < 6.90$), Toxicology TCA & Salicylate alkalinization.
-  - Isotonic $150\text{ mEq/L}$ Infusion Recipe (3 amp 8.4% NaHCO₃ in 1000 mL D5W at 100-250 mL/hr).
+  - Isotonic $150\text{ mEq/L}$ Infusion Recipes:
+    - Thailand 7.5%: $3.5\text{ ampules } (175\text{ mL} = 156\text{ mEq})$ in $825\text{--}850\text{ mL } D_5W$ (or $2\text{ amp}$ in $400\text{--}500\text{ mL } D_5W$) at $100\text{--}250\text{ mL/hr}$.
+    - International 8.4%: $3\text{ ampules } (150\text{ mL} = 150\text{ mEq})$ in $850\text{--}1000\text{ mL } D_5W$ at $100\text{--}250\text{ mL/hr}$.
   - 5 Critical Hazards callout (Paradoxical CNS acidosis, hypokalemia, ionized hypocalcemia, volume overload, oxyhemoglobin shift).
   - Emergent Dialysis "AEIOU" criteria.
 - **Calcium, Magnesium & Phosphate:**

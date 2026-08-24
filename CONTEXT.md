@@ -114,6 +114,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | Lactic Acidosis Bicarbonate | SSC recommends against if $pH > 7.15$; Indicated in Severe Acidemia + AKI Stage 2-3 | BICAR-ICU (Lancet 2018) & SSC 2026 |
 | Calcium Measurement Standard | Direct Ionized Calcium ($iCa^{2+}$) is gold standard; Payne formula deprecated | IFCC/IOF/EFLM 2026 & KDIGO 2024 |
 | Modern ISE Anion Gap Baseline | Normal reference range is $4\text{--}10\text{ mEq/L}$ ($6 \pm 3\text{ mEq/L}$) | Modern ISE Analyzers (Sadler 2020) |
+| Sodium Bicarbonate Formulation | Thailand standard: $7.5\%\text{ NaHCO}_3$ ($44.6\text{ mEq} / 50\text{ mL}$ ampule, $0.893\text{ mEq/mL}$); International: $8.4\%\text{ NaHCO}_3$ ($50\text{ mEq} / 50\text{ mL}$ ampule, $1.0\text{ mEq/mL}$) | Thai GPO Drug Monograph / MIMS Thailand |
 | Magnesium Repletion Rate | Max infusion rate $\le 1.0\text{ g/hr}$ (except TdP/Arrest) to prevent renal loss | Clinical Pharmacokinetics & Nephrology |
 | Phosphate Precipitation Gate | $[Ca \times PO_4] \text{ product } < 55\text{ mg}^2/\text{dL}^2$ | Critical Care Nephrology Standards |
 

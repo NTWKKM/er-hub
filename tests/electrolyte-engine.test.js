@@ -99,10 +99,18 @@ describe('ELECTROLYTE_ENGINE: Potassium & Acidosis Modules', () => {
         const def = ELECTROLYTE_ENGINE.calcBicarbonateDeficit(70, 6, 14, false);
         assert.equal(def.deficitMeq, 280);
         assert.equal(def.halfDeficitMeq, 140);
+        // 7.5% NaHCO3 (44.6 mEq/amp): 280 / 44.6 = 6.27 -> Math.ceil = 7 ampules
+        assert.equal(def.ampules75Total, 7);
+        // 8.4% NaHCO3 (50 mEq/amp): 280 / 50 = 5.6 -> Math.ceil = 6 ampules
+        assert.equal(def.ampules84Total, 6);
+        assert.ok(def.recipes.recipe75.formula1000.includes('7.5%'));
+        assert.ok(def.recipes.recipe84.formula1000.includes('8.4%'));
 
         // Severe acidemia fvd = 0.8: 0.8 * 70 * 8 = 448 mEq
         const defSevere = ELECTROLYTE_ENGINE.calcBicarbonateDeficit(70, 6, 14, true);
         assert.equal(defSevere.deficitMeq, 448);
+        assert.equal(defSevere.ampules75Total, 11); // 448 / 44.6 = 10.04 -> ceil 11
+        assert.equal(defSevere.ampules84Total, 9);  // 448 / 50 = 8.96 -> ceil 9
 
         // BICAR-ICU indication test: Sepsis + severe acidemia + AKI Stage 2 -> Recommended
         const evalBicarbAki = ELECTROLYTE_ENGINE.evaluateBicarbonateIndication({

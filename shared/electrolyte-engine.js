@@ -207,16 +207,63 @@ const ELECTROLYTE_ENGINE = {
         const deficitMeq = fvd * weightKg * (targetHco3 - measuredHco3);
         const halfDeficitMeq = deficitMeq / 2;
 
-        const ampulesTotal = Math.ceil(deficitMeq / 50); // each 50 mL ampule = 50 mEq
+        // 7.5% NaHCO3 (Thailand Standard / GPO): 75 mg/mL = 0.8928 mEq/mL -> 44.6 mEq per 50 mL ampule (~1,785 mOsm/L)
+        const meqPerAmp75 = 44.6;
+        const ampules75Total = Math.round((deficitMeq / meqPerAmp75) * 10) / 10;
+        const ampules75Half = Math.round((halfDeficitMeq / meqPerAmp75) * 10) / 10;
+        const volume75MlTotal = Math.round(deficitMeq / 0.8928);
+        const volume75MlHalf = Math.round(halfDeficitMeq / 0.8928);
+
+        // 8.4% NaHCO3 (International Standard): 84 mg/mL = 1.0 mEq/mL -> 50 mEq per 50 mL ampule (~2,000 mOsm/L)
+        const meqPerAmp84 = 50.0;
+        const ampules84Total = Math.round((deficitMeq / meqPerAmp84) * 10) / 10;
+        const ampules84Half = Math.round((halfDeficitMeq / meqPerAmp84) * 10) / 10;
+        const volume84MlTotal = Math.round(deficitMeq);
+        const volume84MlHalf = Math.round(halfDeficitMeq);
 
         return {
             deficitMeq: Math.round(deficitMeq),
             halfDeficitMeq: Math.round(halfDeficitMeq),
             fvdUsed: fvd,
             targetHco3: targetHco3,
-            ampules84Total: ampulesTotal,
+            // 7.5% Thailand formulation
+            ampules75Total: Math.ceil(deficitMeq / meqPerAmp75),
+            ampules75Half: Math.ceil(halfDeficitMeq / meqPerAmp75),
+            ampules75Exact: ampules75Total,
+            ampules75HalfExact: ampules75Half,
+            volume75MlTotal: volume75MlTotal,
+            volume75MlHalf: volume75MlHalf,
+            meqPerAmp75: meqPerAmp75,
+            // 8.4% International formulation
+            ampules84Total: Math.ceil(deficitMeq / meqPerAmp84),
+            ampules84Half: Math.ceil(halfDeficitMeq / meqPerAmp84),
+            ampules84Exact: ampules84Total,
+            ampules84HalfExact: ampules84Half,
+            volume84MlTotal: volume84MlTotal,
+            volume84MlHalf: volume84MlHalf,
+            meqPerAmp84: meqPerAmp84,
+            // Recipes
+            recipes: {
+                recipe75: {
+                    name: '7.5% NaHCO3 (Thailand / GPO — 44.6 mEq / 50 mL ampule)',
+                    concentrationPct: 7.5,
+                    mEqPerAmp: 44.6,
+                    mEqPerMl: 0.893,
+                    formula1000: '3.5 ampules (175 mL = 156 mEq) 7.5% NaHCO3 in 825-850 mL D5W (yields ~150 mEq/L isotonic solution, ~280-300 mOsm/L)',
+                    formula500: '2 ampules (100 mL = 89.2 mEq) 7.5% NaHCO3 in 400-500 mL D5W',
+                    initialRateMlHr: '100 - 250 mL/hr (titrated to replace 50% deficit in first 4-8 hours)'
+                },
+                recipe84: {
+                    name: '8.4% NaHCO3 (International — 50 mEq / 50 mL ampule)',
+                    concentrationPct: 8.4,
+                    mEqPerAmp: 50.0,
+                    mEqPerMl: 1.0,
+                    formula1000: '3 ampules (150 mL = 150 mEq) 8.4% NaHCO3 in 850-1000 mL D5W (yields ~150 mEq/L isotonic solution, ~300 mOsm/L)',
+                    initialRateMlHr: '100 - 250 mL/hr (titrated to replace 50% deficit in first 4-8 hours)'
+                }
+            },
             isotonicRecipe: {
-                formula: '3 ampules (150 mEq) 8.4% NaHCO3 in 1000 mL D5W (yields ~150 mEq/L, ~300 mOsm/L)',
+                formula: '3.5 ampules (175 mL = 156 mEq) 7.5% NaHCO3 in 850 mL D5W (Thailand) OR 3 ampules (150 mEq) 8.4% NaHCO3 in 1000 mL D5W (yields ~150 mEq/L, ~300 mOsm/L)',
                 initialRateMlHr: '100 - 250 mL/hr (titrated to replace 50% deficit in first 4-8 hours)'
             }
         };

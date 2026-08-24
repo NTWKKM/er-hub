@@ -615,7 +615,7 @@
                 <!-- Step 2 -->
                 <div class="card-sub" style="border-left:3px solid #2563eb;">
                     <strong style="color:#2563eb; font-size:12px;">2. Intracellular Shifting (Rapid)</strong>
-                    <p style="font-size:12px; margin:4px 0;">• <strong>Regular Insulin 10 units IV + D50W 50 mL (25g)</strong> over 5 min.<br>• <strong>Salbutamol 10-20 mg</strong> nebulized.<br>• <strong>8.4% NaHCO₃ 50-100 mEq</strong> (if pH &lt; 7.20).</p>
+                    <p style="font-size:12px; margin:4px 0;">• <strong>Regular Insulin 10 units IV + D50W 50 mL (25g)</strong> over 5 min.<br>• <strong>Salbutamol 10-20 mg</strong> nebulized.<br>• <strong>7.5% NaHCO₃ 50-100 mL (1-2 amp = 44.6-89.2 mEq)</strong> [TH standard] or <strong>8.4% NaHCO₃ 50-100 mEq</strong> (if pH &lt; 7.20).</p>
                 </div>
                 <!-- Step 3 -->
                 <div class="card-sub" style="border-left:3px solid #059669;">
@@ -684,8 +684,15 @@
             <!-- Bicarbonate Deficit Calculator -->
             <div class="card">
                 <div class="card-header">
-                    <span>Bicarbonate Deficit Calculator</span>
+                    <span>Bicarbonate Deficit &amp; Formulation Preparation</span>
                     <span style="font-size:11px; color:var(--graphite);">f_VD: 0.5 (Standard) / 0.8 (Severe)</span>
+                </div>
+                <div class="input-group" style="margin-bottom:12px;">
+                    <label for="acid-formulation">Select NaHCO₃ Formulation</label>
+                    <select id="acid-formulation" class="input-control">
+                        <option value="75" selected>🇹🇭 7.5% NaHCO₃ (Thailand / GPO) — 44.6 mEq / 50 mL amp (~1,785 mOsm/L)</option>
+                        <option value="84">🌐 8.4% NaHCO₃ (International Standard) — 50.0 mEq / 50 mL amp (~2,000 mOsm/L)</option>
+                    </select>
                 </div>
                 <div class="grid-2">
                     <div class="input-group">
@@ -708,9 +715,12 @@
                     <div id="disp-bicarb-total" class="stat-value">216 <span class="stat-unit">mEq</span></div>
                 </div>
                 <div class="card-sub">
-                    <strong style="font-size:12px; color:var(--ink);">Isotonic Bicarbonate Infusion Recipe (~150 mEq/L):</strong>
-                    <p style="font-size:12px; margin:4px 0 0; color:var(--graphite);">
-                        Add <strong>3 ampules (150 mEq) of 8.4% NaHCO₃</strong> into <strong>1,000 mL D5W</strong> (isotonic ~300 mOsm/L). Infuse at <strong>100 - 250 mL/hr</strong>.
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                        <strong style="font-size:12px; color:var(--ink);">Isotonic Bicarbonate Infusion Recipe (~150 mEq/L):</strong>
+                        <span id="disp-bicarb-form-badge" style="font-size:11px; font-weight:700; color:var(--signal-orange);">7.5% GPO</span>
+                    </div>
+                    <p id="disp-bicarb-recipe" style="font-size:12px; margin:6px 0 0; color:var(--graphite); line-height:1.45;">
+                        Add <strong>3.5 ampules (175 mL = 156 mEq) of 7.5% NaHCO₃</strong> into <strong>825-850 mL D5W</strong> (or <strong>2 ampules in 400-500 mL D5W</strong>) to yield ~150 mEq/L (~280-300 mOsm/L). Infuse at <strong>100 - 250 mL/hr</strong>.
                     </p>
                 </div>
             </div>
@@ -1112,10 +1122,19 @@
         const currHco3 = parseFloat(document.getElementById('acid-hco3-curr').value) || 8;
         const targetHco3 = parseFloat(document.getElementById('acid-hco3-target').value) || 14;
         const isSevereAcid = document.getElementById('acid-severe-switch').checked;
+        const bicarbForm = document.getElementById('acid-formulation').value;
         const bicarbDef = ELECTROLYTE_ENGINE.calcBicarbonateDeficit(weight, currHco3, targetHco3, isSevereAcid);
         if (bicarbDef) {
             document.getElementById('disp-bicarb-total').textContent = `${bicarbDef.deficitMeq}`;
-            document.getElementById('disp-bicarb-half').textContent = `Replace ~${bicarbDef.halfDeficitMeq} mEq in first 4-8 hours`;
+            if (bicarbForm === '75') {
+                document.getElementById('disp-bicarb-half').textContent = `50% Target: ~${bicarbDef.halfDeficitMeq} mEq in 4-8h (~${bicarbDef.ampules75HalfExact} amp / ${bicarbDef.volume75MlHalf} mL of 7.5%)`;
+                document.getElementById('disp-bicarb-form-badge').textContent = '7.5% GPO (44.6 mEq/amp)';
+                document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3.5 ampules (175 mL = 156 mEq) of 7.5% NaHCO₃</strong> into <strong>825-850 mL D5W</strong> (or <strong>2 ampules in 400-500 mL D5W</strong>) to yield ~150 mEq/L (~280-300 mOsm/L). Infuse at <strong>100 - 250 mL/hr</strong>.`;
+            } else {
+                document.getElementById('disp-bicarb-half').textContent = `50% Target: ~${bicarbDef.halfDeficitMeq} mEq in 4-8h (~${bicarbDef.ampules84HalfExact} amp / ${bicarbDef.volume84MlHalf} mL of 8.4%)`;
+                document.getElementById('disp-bicarb-form-badge').textContent = '8.4% Int (50 mEq/amp)';
+                document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3 ampules (150 mL = 150 mEq) of 8.4% NaHCO₃</strong> into <strong>850-1000 mL D5W</strong> to yield ~150 mEq/L (~300 mOsm/L). Infuse at <strong>100 - 250 mL/hr</strong>.`;
+            }
         }
 
         const etiology = document.getElementById('acid-etiology').value;
@@ -1243,6 +1262,18 @@
         const hco3Val = document.getElementById('acid-hco3-curr').value;
         const bDef = document.getElementById('disp-bicarb-total').textContent;
         const corrAg = document.getElementById('disp-gap-corr').textContent;
+        const bicarbForm = document.getElementById('acid-formulation').value;
+        const isSevereAcid = document.getElementById('acid-severe-switch').checked;
+        const targetHco3 = parseFloat(document.getElementById('acid-hco3-target').value) || 14;
+        const bicarbDef = ELECTROLYTE_ENGINE.calcBicarbonateDeficit(weight, hco3Val, targetHco3, isSevereAcid);
+
+        const bicarbText = bicarbForm === '75'
+            ? `   - Selected Formulation: 7.5% NaHCO₃ (Thailand / GPO — 44.6 mEq / 50 mL amp)
+   - Calculated Deficit: ${bDef} mEq (50% replacement: ~${bicarbDef ? bicarbDef.halfDeficitMeq : '--'} mEq = ~${bicarbDef ? bicarbDef.ampules75HalfExact : '--'} amp / ${bicarbDef ? bicarbDef.volume75MlHalf : '--'} mL in 4-8h)
+   - Isotonic Recipe: 3.5 amp (175 mL) 7.5% NaHCO₃ in 825-850 mL D5W (or 2 amp in 400-500 mL D5W) at 100-250 mL/hr.`
+            : `   - Selected Formulation: 8.4% NaHCO₃ (International — 50.0 mEq / 50 mL amp)
+   - Calculated Deficit: ${bDef} mEq (50% replacement: ~${bicarbDef ? bicarbDef.halfDeficitMeq : '--'} mEq = ~${bicarbDef ? bicarbDef.ampules84HalfExact : '--'} amp / ${bicarbDef ? bicarbDef.volume84MlHalf : '--'} mL in 4-8h)
+   - Isotonic Recipe: 3 amp (150 mL) 8.4% NaHCO₃ in 850-1000 mL D5W at 100-250 mL/hr.`;
 
         const note = `[ER CLINICAL ELECTROLYTE & ACID-BASE ASSESSMENT]
 HN: ${hn} | Age: ${age}y | Sex: ${sex} | Weight: ${weight} kg
@@ -1258,9 +1289,9 @@ HN: ${hn} | Age: ${age}y | Sex: ${sex} | Weight: ${weight} kg
    - Route safety verified; Mg²⁺ checked concurrently.
 
 3. ACID-BASE & BICARBONATE:
-   - Serum HCO₃⁻: ${hco3Val} mEq/L | Calculated Deficit: ${bDef} mEq
+   - Serum HCO₃⁻: ${hco3Val} mEq/L
+${bicarbText}
    - Albumin-Corrected Anion Gap: ${corrAg} mEq/L (Modern ISE baseline 4-10)
-   - Isotonic Recipe: 3 amp 8.4% NaHCO₃ in 1000 mL D5W at 100-250 mL/hr.
 
 Assessment & Protocol Grounded in 2026 Critical Care Consensus.`;
 
