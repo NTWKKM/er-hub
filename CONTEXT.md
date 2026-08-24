@@ -170,5 +170,12 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   4. **Hyperkalemia Safeguard**: Updated `calcPotassiumDeficit` to explicitly return `Hyperkalemia (>5.0 mEq/L)` with a direct pointer to the emergency protocol instead of returning normal deficit.
   5. **Smooth In-Page Reset**: Replaced `location.reload()` with non-destructive in-memory DOM reset.
 
+## ADR-30: Electrolyte Hub Cross-Condition Contraindication Safety Gates
 
-
+- **Context**: Entering hypernatremic values (e.g. $\text{Na}^+ = 160\text{ mEq/L}$) still generated active 3% NaCl bolus and Adrogué-Madias infusion rates without warning that sodium replacement is contraindicated in hypernatremia. Similar hazards existed in other tabs (e.g. IV potassium auto-calculating during hyperkalemia, IV bicarbonate calculating during alkalemia).
+- **Decision**:
+  1. **Sodium Safety Gate**: When $\text{Na}^+ \ge 135\text{ mEq/L}$, Part A (Hyponatremia) blocks 3% NaCl bolus (`CONTRAINDICATED`) and infusion rates (`Blocked`), displaying a prominent alert directing users to Part B for Hypernatremia Free Water Deficit.
+  2. **Potassium Safety Gate**: In Part A, if $\text{K}^+ < 3.5\text{ mEq/L}$, displays a strict warning that insulin/salbutamol are contraindicated. In Part B, if $\text{K}^+ \ge 5.0\text{ mEq/L}$, blocks the IV Drip Auto-Generator with a red contraindication alert.
+  3. **Acid-Base Safety Gate**: If blood $\text{pH} \ge 7.45$ (or $\text{HCO}_3^- \ge 28\text{ mEq/L}$ with $\text{pH} \ge 7.40$), blocks IV $\text{NaHCO}_3$ dosing with an alkalemia contraindication warning.
+  4. **Mineral Safety Gates**: Explicitly mark IV Calcium, Magnesium, and Phosphate as strictly contraindicated when corresponding hyper-states ($\text{Hypercalcemia}$, $\text{Hypermagnesemia}$, $\text{Hyperphosphatemia}$) are present.
+  5. Updated `service-worker.js` cache version to `er-hub-v84`.

@@ -94,6 +94,20 @@ describe('ELECTROLYTE_ENGINE: Potassium & Acidosis Modules', () => {
         // Central line within safe bounds
         const safeCentral = ELECTROLYTE_ENGINE.evaluatePotassiumSafety(25, 80, true);
         assert.equal(safeCentral.isBlocked, false);
+
+        // Hyperkalemia safety guard (serumK >= 5.0) -> Blocked
+        const hyperkSafety = ELECTROLYTE_ENGINE.evaluatePotassiumSafety(10, 40, false, 5.8);
+        assert.equal(hyperkSafety.isBlocked, true);
+        assert.ok(hyperkSafety.warnings.some(w => w.includes('STRICLY CONTRAINDICATED') || w.includes('CONTRAINDICATED')));
+
+        const infusionHyperk = ELECTROLYTE_ENGINE.calcPotassiumInfusion({
+            fluidVolumeMl: 1000,
+            kclMeqAdded: 40,
+            pumpRateMlHr: 100,
+            isCentralLine: false,
+            serumK: 6.2
+        });
+        assert.equal(infusionHyperk.safety.isBlocked, true);
     });
 
     test('Bicarbonate Deficit Calculation & BICAR-ICU Indication', () => {
@@ -139,6 +153,15 @@ describe('ELECTROLYTE_ENGINE: Potassium & Acidosis Modules', () => {
             hco3: 4
         });
         assert.equal(evalDkaSevere.recommended, true);
+
+        // Alkalemia with pH 7.50 -> Contraindicated
+        const evalAlkalemia = ELECTROLYTE_ENGINE.evaluateBicarbonateIndication({
+            etiology: 'lactic_sepsis',
+            ph: 7.50,
+            hco3: 30
+        });
+        assert.equal(evalAlkalemia.contraindicated, true);
+        assert.ok(evalAlkalemia.summary.includes('Alkalemia Present'));
     });
 });
 

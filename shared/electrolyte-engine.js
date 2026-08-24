@@ -165,9 +165,14 @@ const ELECTROLYTE_ENGINE = {
         };
     },
 
-    evaluatePotassiumSafety: function(rateMeqHr, concentrationMeqL, isCentralLine = false) {
+    evaluatePotassiumSafety: function(rateMeqHr, concentrationMeqL, isCentralLine = false, serumK = null) {
         const warnings = [];
         let isBlocked = false;
+
+        if (serumK !== null && serumK >= 5.0) {
+            warnings.push(`CRITICAL: Serum K⁺ is ${serumK} mEq/L (≥ 5.0 mEq/L). Intravenous Potassium administration is STRICTLY CONTRAINDICATED (fatal cardiac arrest risk). Follow Emergency Hyperkalemia Protocol.`);
+            isBlocked = true;
+        }
 
         if (isCentralLine) {
             if (rateMeqHr > 40) {
@@ -278,6 +283,14 @@ const ELECTROLYTE_ENGINE = {
             summary: '',
             cautions: []
         };
+
+        if (ph >= 7.45 && etiology !== 'toxicology_tca' && etiology !== 'toxicology_salicylate') {
+            result.recommended = false;
+            result.contraindicated = true;
+            result.urgency = 'contraindicated';
+            result.summary = `Alkalemia Present (pH ${ph} ≥ 7.45): Sodium Bicarbonate is STRICTLY CONTRAINDICATED (causes tetany, ionized hypocalcemia, severe hypokalemia, and impairs oxygen delivery).`;
+            return result;
+        }
 
         if (pco2 > 45) {
             result.cautions.push('RESPIRATORY CAUTION: Elevated pCO2 indicates hypoventilation. Giving NaHCO3 without mechanical ventilation worsens intracellular/CNS acidosis via CO2 generation.');
@@ -673,12 +686,12 @@ const ELECTROLYTE_ENGINE = {
         };
     },
 
-    calcPotassiumInfusion: function({ fluidVolumeMl = 1000, kclMeqAdded = 40, pumpRateMlHr = 100, isCentralLine = false }) {
+    calcPotassiumInfusion: function({ fluidVolumeMl = 1000, kclMeqAdded = 40, pumpRateMlHr = 100, isCentralLine = false, serumK = null }) {
         if (!(fluidVolumeMl > 0) || !(kclMeqAdded > 0) || !(pumpRateMlHr > 0)) return null;
         const concMeqL = Math.round((kclMeqAdded / (fluidVolumeMl / 1000)) * 10) / 10;
         const rateMeqHr = Math.round((concMeqL * (pumpRateMlHr / 1000)) * 10) / 10;
         const bottleDurationHrs = Math.round((fluidVolumeMl / pumpRateMlHr) * 10) / 10;
-        const safety = this.evaluatePotassiumSafety(rateMeqHr, concMeqL, isCentralLine);
+        const safety = this.evaluatePotassiumSafety(rateMeqHr, concMeqL, isCentralLine, serumK);
 
         return {
             concMeqL: concMeqL,
@@ -688,6 +701,7 @@ const ELECTROLYTE_ENGINE = {
             kclMeqAdded: kclMeqAdded,
             pumpRateMlHr: pumpRateMlHr,
             isCentralLine: isCentralLine,
+            serumK: serumK,
             safety: safety
         };
     },

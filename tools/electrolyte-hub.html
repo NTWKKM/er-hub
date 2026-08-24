@@ -1160,6 +1160,10 @@
             </div>
         </div>
 
+        <div id="na-hyper-contraindicated-alert" class="alert-box alert-danger" style="display:none; margin-bottom:14px;">
+            <span><strong>⛔ CONTRAINDICATION ALERT (Hypernatremia / Normonatremia):</strong> Patient's measured Na⁺ is <strong id="disp-na-contra-val">--</strong> mEq/L (≥ 135 mEq/L). <strong>Hypertonic Saline (3% NaCl) bolus and sodium-raising infusions are STRICTLY CONTRAINDICATED</strong> (will worsen hyperosmolality and risk cerebral demyelination/hemorrhage). Please use <strong>PART B below</strong> for Hypernatremia Free Water Deficit (FWD) management.</span>
+        </div>
+
         <div class="grid-2">
             <!-- Acute Severe Hyponatremia Bolus -->
             <div class="card">
@@ -1270,6 +1274,10 @@
             <span>🔴 PART A: HYPERKALEMIA MANAGEMENT (K⁺ &gt; 5.0 mEq/L)</span>
         </div>
 
+        <div id="k-hypo-contraindicated-alert" class="alert-box alert-danger" style="display:none; margin-bottom:14px;">
+            <span><strong>⛔ CONTRAINDICATION ALERT (Hypokalemia):</strong> Patient's serum K⁺ is <strong id="disp-k-contra-val">--</strong> mEq/L (&lt; 3.5 mEq/L). <strong>Insulin, Salbutamol, and Potassium-lowering agents are STRICTLY CONTRAINDICATED</strong> (will drive potassium lower and precipitate fatal arrhythmias or cardiac arrest). Please follow <strong>PART B below</strong> for Potassium repletion.</span>
+        </div>
+
         <!-- Emergency Protocol -->
         <div class="card" style="border-left: 4px solid var(--signal-red); margin-bottom:16px;">
             <div class="card-header" style="color:var(--signal-red);">
@@ -1337,7 +1345,7 @@
                 </div>
                 <div class="input-group" style="margin-bottom:10px;">
                     <label for="hypok-val">Serum K⁺ (mEq/L)</label>
-                    <input type="number" id="hypok-val" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="" step="0.1" min="1.0" max="5.0">
+                    <input type="number" id="hypok-val" class="input-control-sm" style="font-family:var(--font-mono); font-size:13.5px; height:38px;" value="" step="0.1" min="1.0" max="10.0">
                     <div class="chip-group">
                         <span style="font-size:10px; color:var(--graphite); margin-right:4px;">Presets:</span>
                         <button type="button" class="chip-btn" data-set="hypok-val" data-val="2.0">2.0</button>
@@ -1425,6 +1433,10 @@
          TAB 3: METABOLIC ACIDOSIS
     ════════════════════════════════════════ -->
     <div id="tab-acidosis" role="tabpanel" aria-labelledby="tab-btn-acidosis" class="tab-panel">
+        <div id="acid-alkalemia-alert" class="alert-box alert-danger" style="display:none; margin-bottom:14px;">
+            <span><strong>⛔ CONTRAINDICATION ALERT (Alkalemia):</strong> Blood pH is <strong id="disp-acid-ph-val">--</strong> (≥ 7.45) or Serum HCO₃⁻ is <strong id="disp-acid-hco3-val">--</strong> mEq/L. <strong>Intravenous Sodium Bicarbonate is STRICTLY CONTRAINDICATED</strong> (will worsen metabolic alkalosis, drop ionized calcium causing tetany, trigger hypokalemia, and impair tissue oxygen delivery).</span>
+        </div>
+
         <div class="grid-2">
             <!-- Bicarbonate Deficit Calculator -->
             <div class="card">
@@ -2636,6 +2648,7 @@
         const measNaStr = document.getElementById('na-measured').value.trim();
         const measNa = measNaStr !== '' ? parseFloat(measNaStr) : null;
         const naGlu = gluStr !== '' ? parseFloat(gluStr) : 100;
+        const naContraAlert = document.getElementById('na-hyper-contraindicated-alert');
 
         if (measNa !== null) {
             const corrHillier = ELECTROLYTE_ENGINE.calcCorrectedSodium(measNa, naGlu, 'hillier');
@@ -2643,36 +2656,60 @@
             document.getElementById('disp-corr-na-hillier').textContent = corrHillier;
             document.getElementById('disp-corr-na-katz').textContent = corrKatz;
 
-            // 3% Bolus
-            const isPediatric = (age || 60) < 15;
-            const bolus = ELECTROLYTE_ENGINE.calcHyponatremiaBolus(weight || 60, isPediatric);
-            document.getElementById('disp-3pct-bolus').textContent = `${bolus.bolusRange || bolus.bolusMl + ' mL'}`;
-            document.getElementById('disp-3pct-bolus-subtitle').textContent = isPediatric ? 'Pediatric 2 mL/kg over 10-20 min' : 'Adult fixed bolus over 10-20 min';
-
-            // Adrogue-Madias
-            const fluid = document.getElementById('na-fluid-choice').value;
-            const deltaTarget = parseFloat(document.getElementById('na-target-delta').value) || 6;
-            const deltaLiter = ELECTROLYTE_ENGINE.calcAdrogueMadias(measNa, fluid, tbw);
-            document.getElementById('disp-delta-na-liter').textContent = `${deltaLiter > 0 ? '+' : ''}${deltaLiter} mEq/L`;
-
-            const fluidAlert = document.getElementById('na-fluid-alert');
-            if (deltaLiter <= 0) {
-                fluidAlert.style.display = 'flex';
+            if (measNa >= 135) {
+                // Patient is Normonatremic or Hypernatremic -> Block Hyponatremia IV Treatment in Part A
+                if (naContraAlert) {
+                    naContraAlert.style.display = 'flex';
+                    document.getElementById('disp-na-contra-val').textContent = measNa;
+                }
+                document.getElementById('disp-3pct-bolus').textContent = 'CONTRAINDICATED';
+                document.getElementById('disp-3pct-bolus').style.color = '#fca5a5';
+                document.getElementById('disp-3pct-bolus-subtitle').textContent = `Na⁺ ${measNa} ≥ 135 mEq/L — 3% NaCl is contraindicated`;
+                document.getElementById('disp-delta-na-liter').textContent = 'N/A';
+                document.getElementById('disp-adrogue-rate').textContent = 'Blocked (Na⁺ ≥ 135)';
+                document.getElementById('disp-adrogue-rate').style.color = 'var(--signal-red)';
+                document.getElementById('na-fluid-alert').style.display = 'none';
             } else {
-                fluidAlert.style.display = 'none';
-            }
+                // Hyponatremic (Na < 135) -> Normal Part A calculations
+                if (naContraAlert) naContraAlert.style.display = 'none';
+                const isPediatric = (age || 60) < 15;
+                const bolus = ELECTROLYTE_ENGINE.calcHyponatremiaBolus(weight || 60, isPediatric);
+                document.getElementById('disp-3pct-bolus').textContent = `${bolus.bolusRange || bolus.bolusMl + ' mL'}`;
+                document.getElementById('disp-3pct-bolus').style.color = '#fef08a';
+                document.getElementById('disp-3pct-bolus-subtitle').textContent = isPediatric ? 'Pediatric 2 mL/kg over 10-20 min' : 'Adult fixed bolus over 10-20 min';
 
-            const infusion = ELECTROLYTE_ENGINE.calcHyponatremiaInfusionRate(deltaTarget, deltaLiter);
-            if (infusion && infusion.mlPerHour > 0) {
-                document.getElementById('disp-adrogue-rate').textContent = `${infusion.mlPerHour} mL/hr`;
-            } else {
-                document.getElementById('disp-adrogue-rate').textContent = '-- mL/hr';
+                // Adrogue-Madias
+                const fluid = document.getElementById('na-fluid-choice').value;
+                const deltaTarget = parseFloat(document.getElementById('na-target-delta').value) || 6;
+                const deltaLiter = ELECTROLYTE_ENGINE.calcAdrogueMadias(measNa, fluid, tbw);
+                document.getElementById('disp-delta-na-liter').textContent = `${deltaLiter > 0 ? '+' : ''}${deltaLiter} mEq/L`;
+
+                const fluidAlert = document.getElementById('na-fluid-alert');
+                if (deltaLiter <= 0) {
+                    fluidAlert.style.display = 'flex';
+                } else {
+                    fluidAlert.style.display = 'none';
+                }
+
+                const infusion = ELECTROLYTE_ENGINE.calcHyponatremiaInfusionRate(deltaTarget, deltaLiter);
+                if (infusion && infusion.mlPerHour > 0) {
+                    document.getElementById('disp-adrogue-rate').textContent = `${infusion.mlPerHour} mL/hr`;
+                    document.getElementById('disp-adrogue-rate').style.color = 'var(--signal-orange)';
+                } else {
+                    document.getElementById('disp-adrogue-rate').textContent = '-- mL/hr';
+                    document.getElementById('disp-adrogue-rate').style.color = 'var(--signal-orange)';
+                }
             }
         } else {
+            if (naContraAlert) naContraAlert.style.display = 'none';
             document.getElementById('disp-corr-na-hillier').textContent = '--';
             document.getElementById('disp-corr-na-katz').textContent = '--';
+            document.getElementById('disp-3pct-bolus').textContent = '100 - 150 mL';
+            document.getElementById('disp-3pct-bolus').style.color = '#fef08a';
+            document.getElementById('disp-3pct-bolus-subtitle').textContent = 'Infuse over 10-20 minutes';
             document.getElementById('disp-delta-na-liter').textContent = '-- mEq/L';
             document.getElementById('disp-adrogue-rate').textContent = '-- mL/hr';
+            document.getElementById('disp-adrogue-rate').style.color = 'var(--signal-orange)';
             document.getElementById('na-fluid-alert').style.display = 'none';
         }
 
@@ -2685,7 +2722,7 @@
             document.getElementById('disp-fwd-d5w-rate').textContent = `${fwd.d5wHourlyRateMlHr} mL/hr`;
         } else if (hyperNa !== null) {
             document.getElementById('disp-fwd-liters').textContent = `0.0 L`;
-            document.getElementById('disp-fwd-d5w-rate').textContent = `0 mL/hr (Na ≤ 140 mEq/L)`;
+            document.getElementById('disp-fwd-d5w-rate').textContent = `0 mL/hr (Na ≤ 140 mEq/L — No Free Water Deficit)`;
         } else {
             document.getElementById('disp-fwd-liters').textContent = `-- L`;
             document.getElementById('disp-fwd-d5w-rate').textContent = `-- mL/hr`;
@@ -2694,16 +2731,29 @@
         // 3. Potassium Calculations
         const hypokStr = document.getElementById('hypok-val').value.trim();
         const hypok = hypokStr !== '' ? parseFloat(hypokStr) : null;
+        const kHypoContraAlert = document.getElementById('k-hypo-contraindicated-alert');
+
         if (hypok !== null) {
+            // Part A Alert: If hypokalemic, warn that insulin/salbutamol are contraindicated
+            if (hypok < 3.5) {
+                if (kHypoContraAlert) {
+                    kHypoContraAlert.style.display = 'flex';
+                    document.getElementById('disp-k-contra-val').textContent = hypok;
+                }
+            } else {
+                if (kHypoContraAlert) kHypoContraAlert.style.display = 'none';
+            }
+
             const kDef = ELECTROLYTE_ENGINE.calcPotassiumDeficit(hypok);
-            if (hypok > 5.0) {
-                document.getElementById('disp-hypok-severity').innerHTML = '<span style="color:#fca5a5; font-weight:700;">⚠️ Hyperkalemic (>5.0) — See Part A Protocol</span>';
+            if (hypok >= 5.0) {
+                document.getElementById('disp-hypok-severity').innerHTML = '<span style="color:#fca5a5; font-weight:700;">⚠️ Hyperkalemic (≥5.0) — See Part A Protocol</span>';
                 document.getElementById('disp-hypok-deficit').textContent = '0 mEq';
             } else {
                 document.getElementById('disp-hypok-severity').textContent = kDef.severity;
                 document.getElementById('disp-hypok-deficit').textContent = `~${kDef.deficitMeq} mEq`;
             }
         } else {
+            if (kHypoContraAlert) kHypoContraAlert.style.display = 'none';
             document.getElementById('disp-hypok-severity').textContent = '--';
             document.getElementById('disp-hypok-deficit').textContent = '-- mEq';
         }
@@ -2715,28 +2765,37 @@
         const kFluidVol = kFluidSel.startsWith('500') ? 500 : 1000;
         const kclMeqAdded = parseFloat(document.getElementById('k-iv-meq').value) || 40;
         const kPumpRate = parseFloat(document.getElementById('k-iv-rate-input').value) || parseFloat(document.getElementById('k-iv-rate-slider').value) || 100;
+        const kAlertEl = document.getElementById('k-safety-alert');
 
-        const kInfusionResult = ELECTROLYTE_ENGINE.calcPotassiumInfusion({
-            fluidVolumeMl: kFluidVol,
-            kclMeqAdded: kclMeqAdded,
-            pumpRateMlHr: kPumpRate,
-            isCentralLine: isCentralK
-        });
+        if (hypok !== null && hypok >= 5.0) {
+            // Hyperkalemic -> BLOCK IV KCl
+            document.getElementById('disp-k-delivery-rate').textContent = '0.0 mEq/hr';
+            document.getElementById('disp-k-duration').textContent = 'N/A — IV KCl Infusion is Blocked';
+            kAlertEl.className = 'alert-box alert-danger';
+            kAlertEl.innerHTML = `<span><strong>⛔ CONTRAINDICATED:</strong> Serum K⁺ is ${hypok} mEq/L (≥ 5.0 mEq/L). Intravenous Potassium infusion is <strong>STRICTLY CONTRAINDICATED</strong> (risk of fatal hyperkalemic arrest). Follow Emergency Hyperkalemia Protocol in Part A above!</span>`;
+        } else {
+            const kInfusionResult = ELECTROLYTE_ENGINE.calcPotassiumInfusion({
+                fluidVolumeMl: kFluidVol,
+                kclMeqAdded: kclMeqAdded,
+                pumpRateMlHr: kPumpRate,
+                isCentralLine: isCentralK,
+                serumK: hypok
+            });
 
-        if (kInfusionResult) {
-            document.getElementById('disp-k-delivery-rate').textContent = `${kInfusionResult.rateMeqHr} mEq/hr`;
-            document.getElementById('disp-k-duration').textContent = `${kInfusionResult.bottleDurationHrs} hrs per ${kFluidVol} mL bottle (${kInfusionResult.concMeqL} mEq/L)`;
+            if (kInfusionResult) {
+                document.getElementById('disp-k-delivery-rate').textContent = `${kInfusionResult.rateMeqHr} mEq/hr`;
+                document.getElementById('disp-k-duration').textContent = `${kInfusionResult.bottleDurationHrs} hrs per ${kFluidVol} mL bottle (${kInfusionResult.concMeqL} mEq/L)`;
 
-            const kAlertEl = document.getElementById('k-safety-alert');
-            if (kInfusionResult.safety.isBlocked) {
-                kAlertEl.className = 'alert-box alert-danger';
-                kAlertEl.innerHTML = `<span><strong>BLOCKED:</strong> ${kInfusionResult.safety.warnings.join('<br>')}</span>`;
-            } else if (!kInfusionResult.safety.isSafe) {
-                kAlertEl.className = 'alert-box alert-warning';
-                kAlertEl.innerHTML = `<span><strong>CAUTION:</strong> ${kInfusionResult.safety.warnings.join('<br>')}</span>`;
-            } else {
-                kAlertEl.className = 'alert-box alert-success';
-                kAlertEl.innerHTML = `<span>✓ Safe infusion for ${isCentralK ? 'Central Venous Line' : 'Peripheral line'} (${kInfusionResult.rateMeqHr} mEq/hr, ${kInfusionResult.concMeqL} mEq/L).</span>`;
+                if (kInfusionResult.safety.isBlocked) {
+                    kAlertEl.className = 'alert-box alert-danger';
+                    kAlertEl.innerHTML = `<span><strong>BLOCKED:</strong> ${kInfusionResult.safety.warnings.join('<br>')}</span>`;
+                } else if (!kInfusionResult.safety.isSafe) {
+                    kAlertEl.className = 'alert-box alert-warning';
+                    kAlertEl.innerHTML = `<span><strong>CAUTION:</strong> ${kInfusionResult.safety.warnings.join('<br>')}</span>`;
+                } else {
+                    kAlertEl.className = 'alert-box alert-success';
+                    kAlertEl.innerHTML = `<span>✓ Safe infusion for ${isCentralK ? 'Central Venous Line' : 'Peripheral line'} (${kInfusionResult.rateMeqHr} mEq/hr, ${kInfusionResult.concMeqL} mEq/L).</span>`;
+                }
             }
         }
 
@@ -2746,34 +2805,49 @@
         const targetHco3 = parseFloat(document.getElementById('acid-hco3-target').value) || 15;
         const isSevereAcid = document.getElementById('acid-severe-switch').checked;
         const bicarbForm = document.getElementById('acid-formulation').value;
+        const phStr = document.getElementById('acid-ph').value.trim();
+        const ph = phStr !== '' ? parseFloat(phStr) : 7.12;
+        const acidAlkalemiaAlert = document.getElementById('acid-alkalemia-alert');
 
-        if (currHco3 !== null) {
-            const bicarbDef = ELECTROLYTE_ENGINE.calcBicarbonateDeficit(weight || 60, currHco3, targetHco3, isSevereAcid);
-            if (bicarbDef) {
-                document.getElementById('disp-bicarb-total').textContent = `${bicarbDef.deficitMeq}`;
-                if (bicarbForm === '75') {
-                    document.getElementById('disp-bicarb-half').textContent = `50% Target: ~${bicarbDef.halfDeficitMeq} mEq in 4-8h (~${bicarbDef.ampules75HalfExact} amp / ${bicarbDef.volume75MlHalf} mL of 7.5%)`;
-                    document.getElementById('disp-bicarb-push-dose').innerHTML = `Give <strong>1 - 2 ampules (50 - 100 mL = 44.6 - 89.2 mEq of 7.5% NaHCO₃)</strong> slow IV push over 2 - 5 min in severe cardiac instability.`;
-                    document.getElementById('disp-bicarb-form-badge').textContent = '7.5% GPO (44.6 mEq/amp)';
-                    document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3.5 ampules (175 mL = 156 mEq) of 7.5% NaHCO₃</strong> into <strong>825-850 mL D5W</strong> (or <strong>2 ampules in 400-500 mL D5W</strong>) to yield ~150 mEq/L. Infuse at <strong>100 - 250 mL/hr</strong>.`;
+        const isAlkalemic = ph >= 7.45 || (currHco3 !== null && currHco3 >= 28 && ph >= 7.40);
+
+        if (isAlkalemic) {
+            if (acidAlkalemiaAlert) {
+                acidAlkalemiaAlert.style.display = 'flex';
+                document.getElementById('disp-acid-ph-val').textContent = ph;
+                document.getElementById('disp-acid-hco3-val').textContent = currHco3 !== null ? currHco3 : '--';
+            }
+            document.getElementById('disp-bicarb-total').textContent = '0';
+            document.getElementById('disp-bicarb-half').textContent = 'Alkalemia present (pH ≥ 7.45) — Sodium Bicarbonate is contraindicated';
+        } else {
+            if (acidAlkalemiaAlert) acidAlkalemiaAlert.style.display = 'none';
+
+            if (currHco3 !== null) {
+                const bicarbDef = ELECTROLYTE_ENGINE.calcBicarbonateDeficit(weight || 60, currHco3, targetHco3, isSevereAcid);
+                if (bicarbDef) {
+                    document.getElementById('disp-bicarb-total').textContent = `${bicarbDef.deficitMeq}`;
+                    if (bicarbForm === '75') {
+                        document.getElementById('disp-bicarb-half').textContent = `50% Target: ~${bicarbDef.halfDeficitMeq} mEq in 4-8h (~${bicarbDef.ampules75HalfExact} amp / ${bicarbDef.volume75MlHalf} mL of 7.5%)`;
+                        document.getElementById('disp-bicarb-push-dose').innerHTML = `Give <strong>1 - 2 ampules (50 - 100 mL = 44.6 - 89.2 mEq of 7.5% NaHCO₃)</strong> slow IV push over 2 - 5 min in severe cardiac instability.`;
+                        document.getElementById('disp-bicarb-form-badge').textContent = '7.5% GPO (44.6 mEq/amp)';
+                        document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3.5 ampules (175 mL = 156 mEq) of 7.5% NaHCO₃</strong> into <strong>825-850 mL D5W</strong> (or <strong>2 ampules in 400-500 mL D5W</strong>) to yield ~150 mEq/L. Infuse at <strong>100 - 250 mL/hr</strong>.`;
+                    } else {
+                        document.getElementById('disp-bicarb-half').textContent = `50% Target: ~${bicarbDef.halfDeficitMeq} mEq in 4-8h (~${bicarbDef.ampules84HalfExact} amp / ${bicarbDef.volume84MlHalf} mL of 8.4%)`;
+                        document.getElementById('disp-bicarb-push-dose').innerHTML = `Give <strong>1 - 2 ampules (50 - 100 mL = 50 - 100 mEq of 8.4% NaHCO₃)</strong> slow IV push over 2 - 5 min in severe cardiac instability.`;
+                        document.getElementById('disp-bicarb-form-badge').textContent = '8.4% Int (50 mEq/amp)';
+                        document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3 ampules (150 mL = 150 mEq) of 8.4% NaHCO₃</strong> into <strong>850-1000 mL D5W</strong> to yield ~150 mEq/L. Infuse at <strong>100 - 250 mL/hr</strong>.`;
+                    }
                 } else {
-                    document.getElementById('disp-bicarb-half').textContent = `50% Target: ~${bicarbDef.halfDeficitMeq} mEq in 4-8h (~${bicarbDef.ampules84HalfExact} amp / ${bicarbDef.volume84MlHalf} mL of 8.4%)`;
-                    document.getElementById('disp-bicarb-push-dose').innerHTML = `Give <strong>1 - 2 ampules (50 - 100 mL = 50 - 100 mEq of 8.4% NaHCO₃)</strong> slow IV push over 2 - 5 min in severe cardiac instability.`;
-                    document.getElementById('disp-bicarb-form-badge').textContent = '8.4% Int (50 mEq/amp)';
-                    document.getElementById('disp-bicarb-recipe').innerHTML = `Add <strong>3 ampules (150 mL = 150 mEq) of 8.4% NaHCO₃</strong> into <strong>850-1000 mL D5W</strong> to yield ~150 mEq/L. Infuse at <strong>100 - 250 mL/hr</strong>.`;
+                    document.getElementById('disp-bicarb-total').textContent = `0`;
+                    document.getElementById('disp-bicarb-half').textContent = `Target reached (No deficit, Current HCO₃⁻ ≥ Target)`;
                 }
             } else {
-                document.getElementById('disp-bicarb-total').textContent = `0`;
-                document.getElementById('disp-bicarb-half').textContent = `Target reached (No deficit, Current HCO₃⁻ ≥ Target)`;
+                document.getElementById('disp-bicarb-total').textContent = `--`;
+                document.getElementById('disp-bicarb-half').textContent = `Enter serum HCO₃⁻`;
             }
-        } else {
-            document.getElementById('disp-bicarb-total').textContent = `--`;
-            document.getElementById('disp-bicarb-half').textContent = `Enter serum HCO₃⁻`;
         }
 
         const etiology = document.getElementById('acid-etiology').value;
-        const phStr = document.getElementById('acid-ph').value.trim();
-        const ph = phStr !== '' ? parseFloat(phStr) : 7.12;
         const pco2 = parseFloat(document.getElementById('acid-pco2').value) || 35;
         const akiStage = parseInt(document.getElementById('acid-aki-stage').value) || 0;
         const bicarbInd = ELECTROLYTE_ENGINE.evaluateBicarbonateIndication({ etiology, ph, hco3: currHco3 || 15, akinStage: akiStage, pco2 });
@@ -2838,7 +2912,7 @@
                 caDescEl.textContent = caEval.primaryType === 'ionized' 
                     ? `iCa ${ica} mmol/L (High > 1.33)` 
                     : `Total Ca ${totCa} mg/dL (Payne Corrected: ${caEval.payneCorrectedCa || totCa} mg/dL)`;
-                caTreatBox.innerHTML = `<strong>Hypercalcemia Protocol:</strong><p style="margin:4px 0 0; color:var(--ink);">• <strong>0.9% NaCl Normal Saline 200 - 500 mL/hr</strong> (target UO 100-150 mL/hr).<br>• <strong>Calcitonin 4 - 8 IU/kg SC/IM q12h</strong> (rapid onset in 4-6h).<br>• <strong>Zoledronic acid 4 mg IV</strong> over 15 min (or Pamidronate 60-90 mg).</p>`;
+                caTreatBox.innerHTML = `<strong>⛔ Hypercalcemia Protocol (IV Calcium Contraindicated):</strong><p style="margin:4px 0 0; color:var(--ink);">• <strong>0.9% NaCl Normal Saline 200 - 500 mL/hr</strong> (target UO 100-150 mL/hr).<br>• <strong>Calcitonin 4 - 8 IU/kg SC/IM q12h</strong> (rapid onset in 4-6h).<br>• <strong>Zoledronic acid 4 mg IV</strong> over 15 min (or Pamidronate 60-90 mg).</p>`;
             } else {
                 caStatEl.textContent = 'NORMAL';
                 caStatEl.style.color = '#34d399';
@@ -2875,7 +2949,7 @@
                 mgStatEl.textContent = 'HYPERMAGNESEMIA';
                 mgStatEl.style.color = '#f87171';
                 mgDescEl.textContent = `Mg²⁺ ${mg} mg/dL (Elevated > 2.4)`;
-                mgTreatBox.innerHTML = `<strong>Hypermagnesemia Protocol:</strong><p style="margin:4px 0 0; color:var(--ink);">Discontinue all Magnesium sources. If symptomatic (hypotension/arrhythmia), give <strong>10% Calcium Gluconate 10-20 mL IV</strong> over 5-10 min to antagonize neuromuscular effects.</p>`;
+                mgTreatBox.innerHTML = `<strong>⛔ Hypermagnesemia Protocol (IV Mg Contraindicated):</strong><p style="margin:4px 0 0; color:var(--ink);">Discontinue all Magnesium sources. If symptomatic (hypotension/loss of DTR/arrhythmia), give <strong>10% Calcium Gluconate 10-20 mL IV</strong> over 5-10 min to antagonize neuromuscular effects.</p>`;
             } else {
                 mgStatEl.textContent = 'NORMAL';
                 mgStatEl.style.color = '#34d399';
@@ -2921,7 +2995,7 @@
                 if (po4 < 2.5) {
                     po4GuidanceEl.innerHTML = `<strong>Dose:</strong> ${po4Rep.recommendedDoseMmol} mmol IV (${po4Rep.infusionDuration}).<br><strong>Safety:</strong> ${po4Rep.safetyGate}`;
                 } else if (po4 > 4.5) {
-                    po4GuidanceEl.innerHTML = `<strong>Management:</strong> ${po4Rep.management}<br><strong>Safety:</strong> ${po4Rep.safetyGate}`;
+                    po4GuidanceEl.innerHTML = `<strong>⛔ Hyperphosphatemia Alert (IV Phosphate Contraindicated):</strong><br><strong>Management:</strong> ${po4Rep.management}<br><strong>Safety:</strong> ${po4Rep.safetyGate}`;
                 } else {
                     po4GuidanceEl.innerHTML = `✓ Serum Phosphate is within normal range (2.5 - 4.5 mg/dL).`;
                 }
