@@ -52,43 +52,17 @@
             margin-bottom: 24px;
         }
 
-        .hub-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--rule);
-            padding-bottom: 12px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .hub-title h2 {
-            margin: 0;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--ink);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .hub-title p {
-            margin: 4px 0 0;
-            color: var(--graphite);
-            font-size: 0.85rem;
-        }
-
         .badge-2026 {
             background: #dcfce7;
             color: #166534;
             border: 1px solid #bbf7d0;
             font-size: 11px;
             font-weight: 700;
-            padding: 3px 8px;
+            padding: 4px 8px;
             border-radius: 4px;
             text-transform: uppercase;
             letter-spacing: 0.03em;
+            white-space: nowrap;
         }
 
         /* ══ Patient Variables Strip ══ */
@@ -416,6 +390,7 @@
         }
 
         @media (max-width: 768px) {
+            .nav-subtitle { display: none; }
             .grid-2 { grid-template-columns: 1fr; }
             .patient-strip { grid-template-columns: 1fr 1fr; }
         }
@@ -423,18 +398,25 @@
 </head>
 <body class="theme-neutral">
 
-<div class="container">
-    <!-- Header -->
-    <div class="hub-header">
-        <div class="hub-title">
-            <h2>⚡ Electrolyte &amp; Acid-Base Clinical Suite</h2>
-            <p>MNRH Emergency Department · 2026 Evidence-Based Critical Care &amp; Nephrology Architecture</p>
+<!-- Sticky Top Navigation Bar -->
+<nav class="top-nav" role="navigation">
+    <img src="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png" alt="MNRH Logo" class="nav-logo">
+    <a href="../index.html" class="nav-home" aria-label="Home">Home</a>
+    <div style="border-left: 1px solid rgba(240, 237, 229, 0.3); padding-left: 14px; display: flex; flex-direction: column; justify-content: center;">
+        <div style="font-size: 15px; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 6px; letter-spacing: 0.01em;">
+            ⚡ Electrolyte &amp; Acid-Base Clinical Suite
         </div>
-        <div>
-            <span class="badge-2026">2026 Consensus Synced</span>
+        <div class="nav-subtitle" style="font-size: 11px; color: #cbd5e1; font-weight: 500; margin-top: 1px;">
+            MNRH Emergency Department · 2026 Evidence-Based Critical Care &amp; Nephrology Architecture
         </div>
     </div>
+    <div class="nav-right" style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+        <span class="badge-2026">2026 Consensus Synced</span>
+        <span id="nav-ver-display" style="font-size: 11px; color: #cbd5e1;">...</span>
+    </div>
+</nav>
 
+<div class="container">
     <!-- Patient Variables Strip -->
     <div class="patient-strip">
         <div class="input-group">
@@ -1317,10 +1299,24 @@ Assessment & Protocol Grounded in 2026 Critical Care Consensus.`;
         }
     });
 
-    // Navigation Bar Injection
-    if (typeof ED_COMPONENTS !== 'undefined' && ED_COMPONENTS.injectNavBar) {
-        ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png', 'Electrolyte & Acid-Base Hub', 'Electrolyte Hub');
-    }
+    // Version sync for Top Nav
+    const verEl = document.getElementById('nav-ver-display');
+    try {
+        const cachedVer = localStorage.getItem('er-hub-cached-version');
+        if (cachedVer && verEl) verEl.textContent = cachedVer;
+    } catch (_) {}
+    fetch('../service-worker.js')
+        .then(res => res.text())
+        .then(code => {
+            const match = code.match(/CACHE_VERSION\s*=\s*['"]er-hub-(v\d+)['"]/i);
+            const dateMatch = code.match(/CACHE_DATE\s*=\s*['"]([^'"]+)['"]/i);
+            if (match && match[1]) {
+                const displayText = dateMatch && dateMatch[1] ? `${match[1]} · ${dateMatch[1]}` : match[1];
+                if (verEl) verEl.textContent = displayText;
+                try { localStorage.setItem('er-hub-cached-version', displayText); } catch (_) {}
+            }
+        })
+        .catch(() => {});
 
     // Initial calculation
     recalc();
