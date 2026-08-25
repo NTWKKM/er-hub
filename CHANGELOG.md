@@ -1,3 +1,25 @@
+## [2.14.0] — 2026-08-25
+
+### Clinical Tools Sequential Realignment & Priority Numbering
+- **Portal Hub Reorganization (`index.html`):**
+  - Reordered active clinical tools into a unified, sequential list according to emergency acuity:
+    - **T1:** IV Infusion Drip Calculator (`tools/drip-calculator.html`)
+    - **T2:** NIHSS Score Sheet (`tools/nihss.html` / `tools/nihss-v2.html`)
+    - **T3:** Electrolyte & Acid-Base Hub (`tools/electrolyte-hub.html`, previously T11)
+    - **T4:** Burn Management & Resuscitation Hub (`tools/burn-manager.html`, previously T10)
+    - **T5:** TB Weight-Based Dosing Calculator (`tools/tb-calculator.html`, previously T6)
+    - **T6:** MgSO4 Calculator (`tools/mgso4-calculator.html`, previously T7)
+    - **T7:** Urgent Clinic Home Medication (`tools/Urgent-Clinic-Home-Medication.html`, previously T3)
+    - **T8:** Clinical Score & Risk Hub (`tools/score-hub.html`, previously T5)
+  - Reordered and renumbered prototype tools:
+    - **T9:** ER NOTE Tool (`tools/er-note/index.html`, previously T4)
+    - **T10:** RSI Checklist (`tools/rsi-checklist.html`, previously T8)
+    - **T11:** Resuscitation Timer (`tools/resus-timer.html`, previously T9)
+- **PWA Service Worker Update (`service-worker.js`):**
+  - Bumped offline cache version to `er-hub-v86` (`25/08/2569`).
+- **Contract & Architecture Documentation (`CONTEXT.md`, `ARCHITECTURE.md`):**
+  - Added ADR-32 and synchronized active/prototype classification contracts.
+
 ## [2.13.0] — 2026-08-24
 
 ### Deep Clinical Audit & Production Promotion (T7, T10, T11 Active Release)

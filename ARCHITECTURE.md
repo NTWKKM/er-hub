@@ -231,7 +231,7 @@ Features:
 ### Portal Hub (`index.html`)
 
 Main entry point. Braun × Mid-Century Modern layout.
-Divided into two parts: Active releases (rt-PA, NSTEMI, and tools T1 to T3 marked with ACTIVE status, displayed first directly without a header) and a "Prototype" section (containing the remaining standing orders and T4 tool marked with PROTOTYPE status, which is collapsed by default and toggleable via a tactile 3D perspective accordion header).
+Divided into two parts: Active releases (rt-PA, NSTEMI, and tools T1 to T8 marked with ACTIVE status, displayed first directly without a header) and a "Prototype" section (containing the remaining standing orders and tools T9 to T11 marked with PROTOTYPE status, which is collapsed by default and toggleable via a tactile 3D perspective accordion header).
 Uses semantic vertical ordered lists with 1px hairlines, tabular numerals, muted category styles, signal orange indicators for time-critical actions.
 Each `.order-row` has a mouse-tracking 3D tilt effect (`perspective(600px)` + `rotateX/Y` + `translateZ`). The collapsible content container toggles `overflow: hidden` during the expand/collapse animation, then switches to `overflow: visible` after the transition completes so the 3D tilt on child rows is not clipped.
 Registers service worker for offline PWA support with dynamic reload notification.

@@ -30,7 +30,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | **NIHSS** | National Institutes of Health Stroke Scale. 11-item neurological deficit score (0–42). Standalone scoring worksheet (`tools/nihss.html`), linked from rtpa.html toolbar via "NIHSS เปล่า" popup button. |
 | **Blank Print** | Pre-formatted standing order sheet with all calculated fields as dotted lines and all checkboxes as ☐. Four pathways: PDF open (4 pages: stemi, pe, heparin, sedation), HTML blank via `ED_BLANK_PRINT.apply()` (rtpa/nstemi/antivenom), popup print via `tools/nihss.html?print-blank-direct=true` (NIHSS), or non-destructive print blank button (Home Medication). |
 | **Urgent Clinic Home Medication** | Standalone home medication and emergency immunization checklist worksheet (`tools/Urgent-Clinic-Home-Medication.html`) for discharge clinical documentation, with auto-save, plain-text clipboard copy, and A4 print blank support. |
-| **Active / Prototype Release States** | Classification of portal hub items. Active releases (rt-PA, NSTEMI, Anaphylaxis, T1 Drip Calc, T2 NIHSS, T3 Home Meds, T5 Score Hub, T6 TB Calc, T7 MgSO4, T8 RSI, T9 Resus Timer, T10 Burn Hub, T11 Electrolyte Hub) are production-ready (displayed directly in the Active section). Prototypes (STEMI, PE, Heparin, Antivenom, Sedation, T4 ER Note) are under evaluation (in the collapsible Prototype section). |
+| **Active / Prototype Release States** | Classification of portal hub items. Active releases (01 rt-PA, 02 NSTEMI, T1 Drip Calc, T2 NIHSS, T3 Electrolyte Hub, T4 Burn Hub, T5 TB Calc, T6 MgSO4, T7 Home Meds, T8 Score Hub) are production-ready (displayed directly in the Active section). Prototypes (03 STEMI, 04 PE, 05 Heparin, 06 Antivenom, 07 Sedation, 08 Anaphylaxis, T9 ER Note, T10 RSI, T11 Resus Timer) are under evaluation (in the collapsible Prototype section). |
 | **Anaphylaxis** | Life-threatening systemic hypersensitivity reaction. First-line therapy is immediate Epinephrine IM (1:1000) 0.01 mg/kg (adult 0.3–0.5 mg, peds max 0.3 mg) into mid-outer thigh. |
 | **RSI (Rapid Sequence Intubation)** | High-risk emergency airway management procedure utilizing simultaneous administration of an induction agent and neuromuscular blocking paralytic to rapidly secure the airway while minimizing aspiration risk. |
 | **SOAP-ME** | Standardized pre-intubation safety checklist acronym: Suction, Oxygen, Airway, Pharmacy/Positioning, Monitoring, Equipment. |
@@ -187,3 +187,22 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   1. Promoted `T7`, `T10`, and `T11` from the collapsible Prototype section to the main Active Tools list in `index.html`.
   2. Set their visual status badges to `ACTIVE`.
   3. Bumped `service-worker.js` cache version to `er-hub-v85` to ensure immediate client cache synchronization.
+
+## ADR-32: Clinical Tools Numbering Reorganization and Priority Realignment
+
+- **Context**: Following production promotion of the Electrolyte & Acid-Base Hub and Burn Hub, tool identifiers were fragmented across discontinuous slots. A clinically prioritized sequential reordering was requested to place high-acuity critical care tools at the forefront.
+- **Decision**:
+  1. **Active Tools Realigned**:
+     - `T1`: IV Infusion Drip Calculator (`tools/drip-calculator.html`)
+     - `T2`: NIHSS Score Sheet (`tools/nihss.html` / `tools/nihss-v2.html`)
+     - `T3`: Electrolyte & Acid-Base Hub (`tools/electrolyte-hub.html`, previously T11)
+     - `T4`: Burn Management & Resuscitation Hub (`tools/burn-manager.html`, previously T10)
+     - `T5`: TB Weight-Based Dosing Calculator (`tools/tb-calculator.html`, previously T6)
+     - `T6`: MgSO4 Calculator (`tools/mgso4-calculator.html`, previously T7)
+     - `T7`: Urgent Clinic Home Medication (`tools/Urgent-Clinic-Home-Medication.html`, previously T3)
+     - `T8`: Clinical Score & Risk Hub (`tools/score-hub.html`, previously T5)
+  2. **Prototype Tools Realigned**:
+     - `T9`: ER NOTE Tool (`tools/er-note/index.html`, previously T4)
+     - `T10`: RSI Checklist (`tools/rsi-checklist.html`, previously T8)
+     - `T11`: Resuscitation Timer (`tools/resus-timer.html`, previously T9)
+  3. Updated `service-worker.js` cache version to `er-hub-v86` (`25/08/2569`).

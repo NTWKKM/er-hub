@@ -9,22 +9,31 @@ Emergency Department clinical standing order system for **Maharat Nakhon Ratchas
 ```
 index.html                       ← Portal hub (Braun × Mid-Century Modern, SW registration)
 ├── orders/
-│   ├── rtpa.html                ← rt-PA Stroke FAST TRACK
-│   ├── stemi.html               ← STEMI Standing Order
-│   ├── nstemi.html              ← NSTEMI + GRACE Score + Anticoag
-│   ├── pe.html                  ← Massive PE Fibrinolysis
-│   ├── heparin.html             ← Heparin Protocol + aPTT Titration
-│   ├── antivenom.html           ← Antivenom Standing Order
-│   └── sedation.html            ← Post-Intubation Sedation
+│   ├── rtpa.html                ← rt-PA Stroke FAST TRACK (01, V1)
+│   ├── rtpa-v2.html             ← rt-PA Stroke FAST TRACK (01, V2)
+│   ├── nstemi.html              ← NSTEMI Standing Order (02, V1)
+│   ├── nstemi-v2.html           ← NSTEMI Standing Order (02, V2)
+│   ├── stemi.html               ← STEMI Standing Order (03)
+│   ├── pe.html                  ← Massive PE Fibrinolysis (04)
+│   ├── heparin.html             ← Heparin Protocol + aPTT Titration (05)
+│   ├── antivenom.html           ← Antivenom Standing Order (06, V1)
+│   ├── antivenom-v2.html        ← Antivenom Standing Order (06, V2)
+│   ├── sedation.html            ← Post-Intubation Sedation (07)
+│   └── anaphylaxis.html         ← Anaphylaxis Standing Order (08)
 ├── tools/
-│   ├── drip-calculator.html     ← IV Infusion Drip Calculator (12 HAD drugs)
-│   ├── nihss.html               ← NIHSS Stroke Scale Score Sheet
-│   ├── Urgent-Clinic-Home-Medication.html ← Home Medication Checklist (ERIG/HRIG auto-calc)
-│   ├── score-hub.html           ← Clinical Score & Risk Hub (AWS, Sepsis, ABCD2, HEART, GRACE, PE)
-│   ├── tb-calculator.html       ← TB Weight-Based Dosing Calculator (Thailand CPG 2018/2022)
-│   ├── mgso4-calculator.html    ← MgSO4 Dosing & Pre-eclampsia/Eclampsia Calculator
+│   ├── drip-calculator.html     ← IV Infusion Drip Calculator (T1, 17 HAD drugs)
+│   ├── nihss.html               ← NIHSS Stroke Scale Score Sheet (T2, V1)
+│   ├── nihss-v2.html            ← NIHSS Stroke Scale Score Sheet (T2, V2)
+│   ├── electrolyte-hub.html     ← Electrolyte & Acid-Base Hub (T3)
+│   ├── burn-manager.html        ← Burn Management & Resuscitation Hub (T4)
+│   ├── tb-calculator.html       ← TB Weight-Based Dosing Calculator (T5)
+│   ├── mgso4-calculator.html    ← MgSO4 Dosing & Pre-eclampsia/Eclampsia Calculator (T6)
+│   ├── Urgent-Clinic-Home-Medication.html ← Home Medication Checklist (T7)
+│   ├── score-hub.html           ← Clinical Score & Risk Hub (T8)
+│   ├── rsi-checklist.html       ← RSI Checklist (T10)
+│   ├── resus-timer.html         ← Resuscitation Timer (T11)
 │   └── er-note/
-│       ├── index.html           ← ER NOTE portal hub (7 templates)
+│       ├── index.html           ← ER NOTE portal hub (T9, 7 templates)
 │       ├── general-er-note.html ← General ER Note
 │       ├── sepsis.html          ← Sepsis (NEWS2/SIRS/qSOFA)
 │       ├── trauma.html          ← Trauma (GCS)
@@ -44,7 +53,9 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 │   ├── stroke-engine.js         ← Stroke rt-PA thrombolytic dosing engine
 │   ├── stemi-engine.js          ← STEMI TNK weight-bracket dosing engine
 │   ├── ob-engine.js             ← MgSO4 dosing & pre-eclampsia severity classification engine
-│   ├── drug-data.js             ← 12-drug catalog (concentrations, limits, warnings)
+│   ├── burn-engine.js           ← Burn assessment & resuscitation engine
+│   ├── electrolyte-engine.js    ← Electrolyte & acid-base calculation engine
+│   ├── drug-data.js             ← 17-drug catalog (concentrations, limits, warnings)
 │   ├── print-bootstrap.js       ← Print/page lifecycle (show/clear/print-blank-direct)
 │   ├── blank-print-engine.js    ← Declarative blank-print reset (rtpa/nstemi)
 │   └── form-validate.js         ← Non-blocking validation (replaces alert())
@@ -55,18 +66,15 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 │   ├── stroke-engine.test.js
 │   ├── stemi-engine.test.js
 │   ├── ob-engine.test.js
+│   ├── burn-engine.test.js
+│   ├── electrolyte-engine.test.js
+│   ├── antivenom.test.js
 │   ├── drug-data.test.js
 │   ├── components.test.js
-│   ├── form-validate.test.js
-│   ├── print-bootstrap.test.js
-│   ├── blank-print-engine.test.js
-│   ├── nstemi-audit-fixes.test.js
-│   ├── nstemi-thresholds.test.js
 │   ├── score-hub.test.js
-│   ├── tb-calculator-ui.test.js
-│   ├── drip-calculator-ui.test.js
-│   ├── nihss-guard.test.js
-│   ├── home-medication-guard.test.js
+│   ├── tb-calculator.test.js
+│   ├── v2-worksheets.test.js
+│   ├── index-flip-cards.test.js
 │   ├── dead-css-guard.test.js
 │   ├── id-integrity-guard.test.js
 │   ├── order-safety-guard.test.js
@@ -101,4 +109,4 @@ See `ARCHITECTURE.md`, `DESIGN.md`, and `CONTEXT.md` for full specifications. Se
 npm test
 ```
 
-Runs 344 unit tests via Node's built-in `node:test` (zero dependencies). Covers `calc-engine.js` (drip rate), `anticoag-engine.js` (heparin dosing + titration), `stroke-engine.js` (rt-PA dosing), `stemi-engine.js` (TNK dosing), `ob-engine.js` (MgSO4 loading, maintenance IV/IM, recurrent seizure, toxicity check, BP severity, severe feature evaluation), `clinical-engine.js` (eGFR + GRACE score + Killip lookup + riskLevel boundaries), `drug-data.js` (12-drug catalog validation + absoluteMaxPerHour), `components.js` (date/time formatting), `form-validate.js`, `print-bootstrap.js`, `blank-print-engine.js`, and structural regression guards (dead-css, id-integrity, order-safety, PWA assets, score-hub, TB calculator UI, drip-calculator UI, NIHSS validation, home medication). Tests are dev-only — they never ship to the browser.
+Runs 367 unit tests via Node's built-in `node:test` (zero dependencies). Covers `calc-engine.js` (drip rate), `anticoag-engine.js` (heparin dosing + titration), `stroke-engine.js` (rt-PA dosing), `stemi-engine.js` (TNK dosing), `ob-engine.js` (MgSO4 dosing & toxicity evaluation), `burn-engine.js` (TBSA & fluid formulas), `electrolyte-engine.js` (Adrogué-Madias, FWD, potassium & acid-base math), `clinical-engine.js` (eGFR + GRACE score + Killip lookup + riskLevel boundaries), `drug-data.js` (17-drug catalog validation + absoluteMaxPerHour), `components.js` (date/time formatting), `form-validate.js`, `print-bootstrap.js`, `blank-print-engine.js`, and structural regression guards (dead-css, id-integrity, order-safety, PWA assets, score-hub, TB calculator, NIHSS V2, and 3D index flip cards). Tests are dev-only — they never ship to the browser.
