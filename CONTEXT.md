@@ -206,3 +206,17 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
      - `T10`: RSI Checklist (`tools/rsi-checklist.html`, previously T8)
      - `T11`: Resuscitation Timer (`tools/resus-timer.html`, previously T9)
   3. Updated `service-worker.js` cache version to `er-hub-v86` (`25/08/2569`).
+
+## ADR-33: Clinical Guidance Refresh (BPaL/BPaLM TB Regimen, Resuscitation Patient Modes, and SSC 2026 Guidelines)
+
+- **Context**: Recent international clinical updates (WHO 2025/2026 TB consolidated guidelines, PALS/AHA 2025/2026 resuscitation standards, and Surviving Sepsis Campaign 2026 recommendations) required integration across emergency tools without disrupting existing workflows.
+- **Decision**:
+  1. **MDR/RR-TB BPaL / BPaLM 6-Month Regimen**:
+     - Integrated the WHO 2025/2026 6-month all-oral BPaL/BPaLM regimen into `tools/tb-calculator.html` with explicit Bedaquiline (400mg OD x2w then 200mg 3x/w), Pretomanid (200mg OD), Linezolid (600mg OD with 300mg reduction guidance), and Moxifloxacin (400mg OD for BPaLM) dosing.
+     - Added mandatory ECG monitoring clinical advisory and universal EMR HIS prescription note builder support.
+  2. **Resuscitation Assistant Real-time Patient Modes**:
+     - Added `#patient-mode` dropdown (`Adult`, `Pediatric`, `Infant`) in `tools/resus-timer.html`.
+     - Provided instant, real-time dynamic guidance: 2-thumb-encircling compressions & 1.5-inch (4 cm) depth for infants, 2-inch (5 cm) depth for children, 15:2 ratio for 2-rescuer pediatric/infant CPR, and updated respiratory arrest ventilation intervals.
+  3. **Sepsis 1-Hour Bundle SSC 2026 Alignment**:
+     - Updated `tools/score-hub.html` Sepsis resuscitation bundle: cautious 30 mL/kg crystalloid administration in elderly/CHF, target MAP 60–65 mmHg in patients $\ge 65$ years on Norepinephrine, and proactive Active Fluid Removal (De-resuscitation) following shock resolution.
+  4. Updated `service-worker.js` offline cache version to `er-hub-v87` (`26/08/2569`).

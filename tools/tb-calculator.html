@@ -564,7 +564,8 @@
                                 <option value="none">สูตรมาตรฐาน (Standard CPG Regimen)</option>
                                 <option value="tpt">ยารักษาวัณโรคแฝง (TPT Regimens)</option>
                                 <option value="h-mono">ดื้อยา Isoniazid (H-mono resistance)</option>
-                                <option value="mdr-shorter">MDR/RR-TB — Shorter Bdq regimen (เข้าเกณฑ์แล้ว)</option>
+                                <option value="mdr-bpal">MDR/RR-TB — BPaL/BPaLM (6-month WHO 2025/2026)</option>
+                                <option value="mdr-shorter">MDR/RR-TB — Shorter All-Oral Bdq Regimen</option>
                                 <option value="mdr-longer">MDR/RR-TB — Individualized Longer Regimen</option>
                             </select>
                         </div>
@@ -751,6 +752,46 @@
                             <tr>
                                 <td class="drug-name-col">6H (Isoniazid)<small>วันละ 1 ครั้ง x 6-9 เดือน</small></td>
                                 <td class="dose-value" id="tpt-6h-val"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- BPaL / BPaLM Result Box -->
+            <div id="result-bpal" class="result-box">
+                <div class="result-header">
+                    <h2 class="result-header-title">MDR/RR-TB — BPaL / BPaLM (WHO 2025/2026)</h2>
+                    <span class="meta-badge primary">6-Month Regimen</span>
+                </div>
+                <div id="inline-warn-bpal"></div>
+                <div style="background:#fef3c7;color:#78350f;padding:10px 12px;border-radius:6px;margin-bottom:12px;font-size:0.9em;line-height:1.4;">
+                    ⚠️ การใช้สูตร BPaL / BPaLM (6 เดือน) ควรใช้ภายใต้การดูแลของผู้เชี่ยวชาญวัณโรค และมีการตรวจคลื่นไฟฟ้าหัวใจ (ECG) เป็นระยะ
+                </div>
+                <div class="clinical-table-wrapper">
+                    <table class="clinical-table">
+                        <thead>
+                            <tr>
+                                <th>ยา (Drug)</th>
+                                <th>ขนาดยา (Dose) สำหรับผู้ใหญ่</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="drug-name-col">Bedaquiline (B)<small>Week 1-2: 400 mg daily, Week 3-26: 200 mg 3x/week</small></td>
+                                <td class="dose-value">400 mg (4 tabs) OD x 2 wks, แล้ว 200 mg (2 tabs) 3x/wk</td>
+                            </tr>
+                            <tr>
+                                <td class="drug-name-col">Pretomanid (Pa)<small>200 mg daily</small></td>
+                                <td class="dose-value">200 mg OD (พร้อมอาหาร)</td>
+                            </tr>
+                            <tr>
+                                <td class="drug-name-col">Linezolid (L)<small>600 mg daily</small></td>
+                                <td class="dose-value">600 mg OD (ปรับลดเหลือ 300 mg ได้ถ้ามีผลข้างเคียง)</td>
+                            </tr>
+                            <tr>
+                                <td class="drug-name-col">Moxifloxacin (M)<small>400 mg daily (เฉพาะสูตร BPaLM)</small></td>
+                                <td class="dose-value">400 mg OD</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1075,6 +1116,7 @@
             document.getElementById('result-adult').classList.remove('active');
             document.getElementById('result-pediatric').classList.remove('active');
             document.getElementById('result-tpt').classList.remove('active');
+            document.getElementById('result-bpal').classList.remove('active');
             document.getElementById('result-mdr-shorter').classList.remove('active');
             document.getElementById('result-mdr-longer').classList.remove('active');
             document.getElementById('result-hmono').classList.remove('active');
@@ -1276,6 +1318,8 @@
                 document.getElementById('result-tpt').classList.add('active');
             } else if (special === 'h-mono') {
                 document.getElementById('result-hmono').classList.add('active');
+            } else if (special === 'mdr-bpal') {
+                document.getElementById('result-bpal').classList.add('active');
             } else if (special === 'mdr-shorter') {
                 document.getElementById('result-mdr-shorter').classList.add('active');
                 const bandIdx = getDrBandIndex(weight);
@@ -1335,6 +1379,12 @@
                 rxNote += `- EMB (${activeE}mg)${eTag}: ${stripArrow(suggestTablets(activeE, [500, 400]))}\n`;
                 rxNote += `- Levofloxacin (${lfxDose}mg): ${stripArrow(suggestTablets(lfxDose, [500, 250]))}\n`;
                 rxNote += `- High-dose INH (พิจารณาใช้กรณี Low-level INH resistance): ${hHighDose} mg/day\n`;
+            } else if (special === 'mdr-bpal') {
+                rxNote += `MDR/RR-TB BPaL / BPaLM (WHO 2025/2026 6-Month Regimen):\n`;
+                rxNote += `- Bedaquiline: 400 mg OD x 2 wks, then 200 mg 3x/wk\n`;
+                rxNote += `- Pretomanid: 200 mg OD\n`;
+                rxNote += `- Linezolid: 600 mg OD (adjust to 300 mg if side effects)\n`;
+                rxNote += `- Moxifloxacin: 400 mg OD (เฉพาะ BPaLM)\n`;
             } else if (special === 'mdr-shorter') {
                 if (weight < 30) {
                     rxNote += `MDR/RR-TB Shorter All-Oral Bdq Regimen:\n`;
@@ -1409,11 +1459,15 @@
                 rxNote += `⚠️ หมายเหตุภาวะตับ: เอนไซม์ตับสูง >3x หลีกเลี่ยงยาทำลายตับ (H, R, Z)\n`;
             }
 
-            document.getElementById('clinical-note-text').innerText = rxNote;
+            const noteEl = document.getElementById('clinical-note-text');
+            if (noteEl) {
+                noteEl.textContent = rxNote;
+                noteEl.innerText = rxNote;
+            }
         }
 
         function copyPrescriptionNote() {
-            const noteText = document.getElementById('clinical-note-text').innerText;
+            const noteText = document.getElementById('clinical-note-text').textContent || document.getElementById('clinical-note-text').innerText;
             navigator.clipboard.writeText(noteText).then(() => {
                 const toast = document.getElementById('toast');
                 toast.style.display = 'block';

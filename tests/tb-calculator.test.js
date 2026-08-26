@@ -432,4 +432,27 @@ test('TB Weight-Based Dosing Calculator Clinical Verification', async (t) => {
         assert.ok(d71.doseHtml.includes('4 เม็ด (250mg)'), 'Eto at 71kg should be 4 tabs');
     });
 
+    await t.test('Execution Test: MDR/RR-TB BPaL / BPaLM WHO 2025/2026 6-month regimen display & EMR note generation', () => {
+        const html = fs.readFileSync(TB_CALC_PATH, 'utf8');
+        const dom = new JSDOM(html, { runScripts: 'dangerously' });
+        const doc = dom.window.document;
+
+        doc.getElementById('tb-weight').value = 55;
+        doc.getElementById('tb-special').value = 'mdr-bpal';
+        dom.window.calculateTBDoses();
+
+        const bpalBox = doc.getElementById('result-bpal');
+        assert.ok(bpalBox.classList.contains('active'), 'BPaL result box should be active when mdr-bpal is selected');
+        assert.ok(bpalBox.textContent.includes('Bedaquiline (B)'), 'Should contain Bedaquiline');
+        assert.ok(bpalBox.textContent.includes('Pretomanid (Pa)'), 'Should contain Pretomanid');
+        assert.ok(bpalBox.textContent.includes('Linezolid (L)'), 'Should contain Linezolid');
+        assert.ok(bpalBox.textContent.includes('Moxifloxacin (M)'), 'Should contain Moxifloxacin');
+
+        const note = doc.getElementById('clinical-note-text').textContent;
+        assert.ok(note.includes('BPaL / BPaLM (WHO 2025/2026 6-Month Regimen)'), 'Clinical note should include BPaL/BPaLM header');
+        assert.ok(note.includes('Bedaquiline: 400 mg OD x 2 wks, then 200 mg 3x/wk'), 'Clinical note should include Bdq loading/maintenance dose');
+        assert.ok(note.includes('Pretomanid: 200 mg OD'), 'Clinical note should include Pretomanid dose');
+        assert.ok(note.includes('Linezolid: 600 mg OD'), 'Clinical note should include Linezolid dose');
+    });
+
 });

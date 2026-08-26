@@ -981,6 +981,11 @@
                 <h1 class="resus-title">Resuscitation Assistant & Timer</h1>
             </div>
             <div class="header-tools">
+                <select id="patient-mode" class="tool-btn" onchange="updatePatientModeGuidance()" title="Patient Mode">
+                    <option value="adult">Adult (≥ Puberty)</option>
+                    <option value="pediatric">Child (1 yr - Puberty)</option>
+                    <option value="infant">Infant (&lt; 1 yr)</option>
+                </select>
                 <button class="tool-btn" id="btn-metronome" onclick="toggleMetronome()" title="CPR Metronome: 110 bpm (100-120 bpm guideline range)">
                     <span class="metro-pulse" id="metro-dot"></span>
                     <span>Metronome 110 bpm</span>
@@ -1361,7 +1366,21 @@
             }
             initAudioSettings();
             initPrintHeaderMeta();
+            updatePatientModeGuidance();
         });
+
+        function updatePatientModeGuidance() {
+            const mode = document.getElementById('patient-mode').value;
+            let note = '';
+            if (mode === 'infant') {
+                note = '💡 <strong>Infant CPR Mode:</strong> Use 2-thumb-encircling hands technique for compressions. Depth: 1.5 inches (4 cm). Rate: 100-120/min. Ratio: 15:2 (2 rescuers). Provide 1 breath every 2-3 secs for respiratory arrest.';
+            } else if (mode === 'pediatric') {
+                note = '💡 <strong>Pediatric CPR Mode:</strong> Use 1 or 2 hands. Depth: 2 inches (5 cm). Rate: 100-120/min. Ratio: 15:2 (2 rescuers). Provide 1 breath every 2-3 secs for respiratory arrest.';
+            } else {
+                note = '💡 <strong>Adult CPR Mode:</strong> Depth: at least 2 inches (5 cm). Rate: 100-120/min. Ratio: 30:2. Provide 1 breath every 6 secs for respiratory arrest. (2025/2026: Suspect Opioid OD? Give Naloxone early).';
+            }
+            setGuidance(note);
+        }
 
         // ══════════════════════════════════════════════════════════════
         // APPLICATION STATE

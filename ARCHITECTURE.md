@@ -99,8 +99,9 @@ Features:
 
 ### Resuscitation Timer (`tools/resus-timer.html`) [PROTOTYPE]
 
-Real-time cardiac arrest management assistant and timer adhering to AHA ACLS 2025/2026 Guidelines (`Part 9: Adult ALS` and `Part 11: Post-Cardiac Arrest Care`).
+Real-time cardiac arrest management assistant and timer adhering to AHA ACLS 2025/2026 Guidelines (`Part 9: Adult ALS` and `Part 11: Post-Cardiac Arrest Care`) and PALS/AHA 2025/2026 pediatric resuscitation guidance.
 Dark theme with tactile controls for high-stress ER resus rooms. Features:
+- **Patient Mode Selector:** Real-time dynamic switching between `Adult` (≥ Puberty), `Child` (1 yr - Puberty), and `Infant` (< 1 yr) with tailored compression depth (1.5" / 4 cm infant, 2" / 5 cm child, ≥2" adult), technique (2-thumb-encircling for infant), ratio (15:2 for 2-rescuer pediatric/infant vs 30:2 adult), and respiratory arrest ventilation interval prompts (1 breath q2-3s vs q6s).
 - Dual timers: Total elapsed time (MM:SS) and 2-minute CPR cycle countdown with visual progress bar.
 - CPR Metronome: 110 bpm (100–120 bpm guideline range) with Web Audio API synthesizer clicks and rhythmic pulsing dot.
 - 2-Minute Cycle Alert: High-priority audio chime and visual strobe alerting team to pause CPR (<10s), check rhythm/pulse, switch compressors, and evaluate ETCO2.
@@ -132,7 +133,7 @@ Features:
 Unified emergency medicine scoring and risk stratification tool. Self-contained HTML worksheet with isolated dark / monochrome-safe design system (optimized for JVC greyscale displays), sticky top navigation bar (`ED_COMPONENTS.injectNavBar()`), and tab switching interface.
 Modules:
 - **AWS Score (CIWA-Ar):** 10 clinical items (0-67 total) with Mild (<10), Moderate (10-19), and Severe (≥20) risk tiers, plus symptom-triggered Benzodiazepine protocol including Lorazepam (2-4 mg PO/IV) & Diazepam dosing regimens.
-- **Sepsis Warning Signs & Screening:** NEWS2 (SSC 2026 Primary Screen), MEWS (0-1 Low / 2-4 Med / ≥5 High), and SIRS early warning calculators, Sepsis 1-Hour resuscitation bundle checklist, and initial empiric antibiotics selection categorized by infection source (Unknown, Pulmonary, Intra-abdominal, UTI, Skin/Soft Tissue, CNS).
+- **Sepsis Warning Signs & Screening:** NEWS2 (SSC 2026 Primary Screen), MEWS (0-1 Low / 2-4 Med / ≥5 High), and SIRS early warning calculators, Sepsis 1-Hour resuscitation bundle checklist (SSC 2026: cautious 30 mL/kg fluid in elderly/CHF, target MAP 60–65 mmHg in patients ≥ 65y on Norepinephrine, and active fluid de-resuscitation post-shock), and initial empiric antibiotics selection categorized by infection source (Unknown, Pulmonary, Intra-abdominal, UTI, Skin/Soft Tissue, CNS).
 - **ABCD2 Score:** TIA 2-day stroke risk calculation (0-7 total, Low/Moderate/High risk).
 - **HEART Score:** ER Chest Pain MACE risk evaluation (0-10 total: Low 0-3 / Mod 4-6 / High 7-10).
 - **GRACE Score:** Pure standalone interface consuming `CLINICAL_ENGINE.calcGRACE()` for NSTEMI mortality risk stratification.
@@ -140,15 +141,18 @@ Modules:
 
 ### Tuberculosis Weight-Based Dosing Calculator (`tools/tb-calculator.html`)
 
-Standalone weight-based TB dosing calculation tool built strictly to Thailand CPG 2018 & CPG 2022 guidelines.
+Standalone weight-based TB dosing calculation tool built strictly to Thailand CPG 2018 & CPG 2022 guidelines and WHO 2025/2026 MDR/RR-TB recommendations.
 Features:
 - **Adult Regimens (2HRZE/4HR):** Single drug mg/kg calculations (H: 4-6 mg/kg, R: 8-12 mg/kg, Z: 20-30 mg/kg, E: 15-20 mg/kg) and Adult FDC 4-FDC (HRZE 75/150/400/275) & 2-FDC (HR 150/300) tablet count mapping by weight bands (35-49kg, 50-69kg, ≥70kg).
 - **Pediatric Regimens (< 15 y/o):** Single drug exact mg/kg/day dosing (H 10-15, R 10-20, Z 30-40, E 15-25) and Child Dispersible FDCs (RHZ 75/50/150 and RH 75/50) by weight bands (4-7kg, 8-11kg, 12-15kg, 16-24kg).
 - **Renal Impairment Adjustments (CrCl < 30 mL/min / HD):** Maintains daily H & R; adjusts Z (20-30 mg/kg) and E (15-20 mg/kg) to 3 times per week post-hemodialysis.
 - **Hepatotoxicity & Special Cases:** Alternative 2-hepatotoxic (2HRE/7HR, 6-9 RZE) and 1-hepatotoxic (2 SHE/16 HE, 18-24 HE + Lfx) regimens, AST/ALT monitoring/re-challenge protocols, pregnancy Pyridoxine (B6) supplementation rules, H-monoresistance 6(H)RZELfx regimen dosing table (R, Z, E, Lfx 750/1000mg, optional High-dose H), and non-blocking additive multi-warning stacking (`#clinical-warning`).
 - **Latent TB Preventive Treatment (TPT):** 3HP (weekly H + Rifapentine x 12 doses by weight band), 1HP (daily H 300 + RPT 600 x 1 month), 4R, 3HR, 6-9H.
-- **MDR-TB Regimens (CPG 2022 Tables 6.3–6.6):** Shorter All-Oral Bedaquiline-containing regimen (weight bands 30-35, 36-45, 46-55, 56-70, >70 kg for Bdq, Lfx/Mfx, Pto, Cfz, Z, High-dose H, E) and Individualized Longer Regimen (interactive WHO Group A/B/C drug selector with 4 / (3+1-2) / (2+3) selection-rule validator, Amikacin nephrotoxicity safety gating, and weight-band tablet lookup).
-- **Clinical Prescription Clipboard Integration:** Copy-to-clipboard clinical prescription note compiler supporting Adult, Pediatric, TPT, Renal, H-monoresistance, and MDR-TB regimens with universal renal/liver warning appends.
+- **MDR-TB Regimens (CPG 2022 & WHO 2025/2026):**
+  - **BPaL / BPaLM 6-Month Regimen:** All-oral 6-month regimen (Bedaquiline 400mg OD x2w then 200mg 3x/w, Pretomanid 200mg OD, Linezolid 600mg OD, Moxifloxacin 400mg OD for BPaLM) with ECG cardiac monitoring alerts.
+  - **Shorter All-Oral Bdq Regimen:** CPG 2022 Table 6.3 weight bands (30-35, 36-45, 46-55, 56-70, >70 kg for Bdq, Lfx/Mfx, Pto, Cfz, Z, High-dose H, E).
+  - **Individualized Longer Regimen:** Interactive WHO Group A/B/C drug selector with 4 / (3+1-2) / (2+3) selection-rule validator, Amikacin nephrotoxicity safety gating, and weight-band tablet lookup.
+- **Clinical Prescription Clipboard Integration:** Copy-to-clipboard clinical prescription note compiler supporting Adult, Pediatric, TPT, Renal, H-monoresistance, BPaL/BPaLM, and MDR-TB regimens with universal renal/liver warning appends.
 
 ### MgSO4 Dosing & Pre-eclampsia/Eclampsia Calculator (`tools/mgso4-calculator.html`)
 
@@ -240,7 +244,7 @@ Redirect script validates `order` slug against allow-list.
 ### Service Worker (`service-worker.js`)
 
 PWA offline cache. Network-first for navigation requests, cache-first for static assets.
-`CACHE_VERSION` is `er-hub-v52` and `CACHE_DATE` is `19/08/2569` — dynamically extracted by `index.html` and `shared/components.js` at runtime via `fetch()` and regex parsing, backed by `localStorage` (`er-hub-cached-version`) for cold-load offline resilience.
+`CACHE_VERSION` is `er-hub-v87` and `CACHE_DATE` is `26/08/2569` — dynamically extracted by `index.html` and `shared/components.js` at runtime via `fetch()` and regex parsing, backed by `localStorage` (`er-hub-cached-version`) for cold-load offline resilience.
 Precaches all HTML/CSS/JS + shared engines + ER NOTE templates + drip-calculator + nihss.html + 512×512 app icon + source PDFs + Google Fonts.
 Per-asset retry with exponential backoff via `fetchWithRetry()`. `Promise.allSettled()` ensures one failure doesn't block others.
 

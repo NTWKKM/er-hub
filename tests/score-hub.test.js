@@ -218,4 +218,14 @@ describe('Clinical Score Hub (tools/score-hub.html)', () => {
         assert.equal(doc.getElementById('perc-score-val').textContent, '8 / 8');
         assert.ok(doc.getElementById('perc-risk-badge').textContent.includes('PERC Negative'));
     });
+
+    test('11. Sepsis Resuscitation SSC 2026 guidance elements present', () => {
+        win = loadScoreHubDom();
+        const doc = win.document;
+        const html = doc.documentElement.innerHTML;
+
+        assert.ok(html.includes('SSC 2026'), 'Should include SSC 2026 references');
+        assert.ok(html.includes('Active Fluid Removal (De-resuscitation)'), 'Should mention Active Fluid Removal (De-resuscitation)');
+        assert.ok(html.includes('เป้าหมาย MAP 60-65 mmHg ในผู้ใหญ่ ≥ 65 ปี'), 'Should include MAP 60-65 mmHg target in elderly');
+    });
 });

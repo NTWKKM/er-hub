@@ -1,3 +1,19 @@
+## [2.15.0] — 2026-08-26
+
+### Clinical Guidance & Resuscitation Enhancements (BPaL/BPaLM, Patient Modes, SSC 2026)
+- **TB Weight-Based Dosing Calculator (`tools/tb-calculator.html`):**
+  - Added **MDR/RR-TB BPaL / BPaLM** (WHO 2025/2026 6-month all-oral regimen) support with Bedaquiline, Pretomanid, Linezolid, and Moxifloxacin dosing tables.
+  - Added dedicated result card, ECG safety monitoring warning, and EMR HIS clinical note generator integration.
+- **Resuscitation Assistant & Timer (`tools/resus-timer.html`):**
+  - Added header **Patient Mode selector** (`Adult`, `Pediatric`, `Infant`) with real-time dynamic guidance updates.
+  - Integrated PALS / AHA 2025/2026 guidance: 2-thumb-encircling compressions & 1.5-inch depth for infants, 2-inch depth for children, 15:2 ratio (2 rescuers) for pediatric/infant CPR, and updated respiratory arrest ventilation rates.
+- **Clinical Score & Risk Hub (`tools/score-hub.html`):**
+  - Updated Sepsis 1-Hour Bundle with Surviving Sepsis Campaign (SSC) 2026 clinical guidelines: cautious 30 mL/kg fluid administration in elderly/CHF, target MAP 60–65 mmHg in patients $\ge 65$ years old on Norepinephrine, and Active Fluid Removal (De-resuscitation) after shock resolution.
+- **PWA Service Worker Update (`service-worker.js`):**
+  - Bumped offline cache version to `er-hub-v87` (`26/08/2569`).
+- **Contract & Architecture Documentation (`CONTEXT.md`, `ARCHITECTURE.md`):**
+  - Added ADR-33 documenting clinical guidance updates and verified test coverage (372/372 passing tests).
+
 ## [2.14.0] — 2026-08-25
 
 ### Clinical Tools Sequential Realignment & Priority Numbering
