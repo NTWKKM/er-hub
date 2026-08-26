@@ -220,3 +220,17 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   3. **Sepsis 1-Hour Bundle SSC 2026 Alignment**:
      - Updated `tools/score-hub.html` Sepsis resuscitation bundle: cautious 30 mL/kg crystalloid administration in elderly/CHF, target MAP 60–65 mmHg in patients $\ge 65$ years on Norepinephrine, and proactive Active Fluid Removal (De-resuscitation) following shock resolution.
   4. Updated `service-worker.js` offline cache version to `er-hub-v87` (`26/08/2569`).
+
+## ADR-34: Universal Clinical Evidence & Reference Drawer Integration across All Standing Orders & Tools
+
+- **Context**: Upgrading clinical evidence across the ER-Hub platform to August 2026 standards required universal guideline attribution, explicit drug monograph citations, Tenecteplase stroke dosing implementation per AHA/ASA 2026, and bedside access to primary literature citations without cluttering printouts.
+- **Decision**:
+  1. **High-Alert Drug (HAD) Monograph Upgrades (`shared/drug-data.js`)**:
+     - Embedded explicit `guidelineSource` and `citation` metadata across all 17 High-Alert Drugs (Epinephrine, Norepinephrine, Dopamine, Dobutamine, Vasopressin, Esmolol, Labetalol, Nicardipine, Nitroglycerin, Nitroprusside, Amiodarone, Lidocaine, Midazolam, Fentanyl, Dexmedetomidine, Heparin).
+     - Added extravasation antidote management protocols (Phentolamine 5–10 mg SC / Topical Nitroglycerin 2% paste) for vasopressor extravasation.
+     - Updated SSC 2026 septic shock notes: Norepinephrine 1st-line, Vasopressin/Epinephrine 2nd-line, Dopamine avoided due to tachyarrhythmias.
+  2. **Stroke Tenecteplase (TNK) Dosing Engine (`shared/stroke-engine.js`)**:
+     - Added `calcTnkStrokeDose(weight)` implementing AHA/ASA 2026 Guidelines (Tenecteplase 0.25 mg/kg single IV bolus, max 25 mg / 5 mL).
+  3. **Universal Clinical Evidence Drawers**:
+     - Standardized `<details class="reference-card">` with Braun Paper styling (`#f8f7f4` background, `#d8d4c8` border, `#1a1a1a` typography) across all 8 Standing Orders (`orders/rtpa.html`, `rtpa-v2.html`, `nstemi.html`, `nstemi-v2.html`, `stemi.html`, `anaphylaxis.html`, `pe.html`, `heparin.html`, `antivenom.html`, `antivenom-v2.html`, `sedation.html`) and all clinical tools (`tools/drip-calculator.html`, `resus-timer.html`, `rsi-checklist.html`, `electrolyte-hub.html`, `burn-manager.html`, `tb-calculator.html`, `mgso4-calculator.html`, `score-hub.html`, `nihss.html`, `nihss-v2.html`, `Urgent-Clinic-Home-Medication.html`).
+  4. Updated `service-worker.js` offline cache version to `er-hub-v88` (`26/08/2569`).

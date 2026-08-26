@@ -86,4 +86,28 @@ describe('rt-PA Stroke Dosing Engine', () => {
         assert.equal(dose55.dripDose, 28.1);
         assert.equal(dose55.pushDose + dose55.dripDose, 33);
     });
+
+    test('Tenecteplase (TNK) 0.25 mg/kg stroke dosing calculations per AHA/ASA 2026', () => {
+        assert.equal(STROKE_ENGINE.calcTnkStrokeDose(0), null);
+        assert.equal(STROKE_ENGINE.calcTnkStrokeDose(-10), null);
+
+        // 60 kg: 60 * 0.25 = 15 mg (3 mL of 5 mg/mL)
+        const tnk60 = STROKE_ENGINE.calcTnkStrokeDose(60);
+        assert.ok(tnk60);
+        assert.equal(tnk60.totalDose, 15);
+        assert.equal(tnk60.volumeMl, 3);
+        assert.equal(tnk60.maxCap, 25);
+
+        // 80 kg: 80 * 0.25 = 20 mg (4 mL)
+        const tnk80 = STROKE_ENGINE.calcTnkStrokeDose(80);
+        assert.ok(tnk80);
+        assert.equal(tnk80.totalDose, 20);
+        assert.equal(tnk80.volumeMl, 4);
+
+        // 120 kg: Capped at 25 mg (5 mL)
+        const tnk120 = STROKE_ENGINE.calcTnkStrokeDose(120);
+        assert.ok(tnk120);
+        assert.equal(tnk120.totalDose, 25);
+        assert.equal(tnk120.volumeMl, 5);
+    });
 });

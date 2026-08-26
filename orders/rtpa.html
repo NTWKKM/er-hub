@@ -283,10 +283,27 @@
                 </div>
 
                 <button type="submit" class="btn btn-calculate">คำนวณและสร้างใบสั่งยา</button>
-                <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (Blank
-                    Order)</button>
+                <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
                 <button type="button" id="print-nihss-blank-btn" class="btn btn-print">🖨️ NIHSS เปล่า</button>
                 <button type="button" id="clear-btn" class="btn btn-clear">ล้างข้อมูล (Clear)</button>
+
+                <!-- Clinical Evidence & Guidelines Drawer -->
+                <div class="reference-card" style="margin-top:16px; padding:12px 16px; background:#f8f7f4; border:1px solid #d8d4c8; border-radius:8px; font-size:12.5px; color:#4a4a4a;">
+                    <details>
+                        <summary style="font-weight:700; cursor:pointer; color:#1a1a1a; display:flex; align-items:center; justify-content:space-between;">
+                            <span>📚 ข้อมูลอ้างอิงและแนวทางเวชปฏิบัติ (Clinical Guidelines &amp; Evidence)</span>
+                            <span style="font-size:11px; color:#737373;">AHA/ASA 2026 / ESO 2023 / Thai Stroke Society</span>
+                        </summary>
+                        <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #d8d4c8; line-height:1.6;">
+                            <ul style="margin:0; padding-left:18px;">
+                                <li><strong>AHA/ASA AIS 2026:</strong> 2026 Guideline for the Early Management of Patients With Acute Ischemic Stroke (Stroke. 2026;57(2):e1-e120) — Class 1 recommendation for Alteplase 0.9 mg/kg (max 90 mg) or Tenecteplase 0.25 mg/kg single bolus (max 25 mg) within 4.5 hours of onset.</li>
+                                <li><strong>BP Safety Thresholds:</strong> Keep SBP &lt; 185 and DBP &lt; 110 mmHg prior to thrombolysis; keep &lt; 180/105 mmHg for ≥24h post-lysis. First-line IV Labetalol 10-20 mg or Nicardipine infusion 5-15 mg/hr.</li>
+                                <li><strong>Low-Dose Alteplase (ENCHANTED Trial):</strong> 0.6 mg/kg (15% bolus, 85% drip over 1 hr, max 50 mg) for Asian populations at high ICH risk (N Engl J Med. 2016;374:2313-2323).</li>
+                                <li><strong>Thai Stroke Society:</strong> แนวทางการรักษาโรคหลอดเลือดสมองตีบหรืออุดตันเฉียบพลันด้วยยาละลายลิ่มเลือด (2020).</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
             </form>
         </div>
 

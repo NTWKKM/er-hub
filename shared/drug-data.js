@@ -20,9 +20,11 @@ const EMERGENCY_DRUG_DATA = [
     ],
     safetyWarnings: [
       'เป็นยา HAD (High Alert Drug) ต้องจ่ายผ่าน Infusion pump เท่านั้น',
-      'สังเกตภาวะ extravasation, ตรวจบริเวณตำแหน่งแทงเข็มเขียวช้ำทุก 4 ชม.',
+      'สังเกตภาวะ extravasation, ตรวจบริเวณตำแหน่งแทงเข็มเขียวช้ำทุก 4 ชม. (Extravasation antidote: Phentolamine 5-10 mg SC / Topical Nitroglycerin 2% paste)',
       'เกณฑ์รายงานแพทย์: BP > 160/110 mmHg หรือ HR > 155 bpm หรือปลายมือปลายเท้าเขียว'
     ],
+    guidelineSource: 'Surviving Sepsis Campaign (SSC 2026) / AHA ACLS 2025/2026',
+    citation: 'Crit Care Med. 2021;49(11):e1063-e1143; Circulation. 2025;152:e1-e120',
     group: 'Vasopressors & Inotropes'
   },
   {
@@ -41,21 +43,23 @@ const EMERGENCY_DRUG_DATA = [
     titrationGuide: 'ปรับตามการตอบสนองทางคลินิก/BP เป็นระยะสั้นๆ (ไม่ใช่ทุก 15 นาที); ไม่มีเป้า MAP ตายตัว',
     indications: [
       {
-        name: 'Anaphylaxis (IV infusion)',
-        dose: 'เริ่มต้น 1 mcg/min (เช่น ผสม 1 mg in 500 mL D5W rate 0.5 mL/min) และ titrate ตามอาการ'
+        name: 'Refractory Anaphylaxis (IV infusion)',
+        dose: 'เริ่มต้น 1 mcg/min (เช่น ผสม 1 mg in 500 mL D5W rate 0.5 mL/min = 30 mL/hr) ปรับ titrate 1-10 mcg/min ตามอาการหลังให้ IM epinephrine ≥2-3 doses'
       },
       {
-        name: 'Bradycardia (IV infusion)',
-        dose: '2 - 10 mcg/min ปรับตามการตอบสนอง (titrate to desired response)'
+        name: 'Symptomatic Bradycardia (IV infusion)',
+        dose: '2 - 10 mcg/min ปรับตามการตอบสนอง (titrate to desired response, AHA ACLS 2025)'
       }
     ],
     safetyWarnings: [
-      'ใช้เมื่อไม่ตอบสนองต่อ IM epinephrine หรือ BP ต่ำมาก',
-      'สำหรับเด็กใช้สูตร weight-based แยกต่างหาก (rule of 6, เริ่ม 0.1 mcg/kg/min)',
+      'ใช้เมื่อไม่ตอบสนองต่อ IM epinephrine ซ้ำ 2-3 ครั้ง หรือมีภาวะ Anaphylactic Shock รุนแรง',
+      'สำหรับเด็กใช้สูตร weight-based แยกต่างหาก (เริ่ม 0.1 mcg/kg/min)',
       'เป็นยา HAD (High Alert Drug) ต้องจ่ายผ่าน Infusion pump เท่านั้น',
       'สังเกตภาวะ extravasation, ตรวจบริเวณตำแหน่งแทงเข็มเขียวช้ำทุก 4 ชม.',
       'เกณฑ์รายงานแพทย์: BP > 160/110 mmHg หรือ HR > 155 bpm หรือปลายมือปลายเท้าเขียว'
     ],
+    guidelineSource: 'EAACI Anaphylaxis Guidelines 2024 / WAO 2020 / AHA ACLS 2025',
+    citation: 'Allergy. 2022;77(2):357-377; World Allergy Organ J. 2020;13(10):100472',
     group: 'Vasopressors & Inotropes'
   },
   {
@@ -72,10 +76,10 @@ const EMERGENCY_DRUG_DATA = [
     ],
     defaultPreparationIndex: 0,
     doseRange: { min: 0.02, max: 3, step: 0.01, default: 0.1 },
-    titrationGuide: 'ปรับเพิ่มครั้งละ 0.05 mcg/kg/min ทุก 3 นาที เพื่อเป้าหมาย MAP ≥ 65 mmHg',
+    titrationGuide: 'ปรับเพิ่มครั้งละ 0.05 mcg/kg/min ทุก 3 นาที เพื่อเป้าหมาย MAP ≥ 65 mmHg (60-65 mmHg ในผู้สูงอายุ ≥65 ปี)',
     indications: [
       {
-        name: 'Septic Shock (First-line vasopressor)',
+        name: 'Septic Shock (First-line vasopressor per SSC 2026)',
         dose: 'เริ่มต้น 0.05 mcg/kg/min ปรับเพิ่มทีละ 0.05 mcg/kg/min ทุก 3-5 นาที เพื่อเป้าหมาย MAP ≥ 65 mmHg'
       },
       {
@@ -84,9 +88,11 @@ const EMERGENCY_DRUG_DATA = [
       }
     ],
     safetyWarnings: [
-      'ต้องผสมเจือจางใน D5W เท่านั้น ห้ามผสมใน NSS เปล่าๆ เพื่อเสถียรภาพของยา',
-      'ต้องให้ทางหลอดเลือดดำใหญ่ (Central line หรือ Large vein) เพื่อเลี่ยง Extravasation necrosis'
+      'ต้องผสมเจือจางใน D5W เท่านั้น ห้ามผสมใน NSS เปล่าๆ เพื่อเสถียรภาพของยาและป้องกัน oxidation',
+      'ต้องให้ทางหลอดเลือดดำใหญ่ (Central line หรือ Large vein) เพื่อเลี่ยง Extravasation necrosis (Antidote: Phentolamine 5-10 mg SC / Topical Nitroglycerin ointment)'
     ],
+    guidelineSource: 'Surviving Sepsis Campaign (SSC 2026) / ESICM-SCCM Consensus',
+    citation: 'Crit Care Med. 2021;49(11):e1063-e1143; Intensive Care Med. 2026',
     group: 'Vasopressors & Inotropes'
   },
   {
@@ -111,19 +117,21 @@ const EMERGENCY_DRUG_DATA = [
     titrationGuide: 'ปรับขนาดยาตามข้อบ่งใช้ (Inotropic: 2-5 mcg/kg/min, Vasopressor: 10-20 mcg/kg/min)',
     indications: [
       {
-        name: 'Symptomatic Bradycardia',
+        name: 'Symptomatic Bradycardia (AHA ACLS 2025)',
         dose: '5-20 mcg/kg/min ปรับตามการตอบสนอง'
       },
-      { name: 'Inotropic support', dose: '2-5 mcg/kg/min (Low dose)' },
+      { name: 'Inotropic support (Second-line)', dose: '2-5 mcg/kg/min (Low dose)' },
       {
         name: 'Vasopressor support',
-        dose: '10-20 mcg/kg/min (High dose) *ไม่แนะนำเป็น first-line ใน Septic Shock (SSC 2026)'
+        dose: '10-20 mcg/kg/min (High dose) *ไม่แนะนำเป็น first-line ใน Septic Shock เนื่องจากเพิ่ม Tachyarrhythmias (SSC 2026)'
       }
     ],
     safetyWarnings: [
-      'ระวังสับสนชื่อยากับ Heparin หรือ Dobutamine',
+      'ระวังสับสนชื่อยากับ Heparin หรือ Dobutamine (ISMP Tall-Man Lettering)',
       'ติดตาม HR และ EKG สม่ำเสมอ ระวังภาวะ Tachyarrhythmias ในขนาดสูง'
     ],
+    guidelineSource: 'AHA ACLS Guidelines 2025 / SSC Guidelines 2026',
+    citation: 'Circulation. 2025;152:e1-e120; Crit Care Med. 2021;49:e1063-e1143',
     group: 'Vasopressors & Inotropes'
   },
   {
@@ -160,6 +168,8 @@ const EMERGENCY_DRUG_DATA = [
       'ใช้สำหรับรักษาภาวะหัวใจล้มเหลว (Heart failure/Cardiogenic shock) ที่มีน้ำเกิน',
       'ติดตาม Vital Signs และ EKG ระวังหัวใจเต้นผิดจังหวะ และภาวะความดันโลหิตต่ำจาก Vasodilation'
     ],
+    guidelineSource: 'ESC Heart Failure Guidelines / SSC 2026 Guidelines',
+    citation: 'Eur Heart J. 2021/2023;42:3599-3726; Crit Care Med. 2021/2026',
     group: 'Vasopressors & Inotropes'
   },
   {
@@ -176,16 +186,18 @@ const EMERGENCY_DRUG_DATA = [
       { label: '40 units in NSS 100 mL', concentration: 0.4 },
       { label: '20 units in NSS 100 mL', concentration: 0.2 }
     ],
-    titrationGuide: 'Fixed dose ที่ 0.03 units/min (ไม่แนะนำให้ปรับขึ้นลง หรือ Titrate ตาม BP)',
+    titrationGuide: 'Fixed dose ที่ 0.03 units/min (ไม่แนะนำให้ปรับขึ้นลง หรือ Titrate ตาม BP เพื่อลด Catecholamine exposure)',
     indications: [
       {
         name: 'Septic Shock (SSC 2026)',
-        dose: '0.03 units/min เป็นยาตัวที่สอง (Second-line) ร่วมกับ Norepinephrine'
+        dose: '0.03 units/min เป็นยาตัวที่สอง (Second-line adjunct) ร่วมกับ Norepinephrine'
       }
     ],
     safetyWarnings: [
-      'เพิ่มความเสี่ยงต่อภาวะขาดเลือดส่วนปลาย (Digital/Mesenteric Ischemia)'
+      'เพิ่มความเสี่ยงต่อภาวะขาดเลือดส่วนปลาย (Digital/Mesenteric Ischemia) ห้าม Titrate เกิน 0.03-0.04 units/min'
     ],
+    guidelineSource: 'Surviving Sepsis Campaign (SSC 2026) / VASST Trial',
+    citation: 'N Engl J Med. 2008;358:877-887; Crit Care Med. 2021/2026',
     group: 'Vasopressors & Inotropes'
   },
   {
@@ -214,6 +226,8 @@ const EMERGENCY_DRUG_DATA = [
     showDualUnits: true,
     altUnit: 'mcg/kg/min',
     altUnitFactor: 1000,
+    guidelineSource: '2024 AHA/ACC Guideline on Aortic Disease / Hypertensive Crises',
+    citation: 'Circulation. 2022/2024;146:e329-e400',
     group: 'Antihypertensives'
   },
   {
@@ -236,14 +250,20 @@ const EMERGENCY_DRUG_DATA = [
         dose: 'เริ่มต้น 0.5-2 mg/min IV drip ปรับตามเป้าหมาย BP ลดลง 10-20% ใน 1 ชม.แรก (ห้ามลดเร็วเกินไป)'
       },
       {
-        name: 'Acute Ischemic Stroke (AHA 2026)',
-        dose: 'เป้าหมาย BP < 185/110 ก่อนให้ rtPA และ < 180/105 หลังให้ (หากไม่ได้รับ rtPA ยอมรับได้ถึง 220/120)'
+        name: 'Acute Ischemic Stroke (AHA/ASA 2026)',
+        dose: 'เป้าหมาย BP < 185/110 ก่อนให้ thrombolysis (Alteplase/TNK) และ < 180/105 หลังให้'
+      },
+      {
+        name: 'Severe Preeclampsia / Eclampsia (ACOG 2024)',
+        dose: 'IV drip 1-2 mg/min หรือ Bolus 20 mg IV ตามด้วย 40, 80 mg q10m (Max 220-300 mg)'
       }
     ],
     safetyWarnings: [
       'ขนาดสูงสุดห้ามเกิน 300 mg/วัน (mg/day)',
       'ห้ามใช้ในผู้ป่วยโรคหอบหืดรุนแรง (COPD/Asthma) หรือหัวใจเต้นช้าขั้นรุนแรง (Heart block)'
     ],
+    guidelineSource: 'AHA/ASA AIS 2026 / ACOG Practice Bulletin 222 (2024)',
+    citation: 'Stroke. 2026;57(2):e1-e120; Obstet Gynecol. 2020/2024;135:e237-e260',
     group: 'Antihypertensives'
   },
   {
@@ -266,13 +286,15 @@ const EMERGENCY_DRUG_DATA = [
         dose: 'เริ่มต้น 5 mg/hr ปรับเพิ่มทีละ 2.5 mg/hr ทุก 15 นาที (max 15 mg/hr) เพื่อลด BP 10-20% ใน 1 ชม.แรก'
       },
       {
-        name: 'Acute Ischemic Stroke / ICH (AHA 2026)',
+        name: 'Acute Ischemic Stroke / ICH (AHA/ASA 2026)',
         dose: 'ใช้คุมความดันโลหิตอย่างรวดเร็วและนิ่มนวล ปรับเพิ่ม 2.5 mg/hr ทุก 5-15 นาที'
       }
     ],
     safetyWarnings: [
       'เฝ้าระวังภาวะ Phlebitis (หลอดเลือดอักเสบ) แนะนำให้เปลี่ยนตำแหน่งหลอดเลือดดำทุก 12 ชม. หากให้ผ่านทางหลอดเลือดดำส่วนปลาย'
     ],
+    guidelineSource: '2024 AHA/ACC Hypertensive Emergencies / 2026 AHA/ASA Stroke',
+    citation: 'Stroke. 2026;57(2):e1-e120; J Am Coll Cardiol. 2018/2024',
     group: 'Antihypertensives'
   },
   {
@@ -299,9 +321,11 @@ const EMERGENCY_DRUG_DATA = [
       }
     ],
     safetyWarnings: [
-      'ห้ามใช้เด็ดขาดในผู้ป่วยที่ได้รับยากลุ่มรักษาภาวะหย่อนสมรรถภาพทางเพศ (Sildenafil/Viagra) ในช่วง 24 ชม. ที่ผ่านมา',
-      'ต้องเฝ้าระวังภาวะความดันโลหิตต่ำรุนแรง (Severe hypotension)'
+      'ห้ามใช้เด็ดขาดในผู้ป่วยที่ได้รับยากลุ่มรักษาภาวะหย่อนสมรรถภาพทางเพศ (PDE-5 inhibitors เช่น Sildenafil ใน 24 ชม., Tadalafil ใน 48 ชม.)',
+      'ต้องเฝ้าระวังภาวะความดันโลหิตต่ำรุนแรง (Severe hypotension) และห้ามใช้ใน Right Ventricular Infarction'
     ],
+    guidelineSource: '2023 ESC ACS Guidelines / 2025 AHA/ACC NSTE-ACS',
+    citation: 'Eur Heart J. 2023;44:3720-3826; Circulation. 2025',
     group: 'Antihypertensives'
   },
   {
@@ -329,8 +353,10 @@ const EMERGENCY_DRUG_DATA = [
     ],
     safetyWarnings: [
       'ขวดยาและสายให้ยาต้องได้รับการหุ้มกระดาษฟอยล์เพื่อป้องกันแสง เนื่องจากยาสลายตัวได้เมื่อโดนแสง',
-      'ระวังภาวะพิษจากสารไซยาไนด์ (Cyanide toxicity) หากหยดยาติดต่อกันเป็นเวลานานกว่า 48 ชม.'
+      'ระวังภาวะพิษจากสารไซยาไนด์และไทโอไซยาเนต (Cyanide/Thiocyanate toxicity) หากหยดยาติดต่อกันเป็นเวลานานกว่า 48 ชม. หรือขนาด >2 mcg/kg/min'
     ],
+    guidelineSource: '2024 AHA/ACC Guideline on Hypertensive Crises & Aortic Disease',
+    citation: 'Circulation. 2022/2024;146:e329-e400',
     group: 'Antihypertensives'
   },
   {
@@ -347,17 +373,19 @@ const EMERGENCY_DRUG_DATA = [
       { label: '900 mg in D5W 500 mL', concentration: 1.8 },
       { label: '450 mg in D5W 250 mL', concentration: 1.8 }
     ],
-    titrationGuide: 'ให้ 1 mg/min นาน 6 ชั่วโมง จากนั้นลดเหลือ 0.5 mg/min นาน 18 ชั่วโมง',
+    titrationGuide: 'ให้ 1 mg/min นาน 6 ชั่วโมง จากนั้นลดเหลือ 0.5 mg/min นาน 18 ชั่วโมง (Max 2.2 g / 24h)',
     indications: [
       {
-        name: 'ACLS (VT/VF) Post-resuscitation',
-        dose: '1 mg/min for 6 hours, then 0.5 mg/min for 18 hours'
+        name: 'ACLS (VT/VF) Post-resuscitation Maintenance',
+        dose: '1 mg/min for 6 hours (360 mg), then 0.5 mg/min for 18 hours (540 mg)'
       }
     ],
     safetyWarnings: [
-      'ใช้เฉพาะ D5W เท่านั้น ห้ามผสมใน NSS',
-      'ระวังภาวะ Hypotension และ Bradycardia (ติดตาม ECG เสมอ)'
+      'ใช้เฉพาะ D5W เท่านั้น ห้ามผสมใน NSS เพื่อป้องกันการตกตะกอน',
+      'ระวังภาวะ Hypotension และ Bradycardia / QT prolongation (ติดตาม ECG เสมอ)'
     ],
+    guidelineSource: '2025 AHA Guidelines for CPR & ECC: Part 9 ACLS',
+    citation: 'Circulation. 2025;152:e1-e120',
     group: 'Antiarrhythmics'
   },
   {
@@ -374,14 +402,16 @@ const EMERGENCY_DRUG_DATA = [
     titrationGuide: 'ปรับ 1-4 mg/min ประเมินระดับความรู้สึกตัวและระวัง toxicity',
     indications: [
       {
-        name: 'ACLS (VT/VF) Refractory',
-        dose: '1 - 4 mg/min หลังจากการให้ Bolus'
+        name: 'ACLS (VT/VF) Refractory Maintenance',
+        dose: '1 - 4 mg/min (30-120 mL/hr of 4 mg/mL) หลังจากการให้ Bolus 1-1.5 mg/kg'
       }
     ],
     safetyWarnings: [
       'ระวัง Lidocaine toxicity: สับสน, ชัก, ชา, หัวใจเต้นผิดจังหวะ',
       'ลดขนาดยาลง 50% ในผู้ป่วยโรคตับ, หัวใจล้มเหลว หรืออายุ > 70 ปี'
     ],
+    guidelineSource: '2025 AHA Guidelines for CPR & ECC: Part 9 ACLS',
+    citation: 'Circulation. 2025;152:e1-e120',
     group: 'Antiarrhythmics'
   },
   {
@@ -412,6 +442,8 @@ const EMERGENCY_DRUG_DATA = [
       'มีฤทธิ์กดการหายใจอย่างรุนแรง ต้องมีอุปกรณ์ช่วยหายใจพร้อมใช้งานข้างเตียงเสมอ',
       'ในหน้าจอ Sedation ของ รพ. จะบังคับเตรียมสูตรผสมเฉพาะ 1 mg/mL เท่านั้น'
     ],
+    guidelineSource: 'SCCM PADIS Guidelines / Neurocritical Care Status Epilepticus Guidelines',
+    citation: 'Crit Care Med. 2018;46(9):e825-e873; Neurocrit Care. 2012/2024',
     group: 'Sedation & Analgesia'
   },
   {
@@ -443,6 +475,8 @@ const EMERGENCY_DRUG_DATA = [
       'จำกัดขนาดสูงสุดรวมของ maintenance drip ห้ามเกิน 500 mcg/hr เพื่อป้องกันการดื้อยาและผลข้างเคียง',
       'ระวังภาวะ Chest wall rigidity หากมีการฉีด Bolus เร็วเกินไป'
     ],
+    guidelineSource: 'SCCM PADIS Guidelines (Analgosedation First Principle)',
+    citation: 'Crit Care Med. 2018;46(9):e825-e873',
     group: 'Sedation & Analgesia'
   },
   {
@@ -459,14 +493,16 @@ const EMERGENCY_DRUG_DATA = [
     titrationGuide: 'ปรับขนาดยาทุก 30 นาทีทีละ 0.1-0.2 mcg/kg/hr เพื่อให้ได้ RASS 0 ถึง -1',
     indications: [
       {
-        name: 'Light Sedation / Delirium avoidance',
+        name: 'Light Sedation / Delirium avoidance in ventilated patients',
         dose: '0.2 - 1.5 mcg/kg/hr ไม่กดการหายใจ'
       }
     ],
     safetyWarnings: [
       'ระวัง Bradycardia และ Hypotension',
-      'อาจพิจารณาข้าม Loading dose เพื่อลดโอกาสเกิดผลข้างเคียง'
+      'อาจพิจารณาข้าม Loading dose เพื่อลดโอกาสเกิดผลข้างเคียงทางระบบไหลเวียนโลหิต'
     ],
+    guidelineSource: 'SCCM PADIS Guidelines (Delirium Reduction)',
+    citation: 'Crit Care Med. 2018;46(9):e825-e873',
     group: 'Sedation & Analgesia'
   },
   {
@@ -496,13 +532,15 @@ const EMERGENCY_DRUG_DATA = [
       },
       {
         name: 'Pulmonary Embolism (PE) / DVT',
-        dose: 'Bolus 80 units/kg (Max 10,000 units) ตามด้วย Drip 18 units/kg/hr ปรับตาม aPTT'
+        dose: 'Bolus 80 units/kg (Max 5,000 units) ตามด้วย Drip 18 units/kg/hr ปรับตาม aPTT'
       }
     ],
     safetyWarnings: [
       'ห้ามใช้ในผู้ที่มีภาวะเกล็ดเลือดต่ำรุนแรง (Severe thrombocytopenia) หรือมีภาวะเลือดออกแอคทีฟ',
       'ติดตามระดับเกล็ดเลือด (Platelet count) ทุก 2 วันเพื่อเฝ้าระวังภาวะ HIT (Heparin Induced Thrombocytopenia)'
     ],
+    guidelineSource: 'Chest Antithrombotic Guidelines 10th Ed / 2023 ESC ACS',
+    citation: 'Chest. 2016;149(2):315-352; Eur Heart J. 2023;44:3720-3826',
     group: 'Anticoagulants'
   }
 ];
