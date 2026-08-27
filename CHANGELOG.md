@@ -1,3 +1,21 @@
+## [2.17.0] — 2026-08-27
+
+### UI/UX Modernization 2026 & Clinical Workflow Enhancements
+- **Cross-Document View Transitions (Baseline 2024–2026) (`shared/base.css`, `tools/er-note/er-note.css`):**
+  - Integrated `@view-transition { navigation: auto; }` with subtle `vt-fade-in` / `vt-fade-out` page navigation animations and full `@media (prefers-reduced-motion: reduce)` accessibility overrides.
+- **Top-Layer Physics & Modern Discrete Transitions (`shared/base.css`):**
+  - Modernized `<dialog>` and `[popover]` modals using `@starting-style`, `transition-behavior: allow-discrete`, and `overlay` for seamless popover/dialog animations.
+- **Dynamic Container Queries & Subgrid (`shared/base.css`):**
+  - Added `container-type: inline-size` across core UI containers (`.container`, `.form-container`, `.result-box`, `.patient-section`, `.calc-card`, `.regimen-selector`) with responsive `@container (max-width: 540px)` adaptive layouts and CSS Subgrid support.
+- **Drip Calculator Interactive Dual-Rate Visualizer (`tools/drip-calculator.html`, `shared/calc-engine.js`):**
+  - Added `calcDropRate` and `calcDropIntervalSeconds` mathematical functions supporting Micro (60 gtt/mL), Macro (20 gtt/mL), and Blood (15 gtt/mL) infusion sets.
+  - Added Dual-Rate visualizer card with real-time drop cadence pulsing dot indicator (`s / drop`) and updated Verify Before Print card.
+- **Clinical Score & Risk Hub Search Navigation (`tools/score-hub.html`):**
+  - Added `#score-search` instant search engine supporting English and Thai clinical keywords (AWS, NEWS2, MEWS, SIRS, ABCD2, HEART, GRACE, Wells, Geneva, PERC, Empiric Abx) with auto-tab switching and smooth scroll navigation.
+  - Made `.tab-bar` horizontally scrollable on mobile screens with hidden scrollbars for touch ergonomics.
+- **PWA Service Worker Update (`service-worker.js`):**
+  - Bumped offline cache version to `er-hub-v90` (`27/08/2569`).
+
 ## [2.16.0] — 2026-08-27
 
 ### UI Bug Fixes & Accessibility Layout Hardening

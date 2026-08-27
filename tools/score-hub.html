@@ -51,23 +51,117 @@
             color: var(--graphite);
             font-size: 0.9em;
         }
-        /* Navigation Tabs */
+        /* Search Bar & Instant Filter */
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .search-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            font-size: 15px;
+            color: var(--graphite);
+            pointer-events: none;
+        }
+        #score-search {
+            width: 100%;
+            padding: 10px 36px 10px 38px;
+            font-size: 14px;
+            font-family: var(--font-ui), 'Sarabun', sans-serif;
+            border: 1.5px solid var(--rule);
+            border-radius: 8px;
+            background: #ffffff;
+            color: var(--ink);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            outline: none;
+            transition: all 180ms ease;
+        }
+        #score-search:focus {
+            border-color: var(--signal-orange);
+            box-shadow: 0 0 0 3px rgba(200, 59, 14, 0.15);
+        }
+        #score-search-clear {
+            position: absolute;
+            right: 10px;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            color: var(--graphite);
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 4px;
+        }
+        #score-search-clear:hover {
+            color: var(--ink);
+            background: var(--paper);
+        }
+        .search-results-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border: 1.5px solid var(--rule);
+            border-radius: 8px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            z-index: 100;
+            max-height: 280px;
+            overflow-y: auto;
+            display: none;
+        }
+        .search-result-item {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--rule-light, #f0ede5);
+            cursor: pointer;
+            transition: background 120ms ease;
+        }
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        .search-result-item:hover, .search-result-item.highlighted {
+            background: #fdf5e6;
+        }
+        .search-result-title {
+            font-weight: 700;
+            font-size: 13.5px;
+            color: var(--ink);
+        }
+        .search-result-desc {
+            font-size: 12px;
+            color: var(--graphite);
+            margin-top: 2px;
+        }
+
+        /* Navigation Tabs (Mobile Horizontally Scrollable & Desktop Clean Pills) */
         .tab-bar {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
             gap: 6px;
             margin-bottom: 24px;
             border-bottom: 2px solid var(--rule);
-            padding-bottom: 8px;
+            padding-bottom: 6px;
+        }
+        .tab-bar::-webkit-scrollbar {
+            display: none;
         }
         .tab-btn {
+            flex-shrink: 0;
+            white-space: nowrap;
             background: var(--paper);
             border: 1px solid var(--rule);
             border-bottom: none;
             border-radius: 6px 6px 0 0;
             padding: 10px 16px;
             font-family: var(--font-ui), 'Sarabun', sans-serif;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 600;
             color: var(--graphite);
             cursor: pointer;
@@ -85,6 +179,13 @@
             color: #ffffff;
             border-color: var(--signal-orange);
             box-shadow: 0 2px 6px rgba(216, 67, 21, 0.25);
+        }
+
+        @media (max-width: 600px) {
+            .tab-btn {
+                padding: 8px 12px;
+                font-size: 12.5px;
+            }
         }
         .tab-panel {
             display: none;
@@ -339,6 +440,17 @@
         <div class="score-hub-header">
             <h2>Clinical Score & Risk Hub — ED MNRH</h2>
             <p>ระบบรวมเครื่องมือคำนวณและประเมินความเสี่ยงทางการแพทย์ฉุกเฉิน</p>
+        </div>
+
+        <!-- Instant Score Search Bar -->
+        <div class="search-container" role="search">
+            <div class="search-input-wrap">
+                <span class="search-icon" aria-hidden="true">🔍</span>
+                <input type="text" id="score-search" placeholder="ค้นหาคะแนนประเมิน (เช่น AWS, Sepsis, NEWS2, MEWS, SIRS, ABCD2, HEART, GRACE, PE, Wells, Geneva, PERC, Abx)..."
+                    aria-label="ค้นหาคะแนนประเมินทางการแพทย์" autocomplete="off">
+                <button type="button" id="score-search-clear" style="display: none;" aria-label="Clear search">✕</button>
+            </div>
+            <div id="search-results-dropdown" class="search-results-dropdown" role="listbox" aria-label="ผลการค้นหาคะแนน"></div>
         </div>
 
         <!-- Navigation Tabs -->
@@ -1168,17 +1280,138 @@
         calcWells();
         calcGeneva();
         calcPERC();
+        initScoreSearch();
     });
 
     // Tab switcher
     function switchTab(tabId) {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-selected', 'false');
+        });
         document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
         
         const targetBtn = document.getElementById('tab-btn-' + tabId);
         const targetPanel = document.getElementById('panel-' + tabId);
-        if (targetBtn) targetBtn.classList.add('active');
+        if (targetBtn) {
+            targetBtn.classList.add('active');
+            targetBtn.setAttribute('aria-selected', 'true');
+        }
         if (targetPanel) targetPanel.classList.add('active');
+    }
+
+    // Search registry & live instant score finder
+    const SCORE_REGISTRY = [
+        { tabKey: 'aws', title: 'AWS Score (CIWA-Ar)', desc: 'ประเมินภาวะถอนสุรา Alcohol Withdrawal Syndrome (เต็ม 67 คะแนน)', keywords: ['aws', 'ciwa', 'alcohol', 'ถอนเหล้า', 'สุรา', 'มือสั่น', 'เหงื่อแตก', 'withdrawal'] },
+        { tabKey: 'sepsis', subKey: 'news2', title: 'Sepsis: NEWS2 Score', desc: 'National Early Warning Score 2 คัดกรองผู้ป่วยวิกฤต/Sepsis', keywords: ['sepsis', 'news2', 'news', 'early warning', 'ติดเชื้อ', 'ความดันต่ำ', 'หายใจเร็ว', 'เสี่ยงสูง'] },
+        { tabKey: 'sepsis', subKey: 'mews', title: 'Sepsis: MEWS Score', desc: 'Modified Early Warning Score ประเมินสัญญาณชีพทรุด', keywords: ['mews', 'sepsis', 'warning', 'ทรุด'] },
+        { tabKey: 'sepsis', subKey: 'sirs', title: 'Sepsis: SIRS Criteria', desc: 'Systemic Inflammatory Response Syndrome (เกณฑ์ SIRS)', keywords: ['sirs', 'sepsis', 'ไข้', 'wbc', 'ชีพจรเร็ว'] },
+        { tabKey: 'sepsis', subKey: 'abx', title: 'Sepsis: Empiric Antibiotics', desc: 'แนวทางการให้ยาปฏิชีวนะตามตำแหน่งการติดเชื้อ SSC 2026', keywords: ['abx', 'antibiotics', 'ยาฆ่าเชื้อ', 'ยาปฏิชีวนะ', 'ceftriaxone', 'meropenem', 'pip tazo', 'ปอดอักเสบ', 'uti', 'sepsis'] },
+        { tabKey: 'abcd2', title: 'ABCD2 Score (TIA)', desc: 'ประเมินความเสี่ยงเกิด Stroke ซ้ำหลัง Transient Ischemic Attack', keywords: ['abcd2', 'tia', 'stroke', 'สมองขาดเลือดชั่วคราว', 'ปากเบี้ยว', 'อ่อนแรงครึ่งซีก'] },
+        { tabKey: 'heart', title: 'HEART Score', desc: 'ประเมินความเสี่ยง MACE ในผู้ป่วยเจ็บแน่นหน้าอก (Chest Pain)', keywords: ['heart', 'chest pain', 'เจ็บหน้าอก', 'แน่นหน้าอก', 'acs', 'mace', 'ecg', 'troponin'] },
+        { tabKey: 'grace', title: 'GRACE Score', desc: 'ประเมินความเสี่ยงและอัตราการเสียชีวิตใน ACS / NSTEMI', keywords: ['grace', 'nstemi', 'stemi', 'acs', 'กล้ามเนื้อหัวใจขาดเลือด', 'killip', 'troponin'] },
+        { tabKey: 'pe', subKey: 'wells', title: 'PE: Wells Score', desc: 'ประเมินความน่าจะเป็นของลิ่มเลือดอุดกั้นในปอด (Pulmonary Embolism)', keywords: ['wells', 'pe', 'pulmonary embolism', 'ลิ่มเลือดอุดกั้นปอด', 'เหนื่อยเฉียบพลัน', 'dvt'] },
+        { tabKey: 'pe', subKey: 'geneva', title: 'PE: Revised Geneva Score', desc: 'เกณฑ์ Geneva ประเมิน PE probability', keywords: ['geneva', 'pe', 'pulmonary embolism', 'd-dimer'] },
+        { tabKey: 'pe', subKey: 'perc', title: 'PE: PERC Rule', desc: 'Pulmonary Embolism Rule-out Criteria (8/8 rule out PE)', keywords: ['perc', 'pe', 'rule out', 'pulmonary embolism'] }
+    ];
+
+    function selectScoreItem(item) {
+        if (!item) return;
+        switchTab(item.tabKey);
+        if (item.tabKey === 'sepsis' && item.subKey) {
+            switchSepsisSub(item.subKey);
+        } else if (item.tabKey === 'pe' && item.subKey) {
+            switchPESub(item.subKey);
+        }
+        const dropdown = document.getElementById('search-results-dropdown');
+        if (dropdown) dropdown.style.display = 'none';
+        const searchInput = document.getElementById('score-search');
+        if (searchInput) searchInput.value = item.title;
+        const clearBtn = document.getElementById('score-search-clear');
+        if (clearBtn) clearBtn.style.display = 'inline-block';
+        
+        const targetPanel = document.getElementById('panel-' + item.tabKey);
+        if (targetPanel && typeof targetPanel.scrollIntoView === 'function') {
+            targetPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+
+    function initScoreSearch() {
+        const searchInput = document.getElementById('score-search');
+        const clearBtn = document.getElementById('score-search-clear');
+        const dropdown = document.getElementById('search-results-dropdown');
+        if (!searchInput || !dropdown) return;
+
+        function performSearch() {
+            const query = (searchInput.value || '').trim().toLowerCase();
+            if (!query) {
+                dropdown.style.display = 'none';
+                dropdown.innerHTML = '';
+                if (clearBtn) clearBtn.style.display = 'none';
+                return;
+            }
+            if (clearBtn) clearBtn.style.display = 'inline-block';
+
+            const matches = SCORE_REGISTRY.filter(item => {
+                if (item.title.toLowerCase().includes(query)) return true;
+                if (item.desc.toLowerCase().includes(query)) return true;
+                return item.keywords.some(k => k.toLowerCase().includes(query));
+            });
+
+            if (matches.length === 0) {
+                dropdown.innerHTML = '<div style="padding: 12px; color: #888; font-size: 13px; text-align: center;">ไม่พบคะแนนที่ตรงกับคำค้นหา</div>';
+                dropdown.style.display = 'block';
+                return;
+            }
+
+            dropdown.innerHTML = '';
+            matches.forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = 'search-result-item';
+                if (idx === 0) row.classList.add('highlighted');
+                row.innerHTML = `
+                    <div class="search-result-title">${item.title}</div>
+                    <div class="search-result-desc">${item.desc}</div>
+                `;
+                row.addEventListener('click', () => {
+                    selectScoreItem(item);
+                });
+                dropdown.appendChild(row);
+            });
+            dropdown.style.display = 'block';
+        }
+
+        searchInput.addEventListener('input', performSearch);
+        searchInput.addEventListener('focus', () => {
+            if (searchInput.value.trim()) performSearch();
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const firstItem = dropdown.querySelector('.search-result-item');
+                if (firstItem) {
+                    firstItem.click();
+                }
+            } else if (e.key === 'Escape') {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                dropdown.style.display = 'none';
+                clearBtn.style.display = 'none';
+                searchInput.focus();
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
     }
 
     // Sepsis Sub-tabs

@@ -228,4 +228,38 @@ describe('Clinical Score Hub (tools/score-hub.html)', () => {
         assert.ok(html.includes('Active Fluid Removal (De-resuscitation)'), 'Should mention Active Fluid Removal (De-resuscitation)');
         assert.ok(html.includes('เป้าหมาย MAP 60-65 mmHg ในผู้ใหญ่ ≥ 65 ปี'), 'Should include MAP 60-65 mmHg target in elderly');
     });
+
+    test('12. Instant Score Search filter and instant tab jump', () => {
+        win = loadScoreHubDom();
+        const doc = win.document;
+
+        const searchInput = doc.getElementById('score-search');
+        const dropdown = doc.getElementById('search-results-dropdown');
+        assert.ok(searchInput, 'Search input should exist');
+        assert.ok(dropdown, 'Dropdown container should exist');
+
+        // Typing 'heart' filters and shows matching item
+        searchInput.value = 'heart';
+        searchInput.dispatchEvent(new win.Event('input'));
+
+        assert.equal(dropdown.style.display, 'block');
+        const items = dropdown.querySelectorAll('.search-result-item');
+        assert.ok(items.length >= 1, 'Should find at least 1 match for "heart"');
+
+        // Click first item -> activates HEART tab
+        items[0].click();
+        assert.ok(doc.getElementById('tab-btn-heart').classList.contains('active'), 'HEART tab button should be active');
+        assert.ok(doc.getElementById('panel-heart').classList.contains('active'), 'HEART panel should be active');
+        assert.equal(dropdown.style.display, 'none');
+
+        // Typing 'wells' -> jumps to PE tab and activates Wells sub-tab
+        searchInput.value = 'wells';
+        searchInput.dispatchEvent(new win.Event('input'));
+        const peItems = dropdown.querySelectorAll('.search-result-item');
+        assert.ok(peItems.length >= 1);
+        peItems[0].click();
+        assert.ok(doc.getElementById('tab-btn-pe').classList.contains('active'), 'PE tab button should be active');
+        assert.ok(doc.getElementById('panel-pe').classList.contains('active'), 'PE panel should be active');
+        assert.equal(doc.getElementById('pe-sub-wells').style.display, 'block');
+    });
 });

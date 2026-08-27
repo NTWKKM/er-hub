@@ -1,6 +1,6 @@
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
-const { calcDripRate } = require('../shared/calc-engine.js');
+const { calcDripRate, calcDropRate, calcDropIntervalSeconds } = require('../shared/calc-engine.js');
 
 describe('calcDripRate', () => {
   test('weight-based per-minute dose: 0.1 mcg/kg/min, 70kg, 100 mcg/mL', () => {
@@ -105,5 +105,45 @@ describe('calcDripRate', () => {
     // mg/hr is not weight-based, so null weightKg should still calculate
     const rate = calcDripRate({ doseValue: 5, doseUnit: 'mg/hr', weightKg: null, concentration: 0.1 });
     assert.equal(rate, 50);
+  });
+});
+
+describe('calcDropRate & calcDropIntervalSeconds', () => {
+  test('micro-drip set (60 gtt/mL): 60 mL/hr equals 60 gtt/min, 1 sec/drop', () => {
+    const dropRate = calcDropRate({ mlPerHour: 60, dropFactor: 60 });
+    assert.equal(dropRate, 60);
+    const interval = calcDropIntervalSeconds({ mlPerHour: 60, dropFactor: 60 });
+    assert.equal(interval, 1);
+  });
+
+  test('macro-drip set (20 gtt/mL): 60 mL/hr equals 20 gtt/min, 3 sec/drop', () => {
+    const dropRate = calcDropRate({ mlPerHour: 60, dropFactor: 20 });
+    assert.equal(dropRate, 20);
+    const interval = calcDropIntervalSeconds({ mlPerHour: 60, dropFactor: 20 });
+    assert.equal(interval, 3);
+  });
+
+  test('blood set (15 gtt/mL): 60 mL/hr equals 15 gtt/min, 4 sec/drop', () => {
+    const dropRate = calcDropRate({ mlPerHour: 60, dropFactor: 15 });
+    assert.equal(dropRate, 15);
+    const interval = calcDropIntervalSeconds({ mlPerHour: 60, dropFactor: 15 });
+    assert.equal(interval, 4);
+  });
+
+  test('handles fractional rates: 25 mL/hr @ 20 gtt/mL -> 8.333 gtt/min, 7.2 sec/drop', () => {
+    const dropRate = calcDropRate({ mlPerHour: 25, dropFactor: 20 });
+    assert.ok(Math.abs(dropRate - (25 * 20 / 60)) < 1e-6);
+    const interval = calcDropIntervalSeconds({ mlPerHour: 25, dropFactor: 20 });
+    assert.ok(Math.abs(interval - 7.2) < 1e-6);
+  });
+
+  test('returns 0 for zero or invalid inputs', () => {
+    assert.equal(calcDropRate({ mlPerHour: 0, dropFactor: 20 }), 0);
+    assert.equal(calcDropRate({ mlPerHour: -10, dropFactor: 20 }), 0);
+    assert.equal(calcDropRate({ mlPerHour: NaN, dropFactor: 20 }), 0);
+    assert.equal(calcDropRate({ mlPerHour: 60, dropFactor: 0 }), 0);
+    assert.equal(calcDropRate({ mlPerHour: 60, dropFactor: -20 }), 0);
+    assert.equal(calcDropIntervalSeconds({ mlPerHour: 0, dropFactor: 20 }), 0);
+    assert.equal(calcDropIntervalSeconds({ mlPerHour: -5, dropFactor: 20 }), 0);
   });
 });

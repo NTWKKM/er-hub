@@ -247,3 +247,19 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
      - Expanded the post-1h column width (`.col-chk-post1h` to 14%) and adjusted table column distribution (26% / 38% / 11% / 14% / 11%).
      - Wrapped header lines in `nowrap` spans to enforce a clean 2-line layout: Line 1: `หลังให้ยา 1 ชม.`, Line 2: `(Post 1h)`.
   3. Updated `service-worker.js` offline cache version to `er-hub-v89` (`27/08/2569`).
+
+### 2026-08-27: UI/UX Modernization 2026 & Clinical Workflow Enhancements
+- **Context**: 2026 Clinical UI/UX design standards for Emergency Medicine require smooth zero-flash page transitions, responsive top-layer dialog physics, container-based adaptive layouts, bedside drip rate cadence visualization, and instant search accessibility for clinical risk scores.
+- **Decision**:
+  1. **Cross-Document View Transitions & Top-Layer Physics (`shared/base.css`, `tools/er-note/er-note.css`)**:
+     - Added `@view-transition { navigation: auto; }` with subtle fade animations and `@media (prefers-reduced-motion: reduce)` overrides.
+     - Modernized `<dialog>` and `[popover]` modals using `@starting-style`, `transition-behavior: allow-discrete`, and `overlay`.
+  2. **Dynamic Container Queries & Subgrid (`shared/base.css`)**:
+     - Applied `container-type: inline-size` across core UI card containers with `@container (max-width: 540px)` adaptive rules and CSS Subgrid support.
+  3. **Drip Calculator Dual-Rate Visualizer (`tools/drip-calculator.html`, `shared/calc-engine.js`)**:
+     - Implemented `calcDropRate` and `calcDropIntervalSeconds` supporting 60, 20, and 15 gtt/mL IV sets with live drop cadence pulsing dot indicator.
+  4. **Clinical Score Hub Instant Search & Mobile Tab Bar (`tools/score-hub.html`)**:
+     - Added `#score-search` instant search engine matching English and Thai clinical keywords with auto-tab switching and smooth scroll navigation.
+     - Enhanced `.tab-bar` with mobile touch horizontal scrolling.
+  5. Updated `service-worker.js` offline cache version to `er-hub-v90` (`27/08/2569`).
+

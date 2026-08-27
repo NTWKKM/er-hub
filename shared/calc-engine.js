@@ -31,9 +31,47 @@ function calcDripRate({ doseValue, doseUnit, weightKg, concentration }) {
     return amountPerHour / concentration;
 }
 
+/**
+ * Calculates drop rate in gtt/min given flow rate in mL/hr and drop factor (gtt/mL).
+ * Formula: gtt/min = (mL/hr * dropFactor) / 60
+ * 
+ * @param {Object} params
+ * @param {number} params.mlPerHour - Infusion pump flow rate in mL/hr
+ * @param {number} [params.dropFactor=20] - IV set drop factor (e.g. 60 for microdrip, 20 for standard macrodrip, 15 for blood set)
+ * @returns {number} - Calculated drop rate in gtt/min
+ */
+function calcDropRate({ mlPerHour, dropFactor = 20 }) {
+    if (!mlPerHour || mlPerHour <= 0 || !dropFactor || dropFactor <= 0 || isNaN(mlPerHour) || isNaN(dropFactor)) return 0;
+    return (mlPerHour * dropFactor) / 60;
+}
+
+/**
+ * Calculates the seconds between each drop (seconds/drop).
+ * Formula: interval = 60 / (gtt/min) = 3600 / (mL/hr * dropFactor)
+ * 
+ * @param {Object} params
+ * @param {number} params.mlPerHour - Infusion pump flow rate in mL/hr
+ * @param {number} [params.dropFactor=20] - IV set drop factor
+ * @returns {number} - Seconds per drop, or 0 if rate is 0
+ */
+function calcDropIntervalSeconds({ mlPerHour, dropFactor = 20 }) {
+    const gttPerMin = calcDropRate({ mlPerHour, dropFactor });
+    if (gttPerMin <= 0) return 0;
+    return 60 / gttPerMin;
+}
+
+// Attach to window for browser client-side usage
+if (typeof window !== 'undefined') {
+    window.calcDripRate = calcDripRate;
+    window.calcDropRate = calcDropRate;
+    window.calcDropIntervalSeconds = calcDropIntervalSeconds;
+}
+
 // Export for Node testing environment if applicable
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        calcDripRate
+        calcDripRate,
+        calcDropRate,
+        calcDropIntervalSeconds
     };
 }
