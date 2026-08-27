@@ -1,3 +1,16 @@
+## [2.16.0] — 2026-08-27
+
+### UI Bug Fixes & Accessibility Layout Hardening
+- **Accessible Skip-Link & Print Hiding (`shared/components.js`, `tools/Urgent-Clinic-Home-Medication.html`, `tools/er-note/er-note.css`, `shared/print.css`):**
+  - Encapsulated `.skip-link` styles inside `shared/components.js` with dynamic stylesheet injection to ensure it is visually hidden offscreen on all pages without depending on external stylesheets.
+  - Added explicit `@media print` rules (`display: none !important`) across `components.js`, `print.css`, `er-note.css`, and `Urgent-Clinic-Home-Medication.html` to eliminate "Skip to content" text from appearing in printouts.
+  - Linked `#main-content` target landmark on `Urgent-Clinic-Home-Medication.html`.
+- **NIHSS V2 Stroke Scale Header & Column Alignment (`tools/nihss-v2.html`):**
+  - Expanded post-1h assessment column (`.col-chk-post1h` to 14% width, adjusted table distribution to 26% / 38% / 11% / 14% / 11%).
+  - Wrapped header lines with `nowrap` spans to ensure a clean 2-line layout: Line 1: `หลังให้ยา 1 ชม.`, Line 2: `(Post 1h)`.
+- **PWA Service Worker Update (`service-worker.js`):**
+  - Bumped offline cache version to `er-hub-v89` (`27/08/2569`).
+
 ## [2.15.0] — 2026-08-26
 
 ### Clinical Guidance & Resuscitation Enhancements (BPaL/BPaLM, Patient Modes, SSC 2026)

@@ -234,3 +234,16 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   3. **Universal Clinical Evidence Drawers**:
      - Standardized `<details class="reference-card">` with Braun Paper styling (`#f8f7f4` background, `#d8d4c8` border, `#1a1a1a` typography) across all 8 Standing Orders (`orders/rtpa.html`, `rtpa-v2.html`, `nstemi.html`, `nstemi-v2.html`, `stemi.html`, `anaphylaxis.html`, `pe.html`, `heparin.html`, `antivenom.html`, `antivenom-v2.html`, `sedation.html`) and all clinical tools (`tools/drip-calculator.html`, `resus-timer.html`, `rsi-checklist.html`, `electrolyte-hub.html`, `burn-manager.html`, `tb-calculator.html`, `mgso4-calculator.html`, `score-hub.html`, `nihss.html`, `nihss-v2.html`, `Urgent-Clinic-Home-Medication.html`).
   4. Updated `service-worker.js` offline cache version to `er-hub-v88` (`26/08/2569`).
+
+## ADR-35: Accessible Skip-Link Component Hardening and NIHSS V2 Assessment Column Typography Realignment
+
+- **Context**: (1) The accessible `Skip to content` link injected by `ED_COMPONENTS.injectNavBar()` rendered unstyled above the topnav and appeared on printouts on standalone worksheets lacking `shared/base.css` (such as `tools/Urgent-Clinic-Home-Medication.html`). (2) On `tools/nihss-v2.html`, the Post-1h column header "หลังให้ยา 1 ชม." wrapped across 3 lines on standard viewport widths.
+- **Decision**:
+  1. **Component Skip-Link Self-Containment (`shared/components.js`)**:
+     - Dynamically injects `#ed-skip-link-style` into the document to ensure absolute offscreen positioning on screen (`top: -60px; :focus { top: 0; }`) and `@media print { .skip-link { display: none !important; } }`.
+     - Explicitly added `.skip-link` display-none print rules in `tools/Urgent-Clinic-Home-Medication.html`, `tools/er-note/er-note.css`, and `shared/print.css`.
+     - Added `#main-content` target landmark to `Urgent-Clinic-Home-Medication.html`.
+  2. **NIHSS V2 Stroke Scale Header Layout (`tools/nihss-v2.html`)**:
+     - Expanded the post-1h column width (`.col-chk-post1h` to 14%) and adjusted table column distribution (26% / 38% / 11% / 14% / 11%).
+     - Wrapped header lines in `nowrap` spans to enforce a clean 2-line layout: Line 1: `หลังให้ยา 1 ชม.`, Line 2: `(Post 1h)`.
+  3. Updated `service-worker.js` offline cache version to `er-hub-v89` (`27/08/2569`).

@@ -241,6 +241,39 @@ const ED_COMPONENTS = {
                 });
         }
 
+        if (typeof document !== 'undefined' && !document.getElementById('ed-skip-link-style')) {
+            const style = document.createElement('style');
+            style.id = 'ed-skip-link-style';
+            style.textContent = `
+                .skip-link {
+                    position: absolute;
+                    top: -60px;
+                    left: 0;
+                    background: #1e3c72;
+                    color: #F0EDE5;
+                    padding: 8px 16px;
+                    z-index: 9999;
+                    font-family: var(--font-ui, 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif);
+                    font-size: 14px;
+                    text-decoration: none;
+                    transition: top 200ms ease;
+                }
+                .skip-link:focus {
+                    top: 0;
+                }
+                @media print {
+                    .skip-link {
+                        display: none !important;
+                    }
+                }
+            `;
+            if (document.head) {
+                document.head.appendChild(style);
+            } else if (document.body) {
+                document.body.appendChild(style);
+            }
+        }
+
         const skipLink = document.createElement('a');
         skipLink.href = '#main-content';
         skipLink.className = 'skip-link';

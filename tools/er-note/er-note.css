@@ -179,7 +179,7 @@ input:focus,textarea:focus,select:focus { outline:none; border-color:var(--accen
 }
 
 @media print {
-  .top-nav,.tab-bar,.action-bar,.footer,.patient-strip,.sidebar-fab,.sidebar-panel { display:none!important; }
+  .top-nav,.tab-bar,.action-bar,.footer,.patient-strip,.sidebar-fab,.sidebar-panel,.skip-link { display:none!important; }
   body { background:#fff; }
   .main { padding:0; max-width:none; }
   .card { border:none; box-shadow:none; padding:10px 0; margin-bottom:6px; break-inside:avoid; page-break-inside:avoid; border-bottom:1px solid #ccc; }

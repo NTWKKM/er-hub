@@ -185,6 +185,7 @@
     .header,
     form,
     .top-nav,
+    .skip-link,
     .float-print-bar,
     a[href*="index.html"] {
         display: none !important;

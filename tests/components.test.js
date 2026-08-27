@@ -117,5 +117,15 @@ describe('ED_COMPONENTS.injectNavBar', () => {
     const statusDot = nav.querySelector('#online-status');
     assert.ok(statusDot, '#online-status should exist');
     assert.equal(statusDot.style.backgroundColor, 'rgb(39, 174, 96)'); // #27ae60
+
+    const skipLink = document.querySelector('a.skip-link');
+    assert.ok(skipLink, '.skip-link element should exist');
+    assert.equal(skipLink.getAttribute('href'), '#main-content');
+    assert.equal(skipLink.textContent, 'Skip to content');
+
+    const skipStyle = document.querySelector('#ed-skip-link-style');
+    assert.ok(skipStyle, '#ed-skip-link-style should exist');
+    assert.ok(skipStyle.textContent.includes('position: absolute'), 'skip-link style should have absolute positioning');
+    assert.ok(skipStyle.textContent.includes('@media print'), 'skip-link style should include @media print');
   });
 });

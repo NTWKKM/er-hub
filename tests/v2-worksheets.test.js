@@ -183,4 +183,19 @@ describe('NIHSS V2 Worksheet (tools/nihss-v2.html) DOM Execution', () => {
         assert.equal(cell5a.value, '4');
         assert.equal(doc.getElementById('total-1').textContent, '7');
     });
+
+    test('Table headers have dedicated width classes and 2-line structure for post 1h column', () => {
+        const win = loadHtmlDom('tools/nihss-v2.html');
+        const doc = win.document;
+
+        const thPost1h = doc.querySelector('thead th.col-chk-post1h');
+        assert.ok(thPost1h, 'Header for post-1h column should have .col-chk-post1h class');
+        assert.ok(thPost1h.innerHTML.includes('หลังให้ยา 1 ชม.'), 'Header must contain Thai line "หลังให้ยา 1 ชม."');
+        assert.ok(thPost1h.innerHTML.includes('(Post 1h)'), 'Header must contain English line "(Post 1h)"');
+
+        const thPost24h = doc.querySelector('thead th.col-chk-post24h');
+        assert.ok(thPost24h, 'Header for post-24h column should have .col-chk-post24h class');
+        assert.ok(thPost24h.innerHTML.includes('24 ชั่วโมง'), 'Header must contain Thai line "24 ชั่วโมง"');
+        assert.ok(thPost24h.innerHTML.includes('(Post 24h)'), 'Header must contain English line "(Post 24h)"');
+    });
 });

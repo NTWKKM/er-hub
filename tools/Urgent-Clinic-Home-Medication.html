@@ -136,6 +136,9 @@
 
 /* Print layout overrides to enforce pure black-and-white A4 paper style */
 @media print {
+  .top-nav, .skip-link {
+    display: none !important;
+  }
   @page {
     size: A4 portrait;
     margin: 6mm 8mm;
@@ -334,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'Home Med');
 });
 </script>
-<main class="main">
+<main class="main" id="main-content">
 <form id="er-form">
 <div class="patient-strip">
   <label for="ernote-hn" class="visually-hidden">HN</label>
