@@ -325,7 +325,14 @@ const ED_COMPONENTS = {
     syncPatientContext: function(params) {
         try {
             if (!params || typeof params !== 'object') return;
-            const current = JSON.parse(sessionStorage.getItem('er-patient-ctx') || '{}');
+            let current = {};
+            const raw = sessionStorage.getItem('er-patient-ctx');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                    current = parsed;
+                }
+            }
             if (params.age !== undefined) current.age = params.age;
             if (params.weight !== undefined) current.weight = params.weight;
             if (params.cr !== undefined) current.cr = params.cr;
@@ -335,7 +342,14 @@ const ED_COMPONENTS = {
 
     getPatientContext: function() {
         try {
-            return JSON.parse(sessionStorage.getItem('er-patient-ctx') || '{}');
+            const raw = sessionStorage.getItem('er-patient-ctx');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                    return parsed;
+                }
+            }
+            return {};
         } catch (_) {
             return {};
         }
@@ -345,9 +359,10 @@ const ED_COMPONENTS = {
      * Modal focus & accessibility trap using HTML5 'inert' attribute (Baseline 2024-2026).
      */
     setModalInert: function(isOpen, modalEl) {
+        if (!modalEl) return;
         const containers = document.querySelectorAll('body > *:not(dialog):not([popover])');
         containers.forEach(el => {
-            if (el !== modalEl && !modalEl.contains(el)) {
+            if (el !== modalEl && !el.contains(modalEl)) {
                 if (isOpen) {
                     el.setAttribute('inert', '');
                 } else {

@@ -275,8 +275,8 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   2. **Service Worker Navigation Preload & Static Routing (`service-worker.js`, `shared/components.js`)**:
      - Enabled `navigationPreload` in SW `activate` event for parallel network+SW processing during navigations.
      - Added Static Routing API progressive enhancement (Chromium 123+) for declarative cache matching of static assets.
-     - Added `ensurePersistentStorage()` helper to request durable storage to prevent OS eviction of cached data.
-  3. **Strict Content Security Policy & Referrer Policy (All 31 HTML files)**:
+     - Added `ensurePersistentStorage()` helper to request durable storage to reduce eviction risk of cached data.
+  3. **Content Security Policy (CSP) Hardening & Referrer Policy (All 31 HTML files)**:
      - Injected strict CSP meta tag (`default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';`) and `<meta name="referrer" content="no-referrer">` across all 31 HTML pages.
   4. **AHA/ASA 2026 Stroke Tenecteplase Option (`orders/rtpa-v2.html`, `tests/v2-worksheets.test.js`)**:
      - Added Tenecteplase / TNK 0.25 mg/kg (max 25 mg / 5 mL single IV bolus in 5-10s, no drip) as a selectable option in `orders/rtpa-v2.html` while keeping Alteplase 0.9 mg/kg as primary default.

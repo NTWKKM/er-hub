@@ -1,16 +1,19 @@
+# Changelog
+
 ## [3.0.0] — 2026-08-28
 
 ### Architecture Modernization, Font Self-Hosting & AHA/ASA 2026 Stroke TNK
+
 - **Self-Hosted WOFF2 Fonts (`shared/fonts/`, `shared/base.css`, `service-worker.js`, `tests/pwa-assets.test.js`):**
   - Self-hosted 16 WOFF2 subset font files (Sarabun, Inter Tight, JetBrains Mono) totaling ~328 KB.
-  - Eliminated 71 fragile external Google Fonts CDN URLs from `service-worker.js` and removed external `<link>` tags across all 27 HTML pages for 100% offline font availability.
+  - Eliminated 71 fragile external Google Fonts CDN URLs from `service-worker.js` and removed external `<link>` tags across all 27 HTML pages for offline font availability after successful precaching.
 - **Service Worker Modernization (`service-worker.js`, `shared/components.js`):**
   - Added Navigation Preload in `activate` event for parallel network+SW processing, reducing navigation latency by up to 300ms.
   - Added Service Worker Static Routing API (Chromium 123+) progressive enhancement for declarative asset caching.
-  - Added `ensurePersistentStorage()` helper to request durable storage, preventing silent eviction of clinical cache during long offline periods.
+  - Added `ensurePersistentStorage()` helper to request durable storage, reducing eviction risk of clinical cache during long offline periods.
   - Bumped offline cache version to `er-hub-v91` (`28/08/2569`).
 - **Security Hardening (CSP & Referrer Policy) (All 31 HTML files):**
-  - Added strict `Content-Security-Policy` and `<meta name="referrer" content="no-referrer">` meta tags to all 31 HTML pages.
+  - Added Content Security Policy (CSP) hardening and `<meta name="referrer" content="no-referrer">` meta tags to all 31 HTML pages.
 - **AHA/ASA 2026 Stroke Guideline Tenecteplase (TNK) Option (`orders/rtpa-v2.html`, `tests/v2-worksheets.test.js`):**
   - Added Tenecteplase / TNK 0.25 mg/kg (max 25 mg / 5 mL single IV bolus in 5-10s) as an option in the V2 stroke worksheet while retaining Alteplase 0.9 mg/kg as primary/default.
   - Dynamic HUD and printout generation for both Alteplase (push + drip) and Tenecteplase (single bolus push, no drip).

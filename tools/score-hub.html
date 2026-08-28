@@ -1341,10 +1341,7 @@
         const dropdown = document.getElementById('search-results-dropdown');
         if (!searchInput || !dropdown) return;
 
-        async function performSearch() {
-            if (window.scheduler && window.scheduler.yield) {
-                await window.scheduler.yield();
-            }
+        function performSearch() {
             const query = (searchInput.value || '').trim().toLowerCase();
             if (!query) {
                 dropdown.style.display = 'none';
