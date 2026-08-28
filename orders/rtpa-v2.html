@@ -4,11 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta name="referrer" content="no-referrer">
     <title>rt-PA Stroke FAST TRACK V2 — ED MNRH</title>
     <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../shared/base.css">
     <link rel="stylesheet" href="../shared/print.css">
 
@@ -77,7 +76,7 @@
         /* Segmented Regimen Selector */
         .regimen-selector {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 12px;
             margin-bottom: 20px;
         }
@@ -414,6 +413,11 @@
                         <span class="title">Alternative Low Dose (0.6 mg/kg)</span>
                         <span class="subtitle">Asian Regimen: Max 50 mg (15% IV push + 85% IV drip 60m)</span>
                     </label>
+                    <label class="regimen-card" id="card-regimen-tnk">
+                        <input type="radio" name="dose-radio" value="tnk">
+                        <span class="title">Tenecteplase / TNK (0.25 mg/kg)</span>
+                        <span class="subtitle">AHA/ASA 2026: Max 25 mg (Single IV Bolus in 5–10s, No Drip)</span>
+                    </label>
                     <input type="hidden" id="selected-dose-value" name="dose" value="0.9">
                 </div>
 
@@ -438,10 +442,10 @@
 
                 <!-- Action Button Cluster -->
                 <div class="action-row">
-                    <button type="submit" class="btn btn-calculate">คำนวณและสร้างใบสั่งยา</button>
-                    <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
-                    <button type="button" id="print-nihss-blank-btn" class="btn btn-print">🖨️ NIHSS เปล่า</button>
-                    <button type="button" id="clear-btn" class="btn btn-clear">ล้างข้อมูล (Clear)</button>
+                    <button type="submit" class="btn btn-calculate" aria-description="คำนวณขนาดยาตามน้ำหนักตัวและสร้างใบสั่งยาทางการแพทย์ A4">คำนวณและสร้างใบสั่งยา</button>
+                    <button type="button" id="print-blank-btn" class="btn btn-print" aria-description="พิมพ์ใบสั่งยาเปล่าสำหรับใช้เขียนด้วยลายมือ">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
+                    <button type="button" id="print-nihss-blank-btn" class="btn btn-print" aria-description="พิมพ์แบบประเมิน NIHSS เปล่า">🖨️ NIHSS เปล่า</button>
+                    <button type="button" id="clear-btn" class="btn btn-clear" aria-description="ล้างข้อมูลทั้งหมดในฟอร์ม">ล้างข้อมูล (Clear)</button>
                 </div>
 
                 <!-- Clinical Evidence & Guidelines Drawer -->
@@ -487,15 +491,16 @@
                     <div class="grid-cell" id="order-date">...</div>
                     <div class="grid-cell">
                         <ul class="order-list">
-                            <li>ก่อนให้ rt-PA if SBP ≥ 185 or DBP ≥ 110 mmHg notify แพทย์ทันที</li>
-                            <li><strong>Alteplase (dose <span id="result-regimen" class="highlight">...</span> mg/kg)</strong>
-                                <ul style="padding-left: 15px;">
+                            <li>ก่อนให้ยาละลายลิ่มเลือด if SBP ≥ 185 or DBP ≥ 110 mmHg notify แพทย์ทันที</li>
+                            <li id="print-med-container">
+                                <strong id="print-drug-header">Alteplase (dose <span id="result-regimen" class="highlight">...</span> mg/kg)</strong>
+                                <ul style="padding-left: 15px;" id="print-drug-details">
                                     <li>Total dose = <span id="total-dose" class="highlight">...</span> mg</li>
-                                    <li>- <span id="push-percent" class="highlight">...</span>% of total dose = <span id="push-dose" class="highlight">...</span> mg IV push in 1 min</li>
-                                    <li>- <span id="drip-percent" class="highlight">...</span>% of total dose = <span id="drip-dose" class="highlight">...</span> mg IV drip in 60 min</li>
+                                    <li id="print-row-push">- <span id="push-percent" class="highlight">...</span>% of total dose = <span id="push-dose" class="highlight">...</span> mg IV push in 1 min</li>
+                                    <li id="print-row-drip">- <span id="drip-percent" class="highlight">...</span>% of total dose = <span id="drip-dose" class="highlight">...</span> mg IV drip in 60 min</li>
                                 </ul>
                             </li>
-                            <li>หลังให้ rt-PA if SBP > 180 or DBP > 105 mmHg notify แพทย์ทันที</li>
+                            <li>หลังให้ยา if SBP > 180 or DBP > 105 mmHg notify แพทย์ทันที</li>
                             <li>ห้ามใส่ NG ภายใน 24 hr แรก ถ้าไม่มีเหตุจำเป็นฉุกเฉิน</li>
                             <li>ห้ามใส่ Foley’s catheter หรือ central line ภายใน 8 hr ถ้าไม่มีเหตุจำเป็นฉุกเฉิน</li>
                             <li>notify แพทย์ if
@@ -918,25 +923,43 @@
 
             function updateLiveHUD() {
                 const weight = parseFloat(weightInput.value);
-                const regimen = parseFloat(selectedDoseInput.value) || 0.9;
-                hudRegimen.textContent = regimen + ' mg/kg';
+                const rawRegimen = selectedDoseInput.value;
+                const isTnk = rawRegimen === 'tnk';
+                const regimen = isTnk ? 0.25 : (parseFloat(rawRegimen) || 0.9);
+                hudRegimen.textContent = isTnk ? 'TNK 0.25 mg/kg' : (regimen + ' mg/kg');
 
                 if (isNaN(weight) || weight < 20 || weight > 250) {
                     hudTotal.textContent = '-- mg';
                     hudPush.textContent = '-- mg';
                     hudDrip.textContent = '-- mg';
-                    hudPushLabel.textContent = regimen === 0.6 ? '15% of total dose' : '10% of total dose';
-                    hudDripLabel.textContent = regimen === 0.6 ? '85% of total dose' : '90% of total dose';
+                    if (isTnk) {
+                        hudPushLabel.textContent = 'Single IV push (5–10s)';
+                        hudDripLabel.textContent = 'No drip required';
+                    } else {
+                        hudPushLabel.textContent = regimen === 0.6 ? '15% of total dose' : '10% of total dose';
+                        hudDripLabel.textContent = regimen === 0.6 ? '85% of total dose' : '90% of total dose';
+                    }
                     return;
                 }
 
-                const dose = STROKE_ENGINE.calcRtpaDose(weight, regimen);
-                if (dose) {
-                    hudTotal.textContent = dose.totalDose.toFixed(2) + ' mg';
-                    hudPush.textContent = dose.pushDose.toFixed(1) + ' mg';
-                    hudDrip.textContent = dose.dripDose.toFixed(2) + ' mg';
-                    hudPushLabel.textContent = dose.pushPercent + '% of total dose';
-                    hudDripLabel.textContent = dose.dripPercent + '% of total dose';
+                if (isTnk) {
+                    const tnkDose = STROKE_ENGINE.calcTnkStrokeDose(weight);
+                    if (tnkDose) {
+                        hudTotal.textContent = tnkDose.totalDose.toFixed(1) + ' mg (' + tnkDose.volumeMl.toFixed(1) + ' mL)';
+                        hudPush.textContent = tnkDose.totalDose.toFixed(1) + ' mg (' + tnkDose.volumeMl.toFixed(1) + ' mL)';
+                        hudDrip.textContent = '0 mg';
+                        hudPushLabel.textContent = 'Single IV push (5–10s, 5 mg/mL)';
+                        hudDripLabel.textContent = 'ไม่ต้อง Drip ต่อ (No Drip)';
+                    }
+                } else {
+                    const dose = STROKE_ENGINE.calcRtpaDose(weight, regimen);
+                    if (dose) {
+                        hudTotal.textContent = dose.totalDose.toFixed(2) + ' mg';
+                        hudPush.textContent = dose.pushDose.toFixed(1) + ' mg';
+                        hudDrip.textContent = dose.dripDose.toFixed(2) + ' mg';
+                        hudPushLabel.textContent = dose.pushPercent + '% of total dose';
+                        hudDripLabel.textContent = dose.dripPercent + '% of total dose';
+                    }
                 }
             }
 
@@ -960,23 +983,38 @@
                 e.preventDefault();
                 const hn = hnInput.value.trim() || '...';
                 const weight = parseFloat(weightInput.value);
-                const selectedDose = parseFloat(selectedDoseInput.value);
+                const rawRegimen = selectedDoseInput.value;
+                const isTnk = rawRegimen === 'tnk';
 
                 if (!ED_VALIDATE.range('weight', 20, 250, 'Weight ต้องอยู่ในช่วง 20–250 kg')) return;
 
-                const dose = STROKE_ENGINE.calcRtpaDose(weight, selectedDose);
-                if (!dose) return;
-                const { totalDose, pushDose, dripDose, pushPercent, dripPercent } = dose;
-
                 document.getElementById('result-hn').textContent = hn;
                 document.getElementById('result-weight').textContent = weight.toFixed(2);
-                document.getElementById('result-regimen').textContent = selectedDose.toString();
 
-                document.getElementById('total-dose').textContent = totalDose.toFixed(2);
-                document.getElementById('push-percent').textContent = pushPercent.toString();
-                document.getElementById('push-dose').textContent = pushDose.toFixed(1);
-                document.getElementById('drip-percent').textContent = dripPercent.toString();
-                document.getElementById('drip-dose').textContent = dripDose.toFixed(2);
+                if (isTnk) {
+                    const tnk = STROKE_ENGINE.calcTnkStrokeDose(weight);
+                    if (!tnk) return;
+                    document.getElementById('result-regimen').textContent = '0.25 (TNK)';
+                    document.getElementById('print-drug-header').innerHTML = '<strong>Tenecteplase / TNK-tPA (dose 0.25 mg/kg, max 25 mg)</strong>';
+                    document.getElementById('print-drug-details').innerHTML = `
+                        <li>Total dose = <span class="highlight">${tnk.totalDose.toFixed(1)}</span> mg (= <span class="highlight">${tnk.volumeMl.toFixed(1)}</span> mL of 5 mg/mL solution)</li>
+                        <li>- ฉีดทาง IV push เร็วในเวลา 5–10 วินาที ครั้งเดียว (Single bolus push)</li>
+                        <li>- <u>ไม่ต้องต่อ IV drip</u></li>
+                    `;
+                } else {
+                    const regNum = parseFloat(rawRegimen);
+                    const dose = STROKE_ENGINE.calcRtpaDose(weight, regNum);
+                    if (!dose) return;
+                    const { totalDose, pushDose, dripDose, pushPercent, dripPercent } = dose;
+
+                    document.getElementById('result-regimen').textContent = regNum.toString();
+                    document.getElementById('print-drug-header').innerHTML = '<strong>Alteplase (dose <span id="result-regimen" class="highlight">' + regNum.toString() + '</span> mg/kg)</strong>';
+                    document.getElementById('print-drug-details').innerHTML = `
+                        <li>Total dose = <span id="total-dose" class="highlight">${totalDose.toFixed(2)}</span> mg</li>
+                        <li>- <span id="push-percent" class="highlight">${pushPercent}</span>% of total dose = <span id="push-dose" class="highlight">${pushDose.toFixed(1)}</span> mg IV push in 1 min</li>
+                        <li>- <span id="drip-percent" class="highlight">${dripPercent}</span>% of total dose = <span id="drip-dose" class="highlight">${dripDose.toFixed(2)}</span> mg IV drip in 60 min</li>
+                    `;
+                }
 
                 const useTime = document.getElementById('use-current-time').checked;
                 const now = ED_PRINT_BOOTSTRAP.generateCommonPrintFields(hn, weight, useTime);

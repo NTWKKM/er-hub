@@ -62,7 +62,7 @@ describe('PWA Cache Assets Validation', () => {
         );
     });
 
-    test('service-worker.js ASSETS array contains resolved Google Fonts subresources', () => {
+    test('service-worker.js ASSETS array contains self-hosted font files', () => {
         const swContent = fs.readFileSync(SW_PATH, 'utf8');
 
         // Extract ASSETS array literal using VM
@@ -75,16 +75,21 @@ describe('PWA Cache Assets Validation', () => {
 
         assert.ok(Array.isArray(assets), 'ASSETS should evaluate to an array');
 
+        // Must NOT contain any Google Fonts CDN references (self-hosted now)
         const gstaticUrls = assets.filter(url => typeof url === 'string' && url.startsWith('https://fonts.gstatic.com/'));
-        assert.ok(gstaticUrls.length >= 29, `Expected >= 29 font files in ASSETS, found ${gstaticUrls.length}`);
+        assert.equal(gstaticUrls.length, 0, `Expected 0 Google Fonts CDN URLs in ASSETS (self-hosted), found ${gstaticUrls.length}`);
 
-        // Verify that Inter Tight, Sarabun, and JetBrains Mono fonts are present in the manifest
-        const hasInterTight = gstaticUrls.some(u => u.includes('/intertight/'));
-        const hasSarabun = gstaticUrls.some(u => u.includes('/sarabun/'));
-        const hasJetBrains = gstaticUrls.some(u => u.includes('/jetbrainsmono/'));
+        // Verify self-hosted font files are present
+        const localFonts = assets.filter(url => typeof url === 'string' && url.includes('./shared/fonts/'));
+        assert.ok(localFonts.length >= 4, `Expected >= 4 self-hosted font files in ASSETS, found ${localFonts.length}`);
 
-        assert.ok(hasInterTight, 'ASSETS manifest must contain Inter Tight font files');
-        assert.ok(hasSarabun, 'ASSETS manifest must contain Sarabun font files');
-        assert.ok(hasJetBrains, 'ASSETS manifest must contain JetBrains Mono font files');
+        // Verify that Inter Tight, Sarabun, and JetBrains Mono fonts are present
+        const hasInterTight = localFonts.some(u => u.includes('InterTight'));
+        const hasSarabun = localFonts.some(u => u.includes('Sarabun'));
+        const hasJetBrains = localFonts.some(u => u.includes('JetBrainsMono'));
+
+        assert.ok(hasInterTight, 'ASSETS manifest must contain self-hosted Inter Tight font files');
+        assert.ok(hasSarabun, 'ASSETS manifest must contain self-hosted Sarabun font files');
+        assert.ok(hasJetBrains, 'ASSETS manifest must contain self-hosted JetBrains Mono font files');
     });
 });

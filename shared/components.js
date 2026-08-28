@@ -303,6 +303,88 @@ const ED_COMPONENTS = {
     hideFloatBar: function() {
         const bar = document.getElementById('float-print-bar');
         if (bar) bar.style.display = 'none';
+    },
+    /**
+     * Request persistent storage to reduce eviction risk of cached clinical data.
+     * Call after first user interaction (e.g., clinical disclaimer accept).
+     * iOS/Android may silently evict "best-effort" storage after 7-14 days.
+     * @returns {Promise<boolean>} True if storage is or becomes persistent, false otherwise.
+     */
+    ensurePersistentStorage: async function() {
+        try {
+            if (typeof navigator !== 'undefined' && navigator.storage && navigator.storage.persist) {
+                const isPersisted = await navigator.storage.persisted();
+                if (isPersisted) return true;
+                return await navigator.storage.persist();
+            }
+            return false;
+        } catch (_) {
+            return false;
+        }
+    },
+
+    /**
+     * Ephemeral tab-session patient context bridge (Zero-PHI persistence).
+     * Passes non-identifying parameters (age, weight, cr) seamlessly across tools in same session.
+     */
+    syncPatientContext: function(params) {
+        try {
+            if (!params || typeof params !== 'object') return;
+            let current = {};
+            const raw = sessionStorage.getItem('er-patient-ctx');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                    current = parsed;
+                }
+            }
+            if (params.age !== undefined) current.age = params.age;
+            if (params.weight !== undefined) current.weight = params.weight;
+            if (params.cr !== undefined) current.cr = params.cr;
+            sessionStorage.setItem('er-patient-ctx', JSON.stringify(current));
+        } catch (_) {}
+    },
+
+    getPatientContext: function() {
+        try {
+            const raw = sessionStorage.getItem('er-patient-ctx');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                    return parsed;
+                }
+            }
+            return {};
+        } catch (_) {
+            return {};
+        }
+    },
+
+    /**
+     * Modal focus & accessibility trap using HTML5 'inert' attribute (Baseline 2024-2026).
+     * Traverses outside modal ancestor chain and tracks applied inert elements to preserve pre-existing states.
+     */
+    setModalInert: function(isOpen, modalEl) {
+        if (!modalEl) return;
+        if (isOpen) {
+            let current = modalEl;
+            while (current && current.parentElement && current !== document.body) {
+                const parent = current.parentElement;
+                Array.from(parent.children).forEach(sibling => {
+                    if (sibling !== current && !sibling.matches?.('dialog, [popover]') && !sibling.hasAttribute('inert')) {
+                        sibling.setAttribute('inert', '');
+                        sibling.setAttribute('data-modal-inert', '');
+                    }
+                });
+                current = parent;
+            }
+        } else {
+            const marked = document.querySelectorAll('[data-modal-inert]');
+            marked.forEach(el => {
+                el.removeAttribute('inert');
+                el.removeAttribute('data-modal-inert');
+            });
+        }
     }
 };
 

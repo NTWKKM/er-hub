@@ -1,8 +1,8 @@
 // service-worker.js — Offline PWA cache for ER Standing Order Hub
 // Caches all static assets for offline access (ED wifi outages during stroke workup)
 // CRITICAL: Always keep in sync with the nav-right version string in index.html
-const CACHE_VERSION = 'er-hub-v90';
-const CACHE_DATE = '27/08/2569';
+const CACHE_VERSION = 'er-hub-v91';
+const CACHE_DATE = '28/08/2569';
 const ASSETS = [
   './',
   './index.html',
@@ -65,77 +65,23 @@ const ASSETS = [
   './docs/High alert drug ER/Heparin.pdf',
   './docs/Toxico/Standing order for Antivenom update.pdf',
   './docs/order Sedation-Fen-dormicum/fen.pdf',
-  'https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap',
-  'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700&display=swap',
-  'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSnv5HMAFg6IuGlBNMjxJEL2VmU3NS7Z2mj0QiqXA.ttf',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSnv5HMAFg6IuGlBNMjxJEL2VmU3NS7Z2mj6AiqXA.ttf',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSnv5HMAFg6IuGlBNMjxJEL2VmU3NS7Z2mjDw-qXA.ttf',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSnv5HMAFg6IuGlBNMjxJEL2VmU3NS7Z2mjPQ-qXA.ttf',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsD8ah8QA.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsD8ahuQ2e8Smg.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsE8ah8QA.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsE8ahuQ2e8Smg.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsH8ag.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsH8ahuQ2e8.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsI8ah8QA.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsI8ahuQ2e8Smg.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsJ8ah8QA.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsJ8ahuQ2e8Smg.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsK8ah8QA.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsK8ahuQ2e8Smg.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsL8ah8QA.woff2',
-  'https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsL8ahuQ2e8Smg.woff2',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8-qxjPQ.ttf',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8L6tjPQ.ttf',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx3cwgknk-6nFg.woff2',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx3cwhsk.woff2',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx7cwgknk-6nFg.woff2',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx7cwhsk.woff2',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwgknk-4.woff2',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxPcwgknk-6nFg.woff2',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxPcwhsk.woff2',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxTcwgknk-6nFg.woff2',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxTcwhsk.woff2',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx_cwgknk-6nFg.woff2',
-  'https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx_cwhsk.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9WBI.ttf',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aAFJn2QN.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aAFJn3YO5gjupg.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aBVJn3YO5gg.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aBVJnw.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aBpJn2QN.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aBpJn3YO5gjupg.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aBtJn2QN.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVjJx26TKEr37c9aBtJn3YO5gjupg.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5sik8s6yLUrwB0lw.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5sik8s6zDX.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5silQs6yLUrwB0lw.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5silQs6zDX.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5silUs6yLUrwB0lw.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5silUs6zDX.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5silss6w.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5silss6yLUrwA.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YK5sulw.ttf',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptik8s6yLUrwB0lw.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptik8s6zDX.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptilQs6yLUrwB0lw.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptilQs6zDX.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptilUs6yLUrwB0lw.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptilUs6zDX.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptilss6w.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptilss6yLUrwA.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YMptulw.ttf',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqik8s6yLUrwB0lw.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqik8s6zDX.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqilQs6yLUrwB0lw.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqilQs6zDX.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqilUs6yLUrwB0lw.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqilUs6zDX.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqilss6w.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqilss6yLUrwA.woff2',
-  'https://fonts.gstatic.com/s/sarabun/v17/DtVmJx26TKEr37c9YOZqulw.ttf'
+  /* Self-hosted fonts (Thai + Latin WOFF2 subsets) */
+  './shared/fonts/Sarabun-400-thai.woff2',
+  './shared/fonts/Sarabun-400-latin.woff2',
+  './shared/fonts/Sarabun-700-thai.woff2',
+  './shared/fonts/Sarabun-700-latin.woff2',
+  './shared/fonts/InterTight-400-latin.woff2',
+  './shared/fonts/InterTight-400-latin-ext.woff2',
+  './shared/fonts/InterTight-500-latin.woff2',
+  './shared/fonts/InterTight-500-latin-ext.woff2',
+  './shared/fonts/InterTight-600-latin.woff2',
+  './shared/fonts/InterTight-600-latin-ext.woff2',
+  './shared/fonts/InterTight-700-latin.woff2',
+  './shared/fonts/InterTight-700-latin-ext.woff2',
+  './shared/fonts/JetBrainsMono-500-latin.woff2',
+  './shared/fonts/JetBrainsMono-500-latin-ext.woff2',
+  './shared/fonts/JetBrainsMono-700-latin.woff2',
+  './shared/fonts/JetBrainsMono-700-latin-ext.woff2'
 ];
 
 /**
@@ -171,6 +117,13 @@ async function fetchWithRetry(url, maxRetries = 2, delayMs = 100) {
 }
 
 self.addEventListener('install', (event) => {
+  // Static Routing API — bypass SW fetch handler for known static assets (Chromium 123+)
+  if (event.addRoutes) {
+    event.addRoutes([
+      { condition: { urlPattern: { pathname: '/shared/*' }, requestMethod: 'GET' }, source: 'cache' },
+      { condition: { urlPattern: { pathname: '/docs/*' }, requestMethod: 'GET' }, source: 'cache' }
+    ]);
+  }
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_VERSION);
@@ -203,29 +156,40 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter(k => k !== CACHE_VERSION).map(k => caches.delete(k)))
-    )
-  );
-  self.clients.claim();
+  event.waitUntil((async () => {
+    // Enable Navigation Preload — parallel network fetch during SW wake-up (saves ~300ms)
+    if (self.registration.navigationPreload) {
+      await self.registration.navigationPreload.enable();
+    }
+    // Atomic cache cleanup — delete all caches except the current version
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(k => k !== CACHE_VERSION).map(k => caches.delete(k)));
+    self.clients.claim();
+  })());
 });
 
 self.addEventListener('fetch', (event) => {
-  // Network-first for navigation requests, cache-first for assets
+  // Network-first for navigation requests (with Navigation Preload support)
   if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request).then(r => r || caches.match('./index.html')))
-    );
+    event.respondWith((async () => {
+      try {
+        // Use Navigation Preload response if available (parallel fetch during SW wake)
+        const preloadResponse = await event.preloadResponse;
+        if (preloadResponse) return preloadResponse;
+        return await fetch(event.request);
+      } catch (err) {
+        // Offline fallback: serve from cache
+        const cached = await caches.match(event.request);
+        return cached || (await caches.match('./index.html'));
+      }
+    })());
   } else {
+    // Cache-first for static assets (all self-hosted now)
     event.respondWith(
       caches.match(event.request).then((cached) => {
         return cached || fetch(event.request).then((response) => {
-          // Cache successful responses (same-origin and Google Fonts)
-          if ((response.ok || response.type === 'opaque') &&
-              (event.request.url.startsWith(self.location.origin) ||
-               event.request.url.startsWith('https://fonts.googleapis.com') ||
-               event.request.url.startsWith('https://fonts.gstatic.com'))) {
+          // Cache successful same-origin responses for offline resilience
+          if (response.ok && event.request.url.startsWith(self.location.origin)) {
             const clone = response.clone();
             caches.open(CACHE_VERSION).then((cache) => cache.put(event.request, clone));
           }

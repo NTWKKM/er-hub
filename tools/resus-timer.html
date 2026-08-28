@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta name="referrer" content="no-referrer">
     <title>Resuscitation Timer & ACLS 2026 Guide — ED MNRH</title>
     <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../shared/base.css">
     <style>
         :root {
@@ -1584,11 +1583,17 @@
             document.getElementById('resus-dashboard').classList.add('cycle-alert-flash');
             playChime();
             logEvent(`⚠️ 2-Minute CPR Mark Reached (Cycle ${lastCycleAlertIndex + 1}) — Rhythm Check & Switch Compressor`, 'ev-rhythm');
+            if (navigator.setAppBadge) {
+                navigator.setAppBadge(lastCycleAlertIndex + 1).catch(() => {});
+            }
         }
 
         function dismissCycleAlert() {
             document.getElementById('cycle-alert-banner').style.display = 'none';
             document.getElementById('resus-dashboard').classList.remove('cycle-alert-flash');
+            if (navigator.clearAppBadge) {
+                navigator.clearAppBadge().catch(() => {});
+            }
         }
 
         // ══════════════════════════════════════════════════════════════

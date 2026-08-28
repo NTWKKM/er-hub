@@ -199,3 +199,66 @@ describe('NIHSS V2 Worksheet (tools/nihss-v2.html) DOM Execution', () => {
         assert.ok(thPost24h.innerHTML.includes('(Post 24h)'), 'Header must contain English line "(Post 24h)"');
     });
 });
+
+describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execution', () => {
+    test('Default selection is Alteplase 0.9 mg/kg and updates live HUD accordingly', () => {
+        const win = loadHtmlDom('orders/rtpa-v2.html');
+        const doc = win.document;
+
+        const standardRadio = doc.querySelector('input[name="dose-radio"][value="0.9"]');
+        assert.ok(standardRadio && standardRadio.checked, 'Alteplase 0.9 mg/kg must be checked by default');
+
+        // Enter weight = 60 kg
+        doc.getElementById('weight').value = '60';
+        doc.getElementById('weight').dispatchEvent(new win.Event('input', { bubbles: true }));
+
+        // 60 kg * 0.9 = 54 mg total, 5.4 mg push (10%), 48.6 mg drip (90%)
+        assert.equal(doc.getElementById('hud-total-dose').textContent, '54.00 mg');
+        assert.equal(doc.getElementById('hud-push-dose').textContent, '5.4 mg');
+        assert.equal(doc.getElementById('hud-drip-dose').textContent, '48.60 mg');
+        assert.equal(doc.getElementById('hud-regimen-badge').textContent, '0.9 mg/kg');
+    });
+
+    test('Selecting Tenecteplase (TNK 0.25 mg/kg) updates live HUD with single bolus push', () => {
+        const win = loadHtmlDom('orders/rtpa-v2.html');
+        const doc = win.document;
+
+        doc.getElementById('weight').value = '60';
+        const tnkRadio = doc.querySelector('input[name="dose-radio"][value="tnk"]');
+        assert.ok(tnkRadio, 'TNK radio option must exist');
+        tnkRadio.checked = true;
+        tnkRadio.dispatchEvent(new win.Event('change', { bubbles: true }));
+
+        // 60 kg * 0.25 = 15 mg (3.0 mL of 5 mg/mL)
+        assert.equal(doc.getElementById('hud-total-dose').textContent, '15.0 mg (3.0 mL)');
+        assert.equal(doc.getElementById('hud-push-dose').textContent, '15.0 mg (3.0 mL)');
+        assert.equal(doc.getElementById('hud-drip-dose').textContent, '0 mg');
+        assert.equal(doc.getElementById('hud-regimen-badge').textContent, 'TNK 0.25 mg/kg');
+    });
+
+    test('Form submission with Tenecteplase generates correct print order structure', () => {
+        const win = loadHtmlDom('orders/rtpa-v2.html');
+        const doc = win.document;
+
+        doc.getElementById('hn').value = '123456';
+        doc.getElementById('weight').value = '70';
+        const tnkRadio = doc.querySelector('input[name="dose-radio"][value="tnk"]');
+        tnkRadio.checked = true;
+        tnkRadio.dispatchEvent(new win.Event('change', { bubbles: true }));
+
+        doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
+
+        // Check print results container is visible
+        assert.equal(doc.getElementById('results-container').classList.contains('hidden'), false);
+        assert.equal(doc.getElementById('result-hn').textContent, '123456');
+        assert.equal(doc.getElementById('result-weight').textContent, '70.00');
+
+        const printHeader = doc.getElementById('print-drug-header');
+        assert.ok(printHeader.textContent.includes('Tenecteplase'), 'Print order header must specify Tenecteplase');
+
+        const printDetails = doc.getElementById('print-drug-details');
+        assert.ok(printDetails.textContent.includes('17.5'), 'Print details must include calculated 17.5 mg dose (70*0.25)');
+        assert.ok(printDetails.textContent.includes('3.5'), 'Print details must include calculated 3.5 mL volume');
+    });
+});
+
