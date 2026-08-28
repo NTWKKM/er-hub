@@ -44,7 +44,7 @@ a { color:var(--accent-2); text-decoration:none; }
 input[type=text],input[type=number],input[type=date],input[type=time],input[type=datetime-local],textarea,select {
   width:100%; padding:7px 9px; border:1px solid var(--line); border-radius:2px; background:#fff; font-family:inherit; font-size:14px;
 }
-textarea { min-height:56px; resize:vertical; }
+textarea { min-height:56px; resize:vertical; field-sizing:content; }
 input:focus,textarea:focus,select:focus { outline:none; border-color:var(--accent); }
 .radio-group,.checkbox-group { display:flex; flex-wrap:wrap; gap:8px 10px; }
 .radio-group label,.checkbox-group label {

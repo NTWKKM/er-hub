@@ -243,15 +243,16 @@ Redirect script validates `order` slug against allow-list.
 
 ### Service Worker (`service-worker.js`)
 
-PWA offline cache. Network-first for navigation requests, cache-first for static assets.
-`CACHE_VERSION` is `er-hub-v90` and `CACHE_DATE` is `27/08/2569` — dynamically extracted by `index.html` and `shared/components.js` at runtime via `fetch()` and regex parsing, backed by `localStorage` (`er-hub-cached-version`) for cold-load offline resilience.
-Precaches all HTML/CSS/JS + shared engines + ER NOTE templates + drip-calculator + nihss.html + 512×512 app icon + source PDFs + Google Fonts.
-Per-asset retry with exponential backoff via `fetchWithRetry()`. `Promise.allSettled()` ensures one failure doesn't block others.
+PWA offline cache. Network-first for navigation requests (with Navigation Preload enabled for parallel network+SW processing), cache-first for static assets.
+`CACHE_VERSION` is `er-hub-v91` and `CACHE_DATE` is `28/08/2569` — dynamically extracted by `index.html` and `shared/components.js` at runtime via `fetch()` and regex parsing, backed by `localStorage` (`er-hub-cached-version`) for cold-load offline resilience.
+Precaches all HTML/CSS/JS + shared engines + ER NOTE templates + drip-calculator + nihss-v2.html + 512×512 app icon + source PDFs + 16 self-hosted WOFF2 font files in `shared/fonts/` (zero external CDN dependencies).
+Per-asset retry with exponential backoff via `fetchWithRetry()`. `Promise.allSettled()` ensures one failure doesn't block others. Includes Static Routing API progressive enhancement (Chromium 123+) for declarative cache matching.
 
 ### PWA Manifest (`manifest.json`)
 
 App name, theme color (`#f4f2ec` Braun cream), background color (`#ebe7df` Braun paper),
-single square 512×512 icon (`docs/icon-512x512.png`, `purpose: any maskable`).
+display `standalone` with `display_override` (`["window-controls-overlay", "standalone"]`),
+512×512 and 192×192 icons (`docs/icon-512x512.png`, `purpose: any maskable`).
 
 ## Data Flow
 

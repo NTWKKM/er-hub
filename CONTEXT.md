@@ -263,3 +263,31 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
      - Enhanced `.tab-bar` with mobile touch horizontal scrolling.
   5. Updated `service-worker.js` offline cache version to `er-hub-v90` (`27/08/2569`).
 
+## ADR-36: Self-Hosted WOFF2 Fonts, PWA Navigation Preload, Universal CSP & AHA/ASA 2026 Stroke Tenecteplase Option
+
+- **Context**: (1) The application previously depended on 71 external Google Fonts CDN URLs, which caused potential offline font rendering delays or failures during hospital intranet WiFi blackouts. (2) AHA/ASA 2026 Acute Ischemic Stroke guidelines recommend Tenecteplase (TNK) 0.25 mg/kg single IV bolus as a rapid alternative to Alteplase 0.9 mg/kg. (3) Service worker wake-up latency on low-spec hospital tablets introduced up to 300ms navigation delays. (4) Modern clinical web standards require strict Content Security Policy (CSP) and Referrer Policy across all standalone pages.
+- **Decision**:
+  1. **Self-Hosted Variable WOFF2 Fonts (`shared/fonts/`, `shared/base.css`, `service-worker.js`)**:
+     - Self-hosted 16 WOFF2 subset font files (Sarabun Thai/Latin, Inter Tight Latin/Ext, JetBrains Mono Latin/Ext) totaling 328 KB.
+     - Replaced external `@import` in `shared/base.css` with local `@font-face` declarations.
+     - Cleaned external Google Fonts `<link>` and preconnect tags from all 27 HTML pages.
+     - Replaced 71 external Google Fonts CDN URLs in `service-worker.js` with 16 local font paths.
+  2. **Service Worker Navigation Preload & Static Routing (`service-worker.js`, `shared/components.js`)**:
+     - Enabled `navigationPreload` in SW `activate` event for parallel network+SW processing during navigations.
+     - Added Static Routing API progressive enhancement (Chromium 123+) for declarative cache matching of static assets.
+     - Added `ensurePersistentStorage()` helper to request durable storage to prevent OS eviction of cached data.
+  3. **Strict Content Security Policy & Referrer Policy (All 31 HTML files)**:
+     - Injected strict CSP meta tag (`default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';`) and `<meta name="referrer" content="no-referrer">` across all 31 HTML pages.
+  4. **AHA/ASA 2026 Stroke Tenecteplase Option (`orders/rtpa-v2.html`, `tests/v2-worksheets.test.js`)**:
+     - Added Tenecteplase / TNK 0.25 mg/kg (max 25 mg / 5 mL single IV bolus in 5-10s, no drip) as a selectable option in `orders/rtpa-v2.html` while keeping Alteplase 0.9 mg/kg as primary default.
+     - Live HUD and printout dynamically adapt between Alteplase (push + drip) and Tenecteplase (single bolus).
+     - Added comprehensive DOM tests in `tests/v2-worksheets.test.js`.
+  5. **Modern CSS & PWA Enhancements (`shared/base.css`, `tools/er-note/er-note.css`, `index.html`, `manifest.json`)**:
+     - Added Speculation Rules API to `index.html` for instant page prerendering.
+     - Added `field-sizing: content` to ER Note textareas for organic height expansion.
+     - Standardized `.btn` minimum height to 48px for WCAG 2.2 touch target compliance.
+     - Added `scroll-padding-top: 72px` and `scroll-padding-bottom: 80px` to `shared/base.css`.
+     - Added `display_override: ["window-controls-overlay", "standalone"]` to `manifest.json`.
+  6. Updated `service-worker.js` offline cache version to `er-hub-v91` (`28/08/2569`).
+
+

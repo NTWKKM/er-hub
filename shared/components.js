@@ -303,6 +303,58 @@ const ED_COMPONENTS = {
     hideFloatBar: function() {
         const bar = document.getElementById('float-print-bar');
         if (bar) bar.style.display = 'none';
+    },
+    /**
+     * Request persistent storage to prevent OS eviction of cached clinical data.
+     * Call after first user interaction (e.g., clinical disclaimer accept).
+     * iOS/Android may silently evict "best-effort" storage after 7-14 days.
+     */
+    ensurePersistentStorage: async function() {
+        if (navigator.storage && navigator.storage.persist) {
+            const isPersisted = await navigator.storage.persisted();
+            if (!isPersisted) {
+                await navigator.storage.persist();
+            }
+        }
+    },
+
+    /**
+     * Ephemeral tab-session patient context bridge (Zero-PHI persistence).
+     * Passes non-identifying parameters (age, weight, cr) seamlessly across tools in same session.
+     */
+    syncPatientContext: function(params) {
+        try {
+            if (!params || typeof params !== 'object') return;
+            const current = JSON.parse(sessionStorage.getItem('er-patient-ctx') || '{}');
+            if (params.age !== undefined) current.age = params.age;
+            if (params.weight !== undefined) current.weight = params.weight;
+            if (params.cr !== undefined) current.cr = params.cr;
+            sessionStorage.setItem('er-patient-ctx', JSON.stringify(current));
+        } catch (_) {}
+    },
+
+    getPatientContext: function() {
+        try {
+            return JSON.parse(sessionStorage.getItem('er-patient-ctx') || '{}');
+        } catch (_) {
+            return {};
+        }
+    },
+
+    /**
+     * Modal focus & accessibility trap using HTML5 'inert' attribute (Baseline 2024-2026).
+     */
+    setModalInert: function(isOpen, modalEl) {
+        const containers = document.querySelectorAll('body > *:not(dialog):not([popover])');
+        containers.forEach(el => {
+            if (el !== modalEl && !modalEl.contains(el)) {
+                if (isOpen) {
+                    el.setAttribute('inert', '');
+                } else {
+                    el.removeAttribute('inert');
+                }
+            }
+        });
     }
 };
 

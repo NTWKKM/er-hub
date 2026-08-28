@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta name="referrer" content="no-referrer">
     <title>MNRH-ED Standing Order Hub — Maharat Nakhon Ratchasima Hospital</title>
     <link rel="icon" type="image/png" href="docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
     <link rel="manifest" href="manifest.json">
@@ -12,6 +14,22 @@
     <link rel="apple-touch-icon" href="docs/icon-512x512.png">
 
     <link rel="stylesheet" href="shared/base.css">
+
+    <script type="speculationrules">
+    {
+      "prerender": [
+        {
+          "where": {
+            "and": [
+              { "href_matches": "/*" },
+              { "not": { "href_matches": "/*.pdf" } }
+            ]
+          },
+          "eagerness": "moderate"
+        }
+      ]
+    }
+    </script>
 
     <script>
         // Backward Compatibility Redirection Logic
