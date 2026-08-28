@@ -861,6 +861,10 @@ dialog::backdrop,
 }
 
 /* ===== Intrinsic Size Accordion Animations (Baseline 2026) ===== */
+:root {
+  interpolate-size: allow-keywords;
+}
+
 details.reference-card::details-content {
   opacity: 0;
   block-size: 0;

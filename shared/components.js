@@ -305,16 +305,21 @@ const ED_COMPONENTS = {
         if (bar) bar.style.display = 'none';
     },
     /**
-     * Request persistent storage to prevent OS eviction of cached clinical data.
+     * Request persistent storage to reduce eviction risk of cached clinical data.
      * Call after first user interaction (e.g., clinical disclaimer accept).
      * iOS/Android may silently evict "best-effort" storage after 7-14 days.
+     * @returns {Promise<boolean>} True if storage is or becomes persistent, false otherwise.
      */
     ensurePersistentStorage: async function() {
-        if (navigator.storage && navigator.storage.persist) {
-            const isPersisted = await navigator.storage.persisted();
-            if (!isPersisted) {
-                await navigator.storage.persist();
+        try {
+            if (typeof navigator !== 'undefined' && navigator.storage && navigator.storage.persist) {
+                const isPersisted = await navigator.storage.persisted();
+                if (isPersisted) return true;
+                return await navigator.storage.persist();
             }
+            return false;
+        } catch (_) {
+            return false;
         }
     },
 
@@ -357,19 +362,29 @@ const ED_COMPONENTS = {
 
     /**
      * Modal focus & accessibility trap using HTML5 'inert' attribute (Baseline 2024-2026).
+     * Traverses outside modal ancestor chain and tracks applied inert elements to preserve pre-existing states.
      */
     setModalInert: function(isOpen, modalEl) {
         if (!modalEl) return;
-        const containers = document.querySelectorAll('body > *:not(dialog):not([popover])');
-        containers.forEach(el => {
-            if (el !== modalEl && !el.contains(modalEl)) {
-                if (isOpen) {
-                    el.setAttribute('inert', '');
-                } else {
-                    el.removeAttribute('inert');
-                }
+        if (isOpen) {
+            let current = modalEl;
+            while (current && current.parentElement && current !== document.body) {
+                const parent = current.parentElement;
+                Array.from(parent.children).forEach(sibling => {
+                    if (sibling !== current && !sibling.matches?.('dialog, [popover]') && !sibling.hasAttribute('inert')) {
+                        sibling.setAttribute('inert', '');
+                        sibling.setAttribute('data-modal-inert', '');
+                    }
+                });
+                current = parent;
             }
-        });
+        } else {
+            const marked = document.querySelectorAll('[data-modal-inert]');
+            marked.forEach(el => {
+                el.removeAttribute('inert');
+                el.removeAttribute('data-modal-inert');
+            });
+        }
     }
 };
 
