@@ -183,45 +183,22 @@
 
         .action-row {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
             gap: 10px;
             margin-top: 10px;
         }
 
         .action-row .btn {
-            width: 100%;
+            flex: 1 1 calc(50% - 10px);
             margin-top: 0;
-        }
-
-        .blank-btn-row {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-        }
-
-        .blank-btn-row #print-blank-btn {
-            flex: 3;
-            margin: 0;
-        }
-
-        .blank-btn-row #print-nihss-blank-btn {
-            flex: 1;
-            margin: 0;
-        }
-
-        .btn-clear {
-            background-color: #d93025 !important;
-            color: #ffffff !important;
-            border: none;
-        }
-
-        .btn-clear:hover {
-            background-color: #b3261e !important;
         }
 
         @media (max-width: 600px) {
             .regimen-selector {
                 grid-template-columns: 1fr;
+            }
+            .action-row .btn {
+                flex: 1 1 100%;
             }
         }
 
@@ -404,7 +381,8 @@
             <form id="rtpa-form">
                 <!-- Patient Demographics Section -->
                 <div class="patient-section">
-                    <div class="patient-header-row" style="justify-content: flex-end; margin-bottom: 8px;">
+                    <div class="patient-header-row">
+                        <h3>1. ข้อมูลผู้ป่วย (Patient Information)</h3>
                         <label class="flag-label" style="font-weight: normal; margin: 0;">
                             <input type="checkbox" id="use-current-time" checked>
                             บันทึกเวลาปัจจุบัน
@@ -465,10 +443,8 @@
                 <!-- Action Button Cluster -->
                 <div class="action-row">
                     <button type="submit" class="btn btn-calculate" aria-description="คำนวณขนาดยาตามน้ำหนักตัวและสร้างใบสั่งยาทางการแพทย์ A4">คำนวณและสร้างใบสั่งยา</button>
-                    <div class="blank-btn-row">
-                        <button type="button" id="print-blank-btn" class="btn btn-print" aria-description="พิมพ์ใบสั่งยาเปล่าสำหรับใช้เขียนด้วยลายมือ">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
-                        <button type="button" id="print-nihss-blank-btn" class="btn btn-print" aria-description="พิมพ์แบบประเมิน NIHSS เปล่า">🖨️ NIHSS เปล่า</button>
-                    </div>
+                    <button type="button" id="print-blank-btn" class="btn btn-print" aria-description="พิมพ์ใบสั่งยาเปล่าสำหรับใช้เขียนด้วยลายมือ">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
+                    <button type="button" id="print-nihss-blank-btn" class="btn btn-print" aria-description="พิมพ์แบบประเมิน NIHSS เปล่า">🖨️ NIHSS เปล่า</button>
                     <button type="button" id="clear-btn" class="btn btn-clear" aria-description="ล้างข้อมูลทั้งหมดในฟอร์ม">ล้างข้อมูล (Clear)</button>
                 </div>
 
@@ -494,6 +470,8 @@
 
         <!-- ══════════════ RESULTS / PRINT AREA ══════════════ -->
         <div id="results-container" class="results-container hidden" aria-live="polite">
+            <h3>3. ตรวจสอบและพิมพ์ใบสั่งยา</h3>
+
             <div id="print-area">
                 <div id="print-header-container"></div>
 
@@ -615,8 +593,8 @@
                     </div>
                 </div>
 
-                <div id="print-footer-container"></div>
-                <div id="print-sticker-container" style="display:none"></div>
+                <div class="version-attribution">Version 2.0 &middot; Thai Stroke Society 2020 / AHA-ASA Guideline &middot; MNRH ED</div>
+                <div id="print-sticker-container"></div>
             </div>
         </div>
 
@@ -1082,9 +1060,8 @@
                 document.getElementById('order-date').innerHTML = dtHtml;
                 document.getElementById('order-date-cont').innerHTML = dtHtml;
 
-                const strokeDrugName = isTnk ? 'Tenecteplase' : 'Alteplase';
-                ED_COMPONENTS.injectStrokeHeader('print-header-container', strokeDrugName);
-                ED_COMPONENTS.injectStrokeFooter('print-footer-container', hn);
+                ED_COMPONENTS.injectPrintHeader('print-header-container');
+                ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
                 ED_PRINT_BOOTSTRAP.showResults();
             });
 
@@ -1103,8 +1080,8 @@
             });
 
             document.getElementById('print-blank-btn').addEventListener('click', () => {
-                ED_COMPONENTS.injectStrokeHeader('print-header-container', 'Alteplase');
-                ED_COMPONENTS.injectStrokeFooter('print-footer-container', '....................');
+                ED_COMPONENTS.injectPrintHeader('print-header-container');
+                ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
                 ED_BLANK_PRINT.apply();
                 ED_PRINT_BOOTSTRAP.showResults();
                 window.print();

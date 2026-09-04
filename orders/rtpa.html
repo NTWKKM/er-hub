@@ -166,33 +166,6 @@
             background-color: var(--stroke-hover);
         }
 
-        .blank-btn-row {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            margin-bottom: 12px;
-        }
-
-        .blank-btn-row #print-blank-btn {
-            flex: 3;
-            margin: 0;
-        }
-
-        .blank-btn-row #print-nihss-blank-btn {
-            flex: 1;
-            margin: 0;
-        }
-
-        .btn-clear {
-            background-color: #d93025 !important;
-            color: #ffffff !important;
-            border: none;
-        }
-
-        .btn-clear:hover {
-            background-color: #b3261e !important;
-        }
-
         @media (max-width: 768px) {
             .checkbox-time-group {
                 padding-left: 0;
@@ -272,6 +245,9 @@
                 <div class="input-layout">
                     <!-- Left Column -->
                     <div class="input-column">
+                        <h3>1. ข้อมูลผู้ป่วย</h3>
+
+
                         <div class="inline-input-group">
                             <label for="hn">HN:</label>
                             <input type="text" id="hn" required placeholder="กรอก HN">
@@ -292,6 +268,7 @@
 
                     <!-- Right Column -->
                     <div class="input-column">
+                        <h3>2. เลือกขนาดยา (Dosage Regimen)</h3>
                         <div class="button-dose-group">
                             <button type="button" class="dose-button active" data-dose="0.9">
                                 Standard Dose: 0.9 mg/kg (Max 90 mg)
@@ -305,10 +282,8 @@
                 </div>
 
                 <button type="submit" class="btn btn-calculate">คำนวณและสร้างใบสั่งยา</button>
-                <div class="blank-btn-row">
-                    <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
-                    <button type="button" id="print-nihss-blank-btn" class="btn btn-print">🖨️ NIHSS เปล่า</button>
-                </div>
+                <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
+                <button type="button" id="print-nihss-blank-btn" class="btn btn-print">🖨️ NIHSS เปล่า</button>
                 <button type="button" id="clear-btn" class="btn btn-clear">ล้างข้อมูล (Clear)</button>
 
                 <!-- Clinical Evidence & Guidelines Drawer -->
@@ -333,6 +308,8 @@
 
         <!-- ══════════════ RESULTS ══════════════ -->
         <div id="results-container" class="results-container hidden" aria-live="polite">
+            <h3>3. ตรวจสอบและพิมพ์ใบสั่งยา</h3>
+
             <div id="print-area">
                 <div id="print-header-container"></div>
 
@@ -459,8 +436,8 @@
                     </div>
                 </div>
 
-                <div id="print-footer-container"></div>
-                <div id="print-sticker-container" style="display:none"></div>
+                <div class="version-attribution">Version 2.0 &middot; AHA/ASA 2019 Stroke Guideline &middot; MNRH ED</div>
+            <div id="print-sticker-container"></div>
             </div>
 
         </div>
@@ -908,8 +885,6 @@
                 document.getElementById('order-date').innerHTML = dtHtml;
                 document.getElementById('order-date-cont').innerHTML = dtHtml;
 
-                ED_COMPONENTS.injectStrokeHeader('print-header-container', 'Alteplase');
-                ED_COMPONENTS.injectStrokeFooter('print-footer-container', hn);
                 ED_PRINT_BOOTSTRAP.showResults();
             });
 
@@ -923,8 +898,8 @@
             });
 
             document.getElementById('print-blank-btn').addEventListener('click', () => {
-                ED_COMPONENTS.injectStrokeHeader('print-header-container', 'Alteplase');
-                ED_COMPONENTS.injectStrokeFooter('print-footer-container', '....................');
+                ED_COMPONENTS.injectPrintHeader('print-header-container');
+                ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
                 ED_BLANK_PRINT.apply();
                 ED_PRINT_BOOTSTRAP.showResults();
                 window.print();
