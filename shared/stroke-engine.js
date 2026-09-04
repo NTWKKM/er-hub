@@ -15,22 +15,16 @@ const STROKE_ENGINE = {
         if (!weight || weight <= 0 || isNaN(weight)) return null;
         if (regimen !== 0.9 && regimen !== 0.6) return null;
 
-        let totalDose, pushPercent, dripPercent;
-        const calculatedTotal = weight * regimen;
+        const isStandard = regimen === 0.9;
+        const maxDose = isStandard ? 90 : 50;
+        const pushPercent = isStandard ? 10 : 15;
+        const dripPercent = isStandard ? 90 : 85;
 
-        if (regimen === 0.9) {
-            totalDose = Math.min(calculatedTotal, 90);
-            pushPercent = 10;
-            dripPercent = 90;
-        } else { // regimen === 0.6
-            totalDose = Math.min(calculatedTotal, 50); // Clinical safety ceiling capped at 50 mg
-            pushPercent = 15;
-            dripPercent = 85;
-        }
-
-        const idealPush = totalDose * (pushPercent / 100);
+        const rawTotal = Math.min(weight * regimen, maxDose);
+        const totalDose = Math.round(rawTotal * 100) / 100;
+        const idealPush = rawTotal * (pushPercent / 100);
         const pushDose = Math.floor(idealPush * 10) / 10;
-        const dripDose = totalDose - pushDose;
+        const dripDose = Math.round((totalDose - pushDose) * 100) / 100;
 
         return { totalDose, pushPercent, dripPercent, pushDose, dripDose };
     },

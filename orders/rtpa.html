@@ -409,11 +409,11 @@
 
                     <!-- Right Column -->
                     <div class="input-column">
-                        <div class="button-dose-group">
-                            <button type="button" class="dose-button active" data-dose="0.9">
+                        <div class="button-dose-group" role="radiogroup" aria-label="ขนาดยา rt-PA (Dosage Regimen)">
+                            <button type="button" class="dose-button active" data-dose="0.9" role="radio" aria-checked="true">
                                 Standard Dose: 0.9 mg/kg (Max 90 mg)
                             </button>
-                            <button type="button" class="dose-button" data-dose="0.6">
+                            <button type="button" class="dose-button" data-dose="0.6" role="radio" aria-checked="false">
                                 Alternative Dose: 0.6 mg/kg (Max 50 mg)
                             </button>
                             <input type="hidden" id="selected-dose-value" name="dose" value="0.9">
@@ -586,7 +586,7 @@
         <!-- ==================== STROKE DOCUMENT PAGE 1 ==================== -->
         <div class="stroke-page" id="stroke-page-1">
             <div class="stroke-page-header">
-                <h4>Maharat NakhonRatchasima Hospital</h4>
+                <h4>Maharat Nakhon Ratchasima Hospital</h4>
             </div>
             <p style="font-size:9pt;">Resident / Attending staff <span class="dotted-line"
                     style="min-width:400px;"></span></p>
@@ -604,12 +604,12 @@
 
             <div class="stroke-section-title">Absolute Exclusion criteria (any one of below)</div>
             <ul class="stroke-checklist">
-                <li>Presumed septic emboli, bacteria endocarditis</li>
-                <li>Serious head injury, intracranial of intraspinal surgery in previous 3 months,</li>
+                <li>Presumed septic emboli, bacterial endocarditis</li>
+                <li>Serious head injury, intracranial or intraspinal surgery in previous 3 months,</li>
                 <li>Clinical CT brain, suspicion of subarachnoid hemorrhage</li>
                 <li>History of previous intracranial hemorrhage</li>
                 <li>Intracranial neoplasm</li>
-                <li>SBP > 185 or DBP > 110mmg despite adequate treatment</li>
+                <li>SBP > 185 or DBP > 110 mmHg despite adequate treatment</li>
                 <li>Active internal bleeding; GI/GU tract bleeding, within previous 3 weeks</li>
                 <li>Acute bleeding diathesis, including but not limited to</li>
                 <li>Platelet count &lt; 100,000 /mm3</li>
@@ -621,10 +621,8 @@
                 <li>Current use of direct thrombin inhibitors with last dose of direct thrombin inhibitor. &lt; 2 days
                     in patients with ClCr > 50ml/min</li>
                 <li>Current use of direct thrombin inhibitors with ClCr&lt; 50 ml/min</li>
-                <li>Current use of direct factor Xa: inhibitors with elevated aPTT or PT or INR or abnormal factor Xa
-                    activity in patients with ClCr > 50 mL/min</li>
-                <li>Current use of direct factor Xa inhibitors with last dose of direct factor a inhibitor &lt; 2 days
-                    in patients with ClCr > 50 mL/min</li>
+                <li style="font-size: 8.5pt;">Current use of direct factor Xa inhibitors with elevated aPTT or PT or INR or abnormal factor Xa activity in patients with ClCr > 50 mL/min</li>
+                <li style="font-size: 9.2pt;">Current use of direct factor Xa inhibitors with last dose of direct factor Xa inhibitor &lt; 2 days in patients with ClCr > 50 mL/min</li>
                 <li>Current use of direct factor Xa inhibitors with ClCr &lt; 50 mL/min</li>
             </ul>
 
@@ -633,7 +631,7 @@
                 <li>Female patient who is possibly pregnant or during pregnancy or lactation</li>
                 <li>History of recent stroke or MI within previous 3 months</li>
                 <li>Major surgery or serious trauma within previous 14 days</li>
-                <li>Lumber puncture of arterial, puncture at a non-compressible site in previous 1 week</li>
+                <li>Lumbar puncture or arterial puncture at a non-compressible site in previous 1 week</li>
                 <li>Glucose &lt; 50 mg/dl</li>
                 <li>Only minor (NIHSS &lt; 4) or rapidly improving stroke symptoms (clearing spontaneously)</li>
                 <li>Seizure at onset with postictal residual neurological impairments</li>
@@ -651,7 +649,7 @@
                 <li>Female patient who is possibly pregnant or during pregnancy or lactation</li>
                 <li>History of recent stroke or MI within previous 3 months</li>
                 <li>Major surgery or serious trauma within previous 14 days</li>
-                <li>Lumber puncture of arterial, puncture at a non-compressible site in previous 1 week</li>
+                <li>Lumbar puncture or arterial puncture at a non-compressible site in previous 1 week</li>
                 <li>Glucose &lt; 50 mg/dl</li>
                 <li>Intracranial AVM or cerebral aneurysm</li>
             </ul>
@@ -812,7 +810,7 @@
         <!-- ==================== STROKE DOCUMENT PAGE 3 ==================== -->
         <div class="stroke-page" id="stroke-page-3">
             <div class="stroke-page-header">
-                <h4>Maharat Nakhonratchasima Hospital</h4>
+                <h4>Maharat Nakhon Ratchasima Hospital</h4>
                 <p><strong>Inclusion and Exclusion Criteria for IV rt-PA</strong></p>
                 <p>ตารางเวลาและประเมินก่อนให้ยาละลายลิ่มเลือดทางเส้นเลือดดำ (IV rt-PA)</p>
             </div>
@@ -991,8 +989,12 @@
             // Handle Dosage Button Clicks
             doseButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    doseButtons.forEach(btn => btn.classList.remove('active'));
+                    doseButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-checked', 'false');
+                    });
                     button.classList.add('active');
+                    button.setAttribute('aria-checked', 'true');
                     selectedDoseInput.value = button.getAttribute('data-dose');
                 });
             });
@@ -1034,9 +1036,27 @@
             document.getElementById('clear-btn').addEventListener('click', () => {
                 ED_VALIDATE.clearAll();
                 ED_PRINT_BOOTSTRAP.clearResults('rtpa-form', () => {
-                    doseButtons.forEach(btn => btn.classList.remove('active'));
-                    document.querySelector('.dose-button[data-dose="0.9"]').classList.add('active');
+                    doseButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-checked', 'false');
+                    });
+                    const stdBtn = document.querySelector('.dose-button[data-dose="0.9"]');
+                    if (stdBtn) {
+                        stdBtn.classList.add('active');
+                        stdBtn.setAttribute('aria-checked', 'true');
+                    }
                     selectedDoseInput.value = "0.9";
+
+                    // Reset print-area DOM fields to avoid stale PHI on print
+                    ['result-hn', 'result-weight', 'result-regimen', 'total-dose', 'push-percent', 'push-dose', 'drip-percent', 'drip-dose'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.textContent = '...';
+                    });
+                    const blankDt = ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML();
+                    const od = document.getElementById('order-date');
+                    if (od) od.innerHTML = blankDt;
+                    const odc = document.getElementById('order-date-cont');
+                    if (odc) odc.innerHTML = blankDt;
                 });
             });
 

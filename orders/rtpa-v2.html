@@ -708,7 +708,7 @@
         <!-- ==================== STROKE DOCUMENT PAGE 1 ==================== -->
         <div class="stroke-page" id="stroke-page-1">
             <div class="stroke-page-header">
-                <h4>Maharat NakhonRatchasima Hospital</h4>
+                <h4>Maharat Nakhon Ratchasima Hospital</h4>
             </div>
             <p style="font-size:9pt;">Resident / Attending staff <span class="dotted-line" style="min-width:400px;"></span></p>
             <hr style="border-top:1px solid #000;margin:4px 0;">
@@ -725,12 +725,12 @@
 
             <div class="stroke-section-title">Absolute Exclusion criteria (any one of below)</div>
             <ul class="stroke-checklist">
-                <li>Presumed septic emboli, bacteria endocarditis</li>
-                <li>Serious head injury, intracranial of intraspinal surgery in previous 3 months,</li>
+                <li>Presumed septic emboli, bacterial endocarditis</li>
+                <li>Serious head injury, intracranial or intraspinal surgery in previous 3 months,</li>
                 <li>Clinical CT brain, suspicion of subarachnoid hemorrhage</li>
                 <li>History of previous intracranial hemorrhage</li>
                 <li>Intracranial neoplasm</li>
-                <li>SBP > 185 or DBP > 110mmg despite adequate treatment</li>
+                <li>SBP > 185 or DBP > 110 mmHg despite adequate treatment</li>
                 <li>Active internal bleeding; GI/GU tract bleeding, within previous 3 weeks</li>
                 <li>Acute bleeding diathesis, including but not limited to</li>
                 <li>Platelet count &lt; 100,000 /mm3</li>
@@ -740,8 +740,8 @@
                 <li>Current use of direct thrombin inhibitors with elevate aPTT or TT or ECT in patient with ClCr > 50 ml/min</li>
                 <li>Current use of direct thrombin inhibitors with last dose of direct thrombin inhibitor. &lt; 2 days in patients with ClCr > 50ml/min</li>
                 <li>Current use of direct thrombin inhibitors with ClCr&lt; 50 ml/min</li>
-                <li>Current use of direct factor Xa: inhibitors with elevated aPTT or PT or INR or abnormal factor Xa activity in patients with ClCr > 50 mL/min</li>
-                <li>Current use of direct factor Xa inhibitors with last dose of direct factor a inhibitor &lt; 2 days in patients with ClCr > 50 mL/min</li>
+                <li style="font-size: 8.5pt;">Current use of direct factor Xa inhibitors with elevated aPTT or PT or INR or abnormal factor Xa activity in patients with ClCr > 50 mL/min</li>
+                <li style="font-size: 9.2pt;">Current use of direct factor Xa inhibitors with last dose of direct factor Xa inhibitor &lt; 2 days in patients with ClCr > 50 mL/min</li>
                 <li>Current use of direct factor Xa inhibitors with ClCr &lt; 50 mL/min</li>
             </ul>
 
@@ -750,7 +750,7 @@
                 <li>Female patient who is possibly pregnant or during pregnancy or lactation</li>
                 <li>History of recent stroke or MI within previous 3 months</li>
                 <li>Major surgery or serious trauma within previous 14 days</li>
-                <li>Lumber puncture of arterial, puncture at a non-compressible site in previous 1 week</li>
+                <li>Lumbar puncture or arterial puncture at a non-compressible site in previous 1 week</li>
                 <li>Glucose &lt; 50 mg/dl</li>
                 <li>Only minor (NIHSS &lt; 4) or rapidly improving stroke symptoms (clearing spontaneously)</li>
                 <li>Seizure at onset with postictal residual neurological impairments</li>
@@ -768,7 +768,7 @@
                 <li>Female patient who is possibly pregnant or during pregnancy or lactation</li>
                 <li>History of recent stroke or MI within previous 3 months</li>
                 <li>Major surgery or serious trauma within previous 14 days</li>
-                <li>Lumber puncture of arterial, puncture at a non-compressible site in previous 1 week</li>
+                <li>Lumbar puncture or arterial puncture at a non-compressible site in previous 1 week</li>
                 <li>Glucose &lt; 50 mg/dl</li>
                 <li>Intracranial AVM or cerebral aneurysm</li>
             </ul>
@@ -898,7 +898,7 @@
         <!-- ==================== STROKE DOCUMENT PAGE 3 ==================== -->
         <div class="stroke-page" id="stroke-page-3">
             <div class="stroke-page-header">
-                <h4>Maharat Nakhonratchasima Hospital</h4>
+                <h4>Maharat Nakhon Ratchasima Hospital</h4>
                 <p><strong>Inclusion and Exclusion Criteria for IV rt-PA</strong></p>
                 <p>ตารางเวลาและประเมินก่อนให้ยาละลายลิ่มเลือดทางเส้นเลือดดำ (IV rt-PA)</p>
             </div>
@@ -1182,6 +1182,28 @@
                         c.classList.toggle('active', r && r.checked);
                     });
                     selectedDoseInput.value = "0.9";
+
+                    // Reset print-area DOM fields to avoid stale PHI on print
+                    const hnEl = document.getElementById('result-hn');
+                    if (hnEl) hnEl.textContent = '...';
+                    const wtEl = document.getElementById('result-weight');
+                    if (wtEl) wtEl.textContent = '...';
+                    const dhEl = document.getElementById('print-drug-header');
+                    if (dhEl) dhEl.innerHTML = 'Alteplase (dose <span id="result-regimen" class="highlight">...</span> mg/kg)';
+                    const ddEl = document.getElementById('print-drug-details');
+                    if (ddEl) {
+                        ddEl.innerHTML = `
+                            <li>Total dose = <span id="total-dose" class="highlight">...</span> mg</li>
+                            <li id="print-row-push">- <span id="push-percent" class="highlight">...</span>% of total dose = <span id="push-dose" class="highlight">...</span> mg IV push in 1 min</li>
+                            <li id="print-row-drip">- <span id="drip-percent" class="highlight">...</span>% of total dose = <span id="drip-dose" class="highlight">...</span> mg IV drip in 60 min</li>
+                        `;
+                    }
+                    const blankDt = ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML();
+                    const od = document.getElementById('order-date');
+                    if (od) od.innerHTML = blankDt;
+                    const odc = document.getElementById('order-date-cont');
+                    if (odc) odc.innerHTML = blankDt;
+
                     updateLiveHUD();
                 });
             });

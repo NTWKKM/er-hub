@@ -110,4 +110,29 @@ describe('rt-PA Stroke Dosing Engine', () => {
         assert.equal(tnk120.totalDose, 25);
         assert.equal(tnk120.volumeMl, 5);
     });
+
+    test('rt-PA precision verification: Push Dose + Drip Dose === Total Dose across 10,000 physiological weights', () => {
+        // Known edge cases where raw float previously caused 0.01 mg mismatch
+        const edge2085 = STROKE_ENGINE.calcRtpaDose(20.85, 0.9);
+        assert.equal(edge2085.totalDose, 18.77);
+        assert.equal(edge2085.pushDose, 1.8);
+        assert.equal(edge2085.dripDose, 16.97);
+        assert.equal(edge2085.pushDose + edge2085.dripDose, edge2085.totalDose);
+
+        const edge2145 = STROKE_ENGINE.calcRtpaDose(21.45, 0.9);
+        assert.equal(edge2145.totalDose, 19.31);
+        assert.equal(edge2145.pushDose, 1.9);
+        assert.equal(edge2145.dripDose, 17.41);
+        assert.equal(edge2145.pushDose + edge2145.dripDose, edge2145.totalDose);
+
+        // Exhaustive test across 10,000 weight points (20.00 to 120.00 kg)
+        for (let w = 2000; w <= 12000; w++) {
+            const weight = w / 100;
+            for (const regimen of [0.9, 0.6]) {
+                const res = STROKE_ENGINE.calcRtpaDose(weight, regimen);
+                const sum = Math.round((res.pushDose + res.dripDose) * 100) / 100;
+                assert.equal(sum, res.totalDose, `Mismatch at weight ${weight} kg with regimen ${regimen}`);
+            }
+        }
+    });
 });

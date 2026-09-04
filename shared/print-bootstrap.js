@@ -81,8 +81,8 @@ const ED_PRINT_BOOTSTRAP = {
      */
     getDateTimeHTML(useCurrentTime, dateObj) {
         const now = dateObj || new Date();
-        const dateStr = useCurrentTime ? ED_COMPONENTS.fmtDate(now) : '....................';
-        const timeStr = useCurrentTime ? ED_COMPONENTS.fmtTime(now) : '....................';
+        const dateStr = useCurrentTime ? ED_COMPONENTS.fmtDate(now) : '_____/_____/_________';
+        const timeStr = useCurrentTime ? ED_COMPONENTS.fmtTime(now) : '____:____ น.';
         return `${dateStr}<br>${timeStr}`;
     },
 
