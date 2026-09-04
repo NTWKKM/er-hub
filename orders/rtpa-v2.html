@@ -1152,11 +1152,11 @@
                     const { totalDose, pushDose, dripDose, pushPercent, dripPercent } = dose;
 
                     document.getElementById('result-regimen').textContent = regNum.toString();
-                    document.getElementById('print-drug-header').innerHTML = '<strong>Alteplase (dose <span id="result-regimen" class="highlight">' + regNum.toString() + '</span> mg/kg)</strong>';
+                    document.getElementById('print-drug-header').innerHTML = '<strong>Alteplase (dose <span class="highlight">' + regNum.toString() + '</span> mg/kg)</strong>';
                     document.getElementById('print-drug-details').innerHTML = `
-                        <li>Total dose = <span id="total-dose" class="highlight">${totalDose.toFixed(2)}</span> mg</li>
-                        <li>- <span id="push-percent" class="highlight">${pushPercent}</span>% of total dose = <span id="push-dose" class="highlight">${pushDose.toFixed(1)}</span> mg IV push in 1 min</li>
-                        <li>- <span id="drip-percent" class="highlight">${dripPercent}</span>% of total dose = <span id="drip-dose" class="highlight">${dripDose.toFixed(2)}</span> mg IV drip in 60 min</li>
+                        <li>Total dose = <span class="highlight">${totalDose.toFixed(2)}</span> mg</li>
+                        <li>- <span class="highlight">${pushPercent}</span>% of total dose = <span class="highlight">${pushDose.toFixed(1)}</span> mg IV push in 1 min</li>
+                        <li>- <span class="highlight">${dripPercent}</span>% of total dose = <span class="highlight">${dripDose.toFixed(2)}</span> mg IV drip in 60 min</li>
                     `;
                 }
 

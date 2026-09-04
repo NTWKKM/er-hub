@@ -862,9 +862,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const freq = document.querySelector('input[name="enox-freq"]:checked')?.value || 'q12h';
             const chkEnox = chk('enox');
             const chk40 = (choice === 'enox' && enoxDose < 50) ? '☑' : '☐';
-            const chk60 = (choice === 'enox' && enoxDose >= 50 && enoxDose < 70) ? '☑' : '☐';
-            const chk80 = (choice === 'enox' && enoxDose >= 70 && enoxDose < 90) ? '☑' : '☐';
-            const chk100 = (choice === 'enox' && enoxDose >= 90) ? '☑' : '☐';
+            const chk60 = (choice === 'enox' && enoxDose >= 50) ? '☑' : '☐';
             const chkQ12 = (choice === 'enox' && freq === 'q12h') ? '☑' : '☐';
             const chkOD = (choice === 'enox' && freq === 'q24h') ? '☑' : '☐';
             
@@ -876,11 +874,11 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `
             <div class="ac-opt ${enoxRecClass} ${enoxNA ? 'na' : ''}">
                 <strong>${chkEnox} Enoxaparin</strong>${enoxWarning}<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${chk40} 0.4 ml</strong> &nbsp;<strong>${chk60} 0.6 ml</strong> &nbsp;<strong>${chk80} 0.8 ml</strong> &nbsp;<strong>${chk100} 1.0 ml</strong><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${chk40} 0.4 ml</strong> &nbsp;<strong>${chk60} 0.6 ml</strong><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>${chkQ12} q 12 hr</strong> &nbsp;<strong>${chkOD} OD</strong> × 5 Days<br>
                 <span style="font-size:9px;color:#666;">(1 mg/kg = ${weight > 0 ? enoxDose + ' mg' : '............ mg'} — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br>
                 (CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)<br>
-                (0.4 ml = 40 mg, 0.6 ml = 60 mg, 0.8 ml = 80 mg, 1.0 ml = 100 mg)</span>
+                (0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>
             </div>`;
         } else {
             html += `
@@ -961,12 +959,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const enoxDose = Math.round(weight * 1.0);
             $('ac-fonda-hint').innerHTML = `(Preferred — eGFR ${egfrLive.toFixed(0)})<br><span style="color:#c0392b;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = `Enoxaparin ${enoxDose} mg SC`;
-            $('ac-enox-hint').innerHTML = `(1 mg/kg = ${enoxDose} mg — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg, 0.8 ml = 80 mg, 1.0 ml = 100 mg)`;
+            $('ac-enox-hint').innerHTML = `(1 mg/kg = ${enoxDose} mg — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
         } else {
             $('ac-fonda-hint').innerHTML = `(Preferred — eGFR --)<br><span style="color:#c0392b;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = 'Enoxaparin -- mg SC';
-            $('ac-enox-hint').innerHTML = `(1 mg/kg = -- mg — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg, 0.8 ml = 80 mg, 1.0 ml = 100 mg)`;
+            $('ac-enox-hint').innerHTML = `(1 mg/kg = -- mg — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
         }
 
@@ -1099,7 +1097,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isNaN(cr) && cr > 0 && !isNaN(age) && age >= MIN_AGE && sex) {
             egfr = CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021(cr, age, sex);
             currentEgfr = egfr;
-            $('screen-egfr').textContent = egfr !== null ? egfr.toString() : '--';
+            $('screen-egfr').textContent = egfr !== null ? egfr.toFixed(0) : '--';
         } else {
             currentEgfr = null;
             $('screen-egfr').textContent = '--';
@@ -1174,7 +1172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update Print Output Fields
         $('p-hn').textContent = hn || '--';
         $('p-weight').textContent = !isNaN(weight) ? weight.toFixed(1) : '--';
-        $('p-egfr').textContent = egfr !== null ? egfr.toString() : '--';
+        $('p-egfr').textContent = egfr !== null ? egfr.toFixed(0) : '--';
         $('p-age').textContent = !isNaN(age) ? age.toString() : '--';
         $('p-hr').textContent = !isNaN(hr) ? hr.toString() : '--';
         $('p-sbp').textContent = !isNaN(sbp) ? sbp.toString() : '--';
@@ -1312,6 +1310,9 @@ document.addEventListener('DOMContentLoaded', () => {
     $('anticoag-panel').addEventListener('change', calculateAndRender);
 
     $('create-order-btn').addEventListener('click', () => {
+        if (!ED_VALIDATE.range('weight', 30, 200, 'Weight ต้องอยู่ในช่วง 30–200 kg')) return;
+        if (!ED_VALIDATE.range('age', MIN_AGE, 120, 'Age ต้องอยู่ในช่วง 18–120 ปี')) return;
+        if (!ED_VALIDATE.range('creatinine', 0.1, 20, 'Creatinine ต้องอยู่ในช่วง 0.1–20 mg/dL')) return;
         window.print();
     });
 
@@ -1360,11 +1361,11 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="ac-opt">
             <strong>☐ Enoxaparin</strong><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>☐ 0.4 ml</strong> &nbsp;<strong>☐ 0.6 ml</strong> &nbsp;<strong>☐ 0.8 ml</strong> &nbsp;<strong>☐ 1.0 ml</strong><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>☐ 0.4 ml</strong> &nbsp;<strong>☐ 0.6 ml</strong><br>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>☐ q 12 hr</strong> &nbsp;<strong>☐ OD</strong> × 5 Days<br>
             <span style="font-size:9px;color:#666;">(1 mg/kg = ............ mg — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br>
             (CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)<br>
-            (0.4 ml = 40 mg, 0.6 ml = 60 mg, 0.8 ml = 80 mg, 1.0 ml = 100 mg)</span>
+            (0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>
         </div>
         <div class="ac-opt">
             <strong>☐ Heparin IV</strong>
