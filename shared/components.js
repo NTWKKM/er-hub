@@ -65,6 +65,97 @@ const ED_COMPONENTS = {
     },
 
     /**
+     * Inject authentic stroke order print header.
+     * Logo on left (no text under logo), centered title and hospital name.
+     * No Department/Ward line.
+     */
+    injectStrokeHeader: function(elementId, drugName = 'Alteplase', logoPath = '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png') {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+
+        el.innerHTML = `
+            <div class="stroke-print-header">
+                <div class="stroke-logo-box">
+                    <img src="${logoPath}" alt="Logo" class="stroke-print-logo">
+                </div>
+                <div class="stroke-title-box">
+                    <div class="stroke-main-title">Standing order for ${drugName} Stroke fast track</div>
+                    <div class="stroke-sub-title">Maharat Nakhon Ratchasima Hospital</div>
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Inject authentic stroke order print footer.
+     * Matches original hospital order form layout and proportions.
+     */
+    injectStrokeFooter: function(elementId, hn = '....................') {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+
+        el.innerHTML = `
+            <div class="stroke-print-footer">
+                <div class="stroke-footer-meta">
+                    <div class="stroke-footer-row">
+                        <div class="stroke-field-col">
+                            <span class="stroke-field-label">Department of service</span>
+                            <span class="stroke-field-dots">..................................................</span>
+                        </div>
+                        <div class="stroke-field-col">
+                            <span class="stroke-field-label">Ward</span>
+                            <span class="stroke-field-dots">..................................................</span>
+                        </div>
+                    </div>
+                    <div class="stroke-footer-row">
+                        <div class="stroke-field-col">
+                            <span class="stroke-field-label">Attending Physician</span>
+                            <span class="stroke-field-dots">..................................................</span>
+                        </div>
+                        <div class="stroke-field-col">
+                            <span class="stroke-field-label">Name of patient &amp; Age</span>
+                            <span class="stroke-field-dots">..................................................</span>
+                        </div>
+                    </div>
+                    <div class="stroke-footer-row">
+                        <div class="stroke-field-col"></div>
+                        <div class="stroke-field-col">
+                            <span class="stroke-field-label">HN&amp;AN</span>
+                            <span class="stroke-field-dots"><span id="stroke-footer-hn"></span>..................................................</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stroke-footer-barcode-box">
+                    <div class="barcode-title">Order_Progress note</div>
+                    <div class="barcode-graphic">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 101 24" width="101" height="24">
+                            <rect x="0" y="0" width="2" height="24" fill="#000"/><rect x="3" y="0" width="1" height="24" fill="#000"/><rect x="6" y="0" width="1" height="24" fill="#000"/><rect x="11" y="0" width="2" height="24" fill="#000"/><rect x="16" y="0" width="1" height="24" fill="#000"/><rect x="20" y="0" width="1" height="24" fill="#000"/><rect x="22" y="0" width="3" height="24" fill="#000"/><rect x="26" y="0" width="3" height="24" fill="#000"/><rect x="30" y="0" width="2" height="24" fill="#000"/><rect x="33" y="0" width="1" height="24" fill="#000"/><rect x="36" y="0" width="3" height="24" fill="#000"/><rect x="40" y="0" width="2" height="24" fill="#000"/><rect x="44" y="0" width="1" height="24" fill="#000"/><rect x="47" y="0" width="3" height="24" fill="#000"/><rect x="52" y="0" width="2" height="24" fill="#000"/><rect x="55" y="0" width="1" height="24" fill="#000"/><rect x="58" y="0" width="3" height="24" fill="#000"/><rect x="62" y="0" width="2" height="24" fill="#000"/><rect x="66" y="0" width="2" height="24" fill="#000"/><rect x="69" y="0" width="3" height="24" fill="#000"/><rect x="74" y="0" width="1" height="24" fill="#000"/><rect x="77" y="0" width="3" height="24" fill="#000"/><rect x="81" y="0" width="3" height="24" fill="#000"/><rect x="85" y="0" width="2" height="24" fill="#000"/><rect x="88" y="0" width="2" height="24" fill="#000"/><rect x="93" y="0" width="3" height="24" fill="#000"/><rect x="97" y="0" width="1" height="24" fill="#000"/><rect x="99" y="0" width="2" height="24" fill="#000"/>
+                        </svg>
+                    </div>
+                    <div class="barcode-text">IP0105</div>
+                    <div class="barcode-divider"></div>
+                    <div class="barcode-sticker-guide">
+                        <div class="sticker-guide-text">
+                            <div>ติดสติกเกอร์บาร์โค้ด</div>
+                            <div>ชื่อ-สกุล HN AN ผู้ป่วย</div>
+                        </div>
+                        <div class="sticker-guide-arrow">
+                            <svg width="34" height="12" viewBox="0 0 34 12" style="display: block;">
+                                <line x1="6" y1="6" x2="34" y2="6" stroke="#000" stroke-width="1.8"/>
+                                <polygon points="0,6 7,2 7,10" fill="#000"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        const hnEl = document.getElementById('stroke-footer-hn');
+        if (hnEl && hn && hn !== '--' && hn !== '....................') {
+            hnEl.textContent = hn + ' ';
+        }
+    },
+
+    /**
      * Update the generated timestamp text on the printed order.
      */
     updateGeneratedTime: function(elementId, dateObj = new Date()) {

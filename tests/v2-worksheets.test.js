@@ -259,6 +259,73 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         const printDetails = doc.getElementById('print-drug-details');
         assert.ok(printDetails.textContent.includes('17.5'), 'Print details must include calculated 17.5 mg dose (70*0.25)');
         assert.ok(printDetails.textContent.includes('3.5'), 'Print details must include calculated 3.5 mL volume');
+
+        // Check authentic stroke header
+        const headerContainer = doc.getElementById('print-header-container');
+        assert.ok(headerContainer, 'Print header container must exist');
+        assert.ok(headerContainer.querySelector('.stroke-print-logo'), 'Hospital logo must be present in stroke header');
+        assert.ok(headerContainer.textContent.includes('Standing order for Tenecteplase Stroke fast track'), 'Header title must match Tenecteplase');
+        assert.ok(headerContainer.textContent.includes('Maharat Nakhon Ratchasima Hospital'), 'Hospital name must be present');
+        assert.equal(headerContainer.textContent.includes('Department:'), false, 'Department: must be removed from header');
+        assert.equal(headerContainer.textContent.includes('Ward:'), false, 'Ward: must be removed from header');
+        assert.equal(headerContainer.textContent.includes('โรงพยาบาลมหาราชนครราชสีมา'), false, 'Logo text must be omitted');
+
+        // Check authentic stroke footer
+        const footerContainer = doc.getElementById('print-footer-container');
+        assert.ok(footerContainer, 'Print footer container must exist');
+        assert.ok(footerContainer.textContent.includes('Department of service'), 'Department of service must exist in footer');
+        assert.ok(footerContainer.textContent.includes('Ward'), 'Ward must exist in footer');
+        assert.ok(footerContainer.textContent.includes('Attending Physician'), 'Attending Physician must exist in footer');
+        assert.ok(footerContainer.textContent.includes('Name of patient & Age'), 'Name of patient & Age must exist in footer');
+        assert.ok(footerContainer.textContent.includes('HN&AN'), 'HN&AN must exist in footer');
+        assert.ok(footerContainer.textContent.includes('IP0105'), 'IP0105 code must exist in footer');
+        assert.ok(footerContainer.querySelector('svg'), 'SVG barcode must be present in footer');
+        assert.ok(footerContainer.textContent.includes('ติดสติกเกอร์บาร์โค้ด'), 'Barcode sticker guide must exist');
+    });
+
+    test('Minimalist UI: No headings 1, 2, 3 and action buttons layout verified in rtpa-v2.html', () => {
+        const win = loadHtmlDom('orders/rtpa-v2.html');
+        const doc = win.document;
+
+        // No h3 headings in patient section or results
+        const h3List = Array.from(doc.querySelectorAll('h3')).map(h => h.textContent);
+        assert.equal(h3List.some(t => t.includes('1. ข้อมูลผู้ป่วย')), false, 'Heading 1 must be removed');
+        assert.equal(h3List.some(t => t.includes('3. ตรวจสอบและพิมพ์ใบสั่งยา')), false, 'Heading 3 must be removed');
+
+        // Button row layout
+        const blankRow = doc.querySelector('.blank-btn-row');
+        assert.ok(blankRow, 'Blank button row container must exist');
+        assert.ok(blankRow.querySelector('#print-blank-btn'), 'Blank order button must be in blank-btn-row');
+        assert.ok(blankRow.querySelector('#print-nihss-blank-btn'), 'NIHSS blank button must be in blank-btn-row');
+        assert.ok(doc.getElementById('clear-btn').classList.contains('btn-clear'), 'Clear button must have btn-clear class');
+    });
+
+    test('Minimalist UI and Authentic Header/Footer in rtpa.html (V1)', () => {
+        const win = loadHtmlDom('orders/rtpa.html');
+        const doc = win.document;
+
+        // No h3 headings 1, 2, 3
+        const h3List = Array.from(doc.querySelectorAll('h3')).map(h => h.textContent);
+        assert.equal(h3List.some(t => t.includes('1. ข้อมูลผู้ป่วย')), false, 'Heading 1 must be removed');
+        assert.equal(h3List.some(t => t.includes('2. เลือกขนาดยา')), false, 'Heading 2 must be removed');
+        assert.equal(h3List.some(t => t.includes('3. ตรวจสอบและพิมพ์ใบสั่งยา')), false, 'Heading 3 must be removed');
+
+        // Button row layout
+        const blankRow = doc.querySelector('.blank-btn-row');
+        assert.ok(blankRow, 'Blank button row container must exist');
+        assert.ok(blankRow.querySelector('#print-blank-btn'), 'Blank order button must be in blank-btn-row');
+        assert.ok(blankRow.querySelector('#print-nihss-blank-btn'), 'NIHSS blank button must be in blank-btn-row');
+
+        // Simulate Blank Order click
+        doc.getElementById('print-blank-btn').dispatchEvent(new win.Event('click', { bubbles: true }));
+        const header = doc.getElementById('print-header-container');
+        assert.ok(header.querySelector('.stroke-print-logo'), 'Logo must be present in header');
+        assert.equal(header.textContent.includes('Department:'), false, 'Department: must be removed from header');
+        assert.equal(header.textContent.includes('Ward:'), false, 'Ward: must be removed from header');
+
+        const footer = doc.getElementById('print-footer-container');
+        assert.ok(footer.textContent.includes('Department of service'), 'Department of service must exist in footer');
+        assert.ok(footer.textContent.includes('IP0105'), 'IP0105 barcode must exist in footer');
     });
 });
 

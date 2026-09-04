@@ -149,6 +149,150 @@
     display: none;
 }
 
+/* ── Authentic Stroke Fast Track Order Header & Footer ── */
+.stroke-print-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 6px;
+    min-height: 48px;
+}
+
+.stroke-logo-box {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.stroke-print-logo {
+    height: 46px;
+    width: auto;
+    max-width: 65px;
+    object-fit: contain;
+    display: block;
+}
+
+.stroke-title-box {
+    text-align: center;
+    width: 100%;
+}
+
+.stroke-main-title {
+    font-size: 14pt;
+    font-weight: bold;
+    line-height: 1.2;
+    color: #000;
+    margin: 0;
+}
+
+.stroke-sub-title {
+    font-size: 11pt;
+    font-weight: bold;
+    line-height: 1.2;
+    color: #000;
+    margin-top: 2px;
+}
+
+.stroke-print-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    border-top: 1px solid #000;
+    margin-top: 6px;
+    padding-top: 4px;
+    page-break-inside: avoid;
+    font-family: 'Sarabun', sans-serif;
+}
+
+.stroke-footer-meta {
+    flex: 1;
+    margin-right: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.stroke-footer-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 8pt;
+    line-height: 1.4;
+    margin-bottom: 2px;
+}
+
+.stroke-field-col {
+    display: flex;
+    align-items: baseline;
+    width: 48%;
+}
+
+.stroke-field-label {
+    white-space: nowrap;
+    margin-right: 4px;
+    font-weight: 500;
+}
+
+.stroke-field-dots {
+    flex: 1;
+    border-bottom: 1px dotted #000;
+    height: 1.1em;
+    min-width: 40px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.stroke-footer-barcode-box {
+    width: 175px;
+    flex-shrink: 0;
+    border: 1px solid #000;
+    padding: 3px 5px;
+    box-sizing: border-box;
+    text-align: center;
+    background: #fff;
+}
+
+.barcode-title {
+    font-size: 7.5pt;
+    font-weight: bold;
+    line-height: 1.1;
+}
+
+.barcode-graphic {
+    display: flex;
+    justify-content: center;
+    margin: 2px 0;
+}
+
+.barcode-text {
+    font-family: monospace, sans-serif;
+    font-size: 8pt;
+    font-weight: bold;
+    letter-spacing: 2px;
+    line-height: 1;
+}
+
+.barcode-divider {
+    border-top: 1px solid #000;
+    margin: 2px 0;
+}
+
+.barcode-sticker-guide {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 7pt;
+    line-height: 1.15;
+    text-align: left;
+}
+
+.sticker-guide-arrow {
+    display: flex;
+    align-items: center;
+    margin-left: 4px;
+}
+
 /* ═══════════════════════════════════════════
    PRINT OVERRIDES — A4 (210mm × 297mm)
    ═══════════════════════════════════════════ */
@@ -415,8 +559,41 @@
     }
 
     /* Prevent orphans */
-    .grid-cell, .fib-order-box, .ac-opt, .sticker-box-container {
+    .grid-cell, .fib-order-box, .ac-opt, .sticker-box-container, .stroke-print-footer {
         page-break-inside: avoid;
+    }
+
+    /* ── Stroke Order Print Header & Footer ── */
+    .stroke-print-header {
+        margin-bottom: 4px;
+        min-height: 44px;
+    }
+
+    .stroke-print-logo {
+        height: 42px;
+    }
+
+    .stroke-main-title {
+        font-size: 13pt;
+    }
+
+    .stroke-sub-title {
+        font-size: 10.5pt;
+    }
+
+    .stroke-print-footer {
+        margin-top: 4px;
+        padding-top: 3px;
+        border-top: 1px solid #000 !important;
+    }
+
+    .stroke-footer-row {
+        font-size: 7.5pt;
+        line-height: 1.35;
+    }
+
+    .stroke-footer-barcode-box {
+        border: 1px solid #000 !important;
     }
 
     /* Ensure black text on white */
