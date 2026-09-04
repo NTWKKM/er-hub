@@ -260,5 +260,23 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         assert.ok(printDetails.textContent.includes('17.5'), 'Print details must include calculated 17.5 mg dose (70*0.25)');
         assert.ok(printDetails.textContent.includes('3.5'), 'Print details must include calculated 3.5 mL volume');
     });
+
+    test('Demographics row places HN, weight, and current time checkbox in the same patient-fields-grid container', () => {
+        const win = loadHtmlDom('orders/rtpa-v2.html');
+        const doc = win.document;
+
+        const grid = doc.querySelector('.patient-section .patient-fields-grid');
+        assert.ok(grid, 'patient-fields-grid must exist inside patient-section');
+
+        const hnInput = grid.querySelector('#hn');
+        const weightInput = grid.querySelector('#weight');
+        const timeCheckbox = grid.querySelector('#use-current-time');
+
+        assert.ok(hnInput, 'HN input must be inside patient-fields-grid');
+        assert.ok(weightInput, 'Weight input must be inside patient-fields-grid');
+        assert.ok(timeCheckbox, 'use-current-time checkbox must be inside patient-fields-grid');
+        assert.ok(timeCheckbox.checked, 'use-current-time must be checked by default');
+    });
 });
+
 

@@ -21,28 +21,12 @@
             margin-bottom: 20px;
         }
 
-        .patient-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--rule-light);
-        }
 
-        .patient-header-row h3 {
-            margin: 0;
-            padding: 0;
-            border: none;
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--ink);
-        }
-
-        .patient-fields-grid {
+        .patient-section .patient-fields-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: 1fr 1fr auto;
             gap: 16px;
+            align-items: flex-end;
         }
 
         .input-item {
@@ -57,20 +41,57 @@
             color: var(--graphite);
         }
 
-        .input-item input {
+        .input-item input:not([type="checkbox"]) {
             width: 100%;
+            height: 40px;
             padding: 9px 12px;
             border: 1px solid var(--rule);
             border-radius: 6px;
             background: #fff;
             font-size: 15px;
             font-family: inherit;
+            box-sizing: border-box;
         }
 
-        .input-item input:focus {
+        .input-item input:not([type="checkbox"]):focus {
             border-color: var(--stroke-primary);
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
             outline: none;
+        }
+
+        .time-check-item {
+            display: flex;
+            align-items: center;
+            height: 40px;
+        }
+
+        .time-checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+            cursor: pointer;
+            user-select: none;
+            margin: 0;
+            padding: 8px 4px;
+            min-height: 40px;
+            white-space: nowrap;
+            transition: color 150ms ease;
+        }
+
+        .time-checkbox-label:hover {
+            color: var(--stroke-primary);
+        }
+
+        .time-checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            cursor: pointer;
+            accent-color: var(--stroke-primary);
+            flex-shrink: 0;
         }
 
         /* Segmented Regimen Selector */
@@ -84,13 +105,13 @@
         .regimen-card {
             border: 2px solid var(--rule);
             border-radius: 8px;
-            padding: 14px 16px;
+            padding: 10px 14px;
             background: #fff;
             cursor: pointer;
             transition: all 180ms ease;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
             user-select: none;
             position: relative;
         }
@@ -130,7 +151,8 @@
         }
 
         .regimen-card .subtitle {
-            font-size: 12.5px;
+            font-size: 12px;
+            line-height: 1.35;
             color: var(--graphite);
         }
 
@@ -139,46 +161,49 @@
             background: #fff;
             border: 2px solid var(--stroke-primary);
             border-radius: 8px;
-            padding: 16px 20px;
-            margin-bottom: 20px;
+            padding: 10px 16px;
+            margin-bottom: 16px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
+            gap: 12px;
             align-items: center;
         }
 
         .hud-metric {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 1px;
         }
 
         .hud-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.04em;
             color: var(--graphite);
+            line-height: 1.2;
         }
 
         .hud-value {
-            font-size: 1.8em;
+            font-size: 1.45em;
             font-weight: 700;
             color: var(--stroke-hover);
             font-variant-numeric: tabular-nums;
             font-family: var(--font-ui);
+            line-height: 1.2;
         }
 
         .hud-pill {
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 600;
-            padding: 2px 8px;
+            padding: 1px 6px;
             border-radius: 4px;
             background: var(--highlight-yellow);
             color: #856404;
             display: inline-block;
-            margin-top: 2px;
+            margin-top: 1px;
             width: fit-content;
+            line-height: 1.3;
         }
 
         .btn-calculate {
@@ -274,6 +299,16 @@
         @media (max-width: 600px) {
             .regimen-selector {
                 grid-template-columns: 1fr;
+            }
+
+            .patient-section .patient-fields-grid {
+                grid-template-columns: 1fr;
+                align-items: stretch;
+            }
+
+            .time-check-item {
+                height: auto;
+                padding-top: 4px;
             }
         }
 
@@ -456,13 +491,6 @@
             <form id="rtpa-form">
                 <!-- Patient Demographics Section -->
                 <div class="patient-section">
-                    <div class="patient-header-row" style="display: flex; justify-content: flex-end; margin-bottom: 8px; border-bottom: none; padding-bottom: 0;">
-                        <label class="flag-label" style="font-weight: normal; margin: 0;">
-                            <input type="checkbox" id="use-current-time" checked>
-                            บันทึกเวลาปัจจุบัน
-                        </label>
-                    </div>
-
                     <div class="patient-fields-grid">
                         <div class="input-item">
                             <label for="hn">Hospital Number (HN):</label>
@@ -472,6 +500,12 @@
                             <label for="weight">น้ำหนัก (kg):</label>
                             <input type="number" id="weight" step="0.01" min="20" max="250" required placeholder="ทศนิยม 2 ตำแหน่ง เช่น 75.58">
                         </div>
+                        <div class="input-item time-check-item">
+                            <label class="time-checkbox-label" for="use-current-time">
+                                <input type="checkbox" id="use-current-time" checked>
+                                <span>บันทึกเวลาปัจจุบัน</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -480,17 +514,17 @@
                     <label class="regimen-card active" id="card-regimen-standard">
                         <input type="radio" name="dose-radio" value="0.9" checked>
                         <span class="title">Standard Dose (0.9 mg/kg)</span>
-                        <span class="subtitle">มาตรฐานสากล: Max 90 mg (10% IV push + 90% IV drip 60m)</span>
+                        <span class="subtitle">มาตรฐานสากล: Max 90 mg<br>(10% IV push + 90% IV drip 60m)</span>
                     </label>
                     <label class="regimen-card" id="card-regimen-low">
                         <input type="radio" name="dose-radio" value="0.6">
                         <span class="title">Alternative Low Dose (0.6 mg/kg)</span>
-                        <span class="subtitle">Asian Regimen: Max 50 mg (15% IV push + 85% IV drip 60m)</span>
+                        <span class="subtitle">Asian Regimen: Max 50 mg<br>(15% IV push + 85% IV drip 60m)</span>
                     </label>
                     <label class="regimen-card" id="card-regimen-tnk">
                         <input type="radio" name="dose-radio" value="tnk">
                         <span class="title">Tenecteplase / TNK (0.25 mg/kg)</span>
-                        <span class="subtitle">AHA/ASA 2026: Max 25 mg (Single IV Bolus in 5–10s, No Drip)</span>
+                        <span class="subtitle">AHA/ASA 2026: Max 25 mg<br>(Single IV Bolus in 5–10s, No Drip)</span>
                     </label>
                     <input type="hidden" id="selected-dose-value" name="dose" value="0.9">
                 </div>
@@ -505,12 +539,12 @@
                     <div class="hud-metric">
                         <span class="hud-label">1. IV Push (1 min)</span>
                         <span class="hud-value" id="hud-push-dose" style="color: var(--ink);">-- mg</span>
-                        <span style="font-size:12px; color:var(--graphite);" id="hud-push-label">10% of total dose</span>
+                        <span style="font-size:11.5px; color:var(--graphite); line-height:1.2;" id="hud-push-label">10% of total dose</span>
                     </div>
                     <div class="hud-metric">
                         <span class="hud-label">2. IV Drip (60 min)</span>
                         <span class="hud-value" id="hud-drip-dose" style="color: var(--ink);">-- mg</span>
-                        <span style="font-size:12px; color:var(--graphite);" id="hud-drip-label">90% of total dose</span>
+                        <span style="font-size:11.5px; color:var(--graphite); line-height:1.2;" id="hud-drip-label">90% of total dose</span>
                     </div>
                 </div>
 
