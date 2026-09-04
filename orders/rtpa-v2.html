@@ -1142,8 +1142,8 @@
                     document.getElementById('print-drug-header').innerHTML = '<strong>Tenecteplase / TNK-tPA (dose 0.25 mg/kg, max 25 mg)</strong>';
                     document.getElementById('print-drug-details').innerHTML = `
                         <li>Total dose = <span class="highlight">${tnk.totalDose.toFixed(1)}</span> mg (= <span class="highlight">${tnk.volumeMl.toFixed(1)}</span> mL of 5 mg/mL solution)</li>
-                        <li>- ฉีดทาง IV push เร็วในเวลา 5–10 วินาที ครั้งเดียว (Single bolus push)</li>
-                        <li>- <u>ไม่ต้องต่อ IV drip</u></li>
+                        <li>ฉีดทาง IV push เร็วในเวลา 5–10 วินาที ครั้งเดียว (Single bolus push)</li>
+                        <li><u>ไม่ต้องต่อ IV drip</u></li>
                     `;
                 } else {
                     const regNum = parseFloat(rawRegimen);

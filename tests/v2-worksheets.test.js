@@ -259,6 +259,8 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         const printDetails = doc.getElementById('print-drug-details');
         assert.ok(printDetails.textContent.includes('17.5'), 'Print details must include calculated 17.5 mg dose (70*0.25)');
         assert.ok(printDetails.textContent.includes('3.5'), 'Print details must include calculated 3.5 mL volume');
+        assert.ok(printDetails.innerHTML.includes('<li>ฉีดทาง IV push'), 'Must not have leading dash in IV push bullet');
+        assert.ok(printDetails.innerHTML.includes('<li><u>ไม่ต้องต่อ IV drip</u></li>'), 'Must not have leading dash in no drip bullet');
     });
 
     test('Demographics row places HN, weight, and current time checkbox in the same patient-fields-grid container', () => {

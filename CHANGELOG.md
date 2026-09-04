@@ -18,8 +18,10 @@
   - Streamlined regimen selector cards with reduced compact padding (`10px 14px`, `gap: 3px`) and wrapped parenthesis clinical details (administration mode & breakdown) to a new line below max dose for enhanced readability.
   - Compacted live dose HUD preview box (`.dose-hud`) with streamlined padding (`10px 16px`, `margin-bottom: 16px`), tightened gaps (`12px`), and calibrated typography (`font-size: 1.45em` for metric values, `11px` uppercase labels) for a sleek, cohesive clinical display.
   - Added responsive fallback for viewport widths under 600px.
+- **Stroke V2 Tenecteplase Order Formatting (`orders/rtpa-v2.html`, `tests/v2-worksheets.test.js`):**
+  - Removed redundant leading dash prefixes from Tenecteplase (TNK) one-day print order list items (`ฉีดทาง IV push...`, `ไม่ต้องต่อ IV drip`) to eliminate duplicate bullets in print output.
 - **Service Worker & Cache Bump (`service-worker.js`):**
-  - Bumped offline PWA cache to `er-hub-v93` (`04/09/2569`).
+  - Bumped offline PWA cache to `er-hub-v94` (`04/09/2569`).
 
 ## [3.0.0] — 2026-08-28
 
