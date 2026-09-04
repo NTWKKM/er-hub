@@ -65,6 +65,28 @@ const ED_COMPONENTS = {
     },
 
     /**
+     * Inject authentic stroke order print header.
+     * Logo on left (no text under logo), centered title and hospital name.
+     * No Department/Ward line.
+     */
+    injectStrokeHeader: function(elementId, drugName = 'Alteplase', logoPath = '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png') {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+
+        el.innerHTML = `
+            <div class="stroke-print-header">
+                <div class="stroke-logo-box">
+                    <img src="${logoPath}" alt="Logo" class="stroke-print-logo">
+                </div>
+                <div class="stroke-title-box">
+                    <div class="stroke-main-title">Standing order for ${drugName} Stroke fast track</div>
+                    <div class="stroke-sub-title">Maharat Nakhon Ratchasima Hospital</div>
+                </div>
+            </div>
+        `;
+    },
+
+    /**
      * Update the generated timestamp text on the printed order.
      */
     updateGeneratedTime: function(elementId, dateObj = new Date()) {

@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.1.0] — 2026-09-04
+
+### Stroke Fast Track Authentic Print Header & Symmetrical UI Alignment
+
+- **Authentic Stroke Fast Track Print Header (`shared/components.js`, `shared/print.css`, `orders/rtpa.html`, `orders/rtpa-v2.html`):**
+  - Added `ED_COMPONENTS.injectStrokeHeader()` with hospital logo top-left (no sub-text) and centered titles (`Standing order for <Drug> Stroke fast track` / `Maharat Nakhon Ratchasima Hospital`).
+  - Removed `Department: ... | Ward: ...` from stroke order print layout.
+  - Dynamically switches drug title in V2 between `Alteplase` and `Tenecteplase` based on selected regimen.
+- **Minimalist & Symmetrical UI Layout (`orders/rtpa.html`, `orders/rtpa-v2.html`):**
+  - Removed section headings `1. ข้อมูลผู้ป่วย`, `2. เลือกขนาดยา (Dosage Regimen)`, and `3. ตรวจสอบและพิมพ์ใบสั่งยา` for a clean minimalist aesthetic.
+  - Symmetrically calibrated 2-column input grid with mathematical vertical alignment between left inputs and right regimen selection buttons.
+  - Consolidated blank order actions into a single row with 3/4 width `🖨️ ใบสั่งยาเปล่า (Blank Order)` (green `#28a745`) and 1/4 width `🖨️ NIHSS เปล่า` (deep teal `#0e7490`).
+  - Re-styled `ล้างข้อมูล (Clear)` as a full-width high-contrast solid red button (`#dc3545`).
+- **Service Worker & Cache Bump (`service-worker.js`):**
+  - Bumped offline PWA cache to `er-hub-v92` (`04/09/2569`).
+
 ## [3.0.0] — 2026-08-28
 
 ### Architecture Modernization, Font Self-Hosting & AHA/ASA 2026 Stroke TNK

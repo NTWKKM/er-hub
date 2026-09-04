@@ -123,26 +123,73 @@
             width: 70px;
         }
 
+        .input-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .input-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .inline-input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .inline-input-group label {
+            flex-shrink: 0;
+            width: 130px;
+            font-weight: bold;
+            text-align: right;
+            padding-right: 12px;
+            font-size: 15px;
+        }
+
+        .inline-input-group input {
+            flex: 1;
+            height: 44px;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .inline-input-group input:focus {
+            border-color: var(--stroke-primary);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+            outline: none;
+        }
+
         .checkbox-time-group {
-            margin-top: 15px;
-            margin-bottom: 15px;
-            padding-left: 150px;
+            margin-top: 2px;
+            margin-bottom: 0;
+            padding-left: 130px;
         }
 
         .button-dose-group {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            flex-grow: 1;
+            gap: 12px;
+            width: 100%;
         }
 
         .dose-button {
-            padding: 12px;
+            height: 44px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
             border: 2px solid var(--stroke-primary);
-            border-radius: 5px;
+            border-radius: 6px;
             background-color: #fff;
             color: var(--stroke-primary);
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
@@ -166,9 +213,106 @@
             background-color: var(--stroke-hover);
         }
 
+        .btn-calculate {
+            width: 100%;
+            height: 48px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background-color: var(--stroke-primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-calculate:hover {
+            background-color: var(--stroke-hover);
+        }
+
+        .blank-btn-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-blank-order {
+            flex: 3;
+            height: 44px;
+            font-size: 15px;
+            font-weight: bold;
+            background-color: #28a745 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .btn-blank-order:hover {
+            background-color: #218838 !important;
+        }
+
+        .btn-blank-nihss {
+            flex: 1;
+            height: 44px;
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #0e7490 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 !important;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .btn-blank-nihss:hover {
+            background-color: #0c647c !important;
+        }
+
+        .btn-clear-red {
+            width: 100%;
+            height: 44px;
+            font-size: 15px;
+            font-weight: bold;
+            background-color: #dc3545 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 0 !important;
+            margin-bottom: 16px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .btn-clear-red:hover {
+            background-color: #c82333 !important;
+        }
+
         @media (max-width: 768px) {
+            .input-layout {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
             .checkbox-time-group {
                 padding-left: 0;
+            }
+            .inline-input-group label {
+                width: 110px;
             }
         }
 
@@ -245,9 +389,6 @@
                 <div class="input-layout">
                     <!-- Left Column -->
                     <div class="input-column">
-                        <h3>1. ข้อมูลผู้ป่วย</h3>
-
-
                         <div class="inline-input-group">
                             <label for="hn">HN:</label>
                             <input type="text" id="hn" required placeholder="กรอก HN">
@@ -268,7 +409,6 @@
 
                     <!-- Right Column -->
                     <div class="input-column">
-                        <h3>2. เลือกขนาดยา (Dosage Regimen)</h3>
                         <div class="button-dose-group">
                             <button type="button" class="dose-button active" data-dose="0.9">
                                 Standard Dose: 0.9 mg/kg (Max 90 mg)
@@ -282,9 +422,11 @@
                 </div>
 
                 <button type="submit" class="btn btn-calculate">คำนวณและสร้างใบสั่งยา</button>
-                <button type="button" id="print-blank-btn" class="btn btn-print">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
-                <button type="button" id="print-nihss-blank-btn" class="btn btn-print">🖨️ NIHSS เปล่า</button>
-                <button type="button" id="clear-btn" class="btn btn-clear">ล้างข้อมูล (Clear)</button>
+                <div class="blank-btn-row">
+                    <button type="button" id="print-blank-btn" class="btn btn-blank-order">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
+                    <button type="button" id="print-nihss-blank-btn" class="btn btn-blank-nihss">🖨️ NIHSS เปล่า</button>
+                </div>
+                <button type="button" id="clear-btn" class="btn btn-clear-red">ล้างข้อมูล (Clear)</button>
 
                 <!-- Clinical Evidence & Guidelines Drawer -->
                 <div class="reference-card" style="margin-top:16px; padding:12px 16px; background:#f8f7f4; border:1px solid #d8d4c8; border-radius:8px; font-size:12.5px; color:#4a4a4a;">
@@ -308,7 +450,6 @@
 
         <!-- ══════════════ RESULTS ══════════════ -->
         <div id="results-container" class="results-container hidden" aria-live="polite">
-            <h3>3. ตรวจสอบและพิมพ์ใบสั่งยา</h3>
 
             <div id="print-area">
                 <div id="print-header-container"></div>
@@ -353,7 +494,7 @@
                             <li>CXR ก่อน admit</li>
                             <li>Admit</li>
                         </ul>
-                        <div style="height:10em"></div>
+                        <div style="height:14em"></div>
                         ลงชื่อแพทย์(ER/MED) <span class="dotted-line"></span>
                     </div>
                     <div class="grid-cell" id="order-date-cont">...</div>
@@ -409,7 +550,7 @@
                             <li>Blood for FBS HbA1C Lipid profile พรุ่งนี้</li>
                             <li>Consult PM&R พรุ่งนี้</li>
                         </ul>
-                        <div style="height:10em"></div>
+                        <div style="height:12.5em"></div>
                         ลงชื่อแพทย์(MED) <span class="dotted-line"></span>
                     </div>
                     <div class="grid-cell">&nbsp;</div>
@@ -885,6 +1026,8 @@
                 document.getElementById('order-date').innerHTML = dtHtml;
                 document.getElementById('order-date-cont').innerHTML = dtHtml;
 
+                ED_COMPONENTS.injectStrokeHeader('print-header-container', 'Alteplase');
+                ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
                 ED_PRINT_BOOTSTRAP.showResults();
             });
 
@@ -898,7 +1041,7 @@
             });
 
             document.getElementById('print-blank-btn').addEventListener('click', () => {
-                ED_COMPONENTS.injectPrintHeader('print-header-container');
+                ED_COMPONENTS.injectStrokeHeader('print-header-container', 'Alteplase');
                 ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
                 ED_BLANK_PRINT.apply();
                 ED_PRINT_BOOTSTRAP.showResults();

@@ -149,6 +149,52 @@
     display: none;
 }
 
+/* ── Authentic Stroke Fast Track Order Header ── */
+.stroke-print-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 8px;
+    min-height: 48px;
+}
+
+.stroke-logo-box {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.stroke-print-logo {
+    height: 46px;
+    width: auto;
+    max-width: 65px;
+    object-fit: contain;
+    display: block;
+}
+
+.stroke-title-box {
+    text-align: center;
+    width: 100%;
+}
+
+.stroke-main-title {
+    font-size: 14pt;
+    font-weight: bold;
+    line-height: 1.2;
+    color: #000;
+    margin: 0;
+}
+
+.stroke-sub-title {
+    font-size: 11pt;
+    font-weight: bold;
+    line-height: 1.2;
+    color: #000;
+    margin-top: 2px;
+}
+
 /* ═══════════════════════════════════════════
    PRINT OVERRIDES — A4 (210mm × 297mm)
    ═══════════════════════════════════════════ */
@@ -264,6 +310,53 @@
 
     .print-header small {
         font-size: 8pt;
+    }
+
+    /* ── Stroke Fast Track authentic print header ── */
+    .stroke-print-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: relative !important;
+        margin-bottom: 6px !important;
+        min-height: 44px !important;
+    }
+
+    .stroke-logo-box {
+        position: absolute !important;
+        left: 0 !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+    }
+
+    .stroke-print-logo {
+        height: 42px !important;
+        width: auto !important;
+        max-width: 60px !important;
+        display: block !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .stroke-title-box {
+        text-align: center !important;
+        width: 100% !important;
+    }
+
+    .stroke-main-title {
+        font-size: 13pt !important;
+        font-weight: bold !important;
+        line-height: 1.2 !important;
+        color: #000 !important;
+        margin: 0 !important;
+    }
+
+    .stroke-sub-title {
+        font-size: 10.5pt !important;
+        font-weight: bold !important;
+        line-height: 1.2 !important;
+        color: #000 !important;
+        margin-top: 1px !important;
     }
 
     /* ── Order content ── */

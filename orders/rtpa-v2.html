@@ -181,24 +181,99 @@
             width: fit-content;
         }
 
-        .action-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
+        .btn-calculate {
+            width: 100%;
+            height: 48px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background-color: var(--stroke-primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
 
-        .action-row .btn {
-            flex: 1 1 calc(50% - 10px);
-            margin-top: 0;
+        .btn-calculate:hover {
+            background-color: var(--stroke-hover);
+        }
+
+        .blank-btn-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-blank-order {
+            flex: 3;
+            height: 44px;
+            font-size: 15px;
+            font-weight: bold;
+            background-color: #28a745 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .btn-blank-order:hover {
+            background-color: #218838 !important;
+        }
+
+        .btn-blank-nihss {
+            flex: 1;
+            height: 44px;
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #0e7490 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 !important;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .btn-blank-nihss:hover {
+            background-color: #0c647c !important;
+        }
+
+        .btn-clear-red {
+            width: 100%;
+            height: 44px;
+            font-size: 15px;
+            font-weight: bold;
+            background-color: #dc3545 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 0 !important;
+            margin-bottom: 16px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .btn-clear-red:hover {
+            background-color: #c82333 !important;
         }
 
         @media (max-width: 600px) {
             .regimen-selector {
                 grid-template-columns: 1fr;
-            }
-            .action-row .btn {
-                flex: 1 1 100%;
             }
         }
 
@@ -381,8 +456,7 @@
             <form id="rtpa-form">
                 <!-- Patient Demographics Section -->
                 <div class="patient-section">
-                    <div class="patient-header-row">
-                        <h3>1. ข้อมูลผู้ป่วย (Patient Information)</h3>
+                    <div class="patient-header-row" style="display: flex; justify-content: flex-end; margin-bottom: 8px; border-bottom: none; padding-bottom: 0;">
                         <label class="flag-label" style="font-weight: normal; margin: 0;">
                             <input type="checkbox" id="use-current-time" checked>
                             บันทึกเวลาปัจจุบัน
@@ -441,12 +515,12 @@
                 </div>
 
                 <!-- Action Button Cluster -->
-                <div class="action-row">
-                    <button type="submit" class="btn btn-calculate" aria-description="คำนวณขนาดยาตามน้ำหนักตัวและสร้างใบสั่งยาทางการแพทย์ A4">คำนวณและสร้างใบสั่งยา</button>
-                    <button type="button" id="print-blank-btn" class="btn btn-print" aria-description="พิมพ์ใบสั่งยาเปล่าสำหรับใช้เขียนด้วยลายมือ">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
-                    <button type="button" id="print-nihss-blank-btn" class="btn btn-print" aria-description="พิมพ์แบบประเมิน NIHSS เปล่า">🖨️ NIHSS เปล่า</button>
-                    <button type="button" id="clear-btn" class="btn btn-clear" aria-description="ล้างข้อมูลทั้งหมดในฟอร์ม">ล้างข้อมูล (Clear)</button>
+                <button type="submit" class="btn btn-calculate" aria-description="คำนวณขนาดยาตามน้ำหนักตัวและสร้างใบสั่งยาทางการแพทย์ A4">คำนวณและสร้างใบสั่งยา</button>
+                <div class="blank-btn-row">
+                    <button type="button" id="print-blank-btn" class="btn btn-print btn-blank-order" aria-description="พิมพ์ใบสั่งยาเปล่าสำหรับใช้เขียนด้วยลายมือ">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
+                    <button type="button" id="print-nihss-blank-btn" class="btn btn-print btn-blank-nihss" aria-description="พิมพ์แบบประเมิน NIHSS เปล่า">🖨️ NIHSS เปล่า</button>
                 </div>
+                <button type="button" id="clear-btn" class="btn btn-clear btn-clear-red" aria-description="ล้างข้อมูลทั้งหมดในฟอร์ม">ล้างข้อมูล (Clear)</button>
 
                 <!-- Clinical Evidence & Guidelines Drawer -->
                 <div class="reference-card" style="margin-top:16px; padding:12px 16px; background:#f8f7f4; border:1px solid #d8d4c8; border-radius:8px; font-size:12.5px; color:#4a4a4a;">
@@ -470,7 +544,6 @@
 
         <!-- ══════════════ RESULTS / PRINT AREA ══════════════ -->
         <div id="results-container" class="results-container hidden" aria-live="polite">
-            <h3>3. ตรวจสอบและพิมพ์ใบสั่งยา</h3>
 
             <div id="print-area">
                 <div id="print-header-container"></div>
@@ -512,7 +585,7 @@
                             <li>CXR ก่อน admit</li>
                             <li>Admit</li>
                         </ul>
-                        <div style="height:10em"></div>
+                        <div style="height:14em"></div>
                         ลงชื่อแพทย์(ER/MED) <span class="dotted-line"></span>
                     </div>
                     <div class="grid-cell" id="order-date-cont">...</div>
@@ -566,7 +639,7 @@
                             <li>Blood for FBS HbA1C Lipid profile พรุ่งนี้</li>
                             <li>Consult PM&R พรุ่งนี้</li>
                         </ul>
-                        <div style="height:10em"></div>
+                        <div style="height:12.5em"></div>
                         ลงชื่อแพทย์(MED) <span class="dotted-line"></span>
                     </div>
                     <div class="grid-cell">&nbsp;</div>
@@ -1060,7 +1133,7 @@
                 document.getElementById('order-date').innerHTML = dtHtml;
                 document.getElementById('order-date-cont').innerHTML = dtHtml;
 
-                ED_COMPONENTS.injectPrintHeader('print-header-container');
+                ED_COMPONENTS.injectStrokeHeader('print-header-container', isTnk ? 'Tenecteplase' : 'Alteplase');
                 ED_COMPONENTS.injectStickerBox('print-sticker-container', hn);
                 ED_PRINT_BOOTSTRAP.showResults();
             });
@@ -1080,7 +1153,7 @@
             });
 
             document.getElementById('print-blank-btn').addEventListener('click', () => {
-                ED_COMPONENTS.injectPrintHeader('print-header-container');
+                ED_COMPONENTS.injectStrokeHeader('print-header-container', 'Alteplase');
                 ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
                 ED_BLANK_PRINT.apply();
                 ED_PRINT_BOOTSTRAP.showResults();
