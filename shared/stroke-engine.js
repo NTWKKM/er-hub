@@ -12,7 +12,7 @@ const STROKE_ENGINE = {
      * @returns {Object|null} Dosing parameters or null if invalid inputs
      */
     calcRtpaDose(weight, regimen) {
-        if (!weight || weight <= 0 || isNaN(weight)) return null;
+        if (!weight || weight <= 0 || !Number.isFinite(weight)) return null;
         if (regimen !== 0.9 && regimen !== 0.6) return null;
 
         const isStandard = regimen === 0.9;
@@ -22,7 +22,7 @@ const STROKE_ENGINE = {
 
         const rawTotal = Math.min(weight * regimen, maxDose);
         const totalDose = Math.round(rawTotal * 100) / 100;
-        const idealPush = rawTotal * (pushPercent / 100);
+        const idealPush = totalDose * (pushPercent / 100);
         const pushDose = Math.floor((idealPush + 1e-9) * 10) / 10;
         const dripDose = Math.round((totalDose - pushDose) * 100) / 100;
 
@@ -36,7 +36,7 @@ const STROKE_ENGINE = {
      * @returns {Object|null} TNK dosing parameters or null if invalid inputs
      */
     calcTnkStrokeDose(weight) {
-        if (!weight || weight <= 0 || isNaN(weight)) return null;
+        if (!weight || weight <= 0 || !Number.isFinite(weight)) return null;
         const totalDose = Math.min(Math.round(weight * 0.25 * 10) / 10, 25); // 0.25 mg/kg, max 25 mg
         const volumeMl = Math.round((totalDose / 5) * 10) / 10; // 5 mg/mL concentration
         return { totalDose, volumeMl, maxCap: 25, concentration: 5 };

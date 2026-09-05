@@ -8,6 +8,9 @@ describe('rt-PA Stroke Dosing Engine', () => {
         assert.equal(STROKE_ENGINE.calcRtpaDose(70, 0.5), null);
         assert.equal(STROKE_ENGINE.calcRtpaDose(0, 0.9), null);
         assert.equal(STROKE_ENGINE.calcRtpaDose(70, null), null);
+        assert.equal(STROKE_ENGINE.calcRtpaDose(Infinity, 0.9), null);
+        assert.equal(STROKE_ENGINE.calcRtpaDose(-Infinity, 0.9), null);
+        assert.equal(STROKE_ENGINE.calcRtpaDose(NaN, 0.9), null);
     });
 
     test('0.9 mg/kg regimen calculations', () => {
@@ -45,6 +48,15 @@ describe('rt-PA Stroke Dosing Engine', () => {
         assert.equal(dose55.pushDose, 4.9);
         assert.equal(dose55.dripDose, 44.6);
         assert.equal(dose55.pushDose + dose55.dripDose, 49.5);
+
+        // 55.55 kg: 55.55 * 0.9 = 49.995 -> totalDose = 50.00
+        // idealPush derived from totalDose (50.00 * 0.10 = 5.0) -> pushDose = 5.0 mg, dripDose = 45.0 mg
+        const dose55_55 = STROKE_ENGINE.calcRtpaDose(55.55, 0.9);
+        assert.ok(dose55_55);
+        assert.equal(dose55_55.totalDose, 50);
+        assert.equal(dose55_55.pushDose, 5.0, '55.55kg 0.9 regimen push dose must be strictly 5.0 mg (not 4.9 mg)');
+        assert.equal(dose55_55.dripDose, 45.0, '55.55kg 0.9 regimen drip dose must be strictly 45.0 mg');
+        assert.equal(dose55_55.pushDose + dose55_55.dripDose, 50);
     });
 
     test('0.6 mg/kg regimen calculations', () => {
@@ -126,6 +138,9 @@ describe('rt-PA Stroke Dosing Engine', () => {
     test('Tenecteplase (TNK) 0.25 mg/kg stroke dosing calculations per AHA/ASA 2026', () => {
         assert.equal(STROKE_ENGINE.calcTnkStrokeDose(0), null);
         assert.equal(STROKE_ENGINE.calcTnkStrokeDose(-10), null);
+        assert.equal(STROKE_ENGINE.calcTnkStrokeDose(Infinity), null);
+        assert.equal(STROKE_ENGINE.calcTnkStrokeDose(-Infinity), null);
+        assert.equal(STROKE_ENGINE.calcTnkStrokeDose(NaN), null);
 
         // 60 kg: 60 * 0.25 = 15 mg (3 mL of 5 mg/mL)
         const tnk60 = STROKE_ENGINE.calcTnkStrokeDose(60);

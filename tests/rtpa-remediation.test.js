@@ -156,4 +156,49 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
                 `${name} must wrap the child ul inside li`);
         }
     });
+
+    test('Print Layout: Doctor order cells use order-cell-flex and eliminate fixed-height spacer divs', () => {
+        assert.ok(printCss.includes('.order-cell-flex'), 'print.css must define .order-cell-flex');
+        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
+            assert.ok(content.includes('order-cell-flex'), `${name} must use order-cell-flex in doctor order cells`);
+            assert.ok(!content.includes('<div style="height:11.5em"></div>'), `${name} must not contain brittle 11.5em height spacer`);
+        }
+    });
+
+    test('Safety: Stale calculation invalidation on input modification in v1 and v2', () => {
+        for (const pagePath of ['orders/rtpa.html', 'orders/rtpa-v2.html']) {
+            const win = loadHtmlDom(pagePath);
+            const doc = win.document;
+
+            // Submit order
+            doc.getElementById('hn').value = '1122334';
+            doc.getElementById('weight').value = '65';
+            doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { cancelable: true }));
+
+            // Results container should be visible
+            const rc = doc.getElementById('results-container');
+            assert.ok(!rc.classList.contains('hidden'), `${pagePath}: results-container must be visible after submit`);
+
+            // Modify weight input -> must immediately invalidate and hide results-container
+            doc.getElementById('weight').value = '70';
+            doc.getElementById('weight').dispatchEvent(new win.Event('input'));
+            assert.ok(rc.classList.contains('hidden'), `${pagePath}: results-container must be hidden when weight changes`);
+
+            // Submit again
+            doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { cancelable: true }));
+            assert.ok(!rc.classList.contains('hidden'), `${pagePath}: results-container must be visible again`);
+
+            // Modify HN input -> must immediately invalidate and hide results-container
+            doc.getElementById('hn').value = '9999999';
+            doc.getElementById('hn').dispatchEvent(new win.Event('input'));
+            assert.ok(rc.classList.contains('hidden'), `${pagePath}: results-container must be hidden when HN changes`);
+        }
+    });
+
+    test('Clinical Precision: Weight pre-rounded to 2 decimal places in v1 and v2', () => {
+        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
+            assert.ok(content.includes('Math.round(rawWeight * 100) / 100'),
+                `${name} must pre-round parsed weight to 2 decimals`);
+        }
+    });
 });
