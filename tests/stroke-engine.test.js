@@ -85,6 +85,22 @@ describe('rt-PA Stroke Dosing Engine', () => {
         assert.equal(dose55.pushDose, 4.9);
         assert.equal(dose55.dripDose, 28.1);
         assert.equal(dose55.pushDose + dose55.dripDose, 33);
+
+        // IEEE 754 precision checks: 60 kg (36 * 0.15 = 5.3999999999999995)
+        const dose60 = STROKE_ENGINE.calcRtpaDose(60, 0.6);
+        assert.ok(dose60);
+        assert.equal(dose60.totalDose, 36);
+        assert.equal(dose60.pushDose, 5.4, '60kg push dose must be exact 5.4 mg, not 5.3 mg');
+        assert.equal(dose60.dripDose, 30.6, '60kg drip dose must be exact 30.6 mg, not 30.7 mg');
+        assert.equal(dose60.pushDose + dose60.dripDose, 36);
+
+        // IEEE 754 precision checks: 30 kg (18 * 0.15 = 2.6999999999999997)
+        const dose30 = STROKE_ENGINE.calcRtpaDose(30, 0.6);
+        assert.ok(dose30);
+        assert.equal(dose30.totalDose, 18);
+        assert.equal(dose30.pushDose, 2.7, '30kg push dose must be exact 2.7 mg, not 2.6 mg');
+        assert.equal(dose30.dripDose, 15.3, '30kg drip dose must be exact 15.3 mg, not 15.4 mg');
+        assert.equal(dose30.pushDose + dose30.dripDose, 18);
     });
 
     test('Tenecteplase (TNK) 0.25 mg/kg stroke dosing calculations per AHA/ASA 2026', () => {

@@ -23,7 +23,7 @@ const STROKE_ENGINE = {
         const rawTotal = Math.min(weight * regimen, maxDose);
         const totalDose = Math.round(rawTotal * 100) / 100;
         const idealPush = rawTotal * (pushPercent / 100);
-        const pushDose = Math.floor(idealPush * 10) / 10;
+        const pushDose = Math.floor((idealPush + 1e-9) * 10) / 10;
         const dripDose = Math.round((totalDose - pushDose) * 100) / 100;
 
         return { totalDose, pushPercent, dripPercent, pushDose, dripDose };

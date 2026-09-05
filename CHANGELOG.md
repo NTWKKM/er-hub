@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.1.2] — 2026-09-05
+
+### Stroke Fast Track Precision & Clinical Safety Refinement
+
+- **IEEE 754 Floating-Point Precision Fix (`shared/stroke-engine.js`, `tests/stroke-engine.test.js`):**
+  - Added `+ 1e-9` epsilon to `Math.floor((idealPush + 1e-9) * 10) / 10` in `calcRtpaDose`, eliminating binary float truncation error at 60 kg (5.4 mg bolus) and 30 kg (2.7 mg bolus) under 0.6 mg/kg regimen.
+- **Conjunctive Blood Pressure Safety Target (`orders/rtpa.html`, `orders/rtpa-v2.html`):**
+  - Updated Nicardipine order target to conjunctive `keep SBP < 180 mmHg and DBP < 105 mmHg` (replacing ambiguous `or`).
+- **Service Worker & Cache Bump (`service-worker.js`):**
+  - Bumped offline PWA cache to `er-hub-v98` (`05/09/2569`).
+
 ## [3.1.1] — 2026-09-05
 
 ### Stroke Fast Track V1 & V2 Clinical Remediation & Guideline Alignment
