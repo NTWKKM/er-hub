@@ -16,7 +16,7 @@ const STROKE_ENGINE = {
         if (regimen !== 0.9 && regimen !== 0.6) return null;
 
         const isStandard = regimen === 0.9;
-        const maxDose = isStandard ? 90 : 50;
+        const maxDose = isStandard ? 90 : 60;
         const pushPercent = isStandard ? 10 : 15;
         const dripPercent = isStandard ? 90 : 85;
 
