@@ -159,9 +159,23 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
 
     test('Print Layout: Doctor order cells use order-cell-flex and eliminate fixed-height spacer divs', () => {
         assert.ok(printCss.includes('.order-cell-flex'), 'print.css must define .order-cell-flex');
-        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
-            assert.ok(content.includes('order-cell-flex'), `${name} must use order-cell-flex in doctor order cells`);
-            assert.ok(!content.includes('<div style="height:11.5em"></div>'), `${name} must not contain brittle 11.5em height spacer`);
+        for (const pagePath of ['orders/rtpa.html', 'orders/rtpa-v2.html']) {
+            const win = loadHtmlDom(pagePath);
+            const doc = win.document;
+
+            // Structurally inspect doctor order cells containing doctor signature lines
+            const allCells = Array.from(doc.querySelectorAll('.grid-cell'));
+            const doctorOrderCells = allCells.filter(cell => cell.textContent.includes('ลงชื่อแพทย์'));
+            assert.ok(doctorOrderCells.length >= 2, `${pagePath} must have at least 2 doctor order cells`);
+            for (const cell of doctorOrderCells) {
+                assert.ok(cell.classList.contains('order-cell-flex'),
+                    `${pagePath}: doctor order cell must have order-cell-flex class`);
+            }
+
+            // Assert that no fixed-height 11.5em spacer div nodes remain in the DOM
+            const spacerNodes = doc.querySelectorAll('div[style*="11.5em"]');
+            assert.equal(spacerNodes.length, 0,
+                `${pagePath} must not contain fixed-height 11.5em spacer div nodes`);
         }
     });
 
@@ -169,36 +183,88 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         for (const pagePath of ['orders/rtpa.html', 'orders/rtpa-v2.html']) {
             const win = loadHtmlDom(pagePath);
             const doc = win.document;
+            const form = doc.getElementById('rtpa-form');
+            const rc = doc.getElementById('results-container');
 
-            // Submit order
+            // 1. Initial Submit order
             doc.getElementById('hn').value = '1122334';
             doc.getElementById('weight').value = '65';
-            doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { cancelable: true }));
-
-            // Results container should be visible
-            const rc = doc.getElementById('results-container');
+            form.dispatchEvent(new win.Event('submit', { cancelable: true }));
             assert.ok(!rc.classList.contains('hidden'), `${pagePath}: results-container must be visible after submit`);
 
-            // Modify weight input -> must immediately invalidate and hide results-container
+            // 2. Modify weight input -> must immediately invalidate and hide results-container
             doc.getElementById('weight').value = '70';
             doc.getElementById('weight').dispatchEvent(new win.Event('input'));
             assert.ok(rc.classList.contains('hidden'), `${pagePath}: results-container must be hidden when weight changes`);
 
-            // Submit again
-            doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { cancelable: true }));
+            // Resubmit
+            form.dispatchEvent(new win.Event('submit', { cancelable: true }));
             assert.ok(!rc.classList.contains('hidden'), `${pagePath}: results-container must be visible again`);
 
-            // Modify HN input -> must immediately invalidate and hide results-container
+            // 3. Modify HN input -> must immediately invalidate and hide results-container
             doc.getElementById('hn').value = '9999999';
             doc.getElementById('hn').dispatchEvent(new win.Event('input'));
             assert.ok(rc.classList.contains('hidden'), `${pagePath}: results-container must be hidden when HN changes`);
+
+            // Resubmit
+            form.dispatchEvent(new win.Event('submit', { cancelable: true }));
+            assert.ok(!rc.classList.contains('hidden'), `${pagePath}: results-container must be visible again`);
+
+            // 4. Modify #use-current-time checkbox -> must immediately invalidate and hide results-container
+            const useTimeCheckbox = doc.getElementById('use-current-time');
+            assert.ok(useTimeCheckbox, `${pagePath} must have #use-current-time checkbox`);
+            useTimeCheckbox.checked = !useTimeCheckbox.checked;
+            useTimeCheckbox.dispatchEvent(new win.Event('change'));
+            assert.ok(rc.classList.contains('hidden'), `${pagePath}: results-container must be hidden when #use-current-time changes`);
+
+            // Resubmit
+            form.dispatchEvent(new win.Event('submit', { cancelable: true }));
+            assert.ok(!rc.classList.contains('hidden'), `${pagePath}: results-container must be visible again`);
+
+            // 5. Modify dosing regimen -> must immediately invalidate and hide results-container
+            const doseBtn06 = doc.querySelector('.dose-button[data-dose="0.6"]');
+            const doseRadio06 = doc.querySelector('input[name="dose-radio"][value="0.6"]');
+            if (doseBtn06) {
+                doseBtn06.dispatchEvent(new win.Event('click'));
+            } else if (doseRadio06) {
+                doseRadio06.checked = true;
+                doseRadio06.dispatchEvent(new win.Event('change'));
+            } else {
+                assert.fail(`${pagePath} must have a dosing regimen selector for 0.6`);
+            }
+            assert.ok(rc.classList.contains('hidden'), `${pagePath}: results-container must be hidden when dosing regimen changes`);
+
+            // Resubmit
+            form.dispatchEvent(new win.Event('submit', { cancelable: true }));
+            assert.ok(!rc.classList.contains('hidden'), `${pagePath}: results-container must be visible again after regimen resubmit`);
         }
     });
 
     test('Clinical Precision: Weight pre-rounded to 2 decimal places in v1 and v2', () => {
-        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
-            assert.ok(content.includes('Math.round(rawWeight * 100) / 100'),
-                `${name} must pre-round parsed weight to 2 decimals`);
+        for (const pagePath of ['orders/rtpa.html', 'orders/rtpa-v2.html']) {
+            const win = loadHtmlDom(pagePath);
+            const doc = win.document;
+
+            doc.getElementById('hn').value = '1122334';
+            doc.getElementById('weight').value = '55.548';
+            doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { cancelable: true }));
+
+            const rc = doc.getElementById('results-container');
+            assert.ok(!rc.classList.contains('hidden'), `${pagePath}: results-container must be visible after submit`);
+
+            // Discriminating test case:
+            // 55.548 rounded to 2 decimal places is 55.55 kg.
+            // 55.55 kg * 0.9 mg/kg = 49.995 mg -> totalDose rounds to 50.00 mg.
+            // idealPush = 50.00 * 0.10 = 5.0 mg -> pushDose = 5.0 mg, dripDose = 45.00 mg.
+            // (If unrounded 55.548 kg were used: 55.548 * 0.9 = 49.9932 mg -> totalDose = 49.99 mg, pushDose = 4.9 mg).
+            assert.equal(doc.getElementById('result-weight').textContent, '55.55',
+                `${pagePath}: rendered weight must be pre-rounded to 55.55`);
+            assert.equal(doc.getElementById('total-dose').textContent, '50.00',
+                `${pagePath}: total dose must be calculated from rounded 55.55 kg as 50.00 mg`);
+            assert.equal(doc.getElementById('push-dose').textContent, '5.0',
+                `${pagePath}: push dose must be 5.0 mg`);
+            assert.equal(doc.getElementById('drip-dose').textContent, '45.00',
+                `${pagePath}: drip dose must be 45.00 mg`);
         }
     });
 });
