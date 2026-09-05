@@ -409,25 +409,32 @@
     /* ── Sticker box ── */
     .sticker-area {
         width: 48mm;
-        height: 12mm;
-        font-size: 6.5pt;
+        height: 16mm;
+        font-size: 7pt;
         border: 1px dashed #000 !important;
         padding: 1px 3px;
         line-height: 1.15;
         box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
     }
 
     .sticker-area strong {
         font-size: 7pt;
+        line-height: 1.1;
     }
 
     .sticker-area small {
         font-size: 5.5pt;
+        line-height: 1.1;
     }
 
     .sticker-area #sticker-hn-text {
         font-size: 7.5pt !important;
         margin-top: 1px !important;
+        line-height: 1.1;
     }
 
     .sticker-box-container {

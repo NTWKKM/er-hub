@@ -5,8 +5,8 @@
 ### Stroke Fast Track Print Layout & Sticker Box Calibration
 
 - **Compacted Patient Sticker Box (`shared/print.css`, `shared/components.js`):**
-  - Reduced print sticker box dimensions to `48mm × 12mm` (screen `170px × 46px`) and reduced container margin to `2px`.
-  - Calibrated order grid table row spacers (`height: 11.5em` in row 1, `height: 10em` in row 2) in both `orders/rtpa.html` and `orders/rtpa-v2.html`.
+  - Reduced print sticker box dimensions to `48mm × 16mm` (screen `170px × 46px`) and container margin to `2px`.
+  - Calibrated order grid table row spacers to symmetrical `height: 11.5em` in both row 1 and row 2 in `orders/rtpa.html` and `orders/rtpa-v2.html`.
   - Guarantees strict 1-page A4 print fit without overflowing the patient sticker box to a second page.
 - **Service Worker & Cache Bump (`service-worker.js`):**
   - Bumped offline PWA cache to `er-hub-v99` (`05/09/2569`).
