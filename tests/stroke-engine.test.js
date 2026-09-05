@@ -59,19 +59,39 @@ describe('rt-PA Stroke Dosing Engine', () => {
         assert.equal(dose50.pushDose, 4.5);
         assert.equal(dose50.dripDose, 25.5);
 
-        // Cap weight: 83.3 kg (should cap at 50 mg)
+        // Non-capped weight above 83.3 kg: 85 kg (85 * 0.6 = 51.0 mg)
+        // idealPush = 51 * 0.15 = 7.65 -> pushDose = 7.6 mg
+        // dripDose = 51.0 - 7.6 = 43.4 mg
         const dose85 = STROKE_ENGINE.calcRtpaDose(85, 0.6);
         assert.ok(dose85);
-        assert.equal(dose85.totalDose, 50);
-        assert.equal(dose85.pushDose, 7.5);
-        assert.equal(dose85.dripDose, 42.5);
+        assert.equal(dose85.totalDose, 51.0);
+        assert.equal(dose85.pushDose, 7.6);
+        assert.equal(dose85.dripDose, 43.4);
 
-        // Over-cap weight: 100 kg
+        // Non-capped weight: 90 kg (90 * 0.6 = 54.0 mg)
+        // idealPush = 54 * 0.15 = 8.1 mg -> pushDose = 8.1 mg
+        // dripDose = 54.0 - 8.1 = 45.9 mg
+        const dose90 = STROKE_ENGINE.calcRtpaDose(90, 0.6);
+        assert.ok(dose90);
+        assert.equal(dose90.totalDose, 54.0);
+        assert.equal(dose90.pushDose, 8.1);
+        assert.equal(dose90.dripDose, 45.9);
+
+        // Max cap boundary: 100 kg (100 * 0.6 = 60.0 mg, max ceiling)
+        // idealPush = 60 * 0.15 = 9.0 mg -> pushDose = 9.0 mg
+        // dripDose = 60.0 - 9.0 = 51.0 mg
         const dose100 = STROKE_ENGINE.calcRtpaDose(100, 0.6);
         assert.ok(dose100);
-        assert.equal(dose100.totalDose, 50);
-        assert.equal(dose100.pushDose, 7.5);
-        assert.equal(dose100.dripDose, 42.5);
+        assert.equal(dose100.totalDose, 60.0);
+        assert.equal(dose100.pushDose, 9.0);
+        assert.equal(dose100.dripDose, 51.0);
+
+        // Over-cap weight: 110 kg (should clamp at 60.0 mg)
+        const dose110 = STROKE_ENGINE.calcRtpaDose(110, 0.6);
+        assert.ok(dose110);
+        assert.equal(dose110.totalDose, 60.0);
+        assert.equal(dose110.pushDose, 9.0);
+        assert.equal(dose110.dripDose, 51.0);
     });
 
     test('0.6 mg/kg remainder/rounding logic', () => {
