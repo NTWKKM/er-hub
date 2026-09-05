@@ -59,6 +59,12 @@
     color: #000;
 }
 
+.order-cell-flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 .grid-cell:nth-child(5n) {
     border-right: none;
 }

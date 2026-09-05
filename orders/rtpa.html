@@ -469,7 +469,7 @@
                         ลงชื่อเภสัช: <span class="dotted-line"></span>
                     </div>
                     <div class="grid-cell" id="order-date">...</div>
-                    <div class="grid-cell">
+                    <div class="grid-cell order-cell-flex">
                         <ul class="order-list">
                             <li>ก่อนให้ rt-PA if SBP ≥ 185 or DBP ≥ 110 mmHg notify แพทย์ทันที</li>
                             <li><strong>Alteplase (dose <span id="result-regimen" class="highlight">...</span>
@@ -494,8 +494,7 @@
                             <li>CXR ก่อน admit</li>
                             <li>Admit</li>
                         </ul>
-                        <div style="height:11.5em"></div>
-                        ลงชื่อแพทย์(ER/MED) <span class="dotted-line"></span>
+                        <div>ลงชื่อแพทย์(ER/MED) <span class="dotted-line"></span></div>
                     </div>
                     <div class="grid-cell" id="order-date-cont">...</div>
                     <div class="grid-cell">
@@ -534,25 +533,26 @@
                         </div>
                     </div>
                     <div class="grid-cell">&nbsp;</div>
-                    <div class="grid-cell">
-                        <strong>หลังจากได้ rt-PA และ admit แล้ว</strong>
-                        <br><br>
-                        <ul class="order-list">
-                            <li>record V/S และ NS ตาม order continuation
-                                <ul style="padding-left: 15px;">
-                                    <li>if SBP >= 180 mmHg or DBP > 105 mmHg ให้ Notify แพทย์ให้ Nicardipine 20 mg + 5DW
-                                        up to 100 ml iv drip 25 ml/hr titrate ทีละ 10 ml/hr ทุก 5-15 min (max 75 ml/hr หรือ 15 mg/hr) keep SBP &lt;
-                                        180 mmHg and DBP &lt; 105 mmHg</li>
-                                </ul>
-                            </li>
-                            <li>CT Brain NC หลังได้ rt-PA 24 hr</li>
-                            <li>if GCS drop, ปวดศีรษะมาก, อาเจียน, ชัก, เลือดออกตำแหน่งใดๆ ให้ Notify แพทย์ทันที</li>
-                            <li>Serial DTX q 6 hr keep 140 – 180 mg/dL (treat hypoglycemia &lt; 60 mg/dL promptly)</li>
-                            <li>Blood for FBS HbA1C Lipid profile พรุ่งนี้</li>
-                            <li>Consult PM&R พรุ่งนี้</li>
-                        </ul>
-                        <div style="height:11.5em"></div>
-                        ลงชื่อแพทย์(MED) <span class="dotted-line"></span>
+                    <div class="grid-cell order-cell-flex">
+                        <div>
+                            <strong>หลังจากได้ rt-PA และ admit แล้ว</strong>
+                            <br><br>
+                            <ul class="order-list">
+                                <li>record V/S และ NS ตาม order continuation
+                                    <ul style="padding-left: 15px;">
+                                        <li>if SBP &gt;= 180 mmHg or DBP &gt; 105 mmHg ให้ Notify แพทย์ให้ Nicardipine 20 mg + 5DW
+                                            up to 100 ml iv drip 25 ml/hr titrate ทีละ 10 ml/hr ทุก 5-15 min (max 75 ml/hr หรือ 15 mg/hr) keep SBP &lt;
+                                            180 mmHg and DBP &lt; 105 mmHg</li>
+                                    </ul>
+                                </li>
+                                <li>CT Brain NC หลังได้ rt-PA 24 hr</li>
+                                <li>if GCS drop, ปวดศีรษะมาก, อาเจียน, ชัก, เลือดออกตำแหน่งใดๆ ให้ Notify แพทย์ทันที</li>
+                                <li>Serial DTX q 6 hr keep 140 – 180 mg/dL (treat hypoglycemia &lt; 60 mg/dL promptly)</li>
+                                <li>Blood for FBS HbA1C Lipid profile พรุ่งนี้</li>
+                                <li>Consult PM&R พรุ่งนี้</li>
+                            </ul>
+                        </div>
+                        <div>ลงชื่อแพทย์(MED) <span class="dotted-line"></span></div>
                     </div>
                     <div class="grid-cell">&nbsp;</div>
                     <div class="grid-cell">
@@ -986,6 +986,22 @@
                 { id: 'order-date-cont', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
             ]);
 
+            // Invalidate calculated results when input parameters change
+            function invalidateOrderDisplay() {
+                const rc = document.getElementById('results-container');
+                if (rc && !rc.classList.contains('hidden')) {
+                    rc.classList.add('hidden');
+                    ED_COMPONENTS.hideFloatBar();
+                }
+            }
+
+            hnInput.addEventListener('input', invalidateOrderDisplay);
+            weightInput.addEventListener('input', invalidateOrderDisplay);
+            const useTimeCheckbox = document.getElementById('use-current-time');
+            if (useTimeCheckbox) {
+                useTimeCheckbox.addEventListener('change', invalidateOrderDisplay);
+            }
+
             // Handle Dosage Button Clicks
             doseButtons.forEach(button => {
                 button.addEventListener('click', () => {
@@ -996,17 +1012,19 @@
                     button.classList.add('active');
                     button.setAttribute('aria-checked', 'true');
                     selectedDoseInput.value = button.getAttribute('data-dose');
+                    invalidateOrderDisplay();
                 });
             });
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const hn = hnInput.value.trim() || '...';
-                const weight = parseFloat(weightInput.value);
+                const rawWeight = parseFloat(weightInput.value);
                 const selectedDose = parseFloat(selectedDoseInput.value);
 
                 if (!ED_VALIDATE.range('weight', 20, 250, 'Weight ต้องอยู่ในช่วง 20–250 kg')) return;
 
+                const weight = Math.round(rawWeight * 100) / 100;
                 const dose = STROKE_ENGINE.calcRtpaDose(weight, selectedDose);
                 if (!dose) return;
                 const { totalDose, pushDose, dripDose, pushPercent, dripPercent } = dose;
