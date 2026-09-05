@@ -279,6 +279,100 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         assert.ok(timeCheckbox, 'use-current-time checkbox must be inside patient-fields-grid');
         assert.ok(timeCheckbox.checked, 'use-current-time must be checked by default');
     });
+
+    test('Consecutive form submissions with updated weight do not throw TypeError and update print area cleanly', () => {
+        const win = loadHtmlDom('orders/rtpa-v2.html');
+        const doc = win.document;
+
+        // Submit 1 (Alteplase 0.9, 60 kg -> 54 mg total)
+        doc.getElementById('hn').value = '111222';
+        doc.getElementById('weight').value = '60';
+        doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
+
+        assert.equal(doc.getElementById('result-weight').textContent, '60.00');
+        assert.ok(doc.getElementById('print-drug-details').textContent.includes('54.00'));
+
+        // Submit 2 (Alteplase 0.9, updated weight 65 kg -> 58.50 mg total)
+        doc.getElementById('weight').value = '65';
+        assert.doesNotThrow(() => {
+            doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
+        }, 'Second submit must not throw TypeError');
+
+        assert.equal(doc.getElementById('result-weight').textContent, '65.00');
+        assert.ok(doc.getElementById('print-drug-details').textContent.includes('58.50'));
+    });
+
+    test('Switching regimens back and forth between Tenecteplase and Alteplase generates correct DOM structure', () => {
+        const win = loadHtmlDom('orders/rtpa-v2.html');
+        const doc = win.document;
+
+        doc.getElementById('hn').value = '333444';
+        doc.getElementById('weight').value = '60';
+
+        // 1. Submit TNK
+        const tnkRadio = doc.querySelector('input[name="dose-radio"][value="tnk"]');
+        tnkRadio.checked = true;
+        tnkRadio.dispatchEvent(new win.Event('change', { bubbles: true }));
+        doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
+
+        assert.ok(doc.getElementById('print-drug-header').textContent.includes('Tenecteplase'));
+        assert.ok(doc.getElementById('print-drug-details').textContent.includes('15.0'));
+
+        // 2. Switch to Alteplase 0.9 and submit
+        const stdRadio = doc.querySelector('input[name="dose-radio"][value="0.9"]');
+        stdRadio.checked = true;
+        stdRadio.dispatchEvent(new win.Event('change', { bubbles: true }));
+        assert.doesNotThrow(() => {
+            doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
+        }, 'Submitting Alteplase 0.9 after TNK must not throw');
+
+        assert.ok(doc.getElementById('print-drug-header').textContent.includes('Alteplase'));
+        assert.ok(doc.getElementById('print-drug-details').textContent.includes('54.00'));
+
+        // 3. Switch to Alteplase 0.6 and submit
+        const lowRadio = doc.querySelector('input[name="dose-radio"][value="0.6"]');
+        lowRadio.checked = true;
+        lowRadio.dispatchEvent(new win.Event('change', { bubbles: true }));
+        assert.doesNotThrow(() => {
+            doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
+        }, 'Submitting Alteplase 0.6 must not throw');
+
+        assert.ok(doc.getElementById('print-drug-header').textContent.includes('0.6'));
+        assert.ok(doc.getElementById('print-drug-details').textContent.includes('36.00'));
+
+        // 4. Switch back to TNK and submit
+        tnkRadio.checked = true;
+        tnkRadio.dispatchEvent(new win.Event('change', { bubbles: true }));
+        assert.doesNotThrow(() => {
+            doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
+        }, 'Submitting TNK again must not throw');
+
+        assert.ok(doc.getElementById('print-drug-header').textContent.includes('Tenecteplase'));
+        assert.ok(doc.getElementById('print-drug-details').textContent.includes('15.0'));
+    });
+
+    test('Blank Order print after calculation contains zero residual numeric doses (ADR-10 clean purge)', () => {
+        const win = loadHtmlDom('orders/rtpa-v2.html');
+        const doc = win.document;
+        win.print = () => {};
+
+        // Calculate Alteplase 0.9 for 60 kg (54.00 mg)
+        doc.getElementById('hn').value = '555666';
+        doc.getElementById('weight').value = '60';
+        doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
+
+        assert.ok(doc.getElementById('print-drug-details').textContent.includes('54.00'));
+
+        // Click print blank order
+        doc.getElementById('print-blank-btn').click();
+
+        // Print details must NOT contain previously calculated 54.00, 5.4, or 48.60 mg
+        const detailsText = doc.getElementById('print-drug-details').textContent;
+        assert.ok(!detailsText.includes('54.00'), 'Blank order must not contain 54.00 mg');
+        assert.ok(!detailsText.includes('48.60'), 'Blank order must not contain 48.60 mg');
+        assert.ok(detailsText.includes('.....'), 'Blank order must contain underline / placeholder slots');
+    });
 });
+
 
 
