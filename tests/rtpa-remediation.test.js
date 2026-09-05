@@ -122,4 +122,38 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         assert.equal(doc.getElementById('result-weight').textContent, '...');
         assert.ok(doc.getElementById('results-container').classList.contains('hidden'));
     });
+
+    test('Clinical Guidelines: Nicardipine continuation order specifies max 75 ml/hr (15 mg/hr)', () => {
+        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
+            assert.ok(content.includes('Nicardipine 20 mg + 5DW'), `${name} must contain Nicardipine order`);
+            assert.ok(content.includes('titrate ทีละ 10 ml/hr ทุก 5-15 min (max 75 ml/hr หรือ 15 mg/hr)'),
+                `${name} must specify titration rate and max 75 ml/hr (15 mg/hr)`);
+        }
+    });
+
+    test('Clinical Guidelines: DTX target specifies 140–180 mg/dL and treats hypoglycemia < 60 mg/dL', () => {
+        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
+            assert.ok(!content.includes('keep 80 – 180 mg%'), `${name} must not contain forbidden intensive target 80-180 mg%`);
+            assert.ok(content.includes('Serial DTX q 6 hr keep 140 – 180 mg/dL (treat hypoglycemia &lt; 60 mg/dL promptly)'),
+                `${name} must specify recommended 140-180 mg/dL target with &lt; encoded`);
+        }
+    });
+
+    test('Document Structure: Page 3 header specifies Timeline and Pre-evaluation Protocol', () => {
+        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
+            assert.ok(content.includes('Timeline and Pre-evaluation Protocol for IV rt-PA'),
+                `${name} page 3 must have correct timeline title`);
+            assert.ok(!content.includes('<div class="stroke-page" id="stroke-page-3">\n            <div class="stroke-page-header">\n                <h4>Maharat Nakhon Ratchasima Hospital</h4>\n                <p><strong>Inclusion and Exclusion Criteria for IV rt-PA</strong></p>'),
+                `${name} page 3 header must not duplicate Inclusion and Exclusion Criteria`);
+        }
+    });
+
+    test('HTML Spec: Record BP list must have valid <ul> nesting inside <li>', () => {
+        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
+            assert.ok(!content.includes('<li>Record BP ระหว่างให้ rt-PA</li>\n                            <ul style="list-style-type: none;'),
+                `${name} must not have ul directly following closed li`);
+            assert.ok(content.includes('<li>Record BP ระหว่างให้ rt-PA\n                                <ul style="list-style-type: none;'),
+                `${name} must wrap the child ul inside li`);
+        }
+    });
 });

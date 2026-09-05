@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.1.1] — 2026-09-05
+
+### Stroke Fast Track V1 & V2 Clinical Remediation & Guideline Alignment
+
+- **Nicardipine Titration Max Cap (`orders/rtpa.html`, `orders/rtpa-v2.html`, `tests/rtpa-remediation.test.js`):**
+  - Explicitly specified maximum dose `(max 75 ml/hr หรือ 15 mg/hr)` in continuation order for post-lysis blood pressure management while maintaining hospital-standard `titrate ทีละ 10 ml/hr ทุก 5-15 min`.
+- **Serial DTX Target Update (`orders/rtpa.html`, `orders/rtpa-v2.html`, `tests/rtpa-remediation.test.js`):**
+  - Updated target glucose to `140 – 180 mg/dL` per 2026 AHA/ASA Guidelines to avoid intensive control (80–130 mg/dL) hypoglycemia hazards, with prompt correction for hypoglycemia (< 60 mg/dL).
+- **Document Page 3 Header & HTML Nesting (`orders/rtpa.html`, `orders/rtpa-v2.html`, `tests/rtpa-remediation.test.js`):**
+  - Renamed page 3 English title to `Timeline and Pre-evaluation Protocol for IV rt-PA` to match content.
+  - Wrapped child `<ul>` list properly inside `<li>Record BP ระหว่างให้ rt-PA...</li>` for W3C compliance.
+- **Service Worker & Cache Bump (`service-worker.js`):**
+  - Bumped offline PWA cache to `er-hub-v97` (`05/09/2569`).
+
 ## [3.1.0] — 2026-09-04
 
 ### Stroke Fast Track Authentic Print Header & Symmetrical UI Alignment
