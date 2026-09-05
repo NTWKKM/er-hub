@@ -157,8 +157,9 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         }
     });
 
-    test('Print Layout: Doctor order cells use order-cell-flex and eliminate fixed-height spacer divs', () => {
+    test('Print Layout: Doctor order cells use order-cell-flex and calibrated .order-row-spacer', () => {
         assert.ok(printCss.includes('.order-cell-flex'), 'print.css must define .order-cell-flex');
+        assert.ok(printCss.includes('.order-row-spacer'), 'print.css must define .order-row-spacer');
         for (const pagePath of ['orders/rtpa.html', 'orders/rtpa-v2.html']) {
             const win = loadHtmlDom(pagePath);
             const doc = win.document;
@@ -170,12 +171,14 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
             for (const cell of doctorOrderCells) {
                 assert.ok(cell.classList.contains('order-cell-flex'),
                     `${pagePath}: doctor order cell must have order-cell-flex class`);
+                assert.ok(cell.querySelector('.order-row-spacer'),
+                    `${pagePath}: doctor order cell must contain .order-row-spacer for handwritten order area`);
             }
 
-            // Assert that no fixed-height 11.5em spacer div nodes remain in the DOM
-            const spacerNodes = doc.querySelectorAll('div[style*="11.5em"]');
-            assert.equal(spacerNodes.length, 0,
-                `${pagePath} must not contain fixed-height 11.5em spacer div nodes`);
+            // Assert that no brittle inline style="height:11.5em" spacer div nodes remain in the DOM
+            const inlineSpacers = doc.querySelectorAll('div[style*="11.5em"]');
+            assert.equal(inlineSpacers.length, 0,
+                `${pagePath} must use clean .order-row-spacer class instead of brittle inline style="height:11.5em"`);
         }
     });
 
