@@ -55,7 +55,7 @@ const ED_COMPONENTS = {
                 <div class="sticker-area">
                     <strong>ติดสติกเกอร์ผู้ป่วย</strong>
                     <small>(Patient Sticker)</small>
-                    <span id="sticker-hn-text" style="font-weight: bold; font-size: 11px; margin-top: 4px;"></span>
+                    <span id="sticker-hn-text" style="font-weight: bold; font-size: 10px; margin-top: 1px;"></span>
                 </div>
             </div>
         `;

@@ -128,16 +128,16 @@
 .sticker-box-container {
     display: flex;
     justify-content: flex-end;
-    margin-top: 8px;
+    margin-top: 4px;
 }
 
 .sticker-area {
     border: 1px dashed #999;
-    padding: 10px;
-    width: 200px;
-    height: 65px;
+    padding: 4px 8px;
+    width: 170px;
+    height: 46px;
     text-align: center;
-    font-size: 10px;
+    font-size: 9px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -408,14 +408,30 @@
 
     /* ── Sticker box ── */
     .sticker-area {
-        width: 60mm;
-        height: 20mm;
-        font-size: 8pt;
+        width: 48mm;
+        height: 12mm;
+        font-size: 6.5pt;
         border: 1px dashed #000 !important;
-        padding: 5px;
+        padding: 1px 3px;
+        line-height: 1.15;
+        box-sizing: border-box;
+    }
+
+    .sticker-area strong {
+        font-size: 7pt;
+    }
+
+    .sticker-area small {
+        font-size: 5.5pt;
+    }
+
+    .sticker-area #sticker-hn-text {
+        font-size: 7.5pt !important;
+        margin-top: 1px !important;
     }
 
     .sticker-box-container {
+        margin-top: 2px !important;
         page-break-inside: avoid;
     }
 
