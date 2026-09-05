@@ -356,7 +356,7 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         const doc = win.document;
         win.print = () => {};
 
-        // Calculate Alteplase 0.9 for 60 kg (54.00 mg)
+        // 1. Calculate Alteplase 0.9 for 60 kg (54.00 mg)
         doc.getElementById('hn').value = '555666';
         doc.getElementById('weight').value = '60';
         doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
@@ -367,10 +367,30 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         doc.getElementById('print-blank-btn').click();
 
         // Print details must NOT contain previously calculated 54.00, 5.4, or 48.60 mg
-        const detailsText = doc.getElementById('print-drug-details').textContent;
+        let detailsText = doc.getElementById('print-drug-details').textContent;
         assert.ok(!detailsText.includes('54.00'), 'Blank order must not contain 54.00 mg');
         assert.ok(!detailsText.includes('48.60'), 'Blank order must not contain 48.60 mg');
         assert.ok(detailsText.includes('.....'), 'Blank order must contain underline / placeholder slots');
+
+        // 2. Calculate Tenecteplase for 60 kg (15.0 mg, 3.0 mL)
+        const tnkRadio = doc.querySelector('input[name="dose-radio"][value="tnk"]');
+        tnkRadio.checked = true;
+        tnkRadio.dispatchEvent(new win.Event('change', { bubbles: true }));
+        doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
+
+        assert.ok(doc.getElementById('print-drug-header').textContent.includes('Tenecteplase'));
+        assert.ok(doc.getElementById('print-drug-details').textContent.includes('15.0'));
+        assert.ok(doc.getElementById('print-drug-details').textContent.includes('3.0'));
+
+        // Click print blank order
+        doc.getElementById('print-blank-btn').click();
+
+        // Print details must keep TNK header & placeholders, but NOT contain 15.0 mg or 3.0 mL
+        assert.ok(doc.getElementById('print-drug-header').textContent.includes('Tenecteplase'));
+        detailsText = doc.getElementById('print-drug-details').textContent;
+        assert.ok(!detailsText.includes('15.0'), 'Blank TNK order must not contain 15.0 mg');
+        assert.ok(!detailsText.includes('3.0'), 'Blank TNK order must not contain calculated 3.0 mL volume');
+        assert.ok(detailsText.includes('.....'), 'Blank TNK order must contain underline / placeholder slots');
     });
 });
 
