@@ -968,7 +968,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('rtpa-form');
-            const resultsContainer = document.getElementById('results-container');
             const hnInput = document.getElementById('hn');
             const weightInput = document.getElementById('weight');
             const doseButtons = document.querySelectorAll('.dose-button');
@@ -1023,8 +1022,7 @@
                 document.getElementById('drip-dose').textContent = dripDose.toFixed(2);
 
                 const useTime = document.getElementById('use-current-time').checked;
-                const now = ED_PRINT_BOOTSTRAP.generateCommonPrintFields(hn, weight, useTime);
-
+                const now = new Date();
                 const dtHtml = ED_PRINT_BOOTSTRAP.getDateTimeHTML(useTime, now);
                 document.getElementById('order-date').innerHTML = dtHtml;
                 document.getElementById('order-date-cont').innerHTML = dtHtml;

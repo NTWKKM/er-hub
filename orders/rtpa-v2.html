@@ -493,12 +493,16 @@
                 <div class="patient-section">
                     <div class="patient-fields-grid">
                         <div class="input-item">
-                            <label for="hn">Hospital Number (HN):</label>
-                            <input type="text" id="hn" required placeholder="กรอก HN">
+                            <div class="inline-input-group" style="display:flex; flex-direction:column; gap:5px; margin:0;">
+                                <label for="hn">Hospital Number (HN):</label>
+                                <input type="text" id="hn" required placeholder="กรอก HN">
+                            </div>
                         </div>
                         <div class="input-item">
-                            <label for="weight">น้ำหนัก (kg):</label>
-                            <input type="number" id="weight" step="0.01" min="20" max="250" required placeholder="ทศนิยม 2 ตำแหน่ง เช่น 75.58">
+                            <div class="inline-input-group" style="display:flex; flex-direction:column; gap:5px; margin:0;">
+                                <label for="weight">น้ำหนัก (kg):</label>
+                                <input type="number" id="weight" step="0.01" min="20" max="250" required placeholder="ทศนิยม 2 ตำแหน่ง เช่น 75.58">
+                            </div>
                         </div>
                         <div class="input-item time-check-item">
                             <label class="time-checkbox-label" for="use-current-time">
@@ -1066,9 +1070,14 @@
                 { id: 'order-date-cont', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
             ]);
 
+            function getSelectedRegimen() {
+                const checkedRadio = document.querySelector('input[name="dose-radio"]:checked');
+                return checkedRadio ? checkedRadio.value : (selectedDoseInput ? selectedDoseInput.value : '0.9');
+            }
+
             function updateLiveHUD() {
                 const weight = parseFloat(weightInput.value);
-                const rawRegimen = selectedDoseInput.value;
+                const rawRegimen = getSelectedRegimen();
                 const isTnk = rawRegimen === 'tnk';
                 const regimen = isTnk ? 0.25 : (parseFloat(rawRegimen) || 0.9);
                 hudRegimen.textContent = isTnk ? 'TNK 0.25 mg/kg' : (regimen + ' mg/kg');
@@ -1115,7 +1124,7 @@
             doseRadios.forEach(radio => {
                 radio.addEventListener('change', () => {
                     const doseVal = radio.value;
-                    selectedDoseInput.value = doseVal;
+                    if (selectedDoseInput) selectedDoseInput.value = doseVal;
                     regimenCards.forEach(c => {
                         const r = c.querySelector('input[type="radio"]');
                         c.classList.toggle('active', r && r.checked);
@@ -1128,7 +1137,7 @@
                 e.preventDefault();
                 const hn = hnInput.value.trim() || '...';
                 const weight = parseFloat(weightInput.value);
-                const rawRegimen = selectedDoseInput.value;
+                const rawRegimen = getSelectedRegimen();
                 const isTnk = rawRegimen === 'tnk';
 
                 if (!ED_VALIDATE.range('weight', 20, 250, 'Weight ต้องอยู่ในช่วง 20–250 kg')) return;
@@ -1139,10 +1148,9 @@
                 if (isTnk) {
                     const tnk = STROKE_ENGINE.calcTnkStrokeDose(weight);
                     if (!tnk) return;
-                    document.getElementById('result-regimen').textContent = '0.25 (TNK)';
-                    document.getElementById('print-drug-header').innerHTML = '<strong>Tenecteplase / TNK-tPA (dose 0.25 mg/kg, max 25 mg)</strong>';
+                    document.getElementById('print-drug-header').innerHTML = '<strong>Tenecteplase / TNK-tPA (dose <span id="result-regimen" class="highlight">0.25 (TNK)</span> mg/kg, max 25 mg)</strong>';
                     document.getElementById('print-drug-details').innerHTML = `
-                        <li>Total dose = <span class="highlight">${tnk.totalDose.toFixed(1)}</span> mg (= <span class="highlight">${tnk.volumeMl.toFixed(1)}</span> mL of 5 mg/mL solution)</li>
+                        <li>Total dose = <span id="total-dose" class="highlight">${tnk.totalDose.toFixed(1)}</span> mg (= <span id="tnk-volume" class="highlight">${tnk.volumeMl.toFixed(1)}</span> mL of 5 mg/mL solution)</li>
                         <li>ฉีดทาง IV push เร็วในเวลา 5–10 วินาที ครั้งเดียว (Single bolus push)</li>
                         <li><u>ไม่ต้องต่อ IV drip</u></li>
                     `;
@@ -1152,18 +1160,16 @@
                     if (!dose) return;
                     const { totalDose, pushDose, dripDose, pushPercent, dripPercent } = dose;
 
-                    document.getElementById('result-regimen').textContent = regNum.toString();
-                    document.getElementById('print-drug-header').innerHTML = '<strong>Alteplase (dose <span class="highlight">' + regNum.toString() + '</span> mg/kg)</strong>';
+                    document.getElementById('print-drug-header').innerHTML = '<strong>Alteplase (dose <span id="result-regimen" class="highlight">' + regNum.toString() + '</span> mg/kg)</strong>';
                     document.getElementById('print-drug-details').innerHTML = `
-                        <li>Total dose = <span class="highlight">${totalDose.toFixed(2)}</span> mg</li>
-                        <li>- <span class="highlight">${pushPercent}</span>% of total dose = <span class="highlight">${pushDose.toFixed(1)}</span> mg IV push in 1 min</li>
-                        <li>- <span class="highlight">${dripPercent}</span>% of total dose = <span class="highlight">${dripDose.toFixed(2)}</span> mg IV drip in 60 min</li>
+                        <li>Total dose = <span id="total-dose" class="highlight">${totalDose.toFixed(2)}</span> mg</li>
+                        <li id="print-row-push">- <span id="push-percent" class="highlight">${pushPercent}</span>% of total dose = <span id="push-dose" class="highlight">${pushDose.toFixed(1)}</span> mg IV push in 1 min</li>
+                        <li id="print-row-drip">- <span id="drip-percent" class="highlight">${dripPercent}</span>% of total dose = <span id="drip-dose" class="highlight">${dripDose.toFixed(2)}</span> mg IV drip in 60 min</li>
                     `;
                 }
 
                 const useTime = document.getElementById('use-current-time').checked;
-                const now = ED_PRINT_BOOTSTRAP.generateCommonPrintFields(hn, weight, useTime);
-
+                const now = new Date();
                 const dtHtml = ED_PRINT_BOOTSTRAP.getDateTimeHTML(useTime, now);
                 document.getElementById('order-date').innerHTML = dtHtml;
                 document.getElementById('order-date-cont').innerHTML = dtHtml;
@@ -1182,7 +1188,7 @@
                         const r = c.querySelector('input[type="radio"]');
                         c.classList.toggle('active', r && r.checked);
                     });
-                    selectedDoseInput.value = "0.9";
+                    if (selectedDoseInput) selectedDoseInput.value = "0.9";
 
                     // Reset print-area DOM fields to avoid stale PHI on print
                     const hnEl = document.getElementById('result-hn');
@@ -1210,8 +1216,28 @@
             });
 
             document.getElementById('print-blank-btn').addEventListener('click', () => {
-                ED_COMPONENTS.injectStrokeHeader('print-header-container', 'Alteplase');
+                const rawRegimen = getSelectedRegimen();
+                const isTnk = rawRegimen === 'tnk';
+
+                ED_COMPONENTS.injectStrokeHeader('print-header-container', isTnk ? 'Tenecteplase' : 'Alteplase');
                 ED_COMPONENTS.injectStickerBox('print-sticker-container', '....................');
+
+                if (isTnk) {
+                    document.getElementById('print-drug-header').innerHTML = '<strong>Tenecteplase / TNK-tPA (dose <span id="result-regimen" class="highlight">0.25 (TNK)</span> mg/kg, max 25 mg)</strong>';
+                    document.getElementById('print-drug-details').innerHTML = `
+                        <li>Total dose = <span id="total-dose" class="highlight">..........</span> mg (= <span class="highlight">..........</span> mL of 5 mg/mL solution)</li>
+                        <li>ฉีดทาง IV push เร็วในเวลา 5–10 วินาที ครั้งเดียว (Single bolus push)</li>
+                        <li><u>ไม่ต้องต่อ IV drip</u></li>
+                    `;
+                } else {
+                    document.getElementById('print-drug-header').innerHTML = '<strong>Alteplase (dose <span id="result-regimen" class="highlight">0.9 หรือ 0.6</span> mg/kg)</strong>';
+                    document.getElementById('print-drug-details').innerHTML = `
+                        <li>Total dose = <span id="total-dose" class="highlight">....................</span> mg</li>
+                        <li id="print-row-push">- <span id="push-percent" class="highlight">..........</span>% of total dose = <span id="push-dose" class="highlight">....................</span> mg IV push in 1 min</li>
+                        <li id="print-row-drip">- <span id="drip-percent" class="highlight">..........</span>% of total dose = <span id="drip-dose" class="highlight">....................</span> mg IV drip in 60 min</li>
+                    `;
+                }
+
                 ED_BLANK_PRINT.apply();
                 ED_PRINT_BOOTSTRAP.showResults();
                 window.print();
@@ -1221,6 +1247,9 @@
                 window.open('../tools/nihss-v2.html?print-blank-direct=true', '_blank',
                     'width=900,height=700,menubar=no,toolbar=no,scrollbars=yes');
             });
+
+            // Initialize live HUD on load
+            updateLiveHUD();
 
             // Auto-run print-blank-direct from home page portal
             if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => document.getElementById('print-blank-btn').click())) return;
