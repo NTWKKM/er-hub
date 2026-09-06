@@ -70,6 +70,41 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         }
     });
 
+    test('Offline-First Logo Resilience: rtpa.html (v1) and rtpa-v2.html embed authentic Base64 logo', () => {
+        const { ED_COMPONENTS } = require('../shared/components.js');
+        const fallbackPath = '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png';
+
+        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
+            const dom = new JSDOM(content);
+            const img = dom.window.document.querySelector('img.stroke-print-logo');
+            assert.ok(img, `${name} must contain img.stroke-print-logo element`);
+            assert.equal(img.getAttribute('src'), ED_COMPONENTS.MNRH_LOGO_BASE64, `${name} logo src must match ED_COMPONENTS.MNRH_LOGO_BASE64`);
+            assert.equal(img.getAttribute('decoding'), 'sync', `${name} logo must specify decoding="sync"`);
+            assert.equal(img.getAttribute('loading'), 'eager', `${name} logo must specify loading="eager"`);
+            assert.ok(img.getAttribute('onerror')?.includes(fallbackPath), `${name} logo must specify fallback onerror`);
+            assert.equal(img.getAttribute('data-fallback'), fallbackPath, `${name} logo must specify data-fallback`);
+        }
+    });
+
+    test('Offline-First Logo Resilience: ED_COMPONENTS.injectStrokeHeader injects Base64 logo with sync decoding', () => {
+        const { JSDOM } = require('jsdom');
+        const dom = new JSDOM('<!DOCTYPE html><html><body><div id="test-header"></div></body></html>');
+        global.document = dom.window.document;
+        global.window = dom.window;
+        const { ED_COMPONENTS } = require('../shared/components.js');
+
+        ED_COMPONENTS.injectStrokeHeader('test-header', 'Alteplase');
+        const headerEl = dom.window.document.getElementById('test-header');
+        assert.ok(headerEl.innerHTML.includes('data:image/png;base64,'), 'injectStrokeHeader must use Base64 data URI by default');
+        assert.ok(headerEl.innerHTML.includes('decoding="sync"'), 'injectStrokeHeader must specify decoding="sync"');
+        assert.ok(headerEl.innerHTML.includes('loading="eager"'), 'injectStrokeHeader must specify loading="eager"');
+        assert.ok(headerEl.innerHTML.includes('Standing order for Alteplase Stroke fast track'), 'injectStrokeHeader must render correct title');
+
+        ED_COMPONENTS.injectStrokeHeader('test-header', 'Tenecteplase');
+        assert.ok(headerEl.innerHTML.includes('data:image/png;base64,'), 'Tenecteplase header must also contain Base64 logo');
+        assert.ok(headerEl.innerHTML.includes('Standing order for Tenecteplase Stroke fast track'), 'Tenecteplase title must be rendered');
+    });
+
     test('Accessibility: rtpa.html (v1) must have role="radiogroup" and role="radio" with aria-checked', () => {
         assert.ok(rtpaV1Html.includes('role="radiogroup"'), 'Must have role=radiogroup on button-dose-group');
         assert.ok(rtpaV1Html.includes('role="radio"'), 'Must have role=radio on dose-button');
