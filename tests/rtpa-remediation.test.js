@@ -71,11 +71,18 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
     });
 
     test('Offline-First Logo Resilience: rtpa.html (v1) and rtpa-v2.html embed authentic Base64 logo', () => {
+        const { ED_COMPONENTS } = require('../shared/components.js');
+        const fallbackPath = '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png';
+
         for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
-            assert.ok(content.includes('data:image/png;base64,'), `${name} must embed authentic hospital logo as Base64 data URI`);
-            assert.ok(content.includes('decoding="sync"'), `${name} logo must specify decoding="sync" for immediate print readiness`);
-            assert.ok(content.includes('loading="eager"'), `${name} logo must specify loading="eager" to prevent deferral`);
-            assert.ok(content.includes('class="stroke-print-logo"'), `${name} logo must have stroke-print-logo class`);
+            const dom = new JSDOM(content);
+            const img = dom.window.document.querySelector('img.stroke-print-logo');
+            assert.ok(img, `${name} must contain img.stroke-print-logo element`);
+            assert.equal(img.getAttribute('src'), ED_COMPONENTS.MNRH_LOGO_BASE64, `${name} logo src must match ED_COMPONENTS.MNRH_LOGO_BASE64`);
+            assert.equal(img.getAttribute('decoding'), 'sync', `${name} logo must specify decoding="sync"`);
+            assert.equal(img.getAttribute('loading'), 'eager', `${name} logo must specify loading="eager"`);
+            assert.ok(img.getAttribute('onerror')?.includes(fallbackPath), `${name} logo must specify fallback onerror`);
+            assert.equal(img.getAttribute('data-fallback'), fallbackPath, `${name} logo must specify data-fallback`);
         }
     });
 

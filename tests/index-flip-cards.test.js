@@ -187,4 +187,61 @@ describe('Portal Index 3D Flip Cards (index.html)', () => {
         regularRow.dispatchEvent(new win.MouseEvent('mouseleave'));
         assert.equal(regularRow.style.transform, 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)');
     });
+
+    test('3D Tilt Effect: queued rAF does not reapply tilt after mouseleave', () => {
+        const indexPath = path.join(__dirname, '..', 'index.html');
+        const html = fs.readFileSync(indexPath, 'utf8');
+
+        let queuedRaf = [];
+        let canceledRafIds = [];
+        const dom = new JSDOM(html, {
+            url: 'file://' + indexPath,
+            runScripts: 'dangerously',
+            beforeParse(window) {
+                window.requestAnimationFrame = function(cb) {
+                    queuedRaf.push(cb);
+                    return queuedRaf.length;
+                };
+                window.cancelAnimationFrame = function(id) {
+                    canceledRafIds.push(id);
+                };
+                window.matchMedia = () => ({
+                    matches: false,
+                    addListener: function() {},
+                    removeListener: function() {},
+                    addEventListener: function() {},
+                    removeEventListener: function() {}
+                });
+            }
+        });
+        dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+        const win = dom.window;
+        const flipContainer = win.document.querySelector('.flip-card-container');
+        assert.ok(flipContainer, 'Flip container should exist');
+
+        flipContainer.getBoundingClientRect = () => ({
+            left: 100,
+            top: 100,
+            width: 300,
+            height: 60,
+            right: 400,
+            bottom: 160
+        });
+
+        // Trigger mousemove to queue rAF
+        flipContainer.dispatchEvent(new win.MouseEvent('mousemove', { clientX: 370, clientY: 145 }));
+        assert.equal(queuedRaf.length, 1, 'rAF callback should be queued');
+
+        // Pointer leaves before rAF callback executes
+        flipContainer.dispatchEvent(new win.MouseEvent('mouseleave'));
+        assert.equal(flipContainer.style.transitionDuration, '400ms');
+        assert.equal(flipContainer.style.transform, 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)');
+        assert.ok(canceledRafIds.includes(1), 'cancelAnimationFrame should be called with queued rAF id');
+
+        // Execute any callbacks that were queued prior to mouseleave
+        queuedRaf.forEach(cb => cb());
+
+        // Transform must preserve reset state and not reapply tilt from stale event
+        assert.equal(flipContainer.style.transform, 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)');
+    });
 });

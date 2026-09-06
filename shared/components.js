@@ -82,17 +82,48 @@ const ED_COMPONENTS = {
         const logoSrc = logoPath || this.MNRH_LOGO_BASE64;
         const fallbackPath = '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png';
 
-        el.innerHTML = `
-            <div class="stroke-print-header">
-                <div class="stroke-logo-box">
-                    <img src="${logoSrc}" alt="Logo" class="stroke-print-logo" loading="eager" decoding="sync" onerror="this.onerror=null;this.src='${fallbackPath}';" data-fallback="${fallbackPath}">
-                </div>
-                <div class="stroke-title-box">
-                    <div class="stroke-main-title">Standing order for ${drugName} Stroke fast track</div>
-                    <div class="stroke-sub-title">Maharat Nakhon Ratchasima Hospital</div>
-                </div>
-            </div>
-        `;
+        el.textContent = '';
+
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'stroke-print-header';
+
+        const logoBox = document.createElement('div');
+        logoBox.className = 'stroke-logo-box';
+
+        const img = document.createElement('img');
+        img.src = logoSrc;
+        img.alt = 'Logo';
+        img.className = 'stroke-print-logo';
+        img.loading = 'eager';
+        img.setAttribute('loading', 'eager');
+        img.decoding = 'sync';
+        img.setAttribute('decoding', 'sync');
+        img.setAttribute('onerror', `this.onerror=null;this.src='${fallbackPath}';`);
+        img.onerror = function() {
+            this.onerror = null;
+            this.src = fallbackPath;
+        };
+        img.setAttribute('data-fallback', fallbackPath);
+        logoBox.appendChild(img);
+
+        const titleBox = document.createElement('div');
+        titleBox.className = 'stroke-title-box';
+
+        const mainTitle = document.createElement('div');
+        mainTitle.className = 'stroke-main-title';
+        mainTitle.textContent = `Standing order for ${drugName} Stroke fast track`;
+
+        const subTitle = document.createElement('div');
+        subTitle.className = 'stroke-sub-title';
+        subTitle.textContent = 'Maharat Nakhon Ratchasima Hospital';
+
+        titleBox.appendChild(mainTitle);
+        titleBox.appendChild(subTitle);
+
+        headerDiv.appendChild(logoBox);
+        headerDiv.appendChild(titleBox);
+
+        el.appendChild(headerDiv);
     },
 
     /**

@@ -1099,6 +1099,7 @@ if ('serviceWorker' in navigator) {
     tiltTargets.forEach(function(card) {
       let ticking = false;
       let lastEvent = null;
+      let rafId = null;
 
       function applyTilt(e) {
         const rect = card.getBoundingClientRect();
@@ -1120,15 +1121,23 @@ if ('serviceWorker' in navigator) {
         lastEvent = e;
         if (!ticking) {
           ticking = true;
-          const rAF = (typeof window !== 'undefined' && window.requestAnimationFrame) || function(cb) { setTimeout(cb, 16); };
-          rAF(function() {
+          const rAF = (typeof window !== 'undefined' && window.requestAnimationFrame) || function(cb) { return setTimeout(cb, 16); };
+          rafId = rAF(function() {
             if (lastEvent) applyTilt(lastEvent);
             ticking = false;
+            rafId = null;
           });
         }
       });
 
       card.addEventListener('mouseleave', function() {
+        lastEvent = null;
+        if (rafId) {
+          const cAF = (typeof window !== 'undefined' && window.cancelAnimationFrame) || clearTimeout;
+          cAF(rafId);
+          rafId = null;
+        }
+        ticking = false;
         card.style.transitionDuration = '400ms';
         card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
       });
