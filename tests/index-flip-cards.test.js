@@ -11,6 +11,7 @@ function loadIndexDom() {
         url: 'file://' + indexPath,
         runScripts: 'dangerously',
         beforeParse(window) {
+            window.requestAnimationFrame = window.requestAnimationFrame || function(cb) { cb(); };
             window.matchMedia = window.matchMedia || function() {
                 return {
                     matches: false,
@@ -133,5 +134,57 @@ describe('Portal Index 3D Flip Cards (index.html)', () => {
 
         const burn = doc.querySelector('a[href="tools/burn-manager.html"]');
         assert.ok(burn, 'Burn manager should exist');
+    });
+
+    test('3D Tilt Effect: Both regular order-rows and flip-card-containers respond to mouse movement', () => {
+        const win = loadIndexDom();
+        const doc = win.document;
+
+        // Verify flip card container has tilt event listeners and updates transform
+        const flipContainer = doc.querySelector('.flip-card-container');
+        assert.ok(flipContainer, 'Flip container should exist');
+
+        // Mock getBoundingClientRect
+        flipContainer.getBoundingClientRect = () => ({
+            left: 100,
+            top: 100,
+            width: 300,
+            height: 60,
+            right: 400,
+            bottom: 160
+        });
+
+        // Mouseenter
+        flipContainer.dispatchEvent(new win.MouseEvent('mouseenter'));
+        assert.equal(flipContainer.style.transitionDuration, '80ms');
+
+        // Mousemove (at right/bottom edge: clientX=370, clientY=145)
+        flipContainer.dispatchEvent(new win.MouseEvent('mousemove', { clientX: 370, clientY: 145 }));
+        
+        assert.ok(flipContainer.style.transform.includes('perspective(600px)'), 'Flip container should have perspective transform on tilt');
+        assert.ok(flipContainer.style.transform.includes('translateZ(6px)'), 'Flip container should have 6px Z lift on tilt');
+
+        // Mouseleave -> reset to 0deg and 400ms duration
+        flipContainer.dispatchEvent(new win.MouseEvent('mouseleave'));
+        assert.equal(flipContainer.style.transitionDuration, '400ms');
+        assert.equal(flipContainer.style.transform, 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)');
+
+        // Verify regular order row also has tilt
+        const regularRow = doc.querySelector('.order-item-wrap:not(.flip-card-container) .order-row');
+        assert.ok(regularRow, 'Regular order-row should exist');
+        regularRow.getBoundingClientRect = () => ({
+            left: 100,
+            top: 100,
+            width: 300,
+            height: 60,
+            right: 400,
+            bottom: 160
+        });
+        regularRow.dispatchEvent(new win.MouseEvent('mouseenter'));
+        regularRow.dispatchEvent(new win.MouseEvent('mousemove', { clientX: 370, clientY: 145 }));
+        assert.ok(regularRow.style.transform.includes('perspective(600px)'));
+        assert.ok(regularRow.style.transform.includes('translateZ(6px)'));
+        regularRow.dispatchEvent(new win.MouseEvent('mouseleave'));
+        assert.equal(regularRow.style.transform, 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)');
     });
 });

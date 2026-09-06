@@ -129,3 +129,27 @@ describe('ED_COMPONENTS.injectNavBar', () => {
     assert.ok(skipStyle.textContent.includes('@media print'), 'skip-link style should include @media print');
   });
 });
+
+describe('ED_COMPONENTS.injectStrokeHeader', () => {
+  test('injects stroke header with authentic Base64 logo, decoding="sync", and loading="eager"', () => {
+    const { JSDOM } = require('jsdom');
+    const dom = new JSDOM('<!DOCTYPE html><html><body><div id="stroke-header-target"></div></body></html>');
+    global.document = dom.window.document;
+    global.window = dom.window;
+
+    assert.ok(ED_COMPONENTS.MNRH_LOGO_BASE64, 'MNRH_LOGO_BASE64 must be defined');
+    assert.ok(ED_COMPONENTS.MNRH_LOGO_BASE64.startsWith('data:image/png;base64,'), 'MNRH_LOGO_BASE64 must be a PNG data URI');
+
+    ED_COMPONENTS.injectStrokeHeader('stroke-header-target', 'Alteplase');
+    const el = document.getElementById('stroke-header-target');
+    assert.ok(el, 'Container should exist');
+    const img = el.querySelector('img.stroke-print-logo');
+    assert.ok(img, 'Must contain stroke-print-logo img element');
+    assert.ok(img.getAttribute('src').startsWith('data:image/png;base64,'), 'Logo img src must be Base64 data URI');
+    assert.equal(img.getAttribute('decoding'), 'sync', 'Image decoding must be sync for print readiness');
+    assert.equal(img.getAttribute('loading'), 'eager', 'Image loading must be eager');
+    assert.ok(img.getAttribute('onerror').includes('Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png'), 'Must have fallback onerror');
+    assert.equal(img.getAttribute('data-fallback'), '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png', 'Must have data-fallback');
+    assert.ok(el.textContent.includes('Standing order for Alteplase Stroke fast track'), 'Must have correct drug title');
+  });
+});
