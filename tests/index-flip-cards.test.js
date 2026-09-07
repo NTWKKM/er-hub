@@ -244,4 +244,97 @@ describe('Portal Index 3D Flip Cards (index.html)', () => {
         // Transform must preserve reset state and not reapply tilt from stale event
         assert.equal(flipContainer.style.transform, 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)');
     });
+
+    test('3D Tilt Effect: preserves rotateY(180deg) flip state and mouseleave reset on an already-flipped container', () => {
+        const win = loadIndexDom();
+        const doc = win.document;
+        const flipContainer = doc.querySelector('.flip-card-container');
+        assert.ok(flipContainer, 'Flip container should exist');
+
+        // Mark container as flipped
+        flipContainer.classList.add('is-flipped');
+
+        flipContainer.getBoundingClientRect = () => ({
+            left: 100,
+            top: 100,
+            width: 300,
+            height: 60,
+            right: 400,
+            bottom: 160
+        });
+
+        // Mouseenter
+        flipContainer.dispatchEvent(new win.MouseEvent('mouseenter'));
+        assert.equal(flipContainer.style.transitionDuration, '80ms');
+
+        // Mousemove (at right/bottom edge: clientX=370, clientY=145)
+        // px = ((370 - 100) / 300) - 0.5 = 0.4
+        // rotateY = 0.4 * 8 * 2 = 6.4deg
+        // Composed totalRotateY = 180 + 6.4 = 186.40deg
+        flipContainer.dispatchEvent(new win.MouseEvent('mousemove', { clientX: 370, clientY: 145 }));
+
+        assert.ok(flipContainer.style.transform.includes('perspective(600px)'), 'Should preserve perspective');
+        assert.ok(flipContainer.style.transform.includes('rotateY(186.40deg)'), 'Should compose tilt with 180deg flip rotation');
+        assert.ok(flipContainer.style.transform.includes('translateZ(6px)'), 'Should preserve 6px Z lift');
+
+        // Mouseleave -> reset to 180deg (preserving flip state), NOT 0deg
+        flipContainer.dispatchEvent(new win.MouseEvent('mouseleave'));
+        assert.equal(flipContainer.style.transitionDuration, '400ms');
+        assert.equal(flipContainer.style.transform, 'perspective(600px) rotateX(0deg) rotateY(180deg) translateZ(0px)');
+    });
+
+    test('3D Tilt Effect: queued rAF does not reset rotateY(180deg) on an already-flipped container', () => {
+        const indexPath = path.join(__dirname, '..', 'index.html');
+        const html = fs.readFileSync(indexPath, 'utf8');
+
+        let queuedRaf = [];
+        let canceledRafIds = [];
+        const dom = new JSDOM(html, {
+            url: 'file://' + indexPath,
+            runScripts: 'dangerously',
+            beforeParse(window) {
+                window.requestAnimationFrame = function(cb) {
+                    queuedRaf.push(cb);
+                    return queuedRaf.length;
+                };
+                window.cancelAnimationFrame = function(id) {
+                    canceledRafIds.push(id);
+                };
+                window.matchMedia = () => ({
+                    matches: false,
+                    addListener: function() {},
+                    removeListener: function() {},
+                    addEventListener: function() {},
+                    removeEventListener: function() {}
+                });
+            }
+        });
+        dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+        const win = dom.window;
+        const flipContainer = win.document.querySelector('.flip-card-container');
+        flipContainer.classList.add('is-flipped');
+
+        flipContainer.getBoundingClientRect = () => ({
+            left: 100,
+            top: 100,
+            width: 300,
+            height: 60,
+            right: 400,
+            bottom: 160
+        });
+
+        // Trigger mousemove to queue rAF
+        flipContainer.dispatchEvent(new win.MouseEvent('mousemove', { clientX: 370, clientY: 145 }));
+        assert.equal(queuedRaf.length, 1);
+
+        // Pointer leaves before rAF callback executes
+        flipContainer.dispatchEvent(new win.MouseEvent('mouseleave'));
+        assert.equal(flipContainer.style.transform, 'perspective(600px) rotateX(0deg) rotateY(180deg) translateZ(0px)');
+
+        // Execute queued callback
+        queuedRaf.forEach(cb => cb());
+
+        // Transform must preserve reset 180deg state
+        assert.equal(flipContainer.style.transform, 'perspective(600px) rotateX(0deg) rotateY(180deg) translateZ(0px)');
+    });
 });

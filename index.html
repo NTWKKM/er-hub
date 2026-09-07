@@ -359,6 +359,10 @@
             will-change: transform;
         }
 
+        .flip-card-container.is-flipped {
+            transform: perspective(600px) rotateX(0deg) rotateY(180deg) translateZ(0px);
+        }
+
         .flip-card-container:hover {
             z-index: 5;
         }
@@ -1109,8 +1113,12 @@ if ('serviceWorker' in navigator) {
         const rotateY = px * MAX_TILT * 2;   // cursor left/right -> tilt around vertical axis
         const rotateX = -py * MAX_TILT * 2;  // cursor up/down -> tilt around horizontal axis
 
+        const isFlipped = card.classList.contains('is-flipped');
+        const baseRotateY = isFlipped ? 180 : 0;
+        const totalRotateY = (baseRotateY + rotateY).toFixed(2);
+
         card.style.transform =
-          'perspective(600px) rotateX(' + rotateX.toFixed(2) + 'deg) rotateY(' + rotateY.toFixed(2) + 'deg) translateZ(' + LIFT + 'px)';
+          'perspective(600px) rotateX(' + rotateX.toFixed(2) + 'deg) rotateY(' + totalRotateY + 'deg) translateZ(' + LIFT + 'px)';
       }
 
       card.addEventListener('mouseenter', function() {
@@ -1139,7 +1147,9 @@ if ('serviceWorker' in navigator) {
         }
         ticking = false;
         card.style.transitionDuration = '400ms';
-        card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+        const isFlipped = card.classList.contains('is-flipped');
+        const resetRotateY = isFlipped ? '180deg' : '0deg';
+        card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(' + resetRotateY + ') translateZ(0px)';
       });
     });
   }
