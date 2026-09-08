@@ -306,19 +306,19 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         }
     });
 
-    test('Design Theme: Warm Clinical Paper Canvas (#EDEAE2) and Elevated White card container (#FFFFFF)', () => {
+    test('Design Theme: Modern Apple / iPadOS Slate Canvas (#ECECEE) and Elevated White card container (#FFFFFF)', () => {
         for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
-            assert.ok(/body\s*\{[^}]*background-color:\s*#edeae2/i.test(content), `${name} body must have #EDEAE2 background`);
+            assert.ok(/body\s*\{[^}]*background-color:\s*#ececee/i.test(content), `${name} body must have #ECECEE background`);
             assert.ok(/\.container\s*\{[^}]*background-color:\s*#ffffff/i.test(content), `${name} .container must have #FFFFFF background`);
             assert.ok(/\.container\s*\{[^}]*border-radius:\s*12px/i.test(content), `${name} .container must have 12px squircle radius`);
-            assert.ok(/\.container\s*\{[^}]*border:\s*1px solid #d8d4c7/i.test(content), `${name} .container must have #D8D4C7 subtle border`);
+            assert.ok(/\.container\s*\{[^}]*border:\s*1px solid #d8d8dc/i.test(content), `${name} .container must have #D8D8DC subtle border`);
         }
     });
 
     test('Realistic Order Sheet: elevated white paper styling on screen', () => {
         for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
             assert.ok(/#print-area\s*\{[^}]*background:\s*#ffffff/i.test(content), `${name} #print-area must be white (#ffffff) on screen`);
-            assert.ok(/#print-area\s*\{[^}]*border:\s*1px solid #d8d4c7/i.test(content), `${name} #print-area must have #D8D4C7 border on screen`);
+            assert.ok(/#print-area\s*\{[^}]*border:\s*1px solid #d8d8dc/i.test(content), `${name} #print-area must have #D8D8DC border on screen`);
             assert.ok(/#print-area\s*\{[^}]*box-shadow:/i.test(content), `${name} #print-area must have elevated shadow on screen`);
         }
     });
