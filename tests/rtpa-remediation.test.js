@@ -195,8 +195,8 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
     test('Print Layout: Doctor order cells use order-cell-flex and calibrated .order-row-spacer', () => {
         assert.ok(printCss.includes('.order-cell-flex'), 'print.css must define .order-cell-flex');
         assert.ok(printCss.includes('.order-row-spacer'), 'print.css must define .order-row-spacer');
-        assert.match(printCss, /\.order-row-spacer\s*\{\s*height:\s*11\.5em;?\s*\}/,
-            'print.css must calibrate .order-row-spacer to 11.5em for 1-page A4 print fit');
+        assert.match(printCss, /\.order-row-spacer\s*\{\s*height:\s*16\.5em;?\s*\}/,
+            'print.css must retain 16.5em for on-screen preview');
         assert.match(printCss, /\.order-row-spacer\s*\{\s*height:\s*11\.5em\s*!important;?\s*\}/,
             'print.css must enforce 11.5em in @media print');
         for (const pagePath of ['orders/rtpa.html', 'orders/rtpa-v2.html']) {
@@ -389,5 +389,17 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
             'print.css must define .theme-stroke #print-area width: 195mm !important');
         assert.match(currentPrintCss, /\.theme-stroke\s+#print-area\s*\{[^}]*padding:\s*3mm 0\s*!important/i,
             'print.css must define .theme-stroke #print-area padding: 3mm 0 !important');
+    });
+
+    test('Print Typography: Blood test results checklist items aligned in a 2-column grid without brittle non-breaking spaces', () => {
+        const v1Html = fs.readFileSync(RTPA_V1_PATH, 'utf8');
+        const v2Html = fs.readFileSync(RTPA_V2_PATH, 'utf8');
+
+        for (const [name, content] of [['v1', v1Html], ['v2', v2Html]]) {
+            assert.ok(content.includes('grid-template-columns: 195px auto'),
+                `${name} must use 2-column grid (195px auto) for blood test results to align Plt with PTT`);
+            assert.ok(content.includes('☐ Plt &lt; 100,000'), `${name} must include Plt < 100,000`);
+            assert.ok(content.includes('☐ PTT prolonged'), `${name} must include PTT prolonged`);
+        }
     });
 });
