@@ -306,19 +306,19 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         }
     });
 
-    test('Design Theme: Warm Ivory Canvas (#FAF9F6) and Apple System Gray 6 card container (#F5F5F7)', () => {
+    test('Design Theme: Warm Ivory Canvas (#EFECE6) and Elevated White card container (#FFFFFF)', () => {
         for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
-            assert.ok(/body\s*\{[^}]*background-color:\s*#faf9f6/i.test(content), `${name} body must have #FAF9F6 background`);
-            assert.ok(/\.container\s*\{[^}]*background-color:\s*#f5f5f7/i.test(content), `${name} .container must have #F5F5F7 background`);
+            assert.ok(/body\s*\{[^}]*background-color:\s*#efece6/i.test(content), `${name} body must have #EFECE6 background`);
+            assert.ok(/\.container\s*\{[^}]*background-color:\s*#ffffff/i.test(content), `${name} .container must have #FFFFFF background`);
             assert.ok(/\.container\s*\{[^}]*border-radius:\s*12px/i.test(content), `${name} .container must have 12px squircle radius`);
-            assert.ok(/\.container\s*\{[^}]*border:\s*1px solid #e8e6dc/i.test(content), `${name} .container must have #E8E6DC subtle border`);
+            assert.ok(/\.container\s*\{[^}]*border:\s*1px solid #dcd8cd/i.test(content), `${name} .container must have #DCD8CD subtle border`);
         }
     });
 
     test('Realistic Order Sheet: elevated white paper styling on screen', () => {
         for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
             assert.ok(/#print-area\s*\{[^}]*background:\s*#ffffff/i.test(content), `${name} #print-area must be white (#ffffff) on screen`);
-            assert.ok(/#print-area\s*\{[^}]*border:\s*1px solid #e8e6dc/i.test(content), `${name} #print-area must have #E8E6DC border on screen`);
+            assert.ok(/#print-area\s*\{[^}]*border:\s*1px solid #d8d4c8/i.test(content), `${name} #print-area must have #D8D4C8 border on screen`);
             assert.ok(/#print-area\s*\{[^}]*box-shadow:/i.test(content), `${name} #print-area must have elevated shadow on screen`);
         }
     });
