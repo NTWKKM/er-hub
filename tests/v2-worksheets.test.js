@@ -285,6 +285,13 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         assert.ok(weightInput, 'Weight input must be inside patient-fields-grid');
         assert.ok(timeCheckbox, 'use-current-time checkbox must be inside patient-fields-grid');
         assert.ok(timeCheckbox.checked, 'use-current-time must be checked by default');
+
+        const hnGroup = hnInput.closest('.inline-input-group');
+        const weightGroup = weightInput.closest('.inline-input-group');
+        assert.ok(hnGroup, 'HN input must be in .inline-input-group for single-line inline layout');
+        assert.ok(weightGroup, 'Weight input must be in .inline-input-group for single-line inline layout');
+        assert.equal(grid.querySelector('label[for="hn"]').textContent, 'HN:');
+        assert.equal(grid.querySelector('label[for="weight"]').textContent, 'น้ำหนัก (kg):');
     });
 
     test('Consecutive form submissions with updated weight do not throw TypeError and update print area cleanly', () => {

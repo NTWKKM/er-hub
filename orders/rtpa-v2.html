@@ -69,43 +69,53 @@
             background: #FAF9F6;
             border: 1px solid #E8E6DC;
             border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 20px;
+            padding: 10px 16px;
+            margin-bottom: 16px;
         }
-
 
         .patient-section .patient-fields-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 16px;
-            align-items: flex-end;
-        }
-
-        .input-item {
             display: flex;
-            flex-direction: column;
-            gap: 5px;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
-        .input-item label {
+        .patient-fields-grid .input-item.inline-input-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+            flex: 1 1 200px;
+            margin: 0;
+        }
+
+        .patient-fields-grid .input-item label {
+            white-space: nowrap;
+            flex-shrink: 0;
+            width: auto;
+            text-align: left;
+            padding: 0;
+            margin: 0;
             font-size: 13px;
             font-weight: 600;
             color: var(--graphite);
         }
 
-        .input-item input:not([type="checkbox"]) {
+        .patient-fields-grid .input-item input:not([type="checkbox"]) {
             width: 100%;
-            height: 40px;
-            padding: 9px 12px;
+            min-width: 80px;
+            height: 38px;
+            padding: 8px 10px;
             border: 1px solid var(--rule);
             border-radius: 6px;
             background: #fff;
-            font-size: 15px;
+            font-size: 14px;
             font-family: inherit;
             box-sizing: border-box;
+            flex: 1;
         }
 
-        .input-item input:not([type="checkbox"]):focus {
+        .patient-fields-grid .input-item input:not([type="checkbox"]):focus {
             border-color: var(--stroke-primary);
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
             outline: none;
@@ -114,21 +124,21 @@
         .time-check-item {
             display: flex;
             align-items: center;
-            height: 40px;
+            height: 38px;
+            flex-shrink: 0;
         }
 
         .time-checkbox-label {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--ink);
             cursor: pointer;
             user-select: none;
             margin: 0;
-            padding: 8px 4px;
-            min-height: 40px;
+            padding: 4px 2px;
             white-space: nowrap;
             transition: color 150ms ease;
         }
@@ -388,8 +398,13 @@
             }
 
             .patient-section .patient-fields-grid {
-                grid-template-columns: 1fr;
+                flex-direction: column;
                 align-items: stretch;
+                gap: 10px;
+            }
+
+            .patient-fields-grid .input-item.inline-input-group {
+                flex: none;
             }
 
             .time-check-item {
@@ -605,17 +620,13 @@
                 <!-- Patient Demographics Section -->
                 <div class="patient-section">
                     <div class="patient-fields-grid">
-                        <div class="input-item">
-                            <div class="inline-input-group" style="display:flex; flex-direction:column; gap:5px; margin:0;">
-                                <label for="hn">Hospital Number (HN):</label>
-                                <input type="text" id="hn" required placeholder="กรอก HN">
-                            </div>
+                        <div class="input-item inline-input-group">
+                            <label for="hn">HN:</label>
+                            <input type="text" id="hn" required placeholder="กรอก HN">
                         </div>
-                        <div class="input-item">
-                            <div class="inline-input-group" style="display:flex; flex-direction:column; gap:5px; margin:0;">
-                                <label for="weight">น้ำหนัก (kg):</label>
-                                <input type="number" id="weight" step="0.01" min="20" max="250" required placeholder="ทศนิยม 2 ตำแหน่ง เช่น 75.58">
-                            </div>
+                        <div class="input-item inline-input-group">
+                            <label for="weight">น้ำหนัก (kg):</label>
+                            <input type="number" id="weight" step="0.01" min="20" max="250" required placeholder="ทศนิยม 2 ตำแหน่ง เช่น 75.58">
                         </div>
                         <div class="input-item time-check-item">
                             <label class="time-checkbox-label" for="use-current-time">
