@@ -337,4 +337,76 @@ describe('Portal Index 3D Flip Cards (index.html)', () => {
         // Transform must preserve reset 180deg state
         assert.equal(flipContainer.style.transform, 'perspective(600px) rotateX(0deg) rotateY(180deg) translateZ(0px)');
     });
+
+    test('3D Tilt Effect: Text sharpness CSS properties and transform cleanup on idle reset', (t, done) => {
+        const indexPath = path.join(__dirname, '..', 'index.html');
+        const html = fs.readFileSync(indexPath, 'utf8');
+
+        // 1. Verify CSS rules for crisp font rendering specifically in .order-row
+        const orderRowMatches = [...html.matchAll(/(?:^|\})\s*([^{}]*\.order-row(?![^{]*:(?:hover|focus|active))[^{}]*)\{([^}]+)\}/g)];
+        assert.ok(orderRowMatches.length > 0, 'Must find .order-row CSS rule');
+        const orderRowDeclarations = orderRowMatches.map(m => m[2]).join('\n');
+
+        assert.ok(!orderRowDeclarations.includes('preserve-3d'), '.order-row must NOT have transform-style: preserve-3d to keep text rendering flat and crisp');
+        assert.match(orderRowDeclarations, /text-rendering:\s*optimizeLegibility;?/, '.order-row must specify optimizeLegibility for crisp glyph rendering');
+        assert.match(orderRowDeclarations, /-webkit-backface-visibility:\s*hidden;?/, '.order-row must specify -webkit-backface-visibility: hidden for hardware antialiasing');
+        assert.match(orderRowDeclarations, /(?<!-webkit-)backface-visibility:\s*hidden;?/, '.order-row must specify unprefixed backface-visibility: hidden');
+
+        // 2. Verify transform cleanup after mouseleave transition
+        const win = loadIndexDom();
+        const doc = win.document;
+        const flipContainer = doc.querySelector('.flip-card-container');
+        assert.ok(flipContainer);
+
+        flipContainer.getBoundingClientRect = () => ({
+            left: 100, top: 100, width: 300, height: 60, right: 400, bottom: 160
+        });
+
+        flipContainer.dispatchEvent(new win.MouseEvent('mousemove', { clientX: 370, clientY: 145 }));
+        assert.ok(flipContainer.style.transform.includes('perspective(600px)'));
+
+        flipContainer.dispatchEvent(new win.MouseEvent('mouseleave'));
+        // Immediately on mouseleave, resets to 0deg (preserving test contract)
+        assert.equal(flipContainer.style.transform, 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)');
+
+        // After transition completes (420ms), inline transform is cleared to un-promote from 3D context
+        setTimeout(() => {
+            assert.equal(flipContainer.style.transform, '', 'Inline transform should be cleared after resting transition to restore native 2D subpixel text rendering');
+            done();
+        }, 450);
+    });
+
+    test('3D Tilt Effect: resetTimer cancellation when re-entering card before 420ms idle timeout', (t, done) => {
+        const win = loadIndexDom();
+        const doc = win.document;
+        const flipContainer = doc.querySelector('.flip-card-container');
+        assert.ok(flipContainer);
+
+        flipContainer.getBoundingClientRect = () => ({
+            left: 100, top: 100, width: 300, height: 60, right: 400, bottom: 160
+        });
+
+        // Initial move and leave
+        flipContainer.dispatchEvent(new win.MouseEvent('mousemove', { clientX: 370, clientY: 145 }));
+        assert.ok(flipContainer.style.transform.includes('perspective(600px)'));
+
+        flipContainer.dispatchEvent(new win.MouseEvent('mouseleave'));
+        assert.equal(flipContainer.style.transform, 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)');
+
+        // Re-enter and trigger movement before 420ms (at 150ms)
+        setTimeout(() => {
+            flipContainer.dispatchEvent(new win.MouseEvent('mouseenter'));
+            flipContainer.dispatchEvent(new win.MouseEvent('mousemove', { clientX: 380, clientY: 150 }));
+            assert.ok(flipContainer.style.transform.includes('perspective(600px)'));
+            assert.notEqual(flipContainer.style.transform, '');
+        }, 150);
+
+        // Check after original 420ms timer would have fired (at 500ms)
+        setTimeout(() => {
+            // Transform must remain active and NOT be wiped by stale resetTimer
+            assert.ok(flipContainer.style.transform.includes('perspective(600px)'), 'Transform must remain active after re-entering card');
+            assert.notEqual(flipContainer.style.transform, '', 'Stale resetTimer must not clear inline transform');
+            done();
+        }, 500);
+    });
 });
