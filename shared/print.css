@@ -66,7 +66,7 @@
 }
 
 .order-row-spacer {
-    height: 16.5em;
+    height: 11.5em;
 }
 
 .grid-cell:nth-child(5n) {
@@ -471,6 +471,13 @@
     }
 
     /* ── Stroke-specific pages ── */
+    .theme-stroke #print-area {
+        width: 195mm !important;
+        margin: 0 auto !important;
+        padding: 3mm 0 !important;
+        box-sizing: border-box !important;
+    }
+
     .stroke-page {
         display: block !important;
         page-break-before: always;
@@ -544,6 +551,10 @@
     /* Prevent orphans */
     .grid-cell, .fib-order-box, .ac-opt, .sticker-box-container {
         page-break-inside: avoid;
+    }
+
+    .order-row-spacer {
+        height: 11.5em !important;
     }
 
     /* Ensure black text on white */

@@ -195,6 +195,10 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
     test('Print Layout: Doctor order cells use order-cell-flex and calibrated .order-row-spacer', () => {
         assert.ok(printCss.includes('.order-cell-flex'), 'print.css must define .order-cell-flex');
         assert.ok(printCss.includes('.order-row-spacer'), 'print.css must define .order-row-spacer');
+        assert.match(printCss, /\.order-row-spacer\s*\{\s*height:\s*11\.5em;?\s*\}/,
+            'print.css must calibrate .order-row-spacer to 11.5em for 1-page A4 print fit');
+        assert.match(printCss, /\.order-row-spacer\s*\{\s*height:\s*11\.5em\s*!important;?\s*\}/,
+            'print.css must enforce 11.5em in @media print');
         for (const pagePath of ['orders/rtpa.html', 'orders/rtpa-v2.html']) {
             const win = loadHtmlDom(pagePath);
             const doc = win.document;
@@ -214,6 +218,10 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
             const inlineSpacers = doc.querySelectorAll('div[style*="11.5em"]');
             assert.equal(inlineSpacers.length, 0,
                 `${pagePath} must use clean .order-row-spacer class instead of brittle inline style="height:11.5em"`);
+
+            const htmlContent = fs.readFileSync(path.resolve(__dirname, '..', pagePath), 'utf-8');
+            assert.match(htmlContent, /\.order-row-spacer\s*\{\s*height:\s*11\.5em\s*!important;?\s*\}/,
+                `${pagePath} must enforce 11.5em in its @media print stylesheet`);
         }
     });
 
@@ -363,5 +371,23 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
             assert.ok(/border:\s*none\s*!important/i.test(printRules), `${name} @media print must enforce border: none`);
             assert.ok(/box-shadow:\s*none\s*!important/i.test(printRules), `${name} @media print must enforce box-shadow: none`);
         }
+    });
+
+    test('Print Margin Harmony: #print-area matches .stroke-page 195mm width and 3mm padding in v1, v2, and print.css', () => {
+        const v1Html = fs.readFileSync(RTPA_V1_PATH, 'utf8');
+        const v2Html = fs.readFileSync(RTPA_V2_PATH, 'utf8');
+        const currentPrintCss = fs.readFileSync(PRINT_CSS_PATH, 'utf8');
+
+        for (const [name, content] of [['v1', v1Html], ['v2', v2Html]]) {
+            assert.match(content, /#print-area\s*\{[^}]*width:\s*195mm\s*!important/i,
+                `${name} must set #print-area width to 195mm !important to match pages 2-4`);
+            assert.match(content, /#print-area\s*\{[^}]*padding:\s*3mm 0\s*!important/i,
+                `${name} must set #print-area padding to 3mm 0 !important to match pages 2-4`);
+        }
+
+        assert.match(currentPrintCss, /\.theme-stroke\s+#print-area\s*\{[^}]*width:\s*195mm\s*!important/i,
+            'print.css must define .theme-stroke #print-area width: 195mm !important');
+        assert.match(currentPrintCss, /\.theme-stroke\s+#print-area\s*\{[^}]*padding:\s*3mm 0\s*!important/i,
+            'print.css must define .theme-stroke #print-area padding: 3mm 0 !important');
     });
 });

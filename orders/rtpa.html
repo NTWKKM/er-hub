@@ -382,13 +382,22 @@
             body,
             .container,
             .form-container,
-            .results-container,
-            #print-area {
+            .results-container {
                 background: transparent !important;
                 border: none !important;
                 box-shadow: none !important;
                 padding: 0 !important;
                 margin: 0 auto !important;
+            }
+
+            #print-area {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                width: 195mm !important;
+                margin: 0 auto !important;
+                padding: 3mm 0 !important;
+                box-sizing: border-box !important;
             }
 
             .grid-header:nth-child(5n) {
@@ -401,6 +410,10 @@
 
             .order-grid-5col > .grid-cell:nth-child(n+11) {
                 border-bottom: none !important;
+            }
+
+            .order-row-spacer {
+                height: 11.5em !important;
             }
 
             .stroke-page {
