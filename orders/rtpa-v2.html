@@ -239,6 +239,12 @@
             display: flex;
             flex-direction: column;
             gap: 1px;
+            transition: opacity 0.2s ease, filter 0.2s ease;
+        }
+
+        .hud-metric.disabled {
+            opacity: 0.35;
+            filter: grayscale(1);
         }
 
         .hud-label {
@@ -648,12 +654,12 @@
                         <span class="hud-pill" id="hud-regimen-badge">0.9 mg/kg</span>
                     </div>
                     <div class="hud-metric">
-                        <span class="hud-label">IV Push (1 min)</span>
+                        <span class="hud-label" id="hud-push-title">IV Push (1 min)</span>
                         <span class="hud-value hud-value-push" id="hud-push-dose">-- mg</span>
                         <span class="hud-pill" id="hud-push-label">10% of total dose</span>
                     </div>
-                    <div class="hud-metric">
-                        <span class="hud-label">IV Drip (60 min)</span>
+                    <div class="hud-metric" id="hud-metric-drip">
+                        <span class="hud-label" id="hud-drip-title">IV Drip (60 min)</span>
                         <span class="hud-value hud-value-drip" id="hud-drip-dose">-- mg</span>
                         <span class="hud-pill" id="hud-drip-label">90% of total dose</span>
                     </div>
@@ -1175,6 +1181,9 @@
             const hudRegimen = document.getElementById('hud-regimen-badge');
             const hudPushLabel = document.getElementById('hud-push-label');
             const hudDripLabel = document.getElementById('hud-drip-label');
+            const hudPushTitle = document.getElementById('hud-push-title');
+            const hudDripTitle = document.getElementById('hud-drip-title');
+            const hudMetricDrip = document.getElementById('hud-metric-drip');
 
             ED_BLANK_PRINT.register([
                 { id: 'result-hn', value: '....................' },
@@ -1217,6 +1226,15 @@
                 const isTnk = rawRegimen === 'tnk';
                 const regimen = isTnk ? 0.25 : (parseFloat(rawRegimen) || 0.9);
                 hudRegimen.textContent = isTnk ? 'TNK 0.25 mg/kg' : (regimen + ' mg/kg');
+                if (hudPushTitle && hudDripTitle) {
+                    hudPushTitle.textContent = isTnk ? 'Single IV Bolus (5–10s)' : 'IV Push (1 min)';
+                    hudDripTitle.textContent = isTnk ? 'IV Drip (No Drip)' : 'IV Drip (60 min)';
+                    hudDripTitle.classList.toggle('disabled', isTnk);
+                }
+                if (hudMetricDrip) {
+                    hudMetricDrip.classList.toggle('disabled', isTnk);
+                    hudMetricDrip.setAttribute('aria-disabled', isTnk ? 'true' : 'false');
+                }
 
                 if (isNaN(weight) || weight < 20 || weight > 250) {
                     hudTotal.textContent = '-- mg';

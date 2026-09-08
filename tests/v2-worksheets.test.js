@@ -217,6 +217,9 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         assert.equal(doc.getElementById('hud-push-dose').textContent, '5.4 mg');
         assert.equal(doc.getElementById('hud-drip-dose').textContent, '48.60 mg');
         assert.equal(doc.getElementById('hud-regimen-badge').textContent, '0.9 mg/kg');
+        assert.equal(doc.getElementById('hud-push-title').textContent, 'IV Push (1 min)');
+        assert.equal(doc.getElementById('hud-drip-title').textContent, 'IV Drip (60 min)');
+        assert.equal(doc.getElementById('hud-metric-drip').classList.contains('disabled'), false);
     });
 
     test('Selecting Tenecteplase (TNK 0.25 mg/kg) updates live HUD with single bolus push', () => {
@@ -234,6 +237,10 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         assert.equal(doc.getElementById('hud-push-dose').textContent, '15.0 mg (3.0 mL)');
         assert.equal(doc.getElementById('hud-drip-dose').textContent, '0 mg');
         assert.equal(doc.getElementById('hud-regimen-badge').textContent, 'TNK 0.25 mg/kg');
+        assert.equal(doc.getElementById('hud-push-title').textContent, 'Single IV Bolus (5–10s)');
+        assert.equal(doc.getElementById('hud-drip-title').textContent, 'IV Drip (No Drip)');
+        assert.equal(doc.getElementById('hud-metric-drip').classList.contains('disabled'), true);
+        assert.equal(doc.getElementById('hud-metric-drip').getAttribute('aria-disabled'), 'true');
     });
 
     test('Form submission with Tenecteplase generates correct print order structure', () => {
@@ -313,6 +320,9 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         const tnkRadio = doc.querySelector('input[name="dose-radio"][value="tnk"]');
         tnkRadio.checked = true;
         tnkRadio.dispatchEvent(new win.Event('change', { bubbles: true }));
+        assert.equal(doc.getElementById('hud-push-title').textContent, 'Single IV Bolus (5–10s)');
+        assert.equal(doc.getElementById('hud-drip-title').textContent, 'IV Drip (No Drip)');
+        assert.equal(doc.getElementById('hud-metric-drip').classList.contains('disabled'), true);
         doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
 
         assert.ok(doc.getElementById('print-drug-header').textContent.includes('Tenecteplase'));
@@ -322,6 +332,9 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         const stdRadio = doc.querySelector('input[name="dose-radio"][value="0.9"]');
         stdRadio.checked = true;
         stdRadio.dispatchEvent(new win.Event('change', { bubbles: true }));
+        assert.equal(doc.getElementById('hud-push-title').textContent, 'IV Push (1 min)');
+        assert.equal(doc.getElementById('hud-drip-title').textContent, 'IV Drip (60 min)');
+        assert.equal(doc.getElementById('hud-metric-drip').classList.contains('disabled'), false);
         assert.doesNotThrow(() => {
             doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
         }, 'Submitting Alteplase 0.9 after TNK must not throw');
@@ -333,6 +346,9 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         const lowRadio = doc.querySelector('input[name="dose-radio"][value="0.6"]');
         lowRadio.checked = true;
         lowRadio.dispatchEvent(new win.Event('change', { bubbles: true }));
+        assert.equal(doc.getElementById('hud-push-title').textContent, 'IV Push (1 min)');
+        assert.equal(doc.getElementById('hud-drip-title').textContent, 'IV Drip (60 min)');
+        assert.equal(doc.getElementById('hud-metric-drip').classList.contains('disabled'), false);
         assert.doesNotThrow(() => {
             doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
         }, 'Submitting Alteplase 0.6 must not throw');
@@ -343,6 +359,9 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         // 4. Switch back to TNK and submit
         tnkRadio.checked = true;
         tnkRadio.dispatchEvent(new win.Event('change', { bubbles: true }));
+        assert.equal(doc.getElementById('hud-push-title').textContent, 'Single IV Bolus (5–10s)');
+        assert.equal(doc.getElementById('hud-drip-title').textContent, 'IV Drip (No Drip)');
+        assert.equal(doc.getElementById('hud-metric-drip').classList.contains('disabled'), true);
         assert.doesNotThrow(() => {
             doc.getElementById('rtpa-form').dispatchEvent(new win.Event('submit', { bubbles: true, cancelable: true }));
         }, 'Submitting TNK again must not throw');
