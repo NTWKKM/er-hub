@@ -305,4 +305,63 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
                 `${pagePath}: drip dose must be 45.00 mg`);
         }
     });
+
+    test('Design Theme: Warm Ivory Canvas (#FAF9F6) and Apple System Gray 6 card container (#F5F5F7)', () => {
+        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
+            assert.ok(/body\s*\{[^}]*background-color:\s*#faf9f6/i.test(content), `${name} body must have #FAF9F6 background`);
+            assert.ok(/\.container\s*\{[^}]*background-color:\s*#f5f5f7/i.test(content), `${name} .container must have #F5F5F7 background`);
+            assert.ok(/\.container\s*\{[^}]*border-radius:\s*12px/i.test(content), `${name} .container must have 12px squircle radius`);
+            assert.ok(/\.container\s*\{[^}]*border:\s*1px solid #e8e6dc/i.test(content), `${name} .container must have #E8E6DC subtle border`);
+        }
+    });
+
+    test('Realistic Order Sheet: elevated white paper styling on screen', () => {
+        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
+            assert.ok(/#print-area\s*\{[^}]*background:\s*#ffffff/i.test(content), `${name} #print-area must be white (#ffffff) on screen`);
+            assert.ok(/#print-area\s*\{[^}]*border:\s*1px solid #e8e6dc/i.test(content), `${name} #print-area must have #E8E6DC border on screen`);
+            assert.ok(/#print-area\s*\{[^}]*box-shadow:/i.test(content), `${name} #print-area must have elevated shadow on screen`);
+        }
+    });
+
+    test('Table Grid Borders: arithmetic eliminates 2px border duplication', () => {
+        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
+            assert.ok(/\.grid-header:nth-child\(5n\)\s*\{[^}]*border-right:\s*none/i.test(content), `${name} must remove border-right on 5n header`);
+            assert.ok(/\.grid-cell:nth-child\(5n\)\s*\{[^}]*border-right:\s*none/i.test(content), `${name} must remove border-right on 5n cell`);
+            assert.ok(/\.order-grid-5col\s*>\s*\.grid-cell:nth-child\(n\+11\)\s*\{[^}]*border-bottom:\s*none/i.test(content),
+                `${name} must remove border-bottom on bottom row cells (n+11)`);
+        }
+    });
+
+    test('Dose & Action Button Ergonomics: Neutral warm gray, vibrant blue #007BFF, medical green #24963e', () => {
+        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
+            // Unselected dose controls
+            assert.ok(/#c9c6b8/i.test(content), `${name} must style unselected dose controls with #C9C6B8`);
+            assert.ok(/#55524b/i.test(content), `${name} must style unselected dose text with #55524B (7.79:1 AAA contrast)`);
+
+            // Calculate & active dose controls
+            assert.ok(/\.btn-calculate\s*\{[^}]*background-color:\s*#007bff/i.test(content), `${name} .btn-calculate must be #007BFF`);
+            assert.ok(/(?:\.dose-button\.active|\.regimen-card\.active)\s*\{[^}]*background(?:-color)?:\s*#007bff/i.test(content),
+                `${name} active dose control must be #007BFF`);
+
+            // Print button controls
+            assert.ok(/(?:\.btn-blank-order|#print-blank-btn)\s*\{[^}]*background-color:\s*#24963e/i.test(content),
+                `${name} print button must be medical green #24963e`);
+            assert.ok(/(?:\.btn-blank-order:hover|#print-blank-btn:hover)\s*\{[^}]*background-color:\s*#1e7e34/i.test(content),
+                `${name} print button hover must be #1e7e34`);
+
+            // Keyboard navigation
+            assert.ok(/:focus-visible/i.test(content), `${name} must provide :focus-visible styling`);
+        }
+    });
+
+    test('Ink-Saver Print Styles: @media print enforces transparent backgrounds, border none, box-shadow none', () => {
+        for (const [name, content] of [['v1', rtpaV1Html], ['v2', rtpaV2Html]]) {
+            const match = content.match(/@media print\s*\{([\s\S]*?)\}\s*<\/style>/i);
+            assert.ok(match, `${name} must have @media print in style block`);
+            const printRules = match[1];
+            assert.ok(/background:\s*transparent\s*!important/i.test(printRules), `${name} @media print must enforce background: transparent`);
+            assert.ok(/border:\s*none\s*!important/i.test(printRules), `${name} @media print must enforce border: none`);
+            assert.ok(/box-shadow:\s*none\s*!important/i.test(printRules), `${name} @media print must enforce box-shadow: none`);
+        }
+    });
 });

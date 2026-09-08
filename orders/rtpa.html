@@ -12,6 +12,58 @@
     <link rel="stylesheet" href="../shared/print.css">
 
     <style>
+        /* ══ Design Theme & Palette (Warm Ivory Canvas & Apple System Gray 6) ══ */
+        body {
+            background-color: #FAF9F6;
+        }
+
+        .container {
+            background-color: #F5F5F7;
+            border-radius: 12px;
+            border: 1px solid #E8E6DC;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Realistic Order Sheet with elevated white paper styling on screen */
+        #print-area {
+            background: #ffffff;
+            border: 1px solid #E8E6DC;
+            border-radius: 8px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+            padding: 24px;
+            margin: 16px auto;
+            box-sizing: border-box;
+        }
+
+        /* Table Grid Borders & Selector Arithmetic: clean uniform 1px grid */
+        .grid-header:nth-child(5n) {
+            border-right: none;
+        }
+
+        .grid-cell:nth-child(5n) {
+            border-right: none;
+        }
+
+        .order-grid-5col > .grid-cell:nth-child(n+11) {
+            border-bottom: none;
+        }
+
+        /* Keyboard navigation ergonomics */
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        .dose-button:focus-visible,
+        .btn:focus-visible,
+        details summary:focus-visible {
+            outline: 2px solid #007BFF !important;
+            outline-offset: 2px !important;
+        }
+
+        .reference-card {
+            background: #FAF9F6 !important;
+            border: 1px solid #E8E6DC !important;
+        }
+
         /* Specific Stroke Document Custom Styles (Not in base.css) */
         .stroke-page {
             display: none;
@@ -185,10 +237,10 @@
             padding: 0 16px;
             display: flex;
             align-items: center;
-            border: 2px solid var(--stroke-primary);
-            border-radius: 6px;
-            background-color: #fff;
-            color: var(--stroke-primary);
+            border: 2px solid #C9C6B8;
+            border-radius: 8px;
+            background-color: #ffffff;
+            color: #55524B;
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
@@ -196,21 +248,29 @@
             text-align: left;
             width: 100%;
             box-sizing: border-box;
+            outline: none;
+        }
+
+        .dose-button:focus:not(:focus-visible),
+        button:focus:not(:focus-visible) {
+            outline: none !important;
         }
 
         .dose-button:hover {
-            background-color: var(--stroke-bg-highlight);
+            border-color: #a8a495;
+            background-color: #f7f6f2;
         }
 
         .dose-button.active {
-            background-color: var(--stroke-primary);
-            color: #fff;
-            border-color: var(--stroke-hover);
-            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+            background-color: #007BFF;
+            color: #ffffff;
+            border: 2px solid #007BFF;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+            outline: none;
         }
 
         .dose-button.active:hover {
-            background-color: var(--stroke-hover);
+            background-color: #0069d9;
         }
 
         .btn-calculate {
@@ -219,16 +279,18 @@
             font-size: 16px;
             font-weight: bold;
             margin-bottom: 10px;
-            background-color: var(--stroke-primary);
-            color: #fff;
+            background-color: #007BFF;
+            color: #ffffff;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
         }
 
         .btn-calculate:hover {
-            background-color: var(--stroke-hover);
+            background-color: #0069d9;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
         }
 
         .blank-btn-row {
@@ -243,10 +305,10 @@
             height: 44px;
             font-size: 15px;
             font-weight: bold;
-            background-color: #28a745 !important;
-            color: #fff !important;
+            background-color: #24963e !important;
+            color: #ffffff !important;
             border: none !important;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             margin: 0 !important;
             display: flex;
@@ -256,7 +318,7 @@
         }
 
         .btn-blank-order:hover {
-            background-color: #218838 !important;
+            background-color: #1e7e34 !important;
         }
 
         .btn-blank-nihss {
@@ -265,9 +327,9 @@
             font-size: 14px;
             font-weight: bold;
             background-color: #0e7490 !important;
-            color: #fff !important;
+            color: #ffffff !important;
             border: none !important;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             margin: 0 !important;
             white-space: nowrap;
@@ -287,9 +349,9 @@
             font-size: 15px;
             font-weight: bold;
             background-color: #dc3545 !important;
-            color: #fff !important;
+            color: #ffffff !important;
             border: none !important;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             margin-top: 0 !important;
             margin-bottom: 16px !important;
@@ -317,6 +379,30 @@
         }
 
         @media print {
+            body,
+            .container,
+            .form-container,
+            .results-container,
+            #print-area {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 auto !important;
+            }
+
+            .grid-header:nth-child(5n) {
+                border-right: none !important;
+            }
+
+            .grid-cell:nth-child(5n) {
+                border-right: none !important;
+            }
+
+            .order-grid-5col > .grid-cell:nth-child(n+11) {
+                border-bottom: none !important;
+            }
+
             .stroke-page {
                 display: block !important;
                 page-break-before: always;
@@ -324,6 +410,9 @@
                 margin: 0 auto;
                 padding: 3mm 0;
                 box-sizing: border-box;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
             }
 
             #stroke-page-1 .stroke-checklist {
