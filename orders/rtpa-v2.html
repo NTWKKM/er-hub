@@ -12,48 +12,110 @@
     <link rel="stylesheet" href="../shared/print.css">
 
     <style>
+        /* ══ Design Theme & Palette (Modern Apple / iPadOS Slate: Neutral Cool Gray Canvas & Elevated White Card) ══ */
+        body {
+            background-color: #ECECEE;
+        }
+
+        .container {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            border: 1px solid #D8D8DC;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Realistic Order Sheet with elevated white paper styling on screen */
+        #print-area {
+            background: #ffffff;
+            border: 1px solid #D8D8DC;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 24px;
+            margin: 16px auto;
+            box-sizing: border-box;
+        }
+
+        /* Table Grid Borders & Selector Arithmetic: clean uniform 1px grid */
+        .grid-header:nth-child(5n) {
+            border-right: none;
+        }
+
+        .grid-cell:nth-child(5n) {
+            border-right: none;
+        }
+
+        .order-grid-5col > .grid-cell:nth-child(n+11) {
+            border-bottom: none;
+        }
+
+        /* Keyboard navigation ergonomics */
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        .regimen-card:focus-visible,
+        .btn:focus-visible,
+        details summary:focus-visible {
+            outline: 2px solid #007BFF !important;
+            outline-offset: 2px !important;
+        }
+
+        .reference-card {
+            background: #FAF9F6 !important;
+            border: 1px solid #E8E6DC !important;
+        }
+
         /* ══ rt-PA V2 Unified Layout ══ */
         .patient-section {
-            background: #f8f7f4;
-            border: 1px solid var(--rule);
+            background: #FAF9F6;
+            border: 1px solid #E8E6DC;
             border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 20px;
+            padding: 10px 16px;
+            margin-bottom: 16px;
         }
-
 
         .patient-section .patient-fields-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 16px;
-            align-items: flex-end;
-        }
-
-        .input-item {
             display: flex;
-            flex-direction: column;
-            gap: 5px;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
-        .input-item label {
+        .patient-fields-grid .input-item.inline-input-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+            flex: 1 1 200px;
+            margin: 0;
+        }
+
+        .patient-fields-grid .input-item label {
+            white-space: nowrap;
+            flex-shrink: 0;
+            width: auto;
+            text-align: left;
+            padding: 0;
+            margin: 0;
             font-size: 13px;
             font-weight: 600;
             color: var(--graphite);
         }
 
-        .input-item input:not([type="checkbox"]) {
+        .patient-fields-grid .input-item input:not([type="checkbox"]) {
             width: 100%;
-            height: 40px;
-            padding: 9px 12px;
+            min-width: 80px;
+            height: 38px;
+            padding: 8px 10px;
             border: 1px solid var(--rule);
             border-radius: 6px;
             background: #fff;
-            font-size: 15px;
+            font-size: 14px;
             font-family: inherit;
             box-sizing: border-box;
+            flex: 1;
         }
 
-        .input-item input:not([type="checkbox"]):focus {
+        .patient-fields-grid .input-item input:not([type="checkbox"]):focus {
             border-color: var(--stroke-primary);
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
             outline: none;
@@ -62,21 +124,21 @@
         .time-check-item {
             display: flex;
             align-items: center;
-            height: 40px;
+            height: 38px;
+            flex-shrink: 0;
         }
 
         .time-checkbox-label {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--ink);
             cursor: pointer;
             user-select: none;
             margin: 0;
-            padding: 8px 4px;
-            min-height: 40px;
+            padding: 4px 2px;
             white-space: nowrap;
             transition: color 150ms ease;
         }
@@ -103,10 +165,10 @@
         }
 
         .regimen-card {
-            border: 2px solid var(--rule);
+            border: 2px solid #C9C6B8;
             border-radius: 8px;
             padding: 10px 14px;
-            background: #fff;
+            background: #ffffff;
             cursor: pointer;
             transition: all 180ms ease;
             display: flex;
@@ -124,36 +186,50 @@
             pointer-events: none;
         }
 
+        .regimen-card,
+        .regimen-card:focus,
         .regimen-card:focus-within {
-            outline: 2px solid var(--stroke-primary);
+            outline: none;
+        }
+
+        .regimen-card:has(input:focus-visible),
+        .regimen-card:focus-visible {
+            outline: 2px solid #0056b3;
             outline-offset: 2px;
         }
 
         .regimen-card:hover {
-            border-color: #9eccff;
-            background: #f4f9ff;
+            border-color: #a8a495;
+            background: #f7f6f2;
         }
 
         .regimen-card.active {
-            border-color: var(--stroke-primary);
-            background: var(--stroke-bg-highlight);
-            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.12);
+            border: 2px solid #007BFF;
+            background: #007BFF;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+            outline: none;
         }
 
         .regimen-card .title {
             font-size: 15px;
             font-weight: 700;
-            color: var(--ink);
+            color: #55524B;
         }
 
         .regimen-card.active .title {
-            color: var(--stroke-hover);
+            color: #ffffff;
         }
 
         .regimen-card .subtitle {
             font-size: 12px;
             line-height: 1.35;
-            color: var(--graphite);
+            color: #55524B;
+            opacity: 0.85;
+        }
+
+        .regimen-card.active .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            opacity: 1;
         }
 
         /* Live Dose Summary HUD */
@@ -173,6 +249,12 @@
             display: flex;
             flex-direction: column;
             gap: 1px;
+            transition: opacity 0.2s ease, filter 0.2s ease;
+        }
+
+        .hud-metric.disabled {
+            opacity: 0.35;
+            filter: grayscale(1);
         }
 
         .hud-label {
@@ -193,15 +275,27 @@
             line-height: 1.2;
         }
 
+        .hud-value-total {
+            color: #0056b3;
+        }
+
+        .hud-value-push {
+            color: #c0392b;
+        }
+
+        .hud-value-drip {
+            color: #1e7e34;
+        }
+
         .hud-pill {
             font-size: 11px;
             font-weight: 600;
-            padding: 1px 6px;
+            padding: 2px 7px;
             border-radius: 4px;
             background: var(--highlight-yellow);
             color: #856404;
             display: inline-block;
-            margin-top: 1px;
+            margin-top: 2px;
             width: fit-content;
             line-height: 1.3;
         }
@@ -212,16 +306,18 @@
             font-size: 16px;
             font-weight: bold;
             margin-bottom: 10px;
-            background-color: var(--stroke-primary);
-            color: #fff;
+            background-color: #007BFF;
+            color: #ffffff;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
         }
 
         .btn-calculate:hover {
-            background-color: var(--stroke-hover);
+            background-color: #0069d9;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
         }
 
         .blank-btn-row {
@@ -236,10 +332,10 @@
             height: 44px;
             font-size: 15px;
             font-weight: bold;
-            background-color: #28a745 !important;
-            color: #fff !important;
+            background-color: #24963e !important;
+            color: #ffffff !important;
             border: none !important;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             margin: 0 !important;
             display: flex;
@@ -249,7 +345,7 @@
         }
 
         .btn-blank-order:hover {
-            background-color: #218838 !important;
+            background-color: #1e7e34 !important;
         }
 
         .btn-blank-nihss {
@@ -258,9 +354,9 @@
             font-size: 14px;
             font-weight: bold;
             background-color: #0e7490 !important;
-            color: #fff !important;
+            color: #ffffff !important;
             border: none !important;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             margin: 0 !important;
             white-space: nowrap;
@@ -280,9 +376,9 @@
             font-size: 15px;
             font-weight: bold;
             background-color: #dc3545 !important;
-            color: #fff !important;
+            color: #ffffff !important;
             border: none !important;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             margin-top: 0 !important;
             margin-bottom: 16px !important;
@@ -302,8 +398,13 @@
             }
 
             .patient-section .patient-fields-grid {
-                grid-template-columns: 1fr;
+                flex-direction: column;
                 align-items: stretch;
+                gap: 10px;
+            }
+
+            .patient-fields-grid .input-item.inline-input-group {
+                flex: none;
             }
 
             .time-check-item {
@@ -422,6 +523,30 @@
         }
 
         @media print {
+            body,
+            .container,
+            .form-container,
+            .results-container,
+            #print-area {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 auto !important;
+            }
+
+            .grid-header:nth-child(5n) {
+                border-right: none !important;
+            }
+
+            .grid-cell:nth-child(5n) {
+                border-right: none !important;
+            }
+
+            .order-grid-5col > .grid-cell:nth-child(n+11) {
+                border-bottom: none !important;
+            }
+
             .stroke-page {
                 display: block !important;
                 page-break-before: always;
@@ -429,6 +554,9 @@
                 margin: 0 auto;
                 padding: 3mm 0;
                 box-sizing: border-box;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
             }
 
             #stroke-page-1 .stroke-checklist {
@@ -492,17 +620,13 @@
                 <!-- Patient Demographics Section -->
                 <div class="patient-section">
                     <div class="patient-fields-grid">
-                        <div class="input-item">
-                            <div class="inline-input-group" style="display:flex; flex-direction:column; gap:5px; margin:0;">
-                                <label for="hn">Hospital Number (HN):</label>
-                                <input type="text" id="hn" required placeholder="กรอก HN">
-                            </div>
+                        <div class="input-item inline-input-group">
+                            <label for="hn">HN:</label>
+                            <input type="text" id="hn" required placeholder="กรอก HN">
                         </div>
-                        <div class="input-item">
-                            <div class="inline-input-group" style="display:flex; flex-direction:column; gap:5px; margin:0;">
-                                <label for="weight">น้ำหนัก (kg):</label>
-                                <input type="number" id="weight" step="0.01" min="20" max="250" required placeholder="ทศนิยม 2 ตำแหน่ง เช่น 75.58">
-                            </div>
+                        <div class="input-item inline-input-group">
+                            <label for="weight">น้ำหนัก (kg):</label>
+                            <input type="number" id="weight" step="0.01" min="20" max="250" required placeholder="ทศนิยม 2 ตำแหน่ง เช่น 75.58">
                         </div>
                         <div class="input-item time-check-item">
                             <label class="time-checkbox-label" for="use-current-time">
@@ -537,18 +661,18 @@
                 <div class="dose-hud" id="dose-hud-preview">
                     <div class="hud-metric">
                         <span class="hud-label">Total Dose</span>
-                        <span class="hud-value" id="hud-total-dose">-- mg</span>
+                        <span class="hud-value hud-value-total" id="hud-total-dose">-- mg</span>
                         <span class="hud-pill" id="hud-regimen-badge">0.9 mg/kg</span>
                     </div>
                     <div class="hud-metric">
-                        <span class="hud-label">1. IV Push (1 min)</span>
-                        <span class="hud-value" id="hud-push-dose" style="color: var(--ink);">-- mg</span>
-                        <span style="font-size:11.5px; color:var(--graphite); line-height:1.2;" id="hud-push-label">10% of total dose</span>
+                        <span class="hud-label" id="hud-push-title">IV Push (1 min)</span>
+                        <span class="hud-value hud-value-push" id="hud-push-dose">-- mg</span>
+                        <span class="hud-pill" id="hud-push-label">10% of total dose</span>
                     </div>
-                    <div class="hud-metric">
-                        <span class="hud-label">2. IV Drip (60 min)</span>
-                        <span class="hud-value" id="hud-drip-dose" style="color: var(--ink);">-- mg</span>
-                        <span style="font-size:11.5px; color:var(--graphite); line-height:1.2;" id="hud-drip-label">90% of total dose</span>
+                    <div class="hud-metric" id="hud-metric-drip">
+                        <span class="hud-label" id="hud-drip-title">IV Drip (60 min)</span>
+                        <span class="hud-value hud-value-drip" id="hud-drip-dose">-- mg</span>
+                        <span class="hud-pill" id="hud-drip-label">90% of total dose</span>
                     </div>
                 </div>
 
@@ -1068,6 +1192,9 @@
             const hudRegimen = document.getElementById('hud-regimen-badge');
             const hudPushLabel = document.getElementById('hud-push-label');
             const hudDripLabel = document.getElementById('hud-drip-label');
+            const hudPushTitle = document.getElementById('hud-push-title');
+            const hudDripTitle = document.getElementById('hud-drip-title');
+            const hudMetricDrip = document.getElementById('hud-metric-drip');
 
             ED_BLANK_PRINT.register([
                 { id: 'result-hn', value: '....................' },
@@ -1110,6 +1237,15 @@
                 const isTnk = rawRegimen === 'tnk';
                 const regimen = isTnk ? 0.25 : (parseFloat(rawRegimen) || 0.9);
                 hudRegimen.textContent = isTnk ? 'TNK 0.25 mg/kg' : (regimen + ' mg/kg');
+                if (hudPushTitle && hudDripTitle) {
+                    hudPushTitle.textContent = isTnk ? 'Single IV Bolus (5–10s)' : 'IV Push (1 min)';
+                    hudDripTitle.textContent = isTnk ? 'IV Drip (No Drip)' : 'IV Drip (60 min)';
+                    hudDripTitle.classList.toggle('disabled', isTnk);
+                }
+                if (hudMetricDrip) {
+                    hudMetricDrip.classList.toggle('disabled', isTnk);
+                    hudMetricDrip.setAttribute('aria-disabled', isTnk ? 'true' : 'false');
+                }
 
                 if (isNaN(weight) || weight < 20 || weight > 250) {
                     hudTotal.textContent = '-- mg';
