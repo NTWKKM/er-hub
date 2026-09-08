@@ -337,4 +337,37 @@ describe('Portal Index 3D Flip Cards (index.html)', () => {
         // Transform must preserve reset 180deg state
         assert.equal(flipContainer.style.transform, 'perspective(600px) rotateX(0deg) rotateY(180deg) translateZ(0px)');
     });
+
+    test('3D Tilt Effect: Text sharpness CSS properties and transform cleanup on idle reset', (t, done) => {
+        const indexPath = path.join(__dirname, '..', 'index.html');
+        const html = fs.readFileSync(indexPath, 'utf8');
+
+        // 1. Verify CSS rules for crisp font rendering in .order-row
+        assert.ok(!html.match(/\.order-row\s*\{[^}]*transform-style:\s*preserve-3d/), '.order-row must NOT have transform-style: preserve-3d to keep text rendering flat and crisp');
+        assert.ok(html.includes('text-rendering: optimizeLegibility;'), 'Stylesheet must specify optimizeLegibility for crisp glyph rendering');
+        assert.ok(html.includes('-webkit-backface-visibility: hidden;'), 'Stylesheet must specify backface-visibility: hidden for hardware antialiasing');
+
+        // 2. Verify transform cleanup after mouseleave transition
+        const win = loadIndexDom();
+        const doc = win.document;
+        const flipContainer = doc.querySelector('.flip-card-container');
+        assert.ok(flipContainer);
+
+        flipContainer.getBoundingClientRect = () => ({
+            left: 100, top: 100, width: 300, height: 60, right: 400, bottom: 160
+        });
+
+        flipContainer.dispatchEvent(new win.MouseEvent('mousemove', { clientX: 370, clientY: 145 }));
+        assert.ok(flipContainer.style.transform.includes('perspective(600px)'));
+
+        flipContainer.dispatchEvent(new win.MouseEvent('mouseleave'));
+        // Immediately on mouseleave, resets to 0deg (preserving test contract)
+        assert.equal(flipContainer.style.transform, 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)');
+
+        // After transition completes (420ms), inline transform is cleared to un-promote from 3D context
+        setTimeout(() => {
+            assert.equal(flipContainer.style.transform, '', 'Inline transform should be cleared after resting transition to restore native 2D subpixel text rendering');
+            done();
+        }, 450);
+    });
 });

@@ -191,7 +191,16 @@
             border-left: 4px solid transparent;
             background-color: transparent;
             transition: background-color 120ms linear, border-left-color 120ms linear, color 120ms linear, transform 400ms ease, box-shadow 400ms ease;
-            transform-style: preserve-3d;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            transform: translateZ(0);
+        }
+
+        .order-row:hover,
+        .flip-card-container:hover {
             will-change: transform;
         }
 
@@ -213,6 +222,18 @@
             outline: 2px solid var(--ink);
             outline-offset: 2px;
             border-radius: 2px;
+        }
+
+        .order-num,
+        .order-category,
+        .order-title,
+        .order-status,
+        .order-arrow {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
 
         .order-num {
@@ -356,7 +377,8 @@
             position: relative;
             transform-style: preserve-3d;
             transition: transform 400ms ease;
-            will-change: transform;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
 
         .flip-card-container.is-flipped {
@@ -385,6 +407,10 @@
             backface-visibility: hidden;
             box-sizing: border-box;
             position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            transform: translateZ(0);
         }
 
         .flip-card-front {
@@ -1104,6 +1130,7 @@ if ('serviceWorker' in navigator) {
       let ticking = false;
       let lastEvent = null;
       let rafId = null;
+      let resetTimer = null;
 
       function applyTilt(e) {
         const rect = card.getBoundingClientRect();
@@ -1122,10 +1149,18 @@ if ('serviceWorker' in navigator) {
       }
 
       card.addEventListener('mouseenter', function() {
+        if (resetTimer) {
+          clearTimeout(resetTimer);
+          resetTimer = null;
+        }
         card.style.transitionDuration = '80ms';
       });
 
       card.addEventListener('mousemove', function(e) {
+        if (resetTimer) {
+          clearTimeout(resetTimer);
+          resetTimer = null;
+        }
         lastEvent = e;
         if (!ticking) {
           ticking = true;
@@ -1150,6 +1185,15 @@ if ('serviceWorker' in navigator) {
         const isFlipped = card.classList.contains('is-flipped');
         const resetRotateY = isFlipped ? '180deg' : '0deg';
         card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(' + resetRotateY + ') translateZ(0px)';
+
+        if (!isFlipped) {
+          clearTimeout(resetTimer);
+          resetTimer = setTimeout(function() {
+            if (!lastEvent && !card.classList.contains('is-flipped') && card.style.transform === 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0px)') {
+              card.style.transform = '';
+            }
+          }, 420);
+        }
       });
     });
   }
