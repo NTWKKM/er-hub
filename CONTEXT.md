@@ -304,3 +304,5 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   4. **Regression Test Verification (`tests/rtpa-remediation.test.js`)**:
      - Added automated regression assertions verifying that both local page print rules and `shared/print.css` prohibit `#e9ecef` on `.grid-header` and mandate `transparent` backgrounds.
   5. Updated `service-worker.js` offline cache version to `er-hub-v113` (`09/09/2569`).
+  6. **Service Worker Precache Failure Protection (`service-worker.js`)**:
+     - Upgraded the install handler to prevent partial cache activation: replaced `Promise.allSettled` with atomic installation failure propagation. If any asset fails to fetch after retries, the partial cache is purged (`caches.delete(CACHE_VERSION)`) and an error is thrown, aborting installation so the existing complete offline cache is preserved and never prematurely deleted during activation.

@@ -92,4 +92,22 @@ describe('PWA Cache Assets Validation', () => {
         assert.ok(hasSarabun, 'ASSETS manifest must contain self-hosted Sarabun font files');
         assert.ok(hasJetBrains, 'ASSETS manifest must contain self-hosted JetBrains Mono font files');
     });
+
+    test('service-worker.js aborts installation and purges partial cache on precache failure', () => {
+        const swContent = fs.readFileSync(SW_PATH, 'utf8');
+
+        // Extract install event listener block
+        const installMatch = swContent.match(/self\.addEventListener\('install'[\s\S]*?self\.addEventListener\('activate'/);
+        assert.ok(installMatch, 'install event listener must exist in service-worker.js');
+        const installCode = installMatch[0];
+
+        // Ensure allSettled is NOT used to swallow asset fetch errors
+        assert.ok(!installCode.includes('Promise.allSettled'), 'install handler must not use Promise.allSettled to silently tolerate failed assets');
+
+        // Ensure partial cache is cleaned up on failure
+        assert.ok(/caches\.delete\(CACHE_VERSION\)/.test(installCode), 'install handler must delete partial CACHE_VERSION on precache failure');
+
+        // Ensure an error is thrown to reject waitUntil and abort SW activation
+        assert.ok(/throw new Error\(/.test(installCode), 'install handler must throw an Error when assets fail to cache');
+    });
 });
