@@ -377,6 +377,30 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         }
     });
 
+    test('Ink-Saver Print Styles: .grid-header in rtpa v1 & v2 has transparent background on print (no shading fill)', () => {
+        const currentV1Html = fs.readFileSync(RTPA_V1_PATH, 'utf8');
+        const currentV2Html = fs.readFileSync(RTPA_V2_PATH, 'utf8');
+        const currentPrintCss = fs.readFileSync(PRINT_CSS_PATH, 'utf8');
+
+        for (const [name, content] of [['v1', currentV1Html], ['v2', currentV2Html]]) {
+            const match = content.match(/@media print\s*\{([\s\S]*?)\}\s*<\/style>/i);
+            assert.ok(match, `${name} must have @media print in style block`);
+            const printRules = match[1];
+            assert.ok(/\.grid-header\s*\{[^}]*background(?:-color)?:\s*transparent\s*!important/i.test(printRules),
+                `${name} @media print must enforce .grid-header transparent background`);
+        }
+
+        assert.ok(/\.theme-stroke\s+\.grid-header\s*\{[^}]*background(?:-color)?:\s*transparent\s*!important/i.test(currentPrintCss),
+            'print.css must enforce transparent background for .theme-stroke .grid-header');
+
+        const printMediaMatch = currentPrintCss.match(/@media print\s*\{([\s\S]*)\}/i);
+        assert.ok(printMediaMatch, 'print.css must have @media print block');
+        assert.ok(!/\.grid-header\s*\{[^}]*background-color:\s*#e9ecef/i.test(printMediaMatch[1]),
+            'print.css must not apply #e9ecef background to .grid-header in @media print');
+        assert.ok(/\.grid-header\s*\{[^}]*background(?:-color)?:\s*transparent\s*!important/i.test(printMediaMatch[1]),
+            'print.css must enforce transparent background for all .grid-header on print');
+    });
+
     test('Print Margin Harmony: #print-area matches .stroke-page 195mm width and 3mm padding in v1, v2, and print.css', () => {
         const v1Html = fs.readFileSync(RTPA_V1_PATH, 'utf8');
         const v2Html = fs.readFileSync(RTPA_V2_PATH, 'utf8');

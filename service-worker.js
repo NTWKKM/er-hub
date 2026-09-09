@@ -1,7 +1,7 @@
 // service-worker.js — Offline PWA cache for ER Standing Order Hub
 // Caches all static assets for offline access (ED wifi outages during stroke workup)
 // CRITICAL: Always keep in sync with the nav-right version string in index.html
-const CACHE_VERSION = 'er-hub-v111';
+const CACHE_VERSION = 'er-hub-v113';
 const CACHE_DATE = '09/09/2569';
 const ASSETS = [
   './',
@@ -128,29 +128,30 @@ self.addEventListener('install', (event) => {
     (async () => {
       const cache = await caches.open(CACHE_VERSION);
 
-      // Precache all assets with per-asset retry on failure.
-      // allSettled ensures one failure doesn't block others.
-      // Log failures but don't fail the install.
-      const results = await Promise.allSettled(
+      // Precache all assets with per-asset retry.
+      // If any asset fails after retries, abort install and clean up the partial cache
+      // so the previous working offline cache is retained and not deleted during activation.
+      const failed = [];
+      await Promise.all(
         ASSETS.map(async (url) => {
           try {
             const response = await fetchWithRetry(url, 2, 100);
             await cache.put(url, response);
-            return { url, success: true };
           } catch (err) {
-            // Log but don't throw — precache should be resilient
-            console.warn(`Failed to cache ${url}:`, err.message);
-            return { url, success: false, error: err.message };
+            console.error(`[SW install] Failed to cache ${url}:`, err.message);
+            failed.push({ url, error: err.message });
           }
         })
       );
 
-      // Optional: log summary
-      const succeeded = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
-      const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && !r.value.success)).length;
-      if (failed > 0) {
-        console.warn(`[SW install] Precached ${succeeded}/${ASSETS.length} assets. ${failed} failed (will retry on next load).`);
+      if (failed.length > 0) {
+        // Clean up incomplete cache to prevent partial offline state
+        await caches.delete(CACHE_VERSION);
+        const failedUrls = failed.map(f => f.url).join(', ');
+        throw new Error(`[SW install] Precache failed for ${failed.length} asset(s): ${failedUrls}. Aborting install to prevent activating an incomplete cache.`);
       }
+
+      console.info(`[SW install] Precached all ${ASSETS.length} assets successfully into ${CACHE_VERSION}.`);
     })()
   );
 });

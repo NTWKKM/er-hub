@@ -290,4 +290,19 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
      - Added `display_override: ["window-controls-overlay", "standalone"]` to `manifest.json`.
   6. Updated `service-worker.js` offline cache version to `er-hub-v91` (`28/08/2569`).
 
+## ADR-37: Universal Unshaded Grid Header Print Standards Across All Clinical Standing Orders
 
+- **Context**: Across all standing order worksheets (STEMI, NSTEMI, Heparin, PE, Antivenom, Sedation, Anaphylaxis, and rt-PA v1/v2), the 5-column order table headers (`.grid-header`: Progress Note, Date/Time, Orders for one day, Date/Time, Order for Continuation) previously rendered with `#e9ecef` gray background shading in `@media print`. When printed to physical hospital medical records or exported to PDF, this background fill consumed unnecessary printer toner/ink, caused smudging on low-grade hospital copy paper, and departed from standard unshaded physical clinical chart formatting.
+- **Decision**:
+  1. **Universal Unshaded Print Headers (`shared/print.css`)**:
+     - Enforced `background: transparent !important; background-color: transparent !important;` on `.grid-header` globally in `@media print`.
+     - Purged all `#e9ecef` background fills in `@media print` across `shared/print.css` while preserving clean 1px solid black grid borders (`border-right: 1px solid #000; border-bottom: 1px solid #000;`) and bold typography (`font-weight: bold; color: #000;`).
+  2. **Worksheet Reinforcement (`orders/rtpa.html`, `orders/rtpa-v2.html`)**:
+     - Added matching `.grid-header { background: transparent !important; background-color: transparent !important; }` in their internal `@media print` stylesheets to guarantee zero-fill rendering regardless of cascade order.
+  3. **Core Documentation Alignment (`DESIGN.md`, `ARCHITECTURE.md`)**:
+     - Updated `DESIGN.md` Section 3 ("Printing Constraints (A4 Layout)") to codify the zero-fill header rule as the universal design token policy for print sheets.
+  4. **Regression Test Verification (`tests/rtpa-remediation.test.js`)**:
+     - Added automated regression assertions verifying that both local page print rules and `shared/print.css` prohibit `#e9ecef` on `.grid-header` and mandate `transparent` backgrounds.
+  5. Updated `service-worker.js` offline cache version to `er-hub-v113` (`09/09/2569`).
+  6. **Service Worker Precache Failure Protection (`service-worker.js`)**:
+     - Upgraded the install handler to prevent partial cache activation: replaced `Promise.allSettled` with atomic installation failure propagation. If any asset fails to fetch after retries, the partial cache is purged (`caches.delete(CACHE_VERSION)`) and an error is thrown, aborting installation so the existing complete offline cache is preserved and never prematurely deleted during activation.
