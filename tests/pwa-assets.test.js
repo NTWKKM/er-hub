@@ -93,21 +93,150 @@ describe('PWA Cache Assets Validation', () => {
         assert.ok(hasJetBrains, 'ASSETS manifest must contain self-hosted JetBrains Mono font files');
     });
 
-    test('service-worker.js aborts installation and purges partial cache on precache failure', () => {
+    function loadServiceWorkerContext({ mockFetch, mockCaches }) {
+        const listeners = {};
+        const selfObj = {
+            addEventListener: (event, handler) => {
+                listeners[event] = handler;
+            },
+            location: { origin: 'http://localhost' },
+            clients: { claim: () => Promise.resolve() },
+            skipWaiting: () => {}
+        };
+
+        const context = {
+            self: selfObj,
+            fetch: mockFetch,
+            caches: mockCaches,
+            setTimeout: (fn) => setImmediate(fn),
+            clearTimeout: (id) => clearImmediate(id),
+            console: {
+                log: () => {},
+                info: () => {},
+                warn: () => {},
+                error: () => {}
+            },
+            Promise,
+            Math,
+            Error,
+            Array,
+            Object
+        };
+
+        selfObj.self = selfObj;
+        vm.createContext(context);
         const swContent = fs.readFileSync(SW_PATH, 'utf8');
+        vm.runInContext(swContent, context);
 
-        // Extract install event listener block
-        const installMatch = swContent.match(/self\.addEventListener\('install'[\s\S]*?self\.addEventListener\('activate'/);
-        assert.ok(installMatch, 'install event listener must exist in service-worker.js');
-        const installCode = installMatch[0];
+        const cacheVerMatch = swContent.match(/const\s+CACHE_VERSION\s*=\s*['"](.*?)['"]/);
+        const cacheVersion = cacheVerMatch ? cacheVerMatch[1] : null;
 
-        // Ensure allSettled is NOT used to swallow asset fetch errors
-        assert.ok(!installCode.includes('Promise.allSettled'), 'install handler must not use Promise.allSettled to silently tolerate failed assets');
+        const assetsMatch = swContent.match(/const\s+ASSETS\s*=\s*(\[[\s\S]*?\]);/);
+        const assets = assetsMatch ? vm.runInContext(assetsMatch[1], vm.createContext({})) : [];
 
-        // Ensure partial cache is cleaned up on failure
-        assert.ok(/caches\.delete\(CACHE_VERSION\)/.test(installCode), 'install handler must delete partial CACHE_VERSION on precache failure');
+        return { context, listeners, cacheVersion, assets };
+    }
 
-        // Ensure an error is thrown to reject waitUntil and abort SW activation
-        assert.ok(/throw new Error\(/.test(installCode), 'install handler must throw an Error when assets fail to cache');
+    test('service-worker.js install handler rejects waitUntil and deletes partial cache on precache failure', async () => {
+        const deletedCaches = [];
+        const putAssets = [];
+
+        const mockCache = {
+            put: async (url, response) => {
+                putAssets.push(url);
+            }
+        };
+
+        const mockCaches = {
+            open: async (name) => mockCache,
+            delete: async (name) => {
+                deletedCaches.push(name);
+                return true;
+            }
+        };
+
+        // Make one specific asset exhaust retries
+        const failingAsset = './orders/rtpa.html';
+        const mockFetch = async (url) => {
+            if (url === failingAsset) {
+                throw new Error('Simulated network failure 503');
+            }
+            return { ok: true, status: 200, type: 'basic' };
+        };
+
+        const { listeners, cacheVersion } = loadServiceWorkerContext({ mockFetch, mockCaches });
+        assert.ok(typeof listeners.install === 'function', 'install listener must be registered');
+
+        let waitPromise = null;
+        const mockEvent = {
+            waitUntil: (p) => {
+                waitPromise = p;
+            }
+        };
+
+        listeners.install(mockEvent);
+        assert.ok(waitPromise, 'install handler must call event.waitUntil()');
+
+        await assert.rejects(
+            waitPromise,
+            (err) => {
+                assert.match(err.message, /Precache failed for 1 asset\(s\)/);
+                assert.match(err.message, /orders\/rtpa\.html/);
+                return true;
+            },
+            'waitUntil promise must reject when asset precache fails'
+        );
+
+        assert.ok(
+            deletedCaches.includes(cacheVersion),
+            `caches.delete must be called with CACHE_VERSION (${cacheVersion}) to purge partial cache`
+        );
+    });
+
+    test('service-worker.js install handler resolves waitUntil and caches all assets on success', async () => {
+        const deletedCaches = [];
+        const putAssets = [];
+
+        const mockCache = {
+            put: async (url, response) => {
+                putAssets.push(url);
+            }
+        };
+
+        const mockCaches = {
+            open: async (name) => mockCache,
+            delete: async (name) => {
+                deletedCaches.push(name);
+                return true;
+            }
+        };
+
+        const mockFetch = async (url) => ({ ok: true, status: 200, type: 'basic' });
+
+        const { listeners, assets } = loadServiceWorkerContext({ mockFetch, mockCaches });
+        assert.ok(typeof listeners.install === 'function', 'install listener must be registered');
+
+        let waitPromise = null;
+        const mockEvent = {
+            waitUntil: (p) => {
+                waitPromise = p;
+            }
+        };
+
+        listeners.install(mockEvent);
+        assert.ok(waitPromise, 'install handler must call event.waitUntil()');
+
+        await assert.doesNotReject(waitPromise, 'waitUntil promise must resolve when all assets succeed');
+
+        assert.equal(
+            deletedCaches.length,
+            0,
+            'caches.delete must not be called when installation succeeds'
+        );
+        assert.equal(
+            putAssets.length,
+            assets.length,
+            'all assets from ASSETS array must be cached'
+        );
     });
 });
