@@ -238,5 +238,10 @@ describe('PWA Cache Assets Validation', () => {
             assets.length,
             'all assets from ASSETS array must be cached'
         );
+        assert.deepEqual(
+            [...putAssets].sort(),
+            [...assets].sort(),
+            'each asset from ASSETS must be cached exactly once'
+        );
     });
 });
