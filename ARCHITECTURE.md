@@ -217,7 +217,7 @@ Features:
 | File | Role | Dependencies |
 | --- | --- | --- |
 | `base.css` | Design system, CSS custom properties, responsive layout, top-nav styling | None |
-| `print.css` | A4 print constraints (`@page`, grid, font sizes, `@media print`) | None |
+| `print.css` | A4 print constraints (`@page`, grid, font sizes, `@media print`, universal unshaded table headers) | None |
 | `components.js` | UI component injection: sticky nav bar (`injectNavBar`), print header, sticker box, float bar. `setupCommonActions()` wires `print-btn` to `window.print()`. | None |
 | `calc-engine.js` | Generic drip rate calculation engine (mL/hr). Guards against null/undefined/NaN params. | None |
 | `clinical-engine.js` | GRACE score + eGFR (CKD-EPI 2021). Sole eGFR source of truth. Case-insensitive sex normalization, `Math.round()` return, null-safe. Killip lookup uses direct string key. | None |
