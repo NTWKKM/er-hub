@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.1.4] — 2026-09-11
+
+### Stroke Fast Track Accessibility, Clinical Max Dose Awareness & SW Cache Bump
+
+- **Accessibility & Keyboard Navigation (`orders/rtpa.html`):**
+  - Implemented WAI-ARIA roving `tabindex` on dosage regimen radio buttons (`tabindex="0"` on active, `-1` on inactive).
+  - Added full 4-way arrow key navigation (↑, ↓, ←, →) with wrap-around support.
+  - Reset roving tabindex on Form Clear.
+- **Clinical Safety Max Dose Micro-Badge (`orders/rtpa.html`, `orders/rtpa-v2.html`):**
+  - Added real-time micro-badge `⚠ Max dose capped` appearing immediately when patient weight reaches or exceeds the clinical ceiling dose.
+  - In v2, placed adjacent to `TOTAL DOSE` with soft clinical red alert styling (`#fef2f2`, `#b91c1c`, `#fecaca`, AAA contrast 7.44:1).
+  - Added smooth fade-in animations (`0.15s ease-out`) for micro-badge and HUD values without flicker during continuous weight entry.
+- **Service Worker & Cache Bump (`service-worker.js`):**
+  - Bumped offline PWA cache to `er-hub-v114` (`11/09/2569`).
+
 ## [3.1.3] — 2026-09-05
 
 ### Stroke Fast Track Print Layout & Sticker Box Calibration
