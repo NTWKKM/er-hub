@@ -177,8 +177,8 @@
 
         .input-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 16px 20px;
             align-items: start;
             margin-bottom: 16px;
         }
@@ -186,6 +186,66 @@
         .input-column {
             display: flex;
             flex-direction: column;
+        }
+
+        .form-section-inputs {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-section-dose {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-section-time {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            min-height: 28px;
+        }
+
+        .micro-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            font-size: 11.5px;
+            font-weight: 600;
+            border-radius: 12px;
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+            white-space: nowrap;
+        }
+
+        .micro-badge.visible {
+            opacity: 1;
+            visibility: visible;
+            animation: fadeInBadge 0.15s ease-out forwards;
+        }
+
+        @keyframes fadeInBadge {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes microBadgeFadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         .inline-input-group {
@@ -217,12 +277,6 @@
             border-color: var(--stroke-primary);
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
             outline: none;
-        }
-
-        .checkbox-time-group {
-            margin-top: 2px;
-            margin-bottom: 0;
-            padding-left: 130px;
         }
 
         .button-dose-group {
@@ -370,9 +424,6 @@
                 grid-template-columns: 1fr;
                 gap: 14px;
             }
-            .checkbox-time-group {
-                padding-left: 0;
-            }
             .inline-input-group label {
                 width: 110px;
             }
@@ -494,8 +545,8 @@
 
             <form id="rtpa-form">
                 <div class="input-layout">
-                    <!-- Left Column -->
-                    <div class="input-column">
+                    <!-- form-section-inputs: HN and Weight inputs -->
+                    <div class="input-column form-section-inputs">
                         <div class="inline-input-group">
                             <label for="hn">HN:</label>
                             <input type="text" id="hn" required placeholder="กรอก HN">
@@ -505,26 +556,28 @@
                             <input type="number" id="weight" step="0.01" min="20" max="250" required
                                 placeholder="ทศนิยม 2 ตำแหน่ง เช่น 75.58">
                         </div>
-
-                        <div class="checkbox-time-group">
-                            <label class="flag-label" style="font-weight: normal;">
-                                <input type="checkbox" id="use-current-time" checked>
-                                บันทึกเวลาปัจจุบัน (Use Current Time)
-                            </label>
-                        </div>
                     </div>
 
-                    <!-- Right Column -->
-                    <div class="input-column">
+                    <!-- form-section-dose: Dosage regimen selection buttons -->
+                    <div class="input-column form-section-dose">
                         <div class="button-dose-group" role="radiogroup" aria-label="ขนาดยา rt-PA (Dosage Regimen)">
-                            <button type="button" class="dose-button active" data-dose="0.9" role="radio" aria-checked="true">
+                            <button type="button" class="dose-button active" data-dose="0.9" role="radio" aria-checked="true" tabindex="0">
                                 Standard Dose: 0.9 mg/kg (Max 90 mg)
                             </button>
-                            <button type="button" class="dose-button" data-dose="0.6" role="radio" aria-checked="false">
+                            <button type="button" class="dose-button" data-dose="0.6" role="radio" aria-checked="false" tabindex="-1">
                                 Alternative Dose: 0.6 mg/kg (Max 60 mg)
                             </button>
                             <input type="hidden" id="selected-dose-value" name="dose" value="0.9">
                         </div>
+                    </div>
+
+                    <!-- form-section-time: Dedicated full-width row for time checkbox and max dose badge -->
+                    <div class="form-section-time">
+                        <label class="flag-label" style="font-weight: normal; margin-bottom: 0;">
+                            <input type="checkbox" id="use-current-time" checked>
+                            บันทึกเวลาปัจจุบัน (Use Current Time)
+                        </label>
+                        <span id="max-dose-badge" class="micro-badge" aria-live="polite">⚠ Max dose capped</span>
                     </div>
                 </div>
 
@@ -1089,8 +1142,9 @@
             const form = document.getElementById('rtpa-form');
             const hnInput = document.getElementById('hn');
             const weightInput = document.getElementById('weight');
-            const doseButtons = document.querySelectorAll('.dose-button');
+            const doseButtons = Array.from(document.querySelectorAll('.dose-button'));
             const selectedDoseInput = document.getElementById('selected-dose-value');
+            const maxDoseBadge = document.getElementById('max-dose-badge');
 
             ED_BLANK_PRINT.register([
                 { id: 'result-hn', value: '....................' },
@@ -1105,6 +1159,20 @@
                 { id: 'order-date-cont', html: ED_PRINT_BOOTSTRAP.getBlankDateTimeHTML() },
             ]);
 
+            // Real-time micro-badge calculation for clinical ceiling dose
+            function updateMaxDoseBadge() {
+                const rawWeight = parseFloat(weightInput.value);
+                const selectedDose = parseFloat(selectedDoseInput.value) || 0.9;
+                const maxDose = selectedDose === 0.9 ? 90 : 60;
+                if (maxDoseBadge) {
+                    if (!isNaN(rawWeight) && rawWeight > 0 && (rawWeight * selectedDose) >= maxDose) {
+                        maxDoseBadge.classList.add('visible');
+                    } else {
+                        maxDoseBadge.classList.remove('visible');
+                    }
+                }
+            }
+
             // Invalidate calculated results when input parameters change
             function invalidateOrderDisplay() {
                 const rc = document.getElementById('results-container');
@@ -1115,23 +1183,50 @@
             }
 
             hnInput.addEventListener('input', invalidateOrderDisplay);
-            weightInput.addEventListener('input', invalidateOrderDisplay);
+            weightInput.addEventListener('input', () => {
+                invalidateOrderDisplay();
+                updateMaxDoseBadge();
+            });
             const useTimeCheckbox = document.getElementById('use-current-time');
             if (useTimeCheckbox) {
                 useTimeCheckbox.addEventListener('change', invalidateOrderDisplay);
             }
 
-            // Handle Dosage Button Clicks
-            doseButtons.forEach(button => {
+            // WAI-ARIA roving tabindex & active state updater
+            function setActiveDoseButton(button, shouldFocus = false) {
+                doseButtons.forEach(btn => {
+                    const isActive = btn === button;
+                    btn.classList.toggle('active', isActive);
+                    btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+                    btn.setAttribute('tabindex', isActive ? '0' : '-1');
+                });
+                selectedDoseInput.value = button.getAttribute('data-dose');
+                if (shouldFocus) {
+                    button.focus();
+                }
+                invalidateOrderDisplay();
+                updateMaxDoseBadge();
+            }
+
+            // Handle Dosage Button Clicks & 4-Way Arrow Key Navigation (↑, ↓, ←, →)
+            doseButtons.forEach((button, index) => {
                 button.addEventListener('click', () => {
-                    doseButtons.forEach(btn => {
-                        btn.classList.remove('active');
-                        btn.setAttribute('aria-checked', 'false');
-                    });
-                    button.classList.add('active');
-                    button.setAttribute('aria-checked', 'true');
-                    selectedDoseInput.value = button.getAttribute('data-dose');
-                    invalidateOrderDisplay();
+                    setActiveDoseButton(button);
+                });
+
+                button.addEventListener('keydown', (e) => {
+                    let targetIndex = -1;
+                    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        targetIndex = (index + 1) % doseButtons.length;
+                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        targetIndex = (index - 1 + doseButtons.length) % doseButtons.length;
+                    }
+
+                    if (targetIndex !== -1) {
+                        setActiveDoseButton(doseButtons[targetIndex], true);
+                    }
                 });
             });
 
@@ -1175,13 +1270,16 @@
                     doseButtons.forEach(btn => {
                         btn.classList.remove('active');
                         btn.setAttribute('aria-checked', 'false');
+                        btn.setAttribute('tabindex', '-1');
                     });
                     const stdBtn = document.querySelector('.dose-button[data-dose="0.9"]');
                     if (stdBtn) {
                         stdBtn.classList.add('active');
                         stdBtn.setAttribute('aria-checked', 'true');
+                        stdBtn.setAttribute('tabindex', '0');
                     }
                     selectedDoseInput.value = "0.9";
+                    updateMaxDoseBadge();
 
                     // Reset print-area DOM fields to avoid stale PHI on print
                     ['result-hn', 'result-weight', 'result-regimen', 'total-dose', 'push-percent', 'push-dose', 'drip-percent', 'drip-dose'].forEach(id => {

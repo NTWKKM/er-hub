@@ -245,6 +245,47 @@
             align-items: center;
         }
 
+        .micro-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 7px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 12px;
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+            white-space: nowrap;
+        }
+
+        .micro-badge.visible {
+            opacity: 1;
+            visibility: visible;
+            animation: fadeInBadge 0.15s ease-out forwards;
+        }
+
+        @keyframes fadeInBadge {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes microBadgeFadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
         .hud-metric {
             display: flex;
             flex-direction: column;
@@ -273,6 +314,21 @@
             font-variant-numeric: tabular-nums;
             font-family: var(--font-ui);
             line-height: 1.2;
+        }
+
+        .hud-value.animate-fade {
+            animation: fadeInValue 0.15s ease-out;
+        }
+
+        @keyframes fadeInValue {
+            from {
+                opacity: 0.35;
+                transform: translateY(-1px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .hud-value-total {
@@ -678,7 +734,10 @@
                 <!-- Live Dose HUD Preview -->
                 <div class="dose-hud" id="dose-hud-preview">
                     <div class="hud-metric">
-                        <span class="hud-label">Total Dose</span>
+                        <div style="display: flex; align-items: center; gap: 8px; min-height: 20px;">
+                            <span class="hud-label">Total Dose</span>
+                            <span id="hud-max-dose-badge" class="micro-badge" aria-live="polite">⚠ Max dose capped</span>
+                        </div>
                         <span class="hud-value hud-value-total" id="hud-total-dose">-- mg</span>
                         <span class="hud-pill" id="hud-regimen-badge">0.9 mg/kg</span>
                     </div>
@@ -1252,7 +1311,19 @@
                 useTimeCheckbox.addEventListener('change', invalidateOrderDisplay);
             }
 
-            function updateLiveHUD() {
+            let hudHasValue = false;
+
+            function triggerHudValueFade() {
+                [hudTotal, hudPush, hudDrip].forEach(el => {
+                    if (!el) return;
+                    el.classList.remove('animate-fade');
+                    void el.offsetWidth;
+                    el.classList.add('animate-fade');
+                });
+            }
+
+            function updateLiveHUD(options = {}) {
+                const isRegimenSwitch = !!options.regimenSwitch;
                 const rawWeight = parseFloat(weightInput.value);
                 const weight = Math.round(rawWeight * 100) / 100;
                 const rawRegimen = getSelectedRegimen();
@@ -1269,10 +1340,13 @@
                     hudMetricDrip.setAttribute('aria-disabled', isTnk ? 'true' : 'false');
                 }
 
+                const hudMaxBadge = document.getElementById('hud-max-dose-badge');
+
                 if (isNaN(weight) || weight < 20 || weight > 250) {
                     hudTotal.textContent = '-- mg';
                     hudPush.textContent = '-- mg';
                     hudDrip.textContent = '-- mg';
+                    hudHasValue = false;
                     if (isTnk) {
                         hudPushLabel.textContent = 'Single IV push (5–10s)';
                         hudDripLabel.textContent = 'No drip required';
@@ -1280,9 +1354,14 @@
                         hudPushLabel.textContent = regimen === 0.6 ? '15% of total dose' : '10% of total dose';
                         hudDripLabel.textContent = regimen === 0.6 ? '85% of total dose' : '90% of total dose';
                     }
+                    if (hudMaxBadge) hudMaxBadge.classList.remove('visible');
                     return;
                 }
 
+                const wasEmpty = !hudHasValue;
+                hudHasValue = true;
+
+                let isCapped = false;
                 if (isTnk) {
                     const tnkDose = STROKE_ENGINE.calcTnkStrokeDose(weight);
                     if (tnkDose) {
@@ -1291,6 +1370,7 @@
                         hudDrip.textContent = '0 mg';
                         hudPushLabel.textContent = 'Single IV push (5–10s, 5 mg/mL)';
                         hudDripLabel.textContent = 'ไม่ต้อง Drip ต่อ (No Drip)';
+                        isCapped = (weight * 0.25) >= 25;
                     }
                 } else {
                     const dose = STROKE_ENGINE.calcRtpaDose(weight, regimen);
@@ -1300,11 +1380,21 @@
                         hudDrip.textContent = dose.dripDose.toFixed(2) + ' mg';
                         hudPushLabel.textContent = dose.pushPercent + '% of total dose';
                         hudDripLabel.textContent = dose.dripPercent + '% of total dose';
+                        const maxDose = regimen === 0.9 ? 90 : 60;
+                        isCapped = (weight * regimen) >= maxDose;
                     }
+                }
+
+                if (hudMaxBadge) {
+                    hudMaxBadge.classList.toggle('visible', isCapped);
+                }
+
+                if (isRegimenSwitch || wasEmpty) {
+                    triggerHudValueFade();
                 }
             }
 
-            weightInput.addEventListener('input', updateLiveHUD);
+            weightInput.addEventListener('input', () => updateLiveHUD());
 
             // Handle Regimen Radio Selection
             const doseRadios = document.querySelectorAll('input[name="dose-radio"]');
@@ -1316,7 +1406,7 @@
                         const r = c.querySelector('input[type="radio"]');
                         c.classList.toggle('active', r && r.checked);
                     });
-                    updateLiveHUD();
+                    updateLiveHUD({ regimenSwitch: true });
                     invalidateOrderDisplay();
                 });
             });
