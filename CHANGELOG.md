@@ -11,7 +11,10 @@
   - Isolated unit in `<span class="live-dose-unit">mg</span>` with 4px gap to eliminate Flexbox whitespace collapsing.
   - Added responsive 3-column dashboard grid layout for mobile screens ($\le$ 600px) and `padding-left: 55px` on header to protect hospital logo alignment.
 - **Stroke Fast Track Worksheet V2 (`orders/rtpa-v2.html`):**
-  - Preserved original clean HUD typography on desktop while adopting the responsive 3-column mobile layout and header padding protection.
+  - Unified Live Dose Micro-Dashboard into single-line format matching v1 (`Total = ... | Push = ... | Drip = ...`).
+  - Total Dose highlighted with Soft Yellow (`#FEF08A` badge), Push in Medical Blue (`#0066CC`), and Drip in Clinical Green (`#1C8930`).
+  - When Tenecteplase (TNK 0.25 mg/kg) is selected, Drip section is visually grayed out (`opacity: 0.35`, `grayscale(1)`) and displays double dash (`—`), communicating bolus-only thrombolysis with zero clinical ambiguity.
+  - Adopted responsive 3-column mobile layout and header padding protection.
 - **Service Worker & Cache Bump (`service-worker.js`):**
   - Bumped offline PWA cache to `er-hub-v115` (`14/09/2569`).
 

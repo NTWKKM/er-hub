@@ -235,7 +235,7 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
         // 60 kg * 0.25 = 15 mg (3.0 mL of 5 mg/mL)
         assert.equal(doc.getElementById('hud-total-dose').textContent, '15.0 mg (3.0 mL)');
         assert.equal(doc.getElementById('hud-push-dose').textContent, '15.0 mg (3.0 mL)');
-        assert.equal(doc.getElementById('hud-drip-dose').textContent, '0 mg');
+        assert.equal(doc.getElementById('hud-drip-dose').textContent, '—');
         assert.equal(doc.getElementById('hud-regimen-badge').textContent, 'TNK 0.25 mg/kg');
         assert.equal(doc.getElementById('hud-push-title').textContent, 'Single IV Bolus (5–10s)');
         assert.equal(doc.getElementById('hud-drip-title').textContent, 'IV Drip (No Drip)');

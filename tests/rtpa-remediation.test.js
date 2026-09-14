@@ -721,18 +721,20 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         assert.equal(liveDripPct.textContent, '90', 'Clear button must reset drip pct to 90');
     });
 
-    test('Clinical UI & Mobile Layout: rtpa-v2.html original HUD styling and mobile grid', () => {
+    test('Clinical UI & Mobile Layout: rtpa-v2.html unified live dose micro-dashboard and mobile grid', () => {
         const v2Content = fs.readFileSync(RTPA_V2_PATH, 'utf8');
 
-        // Verify original HUD styling preserved for v2
-        assert.ok(v2Content.includes('color: #0056b3;'), 'v2 must style .hud-value-total with original #0056b3 color');
-        assert.ok(v2Content.includes('color: #c0392b;'), 'v2 must style .hud-value-push with original #c0392b red');
-        assert.ok(v2Content.includes('color: #1e7e34;'), 'v2 must style .hud-value-drip with original #1e7e34 green');
-        assert.ok(!v2Content.includes('.hud-value-total {\n            color: #111827;'), 'v2 total dose must not have yellow badge override');
+        // Verify unified live-dose-line styling with Soft Yellow badge (#FEF08A), Push (#0066CC), Drip (#1C8930)
+        assert.ok(v2Content.includes('.live-dose-line'), 'v2 must include .live-dose-line single-line bar');
+        assert.ok(v2Content.includes('background-color: #FEF08A;'), 'v2 must style total dose with Soft Yellow #FEF08A badge');
+        assert.ok(v2Content.includes('color: #0066CC;'), 'v2 must style push dose with clinical blue #0066CC');
+        assert.ok(v2Content.includes('color: #1C8930;'), 'v2 must style drip dose with clinical green #1C8930');
+        assert.ok(v2Content.includes('opacity: 0.35;'), 'v2 must include disabled opacity for TNK drip');
+        assert.ok(v2Content.includes('filter: grayscale(1);'), 'v2 must include disabled grayscale filter for TNK drip');
 
         // Verify mobile responsive grid & header padding
         assert.ok(v2Content.includes('padding-left: 55px'), 'v2 must include padding-left: 55px on header for mobile');
-        assert.match(v2Content, /\.dose-hud\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*1fr\)/i, 'v2 must adapt dose-hud to 3-column grid on mobile');
+        assert.match(v2Content, /\.live-dose-line\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*1fr\)/i, 'v2 must adapt live-dose-line to 3-column grid on mobile');
 
         // DOM verification
         const win = loadHtmlDom('orders/rtpa-v2.html');
@@ -740,10 +742,18 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         const hudTotal = doc.getElementById('hud-total-dose');
         const hudPush = doc.getElementById('hud-push-dose');
         const hudDrip = doc.getElementById('hud-drip-dose');
+        const hudMetricDrip = doc.getElementById('hud-metric-drip');
 
-        // Initial state
-        assert.equal(hudTotal.textContent, '— mg', 'Initial Total must be — mg');
-        assert.equal(hudPush.textContent, '— mg', 'Initial Push must be — mg');
-        assert.equal(hudDrip.textContent, '— mg', 'Initial Drip must be — mg');
+        // Initial state is double dash (—)
+        assert.equal(hudTotal.textContent, '—', 'Initial Total must be —');
+        assert.equal(hudPush.textContent, '—', 'Initial Push must be —');
+        assert.equal(hudDrip.textContent, '—', 'Initial Drip must be —');
+
+        // Switch to TNK -> Drip is disabled and displays —
+        const tnkRadio = doc.querySelector('input[name="dose-radio"][value="tnk"]');
+        tnkRadio.checked = true;
+        tnkRadio.dispatchEvent(new win.Event('change'));
+        assert.equal(hudDrip.textContent, '—', 'TNK Drip must display double dash (—)');
+        assert.ok(hudMetricDrip.classList.contains('disabled'), 'TNK Drip metric must be disabled (grayed out)');
     });
 });
