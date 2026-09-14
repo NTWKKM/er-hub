@@ -9,6 +9,7 @@
   - Initial state displays double dash `—` and dynamically adjusts Push / Drip percentages according to active regimen (0.9 mg/kg: 10%/90% vs 0.6 mg/kg: 15%/85%).
   - Clinical accent highlights Total Dose in Soft Yellow (`#FEF08A` badge), Push in Medical Blue (`#0066CC`), and Drip in Clinical Green (`#1C8930`).
   - Isolated unit in `<span class="live-dose-unit">mg</span>` with 4px gap to eliminate Flexbox whitespace collapsing.
+  - Enforced clinical weight boundary validation (20–250 kg) to reset dashboard and max dose badge to `—` when out-of-range, aligning with worksheet limits and V2 behavior.
   - Added responsive 3-column dashboard grid layout for mobile screens ($\le$ 600px) and `padding-left: 55px` on header to protect hospital logo alignment.
 - **Stroke Fast Track Worksheet V2 (`orders/rtpa-v2.html`):**
   - Unified Live Dose Micro-Dashboard into single-line format matching v1 (`Total = ... | Push = ... | Drip = ...`).

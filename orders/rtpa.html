@@ -1316,7 +1316,7 @@
                 const selectedDose = parseFloat(selectedDoseInput.value) || 0.9;
                 const maxDose = selectedDose === 0.9 ? 90 : 60;
                 if (maxDoseBadge) {
-                    if (!isNaN(rawWeight) && rawWeight > 0 && (rawWeight * selectedDose) >= maxDose) {
+                    if (!isNaN(rawWeight) && rawWeight >= 20 && rawWeight <= 250 && (rawWeight * selectedDose) >= maxDose) {
                         maxDoseBadge.classList.add('visible');
                     } else {
                         maxDoseBadge.classList.remove('visible');
@@ -1350,7 +1350,7 @@
                 if (livePushPct) livePushPct.textContent = pushPct.toString();
                 if (liveDripPct) liveDripPct.textContent = dripPct.toString();
 
-                if (isNaN(rawWeight) || rawWeight <= 0) {
+                if (isNaN(rawWeight) || rawWeight < 20 || rawWeight > 250) {
                     setLiveVal(liveTotal, '—');
                     setLiveVal(livePush, '—');
                     setLiveVal(liveDrip, '—');

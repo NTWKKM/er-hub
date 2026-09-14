@@ -712,7 +712,23 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         assert.equal(livePush.textContent, '9.0', 'Push dose capped at 9.0 mg');
         assert.equal(liveDrip.textContent, '81.00', 'Drip dose capped at 81.00 mg');
 
-        // 5. Clear button resets live dose dashboard back to "—"
+        // 5. Out-of-range weights (< 20 kg or > 250 kg) reset live dose to "—"
+        weightInput.value = '10';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.equal(liveTotal.textContent, '—', 'Weight below 20 kg must reset Total to —');
+        assert.equal(livePush.textContent, '—', 'Weight below 20 kg must reset Push to —');
+        assert.equal(liveDrip.textContent, '—', 'Weight below 20 kg must reset Drip to —');
+
+        weightInput.value = '300';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.equal(liveTotal.textContent, '—', 'Weight above 250 kg must reset Total to —');
+        assert.equal(livePush.textContent, '—', 'Weight above 250 kg must reset Push to —');
+        assert.equal(liveDrip.textContent, '—', 'Weight above 250 kg must reset Drip to —');
+
+        // 6. Clear button resets live dose dashboard back to "—"
+        weightInput.value = '60';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.equal(liveTotal.textContent, '54.00', 'Valid 60 kg must display 54.00');
         clearBtn.click();
         assert.equal(liveTotal.textContent, '—', 'Clear button must reset Total to —');
         assert.equal(livePush.textContent, '—', 'Clear button must reset Push to —');
