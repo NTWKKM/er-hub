@@ -647,4 +647,103 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         lowRadio.dispatchEvent(new win.Event('change'));
         assert.ok(hudTotal.classList.contains('animate-fade'), 'Regimen switch must trigger animate-fade');
     });
+
+    test('Live Dose Micro-Dashboard: rtpa.html (v1) real-time dose calculation, clinical accents, unit isolation, and mobile grid', () => {
+        const v1Content = fs.readFileSync(RTPA_V1_PATH, 'utf8');
+
+        // Verify HTML markup and unit isolation
+        assert.ok(v1Content.includes('class="live-dose-line"'), 'v1 must contain live-dose-line container');
+        assert.ok(v1Content.includes('id="live-total"'), 'v1 must contain live-total');
+        assert.ok(v1Content.includes('id="live-push"'), 'v1 must contain live-push');
+        assert.ok(v1Content.includes('id="live-drip"'), 'v1 must contain live-drip');
+        assert.ok(v1Content.includes('class="live-dose-unit"'), 'v1 must wrap unit in .live-dose-unit');
+
+        // Verify CSS styling rules
+        assert.ok(v1Content.includes('#FEF08A'), 'v1 must style total badge with #FEF08A highlighter');
+        assert.ok(v1Content.includes('#0066CC'), 'v1 must style push value with #0066CC clinical blue');
+        assert.ok(v1Content.includes('#1C8930'), 'v1 must style drip value with #1C8930 clinical green');
+        assert.ok(v1Content.includes('padding-left: 55px'), 'v1 must include padding-left: 55px on header for mobile');
+        assert.match(v1Content, /grid-template-columns:\s*repeat\(3,\s*1fr\)/i, 'v1 must use 3-column dashboard grid on mobile');
+
+        // DOM verification
+        const win = loadHtmlDom('orders/rtpa.html');
+        const doc = win.document;
+        const weightInput = doc.getElementById('weight');
+        const liveTotal = doc.getElementById('live-total');
+        const livePush = doc.getElementById('live-push');
+        const liveDrip = doc.getElementById('live-drip');
+        const livePushPct = doc.getElementById('live-push-pct');
+        const liveDripPct = doc.getElementById('live-drip-pct');
+        const clearBtn = doc.getElementById('clear-btn');
+        const btn06 = doc.querySelector('.dose-button[data-dose="0.6"]');
+        const btn09 = doc.querySelector('.dose-button[data-dose="0.9"]');
+
+        // 1. Initial state without weight: displays double dash "—"
+        assert.equal(liveTotal.textContent, '—', 'Initial Total must be double dash —');
+        assert.equal(livePush.textContent, '—', 'Initial Push must be double dash —');
+        assert.equal(liveDrip.textContent, '—', 'Initial Drip must be double dash —');
+        assert.equal(livePushPct.textContent, '10', 'Initial push pct must be 10%');
+        assert.equal(liveDripPct.textContent, '90', 'Initial drip pct must be 90%');
+
+        // 2. Real-time calculation on weight input (without HN): weight = 70 kg, standard 0.9 regimen
+        weightInput.value = '70';
+        weightInput.dispatchEvent(new win.Event('input'));
+        // 70 * 0.9 = 63.00 mg total, 6.3 mg push (10%), 56.70 mg drip (90%)
+        assert.equal(liveTotal.textContent, '63.00', 'Total dose for 70 kg at 0.9 must be 63.00 mg');
+        assert.equal(livePush.textContent, '6.3', 'Push dose for 70 kg at 0.9 must be 6.3 mg');
+        assert.equal(liveDrip.textContent, '56.70', 'Drip dose for 70 kg at 0.9 must be 56.70 mg');
+        assert.equal(livePushPct.textContent, '10', 'Push percentage must remain 10');
+        assert.equal(liveDripPct.textContent, '90', 'Drip percentage must remain 90');
+
+        // 3. Regimen switch to 0.6 mg/kg (Alternative Asian regimen: 15% push / 85% drip)
+        btn06.click();
+        // 70 * 0.6 = 42.00 mg total, 6.3 mg push (15%), 35.70 mg drip (85%)
+        assert.equal(livePushPct.textContent, '15', 'Switching to 0.6 must update push pct to 15');
+        assert.equal(liveDripPct.textContent, '85', 'Switching to 0.6 must update drip pct to 85');
+        assert.equal(liveTotal.textContent, '42.00', 'Total dose for 70 kg at 0.6 must be 42.00 mg');
+        assert.equal(livePush.textContent, '6.3', 'Push dose for 70 kg at 0.6 must be 6.3 mg');
+        assert.equal(liveDrip.textContent, '35.70', 'Drip dose for 70 kg at 0.6 must be 35.70 mg');
+
+        // 4. Weight cap check: 110 kg at 0.9 mg/kg -> capped at 90 mg (9.0 mg push, 81.00 mg drip)
+        btn09.click();
+        weightInput.value = '110';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.equal(liveTotal.textContent, '90.00', 'Total dose capped at 90.00 mg');
+        assert.equal(livePush.textContent, '9.0', 'Push dose capped at 9.0 mg');
+        assert.equal(liveDrip.textContent, '81.00', 'Drip dose capped at 81.00 mg');
+
+        // 5. Clear button resets live dose dashboard back to "—"
+        clearBtn.click();
+        assert.equal(liveTotal.textContent, '—', 'Clear button must reset Total to —');
+        assert.equal(livePush.textContent, '—', 'Clear button must reset Push to —');
+        assert.equal(liveDrip.textContent, '—', 'Clear button must reset Drip to —');
+        assert.equal(livePushPct.textContent, '10', 'Clear button must reset push pct to 10');
+        assert.equal(liveDripPct.textContent, '90', 'Clear button must reset drip pct to 90');
+    });
+
+    test('Clinical UI & Mobile Layout: rtpa-v2.html original HUD styling and mobile grid', () => {
+        const v2Content = fs.readFileSync(RTPA_V2_PATH, 'utf8');
+
+        // Verify original HUD styling preserved for v2
+        assert.ok(v2Content.includes('color: #0056b3;'), 'v2 must style .hud-value-total with original #0056b3 color');
+        assert.ok(v2Content.includes('color: #c0392b;'), 'v2 must style .hud-value-push with original #c0392b red');
+        assert.ok(v2Content.includes('color: #1e7e34;'), 'v2 must style .hud-value-drip with original #1e7e34 green');
+        assert.ok(!v2Content.includes('.hud-value-total {\n            color: #111827;'), 'v2 total dose must not have yellow badge override');
+
+        // Verify mobile responsive grid & header padding
+        assert.ok(v2Content.includes('padding-left: 55px'), 'v2 must include padding-left: 55px on header for mobile');
+        assert.match(v2Content, /\.dose-hud\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*1fr\)/i, 'v2 must adapt dose-hud to 3-column grid on mobile');
+
+        // DOM verification
+        const win = loadHtmlDom('orders/rtpa-v2.html');
+        const doc = win.document;
+        const hudTotal = doc.getElementById('hud-total-dose');
+        const hudPush = doc.getElementById('hud-push-dose');
+        const hudDrip = doc.getElementById('hud-drip-dose');
+
+        // Initial state
+        assert.equal(hudTotal.textContent, '— mg', 'Initial Total must be — mg');
+        assert.equal(hudPush.textContent, '— mg', 'Initial Push must be — mg');
+        assert.equal(hudDrip.textContent, '— mg', 'Initial Drip must be — mg');
+    });
 });
