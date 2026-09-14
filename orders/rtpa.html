@@ -703,7 +703,7 @@
                 </div>
 
                 <!-- Minimal Single-Line Live Dose with Clinical Color & Bold Typography -->
-                <div class="live-dose-line" role="region" aria-label="ขนาดยา rt-PA คำนวณทันที">
+                <div class="live-dose-line" role="region" aria-label="ขนาดยา rt-PA คำนวณทันที" aria-live="polite" aria-atomic="true">
                     <span class="live-dose-item">
                         <span class="live-dose-total-label">Total</span>
                         <span class="live-dose-text">
@@ -1316,7 +1316,7 @@
                 const selectedDose = parseFloat(selectedDoseInput.value) || 0.9;
                 const maxDose = selectedDose === 0.9 ? 90 : 60;
                 if (maxDoseBadge) {
-                    if (!isNaN(rawWeight) && rawWeight >= 20 && rawWeight <= 250 && (rawWeight * selectedDose) >= maxDose) {
+                    if (!isNaN(rawWeight) && rawWeight >= 20 && rawWeight <= 250 && (rawWeight * selectedDose) > maxDose) {
                         maxDoseBadge.classList.add('visible');
                     } else {
                         maxDoseBadge.classList.remove('visible');

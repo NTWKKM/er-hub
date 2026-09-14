@@ -534,15 +534,20 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         weightInput.dispatchEvent(new win.Event('input'));
         assert.ok(!badge.classList.contains('visible'), 'Micro-badge must be hidden when 99 * 0.9 = 89.1 < 90');
 
-        // Weight 100 kg -> 100 * 0.9 = 90 >= 90 mg -> badge visible
+        // Weight 100 kg -> 100 * 0.9 = 90 mg (exact max dose, unclamped) -> badge hidden
         weightInput.value = '100';
         weightInput.dispatchEvent(new win.Event('input'));
-        assert.ok(badge.classList.contains('visible'), 'Micro-badge must appear when 100 * 0.9 = 90 >= 90');
+        assert.ok(!badge.classList.contains('visible'), 'Micro-badge must remain hidden when 100 * 0.9 = 90 (not exceeding maxDose)');
 
-        // Weight 110 kg -> 110 * 0.9 = 99 >= 90 mg -> badge visible
+        // Weight 101 kg -> 101 * 0.9 = 90.9 > 90 mg -> badge visible (capped)
+        weightInput.value = '101';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(badge.classList.contains('visible'), 'Micro-badge must appear when 101 * 0.9 = 90.9 > 90');
+
+        // Weight 110 kg -> 110 * 0.9 = 99 > 90 mg -> badge visible
         weightInput.value = '110';
         weightInput.dispatchEvent(new win.Event('input'));
-        assert.ok(badge.classList.contains('visible'), 'Micro-badge must remain visible when 110 * 0.9 >= 90');
+        assert.ok(badge.classList.contains('visible'), 'Micro-badge must remain visible when 110 * 0.9 > 90');
 
         // Switch to Alternative dose (0.6 mg/kg, max 60 mg) with weight 90 kg:
         // 90 * 0.6 = 54 < 60 mg -> badge hidden
@@ -551,10 +556,15 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         btn06.click();
         assert.ok(!badge.classList.contains('visible'), 'Micro-badge must be hidden for 0.6 regimen when 90 * 0.6 = 54 < 60');
 
-        // Weight 100 kg on 0.6 regimen -> 100 * 0.6 = 60 >= 60 mg -> badge visible
+        // Weight 100 kg on 0.6 regimen -> 100 * 0.6 = 60 mg (exact max dose, unclamped) -> badge hidden
         weightInput.value = '100';
         weightInput.dispatchEvent(new win.Event('input'));
-        assert.ok(badge.classList.contains('visible'), 'Micro-badge must appear for 0.6 regimen when 100 * 0.6 = 60 >= 60');
+        assert.ok(!badge.classList.contains('visible'), 'Micro-badge must remain hidden for 0.6 regimen when 100 * 0.6 = 60 (not exceeding maxDose)');
+
+        // Weight 101 kg on 0.6 regimen -> 101 * 0.6 = 60.6 > 60 mg -> badge visible (capped)
+        weightInput.value = '101';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(badge.classList.contains('visible'), 'Micro-badge must appear for 0.6 regimen when 101 * 0.6 = 60.6 > 60');
 
         // Clear button resets weight and hides micro-badge
         clearBtn.click();
@@ -588,7 +598,11 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
 
         weightInput.value = '100';
         weightInput.dispatchEvent(new win.Event('input'));
-        assert.ok(badge.classList.contains('visible'), 'Badge appears for 0.9 regimen when 100 * 0.9 = 90 >= 90');
+        assert.ok(!badge.classList.contains('visible'), 'Badge hidden for 0.9 regimen when 100 * 0.9 = 90 (unclamped)');
+
+        weightInput.value = '101';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(badge.classList.contains('visible'), 'Badge appears for 0.9 regimen when 101 * 0.9 = 90.9 > 90');
 
         // Alternative Low dose (0.6 mg/kg, max 60 mg)
         lowRadio.checked = true;
@@ -599,7 +613,11 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
 
         weightInput.value = '100';
         weightInput.dispatchEvent(new win.Event('input'));
-        assert.ok(badge.classList.contains('visible'), 'Badge appears for 0.6 regimen when 100 * 0.6 = 60 >= 60');
+        assert.ok(!badge.classList.contains('visible'), 'Badge hidden for 0.6 regimen when 100 * 0.6 = 60 (unclamped)');
+
+        weightInput.value = '101';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(badge.classList.contains('visible'), 'Badge appears for 0.6 regimen when 101 * 0.6 = 60.6 > 60');
 
         // TNK dose (0.25 mg/kg, max 25 mg)
         tnkRadio.checked = true;
@@ -610,7 +628,11 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
 
         weightInput.value = '100';
         weightInput.dispatchEvent(new win.Event('input'));
-        assert.ok(badge.classList.contains('visible'), 'Badge appears for TNK when 100 * 0.25 = 25 >= 25');
+        assert.ok(!badge.classList.contains('visible'), 'Badge hidden for TNK when 100 * 0.25 = 25 (unclamped)');
+
+        weightInput.value = '101';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(badge.classList.contains('visible'), 'Badge appears for TNK when 101 * 0.25 = 25.25 > 25');
 
         // Clear button resets
         clearBtn.click();
@@ -668,6 +690,12 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         // DOM verification
         const win = loadHtmlDom('orders/rtpa.html');
         const doc = win.document;
+        const liveDoseLine = doc.querySelector('.live-dose-line');
+        assert.ok(liveDoseLine, 'v1 must contain live-dose-line element');
+        assert.equal(liveDoseLine.getAttribute('role'), 'region', 'v1 live-dose-line must have role="region"');
+        assert.equal(liveDoseLine.getAttribute('aria-live'), 'polite', 'v1 live-dose-line must have aria-live="polite"');
+        assert.equal(liveDoseLine.getAttribute('aria-atomic'), 'true', 'v1 live-dose-line must have aria-atomic="true"');
+
         const weightInput = doc.getElementById('weight');
         const liveTotal = doc.getElementById('live-total');
         const livePush = doc.getElementById('live-push');
@@ -755,6 +783,12 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         // DOM verification
         const win = loadHtmlDom('orders/rtpa-v2.html');
         const doc = win.document;
+        const hudPreview = doc.getElementById('dose-hud-preview');
+        assert.ok(hudPreview, 'v2 must contain dose-hud-preview element');
+        assert.equal(hudPreview.getAttribute('role'), 'region', 'v2 dose-hud-preview must have role="region"');
+        assert.equal(hudPreview.getAttribute('aria-live'), 'polite', 'v2 dose-hud-preview must have aria-live="polite"');
+        assert.equal(hudPreview.getAttribute('aria-atomic'), 'true', 'v2 dose-hud-preview must have aria-atomic="true"');
+
         const hudTotal = doc.getElementById('hud-total-dose');
         const hudPush = doc.getElementById('hud-push-dose');
         const hudDrip = doc.getElementById('hud-drip-dose');

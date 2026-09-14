@@ -816,7 +816,7 @@
                 </div>
 
                 <!-- Minimal Single-Line Live Dose with Clinical Color & Bold Typography -->
-                <div class="live-dose-line dose-hud" id="dose-hud-preview" role="region" aria-label="ขนาดยา rt-PA คำนวณทันที">
+                <div class="live-dose-line dose-hud" id="dose-hud-preview" role="region" aria-label="ขนาดยา rt-PA คำนวณทันที" aria-live="polite" aria-atomic="true">
                     <span class="live-dose-item hud-metric">
                         <span class="live-dose-total-label">Total</span>
                         <span class="live-dose-text">
@@ -1483,7 +1483,7 @@
                         if (hudDripUnit) hudDripUnit.textContent = '';
                         if (hudPushLabel) hudPushLabel.textContent = 'Single IV push (5–10s, 5 mg/mL)';
                         if (hudDripLabel) hudDripLabel.textContent = 'ไม่ต้อง Drip ต่อ (No Drip)';
-                        isCapped = (weight * 0.25) >= 25;
+                        isCapped = (weight * 0.25) > 25;
                     }
                 } else {
                     const dose = STROKE_ENGINE.calcRtpaDose(weight, regimen);
@@ -1497,7 +1497,7 @@
                         if (hudPushLabel) hudPushLabel.textContent = dose.pushPercent + '% of total dose';
                         if (hudDripLabel) hudDripLabel.textContent = dose.dripPercent + '% of total dose';
                         const maxDose = regimen === 0.9 ? 90 : 60;
-                        isCapped = (weight * regimen) >= maxDose;
+                        isCapped = (weight * regimen) > maxDose;
                     }
                 }
 
