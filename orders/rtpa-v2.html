@@ -124,6 +124,7 @@
         .time-check-item {
             display: flex;
             align-items: center;
+            gap: 10px;
             height: 38px;
             flex-shrink: 0;
         }
@@ -789,6 +790,7 @@
                                 <input type="checkbox" id="use-current-time" checked>
                                 <span>บันทึกเวลาปัจจุบัน</span>
                             </label>
+                            <span id="hud-max-dose-badge" class="micro-badge" aria-live="polite">⚠ Max dose capped</span>
                         </div>
                     </div>
                 </div>
@@ -817,27 +819,35 @@
                 <div class="live-dose-line dose-hud" id="dose-hud-preview" role="region" aria-label="ขนาดยา rt-PA คำนวณทันที">
                     <span class="live-dose-item hud-metric">
                         <span class="live-dose-total-label">Total</span>
-                        <span id="hud-max-dose-badge" class="micro-badge" aria-live="polite">⚠ Max dose capped</span>
-                        <span id="hud-regimen-badge" class="visually-hidden" aria-hidden="true">0.9 mg/kg</span>
                         <span class="live-dose-text">
                             <span class="live-dose-eq"> = </span>
                             <strong id="hud-total-dose" class="hud-value hud-value-total live-dose-val total">—</strong>
+                            <span id="hud-total-unit" class="live-dose-unit">mg</span>
                         </span>
+                        <span id="hud-regimen-badge" class="visually-hidden" aria-hidden="true">0.9 mg/kg</span>
                     </span>
                     <span class="live-dose-sep">|</span>
                     <span class="live-dose-item hud-metric">
-                        <span class="live-dose-push-label"><span id="hud-push-title">IV Push (1 min)</span><span id="hud-push-label" class="visually-hidden">10% of total dose</span></span>
+                        <span class="live-dose-push-label">
+                            <span id="hud-push-title">Push (10%)</span>
+                            <span id="hud-push-label" class="visually-hidden">10% of total dose</span>
+                        </span>
                         <span class="live-dose-text">
                             <span class="live-dose-eq"> = </span>
                             <strong id="hud-push-dose" class="hud-value hud-value-push live-dose-val push">—</strong>
+                            <span id="hud-push-unit" class="live-dose-unit">mg</span>
                         </span>
                     </span>
                     <span class="live-dose-sep">|</span>
                     <span class="live-dose-item hud-metric" id="hud-metric-drip">
-                        <span class="live-dose-drip-label"><span id="hud-drip-title">IV Drip (60 min)</span><span id="hud-drip-label" class="visually-hidden">90% of total dose</span></span>
+                        <span class="live-dose-drip-label">
+                            <span id="hud-drip-title">Drip (90%)</span>
+                            <span id="hud-drip-label" class="visually-hidden">90% of total dose</span>
+                        </span>
                         <span class="live-dose-text">
                             <span class="live-dose-eq"> = </span>
                             <strong id="hud-drip-dose" class="hud-value hud-value-drip live-dose-val drip">—</strong>
+                            <span id="hud-drip-unit" class="live-dose-unit">mg</span>
                         </span>
                     </span>
                 </div>
@@ -1359,6 +1369,9 @@
             const hudTotal = document.getElementById('hud-total-dose');
             const hudPush = document.getElementById('hud-push-dose');
             const hudDrip = document.getElementById('hud-drip-dose');
+            const hudTotalUnit = document.getElementById('hud-total-unit');
+            const hudPushUnit = document.getElementById('hud-push-unit');
+            const hudDripUnit = document.getElementById('hud-drip-unit');
             const hudRegimen = document.getElementById('hud-regimen-badge');
             const hudPushLabel = document.getElementById('hud-push-label');
             const hudDripLabel = document.getElementById('hud-drip-label');
@@ -1418,10 +1431,15 @@
                 const rawRegimen = getSelectedRegimen();
                 const isTnk = rawRegimen === 'tnk';
                 const regimen = isTnk ? 0.25 : (parseFloat(rawRegimen) || 0.9);
-                hudRegimen.textContent = isTnk ? 'TNK 0.25 mg/kg' : (regimen + ' mg/kg');
+                if (hudRegimen) hudRegimen.textContent = isTnk ? 'TNK 0.25 mg/kg' : (regimen + ' mg/kg');
                 if (hudPushTitle && hudDripTitle) {
-                    hudPushTitle.textContent = isTnk ? 'Single IV Bolus (5–10s)' : 'IV Push (1 min)';
-                    hudDripTitle.textContent = isTnk ? 'IV Drip (No Drip)' : 'IV Drip (60 min)';
+                    if (isTnk) {
+                        hudPushTitle.textContent = 'Push (Single Bolus)';
+                        hudDripTitle.textContent = 'Drip';
+                    } else {
+                        hudPushTitle.textContent = regimen === 0.6 ? 'Push (15%)' : 'Push (10%)';
+                        hudDripTitle.textContent = regimen === 0.6 ? 'Drip (85%)' : 'Drip (90%)';
+                    }
                     hudDripTitle.classList.toggle('disabled', isTnk);
                 }
                 if (hudMetricDrip) {
@@ -1435,13 +1453,16 @@
                     hudTotal.textContent = '—';
                     hudPush.textContent = '—';
                     hudDrip.textContent = '—';
+                    if (hudTotalUnit) hudTotalUnit.textContent = 'mg';
+                    if (hudPushUnit) hudPushUnit.textContent = 'mg';
+                    if (hudDripUnit) hudDripUnit.textContent = isTnk ? '' : 'mg';
                     hudHasValue = false;
                     if (isTnk) {
-                        hudPushLabel.textContent = 'Single IV push (5–10s)';
-                        hudDripLabel.textContent = 'No drip required';
+                        if (hudPushLabel) hudPushLabel.textContent = 'Single IV push (5–10s)';
+                        if (hudDripLabel) hudDripLabel.textContent = 'No drip required';
                     } else {
-                        hudPushLabel.textContent = regimen === 0.6 ? '15% of total dose' : '10% of total dose';
-                        hudDripLabel.textContent = regimen === 0.6 ? '85% of total dose' : '90% of total dose';
+                        if (hudPushLabel) hudPushLabel.textContent = regimen === 0.6 ? '15% of total dose' : '10% of total dose';
+                        if (hudDripLabel) hudDripLabel.textContent = regimen === 0.6 ? '85% of total dose' : '90% of total dose';
                     }
                     if (hudMaxBadge) hudMaxBadge.classList.remove('visible');
                     return;
@@ -1454,21 +1475,27 @@
                 if (isTnk) {
                     const tnkDose = STROKE_ENGINE.calcTnkStrokeDose(weight);
                     if (tnkDose) {
-                        hudTotal.innerHTML = tnkDose.totalDose.toFixed(1) + ' <span class="live-dose-unit">mg (' + tnkDose.volumeMl.toFixed(1) + ' mL)</span>';
-                        hudPush.innerHTML = tnkDose.totalDose.toFixed(1) + ' <span class="live-dose-unit">mg (' + tnkDose.volumeMl.toFixed(1) + ' mL)</span>';
-                        hudDrip.innerHTML = '—';
-                        hudPushLabel.textContent = 'Single IV push (5–10s, 5 mg/mL)';
-                        hudDripLabel.textContent = 'ไม่ต้อง Drip ต่อ (No Drip)';
+                        hudTotal.textContent = tnkDose.totalDose.toFixed(1);
+                        if (hudTotalUnit) hudTotalUnit.textContent = 'mg (' + tnkDose.volumeMl.toFixed(1) + ' mL)';
+                        hudPush.textContent = tnkDose.totalDose.toFixed(1);
+                        if (hudPushUnit) hudPushUnit.textContent = 'mg (' + tnkDose.volumeMl.toFixed(1) + ' mL)';
+                        hudDrip.textContent = '—';
+                        if (hudDripUnit) hudDripUnit.textContent = '';
+                        if (hudPushLabel) hudPushLabel.textContent = 'Single IV push (5–10s, 5 mg/mL)';
+                        if (hudDripLabel) hudDripLabel.textContent = 'ไม่ต้อง Drip ต่อ (No Drip)';
                         isCapped = (weight * 0.25) >= 25;
                     }
                 } else {
                     const dose = STROKE_ENGINE.calcRtpaDose(weight, regimen);
                     if (dose) {
-                        hudTotal.innerHTML = dose.totalDose.toFixed(2) + ' <span class="live-dose-unit">mg</span>';
-                        hudPush.innerHTML = dose.pushDose.toFixed(1) + ' <span class="live-dose-unit">mg</span>';
-                        hudDrip.innerHTML = dose.dripDose.toFixed(2) + ' <span class="live-dose-unit">mg</span>';
-                        hudPushLabel.textContent = dose.pushPercent + '% of total dose';
-                        hudDripLabel.textContent = dose.dripPercent + '% of total dose';
+                        hudTotal.textContent = dose.totalDose.toFixed(2);
+                        if (hudTotalUnit) hudTotalUnit.textContent = 'mg';
+                        hudPush.textContent = dose.pushDose.toFixed(1);
+                        if (hudPushUnit) hudPushUnit.textContent = 'mg';
+                        hudDrip.textContent = dose.dripDose.toFixed(2);
+                        if (hudDripUnit) hudDripUnit.textContent = 'mg';
+                        if (hudPushLabel) hudPushLabel.textContent = dose.pushPercent + '% of total dose';
+                        if (hudDripLabel) hudDripLabel.textContent = dose.dripPercent + '% of total dose';
                         const maxDose = regimen === 0.9 ? 90 : 60;
                         isCapped = (weight * regimen) >= maxDose;
                     }
