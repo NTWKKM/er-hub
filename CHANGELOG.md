@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.1.5] — 2026-09-14
+
+### Stroke Fast Track Live Dose Micro-Dashboard & SW Cache Bump
+
+- **Live Dose Micro-Dashboard (`orders/rtpa.html`):**
+  - Added single-line real-time dose calculation above action buttons updating immediately on weight input without requiring HN or submit.
+  - Initial state displays double dash `—` and dynamically adjusts Push / Drip percentages according to active regimen (0.9 mg/kg: 10%/90% vs 0.6 mg/kg: 15%/85%).
+  - Clinical accent highlights Total Dose in Soft Yellow (`#FEF08A` badge), Push in Medical Blue (`#0066CC`), and Drip in Clinical Green (`#1C8930`).
+  - Isolated unit in `<span class="live-dose-unit">mg</span>` with 4px gap to eliminate Flexbox whitespace collapsing.
+  - Added responsive 3-column dashboard grid layout for mobile screens ($\le$ 600px) and `padding-left: 55px` on header to protect hospital logo alignment.
+- **Stroke Fast Track Worksheet V2 (`orders/rtpa-v2.html`):**
+  - Preserved original clean HUD typography on desktop while adopting the responsive 3-column mobile layout and header padding protection.
+- **Service Worker & Cache Bump (`service-worker.js`):**
+  - Bumped offline PWA cache to `er-hub-v115` (`14/09/2569`).
+
 ## [3.1.4] — 2026-09-11
 
 ### Stroke Fast Track Accessibility, Clinical Max Dose Awareness & SW Cache Bump
