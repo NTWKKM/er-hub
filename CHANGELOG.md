@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.1.5] — 2026-09-14
+
+### Stroke Fast Track Live Dose Micro-Dashboard & SW Cache Bump
+
+- **Live Dose Micro-Dashboard (`orders/rtpa.html`):**
+  - Added single-line real-time dose calculation above action buttons updating immediately on weight input without requiring HN or submit.
+  - Initial state displays double dash `—` and dynamically adjusts Push / Drip percentages according to active regimen (0.9 mg/kg: 10%/90% vs 0.6 mg/kg: 15%/85%).
+  - Clinical accent highlights Total Dose in Soft Yellow (`#FEF08A` badge), Push in Medical Blue (`#0066CC`), and Drip in Clinical Green (`#1C8930`).
+  - Isolated unit in `<span class="live-dose-unit">mg</span>` with 4px gap to eliminate Flexbox whitespace collapsing.
+  - Enforced clinical weight boundary validation (20–250 kg) to reset dashboard and max dose badge to `—` when out-of-range, aligning with worksheet limits and V2 behavior.
+  - Added responsive 3-column dashboard grid layout for mobile screens ($\le$ 600px) and `padding-left: 55px` on header to protect hospital logo alignment.
+- **Stroke Fast Track Worksheet V2 (`orders/rtpa-v2.html`):**
+  - Unified Live Dose Micro-Dashboard into single-line format matching v1 (`Total = ... | Push = ... | Drip = ...`).
+  - Total Dose highlighted with Soft Yellow (`#FEF08A` badge), Push in Medical Blue (`#0066CC`), and Drip in Clinical Green (`#1C8930`).
+  - When Tenecteplase (TNK 0.25 mg/kg) is selected, Drip section is visually grayed out (`opacity: 0.35`, `grayscale(1)`) and displays double dash (`—`), communicating bolus-only thrombolysis with zero clinical ambiguity.
+  - Adopted responsive 3-column mobile layout and header padding protection.
+- **Service Worker & Cache Bump (`service-worker.js`):**
+  - Bumped offline PWA cache to `er-hub-v115` (`14/09/2569`).
+
 ## [3.1.4] — 2026-09-11
 
 ### Stroke Fast Track Accessibility, Clinical Max Dose Awareness & SW Cache Bump

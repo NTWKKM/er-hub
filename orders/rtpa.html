@@ -248,6 +248,88 @@
             }
         }
 
+        /* Minimal Single-Line Live Dose with Clinical Color Coding (Data Input Section) */
+        .live-dose-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px 14px;
+            background-color: #F4F7FB;
+            border: 1px solid #D0DBE5;
+            border-radius: 6px;
+            padding: 8px 14px;
+            margin-top: 4px;
+            margin-bottom: 12px;
+            font-size: 14.5px;
+            color: #333333;
+            font-variant-numeric: tabular-nums;
+            animation: fadeInBadge 0.15s ease-out;
+        }
+        .live-dose-item {
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        .live-dose-text {
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            gap: 4px;
+        }
+        .live-dose-eq {
+            margin: 0 2px;
+            color: #4B5563;
+            font-weight: 500;
+        }
+        .live-dose-unit {
+            font-size: 13.5px;
+            color: #55524B;
+            font-weight: normal;
+        }
+        .live-dose-sep {
+            color: #C0C8D0;
+            font-weight: 300;
+            margin: 0 4px;
+        }
+        .live-dose-total-label {
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+        .live-dose-push-label {
+            font-weight: 600;
+            color: #0056b3;
+        }
+        .live-dose-drip-label {
+            font-weight: 600;
+            color: #157A28;
+        }
+        .live-dose-val {
+            font-weight: 800;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+            transition: opacity 0.15s ease-out;
+        }
+        .live-dose-val.total {
+            color: #111827;
+            background-color: #FEF08A;
+            border: 1px solid #FDE047;
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+        .live-dose-val.push {
+            color: #0066CC;
+        }
+        .live-dose-val.drip {
+            color: #1C8930;
+        }
+        .live-dose-val.fade-in {
+            animation: fadeInBadge 0.15s ease-out;
+        }
+
         .inline-input-group {
             display: flex;
             align-items: center;
@@ -427,6 +509,45 @@
             .inline-input-group label {
                 width: 110px;
             }
+            .stroke-print-header {
+                padding-left: 55px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .live-dose-line {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 4px;
+                padding: 8px 6px;
+                text-align: center;
+            }
+            .live-dose-sep {
+                display: none;
+            }
+            .live-dose-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 1px;
+            }
+            .live-dose-total-label,
+            .live-dose-push-label,
+            .live-dose-drip-label {
+                font-size: 11.5px;
+                white-space: nowrap;
+            }
+            .live-dose-text {
+                font-size: 12.5px;
+                white-space: nowrap;
+            }
+            .live-dose-eq {
+                display: none;
+            }
+            .live-dose-val {
+                font-size: 15px;
+            }
         }
 
         @media print {
@@ -579,6 +700,36 @@
                         </label>
                         <span id="max-dose-badge" class="micro-badge" aria-live="polite">⚠ Max dose capped</span>
                     </div>
+                </div>
+
+                <!-- Minimal Single-Line Live Dose with Clinical Color & Bold Typography -->
+                <div class="live-dose-line" role="region" aria-label="ขนาดยา rt-PA คำนวณทันที" aria-live="polite" aria-atomic="true">
+                    <span class="live-dose-item">
+                        <span class="live-dose-total-label">Total</span>
+                        <span class="live-dose-text">
+                            <span class="live-dose-eq"> = </span>
+                            <strong id="live-total" class="live-dose-val total">—</strong>
+                            <span class="live-dose-unit">mg</span>
+                        </span>
+                    </span>
+                    <span class="live-dose-sep">|</span>
+                    <span class="live-dose-item">
+                        <span class="live-dose-push-label">Push (<span id="live-push-pct">10</span>%)</span>
+                        <span class="live-dose-text">
+                            <span class="live-dose-eq"> = </span>
+                            <strong id="live-push" class="live-dose-val push">—</strong>
+                            <span class="live-dose-unit">mg</span>
+                        </span>
+                    </span>
+                    <span class="live-dose-sep">|</span>
+                    <span class="live-dose-item">
+                        <span class="live-dose-drip-label">Drip (<span id="live-drip-pct">90</span>%)</span>
+                        <span class="live-dose-text">
+                            <span class="live-dose-eq"> = </span>
+                            <strong id="live-drip" class="live-dose-val drip">—</strong>
+                            <span class="live-dose-unit">mg</span>
+                        </span>
+                    </span>
                 </div>
 
                 <button type="submit" class="btn btn-calculate">คำนวณและสร้างใบสั่งยา</button>
@@ -1165,11 +1316,63 @@
                 const selectedDose = parseFloat(selectedDoseInput.value) || 0.9;
                 const maxDose = selectedDose === 0.9 ? 90 : 60;
                 if (maxDoseBadge) {
-                    if (!isNaN(rawWeight) && rawWeight > 0 && (rawWeight * selectedDose) >= maxDose) {
+                    if (!isNaN(rawWeight) && rawWeight >= 20 && rawWeight <= 250 && (rawWeight * selectedDose) > maxDose) {
                         maxDoseBadge.classList.add('visible');
                     } else {
                         maxDoseBadge.classList.remove('visible');
                     }
+                }
+            }
+
+            // Minimal Live Dose Calculator Logic
+            const liveTotal = document.getElementById('live-total');
+            const livePush = document.getElementById('live-push');
+            const liveDrip = document.getElementById('live-drip');
+            const livePushPct = document.getElementById('live-push-pct');
+            const liveDripPct = document.getElementById('live-drip-pct');
+
+            function setLiveVal(el, val) {
+                if (!el) return;
+                if (el.textContent !== val) {
+                    el.textContent = val;
+                    el.classList.remove('fade-in');
+                    void el.offsetWidth; // Trigger reflow for smooth re-animation
+                    el.classList.add('fade-in');
+                }
+            }
+
+            function updateLiveDose() {
+                const rawWeight = parseFloat(weightInput.value);
+                const regimen = parseFloat(selectedDoseInput.value) || 0.9;
+
+                const pushPct = regimen === 0.6 ? 15 : 10;
+                const dripPct = regimen === 0.6 ? 85 : 90;
+                if (livePushPct) livePushPct.textContent = pushPct.toString();
+                if (liveDripPct) liveDripPct.textContent = dripPct.toString();
+
+                if (isNaN(rawWeight) || rawWeight < 20 || rawWeight > 250) {
+                    setLiveVal(liveTotal, '—');
+                    setLiveVal(livePush, '—');
+                    setLiveVal(liveDrip, '—');
+                    return;
+                }
+
+                try {
+                    const weight = Math.round(rawWeight * 100) / 100;
+                    const res = STROKE_ENGINE.calcRtpaDose(weight, regimen);
+                    if (res) {
+                        setLiveVal(liveTotal, res.totalDose.toFixed(2));
+                        setLiveVal(livePush, res.pushDose.toFixed(1));
+                        setLiveVal(liveDrip, res.dripDose.toFixed(2));
+                    } else {
+                        setLiveVal(liveTotal, '—');
+                        setLiveVal(livePush, '—');
+                        setLiveVal(liveDrip, '—');
+                    }
+                } catch (_) {
+                    setLiveVal(liveTotal, '—');
+                    setLiveVal(livePush, '—');
+                    setLiveVal(liveDrip, '—');
                 }
             }
 
@@ -1186,6 +1389,7 @@
             weightInput.addEventListener('input', () => {
                 invalidateOrderDisplay();
                 updateMaxDoseBadge();
+                updateLiveDose();
             });
             const useTimeCheckbox = document.getElementById('use-current-time');
             if (useTimeCheckbox) {
@@ -1206,6 +1410,7 @@
                 }
                 invalidateOrderDisplay();
                 updateMaxDoseBadge();
+                updateLiveDose();
             }
 
             // Handle Dosage Button Clicks & 4-Way Arrow Key Navigation (↑, ↓, ←, →)
@@ -1280,6 +1485,7 @@
                     }
                     selectedDoseInput.value = "0.9";
                     updateMaxDoseBadge();
+                    updateLiveDose();
 
                     // Reset print-area DOM fields to avoid stale PHI on print
                     ['result-hn', 'result-weight', 'result-regimen', 'total-dose', 'push-percent', 'push-dose', 'drip-percent', 'drip-dose'].forEach(id => {

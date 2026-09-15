@@ -37,9 +37,11 @@ const STROKE_ENGINE = {
      */
     calcTnkStrokeDose(weight) {
         if (!weight || weight <= 0 || !Number.isFinite(weight)) return null;
-        const totalDose = Math.min(Math.round(weight * 0.25 * 10) / 10, 25); // 0.25 mg/kg, max 25 mg
+        const uncappedDose = Math.round(weight * 0.25 * 10) / 10;
+        const totalDose = Math.min(uncappedDose, 25); // 0.25 mg/kg, max 25 mg
+        const isCapped = uncappedDose > 25;
         const volumeMl = Math.round((totalDose / 5) * 10) / 10; // 5 mg/mL concentration
-        return { totalDose, volumeMl, maxCap: 25, concentration: 5 };
+        return { totalDose, volumeMl, maxCap: 25, concentration: 5, isCapped };
     }
 };
 

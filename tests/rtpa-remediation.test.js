@@ -534,15 +534,20 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         weightInput.dispatchEvent(new win.Event('input'));
         assert.ok(!badge.classList.contains('visible'), 'Micro-badge must be hidden when 99 * 0.9 = 89.1 < 90');
 
-        // Weight 100 kg -> 100 * 0.9 = 90 >= 90 mg -> badge visible
+        // Weight 100 kg -> 100 * 0.9 = 90 mg (exact max dose, unclamped) -> badge hidden
         weightInput.value = '100';
         weightInput.dispatchEvent(new win.Event('input'));
-        assert.ok(badge.classList.contains('visible'), 'Micro-badge must appear when 100 * 0.9 = 90 >= 90');
+        assert.ok(!badge.classList.contains('visible'), 'Micro-badge must remain hidden when 100 * 0.9 = 90 (not exceeding maxDose)');
 
-        // Weight 110 kg -> 110 * 0.9 = 99 >= 90 mg -> badge visible
+        // Weight 101 kg -> 101 * 0.9 = 90.9 > 90 mg -> badge visible (capped)
+        weightInput.value = '101';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(badge.classList.contains('visible'), 'Micro-badge must appear when 101 * 0.9 = 90.9 > 90');
+
+        // Weight 110 kg -> 110 * 0.9 = 99 > 90 mg -> badge visible
         weightInput.value = '110';
         weightInput.dispatchEvent(new win.Event('input'));
-        assert.ok(badge.classList.contains('visible'), 'Micro-badge must remain visible when 110 * 0.9 >= 90');
+        assert.ok(badge.classList.contains('visible'), 'Micro-badge must remain visible when 110 * 0.9 > 90');
 
         // Switch to Alternative dose (0.6 mg/kg, max 60 mg) with weight 90 kg:
         // 90 * 0.6 = 54 < 60 mg -> badge hidden
@@ -551,10 +556,15 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         btn06.click();
         assert.ok(!badge.classList.contains('visible'), 'Micro-badge must be hidden for 0.6 regimen when 90 * 0.6 = 54 < 60');
 
-        // Weight 100 kg on 0.6 regimen -> 100 * 0.6 = 60 >= 60 mg -> badge visible
+        // Weight 100 kg on 0.6 regimen -> 100 * 0.6 = 60 mg (exact max dose, unclamped) -> badge hidden
         weightInput.value = '100';
         weightInput.dispatchEvent(new win.Event('input'));
-        assert.ok(badge.classList.contains('visible'), 'Micro-badge must appear for 0.6 regimen when 100 * 0.6 = 60 >= 60');
+        assert.ok(!badge.classList.contains('visible'), 'Micro-badge must remain hidden for 0.6 regimen when 100 * 0.6 = 60 (not exceeding maxDose)');
+
+        // Weight 101 kg on 0.6 regimen -> 101 * 0.6 = 60.6 > 60 mg -> badge visible (capped)
+        weightInput.value = '101';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(badge.classList.contains('visible'), 'Micro-badge must appear for 0.6 regimen when 101 * 0.6 = 60.6 > 60');
 
         // Clear button resets weight and hides micro-badge
         clearBtn.click();
@@ -588,7 +598,11 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
 
         weightInput.value = '100';
         weightInput.dispatchEvent(new win.Event('input'));
-        assert.ok(badge.classList.contains('visible'), 'Badge appears for 0.9 regimen when 100 * 0.9 = 90 >= 90');
+        assert.ok(!badge.classList.contains('visible'), 'Badge hidden for 0.9 regimen when 100 * 0.9 = 90 (unclamped)');
+
+        weightInput.value = '101';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(badge.classList.contains('visible'), 'Badge appears for 0.9 regimen when 101 * 0.9 = 90.9 > 90');
 
         // Alternative Low dose (0.6 mg/kg, max 60 mg)
         lowRadio.checked = true;
@@ -599,7 +613,11 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
 
         weightInput.value = '100';
         weightInput.dispatchEvent(new win.Event('input'));
-        assert.ok(badge.classList.contains('visible'), 'Badge appears for 0.6 regimen when 100 * 0.6 = 60 >= 60');
+        assert.ok(!badge.classList.contains('visible'), 'Badge hidden for 0.6 regimen when 100 * 0.6 = 60 (unclamped)');
+
+        weightInput.value = '101';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(badge.classList.contains('visible'), 'Badge appears for 0.6 regimen when 101 * 0.6 = 60.6 > 60');
 
         // TNK dose (0.25 mg/kg, max 25 mg)
         tnkRadio.checked = true;
@@ -610,7 +628,26 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
 
         weightInput.value = '100';
         weightInput.dispatchEvent(new win.Event('input'));
-        assert.ok(badge.classList.contains('visible'), 'Badge appears for TNK when 100 * 0.25 = 25 >= 25');
+        assert.ok(!badge.classList.contains('visible'), 'Badge hidden for TNK when 100 * 0.25 = 25 (unclamped)');
+
+        // 100.01 kg: 100.01 * 0.25 = 25.0025 -> rounded to 25.0 mg (unclamped) -> badge hidden
+        weightInput.value = '100.01';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(!badge.classList.contains('visible'), 'Badge hidden for TNK when 100.01 kg rounds to 25.0 mg');
+
+        // 100.1 kg: 100.1 * 0.25 = 25.025 -> rounded to 25.0 mg (unclamped) -> badge hidden
+        weightInput.value = '100.1';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(!badge.classList.contains('visible'), 'Badge hidden for TNK when 100.1 kg rounds to 25.0 mg');
+
+        // 100.2 kg: 100.2 * 0.25 = 25.05 -> rounded to 25.1 mg (> 25 mg cap, clamped) -> badge visible
+        weightInput.value = '100.2';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(badge.classList.contains('visible'), 'Badge appears for TNK when 100.2 kg rounds to 25.1 mg (> 25 mg cap)');
+
+        weightInput.value = '101';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(badge.classList.contains('visible'), 'Badge appears for TNK when 101 * 0.25 = 25.25 > 25');
 
         // Clear button resets
         clearBtn.click();
@@ -646,5 +683,142 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         lowRadio.checked = true;
         lowRadio.dispatchEvent(new win.Event('change'));
         assert.ok(hudTotal.classList.contains('animate-fade'), 'Regimen switch must trigger animate-fade');
+    });
+
+    test('Live Dose Micro-Dashboard: rtpa.html (v1) real-time dose calculation, clinical accents, unit isolation, and mobile grid', () => {
+        const v1Content = fs.readFileSync(RTPA_V1_PATH, 'utf8');
+
+        // Verify HTML markup and unit isolation
+        assert.ok(v1Content.includes('class="live-dose-line"'), 'v1 must contain live-dose-line container');
+        assert.ok(v1Content.includes('id="live-total"'), 'v1 must contain live-total');
+        assert.ok(v1Content.includes('id="live-push"'), 'v1 must contain live-push');
+        assert.ok(v1Content.includes('id="live-drip"'), 'v1 must contain live-drip');
+        assert.ok(v1Content.includes('class="live-dose-unit"'), 'v1 must wrap unit in .live-dose-unit');
+
+        // Verify CSS styling rules
+        assert.ok(v1Content.includes('#FEF08A'), 'v1 must style total badge with #FEF08A highlighter');
+        assert.ok(v1Content.includes('#0066CC'), 'v1 must style push value with #0066CC clinical blue');
+        assert.ok(v1Content.includes('#1C8930'), 'v1 must style drip value with #1C8930 clinical green');
+        assert.ok(v1Content.includes('padding-left: 55px'), 'v1 must include padding-left: 55px on header for mobile');
+        assert.match(v1Content, /grid-template-columns:\s*repeat\(3,\s*1fr\)/i, 'v1 must use 3-column dashboard grid on mobile');
+
+        // DOM verification
+        const win = loadHtmlDom('orders/rtpa.html');
+        const doc = win.document;
+        const liveDoseLine = doc.querySelector('.live-dose-line');
+        assert.ok(liveDoseLine, 'v1 must contain live-dose-line element');
+        assert.equal(liveDoseLine.getAttribute('role'), 'region', 'v1 live-dose-line must have role="region"');
+        assert.equal(liveDoseLine.getAttribute('aria-live'), 'polite', 'v1 live-dose-line must have aria-live="polite"');
+        assert.equal(liveDoseLine.getAttribute('aria-atomic'), 'true', 'v1 live-dose-line must have aria-atomic="true"');
+
+        const weightInput = doc.getElementById('weight');
+        const liveTotal = doc.getElementById('live-total');
+        const livePush = doc.getElementById('live-push');
+        const liveDrip = doc.getElementById('live-drip');
+        const livePushPct = doc.getElementById('live-push-pct');
+        const liveDripPct = doc.getElementById('live-drip-pct');
+        const clearBtn = doc.getElementById('clear-btn');
+        const btn06 = doc.querySelector('.dose-button[data-dose="0.6"]');
+        const btn09 = doc.querySelector('.dose-button[data-dose="0.9"]');
+
+        // 1. Initial state without weight: displays double dash "—"
+        assert.equal(liveTotal.textContent, '—', 'Initial Total must be double dash —');
+        assert.equal(livePush.textContent, '—', 'Initial Push must be double dash —');
+        assert.equal(liveDrip.textContent, '—', 'Initial Drip must be double dash —');
+        assert.equal(livePushPct.textContent, '10', 'Initial push pct must be 10%');
+        assert.equal(liveDripPct.textContent, '90', 'Initial drip pct must be 90%');
+
+        // 2. Real-time calculation on weight input (without HN): weight = 70 kg, standard 0.9 regimen
+        weightInput.value = '70';
+        weightInput.dispatchEvent(new win.Event('input'));
+        // 70 * 0.9 = 63.00 mg total, 6.3 mg push (10%), 56.70 mg drip (90%)
+        assert.equal(liveTotal.textContent, '63.00', 'Total dose for 70 kg at 0.9 must be 63.00 mg');
+        assert.equal(livePush.textContent, '6.3', 'Push dose for 70 kg at 0.9 must be 6.3 mg');
+        assert.equal(liveDrip.textContent, '56.70', 'Drip dose for 70 kg at 0.9 must be 56.70 mg');
+        assert.equal(livePushPct.textContent, '10', 'Push percentage must remain 10');
+        assert.equal(liveDripPct.textContent, '90', 'Drip percentage must remain 90');
+
+        // 3. Regimen switch to 0.6 mg/kg (Alternative Asian regimen: 15% push / 85% drip)
+        btn06.click();
+        // 70 * 0.6 = 42.00 mg total, 6.3 mg push (15%), 35.70 mg drip (85%)
+        assert.equal(livePushPct.textContent, '15', 'Switching to 0.6 must update push pct to 15');
+        assert.equal(liveDripPct.textContent, '85', 'Switching to 0.6 must update drip pct to 85');
+        assert.equal(liveTotal.textContent, '42.00', 'Total dose for 70 kg at 0.6 must be 42.00 mg');
+        assert.equal(livePush.textContent, '6.3', 'Push dose for 70 kg at 0.6 must be 6.3 mg');
+        assert.equal(liveDrip.textContent, '35.70', 'Drip dose for 70 kg at 0.6 must be 35.70 mg');
+
+        // 4. Weight cap check: 110 kg at 0.9 mg/kg -> capped at 90 mg (9.0 mg push, 81.00 mg drip)
+        btn09.click();
+        weightInput.value = '110';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.equal(liveTotal.textContent, '90.00', 'Total dose capped at 90.00 mg');
+        assert.equal(livePush.textContent, '9.0', 'Push dose capped at 9.0 mg');
+        assert.equal(liveDrip.textContent, '81.00', 'Drip dose capped at 81.00 mg');
+
+        // 5. Out-of-range weights (< 20 kg or > 250 kg) reset live dose to "—"
+        weightInput.value = '10';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.equal(liveTotal.textContent, '—', 'Weight below 20 kg must reset Total to —');
+        assert.equal(livePush.textContent, '—', 'Weight below 20 kg must reset Push to —');
+        assert.equal(liveDrip.textContent, '—', 'Weight below 20 kg must reset Drip to —');
+
+        weightInput.value = '300';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.equal(liveTotal.textContent, '—', 'Weight above 250 kg must reset Total to —');
+        assert.equal(livePush.textContent, '—', 'Weight above 250 kg must reset Push to —');
+        assert.equal(liveDrip.textContent, '—', 'Weight above 250 kg must reset Drip to —');
+
+        // 6. Clear button resets live dose dashboard back to "—"
+        weightInput.value = '60';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.equal(liveTotal.textContent, '54.00', 'Valid 60 kg must display 54.00');
+        clearBtn.click();
+        assert.equal(liveTotal.textContent, '—', 'Clear button must reset Total to —');
+        assert.equal(livePush.textContent, '—', 'Clear button must reset Push to —');
+        assert.equal(liveDrip.textContent, '—', 'Clear button must reset Drip to —');
+        assert.equal(livePushPct.textContent, '10', 'Clear button must reset push pct to 10');
+        assert.equal(liveDripPct.textContent, '90', 'Clear button must reset drip pct to 90');
+    });
+
+    test('Clinical UI & Mobile Layout: rtpa-v2.html unified live dose micro-dashboard and mobile grid', () => {
+        const v2Content = fs.readFileSync(RTPA_V2_PATH, 'utf8');
+
+        // Verify unified live-dose-line styling with Soft Yellow badge (#FEF08A), Push (#0066CC), Drip (#1C8930)
+        assert.ok(v2Content.includes('.live-dose-line'), 'v2 must include .live-dose-line single-line bar');
+        assert.ok(v2Content.includes('background-color: #FEF08A;'), 'v2 must style total dose with Soft Yellow #FEF08A badge');
+        assert.ok(v2Content.includes('color: #0066CC;'), 'v2 must style push dose with clinical blue #0066CC');
+        assert.ok(v2Content.includes('color: #1C8930;'), 'v2 must style drip dose with clinical green #1C8930');
+        assert.ok(v2Content.includes('opacity: 0.35;'), 'v2 must include disabled opacity for TNK drip');
+        assert.ok(v2Content.includes('filter: grayscale(1);'), 'v2 must include disabled grayscale filter for TNK drip');
+
+        // Verify mobile responsive grid & header padding
+        assert.ok(v2Content.includes('padding-left: 55px'), 'v2 must include padding-left: 55px on header for mobile');
+        assert.match(v2Content, /\.live-dose-line\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*1fr\)/i, 'v2 must adapt live-dose-line to 3-column grid on mobile');
+
+        // DOM verification
+        const win = loadHtmlDom('orders/rtpa-v2.html');
+        const doc = win.document;
+        const hudPreview = doc.getElementById('dose-hud-preview');
+        assert.ok(hudPreview, 'v2 must contain dose-hud-preview element');
+        assert.equal(hudPreview.getAttribute('role'), 'region', 'v2 dose-hud-preview must have role="region"');
+        assert.equal(hudPreview.getAttribute('aria-live'), 'polite', 'v2 dose-hud-preview must have aria-live="polite"');
+        assert.equal(hudPreview.getAttribute('aria-atomic'), 'true', 'v2 dose-hud-preview must have aria-atomic="true"');
+
+        const hudTotal = doc.getElementById('hud-total-dose');
+        const hudPush = doc.getElementById('hud-push-dose');
+        const hudDrip = doc.getElementById('hud-drip-dose');
+        const hudMetricDrip = doc.getElementById('hud-metric-drip');
+
+        // Initial state is double dash (—)
+        assert.equal(hudTotal.textContent, '—', 'Initial Total must be —');
+        assert.equal(hudPush.textContent, '—', 'Initial Push must be —');
+        assert.equal(hudDrip.textContent, '—', 'Initial Drip must be —');
+
+        // Switch to TNK -> Drip is disabled and displays —
+        const tnkRadio = doc.querySelector('input[name="dose-radio"][value="tnk"]');
+        tnkRadio.checked = true;
+        tnkRadio.dispatchEvent(new win.Event('change'));
+        assert.equal(hudDrip.textContent, '—', 'TNK Drip must display double dash (—)');
+        assert.ok(hudMetricDrip.classList.contains('disabled'), 'TNK Drip metric must be disabled (grayed out)');
     });
 });
