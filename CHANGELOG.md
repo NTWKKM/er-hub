@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.1.6] — 2026-09-15
+
+### Tenecteplase (TNK) Ceiling Cap Alignment & SW Cache Bump
+
+- **Stroke Fast Track Worksheet V2 (`orders/rtpa-v2.html`, `shared/stroke-engine.js`):**
+  - Updated `STROKE_ENGINE.calcTnkStrokeDose(weight)` to compute `uncappedDose = Math.round(weight * 0.25 * 10) / 10` and explicitly return `isCapped = uncappedDose > 25`.
+  - Bound `orders/rtpa-v2.html` live HUD badge to `tnkDose.isCapped`, ensuring the `⚠ Max dose capped` badge appears only when the 25 mg cap actually reduces the rounded dose (preventing false-positive warnings at boundary weights like 100.01 kg and 100.1 kg).
+- **Service Worker & Cache Bump (`service-worker.js`):**
+  - Bumped offline PWA cache to `er-hub-v116` (`15/09/2569`).
+
 ## [3.1.5] — 2026-09-14
 
 ### Stroke Fast Track Live Dose Micro-Dashboard & SW Cache Bump
