@@ -148,18 +148,45 @@ describe('rt-PA Stroke Dosing Engine', () => {
         assert.equal(tnk60.totalDose, 15);
         assert.equal(tnk60.volumeMl, 3);
         assert.equal(tnk60.maxCap, 25);
+        assert.equal(tnk60.isCapped, false);
 
         // 80 kg: 80 * 0.25 = 20 mg (4 mL)
         const tnk80 = STROKE_ENGINE.calcTnkStrokeDose(80);
         assert.ok(tnk80);
         assert.equal(tnk80.totalDose, 20);
         assert.equal(tnk80.volumeMl, 4);
+        assert.equal(tnk80.isCapped, false);
+
+        // 100 kg: 100 * 0.25 = 25.0 mg -> unclamped
+        const tnk100 = STROKE_ENGINE.calcTnkStrokeDose(100);
+        assert.ok(tnk100);
+        assert.equal(tnk100.totalDose, 25);
+        assert.equal(tnk100.isCapped, false);
+
+        // 100.01 kg: 100.01 * 0.25 = 25.0025 -> 25.0 mg (rounded to 1 decimal, not reduced by cap)
+        const tnk100_01 = STROKE_ENGINE.calcTnkStrokeDose(100.01);
+        assert.ok(tnk100_01);
+        assert.equal(tnk100_01.totalDose, 25);
+        assert.equal(tnk100_01.isCapped, false);
+
+        // 100.1 kg: 100.1 * 0.25 = 25.025 -> 25.0 mg (rounded to 1 decimal, not reduced by cap)
+        const tnk100_1 = STROKE_ENGINE.calcTnkStrokeDose(100.1);
+        assert.ok(tnk100_1);
+        assert.equal(tnk100_1.totalDose, 25);
+        assert.equal(tnk100_1.isCapped, false);
+
+        // 100.2 kg: 100.2 * 0.25 = 25.05 -> 25.1 mg (> 25 mg, capped to 25.0 mg)
+        const tnk100_2 = STROKE_ENGINE.calcTnkStrokeDose(100.2);
+        assert.ok(tnk100_2);
+        assert.equal(tnk100_2.totalDose, 25);
+        assert.equal(tnk100_2.isCapped, true);
 
         // 120 kg: Capped at 25 mg (5 mL)
         const tnk120 = STROKE_ENGINE.calcTnkStrokeDose(120);
         assert.ok(tnk120);
         assert.equal(tnk120.totalDose, 25);
         assert.equal(tnk120.volumeMl, 5);
+        assert.equal(tnk120.isCapped, true);
     });
 
     test('rt-PA precision verification: Push Dose + Drip Dose === Total Dose across 10,000 physiological weights', () => {

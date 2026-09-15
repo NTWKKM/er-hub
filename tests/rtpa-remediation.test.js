@@ -630,6 +630,21 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         weightInput.dispatchEvent(new win.Event('input'));
         assert.ok(!badge.classList.contains('visible'), 'Badge hidden for TNK when 100 * 0.25 = 25 (unclamped)');
 
+        // 100.01 kg: 100.01 * 0.25 = 25.0025 -> rounded to 25.0 mg (unclamped) -> badge hidden
+        weightInput.value = '100.01';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(!badge.classList.contains('visible'), 'Badge hidden for TNK when 100.01 kg rounds to 25.0 mg');
+
+        // 100.1 kg: 100.1 * 0.25 = 25.025 -> rounded to 25.0 mg (unclamped) -> badge hidden
+        weightInput.value = '100.1';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(!badge.classList.contains('visible'), 'Badge hidden for TNK when 100.1 kg rounds to 25.0 mg');
+
+        // 100.2 kg: 100.2 * 0.25 = 25.05 -> rounded to 25.1 mg (> 25 mg cap, clamped) -> badge visible
+        weightInput.value = '100.2';
+        weightInput.dispatchEvent(new win.Event('input'));
+        assert.ok(badge.classList.contains('visible'), 'Badge appears for TNK when 100.2 kg rounds to 25.1 mg (> 25 mg cap)');
+
         weightInput.value = '101';
         weightInput.dispatchEvent(new win.Event('input'));
         assert.ok(badge.classList.contains('visible'), 'Badge appears for TNK when 101 * 0.25 = 25.25 > 25');

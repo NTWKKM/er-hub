@@ -1483,7 +1483,7 @@
                         if (hudDripUnit) hudDripUnit.textContent = '';
                         if (hudPushLabel) hudPushLabel.textContent = 'Single IV push (5–10s, 5 mg/mL)';
                         if (hudDripLabel) hudDripLabel.textContent = 'ไม่ต้อง Drip ต่อ (No Drip)';
-                        isCapped = (weight * 0.25) > 25;
+                        isCapped = !!tnkDose.isCapped;
                     }
                 } else {
                     const dose = STROKE_ENGINE.calcRtpaDose(weight, regimen);
