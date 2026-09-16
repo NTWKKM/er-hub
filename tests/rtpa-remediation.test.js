@@ -821,4 +821,53 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
         assert.equal(hudDrip.textContent, '—', 'TNK Drip must display double dash (—)');
         assert.ok(hudMetricDrip.classList.contains('disabled'), 'TNK Drip metric must be disabled (grayed out)');
     });
+
+    test('Button Localization: rtpa.html (v1) and rtpa-v2.html (v2) action buttons are localized to English', () => {
+        for (const [name, filePath] of [['v1', 'orders/rtpa.html'], ['v2', 'orders/rtpa-v2.html']]) {
+            const win = loadHtmlDom(filePath);
+            const doc = win.document;
+
+            const calcBtn = doc.querySelector('.btn-calculate');
+            assert.ok(calcBtn, `${name} must contain .btn-calculate`);
+            assert.equal(calcBtn.textContent.trim(), 'Calculate & Generate Order [TH]', `${name} calculate button text must be localized`);
+
+            const clearBtn = doc.getElementById('clear-btn');
+            assert.ok(clearBtn, `${name} must contain #clear-btn`);
+            assert.equal(clearBtn.textContent.trim(), 'Clear Form', `${name} clear button text must be localized`);
+
+            const blankBtn = doc.getElementById('print-blank-btn');
+            assert.ok(blankBtn, `${name} must contain #print-blank-btn`);
+            assert.equal(blankBtn.textContent.trim(), '🖨️ Blank Order', `${name} blank order button text must be localized`);
+
+            const nihssBtn = doc.getElementById('print-nihss-blank-btn');
+            assert.ok(nihssBtn, `${name} must contain #print-nihss-blank-btn`);
+            assert.equal(nihssBtn.textContent.trim(), '🖨️ Blank NIHSS', `${name} blank nihss button text must be localized`);
+        }
+
+        // Accessibility aria-description checks for v2
+        const v2Win = loadHtmlDom('orders/rtpa-v2.html');
+        const v2Doc = v2Win.document;
+
+        assert.equal(
+            v2Doc.querySelector('.btn-calculate').getAttribute('aria-description'),
+            'Calculate dose based on weight and generate medical A4 standing order',
+            'v2 .btn-calculate aria-description must be localized'
+        );
+        assert.equal(
+            v2Doc.getElementById('print-blank-btn').getAttribute('aria-description'),
+            'Print blank order form for manual handwriting',
+            'v2 #print-blank-btn aria-description must be localized'
+        );
+        assert.equal(
+            v2Doc.getElementById('print-nihss-blank-btn').getAttribute('aria-description'),
+            'Print blank NIHSS assessment form',
+            'v2 #print-nihss-blank-btn aria-description must be localized'
+        );
+        assert.equal(
+            v2Doc.getElementById('clear-btn').getAttribute('aria-description'),
+            'Clear all form inputs and reset calculations',
+            'v2 #clear-btn aria-description must be localized'
+        );
+    });
 });
+
