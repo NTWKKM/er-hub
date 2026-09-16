@@ -842,6 +842,10 @@ describe('rt-PA v1 & v2 Remediation Verification', () => {
             const nihssBtn = doc.getElementById('print-nihss-blank-btn');
             assert.ok(nihssBtn, `${name} must contain #print-nihss-blank-btn`);
             assert.equal(nihssBtn.textContent.trim(), '🖨️ Blank NIHSS', `${name} blank nihss button text must be localized`);
+
+            const weightLabel = doc.querySelector('label[for="weight"]');
+            assert.ok(weightLabel, `${name} must contain label[for="weight"]`);
+            assert.equal(weightLabel.textContent.trim(), 'Weight (kg):', `${name} weight label must be localized to Weight (kg):`);
         }
 
         // Accessibility aria-description checks for v2
