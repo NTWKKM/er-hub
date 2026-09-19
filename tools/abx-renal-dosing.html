@@ -48,41 +48,6 @@
             --focus-ring: rgba(22, 163, 74, 0.25);
         }
 
-        /* Dark mode: slate-tinted white (#E2E8F0) avoids glare, WCAG AAA 10.8:1 */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --paper: #090d16;
-                --ink: #e2e8f0;
-                --graphite: #94a3b8;
-                --rule: #334155;
-                --surface-card: #141e33;
-                --surface-hover: #1e293b;
-                --surface-sub: #0b1120;
-                --surface-nested: #1e293b;
-                --card-border: #334155;
-                --brand-green: #2ecc71;
-                --brand-green-dark: #27ae60;
-                --brand-green-light: rgba(46, 204, 113, 0.15);
-                --brand-green-border: #2ecc71;
-                --brand-blue: #3b82f6;
-                --brand-blue-light: rgba(59, 130, 246, 0.15);
-                --brand-blue-border: #60a5fa;
-                --accent-amber: #fbbf24;
-                --accent-amber-bg: rgba(245, 158, 11, 0.18);
-                --accent-amber-border: #f59e0b;
-                --accent-red: #f87171;
-                --accent-red-bg: rgba(239, 68, 68, 0.18);
-                --accent-red-border: #ef4444;
-                --accent-purple: #a78bfa;
-                --accent-purple-bg: rgba(139, 92, 246, 0.18);
-                --accent-teal: #2dd4bf;
-                --accent-teal-bg: rgba(20, 184, 166, 0.18);
-                --text-main: #e2e8f0;
-                --text-muted: #94a3b8;
-                --focus-ring: rgba(46, 204, 113, 0.45);
-            }
-        }
-
         body.theme-neutral {
             background-color: var(--paper);
             color: var(--text-main);
@@ -976,28 +941,6 @@
         }
         .btn-modal-close:hover {
             color: var(--text-main);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .dual-abx-table th {
-                background: #141e33;
-            }
-            .btn-step {
-                background: #1e293b;
-                border-color: #334155;
-                color: #e2e8f0;
-            }
-            .btn-step:hover:not(:disabled) {
-                background: #334155;
-                border-color: #2ecc71;
-            }
-            .btn-toggle-group, .drop-factor-btn-group {
-                background: #0b1120;
-                border-color: #334155;
-            }
-            .weight-rational-card {
-                background: #141e33;
-            }
         }
 
         /* Toast Notification */

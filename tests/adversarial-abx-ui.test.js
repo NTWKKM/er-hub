@@ -291,9 +291,9 @@ describe('M2 Adversarial UI & PWA Challenge: tools/abx-renal-dosing.html', () =>
         assert.ok(html.includes('min-height: 48px;'), 'CSS specifies 48px min-height');
         assert.ok(html.includes('min-width: 48px;'), 'CSS specifies 48px min-width');
 
-        // Check WCAG AAA slate-tinted dark mode token
-        assert.ok(html.includes('--ink: #e2e8f0;'), 'Dark mode uses glare-free #e2e8f0 text');
-        assert.ok(html.includes('--paper: #090d16;'), 'Dark mode uses deep slate #090d16 paper');
+        // Check Clean White clinical tone tokens (User directive: No dark mode)
+        assert.ok(html.includes('--paper: #f8fafc;'), 'Uses clean slate-white paper background');
+        assert.ok(html.includes('--surface-card: #ffffff;'), 'Uses pure white card surface');
         assert.ok(html.includes('.theme-neutral'), 'Body uses .theme-neutral');
 
         // Check mobile responsive breakpoints
