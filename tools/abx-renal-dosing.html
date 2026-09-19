@@ -14,39 +14,41 @@
     <style>
         /* ==========================================================================
            Theme Tokens & Palette (ER-Hub Clinical Design System)
-           Neutral Green Theme, Slate-tinted Dark Mode, 48px Touch Ergonomics
+           Clean White Tone (โทนขาว) with Emerald/Cobalt Medical Accents, Slate Dark Mode, 48px Touch Ergonomics
            ========================================================================== */
         :root {
-            --paper: #ebe7df;
-            --ink: #1a1a1a;
-            --graphite: #4a4a4a;
-            --rule: #d8d4c8;
+            --paper: #f8fafc;
+            --ink: #0f172a;
+            --graphite: #334155;
+            --rule: #e2e8f0;
             --surface-card: #ffffff;
             --surface-hover: #f1f5f9;
             --surface-sub: #f8fafc;
-            --surface-nested: #f1f5f9;
-            --card-border: #cbd5e1;
-            --brand-green: #27ae60;
-            --brand-green-dark: #1e8449;
-            --brand-green-light: #e8f8f0;
-            --brand-blue: #1e3c72;
-            --brand-blue-light: #e8f0fe;
+            --surface-nested: #ffffff;
+            --card-border: #e2e8f0;
+            --brand-green: #16a34a;
+            --brand-green-dark: #15803d;
+            --brand-green-light: #f0fdf4;
+            --brand-green-border: #86efac;
+            --brand-blue: #2563eb;
+            --brand-blue-light: #eff6ff;
+            --brand-blue-border: #93c5fd;
             --accent-amber: #d97706;
-            --accent-amber-bg: #fef3c7;
-            --accent-amber-border: #f59e0b;
+            --accent-amber-bg: #fffbeb;
+            --accent-amber-border: #fcd34d;
             --accent-red: #dc2626;
-            --accent-red-bg: #fee2e2;
-            --accent-red-border: #ef4444;
+            --accent-red-bg: #fef2f2;
+            --accent-red-border: #fca5a5;
             --accent-purple: #7c3aed;
-            --accent-purple-bg: #ede9fe;
+            --accent-purple-bg: #f5f3ff;
             --accent-teal: #0d9488;
-            --accent-teal-bg: #ccfbf1;
+            --accent-teal-bg: #f0fdfa;
             --text-main: #0f172a;
-            --text-muted: #475569;
-            --focus-ring: rgba(39, 174, 96, 0.35);
+            --text-muted: #64748b;
+            --focus-ring: rgba(22, 163, 74, 0.25);
         }
 
-        /* Dark mode: ergonomic slate-tinted white (#E2E8F0) avoids glare and halation, WCAG AAA 10.8:1 */
+        /* Dark mode: slate-tinted white (#E2E8F0) avoids glare, WCAG AAA 10.8:1 */
         @media (prefers-color-scheme: dark) {
             :root {
                 --paper: #090d16;
@@ -61,10 +63,12 @@
                 --brand-green: #2ecc71;
                 --brand-green-dark: #27ae60;
                 --brand-green-light: rgba(46, 204, 113, 0.15);
+                --brand-green-border: #2ecc71;
                 --brand-blue: #3b82f6;
                 --brand-blue-light: rgba(59, 130, 246, 0.15);
+                --brand-blue-border: #60a5fa;
                 --accent-amber: #fbbf24;
-                --accent-amber-bg: rgba(245, 158, 11, 0.15);
+                --accent-amber-bg: rgba(245, 158, 11, 0.18);
                 --accent-amber-border: #f59e0b;
                 --accent-red: #f87171;
                 --accent-red-bg: rgba(239, 68, 68, 0.18);
@@ -89,14 +93,22 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        .theme-neutral h1 {
+            color: var(--brand-green);
+        }
+
+        .theme-neutral h3 {
+            border-bottom: 2px solid var(--brand-green);
+        }
+
         .portal-wrapper {
-            max-width: 1240px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 16px 20px 48px;
             box-sizing: border-box;
         }
 
-        /* Standard ER-Hub Header Fallback (when components.js nav is inserted above) */
+        /* Page Header */
         .page-header {
             display: flex;
             justify-content: space-between;
@@ -114,7 +126,7 @@
         }
         .page-header h1 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 1.55rem;
             color: var(--brand-green);
             font-weight: 800;
             letter-spacing: -0.01em;
@@ -128,7 +140,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 8px 14px;
+            padding: 8px 16px;
             border-radius: 6px;
             border: 1.5px solid var(--card-border);
             background: var(--surface-card);
@@ -158,34 +170,36 @@
             }
         }
 
-        /* Panels */
+        /* Panels (Clean modern white clinical card) */
         .panel {
             background: var(--surface-card);
-            border: 1.5px solid var(--card-border);
+            border: 1px solid var(--card-border);
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            padding: 22px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
             box-sizing: border-box;
+            transition: box-shadow 160ms ease;
         }
         .panel-title {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin: 0 0 16px 0;
-            padding-bottom: 10px;
+            padding-bottom: 12px;
             border-bottom: 2px solid var(--brand-green);
             color: var(--text-main);
             font-size: 1.15rem;
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: -0.01em;
         }
 
-        /* Form Inputs & Tactile Step Buttons */
+        /* Form Inputs & Tactile Step Buttons (White clinical style, 48px touch ergonomics) */
         .form-group {
             margin-bottom: 14px;
         }
         .form-group label {
             display: block;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.88rem;
             margin-bottom: 6px;
             color: var(--text-main);
@@ -222,12 +236,13 @@
             min-width: 44px;
         }
 
-        /* Tactile Stepper Buttons (48px touch target) */
+        /* Tactile Stepper Buttons (48px Touch Target, White Modern Style) */
         .btn-step {
             height: 48px;
             width: 48px;
             min-width: 48px;
-            background: var(--surface-hover);
+            min-height: 48px;
+            background: #ffffff;
             border: 1.5px solid var(--card-border);
             border-radius: 8px;
             cursor: pointer;
@@ -238,53 +253,68 @@
             font-weight: 800;
             font-size: 20px;
             color: var(--text-main);
-            transition: all 120ms ease;
+            transition: all 140ms ease;
             touch-action: manipulation;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
         }
         .btn-step:hover:not(:disabled) {
-            background: var(--card-border);
-            border-color: var(--text-muted);
+            background: #f8fafc;
+            border-color: var(--brand-green);
+            color: var(--brand-green-dark);
         }
         .btn-step:active:not(:disabled) {
             transform: scale(0.95);
+            background: #f1f5f9;
         }
 
-        /* Toggle Button Groups (48px Touch Targets) */
-        .btn-toggle-group {
+        /* Toggle Button Groups (Modern Segmented Pill Controller) */
+        .btn-toggle-group, .drop-factor-btn-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 6px;
-        }
-        .btn-toggle {
-            height: 48px;
-            min-height: 48px;
-            background: var(--surface-hover);
-            border: 1.5px solid var(--card-border);
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+            gap: 4px;
+            background: #f1f5f9;
+            padding: 4px;
             border-radius: 8px;
-            color: var(--text-muted);
+            border: 1px solid #e2e8f0;
+        }
+        .btn-toggle, .drop-factor-btn {
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-family: inherit;
+            font-size: 0.85rem;
             font-weight: 600;
-            font-size: 0.88rem;
+            padding: 8px 12px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: all 140ms ease;
+            min-height: 44px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0 10px;
-            transition: all 140ms ease;
+            text-align: center;
             touch-action: manipulation;
         }
-        .btn-toggle:hover {
-            border-color: var(--brand-green);
+        .btn-toggle:hover, .drop-factor-btn:hover {
             color: var(--text-main);
+            background: rgba(255, 255, 255, 0.6);
         }
-        .btn-toggle.active {
-            background: var(--brand-green);
-            border-color: var(--brand-green-dark);
+        .btn-toggle.active, .drop-factor-btn.active {
+            background: var(--brand-blue);
             color: #ffffff;
             font-weight: 700;
-            box-shadow: 0 2px 6px rgba(39, 174, 96, 0.3);
+            box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
         }
 
-        /* Side-by-Side Dual Clearance Cards */
+        .rate-large {
+            font-size: 2.3em;
+            font-weight: bold;
+            color: var(--brand-green);
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+
+        /* Clearance Grid Side-by-Side */
         .clearance-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -298,83 +328,76 @@
         }
         .clearance-card {
             background: var(--brand-green-light);
-            border: 2px solid var(--brand-green);
-            border-radius: 10px;
-            padding: 14px;
+            border: 1.5px solid var(--brand-green-border);
+            border-radius: 12px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             transition: all 180ms ease;
             box-sizing: border-box;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+        }
+        .clearance-card.card-egfr {
+            border-color: var(--brand-blue-border);
+            background: var(--brand-blue-light);
         }
         .clearance-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 6px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .clearance-title {
             font-size: 0.84rem;
             font-weight: 700;
             color: var(--brand-blue);
         }
-        .clearance-value {
-            font-size: 2.2rem;
-            font-weight: 900;
-            font-variant-numeric: tabular-nums;
-            color: var(--brand-green-dark);
-            line-height: 1.1;
-            margin: 4px 0;
-        }
         .clearance-units {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             font-weight: 700;
             color: var(--text-muted);
         }
+
         .tier-badge {
             display: inline-block;
             font-size: 0.72rem;
             font-weight: 800;
             text-transform: uppercase;
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 12px;
-            margin-top: 6px;
+            margin-top: 8px;
             align-self: flex-start;
+            letter-spacing: 0.02em;
         }
-        .tier-badge.tier-green {
-            background: #27ae60;
-            color: #ffffff;
-        }
-        .tier-badge.tier-amber {
-            background: var(--accent-amber);
-            color: #ffffff;
-        }
-        .tier-badge.tier-orange {
-            background: #e67e22;
-            color: #ffffff;
-        }
-        .tier-badge.tier-red {
-            background: var(--accent-red);
-            color: #ffffff;
-        }
-        .tier-badge.tier-purple {
-            background: var(--accent-purple);
-            color: #ffffff;
-        }
-        .tier-badge.tier-teal {
-            background: var(--accent-teal);
-            color: #ffffff;
+        .tier-badge.tier-green { background: #16a34a; color: #ffffff; }
+        .tier-badge.tier-amber { background: var(--accent-amber); color: #ffffff; }
+        .tier-badge.tier-orange { background: #ea580c; color: #ffffff; }
+        .tier-badge.tier-red { background: var(--accent-red); color: #ffffff; }
+        .tier-badge.tier-purple { background: var(--accent-purple); color: #ffffff; }
+        .tier-badge.tier-teal { background: var(--accent-teal); color: #ffffff; }
+
+        /* Warning Box */
+        .warning-box {
+            background: var(--accent-amber-bg);
+            border-left: 4px solid var(--accent-amber-border);
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-top: 14px;
+            font-size: 13.5px;
+            line-height: 1.45;
         }
 
-        /* Intelligent Weight Rationalization Banner */
+        /* Weight Indicator Pill Row */
         .weight-rational-card {
-            background: var(--surface-nested);
-            border: 1.5px solid var(--card-border);
-            border-radius: 8px;
-            padding: 12px 14px;
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 14px 16px;
             margin-top: 14px;
-            font-size: 0.85rem;
+            font-size: 0.84rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
         .weight-rational-title {
             font-weight: 700;
@@ -387,7 +410,7 @@
         .weight-rational-desc {
             color: var(--text-muted);
             line-height: 1.4;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         .metric-pill-row {
             display: flex;
@@ -395,9 +418,9 @@
             gap: 6px;
         }
         .metric-pill {
-            background: var(--surface-card);
+            background: #f1f5f9;
             border: 1px solid var(--card-border);
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 6px;
             font-size: 0.78rem;
             font-weight: 600;
@@ -407,13 +430,14 @@
         /* Discordance Alert Banner */
         .discordance-banner {
             display: none;
-            margin-top: 16px;
-            padding: 14px 16px;
-            border-radius: 8px;
-            border-left: 5px solid var(--accent-amber-border);
+            margin-top: 14px;
+            padding: 14px 18px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-amber-border);
             background: var(--accent-amber-bg);
-            color: var(--ink);
+            color: var(--text-main);
             animation: fadeIn 200ms ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
         }
         .discordance-banner.active-discordant {
             display: block;
@@ -425,40 +449,81 @@
         }
         .discordance-title {
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .discordance-body {
-            font-size: 0.85rem;
+            font-size: 0.84rem;
             line-height: 1.45;
+        }
+
+        /* View Mode Switcher & Filter Controls */
+        .toolbar-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .search-box-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 260px;
+        }
+        .search-input {
+            width: 100%;
+            height: 44px;
+            padding: 0 14px 0 36px;
+            background: var(--surface-card);
+            border: 1.5px solid var(--card-border);
+            border-radius: 8px;
             color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: inherit;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 120ms ease;
+        }
+        .search-input:focus {
+            border-color: var(--brand-green);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: var(--text-muted);
+            pointer-events: none;
         }
 
         /* Disease Protocol Filter Chips */
         .filter-chip-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 18px;
+            gap: 6px;
+            margin-bottom: 16px;
         }
         .filter-chip {
-            height: 48px;
-            min-height: 48px;
-            padding: 0 16px;
+            min-height: 40px;
+            padding: 6px 14px;
             background: var(--surface-hover);
             border: 1.5px solid var(--card-border);
-            border-radius: 24px;
+            border-radius: 20px;
             color: var(--text-main);
-            font-size: 0.86rem;
+            font-size: 0.82rem;
             font-weight: 600;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            transition: all 140ms ease;
+            transition: all 120ms ease;
             touch-action: manipulation;
             user-select: none;
         }
@@ -470,10 +535,150 @@
             background: var(--brand-green);
             border-color: var(--brand-green-dark);
             color: #ffffff;
-            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.28);
+            box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);
         }
 
-        /* Antibiotic Cards Grid */
+        /* ==========================================================================
+           DUAL CLEARANCE DRUG TABLE (Requested Primary Feature)
+           ========================================================================== */
+        .table-responsive-wrap {
+            width: 100%;
+            max-height: 720px;
+            overflow-y: auto;
+            overflow-x: auto;
+            overscroll-behavior: contain;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            background: var(--surface-card);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+            margin-bottom: 20px;
+        }
+        .dual-abx-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.86rem;
+            text-align: left;
+            min-width: 820px;
+        }
+        .dual-abx-table th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: #ffffff;
+            color: var(--text-main);
+            padding: 12px 14px;
+            font-weight: 800;
+            border-bottom: 2px solid var(--card-border);
+            white-space: nowrap;
+            box-shadow: 0 1px 0 var(--card-border);
+        }
+        .dual-abx-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--card-border);
+            vertical-align: middle;
+            transition: background-color 100ms ease;
+        }
+        .dual-abx-table tr:last-child td {
+            border-bottom: none;
+        }
+        .dual-abx-table tr:hover td {
+            background: var(--surface-hover);
+        }
+        .dual-abx-table tr.row-discordant td {
+            background: rgba(245, 158, 11, 0.04);
+        }
+        .dual-abx-table tr.row-selected td {
+            background: var(--brand-green-light);
+        }
+
+        .dose-pill-crcl {
+            display: inline-block;
+            background: var(--brand-green-light);
+            border: 1.5px solid var(--brand-green-border);
+            color: var(--brand-green-dark);
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+        .dose-pill-egfr {
+            display: inline-block;
+            background: var(--brand-blue-light);
+            border: 1.5px solid var(--brand-blue-border);
+            color: var(--brand-blue);
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+        .dose-pill-discordant {
+            border-color: var(--accent-amber-border) !important;
+            background: var(--accent-amber-bg) !important;
+            color: #b45309 !important;
+        }
+
+        .status-badge-concordant {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #15803d;
+            background: #dcfce7;
+            padding: 4px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+        .status-badge-discordant {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #b45309;
+            background: #fef3c7;
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid #f59e0b;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .btn-table-action {
+            height: 38px;
+            padding: 0 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 120ms ease;
+            touch-action: manipulation;
+            border: 1px solid var(--card-border);
+            background: var(--surface-card);
+            color: var(--text-main);
+        }
+        .btn-table-action:hover {
+            border-color: var(--brand-green);
+            background: var(--surface-hover);
+        }
+        .btn-table-action.primary {
+            background: var(--brand-green);
+            border-color: var(--brand-green-dark);
+            color: #ffffff;
+        }
+        .btn-table-action.primary:hover {
+            background: var(--brand-green-dark);
+        }
+
+        /* Detailed Card Grid (Preserved for backwards compatibility & toggle) */
         .abx-cards-grid {
             display: flex;
             flex-direction: column;
@@ -482,14 +687,14 @@
         .abx-card {
             background: var(--surface-card);
             border: 1.5px solid var(--card-border);
-            border-radius: 10px;
+            border-radius: 8px;
             padding: 16px;
             transition: border-color 150ms ease, box-shadow 150ms ease;
             box-sizing: border-box;
         }
         .abx-card:hover {
             border-color: var(--brand-green);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
         .abx-card-header {
             display: flex;
@@ -505,11 +710,6 @@
             color: var(--text-main);
             margin: 0;
         }
-        .abx-card-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
         .badge-class {
             background: var(--surface-hover);
             border: 1px solid var(--card-border);
@@ -519,31 +719,13 @@
             font-size: 0.76rem;
             font-weight: 700;
         }
-        .badge-role-1st {
-            background: var(--brand-green-light);
-            color: var(--brand-green-dark);
-            border: 1px solid var(--brand-green);
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.76rem;
-            font-weight: 800;
-        }
-        .badge-role-alt {
-            background: var(--accent-amber-bg);
-            color: var(--accent-amber);
-            border: 1px solid var(--accent-amber-border);
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.76rem;
-            font-weight: 800;
-        }
 
-        /* Dosing Box Inside Drug Card */
+        /* Dose HUD inside card */
         .dose-hud-box {
             background: var(--surface-nested);
             border: 1.5px solid var(--card-border);
-            border-radius: 8px;
-            padding: 14px 16px;
+            border-radius: 6px;
+            padding: 12px 16px;
             margin: 10px 0;
             display: flex;
             justify-content: space-between;
@@ -557,7 +739,7 @@
             gap: 4px;
         }
         .dose-hud-label {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
@@ -580,7 +762,7 @@
             color: var(--brand-blue);
         }
 
-        /* Clinical Highlights Tags (Loading, Extended Infusion, Dialysis) */
+        /* Feature Tags */
         .feature-tags-row {
             display: flex;
             flex-wrap: wrap;
@@ -596,23 +778,11 @@
             align-items: center;
             gap: 4px;
         }
-        .feature-tag-load {
-            background: #eff6ff;
-            color: #1d4ed8;
-            border: 1px solid #93c5fd;
-        }
-        .feature-tag-extended {
-            background: #ecfdf5;
-            color: #047857;
-            border: 1px solid #6ee7b7;
-        }
-        .feature-tag-dialysis {
-            background: #faf5ff;
-            color: #7e22ce;
-            border: 1px solid #d8b4fe;
-        }
+        .feature-tag-load { background: #eff6ff; color: #1d4ed8; border: 1px solid #93c5fd; }
+        .feature-tag-extended { background: #ecfdf5; color: #047857; border: 1px solid #6ee7b7; }
+        .feature-tag-dialysis { background: #faf5ff; color: #7e22ce; border: 1px solid #d8b4fe; }
 
-        /* Expandable Stanford Breakdown */
+        /* Expandable 6-Tier Stanford Table */
         .abx-expand-trigger {
             background: none;
             border: none;
@@ -641,7 +811,6 @@
             display: block;
         }
 
-        /* Stanford 6-Tier Renal Table */
         .renal-table {
             width: 100%;
             border-collapse: collapse;
@@ -683,20 +852,14 @@
             line-height: 1.4;
         }
 
-        /* One-Click Action Row */
-        .abx-action-row {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 12px;
-        }
+        /* Action Buttons */
         .btn-action-copy {
             height: 48px;
             min-height: 48px;
             background: var(--brand-green);
             color: #ffffff;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             padding: 0 16px;
             font-weight: 700;
             font-size: 0.88rem;
@@ -718,16 +881,17 @@
         /* Prescription Note Live Box */
         .rx-preview-card {
             background: var(--surface-card);
-            border: 1.5px solid var(--brand-blue);
-            border-radius: 10px;
-            padding: 16px;
+            border: 1.5px solid var(--brand-blue-border);
+            border-radius: 12px;
+            padding: 18px;
             margin-top: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         }
         .rx-preview-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         .rx-preview-title {
             font-size: 1rem;
@@ -742,17 +906,101 @@
             min-height: 140px;
             font-family: var(--font-mono, monospace);
             font-size: 0.85rem;
-            line-height: 1.45;
-            background: var(--surface-nested);
+            line-height: 1.5;
+            background: var(--surface-sub);
             border: 1px solid var(--card-border);
-            border-radius: 6px;
-            padding: 12px;
+            border-radius: 8px;
+            padding: 14px;
             color: var(--text-main);
             box-sizing: border-box;
             white-space: pre-wrap;
         }
 
-        /* Toast Notification (Accessible Top-Tier Element) */
+        /* Modal Overlay for 6-Tier Reference */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        .modal-backdrop.open {
+            display: flex;
+        }
+        .modal-card {
+            background: var(--surface-card);
+            border: 1.5px solid var(--card-border);
+            border-radius: 16px;
+            max-width: 820px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            box-sizing: border-box;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--brand-green);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+        .modal-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--brand-green);
+        }
+        .btn-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            font-weight: 800;
+            cursor: pointer;
+            color: var(--text-muted);
+            line-height: 1;
+            padding: 4px;
+            border-radius: 4px;
+            transition: color 120ms ease;
+        }
+        .btn-modal-close:hover {
+            color: var(--text-main);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .dual-abx-table th {
+                background: #141e33;
+            }
+            .btn-step {
+                background: #1e293b;
+                border-color: #334155;
+                color: #e2e8f0;
+            }
+            .btn-step:hover:not(:disabled) {
+                background: #334155;
+                border-color: #2ecc71;
+            }
+            .btn-toggle-group, .drop-factor-btn-group {
+                background: #0b1120;
+                border-color: #334155;
+            }
+            .weight-rational-card {
+                background: #141e33;
+            }
+        }
+
+        /* Toast Notification */
         #toast-msg {
             display: none;
             position: fixed;
@@ -789,8 +1037,11 @@
         <header class="page-header" role="banner">
             <div class="page-header-title">
                 <div>
-                    <h1>Antimicrobial Renal Dosing</h1>
-                    <p class="page-header-subtitle">Stanford Antimicrobial Safety Protocol · Dual CrCl &amp; eGFR Clearance</p>
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <h1>Antimicrobial Renal Dosing</h1>
+                        <span class="badge-class" style="background: #fef3c7; color: #b45309; border-color: #f59e0b; font-weight: 800; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">PROTOTYPE</span>
+                    </div>
+                    <p class="page-header-subtitle">Stanford Antimicrobial Safety Protocol (2026) · Dual CrCl &amp; eGFR Clearance Table</p>
                 </div>
             </div>
             <div>
@@ -812,6 +1063,7 @@
 
                 <form id="patient-form" onsubmit="event.preventDefault();">
                     <div id="patient-validation-msg" class="validation-msg" role="alert" style="display: none; background: #fee2e2; color: #991b1b; padding: 8px 12px; border-radius: 6px; font-size: 0.82rem; margin-bottom: 12px; border: 1px solid #f87171; font-weight: 600;"></div>
+                    
                     <!-- Age Input -->
                     <div class="form-group">
                         <label for="in-age">Patient Age (years)</label>
@@ -876,7 +1128,7 @@
                         </div>
                     </div>
 
-                    <!-- Weight Selection Basis (Auto Intelligent vs Manual Override) -->
+                    <!-- Weight Selection Basis -->
                     <div class="form-group">
                         <label>Weight Calculation Basis</label>
                         <div class="btn-toggle-group" role="group" aria-label="Weight Basis">
@@ -888,7 +1140,7 @@
                     </div>
                 </form>
 
-                <!-- Side-by-Side Dual Clearance Cards -->
+                <!-- Side-by-Side Dual Clearance Cards (Styled as IV Drug Cal result-boxes) -->
                 <div class="clearance-grid">
                     <!-- Cockcroft-Gault Card -->
                     <div class="clearance-card" id="card-crcl">
@@ -897,7 +1149,7 @@
                                 <span class="clearance-title">Cockcroft-Gault CrCl</span>
                                 <span class="clearance-units">mL/min</span>
                             </div>
-                            <div class="clearance-value" id="out-crcl">--</div>
+                            <div class="rate-large" id="out-crcl">--</div>
                         </div>
                         <div>
                             <span class="tier-badge tier-green" id="badge-crcl-tier">Tier ≥ 50</span>
@@ -905,13 +1157,13 @@
                     </div>
 
                     <!-- CKD-EPI 2021 Card -->
-                    <div class="clearance-card" id="card-egfr" style="border-color: var(--brand-blue); background: var(--brand-blue-light);">
+                    <div class="clearance-card card-egfr" id="card-egfr">
                         <div>
                             <div class="clearance-header">
                                 <span class="clearance-title" style="color: var(--brand-blue);">CKD-EPI 2021 eGFR</span>
                                 <span class="clearance-units">mL/min/1.73m²</span>
                             </div>
-                            <div class="clearance-value" id="out-egfr" style="color: var(--brand-blue);">--</div>
+                            <div class="rate-large" id="out-egfr" style="color: var(--brand-blue);">--</div>
                         </div>
                         <div>
                             <span class="tier-badge tier-teal" id="badge-egfr-tier">G1 Normal</span>
@@ -919,7 +1171,7 @@
                     </div>
                 </div>
 
-                <!-- Intelligent Weight Indicator & Anthropometrics -->
+                <!-- Weight Indicator & Anthropometrics (IV Drug Cal style card) -->
                 <div class="weight-rational-card">
                     <div class="weight-rational-title">
                         <span>⚖️ Weight Strategy:</span>
@@ -938,7 +1190,7 @@
                     </div>
                 </div>
 
-                <!-- Discordance Alert Banner -->
+                <!-- Discordance Alert Banner (Styled as IV Drug Cal warning-box) -->
                 <div id="discordance-banner" class="discordance-banner" role="alert">
                     <div class="discordance-title">
                         <span id="discordance-icon">⚠️</span>
@@ -951,19 +1203,41 @@
             </aside>
 
             <!-- ==============================================================
-                 RIGHT COLUMN: Interactive Indication Filter & Dosing Cards
+                 RIGHT COLUMN: Dual CrCl & eGFR Table / Detailed Cards View
                  ============================================================== -->
             <main class="panel" aria-label="Antimicrobial Dosing Protocols">
-                <h2 class="panel-title">
-                    <span>💊 Antimicrobial Guidelines &amp; Indication Protocols</span>
-                    <span id="active-indication-badge" class="badge-class">All Indications</span>
-                </h2>
+                <div class="toolbar-container">
+                    <h2 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                        <span>💊 Antimicrobial Dosing Guide</span>
+                        <span id="active-indication-badge" class="badge-class">All Antimicrobials</span>
+                    </h2>
+
+                    <!-- View Mode Switcher (IV Drug Cal segmented button style) -->
+                    <div class="drop-factor-btn-group" role="group" aria-label="View Mode">
+                        <button type="button" class="drop-factor-btn active" id="btn-view-table" onclick="setViewMode('table')">
+                            📊 ตารางยาเทียบ CrCl &amp; eGFR
+                        </button>
+                        <button type="button" class="drop-factor-btn" id="btn-view-cards" onclick="setViewMode('cards')">
+                            🗂️ การ์ดยาละเอียด
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search and Discordant-Only Filter Bar -->
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px;">
+                    <div class="search-box-wrap">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="drug-search-input" class="search-input" placeholder="ค้นหาชื่อยา (เช่น Meropenem, Cefepime, Colistin, Pip/Tazo)..." oninput="handleSearch(this.value)">
+                    </div>
+
+                    <button type="button" id="btn-filter-discordant" class="drop-factor-btn" onclick="toggleDiscordantFilter()" style="border: 1.5px solid var(--card-border); background: var(--surface-hover); min-height: 44px; padding: 0 14px;">
+                        ⚠️ เฉพาะยาที่ขนาดยาต่างกัน (<span id="discordant-count">0</span>)
+                    </button>
+                    <span id="table-count-badge" class="badge-class" style="min-height: 40px; display: inline-flex; align-items: center; font-weight: 700;">29 รายการ</span>
+                </div>
 
                 <!-- Interactive Disease Protocol Filter Chips -->
                 <div>
-                    <label style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 8px;">
-                        FILTER BY CLINICAL INDICATION / SYNDROME:
-                    </label>
                     <div class="filter-chip-container" role="toolbar" aria-label="Disease Protocol Filter Chips">
                         <button type="button" class="filter-chip active" id="chip-all" onclick="selectIndicationFilter('all')">
                             🌐 All Antimicrobials
@@ -992,14 +1266,39 @@
                     </div>
                 </div>
 
-                <!-- Indication Clinical Guidance Banner (Surviving Sepsis / Stanford CPG) -->
-                <div id="indication-guidance-box" class="safety-box" style="display:none; margin-bottom: 18px; border-left-color: var(--brand-blue); background: var(--brand-blue-light);">
+                <!-- Indication Clinical Guidance Banner -->
+                <div id="indication-guidance-box" class="warning-box" style="display:none; margin-bottom: 16px; background: var(--brand-blue-light); border-left-color: var(--brand-blue);">
                     <strong id="guidance-title" style="color: var(--brand-blue);">Clinical Guidance:</strong>
-                    <div id="guidance-body" style="margin-top: 4px;">--</div>
+                    <div id="guidance-body" style="margin-top: 4px; color: var(--text-main);">--</div>
                 </div>
 
-                <!-- Expandable Antibiotic Cards List -->
-                <div class="abx-cards-grid" id="abx-cards-container">
+                <!-- ==========================================================
+                     PRIMARY FEATURE: Dual CrCl & eGFR Comparison Table
+                     ========================================================== -->
+                <div id="abx-table-container" class="table-responsive-wrap">
+                    <table class="dual-abx-table" aria-label="Antimicrobial Dosing Comparison Table by CrCl and eGFR">
+                        <thead>
+                            <tr>
+                                <th>ชื่อยา (Drug &amp; Route)</th>
+                                <th>กลุ่มยา (Class)</th>
+                                <th>ขนาดปกติ (Normal)</th>
+                                <th style="color: var(--brand-green-dark);">ขนาดยาตาม CrCl</th>
+                                <th style="color: var(--brand-blue);">ขนาดยาตาม eGFR</th>
+                                <th>ความสอดคล้อง</th>
+                                <th>จุดเน้นทางคลินิก (Pearls)</th>
+                                <th style="text-align: right;">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="abx-table-body">
+                            <!-- Populated dynamically by renderDualAbxTable() -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ==========================================================
+                     DETAILED CARD VIEW (Preserved for compatibility & deep review)
+                     ========================================================== -->
+                <div class="abx-cards-grid" id="abx-cards-container" style="display: none;">
                     <!-- Populated dynamically by renderAntibioticCards() -->
                 </div>
 
@@ -1024,6 +1323,19 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
         </div>
     </div>
 
+    <!-- 6-Tier Stanford Reference Modal -->
+    <div id="tier-modal" class="modal-backdrop" onclick="closeTierModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-drug-title">Antimicrobial Renal Dosing Table</h3>
+                <button type="button" class="btn-modal-close" onclick="closeTierModal()" aria-label="Close modal">&times;</button>
+            </div>
+            <div id="modal-content-body">
+                <!-- Injected dynamically -->
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification Element -->
     <div id="toast-msg" role="status" aria-live="polite">✓ Copied to Clipboard!</div>
 
@@ -1044,6 +1356,15 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
 
         // Currently selected active drug for detailed prescription note
         let activeRxDrugId = null;
+
+        // View Mode: 'table' (default) or 'cards'
+        let currentViewMode = 'table';
+
+        // Search Filter String
+        let currentSearchQuery = '';
+
+        // Discordant Only Filter
+        let filterDiscordantOnly = false;
 
         // Initialization
         window.addEventListener('DOMContentLoaded', () => {
@@ -1116,6 +1437,43 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             calculateAll();
         }
 
+        // Switch View Mode ('table' vs 'cards')
+        function setViewMode(mode) {
+            currentViewMode = mode;
+            const btnTable = document.getElementById('btn-view-table');
+            const btnCards = document.getElementById('btn-view-cards');
+            const tableWrap = document.getElementById('abx-table-container');
+            const cardsWrap = document.getElementById('abx-cards-container');
+
+            if (mode === 'table') {
+                btnTable.classList.add('active');
+                btnCards.classList.remove('active');
+                tableWrap.style.display = 'block';
+                cardsWrap.style.display = 'none';
+            } else {
+                btnCards.classList.add('active');
+                btnTable.classList.remove('active');
+                tableWrap.style.display = 'none';
+                cardsWrap.style.display = 'flex';
+            }
+        }
+
+        // Search Filter
+        function handleSearch(val) {
+            currentSearchQuery = (val || '').trim().toLowerCase();
+            renderDualAbxTable();
+            renderAntibioticCards();
+        }
+
+        // Toggle Discordant Only Filter
+        function toggleDiscordantFilter() {
+            filterDiscordantOnly = !filterDiscordantOnly;
+            const btn = document.getElementById('btn-filter-discordant');
+            btn.classList.toggle('active', filterDiscordantOnly);
+            renderDualAbxTable();
+            renderAntibioticCards();
+        }
+
         // Filter by Disease Protocol Chips
         function selectIndicationFilter(indKey) {
             activeIndication = indKey;
@@ -1156,6 +1514,7 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                 }
             }
 
+            renderDualAbxTable();
             renderAntibioticCards();
             updatePrescriptionPreview();
         }
@@ -1200,14 +1559,13 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                 renderClearanceCards(null, null, null);
                 renderWeightRationale(null, null, null, null, null);
                 renderDiscordanceBanner(null, null, null, null);
+                renderDualAbxTable();
                 renderAntibioticCards();
                 updatePrescriptionPreview();
                 return;
             }
 
-            if (valMsg) {
-                valMsg.style.display = 'none';
-            }
+            if (valMsg) valMsg.style.display = 'none';
 
             const ptPayload = {
                 age,
@@ -1251,6 +1609,7 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             renderClearanceCards(crclRes, egfrVal, absGfr);
             renderWeightRationale(bmi, ibw, abw, weight, crclRes);
             renderDiscordanceBanner(crclRes?.crcl, egfrVal, absGfr, bsa);
+            renderDualAbxTable();
             renderAntibioticCards();
             updatePrescriptionPreview();
         }
@@ -1393,14 +1752,118 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             }
         }
 
-        // Render Dynamic Antibiotic Cards
-        function renderAntibioticCards() {
-            const container = document.getElementById('abx-cards-container');
-            container.innerHTML = '';
+        // ======================================================================
+        // DUAL CLEARANCE DRUG TABLE RENDERER (Primary Table Feature)
+        // ======================================================================
+        function renderDualAbxTable() {
+            const tbody = document.getElementById('abx-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
 
-            let drugList = [];
+            let drugList = getFilteredDrugList();
+
+            const patientRenalStatus = {
+                rrt: patientState.rrt,
+                isHD: patientState.rrt === 'hd',
+                isCRRT: patientState.rrt === 'crrt',
+                crcl: patientState.calc?.crcl,
+                egfr: patientState.calc?.egfr,
+                weightKg: patientState.calc?.weightUsed
+            };
+
+            let discordantCount = 0;
+
+            drugList.forEach(item => {
+                const drug = item.drug;
+                const dual = (typeof ABX_ENGINE.calculateDualDose === 'function')
+                    ? ABX_ENGINE.calculateDualDose(drug.id, patientRenalStatus, activeIndication !== 'all' ? activeIndication : null)
+                    : null;
+
+                const isDisc = dual ? dual.isDoseDiscordant : false;
+                if (isDisc) discordantCount++;
+
+                // Filter out if discordant only is active and drug is concordant
+                if (filterDiscordantOnly && !isDisc) return;
+
+                const tr = document.createElement('tr');
+                if (isDisc) tr.classList.add('row-discordant');
+                if (activeRxDrugId === drug.id) tr.classList.add('row-selected');
+
+                // CrCl Dose representation
+                const crclDoseStr = dual?.doseCrCl ? `${dual.doseCrCl.recommendedDose} ${dual.doseCrCl.interval}` : (drug.stdDose || '--');
+                // eGFR Dose representation
+                const egfrDoseStr = dual?.doseEGFR ? `${dual.doseEGFR.recommendedDose} ${dual.doseEGFR.interval}` : (drug.stdDose || '--');
+
+                // Feature pearls (loading, infusion, dialysis)
+                let pearls = [];
+                if (drug.id === 'vancomycin') pearls.push('⚡ Load 25-30 mg/kg TBW');
+                if (drug.id === 'pip_tazo') pearls.push('⏱️ Extended 4h; Sepsis 4.5g load');
+                if (drug.id === 'cefepime') pearls.push('⏱️ Extended 4h; CIN risk');
+                if (drug.id === 'meropenem') pearls.push('⏱️ Extended 3h; Avoid valproate');
+                if (drug.id === 'colistin') pearls.push('⚡ Load 300 mg CBA (9 MU)');
+                if (drug.renalTiers?.hd?.postHD) pearls.push(`💧 HD: ${drug.renalTiers.hd.postHD}`);
+
+                const pearlsHtml = pearls.length > 0
+                    ? pearls.map(p => `<span style="display:block; font-size:0.75rem; color:var(--text-muted); margin-bottom:2px;">${p}</span>`).join('')
+                    : `<span style="font-size:0.75rem; color:var(--text-muted);">Standard administration</span>`;
+
+                tr.innerHTML = `
+                    <td>
+                        <strong style="color:var(--text-main); font-size:0.95rem;">${drug.name}</strong>
+                        <span style="font-size:0.72rem; color:var(--text-muted); display:block;">${drug.route || 'IV'}</span>
+                    </td>
+                    <td>
+                        <span class="badge-class">${drug.class}</span>
+                        ${item.role ? `<span style="display:block; margin-top:3px; font-size:0.72rem; font-weight:800; color:var(--brand-green-dark);">${item.role}</span>` : ''}
+                    </td>
+                    <td style="font-size:0.84rem; color:var(--text-muted);">${drug.stdDose}</td>
+                    <td>
+                        <span class="dose-pill-crcl ${isDisc ? 'dose-pill-discordant' : ''}">${crclDoseStr}</span>
+                        <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">Tier: ${dual?.tierCrCl || '--'}</div>
+                    </td>
+                    <td>
+                        <span class="dose-pill-egfr ${isDisc ? 'dose-pill-discordant' : ''}">${egfrDoseStr}</span>
+                        <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">Tier: ${dual?.tierEGFR || '--'}</div>
+                    </td>
+                    <td>
+                        ${isDisc
+                            ? `<span class="status-badge-discordant" title="${dual.discordanceAdvice}">⚠️ ต่างกัน (Discordant)</span>`
+                            : `<span class="status-badge-concordant">✓ สอดคล้อง</span>`
+                        }
+                    </td>
+                    <td>${pearlsHtml}</td>
+                    <td style="text-align:right; white-space:nowrap;">
+                        <button type="button" class="btn-table-action primary" onclick="selectAndCopyDrug('${drug.id}')" title="Select for Prescription Note">
+                            📋 สั่งยานี้
+                        </button>
+                        <button type="button" class="btn-table-action" onclick="openTierModal('${drug.id}')" title="View Stanford 6-Tier Adjustment Table">
+                            ℹ️ ตาราง 6 ระดับ
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+
+            const countEl = document.getElementById('discordant-count');
+            if (countEl) countEl.textContent = discordantCount;
+
+            const badgeEl = document.getElementById('table-count-badge');
+            if (badgeEl) badgeEl.textContent = `${drugList.length} รายการ`;
+        }
+
+        // Global Keyboard Shortcuts (Escape to close modal per modern web accessibility)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeTierModal();
+            }
+        });
+
+        // Helper to retrieve filtered drug list
+        function getFilteredDrugList() {
+            let list = [];
             if (activeIndication === 'all') {
-                drugList = Object.values(ABX_ENGINE.STANFORD_ABX_DB).map(d => ({
+                list = Object.values(ABX_ENGINE.STANFORD_ABX_DB).map(d => ({
                     drugId: d.id,
                     drugName: d.name,
                     drug: d,
@@ -1409,7 +1872,7 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                 }));
             } else {
                 const filtered = ABX_ENGINE.filterByIndication(activeIndication, patientState.calc?.crclRes || patientState.rrt);
-                drugList = filtered.map(item => ({
+                list = filtered.map(item => ({
                     drugId: item.drugId,
                     drugName: item.drugName,
                     drug: item.drugInfo,
@@ -1417,6 +1880,26 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                     indicationInfo: item.indicationInfo
                 }));
             }
+
+            if (currentSearchQuery) {
+                list = list.filter(item => {
+                    const name = (item.drug.name || '').toLowerCase();
+                    const dClass = (item.drug.class || '').toLowerCase();
+                    const id = (item.drug.id || '').toLowerCase();
+                    return name.includes(currentSearchQuery) || dClass.includes(currentSearchQuery) || id.includes(currentSearchQuery);
+                });
+            }
+
+            return list;
+        }
+
+        // Render Dynamic Antibiotic Cards (Detailed Card View)
+        function renderAntibioticCards() {
+            const container = document.getElementById('abx-cards-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            let drugList = getFilteredDrugList();
 
             const patientRenalStatus = {
                 rrt: patientState.rrt,
@@ -1448,98 +1931,102 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                     featureTagsHtml += `<span class="feature-tag feature-tag-extended">⏱️ 3-4h Extended Infusion</span>`;
                 } else if (drug.id === 'meropenem') {
                     featureTagsHtml += `<span class="feature-tag feature-tag-extended">⏱️ 3-Hour Extended Infusion</span>`;
-                } else if (drug.id === 'levofloxacin') {
-                    featureTagsHtml += `<span class="feature-tag feature-tag-load">⚡ Full Load (750mg) First</span>`;
+                } else if (drug.id === 'colistin') {
+                    featureTagsHtml += `<span class="feature-tag feature-tag-load">⚡ Load: 300 mg CBA (9 MU)</span>`;
                 }
 
                 if (drug.renalTiers?.hd?.postHD) {
-                    featureTagsHtml += `<span class="feature-tag feature-tag-dialysis">🩸 Post-HD Supplemental Redosing</span>`;
+                    featureTagsHtml += `<span class="feature-tag feature-tag-dialysis">💧 Dialysis: ${drug.renalTiers.hd.postHD}</span>`;
                 }
 
-                // Stanford 6-tier table HTML
-                const tiers = [
-                    { key: 'crcl_gt_50', label: 'CrCl > 50 mL/min' },
-                    { key: 'crcl_30_50', label: 'CrCl 30 - 50 mL/min' },
-                    { key: 'crcl_10_29', label: 'CrCl 10 - 29 mL/min' },
-                    { key: 'crcl_lt_10', label: 'CrCl < 10 mL/min' },
-                    { key: 'hd', label: 'Hemodialysis (IHD)' },
-                    { key: 'crrt', label: 'CRRT (Continuous)' }
+                const recDose = dCalc ? dCalc.recommendedDose : drug.stdDose;
+                const recInterval = dCalc ? dCalc.interval : 'q24h';
+                const recInfusion = dCalc ? dCalc.infusion : (drug.route || 'IV');
+
+                // 6-Tier Table rows
+                const tiers = drug.renalTiers || {};
+                const tierKeys = [
+                    { k: 'crcl_gt_50', label: 'CrCl > 50 mL/min (Mild/Normal)' },
+                    { k: 'crcl_30_50', label: 'CrCl 30–50 mL/min (Moderate)' },
+                    { k: 'crcl_10_29', label: 'CrCl 10–29 mL/min (Severe)' },
+                    { k: 'crcl_lt_10', label: 'CrCl < 10 mL/min (End Stage)' },
+                    { k: 'hd', label: 'Hemodialysis (IHD / HD)' },
+                    { k: 'crrt', label: 'Continuous RRT (CRRT)' }
                 ];
 
-                let tableRowsHtml = '';
-                tiers.forEach(t => {
-                    const rInfo = drug.renalTiers ? drug.renalTiers[t.key] : drug.renalDosing[t.key];
-                    const isActive = (t.key === currentTier);
-                    let rowDose = rInfo?.dose || '--';
-                    let rowFreq = rInfo?.freq || '--';
-                    if (rowDose === 'Standard indication dose' && item.indicationInfo) {
-                        rowDose = item.indicationInfo.defaultDose;
-                        rowFreq = item.indicationInfo.frequency;
-                    }
-                    tableRowsHtml += `
+                let tierRowsHtml = tierKeys.map(tk => {
+                    const td = tiers[tk.k] || { dose: '--', freq: '--', infusion: '--' };
+                    const isActive = (currentTier === tk.k);
+                    return `
                         <tr class="${isActive ? 'active-tier' : ''}">
-                            <td style="width: 140px; font-weight: 700;">${t.label}</td>
-                            <td>${rowDose}</td>
-                            <td>${rowFreq}</td>
-                            <td style="font-size: 0.78rem; color: var(--text-muted);">${rInfo?.postHD ? 'Post-HD: ' + rInfo.postHD + '; ' : ''}${rInfo?.notes || ''}</td>
+                            <td>${tk.label}</td>
+                            <td><strong>${td.dose}</strong></td>
+                            <td>${td.freq}</td>
+                            <td>${td.infusion || 'IV'}</td>
+                            <td>${td.postHD ? `<em>Post-HD: ${td.postHD}</em>` : (td.notes || '-')}</td>
                         </tr>
                     `;
-                });
+                }).join('');
 
                 card.innerHTML = `
                     <div class="abx-card-header">
                         <div>
                             <h3 class="abx-card-title">${drug.name}</h3>
-                            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Standard: ${drug.stdDose}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                                Standard: <strong>${drug.stdDose}</strong>
+                            </div>
                         </div>
-                        <div class="abx-card-badges">
+                        <div style="display: flex; gap: 6px; align-items: center;">
                             <span class="badge-class">${drug.class}</span>
-                            ${item.role ? `<span class="${item.role === '1st Line' ? 'badge-role-1st' : 'badge-role-alt'}">${item.role}</span>` : ''}
+                            ${item.role ? `<span class="badge-class" style="background:var(--brand-green-light); color:var(--brand-green-dark); font-weight:800;">${item.role}</span>` : ''}
                         </div>
                     </div>
 
+                    <!-- Live Dose Micro-HUD -->
                     <div class="dose-hud-box">
                         <div class="dose-hud-left">
-                            <span class="dose-hud-label">${currentTier === 'unknown' ? '⚠️ Renal Function Required:' : `Recommended Renal Dose (${currentTier.toUpperCase()}):`}</span>
-                            <div class="dose-hud-value" style="${dCalc ? '' : 'font-size: 1.05rem; color: #dc2626;'}">${dCalc ? dCalc.recommendedDose : 'Enter valid parameters'}</div>
+                            <span class="dose-hud-label">Recommended Dose for Current Renal Tier</span>
+                            <div style="display: flex; align-items: baseline; gap: 8px;">
+                                <span class="dose-hud-value">${recDose}</span>
+                                <span class="dose-hud-freq">${recInterval}</span>
+                            </div>
+                            <span class="dose-hud-infusion">${recInfusion}</span>
                         </div>
                         <div style="text-align: right;">
-                            <div class="dose-hud-freq">${dCalc ? dCalc.interval : '--'}</div>
-                            <div class="dose-hud-infusion">${(dCalc && dCalc.infusion) ? dCalc.infusion : '--'}</div>
+                            <button type="button" class="btn-action-copy" onclick="selectAndCopyDrug('${drug.id}')">
+                                📋 Select &amp; Copy Rx
+                            </button>
                         </div>
                     </div>
 
-                    <div class="feature-tags-row">
-                        ${featureTagsHtml}
-                    </div>
+                    <div class="feature-tags-row">${featureTagsHtml}</div>
 
-                    <button type="button" class="abx-expand-trigger" onclick="toggleExpand('${drug.id}')" aria-expanded="false" id="btn-exp-${drug.id}">
-                        ▼ View Stanford 6-Tier Adjustment Table &amp; Safety
-                    </button>
-
-                    <div class="abx-expand-content" id="exp-${drug.id}">
-                        <table class="renal-table">
-                            <thead>
-                                <tr>
-                                    <th>Renal Tier</th>
-                                    <th>Dose</th>
-                                    <th>Interval</th>
-                                    <th>Notes &amp; Dialysis Guidance</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${tableRowsHtml}
-                            </tbody>
-                        </table>
-                        <div class="safety-box">
-                            <strong>⚠️ Safety &amp; Invariants:</strong> ${drug.safetyNotes || drug.clinicalNotes || 'Monitor clinical response and renal biomarkers.'}
-                        </div>
-                    </div>
-
-                    <div class="abx-action-row">
-                        <button type="button" class="btn-action-copy" onclick="selectAndCopyDrug('${drug.id}')">
-                            📋 Select &amp; Copy Rx Note
+                    <!-- Stanford 6-Tier Accordion -->
+                    <div>
+                        <button type="button" class="abx-expand-trigger" id="btn-exp-${drug.id}" onclick="toggleExpand('${drug.id}')" aria-expanded="false" aria-controls="exp-${drug.id}">
+                            <span>▼ View Complete Stanford 6-Tier Dosing Table</span>
                         </button>
+                        <div class="abx-expand-content" id="exp-${drug.id}">
+                            <table class="renal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Renal Function Tier</th>
+                                        <th>Dose</th>
+                                        <th>Interval</th>
+                                        <th>Infusion</th>
+                                        <th>Dialysis &amp; Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tierRowsHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Safety Box -->
+                    <div class="safety-box">
+                        <strong>⚠️ Safety &amp; Administration:</strong> ${drug.safetyNotes || drug.clinicalNotes || 'Monitor clinical response and renal function.'}
                     </div>
                 `;
 
@@ -1547,111 +2034,151 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             });
         }
 
-        // Expand / Collapse Table
+        // Toggle 6-Tier Matrix in Cards View
         function toggleExpand(drugId) {
-            const exp = document.getElementById(`exp-${drugId}`);
             const btn = document.getElementById(`btn-exp-${drugId}`);
-            if (!exp || !btn) return;
-            const isOpen = exp.classList.toggle('open');
-            btn.setAttribute('aria-expanded', isOpen);
-            btn.innerHTML = isOpen ? '▲ Hide Stanford 6-Tier Table' : '▼ View Stanford 6-Tier Adjustment Table &amp; Safety';
+            const content = document.getElementById(`exp-${drugId}`);
+            if (!btn || !content) return;
+
+            const isOpen = content.classList.contains('open');
+            content.classList.toggle('open', !isOpen);
+            btn.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
+            btn.innerHTML = !isOpen ? '▲ Hide Stanford 6-Tier Table' : '▼ View Complete Stanford 6-Tier Dosing Table';
         }
 
-        // Select and Copy Note directly from drug card
+        // Open 6-Tier Stanford Reference Modal
+        function openTierModal(drugId) {
+            const drug = ABX_ENGINE.STANFORD_ABX_DB[drugId];
+            if (!drug) return;
+
+            const modal = document.getElementById('tier-modal');
+            const title = document.getElementById('modal-drug-title');
+            const body = document.getElementById('modal-content-body');
+
+            title.textContent = `${drug.name} — Stanford 6-Tier Renal Dosing Matrix`;
+
+            const currentTier = ABX_ENGINE.getRenalTier(patientState.calc?.crcl, patientState.rrt === 'hd', patientState.rrt === 'crrt');
+            const egfrTier = (patientState.rrt === 'hd') ? 'hd' : ((patientState.rrt === 'crrt') ? 'crrt' : ABX_ENGINE.getRenalTier(patientState.calc?.egfr));
+
+            const tiers = drug.renalTiers || {};
+            const tierKeys = [
+                { k: 'crcl_gt_50', label: 'CrCl > 50 mL/min (Mild/Normal)' },
+                { k: 'crcl_30_50', label: 'CrCl 30–50 mL/min (Moderate)' },
+                { k: 'crcl_10_29', label: 'CrCl 10–29 mL/min (Severe)' },
+                { k: 'crcl_lt_10', label: 'CrCl < 10 mL/min (End Stage)' },
+                { k: 'hd', label: 'Hemodialysis (IHD / HD)' },
+                { k: 'crrt', label: 'Continuous RRT (CRRT)' }
+            ];
+
+            let rowsHtml = tierKeys.map(tk => {
+                const td = tiers[tk.k] || { dose: '--', freq: '--', infusion: '--' };
+                const isCrClActive = (currentTier === tk.k);
+                const isEGFRActive = (egfrTier === tk.k);
+
+                let activeBadges = [];
+                if (isCrClActive) activeBadges.push('<span class="tier-badge tier-green">★ CrCl Active</span>');
+                if (isEGFRActive) activeBadges.push('<span class="tier-badge tier-teal">★ eGFR Active</span>');
+
+                return `
+                    <tr class="${isCrClActive ? 'active-tier' : ''}">
+                        <td>
+                            <strong>${tk.label}</strong>
+                            <div style="margin-top: 4px;">${activeBadges.join(' ')}</div>
+                        </td>
+                        <td><strong style="color:var(--brand-green-dark);">${td.dose}</strong></td>
+                        <td><strong>${td.freq}</strong></td>
+                        <td>${td.infusion || 'IV'}</td>
+                        <td>${td.postHD ? `<em>Post-HD: ${td.postHD}</em>` : (td.notes || '-')}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            body.innerHTML = `
+                <div style="margin-bottom: 12px; font-size: 0.88rem; color: var(--text-muted);">
+                    Standard Normal Dose: <strong>${drug.stdDose}</strong> | Class: <strong>${drug.class}</strong>
+                </div>
+                <table class="renal-table">
+                    <thead>
+                        <tr>
+                            <th>Renal Function Tier</th>
+                            <th>Dose</th>
+                            <th>Interval</th>
+                            <th>Infusion Duration</th>
+                            <th>Dialysis &amp; Specific Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHtml}
+                    </tbody>
+                </table>
+                <div class="safety-box" style="margin-top: 14px;">
+                    <strong>⚠️ Safety Notes &amp; Pearls:</strong> ${drug.safetyNotes || drug.clinicalNotes || 'Monitor clinical response.'}
+                </div>
+                <div style="margin-top: 16px; text-align: right;">
+                    <button type="button" class="btn-action-copy" onclick="selectAndCopyDrug('${drug.id}'); closeTierModal();">
+                        📋 สั่งยานี้ (Generate Rx Note)
+                    </button>
+                </div>
+            `;
+
+            modal.classList.add('open');
+        }
+
+        function closeTierModal() {
+            const modal = document.getElementById('tier-modal');
+            if (modal) modal.classList.remove('open');
+        }
+
+        // Select Drug & Update Live Note Generator
         function selectAndCopyDrug(drugId) {
-            if (activeIndication === 'all') {
-                showToast('⚠️ Please select a clinical indication first');
-                return;
-            }
             activeRxDrugId = drugId;
+            renderDualAbxTable();
             updatePrescriptionPreview();
             copyPrescriptionNote();
         }
 
-        // Live Prescription Note Preview (Strict Zero-PHI)
+        // Update Prescription Live Preview
         function updatePrescriptionPreview() {
-            const area = document.getElementById('rx-note-text');
-            if (!area) return;
+            const previewEl = document.getElementById('rx-note-text');
+            if (!previewEl) return;
 
-            if (typeof ABX_ENGINE === 'undefined') return;
-
-            if (!patientState.calc || (!patientState.calc.crclRes && patientState.rrt === 'none')) {
-                area.textContent = 'Please enter valid patient parameters to calculate renal function.';
-                return;
-            }
-
-            if (activeIndication === 'all' || !activeRxDrugId) {
-                area.textContent = 'Please select a clinical indication and an antimicrobial to view clinical prescription note.';
+            if (!activeRxDrugId) {
+                previewEl.textContent = 'Please calculate parameters and select an antimicrobial from the table to view clinical prescription note.';
                 return;
             }
 
             const drug = ABX_ENGINE.STANFORD_ABX_DB[activeRxDrugId];
-            if (!drug) {
-                area.textContent = 'Please select a clinical indication and an antimicrobial to view clinical prescription note.';
-                return;
-            }
+            if (!drug) return;
 
-            const indId = activeIndication;
-            const patientRenalStatus = {
-                rrt: patientState.rrt,
-                isHD: patientState.rrt === 'hd',
-                isCRRT: patientState.rrt === 'crrt',
-                crcl: patientState.calc?.crcl,
-                weightKg: patientState.calc?.weightUsed
+            const ptPayload = {
+                age: document.getElementById('in-age')?.value,
+                sex: patientState.sex,
+                weightKg: document.getElementById('in-weight')?.value,
+                heightCm: document.getElementById('in-height')?.value,
+                scr: document.getElementById('in-scr')?.value,
+                weightType: patientState.calc?.weightType || patientState.weightBasis
             };
 
-            const dCalc = ABX_ENGINE.calculateDose(drug.id, patientRenalStatus, indId);
-            if (!dCalc) {
-                area.textContent = '⚠️ Unable to calculate dose: Valid renal function parameters required.';
-                return;
-            }
-
             const note = ABX_ENGINE.formatPrescriptionNote({
-                patient: {
-                    age: document.getElementById('in-age').value,
-                    sex: patientState.sex,
-                    weightKg: document.getElementById('in-weight').value,
-                    heightCm: document.getElementById('in-height').value,
-                    weightType: patientState.calc?.weightType || 'TBW'
-                },
-                weightType: patientState.calc?.weightType || 'TBW',
+                patient: ptPayload,
                 crcl: patientState.calc?.crcl,
                 egfr: patientState.calc?.egfr,
-                drug: drug,
-                indicationId: indId,
-                doseStr: dCalc.recommendedDose,
-                freqStr: dCalc.interval,
-                infStr: dCalc.infusion,
-                noteStr: dCalc.adjustments
+                drugId: activeRxDrugId,
+                indicationId: activeIndication !== 'all' ? activeIndication : null
             });
 
-            area.textContent = note;
+            previewEl.textContent = note;
         }
 
-        // One-Click Copy Prescription with Clipboard & Toast Feedback
+        // Copy Prescription Note to Clipboard
         function copyPrescriptionNote() {
-            const area = document.getElementById('rx-note-text');
-            if (!area) return;
+            const previewEl = document.getElementById('rx-note-text');
+            if (!previewEl) return;
+            const text = previewEl.textContent;
 
-            if (!patientState.calc || (!patientState.calc.crclRes && patientState.rrt === 'none')) {
-                showToast('⚠️ Please enter valid patient parameters first');
-                return;
-            }
-
-            if (activeIndication === 'all' || !activeRxDrugId) {
-                showToast('⚠️ Please select an indication and antimicrobial first');
-                return;
-            }
-
-            const text = area.textContent;
-            if (!text || text.startsWith('Please ') || text.startsWith('⚠️ ')) {
-                showToast('⚠️ Prescription note is not ready to copy');
-                return;
-            }
-
-            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text)
-                    .then(() => showToast('✓ Prescription note copied (Zero-PHI compliant)'))
+                    .then(() => showToast("✓ Prescription note copied (Zero-PHI compliant)"))
                     .catch(() => fallbackCopy(text));
             } else {
                 fallbackCopy(text);
@@ -1659,27 +2186,21 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
         }
 
         function fallbackCopy(text) {
-            const t = document.createElement('textarea');
-            t.value = text;
-            t.style.position = 'fixed';
-            t.style.top = '0';
-            t.style.left = '0';
-            t.style.opacity = '0';
-            document.body.appendChild(t);
-            t.focus();
-            t.select();
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
             try {
-                const copied = document.execCommand('copy');
-                showToast(copied
-                    ? '✓ Prescription note copied (Zero-PHI compliant)'
-                    : '⚠️ Unable to copy automatically');
-            } catch (_) {
-                showToast('⚠️ Unable to copy automatically');
+                document.execCommand('copy');
+                showToast("✓ Prescription note copied (Zero-PHI compliant)");
+            } catch (err) {
+                showToast("⚠️ Could not copy note");
             }
-            document.body.removeChild(t);
+            document.body.removeChild(ta);
         }
 
-        // Accessible Toast Display
         function showToast(msg) {
             const toast = document.getElementById('toast-msg');
             if (!toast) return;
@@ -1687,8 +2208,9 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             toast.style.display = 'block';
             setTimeout(() => {
                 toast.style.display = 'none';
-            }, 2400);
+            }, 2500);
         }
     </script>
 </body>
+
 </html>

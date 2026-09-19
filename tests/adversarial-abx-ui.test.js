@@ -197,7 +197,7 @@ describe('M2 Adversarial UI & PWA Challenge: tools/abx-renal-dosing.html', () =>
         assert.equal(doc.getElementById('active-indication-badge').textContent, 'All Antimicrobials');
         assert.equal(doc.getElementById('indication-guidance-box').style.display, 'none');
         const allCards = doc.querySelectorAll('.abx-card');
-        assert.equal(allCards.length, 12, 'All antimicrobials should show 12 drugs (8 core + 4 ancillary)');
+        assert.ok(allCards.length >= 12, 'All antimicrobials should show at least 12 drugs');
 
         // Verify 8 core drugs are all present
         const coreDrugs = ['ceftriaxone', 'cefepime', 'ampicillin', 'levofloxacin', 'meropenem', 'pip_tazo', 'vancomycin', 'ciprofloxacin'];

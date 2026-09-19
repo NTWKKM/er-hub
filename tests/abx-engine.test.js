@@ -52,3 +52,37 @@ describe('ABX_ENGINE Indications', () => {
         assert.strictEqual(ceftriaxone.indicationInfo.defaultDose, '1-2g');
     });
 });
+
+describe('ABX_ENGINE calculateDualDose (CrCl vs eGFR)', () => {
+    test('calculateDualDose returns concordant doses when CrCl and eGFR tiers match', () => {
+        // Patient with CrCl ~ 75, eGFR ~ 85 (both tier > 50)
+        const pt = { age: 45, sex: 'M', weightKg: 70, heightCm: 175, scr: 1.0 };
+        const res = ABX_ENGINE.calculateDualDose('meropenem', pt);
+        assert.ok(res !== null);
+        assert.strictEqual(res.tierCrCl, 'crcl_gt_50');
+        assert.strictEqual(res.tierEGFR, 'crcl_gt_50');
+        assert.strictEqual(res.isDoseDiscordant, false);
+        assert.strictEqual(res.doseCrCl.recommendedDose, '1g');
+        assert.strictEqual(res.doseCrCl.interval, 'q8h');
+        assert.strictEqual(res.doseEGFR.recommendedDose, '1g');
+        assert.strictEqual(res.doseEGFR.interval, 'q8h');
+    });
+
+    test('calculateDualDose flags discordant doses and provides clinical guidance', () => {
+        // Cachectic elderly female: Age 82, Wt 42kg, Ht 150cm, SCr 1.2
+        // CrCl ~ 21.6 mL/min (Tier 10-29) vs eGFR ~ 43.5 mL/min/1.73m² (Tier 30-50)
+        const pt = { age: 82, sex: 'F', weightKg: 42, heightCm: 150, scr: 1.2 };
+        const res = ABX_ENGINE.calculateDualDose('cefepime', pt);
+        assert.ok(res !== null);
+        assert.strictEqual(res.tierCrCl, 'crcl_10_29');
+        assert.strictEqual(res.tierEGFR, 'crcl_30_50');
+        assert.strictEqual(res.isTierDiscordant, true);
+        assert.strictEqual(res.isDoseDiscordant, true);
+        assert.strictEqual(res.doseCrCl.recommendedDose, '2g');
+        assert.strictEqual(res.doseCrCl.interval, 'q24h');
+        assert.strictEqual(res.doseEGFR.recommendedDose, '2g');
+        assert.strictEqual(res.doseEGFR.interval, 'q12h');
+        assert.ok(res.discordanceAdvice.includes('Beta-lactam'));
+    });
+});
+

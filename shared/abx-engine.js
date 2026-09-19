@@ -1,6 +1,6 @@
 /**
  * shared/abx-engine.js
- * Offline-first Antimicrobial Renal Dosing Engine (Stanford Health Care Reference)
+ * Offline-first Antimicrobial Renal Dosing Engine (Stanford Health Care Reference - Approved August 2026)
  */
 
 const ABX_ENGINE = {
@@ -231,8 +231,8 @@ const ABX_ENGINE = {
             category: 'Pneumonia',
             primaryDrugs: ['ceftriaxone', 'ampicillin', 'azithromycin'],
             firstLine: ['ceftriaxone', 'ampicillin', 'azithromycin'],
-            altDrugs: ['levofloxacin', 'vancomycin'],
-            alternatives: ['levofloxacin', 'vancomycin'],
+            altDrugs: ['levofloxacin', 'vancomycin', 'amox_clav'],
+            alternatives: ['levofloxacin', 'vancomycin', 'amox_clav'],
             clinicalGuidance: 'Standard inpatient: Ceftriaxone 1-2g IV q24h + Azithromycin 500mg IV/PO q24h OR Levofloxacin 750mg IV/PO q24h alone. If MRSA risk factors (prior MRSA, cavitation): Add Vancomycin loading 25-30 mg/kg TBW.',
             notes: 'Standard inpatient: Ceftriaxone 1-2g IV q24h + Azithromycin 500mg IV/PO q24h OR Levofloxacin 750mg IV/PO q24h alone. If MRSA risk factors (prior MRSA, cavitation): Add Vancomycin loading 25-30 mg/kg TBW.'
         },
@@ -244,8 +244,8 @@ const ABX_ENGINE = {
             category: 'Pneumonia',
             primaryDrugs: ['cefepime', 'pip_tazo', 'meropenem', 'vancomycin'],
             firstLine: ['cefepime', 'pip_tazo', 'meropenem', 'vancomycin'],
-            altDrugs: ['levofloxacin', 'ciprofloxacin', 'gentamicin'],
-            alternatives: ['levofloxacin', 'ciprofloxacin', 'gentamicin'],
+            altDrugs: ['levofloxacin', 'ciprofloxacin', 'gentamicin', 'amikacin', 'colistin'],
+            alternatives: ['levofloxacin', 'ciprofloxacin', 'gentamicin', 'amikacin', 'colistin'],
             clinicalGuidance: 'Ensure anti-pseudomonal coverage. Add MRSA coverage if risk factors present. Prefer extended infusion for beta-lactams (Cefepime 2g q8h over 4h, Pip/Tazo 4.5g q8h over 4h, Meropenem 1g q8h over 3h).',
             notes: 'Ensure anti-pseudomonal coverage. Add MRSA coverage if risk factors present. Prefer extended infusion for beta-lactams (Cefepime 2g q8h over 4h, Pip/Tazo 4.5g q8h over 4h, Meropenem 1g q8h over 3h).'
         },
@@ -257,8 +257,8 @@ const ABX_ENGINE = {
             category: 'CNS',
             primaryDrugs: ['ceftriaxone', 'vancomycin', 'ampicillin'],
             firstLine: ['ceftriaxone', 'vancomycin', 'ampicillin'],
-            altDrugs: ['meropenem'],
-            alternatives: ['meropenem'],
+            altDrugs: ['meropenem', 'acyclovir'],
+            alternatives: ['meropenem', 'acyclovir'],
             clinicalGuidance: 'Empiric: Ceftriaxone 2g IV q12h (MANDATORY high dose) + Vancomycin 25-30 mg/kg load then 15-20 mg/kg q8-12h (target trough 15-20 mcg/mL). If age >50 or immunocompromised: Add Ampicillin 2g IV q4h for Listeria. Dexamethasone 10mg IV before or with first antibiotic dose.',
             notes: 'Empiric: Ceftriaxone 2g IV q12h (MANDATORY high dose) + Vancomycin 25-30 mg/kg load then 15-20 mg/kg q8-12h (target trough 15-20 mcg/mL). If age >50 or immunocompromised: Add Ampicillin 2g IV q4h for Listeria. Dexamethasone 10mg IV before or with first antibiotic dose.'
         },
@@ -270,8 +270,8 @@ const ABX_ENGINE = {
             category: 'CNS',
             primaryDrugs: ['ceftriaxone', 'vancomycin', 'ampicillin'],
             firstLine: ['ceftriaxone', 'vancomycin', 'ampicillin'],
-            altDrugs: ['meropenem'],
-            alternatives: ['meropenem'],
+            altDrugs: ['meropenem', 'acyclovir'],
+            alternatives: ['meropenem', 'acyclovir'],
             clinicalGuidance: 'Empiric: Ceftriaxone 2g IV q12h (MANDATORY high dose) + Vancomycin 25-30 mg/kg load then 15-20 mg/kg q8-12h (target trough 15-20 mcg/mL). If age >50 or immunocompromised: Add Ampicillin 2g IV q4h for Listeria. Dexamethasone 10mg IV before or with first antibiotic dose.',
             notes: 'Empiric: Ceftriaxone 2g IV q12h (MANDATORY high dose) + Vancomycin 25-30 mg/kg load then 15-20 mg/kg q8-12h (target trough 15-20 mcg/mL). If age >50 or immunocompromised: Add Ampicillin 2g IV q4h for Listeria. Dexamethasone 10mg IV before or with first antibiotic dose.'
         },
@@ -281,12 +281,12 @@ const ABX_ENGINE = {
             thName: 'กระเพาะปัสสาวะอักเสบ',
             icon: '💧',
             category: 'UTI',
-            primaryDrugs: ['ciprofloxacin', 'levofloxacin'],
-            firstLine: ['ciprofloxacin', 'levofloxacin'],
-            altDrugs: ['ceftriaxone'],
-            alternatives: ['ceftriaxone'],
-            clinicalGuidance: 'Nitrofurantoin is contraindicated if CrCl < 30 mL/min. Reserve fluoroquinolones when other first-line oral options are not suitable.',
-            notes: 'Nitrofurantoin is contraindicated if CrCl < 30 mL/min. Reserve fluoroquinolones when other first-line oral options are not suitable.'
+            primaryDrugs: ['nitrofurantoin', 'bactrim', 'ciprofloxacin', 'levofloxacin'],
+            firstLine: ['nitrofurantoin', 'bactrim', 'ciprofloxacin', 'levofloxacin'],
+            altDrugs: ['cefpodoxime', 'cephalexin', 'amox_clav'],
+            alternatives: ['cefpodoxime', 'cephalexin', 'amox_clav'],
+            clinicalGuidance: 'Nitrofurantoin contraindicated if CrCl < 30 mL/min. Bactrim 1 DS PO BID x 3 days. Reserve fluoroquinolones when other first-line oral options are not suitable.',
+            notes: 'Nitrofurantoin contraindicated if CrCl < 30 mL/min. Bactrim 1 DS PO BID x 3 days. Reserve fluoroquinolones when other first-line oral options are not suitable.'
         },
         uti_pyelo: {
             id: 'uti_pyelo',
@@ -296,10 +296,10 @@ const ABX_ENGINE = {
             category: 'UTI',
             primaryDrugs: ['ceftriaxone', 'ciprofloxacin', 'levofloxacin'],
             firstLine: ['ceftriaxone', 'ciprofloxacin', 'levofloxacin'],
-            altDrugs: ['cefepime', 'pip_tazo', 'meropenem'],
-            alternatives: ['cefepime', 'pip_tazo', 'meropenem'],
-            clinicalGuidance: 'Non-critically ill: Ceftriaxone 1-2g IV q24h or Ciprofloxacin 400mg IV q12h. Critically ill or ESBL risk: Meropenem 1g IV q8h or Cefepime 1-2g IV q8-12h.',
-            notes: 'Non-critically ill: Ceftriaxone 1-2g IV q24h or Ciprofloxacin 400mg IV q12h. Critically ill or ESBL risk: Meropenem 1g IV q8h or Cefepime 1-2g IV q8-12h.'
+            altDrugs: ['cefepime', 'pip_tazo', 'meropenem', 'ertapenem', 'amikacin'],
+            alternatives: ['cefepime', 'pip_tazo', 'meropenem', 'ertapenem', 'amikacin'],
+            clinicalGuidance: 'Non-critically ill: Ceftriaxone 1-2g IV q24h or Ciprofloxacin 400mg IV q12h. Critically ill or ESBL risk: Meropenem 1g IV q8h, Ertapenem 1g q24h, or Cefepime 1-2g IV q8-12h.',
+            notes: 'Non-critically ill: Ceftriaxone 1-2g IV q24h or Ciprofloxacin 400mg IV q12h. Critically ill or ESBL risk: Meropenem 1g IV q8h, Ertapenem 1g q24h, or Cefepime 1-2g IV q8-12h.'
         },
         intra_abdominal: {
             id: 'intra_abdominal',
@@ -307,12 +307,12 @@ const ABX_ENGINE = {
             thName: 'การติดเชื้อในช่องท้อง / เยื่อบุช่องท้องอักเสบ',
             icon: '🫃',
             category: 'Intra-abdominal',
-            primaryDrugs: ['pip_tazo', 'ceftriaxone', 'metronidazole'],
-            firstLine: ['pip_tazo', 'ceftriaxone', 'metronidazole'],
-            altDrugs: ['meropenem', 'ciprofloxacin'],
-            alternatives: ['meropenem', 'ciprofloxacin'],
-            clinicalGuidance: 'Community-acquired mild-mod: Ceftriaxone 1-2g IV q24h + Metronidazole 500mg IV q8h. Severe / Healthcare-associated / Septic shock: Pip/Tazo 4.5g IV q8h (over 4h) or Meropenem 1g IV q8h (over 3h).',
-            notes: 'Community-acquired mild-mod: Ceftriaxone 1-2g IV q24h + Metronidazole 500mg IV q8h. Severe / Healthcare-associated / Septic shock: Pip/Tazo 4.5g IV q8h (over 4h) or Meropenem 1g IV q8h (over 3h).'
+            primaryDrugs: ['pip_tazo', 'ceftriaxone', 'metronidazole', 'amp_sulb'],
+            firstLine: ['pip_tazo', 'ceftriaxone', 'metronidazole', 'amp_sulb'],
+            altDrugs: ['meropenem', 'ertapenem', 'ciprofloxacin'],
+            alternatives: ['meropenem', 'ertapenem', 'ciprofloxacin'],
+            clinicalGuidance: 'Community-acquired mild-mod: Ceftriaxone 1-2g IV q24h + Metronidazole 500mg IV q8h or Amp/Sulb 3g q6h. Severe / Healthcare-associated / Septic shock: Pip/Tazo 4.5g IV q8h (over 4h) or Meropenem 1g IV q8h (over 3h).',
+            notes: 'Community-acquired mild-mod: Ceftriaxone 1-2g IV q24h + Metronidazole 500mg IV q8h or Amp/Sulb 3g q6h. Severe / Healthcare-associated / Septic shock: Pip/Tazo 4.5g IV q8h (over 4h) or Meropenem 1g IV q8h (over 3h).'
         },
         skin_soft_tissue: {
             id: 'skin_soft_tissue',
@@ -320,10 +320,10 @@ const ABX_ENGINE = {
             thName: 'การติดเชื้อผิวหนังและเนื้อเยื่ออ่อน / แผลติดเชื้อรุนแรง',
             icon: '🩹',
             category: 'Skin & Soft Tissue',
-            primaryDrugs: ['cefazolin', 'ceftriaxone', 'vancomycin'],
-            firstLine: ['cefazolin', 'ceftriaxone', 'vancomycin'],
-            altDrugs: ['pip_tazo', 'meropenem'],
-            alternatives: ['pip_tazo', 'meropenem'],
+            primaryDrugs: ['cefazolin', 'ceftriaxone', 'vancomycin', 'clindamycin'],
+            firstLine: ['cefazolin', 'ceftriaxone', 'vancomycin', 'clindamycin'],
+            altDrugs: ['pip_tazo', 'meropenem', 'daptomycin', 'linezolid'],
+            alternatives: ['pip_tazo', 'meropenem', 'daptomycin', 'linezolid'],
             clinicalGuidance: 'Non-purulent cellulitis: Cefazolin 2g IV q8h or Ceftriaxone 1-2g IV q24h. Purulent / MRSA: Vancomycin load 25-30 mg/kg TBW. Suspected necrotizing fasciitis: Meropenem 1g IV q8h + Vancomycin + Clindamycin 900mg IV q8h (toxin suppression) + STAT Surgical Consult.',
             notes: 'Non-purulent cellulitis: Cefazolin 2g IV q8h or Ceftriaxone 1-2g IV q24h. Purulent / MRSA: Vancomycin load 25-30 mg/kg TBW. Suspected necrotizing fasciitis: Meropenem 1g IV q8h + Vancomycin + Clindamycin 900mg IV q8h (toxin suppression) + STAT Surgical Consult.'
         },
@@ -335,8 +335,8 @@ const ABX_ENGINE = {
             category: 'Critical Care',
             primaryDrugs: ['pip_tazo', 'cefepime', 'meropenem', 'vancomycin'],
             firstLine: ['pip_tazo', 'cefepime', 'meropenem', 'vancomycin'],
-            altDrugs: ['gentamicin', 'levofloxacin'],
-            alternatives: ['gentamicin', 'levofloxacin'],
+            altDrugs: ['gentamicin', 'amikacin', 'levofloxacin', 'colistin'],
+            alternatives: ['gentamicin', 'amikacin', 'levofloxacin', 'colistin'],
             clinicalGuidance: 'Surviving Sepsis Campaign: Administer broad-spectrum IV antimicrobials within 1 hour. Full loading doses of both beta-lactam (Pip/Tazo 4.5g or Cefepime 2g or Meropenem 1g) and Vancomycin (25-30 mg/kg TBW) regardless of renal dysfunction!',
             notes: 'Surviving Sepsis Campaign: Administer broad-spectrum IV antimicrobials within 1 hour. Full loading doses of both beta-lactam (Pip/Tazo 4.5g or Cefepime 2g or Meropenem 1g) and Vancomycin (25-30 mg/kg TBW) regardless of renal dysfunction!'
         },
@@ -346,23 +346,25 @@ const ABX_ENGINE = {
             thName: 'กระดูกและข้ออักเสบ',
             icon: '🦴',
             category: 'Bone & Joint',
-            primaryDrugs: ['cefazolin', 'ceftriaxone', 'vancomycin'],
-            firstLine: ['cefazolin', 'ceftriaxone', 'vancomycin'],
-            altDrugs: ['ciprofloxacin', 'levofloxacin'],
-            alternatives: ['ciprofloxacin', 'levofloxacin'],
-            clinicalGuidance: 'Often requires prolonged IV therapy. Fluoroquinolones have excellent bone penetration.',
-            notes: 'Often requires prolonged IV therapy. Fluoroquinolones have excellent bone penetration.'
+            primaryDrugs: ['cefazolin', 'ceftriaxone', 'vancomycin', 'daptomycin'],
+            firstLine: ['cefazolin', 'ceftriaxone', 'vancomycin', 'daptomycin'],
+            altDrugs: ['ciprofloxacin', 'levofloxacin', 'linezolid'],
+            alternatives: ['ciprofloxacin', 'levofloxacin', 'linezolid'],
+            clinicalGuidance: 'Often requires prolonged IV therapy (4-6 weeks). Fluoroquinolones and Linezolid have excellent bone penetration.',
+            notes: 'Often requires prolonged IV therapy (4-6 weeks). Fluoroquinolones and Linezolid have excellent bone penetration.'
         }
     },
 
     // ------------------------------------------------------------------------
-    // 4. Stanford Antimicrobial Database
+    // 4. Stanford Antimicrobial Database (Approved August 2026)
     // ------------------------------------------------------------------------
     STANFORD_ABX_DB: {
+        // --- 1. Ceftriaxone ---
         ceftriaxone: {
             id: 'ceftriaxone',
             name: 'Ceftriaxone',
             class: '3rd Gen Cephalosporin',
+            route: 'IV',
             stdDose: '1-2g IV q24h',
             renalTiers: {
                 crcl_gt_50: { dose: '1-2g', freq: 'q24h', infusion: 'IV over 30 min', notes: '2g q12h for meningitis' },
@@ -383,10 +385,13 @@ const ABX_ENGINE = {
             },
             safetyNotes: 'No renal dose adjustment required for Ceftriaxone. Dual biliary/renal elimination. Avoid with IV calcium in neonates (precipitation).'
         },
+
+        // --- 2. Cefepime ---
         cefepime: {
             id: 'cefepime',
             name: 'Cefepime',
             class: '4th Gen Cephalosporin',
+            route: 'IV',
             stdDose: '2g IV q8h',
             renalTiers: {
                 crcl_gt_50: { dose: '2g', freq: 'q8h', infusion: 'IV over 3-4h (extended)', notes: '1-2g q12h for mild-moderate UTI' },
@@ -394,7 +399,7 @@ const ABX_ENGINE = {
                 crcl_10_29: { dose: '2g', freq: 'q24h', infusion: 'IV over 3-4h (extended)', notes: 'Or 1g q24h for mild infections' },
                 crcl_lt_10: { dose: '1g', freq: 'q24h', infusion: 'IV over 30 min', notes: 'CIN neurotoxicity risk' },
                 hd: { dose: '1g', freq: 'q24h', infusion: 'IV over 30 min', postHD: 'Give post-HD on dialysis days' },
-                crrt: { dose: '2g', freq: 'q12h', infusion: 'IV over 3-4h', notes: '' }
+                crrt: { dose: '2g', freq: 'q12h', infusion: 'IV over 3-4h', notes: '2g load then 1g q8h or 2g q12h' }
             },
             indications: {
                 hap_vap: { defaultDose: '2g', frequency: 'q8h', infusion: 'IV over 4h extended', notes: '4-hr extended infusion recommended.' },
@@ -405,10 +410,13 @@ const ABX_ENGINE = {
             },
             safetyNotes: 'High risk of Cefepime-Induced Neurotoxicity (CIN) — encephalopathy, myoclonus, seizures if not adjusted in renal failure. Extended infusion maximizes %fT>MIC.'
         },
+
+        // --- 3. Ampicillin ---
         ampicillin: {
             id: 'ampicillin',
             name: 'Ampicillin',
             class: 'Aminopenicillin',
+            route: 'IV',
             stdDose: '1-2g IV q6h (2g q4h for meningitis)',
             renalTiers: {
                 crcl_gt_50: { dose: '2g', freq: 'q4h', infusion: 'IV over 30 min', notes: '1-2g q6h for non-CNS infections' },
@@ -426,10 +434,13 @@ const ABX_ENGINE = {
             },
             safetyNotes: 'High incidence of rash. Rapid IV push can cause seizures.'
         },
+
+        // --- 4. Levofloxacin ---
         levofloxacin: {
             id: 'levofloxacin',
             name: 'Levofloxacin',
             class: 'Respiratory Fluoroquinolone',
+            route: 'IV/PO',
             stdDose: '750mg IV/PO q24h',
             renalTiers: {
                 crcl_gt_50: { dose: '750mg', freq: 'q24h', infusion: 'IV over 90 min or PO', notes: '500mg q24h for mild-moderate' },
@@ -449,10 +460,13 @@ const ABX_ENGINE = {
             },
             safetyNotes: '100% oral bioavailability (PO = IV). Requires full loading dose even in renal impairment. Black box warnings: tendonitis/rupture, peripheral neuropathy, CNS effects, QTc prolongation.'
         },
+
+        // --- 5. Meropenem ---
         meropenem: {
             id: 'meropenem',
             name: 'Meropenem',
             class: 'Carbapenem',
+            route: 'IV',
             stdDose: '1g IV q8h (2g q8h for meningitis)',
             renalTiers: {
                 crcl_gt_50: { dose: '1g', freq: 'q8h', infusion: 'IV over 3h extended (or 30 min)', notes: '2g q8h for meningitis or severe Pseudomonas' },
@@ -460,7 +474,7 @@ const ABX_ENGINE = {
                 crcl_10_29: { dose: '500mg', freq: 'q12h', infusion: 'IV over 3h extended', notes: '1g q12h for meningitis' },
                 crcl_lt_10: { dose: '500mg', freq: 'q24h', infusion: 'IV over 30 min to 3h', notes: '1g q24h for meningitis' },
                 hd: { dose: '500mg', freq: 'q24h', infusion: 'IV over 30 min', postHD: 'Give post-HD on dialysis days (1g q24h for meningitis)' },
-                crrt: { dose: '1g', freq: 'q8h', infusion: 'IV over 3h', notes: '1g q12h if effluent flow < 20 mL/kg/h' }
+                crrt: { dose: '1g', freq: 'q8h', infusion: 'IV over 3h', notes: 'CF/CNS: 2g IV q12h' }
             },
             indications: {
                 meningitis_ca: { defaultDose: '2g', frequency: 'q8h', infusion: 'IV over 3h extended', notes: 'High-dose required for CNS penetration' },
@@ -473,16 +487,19 @@ const ABX_ENGINE = {
             },
             safetyNotes: 'Drastically reduces serum valproic acid levels leading to refractory seizures (contraindicated combination). Lower epileptogenic risk than imipenem.'
         },
+
+        // --- 6. Piperacillin / Tazobactam ---
         pip_tazo: {
             id: 'pip_tazo',
             name: 'Piperacillin / Tazobactam',
             class: 'Antipseudomonal Penicillin + Inhibitor',
+            route: 'IV',
             stdDose: '4.5g IV q8h (infused over 4 hours)',
             renalTiers: {
                 crcl_gt_50: { dose: '4.5g', freq: 'q8h', infusion: 'IV over 4h extended', notes: 'Standard: 3.375g q6h over 30 min. Sepsis: 4.5g load over 30 min then 4.5g q8h over 4h' },
                 crcl_30_50: { dose: '3.375g', freq: 'q8h', infusion: 'IV over 4h extended', notes: 'Standard: 2.25g q6h over 30 min' },
                 crcl_10_29: { dose: '2.25g', freq: 'q8h', infusion: 'IV over 4h extended', notes: 'Standard: 2.25g q8h over 30 min' },
-                crcl_lt_10: { dose: '2.25g', freq: 'q12h', infusion: 'IV over 4h (or 30 min)', notes: '' },
+                crcl_lt_10: { dose: '2.25g', freq: 'q12h', infusion: 'IV over 4h (or 30 min)', notes: 'Or 3.375g q12h over 4h' },
                 hd: { dose: '2.25g', freq: 'q12h', infusion: 'IV over 30 min', postHD: 'Give post-HD on dialysis days (or 2.25g q8h with 0.75g post-HD)' },
                 crrt: { dose: '3.375g', freq: 'q8h', infusion: 'IV over 4h', notes: 'Or 2.25g q6h over 30 min' }
             },
@@ -495,10 +512,13 @@ const ABX_ENGINE = {
             },
             safetyNotes: 'Synergistic nephrotoxicity when combined with Vancomycin. Contains ~2.79 mEq (64 mg) sodium per gram.'
         },
+
+        // --- 7. Vancomycin ---
         vancomycin: {
             id: 'vancomycin',
             name: 'Vancomycin',
             class: 'Glycopeptide',
+            route: 'IV',
             stdDose: 'Load: 25-30 mg/kg TBW; Maint: 15-20 mg/kg q8-12h',
             renalTiers: {
                 crcl_gt_50: { dose: '15-20 mg/kg', freq: 'q8-12h', infusion: 'IV at rate <= 1000 mg/hr', notes: 'Loading dose: 25-30 mg/kg TBW (max 3000mg) in severe sepsis regardless of CrCl' },
@@ -519,10 +539,13 @@ const ABX_ENGINE = {
             },
             safetyNotes: 'Loading dose MUST use Actual Body Weight (TBW) even in renal impairment. Infuse at rate <= 1000 mg/hr (>= 1-2 hours) to avoid Histamine-related Red Man Syndrome. High nephrotoxicity risk with Pip/Tazo.'
         },
+
+        // --- 8. Ciprofloxacin ---
         ciprofloxacin: {
             id: 'ciprofloxacin',
             name: 'Ciprofloxacin',
             class: 'Fluoroquinolone',
+            route: 'IV/PO',
             stdDose: '400mg IV q8-12h (or 500mg PO q12h)',
             renalTiers: {
                 crcl_gt_50: { dose: '400mg IV (or 500mg PO)', freq: 'q12h (q8h severe)', infusion: 'IV over 60 min or PO', notes: '400mg IV q8h for severe Pseudomonas' },
@@ -541,10 +564,13 @@ const ABX_ENGINE = {
             },
             safetyNotes: 'FDA Black Box Warnings: tendonitis/rupture, peripheral neuropathy, CNS effects, aortic aneurysm. Chelation with polyvalent cations (antacids, calcium, iron). QTc prolongation.'
         },
+
+        // --- 9. Cefazolin ---
         cefazolin: {
             id: 'cefazolin',
             name: 'Cefazolin',
             class: '1st Gen Cephalosporin',
+            route: 'IV',
             stdDose: '2g IV q8h (3g if > 120kg)',
             renalTiers: {
                 crcl_gt_50: { dose: '2g', freq: 'q8h', infusion: 'IV over 30 min', notes: '3g if weight > 120 kg' },
@@ -560,10 +586,13 @@ const ABX_ENGINE = {
             },
             safetyNotes: 'Drug of choice for severe MSSA infections. Well tolerated.'
         },
+
+        // --- 10. Metronidazole ---
         metronidazole: {
             id: 'metronidazole',
             name: 'Metronidazole',
             class: 'Nitroimidazole',
+            route: 'IV/PO',
             stdDose: '500mg IV/PO q8h',
             renalTiers: {
                 crcl_gt_50: { dose: '500mg', freq: 'q8h', infusion: 'IV over 30-60 min or PO', notes: 'Hepatic metabolism' },
@@ -578,10 +607,13 @@ const ABX_ENGINE = {
             },
             safetyNotes: 'Disulfiram-like reaction with alcohol. Peripheral neuropathy with prolonged use.'
         },
+
+        // --- 11. Azithromycin ---
         azithromycin: {
             id: 'azithromycin',
             name: 'Azithromycin',
             class: 'Macrolide',
+            route: 'IV/PO',
             stdDose: '500mg IV/PO q24h',
             renalTiers: {
                 crcl_gt_50: { dose: '500mg', freq: 'q24h', infusion: 'IV over 60 min or PO', notes: 'Biliary elimination' },
@@ -596,10 +628,13 @@ const ABX_ENGINE = {
             },
             safetyNotes: 'QTc prolongation risk. Biliary excretion, no renal adjustment required.'
         },
+
+        // --- 12. Gentamicin ---
         gentamicin: {
             id: 'gentamicin',
             name: 'Gentamicin',
             class: 'Aminoglycoside',
+            route: 'IV',
             stdDose: '5-7 mg/kg IV q24h (high-dose) or 1.5-2 mg/kg q8h',
             renalTiers: {
                 crcl_gt_50: { dose: '5-7 mg/kg (or 1.7 mg/kg)', freq: 'q24h (or q8h)', infusion: 'IV over 60 min', notes: 'Use AdjBW if obese' },
@@ -614,6 +649,316 @@ const ABX_ENGINE = {
                 sepsis_unknown: { defaultDose: '5-7 mg/kg', frequency: 'q24h', infusion: 'IV over 60 min', notes: 'Single empiric dose in severe septic shock' }
             },
             safetyNotes: 'High nephrotoxicity and ototoxicity risk. Always use Adjusted Body Weight (AdjBW) in obese patients. Therapeutic drug monitoring mandatory.'
+        },
+
+        // --- 13. Amikacin (Stanford Guide) ---
+        amikacin: {
+            id: 'amikacin',
+            name: 'Amikacin',
+            class: 'Aminoglycoside',
+            route: 'IV',
+            stdDose: '15-20 mg/kg IV q24h (high-dose) or 7.5 mg/kg q12h',
+            renalTiers: {
+                crcl_gt_50: { dose: '15-20 mg/kg', freq: 'q24h', infusion: 'IV over 60 min', notes: 'High-dose extended interval' },
+                crcl_30_50: { dose: '15 mg/kg', freq: 'q36-48h', infusion: 'IV over 60 min', notes: 'Extend interval based on levels' },
+                crcl_10_29: { dose: '7.5-10 mg/kg', freq: 'q48h', infusion: 'IV over 60 min', notes: 'Dose by therapeutic drug monitoring' },
+                crcl_lt_10: { dose: '7.5 mg/kg x1', freq: 'Dose by level', infusion: 'IV over 60 min', notes: 'Redose when trough < 4-5 mcg/mL' },
+                hd: { dose: '7.5 mg/kg', freq: 'post-HD', infusion: 'IV over 60 min', postHD: 'Administer post-HD on dialysis days' },
+                crrt: { dose: '10-15 mg/kg', freq: 'q24-48h', infusion: 'IV', notes: 'Monitor trough level' }
+            },
+            safetyNotes: 'Use Adjusted Body Weight (ABW) for obese patients. Monitor peak (55-65 mcg/mL) and trough (< 4-5 mcg/mL). Nephrotoxic and ototoxic.'
+        },
+
+        // --- 14. Ampicillin / Sulbactam (Unasyn) ---
+        amp_sulb: {
+            id: 'amp_sulb',
+            name: 'Ampicillin / Sulbactam',
+            class: 'Aminopenicillin + Inhibitor',
+            route: 'IV',
+            stdDose: '1.5-3g IV q6h',
+            renalTiers: {
+                crcl_gt_50: { dose: '1.5-3g', freq: 'q6h', infusion: 'IV over 30 min', notes: 'Acinetobacter: 3g q4h' },
+                crcl_30_50: { dose: '1.5-3g', freq: 'q8h', infusion: 'IV over 30 min', notes: 'Acinetobacter: 3g q8h' },
+                crcl_10_29: { dose: '1.5-3g', freq: 'q12h', infusion: 'IV over 30 min', notes: 'Acinetobacter: 3g q12h' },
+                crcl_lt_10: { dose: '1.5-3g', freq: 'q24h', infusion: 'IV over 30 min', notes: 'Acinetobacter: 3g q12h' },
+                hd: { dose: '1.5-3g', freq: 'q24h', infusion: 'IV over 30 min', postHD: 'Give dose post-HD on dialysis days' },
+                crrt: { dose: '3g', freq: 'q8h', infusion: 'IV over 30 min', notes: 'Acinetobacter: 3g q6h' }
+            },
+            indications: {
+                intra_abdominal: { defaultDose: '3g', frequency: 'q6h', notes: 'Empiric coverage for mild-mod IAI' },
+                skin_soft_tissue: { defaultDose: '1.5-3g', frequency: 'q6h', notes: 'Diabetic foot / human/animal bites' }
+            },
+            safetyNotes: 'Sulbactam has intrinsic activity against Acinetobacter baumannii (requires high sulbactam exposure, e.g. 6-9g/day sulbactam).'
+        },
+
+        // --- 15. Amoxicillin / Clavulanate (Augmentin) ---
+        amox_clav: {
+            id: 'amox_clav',
+            name: 'Amoxicillin / Clavulanate',
+            class: 'Aminopenicillin + Inhibitor',
+            route: 'PO',
+            stdDose: '875/125 mg PO q12h (or 500/125 mg PO q8h)',
+            renalTiers: {
+                crcl_gt_50: { dose: '875 mg', freq: 'q12h (or 500 mg q8h)', infusion: 'PO', notes: 'Take with food to minimize GI distress' },
+                crcl_30_50: { dose: '875 mg', freq: 'q12h', infusion: 'PO', notes: 'Or 500 mg q8h' },
+                crcl_10_29: { dose: '250-500 mg', freq: 'q12h', infusion: 'PO', notes: 'Do NOT use 875mg tablet' },
+                crcl_lt_10: { dose: '250-500 mg', freq: 'q24h', infusion: 'PO', notes: 'Do NOT use 875mg tablet' },
+                hd: { dose: '250-500 mg', freq: 'q24h', infusion: 'PO', postHD: 'Administer post-HD on dialysis days plus additional dose' },
+                crrt: { dose: '500 mg', freq: 'q8-12h', infusion: 'PO', notes: '' }
+            },
+            safetyNotes: 'High incidence of diarrhea/nausea. In renal impairment (CrCl < 30 mL/min), do NOT use the 875 mg tablet due to excessive clavulanate relative to amoxicillin.'
+        },
+
+        // --- 16. Aztreonam ---
+        aztreonam: {
+            id: 'aztreonam',
+            name: 'Aztreonam',
+            class: 'Monobactam',
+            route: 'IV',
+            stdDose: '1-2g IV q8h',
+            renalTiers: {
+                crcl_gt_50: { dose: '1-2g', freq: 'q8h', infusion: 'IV over 30 min', notes: '2g q6-8h for severe/Pseudomonas' },
+                crcl_30_50: { dose: '1-2g', freq: 'q8h', infusion: 'IV over 30 min', notes: 'Standard dose for mild-mod' },
+                crcl_10_29: { dose: '1g', freq: 'q8h (or 50% dose)', infusion: 'IV over 30 min', notes: 'Severe: 1g q6-8h' },
+                crcl_lt_10: { dose: '500mg', freq: 'q8h (or 25% dose)', infusion: 'IV over 30 min', notes: 'Severe: 500mg q6h' },
+                hd: { dose: '500mg', freq: 'q8h', infusion: 'IV over 30 min', postHD: 'Give 1/8th of initial dose post-HD' },
+                crrt: { dose: '1-2g', freq: 'q8h', infusion: 'IV over 30 min', notes: 'Effluent dependent' }
+            },
+            safetyNotes: 'Safe in patients with severe IgE-mediated beta-lactam allergy EXCEPT those with specific Ceftazidime allergy (shares identical side chain).'
+        },
+
+        // --- 17. Ceftazidime ---
+        ceftazidime: {
+            id: 'ceftazidime',
+            name: 'Ceftazidime',
+            class: '3rd Gen Cephalosporin (Antipseudomonal)',
+            route: 'IV',
+            stdDose: '2g IV q8h',
+            renalTiers: {
+                crcl_gt_50: { dose: '2g', freq: 'q8h', infusion: 'IV over 30 min - 2h', notes: 'Antipseudomonal 3rd gen' },
+                crcl_30_50: { dose: '1-2g', freq: 'q12h', infusion: 'IV over 30 min', notes: '' },
+                crcl_10_29: { dose: '1g', freq: 'q12-24h', infusion: 'IV over 30 min', notes: 'CrCl 16-30: 1g q24h' },
+                crcl_lt_10: { dose: '500mg', freq: 'q24-48h', infusion: 'IV over 30 min', notes: '' },
+                hd: { dose: '1g load then 500mg-1g', freq: 'q24h', infusion: 'IV', postHD: 'Administer post-HD on dialysis days' },
+                crrt: { dose: '2g load then 1g', freq: 'q8h', infusion: 'IV', notes: 'Or 2g q12h' }
+            },
+            safetyNotes: 'Neurotoxicity risk in severe renal impairment without dose adjustment. High risk of inducing AmpC beta-lactamases.'
+        },
+
+        // --- 18. Ceftazidime / Avibactam (Zavicefta) ---
+        ceftaz_avi: {
+            id: 'ceftaz_avi',
+            name: 'Ceftazidime / Avibactam',
+            class: 'Cephalosporin + Novel BLI',
+            route: 'IV',
+            stdDose: '2.5g (2g/0.5g) IV q8h over 2 hours',
+            renalTiers: {
+                crcl_gt_50: { dose: '2.5g', freq: 'q8h', infusion: 'IV over 2 hours', notes: 'Active against KPC, OXA-48 carbapenemases' },
+                crcl_30_50: { dose: '1.25g', freq: 'q8h', infusion: 'IV over 2 hours', notes: 'CrCl 31-50' },
+                crcl_10_29: { dose: '0.94g', freq: 'q12h', infusion: 'IV over 2 hours', notes: 'CrCl 16-30' },
+                crcl_lt_10: { dose: '0.94g', freq: 'q24-48h', infusion: 'IV over 2 hours', notes: 'CrCl 6-15: q24h; <6: q48h' },
+                hd: { dose: '0.94g', freq: 'q48h', infusion: 'IV over 2 hours', postHD: 'Administer post-HD on dialysis days' },
+                crrt: { dose: '1.25g', freq: 'q8h', infusion: 'IV over 2 hours', notes: '' }
+            },
+            safetyNotes: 'Reserve for documented Carbapenem-Resistant Enterobacterales (CRE - KPC/OXA-48) or DTR Pseudomonas aeruginosa.'
+        },
+
+        // --- 19. Ceftaroline (Teflaro) ---
+        ceftaroline: {
+            id: 'ceftaroline',
+            name: 'Ceftaroline',
+            class: '5th Gen Cephalosporin (Anti-MRSA)',
+            route: 'IV',
+            stdDose: '600mg IV q12h',
+            renalTiers: {
+                crcl_gt_50: { dose: '600mg', freq: 'q12h', infusion: 'IV over 60 min', notes: '600mg q8h for severe endocarditis' },
+                crcl_30_50: { dose: '400mg', freq: 'q12h', infusion: 'IV over 60 min', notes: '' },
+                crcl_10_29: { dose: '300mg', freq: 'q12h', infusion: 'IV over 60 min', notes: 'CrCl 15-30' },
+                crcl_lt_10: { dose: '200mg', freq: 'q12h', infusion: 'IV over 60 min', notes: 'CrCl < 15' },
+                hd: { dose: '200mg', freq: 'q12h', infusion: 'IV over 60 min', postHD: 'Administer post-HD on dialysis days' },
+                crrt: { dose: '400mg', freq: 'q12h', infusion: 'IV over 60 min', notes: '' }
+            },
+            safetyNotes: 'Only FDA-approved cephalosporin with MRSA activity (binds PBP2a). Direct Coombs test seroconversion common.'
+        },
+
+        // --- 20. Colistin (Colistimethate Sodium / CMS) ---
+        colistin: {
+            id: 'colistin',
+            name: 'Colistin (CMS)',
+            class: 'Polymyxin',
+            route: 'IV',
+            stdDose: 'Load: 300 mg CBA (9-10 MU); Maint: 150 mg CBA (4.5 MU) q12h',
+            renalTiers: {
+                crcl_gt_50: { dose: '150 mg CBA (4.5 MU)', freq: 'q12h', infusion: 'IV over 60 min', notes: 'Always give 300 mg CBA (9-10 MU) loading dose first!' },
+                crcl_30_50: { dose: '100-130 mg CBA (3-4 MU)', freq: 'q12h', infusion: 'IV over 60 min', notes: 'Load 300 mg CBA first' },
+                crcl_10_29: { dose: '75-100 mg CBA (2.5-3 MU)', freq: 'q12h', infusion: 'IV over 60 min', notes: 'Load 300 mg CBA first' },
+                crcl_lt_10: { dose: '50-75 mg CBA (1.5-2.25 MU)', freq: 'q12-24h', infusion: 'IV over 60 min', notes: 'Load 300 mg CBA first' },
+                hd: { dose: '50 mg CBA (1.5 MU)', freq: 'q12h or 100mg post-HD', infusion: 'IV', postHD: 'Give 50 mg (1.5 MU) supplemental post-HD on dialysis days' },
+                crrt: { dose: '100-130 mg CBA (3-4 MU)', freq: 'q12h', infusion: 'IV', notes: 'Load 300 mg CBA first' }
+            },
+            safetyNotes: '1 mg Colistin Base Activity (CBA) ≈ 30,000 IU (0.03 MU) CMS. Mandatory 300 mg CBA (9 MU) STAT loading dose in severe sepsis. High nephrotoxicity & neurotoxicity.'
+        },
+
+        // --- 21. Daptomycin ---
+        daptomycin: {
+            id: 'daptomycin',
+            name: 'Daptomycin',
+            class: 'Lipopeptide',
+            route: 'IV',
+            stdDose: '6-8 mg/kg IV q24h (8-10 mg/kg for bacteremia/endocarditis)',
+            renalTiers: {
+                crcl_gt_50: { dose: '6-8 mg/kg', freq: 'q24h', infusion: 'IV over 30 min', notes: '8-10 mg/kg for bacteremia/endocarditis' },
+                crcl_30_50: { dose: '6-8 mg/kg', freq: 'q24h', infusion: 'IV over 30 min', notes: 'Standard dose' },
+                crcl_10_29: { dose: '6-8 mg/kg', freq: 'q48h', infusion: 'IV over 30 min', notes: 'Extend interval to q48h' },
+                crcl_lt_10: { dose: '6-8 mg/kg', freq: 'q48h', infusion: 'IV over 30 min', notes: 'Extend interval to q48h' },
+                hd: { dose: '6-8 mg/kg', freq: 'q48h', infusion: 'IV', postHD: 'Administer post-HD on dialysis days' },
+                crrt: { dose: '6-8 mg/kg', freq: 'q24-48h', infusion: 'IV', notes: 'Monitor CPK weekly' }
+            },
+            safetyNotes: 'Inactivated by pulmonary surfactant — NEVER use for pneumonia. Monitor baseline and weekly CPK for myopathy / rhabdomyolysis.'
+        },
+
+        // --- 22. Doxycycline ---
+        doxycycline: {
+            id: 'doxycycline',
+            name: 'Doxycycline',
+            class: 'Tetracycline',
+            route: 'IV/PO',
+            stdDose: '100mg IV/PO q12h (200mg load for severe)',
+            renalTiers: {
+                crcl_gt_50: { dose: '100mg', freq: 'q12h', infusion: 'IV over 60 min or PO', notes: '200mg load x1 in severe scrub typhus/melioidosis' },
+                crcl_30_50: { dose: '100mg', freq: 'q12h', infusion: 'IV/PO', notes: 'No renal adjustment needed' },
+                crcl_10_29: { dose: '100mg', freq: 'q12h', infusion: 'IV/PO', notes: 'No renal adjustment needed' },
+                crcl_lt_10: { dose: '100mg', freq: 'q12h', infusion: 'IV/PO', notes: 'No renal adjustment needed' },
+                hd: { dose: '100mg', freq: 'q12h', infusion: 'IV/PO', postHD: 'No supplemental dose needed' },
+                crrt: { dose: '100mg', freq: 'q12h', infusion: 'IV/PO', notes: 'No renal adjustment needed' }
+            },
+            safetyNotes: 'Non-renal elimination. Safe in all stages of renal impairment without adjustment. Drug of choice for Rickettsia, Scrub typhus, and atypical pneumonia.'
+        },
+
+        // --- 23. Ertapenem ---
+        ertapenem: {
+            id: 'ertapenem',
+            name: 'Ertapenem',
+            class: 'Carbapenem (Once-Daily)',
+            route: 'IV',
+            stdDose: '1g IV q24h',
+            renalTiers: {
+                crcl_gt_50: { dose: '1g', freq: 'q24h', infusion: 'IV over 30 min', notes: 'No Pseudomonas activity' },
+                crcl_30_50: { dose: '1g', freq: 'q24h', infusion: 'IV over 30 min', notes: 'Standard dose' },
+                crcl_10_29: { dose: '500mg', freq: 'q24h', infusion: 'IV over 30 min', notes: 'Reduce dose by 50% if CrCl < 30' },
+                crcl_lt_10: { dose: '500mg', freq: 'q24h', infusion: 'IV over 30 min', notes: 'CrCl < 10' },
+                hd: { dose: '500mg', freq: 'q24h', infusion: 'IV over 30 min', postHD: 'Give dose post-HD (or 150mg supplement if given within 6h of HD)' },
+                crrt: { dose: '500mg-1g', freq: 'q24h', infusion: 'IV over 30 min', notes: '' }
+            },
+            safetyNotes: 'Group 1 carbapenem: lacks activity against Pseudomonas aeruginosa, Acinetobacter, or Enterococcus. Seizure risk in unadjusted renal failure.'
+        },
+
+        // --- 24. Fluconazole ---
+        fluconazole: {
+            id: 'fluconazole',
+            name: 'Fluconazole',
+            class: 'Triazole Antifungal',
+            route: 'IV/PO',
+            stdDose: '400-800mg load, then 200-400mg q24h',
+            renalTiers: {
+                crcl_gt_50: { dose: '200-400mg', freq: 'q24h', infusion: 'IV over 60 min or PO', notes: 'Load 400-800mg x1 in candidemia/invasive' },
+                crcl_30_50: { dose: '100-200mg (50% dose)', freq: 'q24h', infusion: 'IV/PO', notes: 'Always give full loading dose first' },
+                crcl_10_29: { dose: '100-200mg (50% dose)', freq: 'q24h', infusion: 'IV/PO', notes: 'Load full dose first' },
+                crcl_lt_10: { dose: '100-200mg (50% dose)', freq: 'q24-48h', infusion: 'IV/PO', notes: 'Load full dose first' },
+                hd: { dose: '100-200mg', freq: 'post-HD', infusion: 'IV/PO', postHD: '100% supplemental dose post-HD on dialysis days' },
+                crrt: { dose: '400-800mg', freq: 'q24h', infusion: 'IV/PO', notes: 'CRRT clears fluconazole rapidly; dose aggressively' }
+            },
+            safetyNotes: '100% oral bioavailability. Full loading dose required even with ESRD. Significant CYP2C9, CYP2C19, CYP3A4 drug interactions.'
+        },
+
+        // --- 25. Linezolid ---
+        linezolid: {
+            id: 'linezolid',
+            name: 'Linezolid',
+            class: 'Oxazolidinone',
+            route: 'IV/PO',
+            stdDose: '600mg IV/PO q12h',
+            renalTiers: {
+                crcl_gt_50: { dose: '600mg', freq: 'q12h', infusion: 'IV over 60 min or PO', notes: '100% oral bioavailability' },
+                crcl_30_50: { dose: '600mg', freq: 'q12h', infusion: 'IV/PO', notes: 'No renal adjustment needed' },
+                crcl_10_29: { dose: '600mg', freq: 'q12h', infusion: 'IV/PO', notes: 'No renal adjustment needed' },
+                crcl_lt_10: { dose: '600mg', freq: 'q12h', infusion: 'IV/PO', notes: 'Metabolites accumulate, monitor CBC' },
+                hd: { dose: '600mg', freq: 'q12h', infusion: 'IV/PO', postHD: 'Give dose post-HD on dialysis days' },
+                crrt: { dose: '600mg', freq: 'q12h', infusion: 'IV/PO', notes: 'No adjustment needed' }
+            },
+            safetyNotes: 'No renal dose adjustment needed. Myelosuppression (thrombocytopenia, anemia) after > 14 days. MAO inhibitor activity: risk of Serotonin Syndrome with SSRIs.'
+        },
+
+        // --- 26. Sulfamethoxazole / Trimethoprim (Bactrim) ---
+        bactrim: {
+            id: 'bactrim',
+            name: 'Sulfamethoxazole / Trimethoprim',
+            class: 'Sulfonamide + Inhibitor',
+            route: 'IV/PO',
+            stdDose: '1-2 DS tabs PO q12h (or 15-20 mg/kg/day TMP IV for PCP)',
+            renalTiers: {
+                crcl_gt_50: { dose: '1-2 DS tabs (or 5 mg/kg TMP)', freq: 'q12h', infusion: 'IV/PO', notes: 'PCP: 15-20 mg/kg/day TMP divided q6-8h' },
+                crcl_30_50: { dose: '1 DS tab (or 5 mg/kg TMP)', freq: 'q12h', infusion: 'IV/PO', notes: 'Standard dose' },
+                crcl_10_29: { dose: '1 DS tab (or 2.5-5 mg/kg TMP)', freq: 'q12-24h (50% dose)', infusion: 'IV/PO', notes: 'Reduce dose by 50%' },
+                crcl_lt_10: { dose: 'Not recommended', freq: 'Avoid if CrCl < 15', infusion: 'IV/PO', notes: 'If essential: 50% dose q24h' },
+                hd: { dose: '1 SS tab (or 2.5 mg/kg TMP)', freq: 'q24h', infusion: 'IV/PO', postHD: 'Give post-HD on dialysis days' },
+                crrt: { dose: '5-10 mg/kg/day TMP', freq: 'divided q12h', infusion: 'IV', notes: 'Monitor serum potassium' }
+            },
+            safetyNotes: 'Inhibits renal tubular secretion of creatinine (artificial rise in SCr by 0.2-0.4 mg/dL without true GFR decrease). High hyperkalemia risk, especially with ACEi/ARBs/spironolactone.'
+        },
+
+        // --- 27. Oseltamivir ---
+        oseltamivir: {
+            id: 'oseltamivir',
+            name: 'Oseltamivir',
+            class: 'Neuraminidase Inhibitor',
+            route: 'PO',
+            stdDose: '75mg PO q12h x 5 days',
+            renalTiers: {
+                crcl_gt_50: { dose: '75mg', freq: 'q12h', infusion: 'PO', notes: 'Treatment: 5 days' },
+                crcl_30_50: { dose: '30mg', freq: 'q12h', infusion: 'PO', notes: 'Or 75mg load then 30mg q12h' },
+                crcl_10_29: { dose: '30mg', freq: 'q24h', infusion: 'PO', notes: 'CrCl 10-30' },
+                crcl_lt_10: { dose: '30mg x1', freq: 'Single dose', infusion: 'PO', notes: '30mg once weekly for prophylaxis' },
+                hd: { dose: '30mg', freq: 'post-HD', infusion: 'PO', postHD: '30mg post every HD session' },
+                crrt: { dose: '30mg', freq: 'q12-24h', infusion: 'PO', notes: '' }
+            },
+            safetyNotes: 'Initiate within 48 hours of symptom onset for maximum benefit. Safe in pregnancy.'
+        },
+
+        // --- 28. Valacyclovir ---
+        valacyclovir: {
+            id: 'valacyclovir',
+            name: 'Valacyclovir',
+            class: 'Antiviral Prodrug',
+            route: 'PO',
+            stdDose: '1g PO q8h (VZV) or 1g PO q12h (HSV)',
+            renalTiers: {
+                crcl_gt_50: { dose: '1g', freq: 'q8h (VZV) or q12h (HSV)', infusion: 'PO', notes: 'Prodrug of acyclovir with high bioavailability' },
+                crcl_30_50: { dose: '1g', freq: 'q12h (VZV) or 500mg q12h (HSV)', infusion: 'PO', notes: '' },
+                crcl_10_29: { dose: '1g', freq: 'q24h (VZV) or 500mg q24h (HSV)', infusion: 'PO', notes: '' },
+                crcl_lt_10: { dose: '500mg', freq: 'q24h', infusion: 'PO', notes: '' },
+                hd: { dose: '500mg', freq: 'post-HD', infusion: 'PO', postHD: 'Give dose post-HD on dialysis days' },
+                crrt: { dose: '500mg-1g', freq: 'q12-24h', infusion: 'PO', notes: '' }
+            },
+            safetyNotes: 'Neurotoxicity (confusion, hallucinations, encephalopathy) in elderly patients with unadjusted renal impairment. Ensure good hydration.'
+        },
+
+        // --- 29. Acyclovir ---
+        acyclovir: {
+            id: 'acyclovir',
+            name: 'Acyclovir',
+            class: 'Antiviral',
+            route: 'IV/PO',
+            stdDose: '5-10 mg/kg IV q8h',
+            renalTiers: {
+                crcl_gt_50: { dose: '5-10 mg/kg', freq: 'q8h', infusion: 'IV over 60 min', notes: '10 mg/kg for HSV encephalitis' },
+                crcl_30_50: { dose: '5-10 mg/kg', freq: 'q12h', infusion: 'IV over 60 min', notes: 'CrCl 25-50' },
+                crcl_10_29: { dose: '5-10 mg/kg', freq: 'q24h', infusion: 'IV over 60 min', notes: 'CrCl 10-25' },
+                crcl_lt_10: { dose: '2.5-5 mg/kg', freq: 'q24h', infusion: 'IV over 60 min', notes: 'CrCl < 10' },
+                hd: { dose: '2.5-5 mg/kg', freq: 'post-HD', infusion: 'IV', postHD: 'Give dose post-HD on dialysis days' },
+                crrt: { dose: '5-10 mg/kg', freq: 'q12h', infusion: 'IV', notes: '' }
+            },
+            safetyNotes: 'Obese patients: use Adjusted Body Weight (ABW). Can precipitate in renal tubules causing acute crystal nephropathy; maintain aggressive IV hydration and infuse over >= 1 hour.'
         }
     },
 
@@ -673,7 +1018,7 @@ const ABX_ENGINE = {
 
         let recommendedDose = tierDosing.dose;
         let interval = tierDosing.freq;
-        let infusion = tierDosing.infusion || (indInfo ? indInfo.infusion : 'IV');
+        let infusion = tierDosing.infusion || (indInfo ? indInfo.infusion : (drug.route ? drug.route : 'IV'));
         let adjustments = tier === 'crcl_gt_50' ? 'Normal renal function' : `Adjusted for renal tier (${tier})`;
 
         // Indication-specific dosing overrides (e.g. Meningitis / CNS penetration)
@@ -721,6 +1066,99 @@ const ABX_ENGINE = {
             warnings: drug.safetyNotes || drug.clinicalNotes || '',
             tier,
             postHD: tierDosing.postHD || null
+        };
+    },
+
+    /**
+     * calculateDualDose: Live simultaneous evaluation of dosing under CrCl vs eGFR
+     */
+    calculateDualDose: (drugId, patientOrRenalStatus, indicationId = null) => {
+        const drug = ABX_ENGINE.STANFORD_ABX_DB[drugId];
+        if (!drug) return null;
+
+        let crclVal = null;
+        let egfrVal = null;
+        let absGfrVal = null;
+        let bsaVal = null;
+        let isHD = false;
+        let isCRRT = false;
+        let weightUsed = null;
+        let weightType = 'TBW';
+
+        if (patientOrRenalStatus && typeof patientOrRenalStatus === 'object') {
+            isHD = Boolean(patientOrRenalStatus.rrt === 'hd' || patientOrRenalStatus.isHD);
+            isCRRT = Boolean(patientOrRenalStatus.rrt === 'crrt' || patientOrRenalStatus.isCRRT);
+
+            // If full patient object
+            if (patientOrRenalStatus.age && patientOrRenalStatus.sex && patientOrRenalStatus.scr && patientOrRenalStatus.weightKg) {
+                const crclObj = ABX_ENGINE.calcCrCl(patientOrRenalStatus, patientOrRenalStatus.weightType);
+                if (crclObj) {
+                    crclVal = crclObj.crcl;
+                    weightUsed = crclObj.weightUsed;
+                    weightType = crclObj.weightType;
+                }
+                const egfrObj = ABX_ENGINE.calcEGFR_CKD_EPI_2021(patientOrRenalStatus);
+                egfrVal = egfrObj ? (typeof egfrObj === 'object' && 'egfr' in egfrObj ? egfrObj.egfr : Number(egfrObj)) : null;
+
+                if (patientOrRenalStatus.heightCm) {
+                    bsaVal = ABX_ENGINE.calcBSA(patientOrRenalStatus.weightKg, patientOrRenalStatus.heightCm);
+                    if (egfrVal && bsaVal) {
+                        absGfrVal = ABX_ENGINE.calcAbsoluteGFR(egfrVal, bsaVal);
+                    }
+                }
+            } else {
+                crclVal = patientOrRenalStatus.crcl != null ? Number(patientOrRenalStatus.crcl) : null;
+                egfrVal = patientOrRenalStatus.egfr != null ? Number(patientOrRenalStatus.egfr) : null;
+                absGfrVal = patientOrRenalStatus.absGfr != null ? Number(patientOrRenalStatus.absGfr) : null;
+                bsaVal = patientOrRenalStatus.bsa != null ? Number(patientOrRenalStatus.bsa) : null;
+            }
+        } else if (typeof patientOrRenalStatus === 'number') {
+            crclVal = patientOrRenalStatus;
+            egfrVal = patientOrRenalStatus;
+        }
+
+        // Tiers
+        const tierCrCl = ABX_ENGINE.getRenalTier(crclVal, isHD, isCRRT);
+        const tierEGFR = isHD ? 'hd' : (isCRRT ? 'crrt' : ABX_ENGINE.getRenalTier(egfrVal));
+
+        const doseCrCl = tierCrCl !== 'unknown' ? ABX_ENGINE.calculateDose(drugId, tierCrCl, indicationId) : null;
+        const doseEGFR = tierEGFR !== 'unknown' ? ABX_ENGINE.calculateDose(drugId, tierEGFR, indicationId) : null;
+
+        // Determine discordance
+        const isTierDiscordant = (!isHD && !isCRRT && tierCrCl !== 'unknown' && tierEGFR !== 'unknown' && tierCrCl !== tierEGFR);
+        const isDoseDiscordant = Boolean(
+            isTierDiscordant &&
+            doseCrCl && doseEGFR &&
+            (doseCrCl.recommendedDose !== doseEGFR.recommendedDose || doseCrCl.interval !== doseEGFR.interval)
+        );
+
+        let discordanceAdvice = '';
+        if (isDoseDiscordant) {
+            if (['vancomycin', 'gentamicin', 'amikacin', 'tobramycin', 'colistin'].includes(drugId)) {
+                discordanceAdvice = 'Narrow Therapeutic Index drug: Prioritize the lower clearance estimate (more conservative dose) to prevent accumulation toxicity, and monitor therapeutic drug levels / TDM closely.';
+            } else if (['pip_tazo', 'cefepime', 'meropenem', 'ceftriaxone', 'ceftazidime', 'ampicillin'].includes(drugId)) {
+                discordanceAdvice = 'Beta-lactam in serious infection: In severe sepsis/shock, consider the higher clearance estimate or extended infusion to avoid therapeutic underdosing.';
+            } else {
+                discordanceAdvice = `Discordance between CrCl (${crclVal ? crclVal.toFixed(1) : '--'} mL/min [${tierCrCl}]) and eGFR (${egfrVal ? egfrVal.toFixed(1) : '--'} mL/min/1.73m² [${tierEGFR}]). Select dose based on patient clinical status and volume of distribution.`;
+            }
+        }
+
+        return {
+            drug,
+            tierCrCl,
+            tierEGFR,
+            crclVal,
+            egfrVal,
+            absGfrVal,
+            doseCrCl,
+            doseEGFR,
+            isTierDiscordant,
+            isDoseDiscordant,
+            discordanceAdvice,
+            activeTiers: {
+                crcl: tierCrCl,
+                egfr: tierEGFR
+            }
         };
     },
 
