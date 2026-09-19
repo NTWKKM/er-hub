@@ -164,8 +164,10 @@ const ABX_ENGINE = {
     getRenalTier: (crcl, isHD = false, isCRRT = false) => {
         if (isHD) return 'hd';
         if (isCRRT) return 'crrt';
-        if (crcl == null || isNaN(crcl) || !Number.isFinite(Number(crcl))) return 'unknown';
+        if (typeof crcl !== 'number' && typeof crcl !== 'string') return 'unknown';
+        if (typeof crcl === 'string' && crcl.trim() === '') return 'unknown';
         const c = Number(crcl);
+        if (!Number.isFinite(c)) return 'unknown';
         if (c >= 50) return 'crcl_gt_50';
         if (c >= 30) return 'crcl_30_50';
         if (c >= 10) return 'crcl_10_29';
@@ -801,8 +803,8 @@ const ABX_ENGINE = {
         const egfrNum = (typeof egfrVal === 'object' && egfrVal !== null && 'egfr' in egfrVal) ? egfrVal.egfr : (egfrVal != null ? Number(egfrVal) : null);
         
         // Calculate dose if missing
-        if ((!doseStr || !freqStr) && drug) {
-            let calc = ABX_ENGINE.calculateDose(drug.id || drugId, crclVal != null ? crclVal : 'crcl_gt_50', indication ? (indication.id || indicationId) : null);
+        if ((!doseStr || !freqStr) && drug && crclVal != null) {
+            let calc = ABX_ENGINE.calculateDose(drug.id || drugId, crclVal, indication ? (indication.id || indicationId) : null);
             if (calc) {
                 if (!doseStr) doseStr = calc.recommendedDose;
                 if (!freqStr) freqStr = calc.interval;

@@ -185,19 +185,19 @@ describe('CHALLENGER 1: Mathematical Engine vs Independent Clinical Oracles', ()
     });
 
     test('1.4 CKD-EPI 2021 Race-Free 20-Vector Matrix vs KDIGO Gold Standard', () => {
-        // Independent publication-derived benchmark constants (Inker et al. NEJM 2021 Table 1)
+        // Independent publication-derived benchmark constants (Inker et al. NEJM 2021 Table S1)
         const publicationVectors = [
-            { scr: 1.0, age: 50, sex: 'M', expectedEGFR: 91.7 },
-            { scr: 0.8, age: 50, sex: 'F', expectedEGFR: 89.7 },
-            { scr: 4.0, age: 65, sex: 'M', expectedEGFR: 15.8 },
-            { scr: 0.5, age: 20, sex: 'M', expectedEGFR: 149.7 },
-            { scr: 0.7, age: 45, sex: 'F', expectedEGFR: 108.6 }
+            { scr: 0.90, age: 18, sex: 'M', expectedEGFR: 127 },
+            { scr: 0.91, age: 18, sex: 'M', expectedEGFR: 125 },
+            { scr: 0.70, age: 18, sex: 'F', expectedEGFR: 128 },
+            { scr: 1.50, age: 90, sex: 'M', expectedEGFR: 44 },
+            { scr: 1.50, age: 90, sex: 'F', expectedEGFR: 33 }
         ];
 
         publicationVectors.forEach(pv => {
             const actual = ABX_ENGINE.calcEGFR_CKD_EPI_2021(pv.scr, pv.age, pv.sex);
             assert.ok(actual !== null, `calcEGFR_CKD_EPI_2021 returned null for publication vector ${JSON.stringify(pv)}`);
-            const roundedVal = parseFloat(Number(actual).toFixed(1));
+            const roundedVal = Math.round(Number(actual));
             assert.strictEqual(roundedVal, pv.expectedEGFR, `Publication vector mismatch for ${JSON.stringify(pv)}: expected ${pv.expectedEGFR}, got ${roundedVal}`);
         });
 
@@ -494,6 +494,17 @@ describe('CHALLENGER 1: Boundary Conditions, Stress Fuzzing & Safety Invariants'
         assert.strictEqual(ABX_ENGINE.getRenalTier(NaN), 'unknown');
         assert.strictEqual(ABX_ENGINE.getRenalTier(null), 'unknown');
         assert.strictEqual(ABX_ENGINE.getRenalTier(undefined), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(''), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier('   '), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(true), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(false), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier([]), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier({}), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier('invalid'), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(Infinity), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(-Infinity), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier('60'), 'crcl_gt_50');
+        assert.strictEqual(ABX_ENGINE.getRenalTier('40'), 'crcl_30_50');
 
         // Dialysis overrides
         assert.strictEqual(ABX_ENGINE.getRenalTier(80, true, false), 'hd');
@@ -552,6 +563,16 @@ describe('CHALLENGER 1: Boundary Conditions, Stress Fuzzing & Safety Invariants'
         assert.match(note, /Age 56 yr/i);
         assert.match(note, /Sex M/i);
         assert.match(note, /Wt 82 kg/i);
+    });
+
+    test('4.4.1 formatPrescriptionNote safely preserves "As indicated" when renal data is unavailable', () => {
+        const noteNoRenal = ABX_ENGINE.formatPrescriptionNote({
+            drugId: 'cefepime',
+            indicationId: 'hap_vap'
+        });
+        assert.match(noteNoRenal, /Cefepime As indicated/i);
+        assert.doesNotMatch(noteNoRenal, /2g q8h/i);
+        assert.doesNotMatch(noteNoRenal, /CrCl \(Cockcroft-Gault\):/i);
     });
 
     test('4.5 Dialytic Clearance: HD and CRRT routing verification', () => {
