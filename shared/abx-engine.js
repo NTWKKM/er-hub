@@ -156,8 +156,10 @@ const ABX_ENGINE = {
     calcAbsoluteGFR: (egfr, bsa) => {
         // Absolute GFR = eGFR * (BSA / 1.73) in mL/min
         if (egfr == null || bsa == null) return null;
-        if (typeof egfr === 'string' && egfr.trim() === '') return null;
-        const egfrVal = (typeof egfr === 'object' && egfr !== null && 'egfr' in egfr) ? Number(egfr.egfr) : Number(egfr);
+        const rawEgfr = (typeof egfr === 'object' && egfr !== null) ? egfr.egfr : egfr;
+        if (rawEgfr == null) return null;
+        if (typeof rawEgfr === 'string' && rawEgfr.trim() === '') return null;
+        const egfrVal = Number(rawEgfr);
         if (!Number.isFinite(egfrVal) || egfrVal < 0) return null;
         if (typeof bsa === 'string' && bsa.trim() === '') return null;
         const bsaVal = Number(bsa);
@@ -1151,7 +1153,7 @@ const ABX_ENGINE = {
             } else if (['pip_tazo', 'cefepime', 'meropenem', 'ceftriaxone', 'ceftazidime', 'ampicillin'].includes(drugId)) {
                 discordanceAdvice = 'Beta-lactam in serious infection: In severe sepsis/shock, consider the higher clearance estimate or extended infusion to avoid therapeutic underdosing.';
             } else {
-                discordanceAdvice = `Discordance between CrCl (${crclVal ? crclVal.toFixed(1) : '--'} mL/min [${tierCrCl}]) and eGFR (${egfrVal ? egfrVal.toFixed(1) : '--'} mL/min/1.73m² [${tierEGFR}]). Select dose based on patient clinical status and volume of distribution.`;
+                discordanceAdvice = `Discordance between CrCl (${Number.isFinite(crclVal) ? crclVal.toFixed(1) : '--'} mL/min [${tierCrCl}]) and eGFR (${Number.isFinite(egfrVal) ? egfrVal.toFixed(1) : '--'} mL/min/1.73m² [${tierEGFR}]). Select dose based on patient clinical status and volume of distribution.`;
             }
         }
 

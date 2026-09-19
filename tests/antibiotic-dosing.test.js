@@ -218,12 +218,19 @@ describe('Tier 1: Anthropometrics & Dual Renal Calculations', () => {
 
         test('Missing inputs return null', () => {
             assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(null, 1.8), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(undefined, 1.8), null);
             assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(60, null), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(60, undefined), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR({ egfr: null }, 1.73), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR({ egfr: undefined }, 1.73), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR({}, 1.73), null);
         });
 
         test('Accepts zero eGFR while rejecting negative or non-finite eGFR values', () => {
             assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(0, 1.73), 0);
             assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR({ egfr: 0 }, 1.73), 0);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR({ egfr: null }, 1.73), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR({}, 1.73), null);
             assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(-10, 1.73), null);
             assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR({ egfr: -5 }, 1.73), null);
             assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(Infinity, 1.73), null);

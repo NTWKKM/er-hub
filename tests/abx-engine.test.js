@@ -124,5 +124,19 @@ describe('ABX_ENGINE calculateDualDose (CrCl vs eGFR)', () => {
         assert.strictEqual(res.doseEGFR.recommendedDose, '2g');
         assert.strictEqual(res.doseEGFR.interval, 'q12h');
     });
+
+    test('calculateDualDose renders valid zero clearance as 0.0 in discordanceAdvice instead of --', () => {
+        const pt = {
+            crcl: 60,
+            egfr: 0,
+            bsa: 1.73
+        };
+        const res = ABX_ENGINE.calculateDualDose('levofloxacin', pt);
+        assert.ok(res !== null);
+        assert.strictEqual(res.isDoseDiscordant, true);
+        assert.ok(res.discordanceAdvice.includes('CrCl (60.0 mL/min [crcl_gt_50])'));
+        assert.ok(res.discordanceAdvice.includes('eGFR (0.0 mL/min/1.73m² [crcl_lt_10])'));
+        assert.ok(!res.discordanceAdvice.includes('--'));
+    });
 });
 
