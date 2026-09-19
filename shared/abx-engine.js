@@ -1118,8 +1118,16 @@ const ABX_ENGINE = {
         }
 
         // Tiers
+        const effectiveEGFR = Number.isFinite(absGfrVal)
+            ? absGfrVal
+            : (Number.isFinite(egfrVal) && Number.isFinite(bsaVal) && bsaVal > 0
+                ? ABX_ENGINE.calcAbsoluteGFR(egfrVal, bsaVal)
+                : egfrVal);
+        if (absGfrVal == null && Number.isFinite(egfrVal) && Number.isFinite(bsaVal) && bsaVal > 0) {
+            absGfrVal = effectiveEGFR;
+        }
         const tierCrCl = ABX_ENGINE.getRenalTier(crclVal, isHD, isCRRT);
-        const tierEGFR = isHD ? 'hd' : (isCRRT ? 'crrt' : ABX_ENGINE.getRenalTier(absGfrVal ?? egfrVal));
+        const tierEGFR = isHD ? 'hd' : (isCRRT ? 'crrt' : ABX_ENGINE.getRenalTier(effectiveEGFR));
 
         const doseCrCl = tierCrCl !== 'unknown' ? ABX_ENGINE.calculateDose(drugId, tierCrCl, indicationId) : null;
         const doseEGFR = tierEGFR !== 'unknown' ? ABX_ENGINE.calculateDose(drugId, tierEGFR, indicationId) : null;

@@ -104,5 +104,25 @@ describe('ABX_ENGINE calculateDualDose (CrCl vs eGFR)', () => {
         assert.strictEqual(res.doseEGFR.recommendedDose, '2g');
         assert.strictEqual(res.doseEGFR.interval, 'q12h');
     });
+
+    test('calculateDualDose derives absolute GFR from BSA when absGfr is absent (e.g. eGFR 55 with BSA 1.34 selecting crcl_30_50)', () => {
+        // Patient with CrCl 60, eGFR 55, BSA 1.34 (no explicit absGfr)
+        // Absolute GFR = (55 * 1.34) / 1.73 ≈ 42.60 mL/min -> selects crcl_30_50
+        const pt = {
+            crcl: 60,
+            egfr: 55,
+            bsa: 1.34
+        };
+        const res = ABX_ENGINE.calculateDualDose('cefepime', pt);
+        assert.ok(res !== null);
+        assert.strictEqual(res.tierCrCl, 'crcl_gt_50');
+        assert.strictEqual(res.tierEGFR, 'crcl_30_50', 'Derived absolute GFR ~42.6 must select crcl_30_50');
+        assert.strictEqual(res.isTierDiscordant, true);
+        assert.strictEqual(res.isDoseDiscordant, true);
+        assert.strictEqual(res.doseCrCl.recommendedDose, '2g');
+        assert.strictEqual(res.doseCrCl.interval, 'q8h');
+        assert.strictEqual(res.doseEGFR.recommendedDose, '2g');
+        assert.strictEqual(res.doseEGFR.interval, 'q12h');
+    });
 });
 
