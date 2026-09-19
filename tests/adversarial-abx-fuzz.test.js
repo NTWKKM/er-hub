@@ -94,8 +94,9 @@ describe('Adversarial Fuzzing: Dual Renal Clearance Engine', () => {
     });
 
     test('getRenalTier correctly maps boundary thresholds and RRT flags', () => {
-        assert.strictEqual(ABX_ENGINE.getRenalTier(null), 'crcl_gt_50');
-        assert.strictEqual(ABX_ENGINE.getRenalTier(NaN), 'crcl_gt_50');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(null), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(NaN), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(undefined), 'unknown');
         assert.strictEqual(ABX_ENGINE.getRenalTier(-10), 'crcl_lt_10');
         assert.strictEqual(ABX_ENGINE.getRenalTier(0), 'crcl_lt_10');
         assert.strictEqual(ABX_ENGINE.getRenalTier(9.99), 'crcl_lt_10');
@@ -135,17 +136,13 @@ describe('Adversarial Fuzzing: Stanford Antimicrobial Database & Protocols', () 
         assert.strictEqual(ABX_ENGINE.calculateDose(null, 60), null);
         assert.strictEqual(ABX_ENGINE.calculateDose(undefined, 60), null);
 
-        // Unknown tier string safely falls back to normal dosing without throwing
+        // Unknown tier string safely returns null
         const doseUnknownTier = ABX_ENGINE.calculateDose('ceftriaxone', 'UNKNOWN_TIER_KEY');
-        assert.ok(doseUnknownTier !== null);
-        assert.strictEqual(doseUnknownTier.recommendedDose, '1-2g');
-        assert.strictEqual(doseUnknownTier.interval, 'q24h');
+        assert.strictEqual(doseUnknownTier, null);
 
-        // Null renal status defaults safely to normal tier
+        // Null renal status safely returns null
         const doseNullStatus = ABX_ENGINE.calculateDose('cefepime', null);
-        assert.ok(doseNullStatus !== null);
-        assert.strictEqual(doseNullStatus.recommendedDose, '2g');
-        assert.strictEqual(doseNullStatus.interval, 'q8h');
+        assert.strictEqual(doseNullStatus, null);
 
         // Object renal status with HD flag
         const doseHD = ABX_ENGINE.calculateDose('cefepime', { isHD: true });
@@ -269,28 +266,50 @@ describe('Randomized Fuzzing Stress Harness (1,000 Cycles)', () => {
         const drugs = Object.keys(ABX_ENGINE.STANFORD_ABX_DB).concat(['bogus_drug', null, undefined]);
         const indications = Object.keys(ABX_ENGINE.DISEASE_PROTOCOLS).concat(['bogus_ind', null, undefined]);
 
-        let exceptions = 0;
-        for (let i = 0; i < 1000; i++) {
-            const fVal1 = fuzzTypes[Math.floor(Math.random() * fuzzTypes.length)];
-            const fVal2 = fuzzTypes[Math.floor(Math.random() * fuzzTypes.length)];
-            const drug = drugs[Math.floor(Math.random() * drugs.length)];
-            const ind = indications[Math.floor(Math.random() * indications.length)];
+        const seed = 1337420;
+        let s = seed;
+        function seededRandom() {
+            // Mulberry32 32-bit PRNG
+            s |= 0; s = s + 0x6D2B79F5 | 0;
+            let t = Math.imul(s ^ (s >>> 15), 1 | s);
+            t = t + Math.imul(t ^ (t >>> 7), 61 | t) ^ t;
+            return ((t >>> 0) / 4294967296);
+        }
 
+        const failures = [];
+        const runOp = (opName, fn, inputs) => {
             try {
-                ABX_ENGINE.calcIBW(fVal1, fVal2);
-                ABX_ENGINE.calcABW(fVal1, fVal2);
-                ABX_ENGINE.calcBMI(fVal1, fVal2);
-                ABX_ENGINE.calcBSA(fVal1, fVal2);
-                ABX_ENGINE.getRenalTier(fVal1);
-                ABX_ENGINE.calcAbsoluteGFR(fVal1, fVal2);
-                ABX_ENGINE.calculateDose(drug, fVal1, ind);
-                ABX_ENGINE.filterByIndication(ind, fVal1);
-            } catch (e) {
-                exceptions++;
+                fn();
+            } catch (err) {
+                if (failures.length < 5) {
+                    failures.push({
+                        opName,
+                        inputs,
+                        seed,
+                        message: err.message,
+                        stack: err.stack
+                    });
+                }
             }
+        };
+
+        for (let i = 0; i < 1000; i++) {
+            const fVal1 = fuzzTypes[Math.floor(seededRandom() * fuzzTypes.length)];
+            const fVal2 = fuzzTypes[Math.floor(seededRandom() * fuzzTypes.length)];
+            const drug = drugs[Math.floor(seededRandom() * drugs.length)];
+            const ind = indications[Math.floor(seededRandom() * indications.length)];
+
+            runOp('calcIBW', () => ABX_ENGINE.calcIBW(fVal1, fVal2), { fVal1, fVal2 });
+            runOp('calcABW', () => ABX_ENGINE.calcABW(fVal1, fVal2), { fVal1, fVal2 });
+            runOp('calcBMI', () => ABX_ENGINE.calcBMI(fVal1, fVal2), { fVal1, fVal2 });
+            runOp('calcBSA', () => ABX_ENGINE.calcBSA(fVal1, fVal2), { fVal1, fVal2 });
+            runOp('getRenalTier', () => ABX_ENGINE.getRenalTier(fVal1), { fVal1 });
+            runOp('calcAbsoluteGFR', () => ABX_ENGINE.calcAbsoluteGFR(fVal1, fVal2), { fVal1, fVal2 });
+            runOp('calculateDose', () => ABX_ENGINE.calculateDose(drug, fVal1, ind), { drug, fVal1, ind });
+            runOp('filterByIndication', () => ABX_ENGINE.filterByIndication(ind, fVal1), { ind, fVal1 });
         }
 
         // The core calculation and query methods should achieve zero exceptions across 1000 fuzzed iterations
-        assert.strictEqual(exceptions, 0, `Expected 0 exceptions during randomized fuzzing, but got ${exceptions}`);
+        assert.strictEqual(failures.length, 0, `Expected 0 exceptions during randomized fuzzing (seed: ${seed}), but got ${failures.length} failures: ${JSON.stringify(failures, null, 2)}`);
     });
 });

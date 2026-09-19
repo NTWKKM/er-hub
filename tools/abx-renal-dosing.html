@@ -811,6 +811,7 @@
                 </h2>
 
                 <form id="patient-form" onsubmit="event.preventDefault();">
+                    <div id="patient-validation-msg" class="validation-msg" role="alert" style="display: none; background: #fee2e2; color: #991b1b; padding: 8px 12px; border-radius: 6px; font-size: 0.82rem; margin-bottom: 12px; border: 1px solid #f87171; font-weight: 600;"></div>
                     <!-- Age Input -->
                     <div class="form-group">
                         <label for="in-age">Patient Age (years)</label>
@@ -1042,7 +1043,7 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
         let activeIndication = 'all';
 
         // Currently selected active drug for detailed prescription note
-        let activeRxDrugId = 'ceftriaxone';
+        let activeRxDrugId = null;
 
         // Initialization
         window.addEventListener('DOMContentLoaded', () => {
@@ -1140,12 +1141,18 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             if (indKey === 'all') {
                 badge.textContent = 'All Antimicrobials';
                 guidanceBox.style.display = 'none';
+                activeRxDrugId = null;
             } else {
                 const indObj = ABX_ENGINE.DISEASE_PROTOCOLS[indKey];
                 if (indObj) {
                     badge.textContent = indObj.name;
                     guidanceBody.textContent = indObj.clinicalGuidance || indObj.notes;
                     guidanceBox.style.display = 'block';
+
+                    const allowedDrugs = (indObj.primaryDrugs || []).concat(indObj.altDrugs || []);
+                    if (!allowedDrugs.includes(activeRxDrugId)) {
+                        activeRxDrugId = null;
+                    }
                 }
             }
 
@@ -1157,10 +1164,50 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
         function calculateAll() {
             if (typeof ABX_ENGINE === 'undefined') return;
 
-            const age = parseFloat(document.getElementById('in-age').value) || 60;
-            const weight = parseFloat(document.getElementById('in-weight').value) || 70;
-            const height = parseFloat(document.getElementById('in-height').value) || 170;
-            const scr = parseFloat(document.getElementById('in-scr').value) || 1.0;
+            const valMsg = document.getElementById('patient-validation-msg');
+            const ageEl = document.getElementById('in-age');
+            const weightEl = document.getElementById('in-weight');
+            const heightEl = document.getElementById('in-height');
+            const scrEl = document.getElementById('in-scr');
+
+            const rawAge = ageEl ? ageEl.value.trim() : '';
+            const rawWeight = weightEl ? weightEl.value.trim() : '';
+            const rawHeight = heightEl ? heightEl.value.trim() : '';
+            const rawScr = scrEl ? scrEl.value.trim() : '';
+
+            const age = parseFloat(rawAge);
+            const weight = parseFloat(rawWeight);
+            const height = parseFloat(rawHeight);
+            const scr = parseFloat(rawScr);
+
+            const isAgeValid = rawAge !== '' && !isNaN(age) && Number.isFinite(age) && age >= 1 && age <= 120;
+            const isWeightValid = rawWeight !== '' && !isNaN(weight) && Number.isFinite(weight) && weight >= 20 && weight <= 300;
+            const isHeightValid = rawHeight !== '' && !isNaN(height) && Number.isFinite(height) && height >= 80 && height <= 250;
+            const isScrValid = rawScr !== '' && !isNaN(scr) && Number.isFinite(scr) && scr >= 0.1 && scr <= 30.0;
+
+            if (!isAgeValid || !isWeightValid || !isHeightValid || !isScrValid) {
+                if (valMsg) {
+                    let errs = [];
+                    if (!isAgeValid) errs.push('Age (1-120 yr)');
+                    if (!isWeightValid) errs.push('Weight (20-300 kg)');
+                    if (!isHeightValid) errs.push('Height (80-250 cm)');
+                    if (!isScrValid) errs.push('SCr (0.1-30.0 mg/dL)');
+                    valMsg.textContent = `⚠️ Invalid clinical inputs: Please verify ${errs.join(', ')}.`;
+                    valMsg.style.display = 'block';
+                }
+
+                patientState.calc = null;
+                renderClearanceCards(null, null, null);
+                renderWeightRationale(null, null, null, null, null);
+                renderDiscordanceBanner(null, null, null, null);
+                renderAntibioticCards();
+                updatePrescriptionPreview();
+                return;
+            }
+
+            if (valMsg) {
+                valMsg.style.display = 'none';
+            }
 
             const ptPayload = {
                 age,
@@ -1223,7 +1270,7 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                 outCrcl.textContent = 'CRRT';
                 badgeCrcl.textContent = 'CONTINUOUS RRT';
                 badgeCrcl.className = 'tier-badge tier-teal';
-            } else if (crclRes) {
+            } else if (crclRes && crclRes.crcl != null && !isNaN(crclRes.crcl) && Number.isFinite(crclRes.crcl) && crclRes.crcl >= 0) {
                 const c = crclRes.crcl;
                 outCrcl.textContent = c.toFixed(1);
                 if (c >= 50) {
@@ -1241,10 +1288,12 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                 }
             } else {
                 outCrcl.textContent = '--';
+                badgeCrcl.textContent = '⚠️ Renal Function Required';
+                badgeCrcl.className = 'tier-badge tier-amber';
             }
 
             // eGFR Rendering
-            if (egfrVal != null) {
+            if (egfrVal != null && !isNaN(egfrVal) && Number.isFinite(egfrVal) && egfrVal >= 0) {
                 outEgfr.textContent = egfrVal.toFixed(1);
                 if (egfrVal >= 90) {
                     badgeEgfr.textContent = 'G1 Normal (≥90)';
@@ -1267,6 +1316,8 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                 }
             } else {
                 outEgfr.textContent = '--';
+                badgeEgfr.textContent = '--';
+                badgeEgfr.className = 'tier-badge tier-teal';
             }
         }
 
@@ -1281,17 +1332,23 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             const outBsa = document.getElementById('out-bsa');
             const outAbsGfr = document.getElementById('out-absgfr');
 
-            if (bmi) outBmi.textContent = bmi.toFixed(1);
-            if (ibw) outIbw.textContent = ibw.toFixed(1);
-            if (abw) outAbw.textContent = abw.toFixed(1);
-            if (patientState.calc?.bsa) outBsa.textContent = patientState.calc.bsa.toFixed(2) + ' m²';
-            if (patientState.calc?.absGfr) outAbsGfr.textContent = patientState.calc.absGfr.toFixed(1);
+            if (outBmi) outBmi.textContent = (bmi != null && !isNaN(bmi)) ? bmi.toFixed(1) : '--';
+            if (outIbw) outIbw.textContent = (ibw != null && !isNaN(ibw)) ? ibw.toFixed(1) : '--';
+            if (outAbw) outAbw.textContent = (abw != null && !isNaN(abw)) ? abw.toFixed(1) : '--';
+            if (outBsa) outBsa.textContent = patientState.calc?.bsa ? patientState.calc.bsa.toFixed(2) + ' m²' : '--';
+            if (outAbsGfr) outAbsGfr.textContent = patientState.calc?.absGfr ? patientState.calc.absGfr.toFixed(1) : '--';
 
             const type = crclRes ? crclRes.weightType : 'TBW';
             const w = crclRes ? crclRes.weightUsed : tbw;
 
-            outType.textContent = type;
-            outUsed.textContent = w.toFixed(1);
+            if (outType) outType.textContent = type;
+            if (outUsed) outUsed.textContent = (w != null && !isNaN(w) && Number.isFinite(w)) ? w.toFixed(1) : '--';
+
+            if (!outDesc) return;
+            if (w == null || isNaN(w)) {
+                outDesc.textContent = 'Enter patient weight and parameters to evaluate dosing strategy.';
+                return;
+            }
 
             if (type === 'ABW') {
                 outDesc.textContent = `Patient is clinically obese (BMI ${bmi ? bmi.toFixed(1) : '--'} ≥ 30 or TBW > 120% IBW). 40% Adjusted Body Weight (IBW + 0.4 × [TBW - IBW]) is selected to prevent medication overdosing while maintaining therapeutic efficacy.`;
@@ -1443,12 +1500,12 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
 
                     <div class="dose-hud-box">
                         <div class="dose-hud-left">
-                            <span class="dose-hud-label">Recommended Renal Dose (${currentTier.toUpperCase()}):</span>
-                            <div class="dose-hud-value">${dCalc.recommendedDose}</div>
+                            <span class="dose-hud-label">${currentTier === 'unknown' ? '⚠️ Renal Function Required:' : `Recommended Renal Dose (${currentTier.toUpperCase()}):`}</span>
+                            <div class="dose-hud-value" style="${dCalc ? '' : 'font-size: 1.05rem; color: #dc2626;'}">${dCalc ? dCalc.recommendedDose : 'Enter valid parameters'}</div>
                         </div>
                         <div style="text-align: right;">
-                            <div class="dose-hud-freq">${dCalc.interval}</div>
-                            <div class="dose-hud-infusion">${dCalc.infusion || 'IV'}</div>
+                            <div class="dose-hud-freq">${dCalc ? dCalc.interval : '--'}</div>
+                            <div class="dose-hud-infusion">${(dCalc && dCalc.infusion) ? dCalc.infusion : '--'}</div>
                         </div>
                     </div>
 
@@ -1502,6 +1559,10 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
 
         // Select and Copy Note directly from drug card
         function selectAndCopyDrug(drugId) {
+            if (activeIndication === 'all') {
+                showToast('⚠️ Please select a clinical indication first');
+                return;
+            }
             activeRxDrugId = drugId;
             updatePrescriptionPreview();
             copyPrescriptionNote();
@@ -1509,11 +1570,28 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
 
         // Live Prescription Note Preview (Strict Zero-PHI)
         function updatePrescriptionPreview() {
+            const area = document.getElementById('rx-note-text');
+            if (!area) return;
+
             if (typeof ABX_ENGINE === 'undefined') return;
 
-            const drug = ABX_ENGINE.STANFORD_ABX_DB[activeRxDrugId] || ABX_ENGINE.STANFORD_ABX_DB['ceftriaxone'];
-            const indId = activeIndication !== 'all' ? activeIndication : 'cap';
+            if (!patientState.calc || (!patientState.calc.crclRes && patientState.rrt === 'none')) {
+                area.textContent = 'Please enter valid patient parameters to calculate renal function.';
+                return;
+            }
 
+            if (activeIndication === 'all' || !activeRxDrugId) {
+                area.textContent = 'Please select a clinical indication and an antimicrobial to view clinical prescription note.';
+                return;
+            }
+
+            const drug = ABX_ENGINE.STANFORD_ABX_DB[activeRxDrugId];
+            if (!drug) {
+                area.textContent = 'Please select a clinical indication and an antimicrobial to view clinical prescription note.';
+                return;
+            }
+
+            const indId = activeIndication;
             const patientRenalStatus = {
                 rrt: patientState.rrt,
                 isHD: patientState.rrt === 'hd',
@@ -1523,6 +1601,10 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             };
 
             const dCalc = ABX_ENGINE.calculateDose(drug.id, patientRenalStatus, indId);
+            if (!dCalc) {
+                area.textContent = '⚠️ Unable to calculate dose: Valid renal function parameters required.';
+                return;
+            }
 
             const note = ABX_ENGINE.formatPrescriptionNote({
                 patient: {
@@ -1543,15 +1625,29 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                 noteStr: dCalc.adjustments
             });
 
-            const area = document.getElementById('rx-note-text');
-            if (area) area.textContent = note;
+            area.textContent = note;
         }
 
         // One-Click Copy Prescription with Clipboard & Toast Feedback
         function copyPrescriptionNote() {
             const area = document.getElementById('rx-note-text');
             if (!area) return;
+
+            if (!patientState.calc || (!patientState.calc.crclRes && patientState.rrt === 'none')) {
+                showToast('⚠️ Please enter valid patient parameters first');
+                return;
+            }
+
+            if (activeIndication === 'all' || !activeRxDrugId) {
+                showToast('⚠️ Please select an indication and antimicrobial first');
+                return;
+            }
+
             const text = area.textContent;
+            if (!text || text.startsWith('Please ') || text.startsWith('⚠️ ')) {
+                showToast('⚠️ Prescription note is not ready to copy');
+                return;
+            }
 
             if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
                 navigator.clipboard.writeText(text)
@@ -1573,8 +1669,10 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             t.focus();
             t.select();
             try {
-                document.execCommand('copy');
-                showToast('✓ Prescription note copied (Zero-PHI compliant)');
+                const copied = document.execCommand('copy');
+                showToast(copied
+                    ? '✓ Prescription note copied (Zero-PHI compliant)'
+                    : '⚠️ Unable to copy automatically');
             } catch (_) {
                 showToast('⚠️ Unable to copy automatically');
             }

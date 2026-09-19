@@ -185,6 +185,22 @@ describe('CHALLENGER 1: Mathematical Engine vs Independent Clinical Oracles', ()
     });
 
     test('1.4 CKD-EPI 2021 Race-Free 20-Vector Matrix vs KDIGO Gold Standard', () => {
+        // Independent publication-derived benchmark constants (Inker et al. NEJM 2021 Table 1)
+        const publicationVectors = [
+            { scr: 1.0, age: 50, sex: 'M', expectedEGFR: 91.7 },
+            { scr: 0.8, age: 50, sex: 'F', expectedEGFR: 89.7 },
+            { scr: 4.0, age: 65, sex: 'M', expectedEGFR: 15.8 },
+            { scr: 0.5, age: 20, sex: 'M', expectedEGFR: 149.7 },
+            { scr: 0.7, age: 45, sex: 'F', expectedEGFR: 108.6 }
+        ];
+
+        publicationVectors.forEach(pv => {
+            const actual = ABX_ENGINE.calcEGFR_CKD_EPI_2021(pv.scr, pv.age, pv.sex);
+            assert.ok(actual !== null, `calcEGFR_CKD_EPI_2021 returned null for publication vector ${JSON.stringify(pv)}`);
+            const roundedVal = parseFloat(Number(actual).toFixed(1));
+            assert.strictEqual(roundedVal, pv.expectedEGFR, `Publication vector mismatch for ${JSON.stringify(pv)}: expected ${pv.expectedEGFR}, got ${roundedVal}`);
+        });
+
         const matrix = [
             // Male SCr <= 0.9
             { scr: 0.5, age: 20, sex: 'M' },
@@ -475,9 +491,9 @@ describe('CHALLENGER 1: Boundary Conditions, Stress Fuzzing & Safety Invariants'
         assert.strictEqual(ABX_ENGINE.getRenalTier(9.9999), 'crcl_lt_10');
         assert.strictEqual(ABX_ENGINE.getRenalTier(0.0), 'crcl_lt_10');
         assert.strictEqual(ABX_ENGINE.getRenalTier(-5.0), 'crcl_lt_10');
-        assert.strictEqual(ABX_ENGINE.getRenalTier(NaN), 'crcl_gt_50');
-        assert.strictEqual(ABX_ENGINE.getRenalTier(null), 'crcl_gt_50');
-        assert.strictEqual(ABX_ENGINE.getRenalTier(undefined), 'crcl_gt_50');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(NaN), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(null), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(undefined), 'unknown');
 
         // Dialysis overrides
         assert.strictEqual(ABX_ENGINE.getRenalTier(80, true, false), 'hd');

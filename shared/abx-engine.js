@@ -164,10 +164,11 @@ const ABX_ENGINE = {
     getRenalTier: (crcl, isHD = false, isCRRT = false) => {
         if (isHD) return 'hd';
         if (isCRRT) return 'crrt';
-        if (crcl == null || isNaN(crcl)) return 'crcl_gt_50';
-        if (crcl >= 50) return 'crcl_gt_50';
-        if (crcl >= 30) return 'crcl_30_50';
-        if (crcl >= 10) return 'crcl_10_29';
+        if (crcl == null || isNaN(crcl) || !Number.isFinite(Number(crcl))) return 'unknown';
+        const c = Number(crcl);
+        if (c >= 50) return 'crcl_gt_50';
+        if (c >= 30) return 'crcl_30_50';
+        if (c >= 10) return 'crcl_10_29';
         return 'crcl_lt_10';
     },
 
@@ -621,28 +622,51 @@ const ABX_ENGINE = {
         const drug = ABX_ENGINE.STANFORD_ABX_DB[drugId];
         if (!drug) return null;
 
+        if (patientOrRenalStatus == null) return null;
+
+        const validTiers = ['crcl_gt_50', 'crcl_30_50', 'crcl_10_29', 'crcl_lt_10', 'hd', 'crrt'];
+
         // Determine tier
-        let tier = 'crcl_gt_50';
+        let tier = null;
         if (typeof patientOrRenalStatus === 'string') {
-            tier = patientOrRenalStatus;
+            if (validTiers.includes(patientOrRenalStatus)) {
+                tier = patientOrRenalStatus;
+            } else {
+                return null;
+            }
         } else if (typeof patientOrRenalStatus === 'number') {
-            tier = ABX_ENGINE.getRenalTier(patientOrRenalStatus);
-        } else if (typeof patientOrRenalStatus === 'object' && patientOrRenalStatus !== null) {
+            const calculatedTier = ABX_ENGINE.getRenalTier(patientOrRenalStatus);
+            if (calculatedTier === 'unknown') return null;
+            tier = calculatedTier;
+        } else if (typeof patientOrRenalStatus === 'object') {
             if (patientOrRenalStatus.rrt === 'hd' || patientOrRenalStatus.isHD) {
                 tier = 'hd';
             } else if (patientOrRenalStatus.rrt === 'crrt' || patientOrRenalStatus.isCRRT) {
                 tier = 'crrt';
             } else if (patientOrRenalStatus.crcl != null) {
-                tier = ABX_ENGINE.getRenalTier(patientOrRenalStatus.crcl);
+                const calculatedTier = ABX_ENGINE.getRenalTier(patientOrRenalStatus.crcl);
+                if (calculatedTier === 'unknown') return null;
+                tier = calculatedTier;
             } else if (patientOrRenalStatus.weightKg && patientOrRenalStatus.scr && patientOrRenalStatus.age && patientOrRenalStatus.sex) {
                 const res = ABX_ENGINE.calcCrCl(patientOrRenalStatus);
-                tier = res ? ABX_ENGINE.getRenalTier(res.crcl) : 'crcl_gt_50';
-            } else if (patientOrRenalStatus.tier) {
+                if (!res || res.crcl == null) return null;
+                const calculatedTier = ABX_ENGINE.getRenalTier(res.crcl);
+                if (calculatedTier === 'unknown') return null;
+                tier = calculatedTier;
+            } else if (patientOrRenalStatus.tier && validTiers.includes(patientOrRenalStatus.tier)) {
                 tier = patientOrRenalStatus.tier;
+            } else {
+                return null;
             }
+        } else {
+            return null;
         }
 
-        const tierDosing = (drug.renalTiers && drug.renalTiers[tier]) || (drug.renalDosing && drug.renalDosing[tier]) || drug.renalTiers.crcl_gt_50;
+        if (!tier || !validTiers.includes(tier)) return null;
+
+        const tierDosing = (drug.renalTiers && drug.renalTiers[tier]) || (drug.renalDosing && drug.renalDosing[tier]);
+        if (!tierDosing) return null;
+
         const indInfo = (drug.indications && indicationId) ? drug.indications[indicationId] : null;
 
         let recommendedDose = tierDosing.dose;
@@ -672,9 +696,11 @@ const ABX_ENGINE = {
                 else if (tier === 'crrt') { recommendedDose = '2g'; interval = 'q8h'; }
                 adjustments = `CNS Listeria dosing adjusted for ${tier}`;
             }
-        } else if (tierDosing.dose === 'Standard indication dose' && indInfo) {
+        } else if (indInfo && tier === 'crcl_gt_50') {
+            // Indication dose is defined for normal renal function; renal tiers keep priority when impaired.
             recommendedDose = indInfo.defaultDose;
             interval = indInfo.frequency;
+            if (indInfo.infusion) infusion = indInfo.infusion;
         }
 
         if (tierDosing.postHD) {
@@ -792,7 +818,7 @@ const ABX_ENGINE = {
         note += `--------------------------------\n`;
         
         let ptParts = [];
-        if (pt.age != null) ptParts.push(`Age ${pt.age} yr`);
+        if (pt.age != null) ptParts.push(`Age ${Number(pt.age) > 89 ? '90+' : pt.age} yr`);
         if (pt.sex != null) ptParts.push(`Sex ${pt.sex}`);
         if (pt.weightKg != null) ptParts.push(`Wt ${pt.weightKg} kg (Using ${weightBasis})`);
         if (ptParts.length > 0) note += `Patient: ${ptParts.join(' | ')}\n`;
@@ -820,6 +846,16 @@ Object.values(ABX_ENGINE.STANFORD_ABX_DB).forEach(d => {
     if (!d.renalTiers && d.renalDosing) d.renalTiers = d.renalDosing;
     if (!d.clinicalNotes && d.safetyNotes) d.clinicalNotes = d.safetyNotes;
     if (!d.safetyNotes && d.clinicalNotes) d.safetyNotes = d.clinicalNotes;
+});
+
+// Deduplicate meningitis compatibility data while retaining both lookup keys
+if (ABX_ENGINE.DISEASE_PROTOCOLS && ABX_ENGINE.DISEASE_PROTOCOLS.meningitis_ca) {
+    ABX_ENGINE.DISEASE_PROTOCOLS.meningitis = ABX_ENGINE.DISEASE_PROTOCOLS.meningitis_ca;
+}
+Object.values(ABX_ENGINE.STANFORD_ABX_DB).forEach(d => {
+    if (d.indications && d.indications.meningitis_ca) {
+        d.indications.meningitis = d.indications.meningitis_ca;
+    }
 });
 
 // Dual export: CommonJS (Node.js test runner) & Browser Window

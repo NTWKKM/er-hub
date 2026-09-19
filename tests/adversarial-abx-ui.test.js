@@ -22,11 +22,12 @@ function loadAbxUiDom() {
     const unhandledErrors = [];
     const dom = new JSDOM(html, {
         url: 'file://' + htmlPath,
-        runScripts: 'dangerously'
-    });
-
-    dom.window.addEventListener('error', (e) => {
-        unhandledErrors.push(e.error || e.message);
+        runScripts: 'dangerously',
+        beforeParse(window) {
+            window.addEventListener('error', (e) => {
+                unhandledErrors.push(e.error || e.message);
+            });
+        }
     });
 
     // Ensure DOMContentLoaded handlers run on window
@@ -232,8 +233,9 @@ describe('M2 Adversarial UI & PWA Challenge: tools/abx-renal-dosing.html', () =>
     test('7. Zero-PHI Clinical Prescription Note & Toast Notification Verification', async () => {
         const { win, doc } = loadAbxUiDom();
 
-        // Update note preview
-        win.updatePrescriptionPreview();
+        // Explicitly select an indication and antimicrobial (per clinical safety gate)
+        win.selectIndicationFilter('cap');
+        win.selectAndCopyDrug('ceftriaxone');
         const note = doc.getElementById('rx-note-text').textContent;
 
         // Strict Zero-PHI Check (HIPAA / PDPA invariants)
