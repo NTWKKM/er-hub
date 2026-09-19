@@ -67,53 +67,54 @@
         }
 
         .portal-wrapper {
-            max-width: 1400px;
+            max-width: 1440px;
             margin: 0 auto;
-            padding: 16px 20px 48px;
+            padding: 12px 16px 40px;
             box-sizing: border-box;
+            overflow-x: hidden;
         }
 
-        /* Page Header */
+        /* Page Header - Minimal & Clean */
         .page-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding-bottom: 14px;
-            border-bottom: 2px solid var(--rule);
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--rule);
         }
         .page-header-title {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         .page-header h1 {
             margin: 0;
-            font-size: 1.55rem;
+            font-size: 1.35rem;
             color: var(--brand-green);
             font-weight: 800;
             letter-spacing: -0.01em;
         }
         .page-header-subtitle {
             margin: 2px 0 0 0;
-            font-size: 0.88rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
         }
         .btn-back {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 6px;
-            border: 1.5px solid var(--card-border);
+            border: 1px solid var(--card-border);
             background: var(--surface-card);
             color: var(--text-main);
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.88rem;
-            min-height: 48px;
+            font-size: 0.82rem;
+            min-height: 40px;
             box-sizing: border-box;
             transition: all 150ms ease;
         }
@@ -122,105 +123,234 @@
             border-color: var(--brand-green);
         }
 
-        /* Dual Column Layout */
-        .layout-two-col {
-            display: grid;
-            grid-template-columns: 460px 1fr;
-            gap: 22px;
-            align-items: start;
+        /* Horizontal 2-Module Layout */
+        .layout-horizontal {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
         }
         @media (max-width: 1024px) {
-            .layout-two-col {
+            .layout-horizontal {
+                gap: 10px;
+            }
+        }
+
+        /* Panels (Minimal White Clinical Cards) */
+        .panel {
+            background: var(--surface-card);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+            box-sizing: border-box;
+            transition: box-shadow 160ms ease;
+        }
+
+        /* ==========================================================================
+           MODULE 1: PATIENT & RENAL FUNCTION (Collapsible Header & Body)
+           ========================================================================== */
+        .panel-renal-module {
+            background: var(--surface-card);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+        .renal-summary-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .renal-summary-left {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .renal-summary-title {
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .summary-meta-pill {
+            background: #f1f5f9;
+            color: var(--text-main);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--card-border);
+        }
+        .summary-badge-crcl {
+            background: var(--brand-green-light);
+            border: 1px solid var(--brand-green-border);
+            color: var(--brand-green-dark);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .summary-badge-egfr {
+            background: var(--brand-blue-light);
+            border: 1px solid var(--brand-blue-border);
+            color: var(--brand-blue);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .summary-badge-disc {
+            background: var(--accent-amber-bg);
+            border: 1px solid var(--accent-amber-border);
+            color: #b45309;
+            font-size: 0.76rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-toggle-module {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #f8fafc;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            color: var(--brand-green-dark);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 120ms ease;
+            touch-action: manipulation;
+        }
+        .btn-toggle-module:hover {
+            background: var(--surface-hover);
+            border-color: var(--brand-green);
+        }
+        .toggle-arrow {
+            font-size: 0.72rem;
+            transition: transform 180ms ease;
+        }
+
+        /* Collapsible content (Hidden when collapsed, fully functional in DOM) */
+        .collapsible-content {
+            overflow: hidden;
+            transition: max-height 250ms cubic-bezier(0.4, 0, 0.2, 1), opacity 200ms ease, margin-top 200ms ease;
+            max-height: 2000px;
+            opacity: 1;
+            margin-top: 12px;
+            border-top: 1px solid var(--rule);
+            padding-top: 12px;
+        }
+        .collapsible-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+            pointer-events: none;
+        }
+
+        /* Responsive Form Grids */
+        .renal-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            align-items: end;
+        }
+        .renal-form-grid-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        @media (max-width: 768px) {
+            .renal-form-grid-options {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Panels (Clean modern white clinical card) */
-        .panel {
-            background: var(--surface-card);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 22px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
-            box-sizing: border-box;
-            transition: box-shadow 160ms ease;
-        }
-        .panel-title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 0 0 16px 0;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--brand-green);
-            color: var(--text-main);
-            font-size: 1.15rem;
-            font-weight: 800;
-            letter-spacing: -0.01em;
-        }
-
-        /* Form Inputs & Tactile Step Buttons (White clinical style, 48px touch ergonomics) */
         .form-group {
-            margin-bottom: 14px;
+            margin-bottom: 6px;
         }
         .form-group label {
             display: block;
             font-weight: 700;
-            font-size: 0.88rem;
-            margin-bottom: 6px;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
             color: var(--text-main);
         }
         .input-stepper-wrap {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .form-control {
             flex: 1;
             height: 48px;
-            padding: 0 14px;
+            padding: 0 10px;
             background: var(--surface-card);
-            border: 1.5px solid var(--card-border);
-            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
             color: var(--text-main);
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 0.95rem;
+            font-weight: 700;
             font-family: inherit;
             box-sizing: border-box;
             outline: none;
             transition: border-color 150ms ease, box-shadow 150ms ease;
             font-variant-numeric: tabular-nums;
+            min-width: 50px;
+            text-align: center;
         }
         .form-control:focus {
             border-color: var(--brand-green);
             box-shadow: 0 0 0 3px var(--focus-ring);
         }
         .unit-label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
             font-weight: 600;
-            min-width: 44px;
+            min-width: 32px;
+            white-space: nowrap;
         }
 
-        /* Tactile Stepper Buttons (48px Touch Target, White Modern Style) */
+        /* Tactile Stepper Buttons (48px Touch Target Enforcement) */
         .btn-step {
             height: 48px;
             width: 48px;
             min-width: 48px;
             min-height: 48px;
             background: #ffffff;
-            border: 1.5px solid var(--card-border);
-            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
             cursor: pointer;
             user-select: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 20px;
+            font-size: 18px;
             color: var(--text-main);
-            transition: all 140ms ease;
+            transition: all 120ms ease;
             touch-action: manipulation;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
         .btn-step:hover:not(:disabled) {
             background: #f8fafc;
@@ -228,7 +358,7 @@
             color: var(--brand-green-dark);
         }
         .btn-step:active:not(:disabled) {
-            transform: scale(0.95);
+            transform: scale(0.96);
             background: #f1f5f9;
         }
 
@@ -238,8 +368,8 @@
             grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
             gap: 4px;
             background: #f1f5f9;
-            padding: 4px;
-            border-radius: 8px;
+            padding: 3px;
+            border-radius: 6px;
             border: 1px solid #e2e8f0;
         }
         .btn-toggle, .drop-factor-btn {
@@ -247,13 +377,13 @@
             background: transparent;
             color: #64748b;
             font-family: inherit;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 600;
-            padding: 8px 12px;
-            border-radius: 6px;
+            padding: 6px 10px;
+            border-radius: 4px;
             cursor: pointer;
             transition: all 140ms ease;
-            min-height: 44px;
+            min-height: 40px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -271,20 +401,23 @@
             box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
         }
 
-        .rate-large {
-            font-size: 2.3em;
-            font-weight: bold;
-            color: var(--brand-green);
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
+        /* Clearance Cards & Anthropometrics Layout */
+        .clearance-row-wrapper {
+            display: grid;
+            grid-template-columns: minmax(280px, 1fr) 2fr;
+            gap: 12px;
+            margin-top: 10px;
+            align-items: stretch;
         }
-
-        /* Clearance Grid Side-by-Side */
+        @media (max-width: 900px) {
+            .clearance-row-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
         .clearance-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 14px;
+            gap: 10px;
         }
         @media (max-width: 480px) {
             .clearance-grid {
@@ -293,15 +426,14 @@
         }
         .clearance-card {
             background: var(--brand-green-light);
-            border: 1.5px solid var(--brand-green-border);
-            border-radius: 12px;
-            padding: 16px;
+            border: 1px solid var(--brand-green-border);
+            border-radius: 8px;
+            padding: 12px 14px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             transition: all 180ms ease;
             box-sizing: border-box;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
         .clearance-card.card-egfr {
             border-color: var(--brand-blue-border);
@@ -312,17 +444,24 @@
             align-items: center;
             justify-content: space-between;
             gap: 6px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .clearance-title {
-            font-size: 0.84rem;
+            font-size: 0.8rem;
             font-weight: 700;
             color: var(--brand-blue);
         }
         .clearance-units {
-            font-size: 0.76rem;
+            font-size: 0.72rem;
             font-weight: 700;
             color: var(--text-muted);
+        }
+        .rate-large {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--brand-green);
+            font-variant-numeric: tabular-nums;
+            line-height: 1.1;
         }
 
         .tier-badge {
@@ -330,9 +469,9 @@
             font-size: 0.72rem;
             font-weight: 800;
             text-transform: uppercase;
-            padding: 4px 10px;
-            border-radius: 12px;
-            margin-top: 8px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-top: 6px;
             align-self: flex-start;
             letter-spacing: 0.02em;
         }
@@ -343,26 +482,16 @@
         .tier-badge.tier-purple { background: var(--accent-purple); color: #ffffff; }
         .tier-badge.tier-teal { background: var(--accent-teal); color: #ffffff; }
 
-        /* Warning Box */
-        .warning-box {
-            background: var(--accent-amber-bg);
-            border-left: 4px solid var(--accent-amber-border);
-            padding: 14px 16px;
-            border-radius: 8px;
-            margin-top: 14px;
-            font-size: 13.5px;
-            line-height: 1.45;
-        }
-
-        /* Weight Indicator Pill Row */
+        /* Weight Indicator & Anthropometrics Card */
         .weight-rational-card {
             background: #ffffff;
             border: 1px solid var(--card-border);
-            border-radius: 10px;
-            padding: 14px 16px;
-            margin-top: 14px;
-            font-size: 0.84rem;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .weight-rational-title {
             font-weight: 700;
@@ -370,24 +499,25 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .weight-rational-desc {
             color: var(--text-muted);
-            line-height: 1.4;
-            margin-bottom: 10px;
+            line-height: 1.35;
+            margin-bottom: 8px;
+            font-size: 0.78rem;
         }
         .metric-pill-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 4px;
         }
         .metric-pill {
             background: #f1f5f9;
             border: 1px solid var(--card-border);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.78rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.74rem;
             font-weight: 600;
             color: var(--text-main);
         }
@@ -395,14 +525,13 @@
         /* Discordance Alert Banner */
         .discordance-banner {
             display: none;
-            margin-top: 14px;
-            padding: 14px 18px;
-            border-radius: 10px;
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
             border-left: 4px solid var(--accent-amber-border);
             background: var(--accent-amber-bg);
             color: var(--text-main);
             animation: fadeIn 200ms ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
         }
         .discordance-banner.active-discordant {
             display: block;
@@ -414,40 +543,64 @@
         }
         .discordance-title {
             font-weight: 800;
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 4px;
+            gap: 6px;
+            margin-bottom: 2px;
         }
         .discordance-body {
-            font-size: 0.84rem;
-            line-height: 1.45;
+            font-size: 0.8rem;
+            line-height: 1.4;
         }
 
-        /* View Mode Switcher & Filter Controls */
+        /* Warning Box */
+        .warning-box {
+            background: var(--accent-amber-bg);
+            border-left: 4px solid var(--accent-amber-border);
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.82rem;
+            line-height: 1.4;
+        }
+
+        /* ==========================================================================
+           MODULE 2: ANTIMICROBIAL DOSING TABLE (Full Width, Zero Horizontal Scroll)
+           ========================================================================== */
+        .panel-drug-module {
+            background: var(--surface-card);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        /* Toolbar & Controls */
         .toolbar-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
+            gap: 8px;
+            margin-bottom: 10px;
         }
         .search-box-wrap {
             position: relative;
             flex: 1;
-            min-width: 260px;
+            min-width: 220px;
         }
         .search-input {
             width: 100%;
-            height: 44px;
-            padding: 0 14px 0 36px;
+            height: 38px;
+            padding: 0 12px 0 32px;
             background: var(--surface-card);
-            border: 1.5px solid var(--card-border);
-            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
             color: var(--text-main);
-            font-size: 0.9rem;
+            font-size: 0.84rem;
             font-weight: 600;
             font-family: inherit;
             box-sizing: border-box;
@@ -460,71 +613,73 @@
         }
         .search-icon {
             position: absolute;
-            left: 12px;
+            left: 10px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
             pointer-events: none;
         }
 
-        /* Disease Protocol Filter Chips */
+        /* Disease Protocol Filter Chips (Compact Minimal Footprint) */
         .filter-chip-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 16px;
+            gap: 4px;
+            margin-bottom: 10px;
+            align-items: center;
         }
         .filter-chip {
-            min-height: 40px;
-            padding: 6px 14px;
-            background: var(--surface-hover);
-            border: 1.5px solid var(--card-border);
-            border-radius: 20px;
+            min-height: 28px;
+            padding: 3px 9px;
+            background: #f8fafc;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
             color: var(--text-main);
-            font-size: 0.82rem;
+            font-size: 0.76rem;
             font-weight: 600;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             transition: all 120ms ease;
             touch-action: manipulation;
             user-select: none;
+            white-space: nowrap;
         }
         .filter-chip:hover {
             border-color: var(--brand-green);
-            background: var(--surface-card);
+            background: #f0fdf4;
         }
         .filter-chip.active {
             background: var(--brand-green);
             border-color: var(--brand-green-dark);
             color: #ffffff;
-            box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);
+            font-weight: 700;
+            box-shadow: 0 1px 3px rgba(22, 163, 74, 0.2);
         }
 
-        /* ==========================================================================
-           DUAL CLEARANCE DRUG TABLE (Requested Primary Feature)
-           ========================================================================== */
+        /* Primary Dosing Table: Full Width, Fits on Display, Zero Horizontal Scroll */
         .table-responsive-wrap {
             width: 100%;
-            max-height: 720px;
+            max-height: calc(100vh - 280px);
+            min-height: 380px;
             overflow-y: auto;
             overflow-x: auto;
             overscroll-behavior: contain;
             border: 1px solid var(--card-border);
-            border-radius: 12px;
+            border-radius: 8px;
             background: var(--surface-card);
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
-            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            margin-bottom: 14px;
         }
         .dual-abx-table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            font-size: 0.86rem;
+            font-size: 0.83rem;
             text-align: left;
-            min-width: 820px;
+            min-width: 0;
         }
         .dual-abx-table th {
             position: sticky;
@@ -532,23 +687,25 @@
             z-index: 5;
             background: #ffffff;
             color: var(--text-main);
-            padding: 12px 14px;
+            padding: 10px 12px;
             font-weight: 800;
             border-bottom: 2px solid var(--card-border);
             white-space: nowrap;
             box-shadow: 0 1px 0 var(--card-border);
+            font-size: 0.82rem;
         }
         .dual-abx-table td {
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--card-border);
+            padding: 9px 12px;
+            border-bottom: 1px solid #f1f5f9;
             vertical-align: middle;
             transition: background-color 100ms ease;
+            font-size: 0.82rem;
         }
         .dual-abx-table tr:last-child td {
             border-bottom: none;
         }
         .dual-abx-table tr:hover td {
-            background: var(--surface-hover);
+            background: #f8fafc;
         }
         .dual-abx-table tr.row-discordant td {
             background: rgba(245, 158, 11, 0.04);
@@ -557,27 +714,28 @@
             background: var(--brand-green-light);
         }
 
+        /* Dose Pills */
         .dose-pill-crcl {
             display: inline-block;
             background: var(--brand-green-light);
-            border: 1.5px solid var(--brand-green-border);
+            border: 1px solid var(--brand-green-border);
             color: var(--brand-green-dark);
             font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.88rem;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 0.82rem;
             font-variant-numeric: tabular-nums;
             white-space: nowrap;
         }
         .dose-pill-egfr {
             display: inline-block;
             background: var(--brand-blue-light);
-            border: 1.5px solid var(--brand-blue-border);
+            border: 1px solid var(--brand-blue-border);
             color: var(--brand-blue);
             font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.88rem;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 0.82rem;
             font-variant-numeric: tabular-nums;
             white-space: nowrap;
         }
@@ -590,45 +748,46 @@
         .status-badge-concordant {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            font-size: 0.75rem;
+            gap: 3px;
+            font-size: 0.72rem;
             font-weight: 800;
             color: #15803d;
             background: #dcfce7;
-            padding: 4px 10px;
-            border-radius: 12px;
+            padding: 2px 7px;
+            border-radius: 10px;
             white-space: nowrap;
         }
         .status-badge-discordant {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            font-size: 0.75rem;
+            gap: 3px;
+            font-size: 0.72rem;
             font-weight: 800;
             color: #b45309;
             background: #fef3c7;
-            padding: 4px 10px;
-            border-radius: 12px;
+            padding: 2px 7px;
+            border-radius: 10px;
             border: 1px solid #f59e0b;
             white-space: nowrap;
             cursor: pointer;
         }
 
         .btn-table-action {
-            height: 38px;
-            padding: 0 14px;
-            border-radius: 6px;
-            font-size: 0.8rem;
+            height: 32px;
+            padding: 0 10px;
+            border-radius: 5px;
+            font-size: 0.76rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             transition: all 120ms ease;
             touch-action: manipulation;
             border: 1px solid var(--card-border);
             background: var(--surface-card);
             color: var(--text-main);
+            white-space: nowrap;
         }
         .btn-table-action:hover {
             border-color: var(--brand-green);
@@ -643,34 +802,33 @@
             background: var(--brand-green-dark);
         }
 
-        /* Detailed Card Grid (Preserved for backwards compatibility & toggle) */
+        /* Detailed Card Grid */
         .abx-cards-grid {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
         }
         .abx-card {
             background: var(--surface-card);
-            border: 1.5px solid var(--card-border);
+            border: 1px solid var(--card-border);
             border-radius: 8px;
-            padding: 16px;
-            transition: border-color 150ms ease, box-shadow 150ms ease;
+            padding: 14px;
+            transition: border-color 150ms ease;
             box-sizing: border-box;
         }
         .abx-card:hover {
             border-color: var(--brand-green);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
         .abx-card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 6px;
+            margin-bottom: 8px;
         }
         .abx-card-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: var(--text-main);
             margin: 0;
@@ -679,50 +837,50 @@
             background: var(--surface-hover);
             border: 1px solid var(--card-border);
             color: var(--text-muted);
-            padding: 3px 8px;
+            padding: 2px 7px;
             border-radius: 4px;
-            font-size: 0.76rem;
+            font-size: 0.72rem;
             font-weight: 700;
         }
 
         /* Dose HUD inside card */
         .dose-hud-box {
             background: var(--surface-nested);
-            border: 1.5px solid var(--card-border);
+            border: 1px solid var(--card-border);
             border-radius: 6px;
-            padding: 12px 16px;
-            margin: 10px 0;
+            padding: 10px 14px;
+            margin: 8px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
         }
         .dose-hud-left {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 2px;
         }
         .dose-hud-label {
-            font-size: 0.78rem;
+            font-size: 0.74rem;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
         }
         .dose-hud-value {
-            font-size: 1.7rem;
+            font-size: 1.5rem;
             font-weight: 900;
             color: var(--brand-green);
             font-variant-numeric: tabular-nums;
             line-height: 1.1;
         }
         .dose-hud-freq {
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--text-main);
         }
         .dose-hud-infusion {
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: var(--brand-blue);
         }
@@ -731,17 +889,17 @@
         .feature-tags-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            margin: 8px 0;
+            gap: 4px;
+            margin: 6px 0;
         }
         .feature-tag {
-            font-size: 0.76rem;
+            font-size: 0.72rem;
             font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 6px;
+            padding: 2px 8px;
+            border-radius: 4px;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
         .feature-tag-load { background: #eff6ff; color: #1d4ed8; border: 1px solid #93c5fd; }
         .feature-tag-extended { background: #ecfdf5; color: #047857; border: 1px solid #6ee7b7; }
@@ -752,23 +910,23 @@
             background: none;
             border: none;
             color: var(--brand-green);
-            font-size: 0.86rem;
+            font-size: 0.82rem;
             font-weight: 700;
             cursor: pointer;
-            padding: 8px 0;
+            padding: 6px 0;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             touch-action: manipulation;
-            min-height: 48px;
+            min-height: 38px;
         }
         .abx-expand-trigger:hover {
             text-decoration: underline;
         }
         .abx-expand-content {
             display: none;
-            margin-top: 10px;
-            padding-top: 10px;
+            margin-top: 8px;
+            padding-top: 8px;
             border-top: 1px dashed var(--card-border);
             animation: fadeIn 150ms ease;
         }
@@ -779,12 +937,12 @@
         .renal-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.84rem;
-            margin: 8px 0;
+            font-size: 0.8rem;
+            margin: 6px 0;
         }
         .renal-table th, .renal-table td {
             border: 1px solid var(--card-border);
-            padding: 8px 10px;
+            padding: 6px 8px;
             text-align: left;
         }
         .renal-table th {
@@ -800,7 +958,7 @@
         }
         .renal-table tr.active-tier td:first-child::after {
             content: " ★ ACTIVE";
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: var(--brand-green);
             font-weight: 900;
         }
@@ -810,24 +968,24 @@
             background: var(--surface-hover);
             border-left: 4px solid var(--accent-amber);
             border-radius: 4px;
-            padding: 10px 12px;
-            font-size: 0.82rem;
+            padding: 8px 10px;
+            font-size: 0.78rem;
             color: var(--text-main);
-            margin-top: 8px;
-            line-height: 1.4;
+            margin-top: 6px;
+            line-height: 1.35;
         }
 
         /* Action Buttons */
         .btn-action-copy {
-            height: 48px;
-            min-height: 48px;
+            height: 40px;
+            min-height: 40px;
             background: var(--brand-green);
             color: #ffffff;
             border: none;
             border-radius: 6px;
-            padding: 0 16px;
+            padding: 0 14px;
             font-weight: 700;
-            font-size: 0.88rem;
+            font-size: 0.82rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -837,45 +995,41 @@
         }
         .btn-action-copy:hover {
             background: var(--brand-green-dark);
-            transform: translateY(-1px);
-        }
-        .btn-action-copy:active {
-            transform: translateY(1px);
         }
 
         /* Prescription Note Live Box */
         .rx-preview-card {
             background: var(--surface-card);
-            border: 1.5px solid var(--brand-blue-border);
-            border-radius: 12px;
-            padding: 18px;
-            margin-top: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--brand-blue-border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-top: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
         }
         .rx-preview-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         .rx-preview-title {
-            font-size: 1rem;
+            font-size: 0.92rem;
             font-weight: 800;
             color: var(--brand-blue);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .rx-text-area {
             width: 100%;
-            min-height: 140px;
+            min-height: 100px;
             font-family: var(--font-mono, monospace);
-            font-size: 0.85rem;
-            line-height: 1.5;
+            font-size: 0.82rem;
+            line-height: 1.45;
             background: var(--surface-sub);
             border: 1px solid var(--card-border);
-            border-radius: 8px;
-            padding: 14px;
+            border-radius: 6px;
+            padding: 10px;
             color: var(--text-main);
             box-sizing: border-box;
             white-space: pre-wrap;
@@ -903,13 +1057,13 @@
         }
         .modal-card {
             background: var(--surface-card);
-            border: 1.5px solid var(--card-border);
-            border-radius: 16px;
-            max-width: 820px;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            max-width: 800px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            padding: 24px;
+            padding: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             box-sizing: border-box;
         }
@@ -918,19 +1072,19 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid var(--brand-green);
-            padding-bottom: 12px;
-            margin-bottom: 16px;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
         }
         .modal-title {
             margin: 0;
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 800;
             color: var(--brand-green);
         }
         .btn-modal-close {
             background: none;
             border: none;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             cursor: pointer;
             color: var(--text-muted);
@@ -952,10 +1106,10 @@
             transform: translateX(-50%);
             background: #1e293b;
             color: #f8fafc;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 8px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 600;
             z-index: 100000;
             animation: toastIn 180ms ease-out;
@@ -994,168 +1148,195 @@
             </div>
         </header>
 
-        <div class="layout-two-col">
+        <div class="layout-horizontal">
             <!-- ==============================================================
-                 LEFT COLUMN: Patient Parameters & Dual Renal Clearance Engine
+                 MODULE 1: Patient Parameters & Renal Clearance (Collapsible)
                  ============================================================== -->
-            <aside class="panel" aria-label="Patient Parameters & Renal Function">
-                <h2 class="panel-title">
-                    <span>🩺 Patient &amp; Renal Clearance</span>
-                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Dynamic Real-Time</span>
-                </h2>
+            <section class="panel panel-renal-module" id="module-renal" aria-label="Patient Parameters &amp; Renal Function">
+                <!-- Live Summary Bar (Always Visible, Click to Toggle) -->
+                <div class="renal-summary-bar" onclick="toggleRenalModule()" role="button" tabindex="0" aria-expanded="false" aria-controls="renal-module-body" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleRenalModule();}">
+                    <div class="renal-summary-left">
+                        <span class="renal-summary-title">🩺 รายละเอียดค่าไต &amp; ข้อมูลผู้ป่วย</span>
+                        <span id="summary-pt-info" class="summary-meta-pill">ชาย 65 ปี · 70.0 kg · 170 cm · SCr 1.2 mg/dL</span>
+                        <span class="summary-badge-crcl">CrCl: <strong id="summary-crcl-val">--</strong> mL/min</span>
+                        <span class="summary-badge-egfr">eGFR: <strong id="summary-egfr-val">--</strong> mL/min/1.73m²</span>
+                        <span id="summary-disc-badge" class="summary-badge-disc" style="display: none;">⚠️ ค่าไตต่างระดับ</span>
+                    </div>
+                    <div class="renal-summary-right">
+                        <button type="button" class="btn-toggle-module" id="btn-toggle-renal" onclick="event.stopPropagation(); toggleRenalModule()" aria-expanded="false" aria-controls="renal-module-body">
+                            <span id="renal-toggle-text">⚙️ ปรับข้อมูลผู้ป่วย</span>
+                            <span id="renal-toggle-icon" class="toggle-arrow">▼</span>
+                        </button>
+                    </div>
+                </div>
 
-                <form id="patient-form" onsubmit="event.preventDefault();">
-                    <div id="patient-validation-msg" class="validation-msg" role="alert" style="display: none; background: #fee2e2; color: #991b1b; padding: 8px 12px; border-radius: 6px; font-size: 0.82rem; margin-bottom: 12px; border: 1px solid #f87171; font-weight: 600;"></div>
+                <!-- Collapsible Parameter Form & Clearance Cards (Default Collapsed) -->
+                <div id="renal-module-body" class="collapsible-content collapsed">
+                    <div id="patient-validation-msg" class="validation-msg" role="alert" style="display: none; background: #fee2e2; color: #991b1b; padding: 8px 12px; border-radius: 6px; font-size: 0.82rem; margin-bottom: 10px; border: 1px solid #f87171; font-weight: 600;"></div>
                     
-                    <!-- Age Input -->
-                    <div class="form-group">
-                        <label for="in-age">Patient Age (years)</label>
-                        <div class="input-stepper-wrap">
-                            <button type="button" class="btn-step" onclick="stepVal('in-age', -1, 1, 120)" aria-label="Decrease age">–</button>
-                            <input type="number" id="in-age" class="form-control" value="65" min="1" max="120" step="1" required>
-                            <button type="button" class="btn-step" onclick="stepVal('in-age', 1, 1, 120)" aria-label="Increase age">+</button>
-                            <span class="unit-label">years</span>
-                        </div>
-                    </div>
+                    <form id="patient-form" onsubmit="event.preventDefault();">
+                        <!-- Demographics & Labs Horizontal Row -->
+                        <div class="renal-form-grid">
+                            <!-- Age Input -->
+                            <div class="form-group">
+                                <label for="in-age">Age (อายุ)</label>
+                                <div class="input-stepper-wrap">
+                                    <button type="button" class="btn-step" onclick="stepVal('in-age', -1, 1, 120)" aria-label="Decrease age">–</button>
+                                    <input type="number" id="in-age" class="form-control" value="65" min="1" max="120" step="1" required>
+                                    <button type="button" class="btn-step" onclick="stepVal('in-age', 1, 1, 120)" aria-label="Increase age">+</button>
+                                    <span class="unit-label">ปี</span>
+                                </div>
+                            </div>
 
-                    <!-- Biological Sex Input -->
-                    <div class="form-group">
-                        <label>Biological Sex</label>
-                        <div class="btn-toggle-group" role="group" aria-label="Biological Sex">
-                            <button type="button" id="btn-sex-m" class="btn-toggle active" onclick="setSex('M')">Male (เพศชาย)</button>
-                            <button type="button" id="btn-sex-f" class="btn-toggle" onclick="setSex('F')">Female (เพศหญิง)</button>
-                        </div>
-                    </div>
+                            <!-- Biological Sex Input -->
+                            <div class="form-group">
+                                <label>Biological Sex (เพศ)</label>
+                                <div class="btn-toggle-group" role="group" aria-label="Biological Sex">
+                                    <button type="button" id="btn-sex-m" class="btn-toggle active" onclick="setSex('M')">ชาย (Male)</button>
+                                    <button type="button" id="btn-sex-f" class="btn-toggle" onclick="setSex('F')">หญิง (Female)</button>
+                                </div>
+                            </div>
 
-                    <!-- Weight & Height (Two Col) -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div class="form-group">
-                            <label for="in-weight">Weight (TBW)</label>
-                            <div class="input-stepper-wrap">
-                                <button type="button" class="btn-step" onclick="stepVal('in-weight', -1, 20, 300)" aria-label="Decrease weight">–</button>
-                                <input type="number" id="in-weight" class="form-control" value="70.0" min="20" max="300" step="0.5" required>
-                                <button type="button" class="btn-step" onclick="stepVal('in-weight', 1, 20, 300)" aria-label="Increase weight">+</button>
-                                <span class="unit-label">kg</span>
+                            <!-- Weight Input -->
+                            <div class="form-group">
+                                <label for="in-weight">Weight (น้ำหนัก TBW)</label>
+                                <div class="input-stepper-wrap">
+                                    <button type="button" class="btn-step" onclick="stepVal('in-weight', -1, 20, 300)" aria-label="Decrease weight">–</button>
+                                    <input type="number" id="in-weight" class="form-control" value="70.0" min="20" max="300" step="0.5" required>
+                                    <button type="button" class="btn-step" onclick="stepVal('in-weight', 1, 20, 300)" aria-label="Increase weight">+</button>
+                                    <span class="unit-label">kg</span>
+                                </div>
+                            </div>
+
+                            <!-- Height Input -->
+                            <div class="form-group">
+                                <label for="in-height">Height (ส่วนสูง)</label>
+                                <div class="input-stepper-wrap">
+                                    <button type="button" class="btn-step" onclick="stepVal('in-height', -1, 80, 250)" aria-label="Decrease height">–</button>
+                                    <input type="number" id="in-height" class="form-control" value="170" min="80" max="250" step="1" required>
+                                    <button type="button" class="btn-step" onclick="stepVal('in-height', 1, 80, 250)" aria-label="Increase height">+</button>
+                                    <span class="unit-label">cm</span>
+                                </div>
+                            </div>
+
+                            <!-- Serum Creatinine Input -->
+                            <div class="form-group">
+                                <label for="in-scr">Serum Creatinine (SCr)</label>
+                                <div class="input-stepper-wrap">
+                                    <button type="button" class="btn-step" onclick="stepVal('in-scr', -0.1, 0.1, 30.0, 1)" aria-label="Decrease creatinine">–</button>
+                                    <input type="number" id="in-scr" class="form-control" value="1.2" min="0.1" max="30.0" step="0.1" required>
+                                    <button type="button" class="btn-step" onclick="stepVal('in-scr', 0.1, 0.1, 30.0, 1)" aria-label="Increase creatinine">+</button>
+                                    <span class="unit-label">mg/dL</span>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="in-height">Height</label>
-                            <div class="input-stepper-wrap">
-                                <button type="button" class="btn-step" onclick="stepVal('in-height', -1, 80, 250)" aria-label="Decrease height">–</button>
-                                <input type="number" id="in-height" class="form-control" value="170" min="80" max="250" step="1" required>
-                                <button type="button" class="btn-step" onclick="stepVal('in-height', 1, 80, 250)" aria-label="Increase height">+</button>
-                                <span class="unit-label">cm</span>
+                        <!-- Clinical Options (RRT & Weight Basis) -->
+                        <div class="renal-form-grid-options">
+                            <div class="form-group">
+                                <label>Renal Replacement Status (RRT การฟอกไต)</label>
+                                <div class="btn-toggle-group" role="group" aria-label="Renal Replacement Status">
+                                    <button type="button" id="btn-rrt-none" class="btn-toggle active" onclick="setRRT('none')">None (ไม่ฟอกไต)</button>
+                                    <button type="button" id="btn-rrt-hd" class="btn-toggle" onclick="setRRT('hd')">IHD / HD</button>
+                                    <button type="button" id="btn-rrt-crrt" class="btn-toggle" onclick="setRRT('crrt')">CRRT</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Weight Calculation Basis (ฐานคิดน้ำหนัก)</label>
+                                <div class="btn-toggle-group" role="group" aria-label="Weight Basis">
+                                    <button type="button" id="btn-wt-auto" class="btn-toggle active" onclick="setWeightBasis('auto')">Auto Tiering</button>
+                                    <button type="button" id="btn-wt-tbw" class="btn-toggle" onclick="setWeightBasis('TBW')">TBW</button>
+                                    <button type="button" id="btn-wt-ibw" class="btn-toggle" onclick="setWeightBasis('IBW')">IBW</button>
+                                    <button type="button" id="btn-wt-abw" class="btn-toggle" onclick="setWeightBasis('ABW')">ABW (40%)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Clearance Outputs & Weight Strategy -->
+                    <div class="clearance-row-wrapper">
+                        <div class="clearance-grid">
+                            <!-- Cockcroft-Gault Card -->
+                            <div class="clearance-card" id="card-crcl">
+                                <div>
+                                    <div class="clearance-header">
+                                        <span class="clearance-title" style="color: var(--brand-green-dark);">Cockcroft-Gault CrCl</span>
+                                        <span class="clearance-units">mL/min</span>
+                                    </div>
+                                    <div class="rate-large" id="out-crcl">--</div>
+                                </div>
+                                <div>
+                                    <span class="tier-badge tier-green" id="badge-crcl-tier">Tier ≥ 50</span>
+                                </div>
+                            </div>
+
+                            <!-- CKD-EPI 2021 Card -->
+                            <div class="clearance-card card-egfr" id="card-egfr">
+                                <div>
+                                    <div class="clearance-header">
+                                        <span class="clearance-title" style="color: var(--brand-blue);">CKD-EPI 2021 eGFR</span>
+                                        <span class="clearance-units">mL/min/1.73m²</span>
+                                    </div>
+                                    <div class="rate-large" id="out-egfr" style="color: var(--brand-blue);">--</div>
+                                </div>
+                                <div>
+                                    <span class="tier-badge tier-teal" id="badge-egfr-tier">G1 Normal</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weight Strategy & Anthropometrics -->
+                        <div class="weight-rational-card">
+                            <div class="weight-rational-title">
+                                <span>⚖️ Weight Strategy:</span>
+                                <span id="out-weight-type" style="color: var(--brand-green); font-weight: 800;">TBW</span>
+                                <span>(<span id="out-weight-used">--</span> kg used)</span>
+                            </div>
+                            <div class="weight-rational-desc" id="out-weight-rationale">
+                                Evaluating weight tiering based on BMI and Devine formula...
+                            </div>
+                            <div class="metric-pill-row">
+                                <span class="metric-pill">BMI: <strong id="out-bmi">--</strong> kg/m²</span>
+                                <span class="metric-pill">IBW: <strong id="out-ibw">--</strong> kg</span>
+                                <span class="metric-pill">AdjBW: <strong id="out-abw">--</strong> kg</span>
+                                <span class="metric-pill">BSA: <strong id="out-bsa">--</strong></span>
+                                <span class="metric-pill">Abs GFR: <strong id="out-absgfr">--</strong> mL/min</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Serum Creatinine Input -->
-                    <div class="form-group">
-                        <label for="in-scr">Serum Creatinine (SCr)</label>
-                        <div class="input-stepper-wrap">
-                            <button type="button" class="btn-step" onclick="stepVal('in-scr', -0.1, 0.1, 30.0, 1)" aria-label="Decrease creatinine">–</button>
-                            <input type="number" id="in-scr" class="form-control" value="1.2" min="0.1" max="30.0" step="0.1" required>
-                            <button type="button" class="btn-step" onclick="stepVal('in-scr', 0.1, 0.1, 30.0, 1)" aria-label="Increase creatinine">+</button>
-                            <span class="unit-label">mg/dL</span>
+                    <!-- Discordance Alert Banner -->
+                    <div id="discordance-banner" class="discordance-banner" role="alert">
+                        <div class="discordance-title">
+                            <span id="discordance-icon">⚠️</span>
+                            <span id="discordance-heading">Clearance Tier Discordance Detected</span>
+                        </div>
+                        <div class="discordance-body" id="discordance-text">
+                            Cockcroft-Gault CrCl and CKD-EPI eGFR classify the patient into different renal dosing tiers.
                         </div>
                     </div>
 
-                    <!-- Renal Replacement Therapy (RRT) -->
-                    <div class="form-group">
-                        <label>Renal Replacement Status (RRT)</label>
-                        <div class="btn-toggle-group" role="group" aria-label="Renal Replacement Status">
-                            <button type="button" id="btn-rrt-none" class="btn-toggle active" onclick="setRRT('none')">None (Native)</button>
-                            <button type="button" id="btn-rrt-hd" class="btn-toggle" onclick="setRRT('hd')">IHD / HD</button>
-                            <button type="button" id="btn-rrt-crrt" class="btn-toggle" onclick="setRRT('crrt')">CRRT</button>
-                        </div>
-                    </div>
-
-                    <!-- Weight Selection Basis -->
-                    <div class="form-group">
-                        <label>Weight Calculation Basis</label>
-                        <div class="btn-toggle-group" role="group" aria-label="Weight Basis">
-                            <button type="button" id="btn-wt-auto" class="btn-toggle active" onclick="setWeightBasis('auto')">Auto Tiering</button>
-                            <button type="button" id="btn-wt-tbw" class="btn-toggle" onclick="setWeightBasis('TBW')">TBW</button>
-                            <button type="button" id="btn-wt-ibw" class="btn-toggle" onclick="setWeightBasis('IBW')">IBW</button>
-                            <button type="button" id="btn-wt-abw" class="btn-toggle" onclick="setWeightBasis('ABW')">ABW (40%)</button>
-                        </div>
-                    </div>
-                </form>
-
-                <!-- Side-by-Side Dual Clearance Cards (Styled as IV Drug Cal result-boxes) -->
-                <div class="clearance-grid">
-                    <!-- Cockcroft-Gault Card -->
-                    <div class="clearance-card" id="card-crcl">
-                        <div>
-                            <div class="clearance-header">
-                                <span class="clearance-title">Cockcroft-Gault CrCl</span>
-                                <span class="clearance-units">mL/min</span>
-                            </div>
-                            <div class="rate-large" id="out-crcl">--</div>
-                        </div>
-                        <div>
-                            <span class="tier-badge tier-green" id="badge-crcl-tier">Tier ≥ 50</span>
-                        </div>
-                    </div>
-
-                    <!-- CKD-EPI 2021 Card -->
-                    <div class="clearance-card card-egfr" id="card-egfr">
-                        <div>
-                            <div class="clearance-header">
-                                <span class="clearance-title" style="color: var(--brand-blue);">CKD-EPI 2021 eGFR</span>
-                                <span class="clearance-units">mL/min/1.73m²</span>
-                            </div>
-                            <div class="rate-large" id="out-egfr" style="color: var(--brand-blue);">--</div>
-                        </div>
-                        <div>
-                            <span class="tier-badge tier-teal" id="badge-egfr-tier">G1 Normal</span>
-                        </div>
+                    <!-- Close/Collapse Button -->
+                    <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                        <button type="button" class="btn-toggle-module" onclick="toggleRenalModule()" style="font-size: 0.78rem;">
+                            ▲ ย่อเก็บรายละเอียด (Collapse)
+                        </button>
                     </div>
                 </div>
-
-                <!-- Weight Indicator & Anthropometrics (IV Drug Cal style card) -->
-                <div class="weight-rational-card">
-                    <div class="weight-rational-title">
-                        <span>⚖️ Weight Strategy:</span>
-                        <span id="out-weight-type" style="color: var(--brand-green); font-weight: 800;">TBW</span>
-                        <span>(<span id="out-weight-used">--</span> kg used)</span>
-                    </div>
-                    <div class="weight-rational-desc" id="out-weight-rationale">
-                        Evaluating weight tiering based on BMI and Devine formula...
-                    </div>
-                    <div class="metric-pill-row">
-                        <span class="metric-pill">BMI: <strong id="out-bmi">--</strong> kg/m²</span>
-                        <span class="metric-pill">IBW: <strong id="out-ibw">--</strong> kg</span>
-                        <span class="metric-pill">AdjBW: <strong id="out-abw">--</strong> kg</span>
-                        <span class="metric-pill">BSA: <strong id="out-bsa">--</strong></span>
-                        <span class="metric-pill">Abs GFR: <strong id="out-absgfr">--</strong> mL/min</span>
-                    </div>
-                </div>
-
-                <!-- Discordance Alert Banner (Styled as IV Drug Cal warning-box) -->
-                <div id="discordance-banner" class="discordance-banner" role="alert">
-                    <div class="discordance-title">
-                        <span id="discordance-icon">⚠️</span>
-                        <span id="discordance-heading">Clearance Tier Discordance Detected</span>
-                    </div>
-                    <div class="discordance-body" id="discordance-text">
-                        Cockcroft-Gault CrCl and CKD-EPI eGFR classify the patient into different renal dosing tiers.
-                    </div>
-                </div>
-            </aside>
+            </section>
 
             <!-- ==============================================================
-                 RIGHT COLUMN: Dual CrCl & eGFR Table / Detailed Cards View
+                 MODULE 2: Full-Width Antimicrobial Table (Zero Horizontal Scroll)
                  ============================================================== -->
-            <main class="panel" aria-label="Antimicrobial Dosing Protocols">
+            <main class="panel panel-drug-module" id="module-drugs" aria-label="Antimicrobial Dosing Protocols">
                 <div class="toolbar-container">
-                    <h2 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
-                        <span>💊 Antimicrobial Dosing Guide</span>
-                        <span id="active-indication-badge" class="badge-class">All Antimicrobials</span>
+                    <h2 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                        <span>💊 ตารางแนวทางการปรับขนาดยาต้านจุลชีพตามการทำงานของไต</span>
+                        <span id="active-indication-badge" class="badge-class" style="font-size: 0.76rem;">All Antimicrobials</span>
                     </h2>
 
-                    <!-- View Mode Switcher (IV Drug Cal segmented button style) -->
+                    <!-- View Mode Switcher -->
                     <div class="drop-factor-btn-group" role="group" aria-label="View Mode">
                         <button type="button" class="drop-factor-btn active" id="btn-view-table" onclick="setViewMode('table')">
                             📊 ตารางยาเทียบ CrCl &amp; eGFR
@@ -1166,20 +1347,20 @@
                     </div>
                 </div>
 
-                <!-- Search and Discordant-Only Filter Bar -->
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px;">
+                <!-- Search and Discordant Filter Row -->
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px;">
                     <div class="search-box-wrap">
                         <span class="search-icon">🔍</span>
                         <input type="text" id="drug-search-input" class="search-input" placeholder="ค้นหาชื่อยา (เช่น Meropenem, Cefepime, Colistin, Pip/Tazo)..." oninput="handleSearch(this.value)">
                     </div>
 
-                    <button type="button" id="btn-filter-discordant" class="drop-factor-btn" onclick="toggleDiscordantFilter()" style="border: 1.5px solid var(--card-border); background: var(--surface-hover); min-height: 44px; padding: 0 14px;">
+                    <button type="button" id="btn-filter-discordant" class="drop-factor-btn" onclick="toggleDiscordantFilter()" style="border: 1px solid var(--card-border); background: var(--surface-hover); min-height: 38px; padding: 0 12px; font-size: 0.78rem;">
                         ⚠️ เฉพาะยาที่ขนาดยาต่างกัน (<span id="discordant-count">0</span>)
                     </button>
-                    <span id="table-count-badge" class="badge-class" style="min-height: 40px; display: inline-flex; align-items: center; font-weight: 700;">29 รายการ</span>
+                    <span id="table-count-badge" class="badge-class" style="min-height: 38px; display: inline-flex; align-items: center; font-weight: 700; font-size: 0.78rem;">29 รายการ</span>
                 </div>
 
-                <!-- Interactive Disease Protocol Filter Chips -->
+                <!-- Compact Disease Protocol Filter Chips -->
                 <div>
                     <div class="filter-chip-container" role="toolbar" aria-label="Disease Protocol Filter Chips">
                         <button type="button" class="filter-chip active" id="chip-all" onclick="selectIndicationFilter('all')">
@@ -1210,20 +1391,17 @@
                 </div>
 
                 <!-- Indication Clinical Guidance Banner -->
-                <div id="indication-guidance-box" class="warning-box" style="display:none; margin-bottom: 16px; background: var(--brand-blue-light); border-left-color: var(--brand-blue);">
+                <div id="indication-guidance-box" class="warning-box" style="display:none; margin-bottom: 12px; background: var(--brand-blue-light); border-left-color: var(--brand-blue);">
                     <strong id="guidance-title" style="color: var(--brand-blue);">Clinical Guidance:</strong>
                     <div id="guidance-body" style="margin-top: 4px; color: var(--text-main);">--</div>
                 </div>
 
-                <!-- ==========================================================
-                     PRIMARY FEATURE: Dual CrCl & eGFR Comparison Table
-                     ========================================================== -->
+                <!-- Full Width Comparison Table (Zero Horizontal Scroll) -->
                 <div id="abx-table-container" class="table-responsive-wrap">
                     <table class="dual-abx-table" aria-label="Antimicrobial Dosing Comparison Table by CrCl and eGFR">
                         <thead>
                             <tr>
-                                <th>ชื่อยา (Drug &amp; Route)</th>
-                                <th>กลุ่มยา (Class)</th>
+                                <th>ชื่อยา (Drug &amp; Route / Class)</th>
                                 <th>ขนาดปกติ (Normal)</th>
                                 <th style="color: var(--brand-green-dark);">ขนาดยาตาม CrCl</th>
                                 <th style="color: var(--brand-blue);">ขนาดยาตาม eGFR</th>
@@ -1238,9 +1416,7 @@
                     </table>
                 </div>
 
-                <!-- ==========================================================
-                     DETAILED CARD VIEW (Preserved for compatibility & deep review)
-                     ========================================================== -->
+                <!-- Detailed Card View (Preserved for mode switch) -->
                 <div class="abx-cards-grid" id="abx-cards-container" style="display: none;">
                     <!-- Populated dynamically by renderAntibioticCards() -->
                 </div>
@@ -1250,7 +1426,7 @@
                     <div class="rx-preview-header">
                         <div class="rx-preview-title">
                             <span>📋 Clinical Prescription Note</span>
-                            <span style="font-size: 0.76rem; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 2px 8px; border-radius: 10px;">
+                            <span style="font-size: 0.72rem; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 2px 8px; border-radius: 10px;">
                                 🔒 ZERO-PHI COMPLIANT
                             </span>
                         </div>
@@ -1340,6 +1516,30 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             // Initial calculation run
             calculateAll();
         });
+
+        // Toggle Module 1 Collapsible Body
+        function toggleRenalModule() {
+            const body = document.getElementById('renal-module-body');
+            const btn = document.getElementById('btn-toggle-renal');
+            const summaryBar = document.querySelector('.renal-summary-bar');
+            const icon = document.getElementById('renal-toggle-icon');
+            const text = document.getElementById('renal-toggle-text');
+            if (!body) return;
+            const isCollapsed = body.classList.contains('collapsed');
+            if (isCollapsed) {
+                body.classList.remove('collapsed');
+                if (btn) btn.setAttribute('aria-expanded', 'true');
+                if (summaryBar) summaryBar.setAttribute('aria-expanded', 'true');
+                if (icon) icon.textContent = '▲';
+                if (text) text.textContent = '▲ ย่อข้อมูลผู้ป่วย';
+            } else {
+                body.classList.add('collapsed');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+                if (summaryBar) summaryBar.setAttribute('aria-expanded', 'false');
+                if (icon) icon.textContent = '▼';
+                if (text) text.textContent = '⚙️ ปรับข้อมูลผู้ป่วย';
+            }
+        }
 
         // Numeric Stepper Helper
         function stepVal(id, delta, min, max, precision = 0) {
@@ -1499,6 +1699,7 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                 }
 
                 patientState.calc = null;
+                updateSummaryBar(null, null, null, null, null, null, null);
                 renderClearanceCards(null, null, null);
                 renderWeightRationale(null, null, null, null, null);
                 renderDiscordanceBanner(null, null, null, null);
@@ -1548,6 +1749,9 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                 weightType: crclRes ? crclRes.weightType : 'TBW'
             };
 
+            // Update Summary Bar in Collapsed Module 1 Header
+            updateSummaryBar(age, weight, height, scr, crclRes, egfrVal, bsa);
+
             // Render Output Cards
             renderClearanceCards(crclRes, egfrVal, absGfr);
             renderWeightRationale(bmi, ibw, abw, weight, crclRes);
@@ -1555,6 +1759,42 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             renderDualAbxTable();
             renderAntibioticCards();
             updatePrescriptionPreview();
+        }
+
+        // Update Live Summary Bar in Module 1 (Always Visible)
+        function updateSummaryBar(age, weight, height, scr, crclRes, egfrVal, bsa) {
+            const sumPt = document.getElementById('summary-pt-info');
+            const sumCrcl = document.getElementById('summary-crcl-val');
+            const sumEgfr = document.getElementById('summary-egfr-val');
+            const sumDisc = document.getElementById('summary-disc-badge');
+
+            if (!age || !weight || isNaN(age) || isNaN(weight)) {
+                if (sumCrcl) sumCrcl.textContent = '--';
+                if (sumEgfr) sumEgfr.textContent = '--';
+                if (sumDisc) sumDisc.style.display = 'none';
+                return;
+            }
+
+            if (sumPt) {
+                const sexText = patientState.sex === 'M' ? 'ชาย' : 'หญิง';
+                const rrtText = patientState.rrt === 'hd' ? ' · HD' : (patientState.rrt === 'crrt' ? ' · CRRT' : '');
+                sumPt.textContent = `${sexText} ${age} ปี · ${weight} kg · ${height} cm · SCr ${scr} mg/dL${rrtText}`;
+            }
+
+            if (sumCrcl) {
+                if (patientState.rrt === 'hd') sumCrcl.textContent = 'IHD';
+                else if (patientState.rrt === 'crrt') sumCrcl.textContent = 'CRRT';
+                else sumCrcl.textContent = (crclRes && crclRes.crcl != null && !isNaN(crclRes.crcl)) ? crclRes.crcl.toFixed(1) : '--';
+            }
+
+            if (sumEgfr) {
+                sumEgfr.textContent = (egfrVal != null && !isNaN(egfrVal)) ? egfrVal.toFixed(1) : '--';
+            }
+
+            if (sumDisc) {
+                const isDisc = (patientState.rrt === 'none' && crclRes?.crcl && egfrVal && typeof ABX_ENGINE !== 'undefined' && ABX_ENGINE.evaluateDiscordance(crclRes.crcl, egfrVal, bsa)?.isDiscordant);
+                sumDisc.style.display = isDisc ? 'inline-flex' : 'none';
+            }
         }
 
         // Render Clearance Cards (CrCl vs eGFR)
@@ -1683,6 +1923,7 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             const disc = ABX_ENGINE.evaluateDiscordance(crcl, egfr, bsa);
             if (disc && disc.isDiscordant) {
                 banner.className = 'discordance-banner active-discordant';
+                banner.style.display = 'block';
                 title.textContent = 'Clearance Tier Discordance Detected (CrCl vs eGFR)';
                 text.innerHTML = `
                     Cockcroft-Gault CrCl (<strong>${crcl.toFixed(1)} mL/min</strong> [${disc.tierCrCl}]) and eGFR (<strong>${egfr.toFixed(1)} mL/min/1.73m²</strong> [${disc.tierEGFR}]) place this patient into <strong>DIFFERENT dosage adjustment tiers</strong>.<br>
@@ -1690,13 +1931,14 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                 `;
             } else {
                 banner.className = 'discordance-banner concordant';
+                banner.style.display = 'block';
                 title.textContent = '✓ Clearance Estimates Concordant';
                 text.textContent = 'Cockcroft-Gault CrCl and CKD-EPI 2021 eGFR align in the same dosage tier. Renal dosing adjustments are consistent.';
             }
         }
 
         // ======================================================================
-        // DUAL CLEARANCE DRUG TABLE RENDERER (Primary Table Feature)
+        // DUAL CLEARANCE DRUG TABLE RENDERER (7-Column Full-Width Minimal)
         // ======================================================================
         function renderDualAbxTable() {
             const tbody = document.getElementById('abx-table-body');
@@ -1752,21 +1994,23 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
 
                 tr.innerHTML = `
                     <td>
-                        <strong style="color:var(--text-main); font-size:0.95rem;">${drug.name}</strong>
-                        <span style="font-size:0.72rem; color:var(--text-muted); display:block;">${drug.route || 'IV'}</span>
+                        <div style="display:flex; align-items:baseline; gap:6px; flex-wrap:wrap;">
+                            <strong style="color:var(--text-main); font-size:0.92rem;">${drug.name}</strong>
+                            <span style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">${drug.route || 'IV'}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+                            <span class="badge-class" style="font-size:0.7rem; padding:1px 6px;">${drug.class}</span>
+                            ${item.role ? `<span style="font-size:0.7rem; font-weight:800; color:var(--brand-green-dark);">${item.role}</span>` : ''}
+                        </div>
                     </td>
-                    <td>
-                        <span class="badge-class">${drug.class}</span>
-                        ${item.role ? `<span style="display:block; margin-top:3px; font-size:0.72rem; font-weight:800; color:var(--brand-green-dark);">${item.role}</span>` : ''}
-                    </td>
-                    <td style="font-size:0.84rem; color:var(--text-muted);">${drug.stdDose}</td>
+                    <td style="font-size:0.82rem; color:var(--text-muted); white-space:nowrap;">${drug.stdDose}</td>
                     <td>
                         <span class="dose-pill-crcl ${isDisc ? 'dose-pill-discordant' : ''}">${crclDoseStr}</span>
-                        <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">Tier: ${dual?.tierCrCl || '--'}</div>
+                        <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">Tier: ${dual?.tierCrCl || '--'}</div>
                     </td>
                     <td>
                         <span class="dose-pill-egfr ${isDisc ? 'dose-pill-discordant' : ''}">${egfrDoseStr}</span>
-                        <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">Tier: ${dual?.tierEGFR || '--'}</div>
+                        <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">Tier: ${dual?.tierEGFR || '--'}</div>
                     </td>
                     <td>
                         ${isDisc
@@ -1774,7 +2018,7 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                             : `<span class="status-badge-concordant">✓ สอดคล้อง</span>`
                         }
                     </td>
-                    <td>${pearlsHtml}</td>
+                    <td style="line-height:1.35; max-width:280px;">${pearlsHtml}</td>
                     <td style="text-align:right; white-space:nowrap;">
                         <button type="button" class="btn-table-action primary" onclick="selectAndCopyDrug('${drug.id}')" title="Select for Prescription Note">
                             📋 สั่งยานี้
