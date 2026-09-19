@@ -220,6 +220,28 @@ describe('Tier 1: Anthropometrics & Dual Renal Calculations', () => {
             assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(null, 1.8), null);
             assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(60, null), null);
         });
+
+        test('Accepts zero eGFR while rejecting negative or non-finite eGFR values', () => {
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(0, 1.73), 0);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR({ egfr: 0 }, 1.73), 0);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(-10, 1.73), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR({ egfr: -5 }, 1.73), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(Infinity, 1.73), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(-Infinity, 1.73), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(NaN, 1.73), null);
+        });
+
+        test('Validates BSA as finite value > 0 and converts numeric string BSA', () => {
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(60, 0), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(60, -1.5), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(60, Infinity), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(60, NaN), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(60, ''), null);
+            assert.strictEqual(ABX_ENGINE.calcAbsoluteGFR(60, '   '), null);
+
+            const absGfrStr = ABX_ENGINE.calcAbsoluteGFR(60, "1.73");
+            assert.strictEqual(Math.round(absGfrStr), 60);
+        });
     });
 
     describe('1.8 Renal Tier Classification & Discordance Evaluation', () => {

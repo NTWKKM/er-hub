@@ -155,10 +155,14 @@ const ABX_ENGINE = {
 
     calcAbsoluteGFR: (egfr, bsa) => {
         // Absolute GFR = eGFR * (BSA / 1.73) in mL/min
-        if (!egfr || !bsa) return null;
-        const egfrVal = (typeof egfr === 'object' && egfr !== null && 'egfr' in egfr) ? egfr.egfr : Number(egfr);
-        if (isNaN(egfrVal)) return null;
-        return egfrVal * (bsa / 1.73);
+        if (egfr == null || bsa == null) return null;
+        if (typeof egfr === 'string' && egfr.trim() === '') return null;
+        const egfrVal = (typeof egfr === 'object' && egfr !== null && 'egfr' in egfr) ? Number(egfr.egfr) : Number(egfr);
+        if (!Number.isFinite(egfrVal) || egfrVal < 0) return null;
+        if (typeof bsa === 'string' && bsa.trim() === '') return null;
+        const bsaVal = Number(bsa);
+        if (!Number.isFinite(bsaVal) || bsaVal <= 0) return null;
+        return egfrVal * (bsaVal / 1.73);
     },
 
     getRenalTier: (crcl, isHD = false, isCRRT = false) => {
@@ -1102,7 +1106,7 @@ const ABX_ENGINE = {
 
                 if (patientOrRenalStatus.heightCm) {
                     bsaVal = ABX_ENGINE.calcBSA(patientOrRenalStatus.weightKg, patientOrRenalStatus.heightCm);
-                    if (egfrVal && bsaVal) {
+                    if (egfrVal != null && bsaVal) {
                         absGfrVal = ABX_ENGINE.calcAbsoluteGFR(egfrVal, bsaVal);
                     }
                 }

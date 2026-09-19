@@ -1731,7 +1731,7 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
 
             // BSA & Absolute GFR
             const bsa = ABX_ENGINE.calcBSA(weight, height);
-            const absGfr = (egfrVal && bsa) ? ABX_ENGINE.calcAbsoluteGFR(egfrVal, bsa) : null;
+            const absGfr = (egfrVal != null && bsa) ? ABX_ENGINE.calcAbsoluteGFR(egfrVal, bsa) : null;
             const bmi = ABX_ENGINE.calcBMI(weight, height);
             const ibw = ABX_ENGINE.calcIBW(height, patientState.sex);
             const abw = (ibw && weight) ? ABX_ENGINE.calcABW(weight, ibw) : null;
