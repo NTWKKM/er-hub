@@ -4,14 +4,14 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { JSDOM } = require('jsdom');
 
-function loadAbxUiDom() {
-    const htmlPath = path.join(__dirname, '..', 'tools', 'abx-renal-dosing.html');
+function loadAbxUiDom(t) {
+    const htmlPath = path.resolve(__dirname, '../tools/abx-renal-dosing.html');
     let html = fs.readFileSync(htmlPath, 'utf8');
-    const dir = path.dirname(htmlPath);
 
-    // Inline local scripts for deterministic node:test execution
-    html = html.replace(/<script src="([^"]+)"><\/script>/g, (match, src) => {
-        if (src.startsWith('http')) return match;
+    // Inline local <script src="..."> tags so JSDOM can execute them under file://
+    const dir = path.dirname(htmlPath);
+    html = html.replace(/<script\s+src="([^"]+)"><\/script>/g, (match, src) => {
+        if (src.startsWith('http://') || src.startsWith('https://')) return match;
         const scriptPath = path.resolve(dir, src);
         if (fs.existsSync(scriptPath)) {
             return '<script>' + fs.readFileSync(scriptPath, 'utf8') + '</script>';
@@ -33,13 +33,19 @@ function loadAbxUiDom() {
     // Ensure DOMContentLoaded handlers run on window
     dom.window.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
 
+    if (t && typeof t.after === 'function') {
+        t.after(() => {
+            dom.window.close();
+        });
+    }
+
     return { win: dom.window, doc: dom.window.document, unhandledErrors };
 }
 
 describe('M2 Adversarial UI & PWA Challenge: tools/abx-renal-dosing.html', () => {
 
-    test('1. DOM Initialization & Structural Contract', () => {
-        const { doc, unhandledErrors } = loadAbxUiDom();
+    test('1. DOM Initialization & Structural Contract', (t) => {
+        const { doc, unhandledErrors } = loadAbxUiDom(t);
         assert.equal(unhandledErrors.length, 0, 'No unhandled errors during load');
 
         // Required Input Elements
@@ -66,8 +72,8 @@ describe('M2 Adversarial UI & PWA Challenge: tools/abx-renal-dosing.html', () =>
         assert.ok(parseFloat(egfrText) > 0, `Initial eGFR should be numeric, got: ${egfrText}`);
     });
 
-    test('2. Form Input Resilience: Empty, Zero, Negative, and NaN values do NOT throw uncaught DOM exceptions', () => {
-        const { win, doc, unhandledErrors } = loadAbxUiDom();
+    test('2. Form Input Resilience: Empty, Zero, Negative, and NaN values do NOT throw uncaught DOM exceptions', (t) => {
+        const { win, doc, unhandledErrors } = loadAbxUiDom(t);
 
         const stressValues = [
             '', '0', '-1', '-50', '-999', 'abc', 'NaN', 'undefined', 'null', '0.0000', '99999'
@@ -94,8 +100,8 @@ describe('M2 Adversarial UI & PWA Challenge: tools/abx-renal-dosing.html', () =>
         assert.equal(unhandledErrors.length, 0, `Unhandled exceptions occurred during input fuzzing: ${JSON.stringify(unhandledErrors)}`);
     });
 
-    test('3. Tactile Stepper Clamping: Minus buttons do not drive values below biological minimums', () => {
-        const { win, doc } = loadAbxUiDom();
+    test('3. Tactile Stepper Clamping: Minus buttons do not drive values below biological minimums', (t) => {
+        const { win, doc } = loadAbxUiDom(t);
 
         // Step Age down past min (initial 65 -> set to 2 -> step -1 twice -> min 1)
         doc.getElementById('in-age').value = '2';
@@ -125,13 +131,16 @@ describe('M2 Adversarial UI & PWA Challenge: tools/abx-renal-dosing.html', () =>
 
         // Step SCr down past min (set to 0.2 -> step -0.1 twice -> min 0.1)
         doc.getElementById('in-scr').value = '0.2';
-        win.stepVal('in-scr', -0.1, 0.1, 20.0, 1);
-        win.stepVal('in-scr', -0.1, 0.1, 20.0, 1);
+        const scrDecBtn = doc.querySelector('button.btn-step[onclick*="in-scr"][onclick*="-0.1"]') ||
+                          doc.querySelector('button[aria-label="Decrease creatinine"]');
+        assert.ok(scrDecBtn, 'Decrement button for in-scr must exist');
+        scrDecBtn.dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
+        scrDecBtn.dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
         assert.equal(doc.getElementById('in-scr').value, '0.1', 'SCr clamps at min 0.1');
     });
 
-    test('4. Discordance Banner Activation: Triggers when CrCl and eGFR place patient in different dosage tiers', () => {
-        const { win, doc } = loadAbxUiDom();
+    test('4. Discordance Banner Activation: Triggers when CrCl and eGFR place patient in different dosage tiers', (t) => {
+        const { win, doc } = loadAbxUiDom(t);
         const banner = doc.getElementById('discordance-banner');
         const heading = doc.getElementById('discordance-heading');
         const text = doc.getElementById('discordance-text');
@@ -170,8 +179,8 @@ describe('M2 Adversarial UI & PWA Challenge: tools/abx-renal-dosing.html', () =>
         assert.equal(banner.style.display, 'none', 'CRRT suppresses discordance banner');
     });
 
-    test('5. Indication Filtering Engine & Overrides in UI', () => {
-        const { win, doc } = loadAbxUiDom();
+    test('5. Indication Filtering Engine & Overrides in UI', (t) => {
+        const { win, doc } = loadAbxUiDom(t);
 
         // 1. Filter by Meningitis
         win.selectIndicationFilter('meningitis_ca');
@@ -206,8 +215,8 @@ describe('M2 Adversarial UI & PWA Challenge: tools/abx-renal-dosing.html', () =>
         }
     });
 
-    test('6. 6-Tier Stanford Table Expand/Collapse & Dynamic Tier Highlighting', () => {
-        const { win, doc } = loadAbxUiDom();
+    test('6. 6-Tier Stanford Table Expand/Collapse & Dynamic Tier Highlighting', (t) => {
+        const { win, doc } = loadAbxUiDom(t);
 
         const btn = doc.getElementById('btn-exp-ceftriaxone');
         const exp = doc.getElementById('exp-ceftriaxone');
@@ -230,8 +239,8 @@ describe('M2 Adversarial UI & PWA Challenge: tools/abx-renal-dosing.html', () =>
         assert.ok(!exp.classList.contains('open'));
     });
 
-    test('7. Zero-PHI Clinical Prescription Note & Toast Notification Verification', async () => {
-        const { win, doc } = loadAbxUiDom();
+    test('7. Zero-PHI Clinical Prescription Note & Toast Notification Verification', async (t) => {
+        const { win, doc } = loadAbxUiDom(t);
 
         // Explicitly select an indication and antimicrobial (per clinical safety gate)
         win.selectIndicationFilter('cap');

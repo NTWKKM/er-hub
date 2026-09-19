@@ -684,5 +684,28 @@ describe('Tier 4: Real-World Clinical Scenarios, Boundary Conditions & Safety In
         assert.doesNotMatch(note, /CitizenID/i, 'Prescription note must not contain Citizen ID');
         assert.doesNotMatch(note, /PatientName|Full Name/i, 'Prescription note must not contain patient name');
         assert.doesNotMatch(note, /DOB|Birth/i, 'Prescription note must not contain DOB');
+
+        // HIPAA Safe Harbor de-identification: Ages > 89 must be aggregated to 90+
+        const noteAge89 = ABX_ENGINE.formatPrescriptionNote({
+            patient: { age: 89, sex: 'F', weightKg: 50, scr: 1.0 },
+            crcl: 30,
+            egfr: 35,
+            drugId: 'cefepime',
+            doseStr: '1g',
+            freqStr: 'q12h'
+        });
+        assert.match(noteAge89, /Age 89 yr/, 'Age 89 must remain exact');
+        assert.doesNotMatch(noteAge89, /Age 90\+ yr/, 'Age 89 must not be aggregated to 90+');
+
+        const noteAge90 = ABX_ENGINE.formatPrescriptionNote({
+            patient: { age: 90, sex: 'M', weightKg: 60, scr: 1.2 },
+            crcl: 25,
+            egfr: 28,
+            drugId: 'cefepime',
+            doseStr: '1g',
+            freqStr: 'q24h'
+        });
+        assert.match(noteAge90, /Age 90\+ yr/, 'Age 90 must be aggregated to Age 90+ yr');
+        assert.doesNotMatch(noteAge90, /\bAge 90 yr\b/, 'Prescription note must never expose exact Age 90 yr');
     });
 });

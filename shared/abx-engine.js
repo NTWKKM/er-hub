@@ -132,18 +132,27 @@ const ABX_ENGINE = {
             age = ageParam;
             sex = sexParam;
         }
-        if (!scr || !age || !sex) return null;
+        if (scr == null || age == null || sex == null) return null;
+        if ((typeof scr !== 'number' && typeof scr !== 'string') || (typeof age !== 'number' && typeof age !== 'string')) return null;
+        if (typeof scr === 'string' && scr.trim() === '') return null;
+        if (typeof age === 'string' && age.trim() === '') return null;
+        const numScr = Number(scr);
+        const numAge = Number(age);
+        if (!Number.isFinite(numScr) || numScr <= 0 || !Number.isFinite(numAge) || numAge <= 0) return null;
         
         const s = typeof sex === 'string' ? sex.trim().toUpperCase() : '';
         const isFemale = (s === 'F' || s === 'FEMALE');
+        const isMale = (s === 'M' || s === 'MALE');
+        if (!isFemale && !isMale) return null;
+
         const kappa = isFemale ? 0.7 : 0.9;
         const alpha = isFemale ? -0.241 : -0.302;
         const sexFactor = isFemale ? 1.012 : 1.000;
         
-        let min = Math.min(scr / kappa, 1);
-        let max = Math.max(scr / kappa, 1);
+        let min = Math.min(numScr / kappa, 1);
+        let max = Math.max(numScr / kappa, 1);
         
-        let egfrVal = 142 * Math.pow(min, alpha) * Math.pow(max, -1.200) * Math.pow(0.9938, age) * sexFactor;
+        let egfrVal = 142 * Math.pow(min, alpha) * Math.pow(max, -1.200) * Math.pow(0.9938, numAge) * sexFactor;
         
         // Return Number wrapper preserving primitive numeric comparisons while exposing metadata
         const res = new Number(egfrVal);
@@ -200,7 +209,9 @@ const ABX_ENGINE = {
                 return -1;
             };
             let crclTier = getTierIndex(crcl);
-            let egfrTier = getTierIndex(bsaOrAbsGfr || (typeof egfr === 'object' && egfr.egfr ? egfr.egfr : egfr));
+            let absGfrLegacy = (typeof bsaOrAbsGfr === 'object' && bsaOrAbsGfr !== null && 'absGfr' in bsaOrAbsGfr) ? bsaOrAbsGfr.absGfr : null;
+            let egfrComp = absGfrLegacy != null ? absGfrLegacy : (typeof egfr === 'object' && egfr.egfr ? egfr.egfr : egfr);
+            let egfrTier = getTierIndex(egfrComp);
             return (crclTier !== -1 && egfrTier !== -1 && crclTier !== egfrTier);
         }
 
@@ -209,7 +220,16 @@ const ABX_ENGINE = {
         const egfrVal = (typeof egfr === 'object' && egfr !== null && 'egfr' in egfr) ? egfr.egfr : Number(egfr);
         let effectiveEGFR = egfrVal;
         if (bsaOrAbsGfr != null) {
-            effectiveEGFR = bsaOrAbsGfr < 4 ? ABX_ENGINE.calcAbsoluteGFR(egfrVal, bsaOrAbsGfr) : bsaOrAbsGfr;
+            if (typeof bsaOrAbsGfr === 'object' && bsaOrAbsGfr !== null) {
+                if ('absGfr' in bsaOrAbsGfr && bsaOrAbsGfr.absGfr != null) {
+                    const parsed = Number(bsaOrAbsGfr.absGfr);
+                    if (Number.isFinite(parsed)) effectiveEGFR = parsed;
+                } else if ('bsa' in bsaOrAbsGfr && bsaOrAbsGfr.bsa != null) {
+                    effectiveEGFR = ABX_ENGINE.calcAbsoluteGFR(egfrVal, Number(bsaOrAbsGfr.bsa));
+                }
+            } else {
+                effectiveEGFR = ABX_ENGINE.calcAbsoluteGFR(egfrVal, Number(bsaOrAbsGfr));
+            }
         }
         const tierEGFR = ABX_ENGINE.getRenalTier(effectiveEGFR);
         const isDiscordant = (tierCrCl !== tierEGFR);
@@ -1113,12 +1133,18 @@ const ABX_ENGINE = {
                     }
                 }
             } else {
-                crclVal = patientOrRenalStatus.crcl != null ? Number(patientOrRenalStatus.crcl) : null;
-                egfrVal = patientOrRenalStatus.egfr != null ? Number(patientOrRenalStatus.egfr) : null;
-                absGfrVal = patientOrRenalStatus.absGfr != null ? Number(patientOrRenalStatus.absGfr) : null;
-                bsaVal = patientOrRenalStatus.bsa != null ? Number(patientOrRenalStatus.bsa) : null;
+                const parseRenalVal = (v) => {
+                    if (typeof v !== 'number' && typeof v !== 'string') return null;
+                    if (typeof v === 'string' && v.trim() === '') return null;
+                    const num = Number(v);
+                    return Number.isFinite(num) ? num : null;
+                };
+                crclVal = parseRenalVal(patientOrRenalStatus.crcl);
+                egfrVal = parseRenalVal(patientOrRenalStatus.egfr);
+                absGfrVal = parseRenalVal(patientOrRenalStatus.absGfr);
+                bsaVal = parseRenalVal(patientOrRenalStatus.bsa);
             }
-        } else if (typeof patientOrRenalStatus === 'number') {
+        } else if (typeof patientOrRenalStatus === 'number' && Number.isFinite(patientOrRenalStatus)) {
             crclVal = patientOrRenalStatus;
             egfrVal = patientOrRenalStatus;
         }

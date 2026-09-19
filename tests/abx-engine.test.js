@@ -40,6 +40,46 @@ describe('ABX_ENGINE Renal Evaluator', () => {
     test('calcEGFR_CKD_EPI_2021', () => {
         let egfr = ABX_ENGINE.calcEGFR_CKD_EPI_2021(1.0, 60, 'M');
         assert.ok(egfr > 60 && egfr < 100);
+
+        // Validates and coerces valid strings
+        let egfrStr = ABX_ENGINE.calcEGFR_CKD_EPI_2021('1.0', '60', 'M');
+        assert.strictEqual(Math.round(Number(egfrStr)), Math.round(Number(egfr)));
+
+        // Rejects non-positive or non-finite numbers
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021(0, 60, 'M'), null);
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021(-1, 60, 'M'), null);
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021(1.0, 0, 'M'), null);
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021(1.0, -10, 'M'), null);
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021(NaN, 60, 'M'), null);
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021(Infinity, 60, 'M'), null);
+
+        // Rejects booleans and blank strings
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021(true, 60, 'M'), null);
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021(1.0, false, 'M'), null);
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021('', 60, 'M'), null);
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021('   ', 60, 'M'), null);
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021(1.0, '  ', 'M'), null);
+
+        // Rejects invalid sex
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021(1.0, 60, 'X'), null);
+        assert.strictEqual(ABX_ENGINE.calcEGFR_CKD_EPI_2021(1.0, 60, null), null);
+    });
+
+    test('evaluateDiscordance interprets numeric 3rd argument as BSA and object absGfr directly', () => {
+        // Numeric 3rd argument treated strictly as BSA:
+        // CrCl 42 (tier 30-50), eGFR 25 mL/min/1.73m², BSA 1.8 m²
+        // Absolute GFR = 25 * (1.8 / 1.73) = 26.01 mL/min (tier 10-29) -> Discordant
+        const discNumBSA = ABX_ENGINE.evaluateDiscordance(42, 25, 1.8);
+        assert.strictEqual(discNumBSA.isDiscordant, true);
+        assert.strictEqual(discNumBSA.tierCrCl, 'crcl_30_50');
+        assert.strictEqual(discNumBSA.tierEGFR, 'crcl_10_29');
+
+        // Object with absGfr < 4: used directly without recalculating from egfrVal
+        // CrCl 20 (crcl_10_29), eGFR 30, absGfr 3 (crcl_lt_10) -> Discordant
+        const discLowAbsGfr = ABX_ENGINE.evaluateDiscordance(20, 30, { absGfr: 3 });
+        assert.strictEqual(discLowAbsGfr.isDiscordant, true);
+        assert.strictEqual(discLowAbsGfr.tierCrCl, 'crcl_10_29');
+        assert.strictEqual(discLowAbsGfr.tierEGFR, 'crcl_lt_10');
     });
 });
 
@@ -137,6 +177,22 @@ describe('ABX_ENGINE calculateDualDose (CrCl vs eGFR)', () => {
         assert.ok(res.discordanceAdvice.includes('CrCl (60.0 mL/min [crcl_gt_50])'));
         assert.ok(res.discordanceAdvice.includes('eGFR (0.0 mL/min/1.73m² [crcl_lt_10])'));
         assert.ok(!res.discordanceAdvice.includes('--'));
+    });
+
+    test('calculateDualDose safely parses renal values, rejecting booleans, blank strings, and non-finite values as unknown rather than zero', () => {
+        // Patient with booleans and empty strings
+        const pt = {
+            crcl: false,
+            egfr: '   ',
+            absGfr: true,
+            bsa: ''
+        };
+        const res = ABX_ENGINE.calculateDualDose('cefepime', pt);
+        assert.ok(res !== null);
+        assert.strictEqual(res.tierCrCl, 'unknown');
+        assert.strictEqual(res.tierEGFR, 'unknown');
+        assert.strictEqual(res.doseCrCl, null);
+        assert.strictEqual(res.doseEGFR, null);
     });
 });
 
