@@ -1953,6 +1953,8 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                 isCRRT: patientState.rrt === 'crrt',
                 crcl: patientState.calc?.crcl,
                 egfr: patientState.calc?.egfr,
+                absGfr: patientState.calc?.absGfr,
+                bsa: patientState.calc?.bsa,
                 weightKg: patientState.calc?.weightUsed
             };
 
@@ -2049,22 +2051,33 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
         // Helper to retrieve filtered drug list
         function getFilteredDrugList() {
             let list = [];
+            const renalStatusForFilter = patientState.calc?.crclRes || patientState.rrt;
+
             if (activeIndication === 'all') {
-                list = Object.values(ABX_ENGINE.STANFORD_ABX_DB).map(d => ({
-                    drugId: d.id,
-                    drugName: d.name,
-                    drug: d,
-                    role: null,
-                    indicationInfo: null
-                }));
+                list = Object.values(ABX_ENGINE.STANFORD_ABX_DB).map(d => {
+                    const renalProvided = renalStatusForFilter != null && renalStatusForFilter !== '';
+                    const calculated = renalProvided ? ABX_ENGINE.calculateDose(d.id, renalStatusForFilter, null) : null;
+                    const renalUnresolved = Boolean(renalProvided && !calculated);
+                    return {
+                        drugId: d.id,
+                        drugName: d.name,
+                        drug: d,
+                        role: null,
+                        indicationInfo: null,
+                        calculated,
+                        renalUnresolved
+                    };
+                });
             } else {
-                const filtered = ABX_ENGINE.filterByIndication(activeIndication, patientState.calc?.crclRes || patientState.rrt);
+                const filtered = ABX_ENGINE.filterByIndication(activeIndication, renalStatusForFilter);
                 list = filtered.map(item => ({
                     drugId: item.drugId,
                     drugName: item.drugName,
                     drug: item.drugInfo,
                     role: item.role,
-                    indicationInfo: item.indicationInfo
+                    indicationInfo: item.indicationInfo,
+                    calculated: item.calculated,
+                    renalUnresolved: Boolean(item.renalUnresolved)
                 }));
             }
 
@@ -2093,6 +2106,9 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                 isHD: patientState.rrt === 'hd',
                 isCRRT: patientState.rrt === 'crrt',
                 crcl: patientState.calc?.crcl,
+                egfr: patientState.calc?.egfr,
+                absGfr: patientState.calc?.absGfr,
+                bsa: patientState.calc?.bsa,
                 weightKg: patientState.calc?.weightUsed
             };
 
@@ -2100,7 +2116,9 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
 
             drugList.forEach(item => {
                 const drug = item.drug;
-                const dCalc = ABX_ENGINE.calculateDose(drug.id, patientRenalStatus, activeIndication !== 'all' ? activeIndication : null);
+                const dCalc = (item.calculated !== undefined && item.calculated !== null)
+                    ? item.calculated
+                    : ABX_ENGINE.calculateDose(drug.id, patientRenalStatus, activeIndication !== 'all' ? activeIndication : null);
 
                 const card = document.createElement('article');
                 card.className = 'abx-card';
@@ -2126,9 +2144,10 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
                     featureTagsHtml += `<span class="feature-tag feature-tag-dialysis">💧 Dialysis: ${drug.renalTiers.hd.postHD}</span>`;
                 }
 
-                const recDose = dCalc ? dCalc.recommendedDose : drug.stdDose;
-                const recInterval = dCalc ? dCalc.interval : 'q24h';
-                const recInfusion = dCalc ? dCalc.infusion : (drug.route || 'IV');
+                const isUnresolved = Boolean(item.renalUnresolved || (!dCalc && (patientState.calc?.crcl != null || patientState.rrt !== 'none')));
+                const recDose = dCalc ? dCalc.recommendedDose : (isUnresolved ? 'Renal data required' : drug.stdDose);
+                const recInterval = dCalc ? dCalc.interval : (isUnresolved ? '' : 'q24h');
+                const recInfusion = dCalc ? dCalc.infusion : (isUnresolved ? '--' : (drug.route || 'IV'));
 
                 // 6-Tier Table rows
                 const tiers = drug.renalTiers || {};
@@ -2245,7 +2264,7 @@ Please calculate parameters and select an antimicrobial to view clinical prescri
             title.textContent = `${drug.name} — Stanford 6-Tier Renal Dosing Matrix`;
 
             const currentTier = ABX_ENGINE.getRenalTier(patientState.calc?.crcl, patientState.rrt === 'hd', patientState.rrt === 'crrt');
-            const egfrTier = (patientState.rrt === 'hd') ? 'hd' : ((patientState.rrt === 'crrt') ? 'crrt' : ABX_ENGINE.getRenalTier(patientState.calc?.egfr));
+            const egfrTier = (patientState.rrt === 'hd') ? 'hd' : ((patientState.rrt === 'crrt') ? 'crrt' : ABX_ENGINE.getRenalTier(patientState.calc?.absGfr ?? patientState.calc?.egfr));
 
             const tiers = drug.renalTiers || {};
             const tierKeys = [

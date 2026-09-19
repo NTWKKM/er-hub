@@ -84,5 +84,25 @@ describe('ABX_ENGINE calculateDualDose (CrCl vs eGFR)', () => {
         assert.strictEqual(res.doseEGFR.interval, 'q12h');
         assert.ok(res.discordanceAdvice.includes('Beta-lactam'));
     });
+
+    test('calculateDualDose tiers eGFR on absolute GFR when available (e.g. eGFR 55 with absGFR 42.6 selecting crcl_30_50)', () => {
+        // Patient with CrCl 60 (tier > 50), eGFR 55, absolute GFR 42.6 (tier 30-50)
+        const pt = {
+            crcl: 60,
+            egfr: 55,
+            absGfr: 42.6,
+            weightKg: 50
+        };
+        const res = ABX_ENGINE.calculateDualDose('cefepime', pt);
+        assert.ok(res !== null);
+        assert.strictEqual(res.tierCrCl, 'crcl_gt_50');
+        assert.strictEqual(res.tierEGFR, 'crcl_30_50', 'Absolute GFR 42.6 must select crcl_30_50 instead of crcl_gt_50');
+        assert.strictEqual(res.isTierDiscordant, true);
+        assert.strictEqual(res.isDoseDiscordant, true);
+        assert.strictEqual(res.doseCrCl.recommendedDose, '2g');
+        assert.strictEqual(res.doseCrCl.interval, 'q8h');
+        assert.strictEqual(res.doseEGFR.recommendedDose, '2g');
+        assert.strictEqual(res.doseEGFR.interval, 'q12h');
+    });
 });
 

@@ -471,6 +471,44 @@ describe('CHALLENGER 1: Disease Protocol Overrides & Indication Filtering', () =
         assert.strictEqual(cefepime.dose, '2g', 'CrCl 25 should adjust Cefepime to 2g');
         assert.strictEqual(cefepime.interval, 'q24h');
     });
+
+    test('3.5 filterByIndication with numeric 0 (CrCl = 0) calculates crcl_lt_10 severe impairment dosing, never unadjusted dose', () => {
+        const drugsZero = ABX_ENGINE.filterByIndication('hap_vap', 0);
+        const pipTazo = drugsZero.find(d => d.drugId === 'pip_tazo');
+        assert.ok(pipTazo, 'Pip/Tazo must be present');
+        assert.strictEqual(pipTazo.dose, '2.25g', 'CrCl 0 must adjust Pip/Tazo to 2.25g (crcl_lt_10)');
+        assert.strictEqual(pipTazo.interval, 'q12h');
+        assert.strictEqual(pipTazo.renalUnresolved, false);
+
+        const cefepime = drugsZero.find(d => d.drugId === 'cefepime');
+        assert.ok(cefepime, 'Cefepime must be present');
+        assert.strictEqual(cefepime.dose, '1g', 'CrCl 0 must adjust Cefepime to 1g (crcl_lt_10)');
+        assert.strictEqual(cefepime.interval, 'q24h');
+        assert.strictEqual(cefepime.renalUnresolved, false);
+    });
+
+    test('3.6 filterByIndication marks renalUnresolved for supplied unresolvable renal status', () => {
+        const invalidStatuses = ['none', 'invalid_tier_string', {}];
+        invalidStatuses.forEach(st => {
+            const drugs = ABX_ENGINE.filterByIndication('hap_vap', st);
+            drugs.forEach(d => {
+                assert.strictEqual(d.renalUnresolved, true, `Expected renalUnresolved true for status ${JSON.stringify(st)}`);
+                assert.strictEqual(d.dose, 'Renal data required');
+                assert.strictEqual(d.interval, '');
+            });
+        });
+    });
+
+    test('3.7 filterByIndication preserves standard/indication default dose when no renal status is supplied', () => {
+        [null, undefined, ''].forEach(st => {
+            const drugs = ABX_ENGINE.filterByIndication('hap_vap', st);
+            const pipTazo = drugs.find(d => d.drugId === 'pip_tazo');
+            assert.ok(pipTazo);
+            assert.strictEqual(pipTazo.renalUnresolved, false);
+            assert.strictEqual(pipTazo.dose, '4.5g');
+            assert.strictEqual(pipTazo.interval, 'q8h');
+        });
+    });
 });
 
 // ============================================================================

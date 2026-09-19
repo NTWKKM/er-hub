@@ -1119,7 +1119,7 @@ const ABX_ENGINE = {
 
         // Tiers
         const tierCrCl = ABX_ENGINE.getRenalTier(crclVal, isHD, isCRRT);
-        const tierEGFR = isHD ? 'hd' : (isCRRT ? 'crrt' : ABX_ENGINE.getRenalTier(egfrVal));
+        const tierEGFR = isHD ? 'hd' : (isCRRT ? 'crrt' : ABX_ENGINE.getRenalTier(absGfrVal ?? egfrVal));
 
         const doseCrCl = tierCrCl !== 'unknown' ? ABX_ENGINE.calculateDose(drugId, tierCrCl, indicationId) : null;
         const doseEGFR = tierEGFR !== 'unknown' ? ABX_ENGINE.calculateDose(drugId, tierEGFR, indicationId) : null;
@@ -1173,9 +1173,17 @@ const ABX_ENGINE = {
                 let drug = ABX_ENGINE.STANFORD_ABX_DB[drugId];
                 if (drug) {
                     let indInfo = (drug.indications && drug.indications[indicationId]) || null;
-                    let calculated = patientOrRenalStatus ? ABX_ENGINE.calculateDose(drugId, patientOrRenalStatus, indicationId) : null;
-                    let dose = calculated ? calculated.recommendedDose : (indInfo ? indInfo.defaultDose : drug.stdDose);
-                    let interval = calculated ? calculated.interval : (indInfo ? indInfo.frequency : 'q24h');
+                    const renalProvided = patientOrRenalStatus != null && patientOrRenalStatus !== '';
+                    const calculated = renalProvided
+                        ? ABX_ENGINE.calculateDose(drugId, patientOrRenalStatus, indicationId)
+                        : null;
+                    const renalUnresolved = Boolean(renalProvided && !calculated);
+                    const dose = calculated ? calculated.recommendedDose
+                        : renalUnresolved ? 'Renal data required'
+                        : (indInfo ? indInfo.defaultDose : drug.stdDose);
+                    const interval = calculated ? calculated.interval
+                        : renalUnresolved ? ''
+                        : (indInfo ? indInfo.frequency : 'q24h');
                     let notes = indInfo ? (indInfo.notes || '') : (drug.clinicalNotes || '');
                     
                     result.push({
@@ -1188,7 +1196,8 @@ const ABX_ENGINE = {
                         notes,
                         indicationInfo: indInfo || { defaultDose: dose, frequency: interval, notes },
                         drugInfo: drug,
-                        calculated
+                        calculated,
+                        renalUnresolved
                     });
                 }
             });

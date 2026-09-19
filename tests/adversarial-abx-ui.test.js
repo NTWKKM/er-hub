@@ -275,10 +275,14 @@ describe('M2 Adversarial UI & PWA Challenge: tools/abx-renal-dosing.html', () =>
         assert.equal(doc.getElementById('toast-msg').textContent, '✓ Prescription note copied (Zero-PHI compliant)');
 
         // Test fallback copy when clipboard fails
+        const toast = doc.getElementById('toast-msg');
+        toast.style.display = 'none';
+        toast.textContent = '';
         win.navigator.clipboard.writeText = () => Promise.reject(new Error('Permission denied'));
         win.copyPrescriptionNote();
         await new Promise(resolve => setTimeout(resolve, 20));
-        assert.ok(doc.getElementById('toast-msg').style.display !== 'none');
+        assert.notEqual(toast.style.display, 'none', 'Fallback path shows the toast');
+        assert.ok(toast.textContent.length > 0, 'Fallback path sets a toast message');
     });
 
     test('8. Clinical Ergonomics: 48px Touch Targets & Responsive Layout Design Tokens', () => {
