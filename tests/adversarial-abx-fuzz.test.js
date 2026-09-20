@@ -97,7 +97,7 @@ describe('Adversarial Fuzzing: Dual Renal Clearance Engine', () => {
         assert.strictEqual(ABX_ENGINE.getRenalTier(null), 'unknown');
         assert.strictEqual(ABX_ENGINE.getRenalTier(NaN), 'unknown');
         assert.strictEqual(ABX_ENGINE.getRenalTier(undefined), 'unknown');
-        assert.strictEqual(ABX_ENGINE.getRenalTier(-10), 'crcl_lt_10');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(-10), 'unknown');
         assert.strictEqual(ABX_ENGINE.getRenalTier(0), 'crcl_lt_10');
         assert.strictEqual(ABX_ENGINE.getRenalTier(9.99), 'crcl_lt_10');
         assert.strictEqual(ABX_ENGINE.getRenalTier(10), 'crcl_10_29');

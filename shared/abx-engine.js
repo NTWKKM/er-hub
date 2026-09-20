@@ -186,7 +186,7 @@ const ABX_ENGINE = {
         if (typeof crcl !== 'number' && typeof crcl !== 'string') return 'unknown';
         if (typeof crcl === 'string' && crcl.trim() === '') return 'unknown';
         const c = Number(crcl);
-        if (!Number.isFinite(c)) return 'unknown';
+        if (!Number.isFinite(c) || c < 0) return 'unknown';
         if (c >= 50) return 'crcl_gt_50';
         if (c >= 30) return 'crcl_30_50';
         if (c >= 10) return 'crcl_10_29';

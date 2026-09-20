@@ -528,7 +528,7 @@ describe('CHALLENGER 1: Boundary Conditions, Stress Fuzzing & Safety Invariants'
         assert.strictEqual(ABX_ENGINE.getRenalTier(10.0), 'crcl_10_29');
         assert.strictEqual(ABX_ENGINE.getRenalTier(9.9999), 'crcl_lt_10');
         assert.strictEqual(ABX_ENGINE.getRenalTier(0.0), 'crcl_lt_10');
-        assert.strictEqual(ABX_ENGINE.getRenalTier(-5.0), 'crcl_lt_10');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(-5.0), 'unknown');
         assert.strictEqual(ABX_ENGINE.getRenalTier(NaN), 'unknown');
         assert.strictEqual(ABX_ENGINE.getRenalTier(null), 'unknown');
         assert.strictEqual(ABX_ENGINE.getRenalTier(undefined), 'unknown');

@@ -297,6 +297,46 @@ describe('ABX_ENGINE calculateDualDose (CrCl vs eGFR)', () => {
             'Valid explicit absGfr 20 must produce discordance with CrCl 40'
         );
     });
+
+    test('getRenalTier and calculateDose reject finite negative clearance values as unknown/null while keeping zero valid', () => {
+        // Finite negative values return unknown in getRenalTier
+        assert.strictEqual(ABX_ENGINE.getRenalTier(-5), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier('-5'), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(-0.01), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(-100), 'unknown');
+
+        // Zero remains valid for anuria / ESRD mapping to crcl_lt_10
+        assert.strictEqual(ABX_ENGINE.getRenalTier(0), 'crcl_lt_10');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(0.0), 'crcl_lt_10');
+        assert.strictEqual(ABX_ENGINE.getRenalTier('0'), 'crcl_lt_10');
+
+        // Non-finite values preserve unknown handling
+        assert.strictEqual(ABX_ENGINE.getRenalTier(NaN), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(Infinity), 'unknown');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(-Infinity), 'unknown');
+
+        // Dialysis overrides take precedence even with negative clearance
+        assert.strictEqual(ABX_ENGINE.getRenalTier(-5, true, false), 'hd');
+        assert.strictEqual(ABX_ENGINE.getRenalTier(-5, false, true), 'crrt');
+
+        // calculateDose tier selection rejects negative clearance values returning null
+        assert.strictEqual(ABX_ENGINE.calculateDose('meropenem', -5), null);
+        assert.strictEqual(ABX_ENGINE.calculateDose('meropenem', { crcl: -5 }), null);
+        assert.strictEqual(ABX_ENGINE.calculateDose('cefepime', -10), null);
+        assert.strictEqual(ABX_ENGINE.calculateDose('cefepime', { crcl: -10 }), null);
+
+        // calculateDose accepts zero clearance and calculates crcl_lt_10 dose
+        const doseMeroZero = ABX_ENGINE.calculateDose('meropenem', 0);
+        assert.ok(doseMeroZero !== null);
+        assert.strictEqual(doseMeroZero.recommendedDose, '500mg');
+        assert.strictEqual(doseMeroZero.interval, 'q24h');
+
+        const doseMeroZeroObj = ABX_ENGINE.calculateDose('meropenem', { crcl: 0 });
+        assert.ok(doseMeroZeroObj !== null);
+        assert.strictEqual(doseMeroZeroObj.recommendedDose, '500mg');
+        assert.strictEqual(doseMeroZeroObj.interval, 'q24h');
+    });
 });
+
 
 
