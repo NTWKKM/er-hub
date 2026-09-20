@@ -194,5 +194,109 @@ describe('ABX_ENGINE calculateDualDose (CrCl vs eGFR)', () => {
         assert.strictEqual(res.doseCrCl, null);
         assert.strictEqual(res.doseEGFR, null);
     });
+
+    test('calcCrCl rejects infinite, boolean, and non-finite values returning null', () => {
+        // Infinite values
+        assert.strictEqual(ABX_ENGINE.calcCrCl({ age: Infinity, sex: 'M', weightKg: 70, scr: 1.0 }), null);
+        assert.strictEqual(ABX_ENGINE.calcCrCl({ age: 60, sex: 'M', weightKg: Infinity, scr: 1.0 }), null);
+        assert.strictEqual(ABX_ENGINE.calcCrCl({ age: 60, sex: 'M', weightKg: 70, scr: Infinity }), null);
+        assert.strictEqual(ABX_ENGINE.calcCrCl({ age: -Infinity, sex: 'M', weightKg: 70, scr: 1.0 }), null);
+        assert.strictEqual(ABX_ENGINE.calcCrCl({ age: NaN, sex: 'M', weightKg: 70, scr: 1.0 }), null);
+
+        // Booleans
+        assert.strictEqual(ABX_ENGINE.calcCrCl({ age: true, sex: 'M', weightKg: 70, scr: 1.0 }), null);
+        assert.strictEqual(ABX_ENGINE.calcCrCl({ age: 60, sex: 'M', weightKg: false, scr: 1.0 }), null);
+        assert.strictEqual(ABX_ENGINE.calcCrCl({ age: 60, sex: 'M', weightKg: 70, scr: true }), null);
+
+        // Downstream calculation guards
+        assert.strictEqual(ABX_ENGINE.calculateDose('meropenem', { age: Infinity, sex: 'M', weightKg: 70, scr: 1.0 }), null);
+        const dualRes = ABX_ENGINE.calculateDualDose('meropenem', { age: Infinity, sex: 'M', weightKg: 70, scr: 1.0 });
+        assert.strictEqual(dualRes.tierCrCl, 'unknown');
+        assert.strictEqual(dualRes.doseCrCl, null);
+    });
+
+    test('evaluateDiscordance modern contract validates clearance values, rejects non-finite/booleans/negatives, and preserves fallback to egfrVal', () => {
+        // CrCl validation before tier selection:
+        // Invalid or negative crcl maps to unknown tier and does not flag discordance
+        const invalidCrClBool = ABX_ENGINE.evaluateDiscordance(true, 30);
+        assert.strictEqual(invalidCrClBool.tierCrCl, 'unknown');
+        assert.strictEqual(invalidCrClBool.isDiscordant, false);
+        assert.strictEqual(invalidCrClBool.clinicalAdvice, '');
+
+        const invalidCrClNeg = ABX_ENGINE.evaluateDiscordance(-5, 30);
+        assert.strictEqual(invalidCrClNeg.tierCrCl, 'unknown');
+        assert.strictEqual(invalidCrClNeg.isDiscordant, false);
+        assert.strictEqual(invalidCrClNeg.clinicalAdvice, '');
+
+        const invalidCrClInf = ABX_ENGINE.evaluateDiscordance(Infinity, 30);
+        assert.strictEqual(invalidCrClInf.tierCrCl, 'unknown');
+        assert.strictEqual(invalidCrClInf.isDiscordant, false);
+
+        // Explicit absGfr validation & fallback preservation:
+        // CrCl 20 (tier 10-29), eGFR 30 (tier 30-50)
+        // Invalid absGfr values (boolean, negative, blank, non-finite) MUST fallback to eGFR 30 -> discordant with CrCl 20
+        const discBool = ABX_ENGINE.evaluateDiscordance(20, 30, { absGfr: true });
+        assert.strictEqual(discBool.tierEGFR, 'crcl_30_50', 'Boolean absGfr must fallback to eGFR');
+        assert.strictEqual(discBool.isDiscordant, true);
+
+        const discBlank = ABX_ENGINE.evaluateDiscordance(20, 30, { absGfr: '   ' });
+        assert.strictEqual(discBlank.tierEGFR, 'crcl_30_50', 'Blank string absGfr must fallback to eGFR');
+        assert.strictEqual(discBlank.isDiscordant, true);
+
+        const discNeg = ABX_ENGINE.evaluateDiscordance(20, 30, { absGfr: -10 });
+        assert.strictEqual(discNeg.tierEGFR, 'crcl_30_50', 'Negative absGfr must fallback to eGFR');
+        assert.strictEqual(discNeg.isDiscordant, true);
+
+        const discInf = ABX_ENGINE.evaluateDiscordance(20, 30, { absGfr: Infinity });
+        assert.strictEqual(discInf.tierEGFR, 'crcl_30_50', 'Infinite absGfr must fallback to eGFR');
+        assert.strictEqual(discInf.isDiscordant, true);
+
+        // Valid absGfr values (>= 0 and finite numbers or nonblank strings) are accepted:
+        const discZero = ABX_ENGINE.evaluateDiscordance(20, 30, { absGfr: 0 });
+        assert.strictEqual(discZero.tierEGFR, 'crcl_lt_10', 'absGfr 0 must be accepted as crcl_lt_10');
+        assert.strictEqual(discZero.isDiscordant, true);
+
+        const discStr = ABX_ENGINE.evaluateDiscordance(20, 30, { absGfr: '20' });
+        assert.strictEqual(discStr.tierEGFR, 'crcl_10_29', 'absGfr string "20" must be parsed as 20');
+        assert.strictEqual(discStr.isDiscordant, false);
+    });
+
+    test('evaluateDiscordance legacy contract validates values before explicit tier matching and preserves fallback to egfr', () => {
+        const tiers = [
+            { min: 0, max: 29.99 },
+            { min: 30, max: 100 }
+        ];
+
+        // CrCl validation rejects booleans, negatives, non-finite
+        assert.strictEqual(ABX_ENGINE.evaluateDiscordance(true, 50, null, tiers), false);
+        assert.strictEqual(ABX_ENGINE.evaluateDiscordance(-5, 50, null, tiers), false);
+        assert.strictEqual(ABX_ENGINE.evaluateDiscordance(Infinity, 50, null, tiers), false);
+
+        // Legacy absGfr validation: invalid absGfr must fallback to egfr
+        // CrCl 40 (tier 1), eGFR 40 (tier 1). If absGfr is true, without fallback it would coerce to 1 (tier 0) and falsely report discordance.
+        assert.strictEqual(
+            ABX_ENGINE.evaluateDiscordance(40, 40, { absGfr: true }, tiers),
+            false,
+            'Boolean absGfr must fallback to eGFR and remain concordant'
+        );
+        assert.strictEqual(
+            ABX_ENGINE.evaluateDiscordance(40, 40, { absGfr: -5 }, tiers),
+            false,
+            'Negative absGfr must fallback to eGFR and remain concordant'
+        );
+        assert.strictEqual(
+            ABX_ENGINE.evaluateDiscordance(40, 40, { absGfr: '   ' }, tiers),
+            false,
+            'Blank string absGfr must fallback to eGFR and remain concordant'
+        );
+
+        // Valid absGfr in legacy is honored: absGfr 20 (tier 0) vs CrCl 40 (tier 1) -> discordant
+        assert.strictEqual(
+            ABX_ENGINE.evaluateDiscordance(40, 40, { absGfr: 20 }, tiers),
+            true,
+            'Valid explicit absGfr 20 must produce discordance with CrCl 40'
+        );
+    });
 });
+
 

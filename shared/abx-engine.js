@@ -57,9 +57,13 @@ const ABX_ENGINE = {
         const numAge = Number(age);
         const numWeight = Number(weightKg);
         const numScr = Number(scr);
-        const numHeight = heightCm != null ? Number(heightCm) : null;
+        const numHeight = (heightCm != null && typeof heightCm !== 'boolean' && Number.isFinite(Number(heightCm)) && Number(heightCm) > 0)
+            ? Number(heightCm)
+            : null;
 
-        if (isNaN(numAge) || isNaN(numWeight) || isNaN(numScr) || numAge <= 0 || numWeight <= 0 || numScr <= 0) {
+        if (typeof age === 'boolean' || typeof weightKg === 'boolean' || typeof scr === 'boolean' ||
+            !Number.isFinite(numAge) || !Number.isFinite(numWeight) || !Number.isFinite(numScr) ||
+            numAge <= 0 || numWeight <= 0 || numScr <= 0) {
             return null;
         }
 
@@ -198,44 +202,80 @@ const ABX_ENGINE = {
             if (Array.isArray(tiers)) return false;
             return { isDiscordant: false, tierCrCl: null, tierEGFR: null, clinicalAdvice: '' };
         }
+
+        const parseRenalVal = (val) => {
+            if (typeof val !== 'number' && typeof val !== 'string') return null;
+            if (typeof val === 'string' && val.trim() === '') return null;
+            const n = Number(val);
+            return (Number.isFinite(n) && n >= 0) ? n : null;
+        };
         
         // Legacy 4-param call from tools/abx-renal-dosing.html
         if (Array.isArray(tiers)) {
             const getTierIndex = (val) => {
+                if (val == null || !Number.isFinite(val) || val < 0) return -1;
                 for (let i = 0; i < tiers.length; i++) {
                     let t = tiers[i];
                     if (t && typeof t === 'object' && val >= t.min && val <= t.max) return i;
                 }
                 return -1;
             };
-            let crclTier = getTierIndex(crcl);
-            let absGfrLegacy = (typeof bsaOrAbsGfr === 'object' && bsaOrAbsGfr !== null && 'absGfr' in bsaOrAbsGfr) ? bsaOrAbsGfr.absGfr : null;
-            let egfrComp = absGfrLegacy != null ? absGfrLegacy : (typeof egfr === 'object' && egfr.egfr ? egfr.egfr : egfr);
-            let egfrTier = getTierIndex(egfrComp);
+
+            const validCrCl = parseRenalVal(crcl);
+            const crclTier = validCrCl !== null ? getTierIndex(validCrCl) : -1;
+
+            const absGfrLegacy = (typeof bsaOrAbsGfr === 'object' && bsaOrAbsGfr !== null && 'absGfr' in bsaOrAbsGfr) ? bsaOrAbsGfr.absGfr : null;
+            const validAbsGfrLegacy = absGfrLegacy != null ? parseRenalVal(absGfrLegacy) : null;
+
+            let validEgfrComp = null;
+            if (validAbsGfrLegacy !== null) {
+                validEgfrComp = validAbsGfrLegacy;
+            } else {
+                const rawEgfr = (typeof egfr === 'object' && egfr !== null && 'egfr' in egfr) ? egfr.egfr : egfr;
+                validEgfrComp = parseRenalVal(rawEgfr);
+            }
+
+            const egfrTier = validEgfrComp !== null ? getTierIndex(validEgfrComp) : -1;
             return (crclTier !== -1 && egfrTier !== -1 && crclTier !== egfrTier);
         }
 
         // Modern 3-param contract: evaluateDiscordance(crcl, egfr, bsa)
-        const tierCrCl = ABX_ENGINE.getRenalTier(crcl);
-        const egfrVal = (typeof egfr === 'object' && egfr !== null && 'egfr' in egfr) ? egfr.egfr : Number(egfr);
-        let effectiveEGFR = egfrVal;
+        const validCrCl = parseRenalVal(crcl);
+        const tierCrCl = validCrCl !== null ? ABX_ENGINE.getRenalTier(validCrCl) : 'unknown';
+
+        const rawEgfr = (typeof egfr === 'object' && egfr !== null && 'egfr' in egfr) ? egfr.egfr : egfr;
+        const validEgfr = parseRenalVal(rawEgfr);
+
+        let effectiveEGFR = validEgfr;
         if (bsaOrAbsGfr != null) {
             if (typeof bsaOrAbsGfr === 'object' && bsaOrAbsGfr !== null) {
                 if ('absGfr' in bsaOrAbsGfr && bsaOrAbsGfr.absGfr != null) {
-                    const parsed = Number(bsaOrAbsGfr.absGfr);
-                    if (Number.isFinite(parsed)) effectiveEGFR = parsed;
+                    const parsedAbsGfr = parseRenalVal(bsaOrAbsGfr.absGfr);
+                    if (parsedAbsGfr !== null) {
+                        effectiveEGFR = parsedAbsGfr;
+                    }
+                    // Preserves fallback to validEgfr if parsedAbsGfr is invalid or non-finite
                 } else if ('bsa' in bsaOrAbsGfr && bsaOrAbsGfr.bsa != null) {
-                    effectiveEGFR = ABX_ENGINE.calcAbsoluteGFR(egfrVal, Number(bsaOrAbsGfr.bsa));
+                    if (validEgfr !== null && typeof bsaOrAbsGfr.bsa !== 'boolean') {
+                        const derived = ABX_ENGINE.calcAbsoluteGFR(validEgfr, bsaOrAbsGfr.bsa);
+                        if (derived !== null) effectiveEGFR = derived;
+                    }
                 }
             } else {
-                effectiveEGFR = ABX_ENGINE.calcAbsoluteGFR(egfrVal, Number(bsaOrAbsGfr));
+                if (validEgfr !== null && typeof bsaOrAbsGfr !== 'boolean') {
+                    const derived = ABX_ENGINE.calcAbsoluteGFR(validEgfr, bsaOrAbsGfr);
+                    if (derived !== null) effectiveEGFR = derived;
+                }
             }
         }
-        const tierEGFR = ABX_ENGINE.getRenalTier(effectiveEGFR);
-        const isDiscordant = (tierCrCl !== tierEGFR);
+
+        const tierEGFR = effectiveEGFR !== null ? ABX_ENGINE.getRenalTier(effectiveEGFR) : 'unknown';
+        const isDiscordant = (tierCrCl !== 'unknown' && tierEGFR !== 'unknown' && tierCrCl !== tierEGFR);
         const clinicalAdvice = isDiscordant
             ? 'Discordance detected between Cockcroft-Gault CrCl and eGFR tiers. For beta-lactams in severe sepsis, avoid underdosing (consider higher dose). For narrow therapeutic index agents (Vancomycin, Aminoglycosides), monitor therapeutic drug levels closely.'
-            : 'Renal estimates are concordant across dosing tiers.';
+            : (tierCrCl === 'unknown' || tierEGFR === 'unknown'
+                ? ''
+                : 'Renal estimates are concordant across dosing tiers.');
 
         return {
             isDiscordant,
