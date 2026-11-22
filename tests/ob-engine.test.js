@@ -432,3 +432,54 @@ describe('MNRH_SEVERE_PE_SO', () => {
         assert.deepEqual(BP_SECOND_LINE.map(d => d.max), ['15 mg/h', '160 mg/h', '10 mg/h']);
     });
 });
+
+describe('BP escalation sequences and recurrent-seizure step-up (CodeRabbit PR 21)', () => {
+    const { BP_PROTOCOLS: P } = require('../shared/ob-engine.js');
+    test('hydralazine total including the 1 mg test dose stays within 20 mg', () => {
+        assert.match(P.hydralazine.maxTotal, /20 mg \(รวม test dose\)/);
+        assert.match(P.hydralazine.steps[2], /5–10 mg/);
+        assert.match(P.hydralazine.steps[2], /1 \+ 5 \+ 10 mg/);
+    });
+    test('labetalol 80 mg is followed by a 10 min recheck before conditional hydralazine', () => {
+        assert.match(P.labetalol.steps[2], /80 mg IV, วัด BP ซ้ำใน 10 min; ให้ Hydralazine 10 mg IV เฉพาะเมื่อ SBP ยัง ≥ 160 หรือ DBP ≥ 110/);
+    });
+    test('final nifedipine 20 mg is followed by a 20 min recheck before conditional labetalol', () => {
+        assert.match(P.nifedipine.steps[2], /20 mg oral, วัด BP ใน 20 min; ให้ Labetalol 20 mg IV เฉพาะเมื่อ BP ยัง ≥ 160\/110/);
+    });
+    test('1.5 g/h step-up is scoped to patients currently on 1 g/h', () => {
+        const rec = calcMgSO4RecurrentBolus();
+        assert.equal(rec.infusionStepUpFromG_hr, 1);
+        assert.match(rec.infusionStepUp, /1\.5 g\/h/);
+    });
+});
+
+describe('tools/mgso4-calculator.html recurrent step-up display', () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const { JSDOM } = require('jsdom');
+    function load() {
+        const file = path.join(__dirname, '..', 'tools/mgso4-calculator.html');
+        const html = fs.readFileSync(file, 'utf8').replace(/<script src="([^"]+)"><\/script>/g, (m, src) => {
+            const p = path.resolve(path.dirname(file), src);
+            return fs.existsSync(p) ? '<script>' + fs.readFileSync(p, 'utf8') + '</script>' : m;
+        });
+        return new JSDOM(html, { url: 'file://' + file, runScripts: 'dangerously' }).window;
+    }
+    test('hidden at 2 g/h, shown once a 1 g/h criterion is ticked', () => {
+        const win = load();
+        const out = win.document.getElementById('recurrent-stepup');
+        assert.doesNotMatch(out.textContent, /1\.5 g\/h/);
+        const cb = win.document.getElementById('crit-cr');
+        cb.checked = true;
+        cb.dispatchEvent(new win.Event('change'));
+        assert.match(out.textContent, /1\.5 g\/h/);
+    });
+    test('urine-output threshold rounds only for display', () => {
+        const win = load();
+        const w = win.document.getElementById('ob-weight');
+        w.value = '65';
+        w.dispatchEvent(new win.Event('input'));
+        // 65 kg × 0.5 = 32.5 mL/h → 33 shown; 4 h = 130 mL (not 33 × 4 = 132)
+        assert.match(win.document.getElementById('uo-threshold').textContent, /33 mL\/h.*130 mL/);
+    });
+});

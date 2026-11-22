@@ -71,12 +71,20 @@
         var entry = oldKeys[j];
         try {
           var data = JSON.parse(localStorage.getItem(entry.key) || '{}');
+          // v1 drafts carry no edit time of their own. Keep a reliable stored time if one
+          // exists; otherwise the age is unknown, so discard the HN-bearing draft rather than
+          // restart its 24 h retention window at migration time.
+          var editedAt = Number(data && (data.updatedAt || data.savedAt));
+          if (!(isFinite(editedAt) && editedAt > 0)){
+            localStorage.removeItem(entry.key);
+            continue;
+          }
           var id = genId();
           var hn = data['ernote-hn'] || '';
           var ccInfo = CC_FIELDS[entry.template];
           var cc = '';
           if (ccInfo && data[ccInfo.id]) cc = String(data[ccInfo.id]).slice(0, 80);
-          reg.drafts.push({ id:id, template:entry.template, hn:hn, cc:cc, updatedAt:Date.now() });
+          reg.drafts.push({ id:id, template:entry.template, hn:hn, cc:cc, updatedAt:editedAt });
           localStorage.setItem(draftKey(entry.template, id), JSON.stringify(data));
           localStorage.removeItem(entry.key);
         } catch(e){}
@@ -85,36 +93,55 @@
     } catch(err){}
   }
 
-  /* ---- Retention: purge expired and orphaned drafts ---- */
+  /* ---- Retention: purge expired and orphaned drafts ----
+   * Another tab can create or edit a draft while this runs, and localStorage offers no
+   * lock. So the registry is re-read right before each destructive step: a content key is
+   * removed only if the latest registry still does not track it as live, and the pruned
+   * registry is rebuilt from the latest copy so drafts added meanwhile are kept. */
+  function isLiveDraft(d, now){
+    var age = now - (Number(d.updatedAt) || 0);
+    return age >= 0 && age < DRAFT_TTL_MS;
+  }
+
+  function liveDraftKeys(reg, now){
+    var keys = {};
+    for (var i = 0; i < reg.drafts.length; i++){
+      if (isLiveDraft(reg.drafts[i], now)) keys[draftKey(reg.drafts[i].template, reg.drafts[i].id)] = true;
+    }
+    return keys;
+  }
+
   function purgeExpiredDrafts(now){
     now = (typeof now === 'number') ? now : Date.now();
     try {
-      var reg = loadRegistry();
-      var kept = [];
-      var keepKeys = {};
-      for (var i = 0; i < reg.drafts.length; i++){
-        var d = reg.drafts[i];
-        var age = now - (Number(d.updatedAt) || 0);
-        if (age >= 0 && age < DRAFT_TTL_MS){
-          kept.push(d);
-          keepKeys[draftKey(d.template, d.id)] = true;
-        }
-      }
       // Collect per-draft keys that are expired or no longer tracked (orphans)
+      var live = liveDraftKeys(loadRegistry(), now);
       var stale = [];
       for (var j = 0; j < localStorage.length; j++){
         var key = localStorage.key(j);
         if (!key || key.indexOf(DRAFT_PREFIX) !== 0) continue;
         if (!/-d_[a-z0-9_]+$/.test(key.slice(DRAFT_PREFIX.length))) continue; // v1 keys: migrated first
-        if (!keepKeys[key]) stale.push(key);
+        if (!live[key]) stale.push(key);
       }
-      for (var k = 0; k < stale.length; k++) localStorage.removeItem(stale[k]);
-      var dropped = reg.drafts.length - kept.length;
+      // Revalidate against the latest registry before removing content
+      var removed = 0;
+      if (stale.length){
+        var liveNow = liveDraftKeys(loadRegistry(), now);
+        for (var k = 0; k < stale.length; k++){
+          if (liveNow[stale[k]]) continue;
+          localStorage.removeItem(stale[k]);
+          removed++;
+        }
+      }
+      // Prune the latest registry, not the copy read at the start
+      var latest = loadRegistry();
+      var kept = latest.drafts.filter(function(d){ return isLiveDraft(d, now); });
+      var dropped = latest.drafts.length - kept.length;
       if (dropped > 0){
-        reg.drafts = kept;
-        saveRegistry(reg);
+        latest.drafts = kept;
+        saveRegistry(latest);
       }
-      return dropped + stale.length;
+      return dropped + removed;
     } catch(e){ return 0; }
   }
 

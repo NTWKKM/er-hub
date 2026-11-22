@@ -1,6 +1,6 @@
 /**
  * NSTEMI V1 and V2 anticoagulant and antiplatelet logic (re-audit 2026-11-22).
- *  - Enoxaparin: 1 mg/kg q12h; age >= 75 → 0.75 mg/kg q12h; eGFR < 30 → 1 mg/kg OD (auto, overridable)
+ *  - Enoxaparin: 1 mg/kg q12h at any age (no NSTE-ACS age adjustment); eGFR < 30 → 1 mg/kg OD (auto, overridable)
  *  - Fondaparinux contraindicated below eGFR 20 (ESC 2023)
  *  - High risk (invasive < 24 h): hold P2Y12, no routine pretreatment (ACC/AHA 2025)
  */
@@ -51,14 +51,14 @@ const freq = win => win.document.querySelector('input[name="enox-freq"]:checked'
 describe('CLINICAL_ENGINE enoxaparin helpers', () => {
     test('standard adult: 1 mg/kg q12h', () => {
         assert.deepEqual(CLINICAL_ENGINE.calcEnoxaparinACS({ weight: 70, age: 60, freq: 'q12h' }),
-            { mgPerKg: 1, dose: 70, freq: 'q12h', elderlyAdjusted: false });
+            { mgPerKg: 1, dose: 70, freq: 'q12h' });
     });
-    test('age >= 75 on q12h: 0.75 mg/kg', () => {
-        const r = CLINICAL_ENGINE.calcEnoxaparinACS({ weight: 70, age: 75, freq: 'q12h' });
-        assert.equal(r.mgPerKg, 0.75);
-        assert.equal(r.dose, 53);
+    test('age >= 75 on q12h stays 1 mg/kg (0.75 mg/kg is a STEMI-only regimen)', () => {
+        const r = CLINICAL_ENGINE.calcEnoxaparinACS({ weight: 70, age: 80, freq: 'q12h' });
+        assert.equal(r.mgPerKg, 1);
+        assert.equal(r.dose, 70);
     });
-    test('once daily (renal) stays 1 mg/kg even when elderly', () => {
+    test('once daily (renal) is 1 mg/kg', () => {
         assert.equal(CLINICAL_ENGINE.calcEnoxaparinACS({ weight: 70, age: 82, freq: 'q24h' }).dose, 70);
     });
     test('eGFR band: < 30 → q24h, >= 30 → q12h, unknown → null', () => {
@@ -70,12 +70,21 @@ describe('CLINICAL_ENGINE enoxaparin helpers', () => {
 
 for (const page of ['orders/nstemi.html', 'orders/nstemi-v2.html']) {
     describe(`${page} anticoagulation`, () => {
-        test('elderly patient gets 0.75 mg/kg enoxaparin on screen', () => {
+        test('elderly patient gets 1 mg/kg q12h enoxaparin on screen', () => {
             const win = loadHtmlDom(page);
             fill(win, { weight: 70, age: 80, cr: 0.9 });
             chooseEnox(win);
             assert.equal(freq(win), 'q12h');
-            assert.match(win.document.getElementById('screen-anticoag').textContent, /Enoxaparin 53 mg SC q12h/);
+            assert.match(win.document.getElementById('screen-anticoag').textContent, /Enoxaparin 70 mg SC q12h/);
+        });
+
+        test('Clear resets the eGFR band so the next patient gets auto frequency again', () => {
+            const win = loadHtmlDom(page);
+            fill(win, { weight: 70, age: 60, cr: 3.0 });      // eGFR ≈ 23 → q24h
+            assert.equal(freq(win), 'q24h');
+            win.document.getElementById('clear-btn').click();
+            fill(win, { weight: 70, age: 60, cr: 3.0 });      // same band, new patient
+            assert.equal(freq(win), 'q24h', 'auto-selection must run again after Clear');
         });
 
         test('eGFR < 30 auto-selects once daily, and a manual q12h override survives re-render', () => {
@@ -89,6 +98,29 @@ for (const page of ['orders/nstemi.html', 'orders/nstemi-v2.html']) {
             w.value = '72';
             w.dispatchEvent(new win.Event('input', { bubbles: true }));
             assert.equal(freq(win), 'q12h', 'override must not be reset while the eGFR band is unchanged');
+        });
+
+        test('fondaparinux at eGFR 20 is selectable without override', () => {
+            const win = loadHtmlDom(page);
+            fill(win, { weight: 70, age: 60, cr: 3.35 });     // eGFR 20 (CKD-EPI 2021)
+            assert.equal(CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021(3.35, 60, 'male'), 20);
+            const radio = win.document.getElementById('ac-radio-fonda');
+            assert.equal(radio.closest('label').classList.contains('ac-disabled'), false);
+            radio.click();
+            assert.equal(radio.checked, true, 'a single click selects fondaparinux');
+        });
+
+        test('fondaparinux below eGFR 20 is contraindicated and needs a confirmed override', () => {
+            const win = loadHtmlDom(page);
+            fill(win, { weight: 70, age: 60, cr: 3.6 });      // eGFR 19
+            const radio = win.document.getElementById('ac-radio-fonda');
+            const label = radio.closest('label');
+            assert.equal(label.classList.contains('ac-disabled'), true);
+            radio.click();
+            assert.equal(radio.checked, false, 'first click must not select a contraindicated drug');
+            assert.equal(label.classList.contains('ac-override-pending'), true);
+            radio.click();
+            assert.equal(radio.checked, true, 'second click confirms the override');
         });
 
         test('fondaparinux is not contraindicated at eGFR 20-29', () => {

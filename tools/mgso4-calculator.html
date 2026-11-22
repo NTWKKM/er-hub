@@ -278,6 +278,7 @@
         const reduce = critIds.some(id => $(id).checked);
         $('rate-1g').classList.toggle('is-active', reduce);
         $('rate-2g').classList.toggle('is-active', !reduce);
+        updateRecurrentStepUp(reduce ? 1 : 2);
     }
     critIds.forEach(id => $(id).addEventListener('change', updateRate));
 
@@ -299,8 +300,9 @@
             out.textContent = 'ใส่น้ำหนักเพื่อคำนวณ 0.5 mL/kg/h';
             return;
         }
-        const perHour = Math.round(w * 0.5);
-        out.innerHTML = `Notify ถ้า urine &lt; <span class="uo-out">${perHour} mL/h</span> (&lt; <span class="uo-out">${perHour * 4} mL</span> ต่อ 4 ชม.)`;
+        const perHour = w * 0.5;      // keep unrounded; round only for display
+        const per4h = perHour * 4;
+        out.innerHTML = `Notify ถ้า urine &lt; <span class="uo-out">${Math.round(perHour)} mL/h</span> (&lt; <span class="uo-out">${Math.round(per4h)} mL</span> ต่อ 4 ชม.)`;
     }
     $('ob-weight').addEventListener('input', updateUO);
 
@@ -315,7 +317,13 @@
     $('recurrent-table-body').innerHTML =
         row(['50%', { html: `${rec.vol50pct} mL`, num: true }, { html: `ดูด 50% ${rec.vol50pct} mL + NSS ${rec.diluentVol} mL ได้ ${rec.vol10pct} mL of 10%` }]) +
         row(['10%', { html: `${rec.vol10pct} mL`, num: true }, { html: `10% MgSO4 ${rec.vol10pct} mL slow IV push` }]);
-    $('recurrent-stepup').textContent = `${rec.rateNote}; ${rec.infusionStepUp}`;
+    // The 1.5 g/h step-up only raises a 1 g/h maintenance; it is hidden at >= 1.5 g/h.
+    function updateRecurrentStepUp(currentG_hr) {
+        $('recurrent-stepup').textContent = currentG_hr === rec.infusionStepUpFromG_hr
+            ? `${rec.rateNote}; ${rec.infusionStepUp}`
+            : rec.rateNote;
+    }
+    updateRecurrentStepUp(2);
     $('recurrent-2ndline-note').innerHTML = `<p class="callout-title">Second line</p><p>${esc(rec.secondLine)}</p>`;
 
     // BP second line and first-line alternatives

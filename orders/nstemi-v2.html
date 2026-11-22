@@ -494,7 +494,7 @@
                     <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #d8d4c8; line-height:1.6;">
                         <ul style="margin:0; padding-left:18px;">
                             <li><strong>2023 ESC / 2025 ACC/AHA ACS Guidelines:</strong> Fondaparinux 2.5 mg SC OD is the preferred anticoagulant in non-immediate invasive strategy (Class I, Level A; OASIS-5 Trial) with lowest bleeding risk. Avoid if eGFR &lt; 20 mL/min/1.73m² (ESC 2023).</li>
-                            <li><strong>Enoxaparin (LMWH):</strong> 1 mg/kg SC q12h. In eGFR &lt; 30 mL/min: adjust to 1 mg/kg SC OD. In age ≥75y: omit IV bolus and maintain 0.75 mg/kg SC q12h.</li>
+                            <li><strong>Enoxaparin (LMWH):</strong> 1 mg/kg SC q12h. In eGFR &lt; 30 mL/min: adjust to 1 mg/kg SC OD. No age adjustment in NSTE-ACS (the 0.75 mg/kg regimen at age ≥75y applies to STEMI only).</li>
                             <li><strong>GRACE Risk Model 2.0:</strong> Validated in-hospital mortality score predicting ischemia and urgency of coronary angiography (Low &le;108, Intermediate 109-140, High &gt;140).</li>
                             <li><strong>CKD-EPI 2021:</strong> Race-free serum creatinine formula (Inker LA et al. N Engl J Med. 2021;385:1737-1749).</li>
                         </ul>
@@ -640,7 +640,7 @@
                             <div style="width:100%;">
                                 <strong id="ac-enox-text" style="color:var(--cardiac-primary);">Enoxaparin -- mg SC</strong>
                                 <span id="ac-badge-enox" class="ac-badge" style="display:none;"></span>
-                                <div style="font-size:10.5px; color:#666;" id="ac-enox-hint">(1 mg/kg, อายุ ≥ 75: 0.75 mg/kg — GFR &lt; 30 → 1 mg/kg once daily)</div>
+                                <div style="font-size:10.5px; color:#666;" id="ac-enox-hint">(1 mg/kg q12h ทุกอายุ — GFR &lt; 30 → 1 mg/kg once daily)</div>
                                 <div id="enox-frequency-container" style="display:none; margin-top:4px; gap:12px;">
                                     <label style="cursor:pointer; display:inline-flex; align-items:center; gap:4px; margin:0;"><input type="radio" name="enox-freq" value="q12h" checked> q 12 hr</label>
                                     <label style="cursor:pointer; display:inline-flex; align-items:center; gap:4px; margin:0;"><input type="radio" name="enox-freq" value="q24h"> OD (once daily)</label>
@@ -828,14 +828,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const ENOX_ENGINE = (typeof CLINICAL_ENGINE.calcEnoxaparinACS === 'function') ? CLINICAL_ENGINE : {
         ENOX_OD_EGFR: 30,
         enoxFreqForEgfr: e => (e === null || e === undefined || !Number.isFinite(Number(e))) ? null : (Number(e) < 30 ? 'q24h' : 'q12h'),
-        calcEnoxaparinACS: ({ weight, age, freq }) => {
+        calcEnoxaparinACS: ({ weight, freq }) => {
             const f = freq === 'q24h' ? 'q24h' : 'q12h';
-            const mgPerKg = (f === 'q12h' && Number(age) >= 75) ? 0.75 : 1.0;
-            return { mgPerKg, dose: weight > 0 ? Math.round(weight * mgPerKg) : null, freq: f, elderlyAdjusted: mgPerKg === 0.75 };
+            return { mgPerKg: 1, dose: weight > 0 ? Math.round(weight) : null, freq: f };
         }
     };
     let lastEnoxBand = null;     // eGFR band that last auto-set the enoxaparin frequency
-    const enoxFor = (weight, freq) => ENOX_ENGINE.calcEnoxaparinACS({ weight, age: parseFloat($('age').value), freq });
+    const enoxFor = (weight, freq) => ENOX_ENGINE.calcEnoxaparinACS({ weight, freq });
     const $ = id => document.getElementById(id);
 
     // Static DOM Injections on Load
@@ -892,7 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <strong>${chkEnox} Enoxaparin</strong>${enoxWarning}<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${chk40} 0.4 ml</strong> &nbsp;<strong>${chk60} 0.6 ml</strong><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>${chkQ12} q 12 hr</strong> &nbsp;<strong>${chkOD} OD</strong> × 5 Days<br>
-                <span style="font-size:9px;color:#666;">(${enox.mgPerKg} mg/kg${enox.elderlyAdjusted ? ' (อายุ ≥ 75)' : ''} = ${weight > 0 ? enoxDose + ' mg' : '............ mg'} — GFR &lt; ${ENOX_OD_EGFR} → 1 mg/kg once daily)<br>
+                <span style="font-size:9px;color:#666;">(${enox.mgPerKg} mg/kg = ${weight > 0 ? enoxDose + ' mg' : '............ mg'} — GFR &lt; ${ENOX_OD_EGFR} → 1 mg/kg once daily)<br>
                 (CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)<br>
                 (0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>
             </div>`;
@@ -977,12 +976,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const enoxDose = enox.dose;
             $('ac-fonda-hint').innerHTML = `(Preferred — eGFR ${egfrLive.toFixed(0)})<br><span style="color:#c0392b;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = `Enoxaparin ${enoxDose} mg SC`;
-            $('ac-enox-hint').innerHTML = `(${enox.mgPerKg} mg/kg${enox.elderlyAdjusted ? ' อายุ ≥ 75' : ''} = ${enoxDose} mg — GFR &lt; ${ENOX_OD_EGFR} → 1 mg/kg once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
+            $('ac-enox-hint').innerHTML = `(${enox.mgPerKg} mg/kg = ${enoxDose} mg — GFR &lt; ${ENOX_OD_EGFR} → 1 mg/kg once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
         } else {
             $('ac-fonda-hint').innerHTML = `(Preferred — eGFR --)<br><span style="color:#c0392b;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = 'Enoxaparin -- mg SC';
-            $('ac-enox-hint').innerHTML = `(1 mg/kg, อายุ ≥ 75: 0.75 mg/kg = -- mg — GFR &lt; ${ENOX_OD_EGFR} → 1 mg/kg once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
+            $('ac-enox-hint').innerHTML = `(1 mg/kg q12h ทุกอายุ = -- mg — GFR &lt; ${ENOX_OD_EGFR} → 1 mg/kg once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
         }
 
@@ -1349,6 +1348,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     $('clear-btn').addEventListener('click', () => {
         $('nstemi-form').reset();
+        lastEnoxBand = null;  // next patient: let the eGFR band auto-select the frequency again
         document.querySelectorAll('input[name="anticoag-choice"]').forEach(r => { r.checked = false; });
         document.querySelectorAll('input[name="dapt-p2y12"]').forEach(r => { r.checked = false; });
         calculateAndRender();
@@ -1389,7 +1389,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <strong>☐ Enoxaparin</strong><br>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>☐ 0.4 ml</strong> &nbsp;<strong>☐ 0.6 ml</strong><br>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>☐ q 12 hr</strong> &nbsp;<strong>☐ OD</strong> × 5 Days<br>
-            <span style="font-size:9px;color:#666;">(1 mg/kg, อายุ ≥ 75: 0.75 mg/kg = ............ mg — GFR &lt; ${ENOX_OD_EGFR} → 1 mg/kg once daily)<br>
+            <span style="font-size:9px;color:#666;">(1 mg/kg q12h ทุกอายุ = ............ mg — GFR &lt; ${ENOX_OD_EGFR} → 1 mg/kg once daily)<br>
             (CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)<br>
             (0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>
         </div>

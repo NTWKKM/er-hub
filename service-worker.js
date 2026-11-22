@@ -1,7 +1,7 @@
 // service-worker.js — Offline PWA cache for ER Standing Order Hub
 // Caches all static assets for offline access (ED wifi outages during stroke workup)
 // CRITICAL: Always keep in sync with the nav-right version string in index.html
-const CACHE_VERSION = 'er-hub-v121';
+const CACHE_VERSION = 'er-hub-v122';
 const CACHE_DATE = '22/11/2569';
 const ASSETS = [
   './',
@@ -187,6 +187,17 @@ self.addEventListener('activate', (event) => {
 const NETWORK_TIMEOUT_MS = 5000;
 const CODE_PATH = /\.(?:html?|js|mjs|css|json)$/i;
 
+// Persisting a copy is best-effort: a quota or storage error must not turn a good network
+// response into a fallback.
+async function putInCache(request, response) {
+  try {
+    const cache = await caches.open(CACHE_VERSION);
+    await cache.put(request, response);
+  } catch (err) {
+    console.warn('[SW] cache.put failed:', request.url, err && err.message);
+  }
+}
+
 function isSameOrigin(request) {
   return new URL(request.url).origin === self.location.origin;
 }
@@ -215,8 +226,7 @@ async function networkFirst(request, preloadPromise) {
     .then((preloaded) => preloaded || fetch(request, { cache: 'no-cache' }))
     .then(async (response) => {
       if (response && response.ok && response.type === 'basic') {
-        const cache = await caches.open(CACHE_VERSION);
-        await cache.put(request, response.clone());
+        await putInCache(request, response.clone());
       }
       return response;
     });
@@ -238,17 +248,17 @@ async function networkFirst(request, preloadPromise) {
 async function cacheFirst(request) {
   const cached = await caches.match(request);
   if (cached) return cached;
+  let response;
   try {
-    const response = await fetch(request);
-    // Cache successful same-origin responses for offline resilience
-    if (response.ok && isSameOrigin(request)) {
-      const cache = await caches.open(CACHE_VERSION);
-      await cache.put(request, response.clone());
-    }
-    return response;
+    response = await fetch(request);
   } catch (err) {
     return new Response('', { status: 503, statusText: 'Offline and not cached' });
   }
+  // Cache successful same-origin responses for offline resilience
+  if (response.ok && isSameOrigin(request)) {
+    await putInCache(request, response.clone());
+  }
+  return response;
 }
 
 self.addEventListener('fetch', (event) => {

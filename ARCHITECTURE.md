@@ -224,7 +224,7 @@ Offline antimicrobial dose-adjustment tool powered by `shared/abx-engine.js`. Co
 | `print.css` | A4 print constraints (`@page`, grid, font sizes, `@media print`, universal unshaded table headers) | None |
 | `components.js` | UI component injection: sticky nav bar (`injectNavBar`), print header, sticker box, float bar. `setupCommonActions()` wires `print-btn` to `window.print()`. | None |
 | `calc-engine.js` | Generic drip rate calculation engine (mL/hr). Guards against null/undefined/NaN params. | None |
-| `clinical-engine.js` | GRACE score + eGFR (CKD-EPI 2021) + NSTE-ACS enoxaparin (`calcEnoxaparinACS`: 1 mg/kg q12h, 0.75 mg/kg q12h at age ≥ 75, 1 mg/kg OD at eGFR < 30; `enoxFreqForEgfr`). Sole eGFR source of truth. Case-insensitive sex normalization, `Math.round()` return, null-safe. Killip lookup uses direct string key. | None |
+| `clinical-engine.js` | GRACE score + eGFR (CKD-EPI 2021) + NSTE-ACS enoxaparin (`calcEnoxaparinACS`: 1 mg/kg q12h at any age, 1 mg/kg OD at eGFR < 30; `enoxFreqForEgfr`). The 0.75 mg/kg age ≥ 75 regimen is STEMI-only and is not applied. Sole eGFR source of truth. Case-insensitive sex normalization, `Math.round()` return, null-safe. Killip lookup uses direct string key. | None |
 | `anticoag-engine.js` | Heparin standalone dosing/titration engine. Exports `calcHeparinInitialDose`, `getHeparinTitration`, `HEPARIN_STANDALONE_PROTOCOLS`. | None |
 | `stroke-engine.js` | Stroke rt-PA thrombolytic dosing engine. Exports `calcRtpaDose` for 0.9 mg/kg and 0.6 mg/kg regimens. | None |
 | `stemi-engine.js` | STEMI TNK weight-bracket dosing engine. Exports `calcTNK`. | None |
@@ -248,8 +248,8 @@ Redirect script validates `order` slug against allow-list.
 
 ### Service Worker (`service-worker.js`)
 
-PWA offline cache. Code is network-first: navigations, HTML, JS, CSS and JSON are fetched with `cache: 'no-cache'` (Navigation Preload for navigations), written to the current cache, and fall back to the cache after 5 s or offline (query strings ignored, then the portal shell). This keeps a page and the engines it loads on the same deploy; cache-first code caused HTML/engine version skew. Fonts, images and PDFs stay cache-first, and only `docs/*` uses a Static Routing cache route. Precache fetches with `cache: 'reload'`.
-`CACHE_VERSION` is `er-hub-v119` and `CACHE_DATE` is `22/11/2569` — dynamically extracted by `index.html` and `shared/components.js` at runtime via `fetch()` and regex parsing, backed by `localStorage` (`er-hub-cached-version`) for cold-load offline resilience.
+PWA offline cache. Code is network-first: navigations, HTML, JS, CSS and JSON are fetched with `cache: 'no-cache'` (Navigation Preload for navigations), written to the current cache, and fall back to the cache after 5 s or offline (query strings ignored, then the portal shell). This keeps a page and the engines it loads on the same deploy only when `CACHE_VERSION` changes with each deploy and every code fetch completes within 5 s; a request that times out falls back to whatever the cache holds, which may be from an earlier deploy. Cache-first code caused HTML/engine version skew, which is why code is network-first. A failed `cache.put` is logged and the network response is still returned. Fonts, images and PDFs stay cache-first, and only `docs/*` uses a Static Routing cache route. Precache fetches with `cache: 'reload'`.
+`CACHE_VERSION` is `er-hub-v122` and `CACHE_DATE` is `22/11/2569` — dynamically extracted by `index.html` and `shared/components.js` at runtime via `fetch()` and regex parsing, backed by `localStorage` (`er-hub-cached-version`) for cold-load offline resilience.
 Precaches all HTML/CSS/JS + shared engines + ER NOTE templates + drip-calculator + nihss-v2.html + 512×512 app icon + source PDFs + 16 self-hosted WOFF2 font files in `shared/fonts/` (zero external CDN dependencies).
 Per-asset retry with exponential backoff via `fetchWithRetry()`. Install is atomic: if any asset still fails, the partial cache is deleted and install aborts so the previous complete cache stays active. Includes Static Routing API progressive enhancement (Chromium 123+); route patterns are resolved against `registration.scope` so they match under a sub-path deployment. A cache miss while offline returns a synthetic `503` response instead of an undefined `respondWith()` value.
 
@@ -296,7 +296,7 @@ User enters history, exam, investigations, scoring variables
 | Patient form state | Client-only. Resets on navigation/tab close. No server sync. |
 | Calculation engines | Pure functional. Deterministic. Loaded from local disk. |
 | PWA asset cache | Service worker registered on `index.html`. Network-first for navigation, cache-first for assets. Cache version bumped on deploy. Per-asset retry on install failure. |
-| ER NOTE drafts | `localStorage` persistence. Schema v2 registry. v1 keys auto-migrate. Purged by `purgeExpiredDrafts()` on page load and on tab re-focus once `updatedAt` is ≥ 24 h old (or future-dated); orphan draft keys absent from the registry are removed too. Never uploaded. |
+| ER NOTE drafts | `localStorage` persistence. Schema v2 registry. v1 keys auto-migrate. Purged by `purgeExpiredDrafts()` on page load and on tab re-focus once `updatedAt` is ≥ 24 h old (or future-dated); orphan draft keys absent from the registry are removed too. The registry is re-read before each destructive step so drafts another tab adds mid-purge survive. v1 drafts without a stored edit time are discarded at migration rather than given a fresh window. Never uploaded. |
 
 ## Clinical & System Warnings
 
@@ -314,7 +314,7 @@ User enters history, exam, investigations, scoring variables
 
 ## Test Suite Architecture & Quality Guardrails
 
-The ER-Hub test suite is designed with high signal-to-noise ratio and zero clinical false-alarms. It comprises **30 test files** (613 tests total) executing via Node.js native test runner (`node:test`):
+The ER-Hub test suite is designed with high signal-to-noise ratio and zero clinical false-alarms. It comprises **32 test files** (665 tests total) executing via Node.js native test runner (`node:test`):
 
 ```bash
 node --test tests/*.test.js

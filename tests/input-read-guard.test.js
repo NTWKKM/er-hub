@@ -25,7 +25,9 @@ const ALLOWLIST = {
 
 const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const LOOKUP = id => `(?:\\$|(?:[\\w$]+\\.)?getElementById)\\(\\s*['"\`]${esc(id)}['"\`]\\s*\\)`;
-const READ = '\\??\\.(?:value|valueAsNumber|selectedIndex|options)\\b';
+// A property access counts as a read unless it is the target of a simple assignment
+// (`x.value = ...` only writes); `==` and `===` comparisons still count as reads.
+const READ = '\\??\\.(?:value|valueAsNumber|selectedIndex|options)\\b(?!\\s*=(?!=))';
 
 function isValueRead(js, id) {
     if (new RegExp(LOOKUP(id) + READ).test(js)) return true;
@@ -36,6 +38,22 @@ function isValueRead(js, id) {
     }
     return false;
 }
+
+describe('isValueRead fixtures', () => {
+    test('rejects write-only accesses', () => {
+        assert.equal(isValueRead(`$('w').value = '';`, 'w'), false);
+        assert.equal(isValueRead(`document.getElementById('w').value = 5;`, 'w'), false);
+        assert.equal(isValueRead(`const el = $('w'); el.value = '';`, 'w'), false);
+        assert.equal(isValueRead(`$('s').selectedIndex = 0;`, 's'), false);
+    });
+    test('accepts reads and comparisons', () => {
+        assert.equal(isValueRead(`const w = parseFloat($('w').value);`, 'w'), true);
+        assert.equal(isValueRead(`if ($('w').value === '') return;`, 'w'), true);
+        assert.equal(isValueRead(`if ($('w').value == 0) return;`, 'w'), true);
+        assert.equal(isValueRead(`const el = $('w'); el.value = ''; use(el.value);`, 'w'), true);
+        assert.equal(isValueRead(`const n = $('s')?.options[$('s').selectedIndex];`, 's'), true);
+    });
+});
 
 describe('Order pages: every form control value is consumed by script', () => {
     for (const rel of PAGES) {

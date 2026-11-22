@@ -146,9 +146,9 @@ const BP_PROTOCOLS = {
         steps: [
             'Test dose 1 mg IV นาน > 1 min',
             '5–10 mg IV นาน 2 min, วัด BP ใน 20 min',
-            'ถ้ายังสูง → 10 mg IV ซ้ำ แล้วเปลี่ยนเป็น Labetalol'
+            'ถ้ายังสูง → 5–10 mg IV ซ้ำ โดยยอดรวมทั้งหมด (รวม test dose) ไม่เกิน 20 mg (เช่น 1 + 5 + 10 mg) แล้วเปลี่ยนเป็น Labetalol'
         ],
-        maxTotal: '20 mg',
+        maxTotal: '20 mg (รวม test dose)',
         note: 'ถ้าครบ max → เปลี่ยนเป็น Labetalol หรือ consult specialist',
         contraindications: 'หลีกเลี่ยงในผู้ป่วยโรคหลอดเลือดหัวใจตีบเฉียบพลัน (ACS) เนื่องจากเกิด reflex tachycardia'
     },
@@ -157,7 +157,7 @@ const BP_PROTOCOLS = {
         steps: [
             '20 mg IV (ให้ช้า ≥2 min)',
             'ถ้าไม่ตอบสนองใน 10 min → 40 mg IV',
-            'ถ้ายังไม่ตอบสนอง → 80 mg IV, แล้ว Hydralazine 10 mg IV'
+            'ถ้ายังไม่ตอบสนอง → 80 mg IV, วัด BP ซ้ำใน 10 min; ให้ Hydralazine 10 mg IV เฉพาะเมื่อ SBP ยัง ≥ 160 หรือ DBP ≥ 110 mmHg'
         ],
         maxTotal: '300 mg',
         note: 'ถ้าครบ max → เปลี่ยนเป็น Hydralazine หรือ consult specialist',
@@ -168,7 +168,7 @@ const BP_PROTOCOLS = {
         steps: [
             '10 mg oral (Immediate-release), วัด BP ใน 20 min',
             'ถ้ายังสูง → 20 mg oral, วัด BP ใน 20 min',
-            'ถ้ายังสูง → 20 mg oral, แล้ว Labetalol 20 mg IV'
+            'ถ้ายังสูง → 20 mg oral, วัด BP ใน 20 min; ให้ Labetalol 20 mg IV เฉพาะเมื่อ BP ยัง ≥ 160/110 mmHg'
         ],
         maxTotal: '180 mg/day',
         note: 'ห้ามเจาะแคปซูลหรืออมใต้ลิ้น',
@@ -416,7 +416,9 @@ function calcMgSO4RecurrentBolus() {
         diluentVol,     // 16 mL NSS to dilute
         rateNote: 'Slow IV push ≤1 g/min (ให้ช้าๆ อย่างน้อย 2-5 นาที)',
         cpgHalfDoseNote: '10% MgSO4 2-4 g (half dose) IV push slowly',
-        infusionStepUp: 'เพิ่ม maintenance เป็น 1.5 g/h หลัง bolus',
+        // Applies only when maintenance is currently 1 g/h; never a reduction for patients at >= 1.5 g/h.
+        infusionStepUp: 'เพิ่ม maintenance เป็น 1.5 g/h หลัง bolus (เฉพาะผู้ที่ได้ 1 g/h อยู่)',
+        infusionStepUpFromG_hr: 1,
         secondLine: 'ถ้ายังชักหลัง bolus 2 ครั้ง → Benzodiazepine หรือ anticonvulsant อื่น: Phenytoin 125 mg IV (เพิ่มได้ถึง 250 mg, ฉีดนาน 3–5 min), Diazepam 5 mg IV, หรือ Midazolam 5–10 mg IV/IM (RTCOG 2569)'
     };
 }

@@ -58,10 +58,9 @@ const CLINICAL_ENGINE = {
         return { score, bd: { ageP, hrP, sbpP, crP, kilP, arrP, stP, mkP } };
     },
 
-    // NSTE-ACS enoxaparin (ESC 2023 / ACC/AHA 2025):
-    //   standard 1 mg/kg SC q12h; age >= 75 → 0.75 mg/kg q12h (no IV bolus);
+    // NSTE-ACS enoxaparin (ESC 2023 / ACC/AHA 2025, product label for UA/NSTEMI):
+    //   1 mg/kg SC q12h at any age (the 0.75 mg/kg age >= 75 regimen applies to STEMI only);
     //   eGFR < 30 → 1 mg/kg SC once daily. Thai pre-filled syringes are 0.4 / 0.6 mL.
-    ENOX_ELDERLY_AGE: 75,
     ENOX_OD_EGFR: 30,
 
     enoxFreqForEgfr: function(egfr) {
@@ -69,12 +68,11 @@ const CLINICAL_ENGINE = {
         return Number(egfr) < this.ENOX_OD_EGFR ? 'q24h' : 'q12h';
     },
 
-    calcEnoxaparinACS: function({ weight, age, freq }) {
+    calcEnoxaparinACS: function({ weight, freq }) {
         const f = freq === 'q24h' ? 'q24h' : 'q12h';
-        const elderly = Number(age) >= this.ENOX_ELDERLY_AGE;
-        const mgPerKg = (f === 'q12h' && elderly) ? 0.75 : 1.0;
+        const mgPerKg = 1.0;
         const dose = weight > 0 ? Math.round(weight * mgPerKg) : null;
-        return { mgPerKg, dose, freq: f, elderlyAdjusted: mgPerKg === 0.75 };
+        return { mgPerKg, dose, freq: f };
     },
 
     riskLevel: function(graceScore, anyVH, anyH1) {

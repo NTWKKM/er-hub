@@ -67,6 +67,52 @@ describe('ER NOTE draft retention (PHI: HN must not persist > 24 h)', () => {
     });
 });
 
+describe('ER NOTE v1 migration and concurrent purge', () => {
+    test('v1 draft with no edit time is discarded, not given a fresh 24 h window', () => {
+        const win = loadPage('tools/er-note/index.html', {
+            'ernote-draft-sepsis': JSON.stringify({ 'ernote-hn': '888' })
+        });
+        const ls = win.localStorage;
+        assert.equal(ls.getItem('ernote-draft-sepsis'), null);
+        const reg = JSON.parse(ls.getItem('ernote-registry') || '{"drafts":[]}');
+        assert.equal(reg.drafts.length, 0);
+    });
+
+    test('v1 draft keeps a stored edit time and expires on it', () => {
+        const edited = Date.now() - 60 * 1000;
+        const win = loadPage('tools/er-note/index.html', {
+            'ernote-draft-trauma': JSON.stringify({ 'ernote-hn': '999', savedAt: edited })
+        });
+        const reg = JSON.parse(win.localStorage.getItem('ernote-registry'));
+        assert.equal(reg.drafts.length, 1);
+        assert.equal(reg.drafts[0].updatedAt, edited);
+        assert.equal(win.ErNote.registry.purgeExpired(edited + DAY), 2);
+    });
+
+    test('a draft another tab adds during the purge keeps its registry entry and content', () => {
+        const win = loadPage('tools/er-note/index.html', {});
+        const ls = win.localStorage;
+        const now = Date.now();
+        const added = { id: 'd_new_1', template: 'sepsis', hn: '123', cc: '', updatedAt: now };
+        ls.setItem('ernote-registry', JSON.stringify({ version: 2, drafts: [] }));
+        ls.setItem('ernote-draft-sepsis-d_new_1', '{}');   // content written, registry not yet read
+        // Simulate the other tab registering the draft after the purge's first registry read
+        const proto = Object.getPrototypeOf(ls);
+        const realGet = proto.getItem;
+        let reads = 0;
+        proto.getItem = function (k) {
+            if (k === 'ernote-registry' && ++reads === 2) {
+                realGet.call(this, k);
+                ls.setItem('ernote-registry', JSON.stringify({ version: 2, drafts: [added] }));
+            }
+            return realGet.call(this, k);
+        };
+        try { win.ErNote.registry.purgeExpired(now); } finally { proto.getItem = realGet; }
+        assert.notEqual(ls.getItem('ernote-draft-sepsis-d_new_1'), null);
+        assert.deepEqual(JSON.parse(ls.getItem('ernote-registry')).drafts.map(d => d.id), ['d_new_1']);
+    });
+});
+
 describe('Home Medication draft retention', () => {
     const key = 'er-hub-home-med-draft';
 
