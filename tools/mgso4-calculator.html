@@ -5,812 +5,350 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <meta name="referrer" content="no-referrer">
-    <title>MgSO4 Calculator (Pre-eclampsia/Eclampsia) — ED MNRH</title>
+    <meta name="description" content="MgSO4 and blood pressure orders for severe preeclampsia and eclampsia, following the MNRH standing order and RTCOG guideline 2569.">
+    <title>MgSO4 Calculator (Pre-eclampsia/Eclampsia) | ED MNRH</title>
     <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
     <link rel="stylesheet" href="../shared/base.css">
+    <link rel="stylesheet" href="screen/tool-screen.css">
     <style>
-        :root {
-            --ob-primary: #7c3aed;
-            --ob-primary-dark: #5b21b6;
-            --ob-bg-light: #f5f3ff;
-            --ob-border: #ddd6fe;
-            --surface-bg: #f8fafc;
-            --card-border: #e2e8f0;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --alert-red-bg: #fef2f2;
-            --alert-red-border: #fca5a5;
-            --alert-red-text: #991b1b;
-            --alert-amber-bg: #fffbe6;
-            --alert-amber-border: #fcd34d;
-            --alert-amber-text: #92400e;
-        }
-
-        body.theme-neutral {
-            background-color: var(--paper);
-            color: var(--text-main);
-            font-family: var(--font-ui), 'Sarabun', sans-serif;
-            padding: 16px;
-        }
-
-        .container {
-            max-width: 1040px;
-            margin: 0 auto;
-            background: #ffffff;
-            border: 1px solid var(--rule);
-            border-radius: 8px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-            padding: 20px 24px;
-        }
-
-        /* ══ Section Headers ══ */
-        .section-header {
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--ob-primary-dark);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            margin: 16px 0 10px 0;
-            padding-bottom: 6px;
-            border-bottom: 2px solid #f1f5f9;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .section-header:first-child {
-            margin-top: 0;
-        }
-
-        .section-title-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .badge-treatment {
-            font-size: 11px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            background: var(--alert-red-bg);
-            color: var(--alert-red-text);
-            border: 1px solid var(--alert-red-border);
-        }
-
-        /* ══ Safety Alert Banners ══ */
-        .safety-banner {
-            background: #fef2f2;
-            border: 1.5px solid #fca5a5;
-            color: #991b1b;
-            border-radius: 8px;
-            padding: 12px 14px;
-            margin-bottom: 14px;
-            font-size: 12.5px;
-            line-height: 1.5;
-        }
-
-        .safety-banner strong {
-            color: #7f1d1d;
-        }
-
-        .alt-med-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            margin-top: 8px;
-        }
-
-        .alt-med-item {
-            background: #ffffff;
-            border: 1px solid #fecaca;
-            border-radius: 4px;
-            padding: 6px 10px;
-            font-size: 12px;
-        }
-
-        /* ══ Collapsible Toggles ══ */
-        .collapse-toggle {
-            cursor: pointer;
-            user-select: none;
-            transition: color 0.15s ease;
-        }
-
-        .collapse-toggle:hover {
-            color: var(--ob-primary);
-        }
-
-        .collapse-toggle .toggle-chevron {
-            display: inline-block;
-            transition: transform 0.2s ease;
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .collapse-toggle[aria-expanded="false"] .toggle-chevron {
-            transform: rotate(-90deg);
-        }
-
-        .collapsible-body {
-            overflow: hidden;
-            transition: max-height 0.25s ease-in-out, opacity 0.2s ease-in-out;
-            max-height: 1800px;
-            opacity: 1;
-        }
-
-        .collapsible-body.collapsed {
-            max-height: 0;
-            opacity: 0;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* ══ Compact Grids & Cards ══ */
-        .grid-2col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .grid-3col {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-        }
-
-        .compact-card {
-            background: var(--surface-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
-            padding: 12px 14px;
-        }
-
-        .compact-card.highlight {
-            background: var(--ob-bg-light);
-            border-color: var(--ob-border);
-        }
-
-        .compact-card-title {
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* ══ Primary Dosing Bar ══ */
-        .primary-dose-banner {
-            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
-            color: #ffffff;
-            border-radius: 10px;
-            padding: 14px 18px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            box-shadow: 0 3px 10px rgba(124, 58, 237, 0.2);
-        }
-
-        .primary-dose-main {
-            display: flex;
-            align-items: baseline;
-            gap: 10px;
-        }
-
-        .primary-dose-val {
-            font-family: 'Inter Tight', sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
-            line-height: 1;
-        }
-
-        .primary-dose-lbl {
-            font-size: 13.5px;
-            font-weight: 500;
-            opacity: 0.9;
-        }
-
-        .primary-dose-sub {
-            font-size: 12.5px;
-            text-align: right;
-            opacity: 0.95;
-            line-height: 1.4;
-        }
-
-        /* ══ Tables ══ */
-        .compact-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12.5px;
-            margin-top: 6px;
-        }
-
-        .compact-table th {
-            background: #f1f5f9;
-            padding: 6px 10px;
-            text-align: left;
-            font-weight: 700;
-            color: #475569;
-            font-size: 11.5px;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-            border-bottom: 1.5px solid #e2e8f0;
-        }
-
-        .compact-table td {
-            padding: 6px 10px;
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: top;
-            line-height: 1.4;
-        }
-
-        .compact-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .conc-badge {
-            display: inline-block;
-            font-weight: 700;
-            font-size: 11px;
-            padding: 1px 6px;
-            border-radius: 3px;
-        }
-
-        .conc-50 { background: #fef3c7; color: #92400e; }
-        .conc-10 { background: #dbeafe; color: #1e40af; }
-
-        .rate-badge {
-            display: inline-block;
-            font-weight: 700;
-            font-size: 12px;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .rate-1g { background: #dbeafe; color: #1e40af; }
-        .rate-2g { background: #fef3c7; color: #92400e; }
-
-        /* ══ Toxicity Status ══ */
-        .tox-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .tox-pill {
-            flex: 1;
-            background: #ffffff;
-            border: 1px solid var(--card-border);
-            border-radius: 6px;
-            padding: 8px 12px;
-            text-align: center;
-        }
-
-        .tox-pill-lbl {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .tox-pill-val {
-            font-size: 13px;
-            font-weight: 700;
-            color: #166534;
-            margin-top: 2px;
-        }
-
-        .tox-pill-sub {
-            font-size: 10.5px;
-            color: #dc2626;
-            margin-top: 2px;
-        }
-
-        .antidote-banner {
-            background: var(--alert-amber-bg);
-            border: 1px solid var(--alert-amber-border);
-            color: var(--alert-amber-text);
-            border-radius: 6px;
-            padding: 8px 12px;
-            font-size: 12px;
-            line-height: 1.4;
-        }
-
-        /* ══ Diagnostic Cards ══ */
-        .dx-item {
-            font-size: 12.5px;
-            line-height: 1.4;
-            margin-bottom: 4px;
-            color: var(--text-main);
-        }
-
-        .dx-item:last-child { margin-bottom: 0; }
-
-        /* ══ Lab Grid ══ */
-        .lab-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-        }
-
-        .lab-item {
-            font-size: 12px;
-            padding: 4px 8px;
-            background: var(--surface-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 4px;
-        }
-
-        /* ══ Responsive Layout ══ */
-        @media (max-width: 820px) {
-            .grid-2col, .grid-3col, .alt-med-list {
-                grid-template-columns: 1fr;
-            }
-            .primary-dose-banner {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
-            }
-            .primary-dose-sub {
-                text-align: left;
-            }
-            .tox-bar {
-                flex-direction: column;
-            }
-            .lab-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
+        .load-figure { display: grid; gap: var(--space-2xs); }
+        .so-grid { display: grid; gap: var(--space-md); }
+        .uo-out { font-weight: 700; font-variant-numeric: tabular-nums; }
+        .ladder > li::before { color: var(--color-error); }
     </style>
 </head>
-<body class="theme-neutral">
-<div class="container">
+<body class="tool-screen" data-screen="ob">
 
-    <!-- ══════════════ SAFETY & CONTRAINDICATION CALLOUT ══════════════ -->
-    <div class="safety-banner" id="safety-alert-container">
-        <div style="font-weight: 700; font-size: 13px; color: #991b1b; margin-bottom: 4px;">
-            ⛔ ABSOLUTE CONTRAINDICATION: Myasthenia Gravis
-        </div>
+<main class="screen">
+
+    <header class="screen-head">
         <div>
-            ห้ามใช้ MgSO4 เด็ดขาดในผู้ป่วย <strong>Myasthenia Gravis</strong> (แมกนีเซียมยับยั้ง Pre-synaptic Acetylcholine release → Respiratory failure เฉียบพลัน)
+            <h1>Severe preeclampsia: MgSO4 and BP orders</h1>
+            <p class="source" id="so-source">MNRH Standing Order 2569, RTCOG CPG OB 69-046 (Update 2569)</p>
         </div>
-        <div style="margin-top: 6px; font-weight: 600;">ทางเลือกเมื่อมีข้อห้ามใช้ MgSO4 (Alternative Anticonvulsants):</div>
-        <div class="alt-med-list" id="alt-med-container">
-            <!-- Dynamically populated from ALTERNATIVE_ANTICONVULSANTS -->
-        </div>
-        <div style="margin-top: 8px; font-size: 11.5px; color: #7f1d1d; border-top: 1px dashed #fca5a5; padding-top: 6px;">
-            ⚠️ <strong>Renal Impairment Warning:</strong> MgSO4 ขับออกทางไต 100% หาก Cr &gt; 1.1 mg/dL หรือ oliguria ให้ลด Loading dose เหลือ <strong>2 g IV bolus</strong>, ตรวจ Serum Mg, และ Hold/ลด Maintenance dose
-        </div>
+        <span class="tag is-accent">Prophylaxis and treatment</span>
+    </header>
+
+    <!-- Contraindication -->
+    <section class="callout is-danger" id="safety-alert-container" aria-labelledby="mg-ci-title">
+        <h2 class="callout-title" id="mg-ci-title">Myasthenia gravis: ห้ามใช้ MgSO4</h2>
+        <p>แมกนีเซียมยับยั้ง presynaptic acetylcholine release ทำให้เกิด respiratory failure เฉียบพลัน ให้ใช้ anticonvulsant อื่นแทน:</p>
+        <ul class="list" id="alt-med-container" style="margin-top: var(--space-2xs);"></ul>
+    </section>
+
+    <!-- Signature: the standing order sheet -->
+    <div class="split-wide">
+        <section class="panel" aria-labelledby="so-orders-title">
+            <div class="panel-head">
+                <h2 id="so-orders-title">MgSO4 orders</h2>
+                <span class="meta">Admit LR, NPO, retained Foley catheter</span>
+            </div>
+
+            <ol class="steps">
+                <li>
+                    <div class="load-figure">
+                        <span class="step-title">Loading dose</span>
+                        <div class="figure-row">
+                            <span class="figure-big" id="load-dose-val">4<span class="unit">g IV</span></span>
+                            <span class="figure-label" id="load-dose-sub"></span>
+                        </div>
+                        <p class="step-body" id="load-dose-mix"></p>
+                    </div>
+                </li>
+                <li>
+                    <div class="so-grid">
+                        <div>
+                            <span class="step-title">Maintenance</span>
+                            <p class="step-body" id="maint-mix"></p>
+                        </div>
+                        <div class="rate-options">
+                            <div class="rate-option is-active" id="rate-2g">
+                                <span class="figure-mid" id="rate-2g-val"></span>
+                                <span class="small" id="rate-2g-lbl"></span>
+                            </div>
+                            <div class="rate-option" id="rate-1g">
+                                <span class="figure-mid" id="rate-1g-val"></span>
+                                <span class="small" id="rate-1g-lbl"></span>
+                            </div>
+                        </div>
+                        <fieldset style="border: 0; margin: 0; padding: 0;">
+                            <legend class="field-label">ใช้ 1 g/h ถ้ามีข้อใดข้อหนึ่ง</legend>
+                            <div id="reduce-criteria"></div>
+                        </fieldset>
+                        <p class="small muted" id="maint-actual"></p>
+                        <p class="small muted" id="maint-duration"></p>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                        <span class="step-title">เตรียมไว้ข้างเตียง</span>
+                        <p class="step-body" id="bedside-list"></p>
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+        <section class="panel" aria-labelledby="monitor-title">
+            <div class="panel-head">
+                <h2 id="monitor-title">Monitoring</h2>
+                <span class="meta">แจ้งแพทย์เมื่อ</span>
+            </div>
+            <div class="field" style="margin-bottom: var(--space-sm);">
+                <label for="ob-weight">น้ำหนักผู้ป่วย (kg) สำหรับเกณฑ์ urine output</label>
+                <input type="number" id="ob-weight" min="30" max="200" step="0.5" inputmode="decimal" placeholder="เช่น 65">
+                <span class="field-hint" id="uo-threshold" aria-live="polite">ใส่น้ำหนักเพื่อคำนวณ 0.5 mL/kg/h</span>
+            </div>
+            <div class="table-wrap">
+                <table class="data">
+                    <thead><tr><th scope="col">Monitor</th><th scope="col" class="num">ทุก</th><th scope="col">Notify ถ้า</th></tr></thead>
+                    <tbody id="monitor-body"></tbody>
+                </table>
+            </div>
+            <div class="callout is-warn" id="antidote-banner-body" style="margin-top: var(--space-md);"></div>
+        </section>
     </div>
 
-    <!-- ══════════════ 1. LOADING DOSE (Always Expanded) ══════════════ -->
-    <div class="primary-dose-banner">
-        <div class="primary-dose-main">
-            <span class="primary-dose-val" id="load-dose-val">4 g IV</span>
-            <span class="primary-dose-lbl">Loading Dose (MgSO4)</span>
+    <!-- BP control -->
+    <section class="panel" aria-labelledby="bp-title">
+        <div class="panel-head">
+            <h2 id="bp-title">BP ≥ 160/110 mmHg</h2>
+            <span class="meta">ให้ยาเมื่อ BP สูงต่อเนื่อง ≥ 15 นาที</span>
         </div>
-        <div class="primary-dose-sub" id="load-dose-sub">
-            Infusion time: <strong>20-30 นาที</strong> (Rate ≤ 1 g/min)<br>
-            เตรียม Calcium gluconate ไว้พร้อมเสมอ
-        </div>
-    </div>
-
-    <div class="compact-card highlight" style="margin-bottom: 14px;">
-        <div class="compact-card-title">
-            <span>💉 วิธีเตรียม &amp; Pump Rate — MgSO4 Loading 4g</span>
-            <span class="badge-treatment">ทั้ง Prophylaxis &amp; Treatment</span>
-        </div>
-        <table class="compact-table">
-            <thead>
-                <tr>
-                    <th>ความเข้มข้น</th>
-                    <th>ปริมาณยา</th>
-                    <th>วิธีเตรียม</th>
-                    <th>Pump Rate</th>
-                </tr>
-            </thead>
-            <tbody id="loading-table-body">
-                <!-- Dynamically populated from ob-engine.js -->
-            </tbody>
-        </table>
-        <div id="textbook-ref-box" style="margin-top: 8px; font-size: 11.5px; color: #475569; background: #ffffff; padding: 6px 10px; border-radius: 4px; border: 1px solid #e2e8f0;">
-            <!-- Textbook reference variations -->
-        </div>
-    </div>
-
-    <!-- ══════════════ 2. MAINTENANCE IV DRIP (Always Expanded) ══════════════ -->
-    <h3 class="section-header">
-        <span class="section-title-group">💧 Maintenance IV Drip — Continuous Infusion (24 ชม. หลังคลอด / last seizure)</span>
-    </h3>
-
-    <div class="grid-2col" style="margin-bottom: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
-        <div class="compact-card">
-            <div class="compact-card-title" id="formula-a-title">สูตร A (Thai-CMU 10g / 1000 mL)</div>
-            <div id="formula-a-body" style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;"></div>
-        </div>
-        <div class="compact-card">
-            <div class="compact-card-title" id="formula-b-title">สูตร B (Concentrated 20g / 500 mL)</div>
-            <div id="formula-b-body" style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;"></div>
-        </div>
-        <div class="compact-card">
-            <div class="compact-card-title" id="formula-c-title">สูตร C (CPG 20g / 1000 mL)</div>
-            <div id="formula-c-body" style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;"></div>
-        </div>
-    </div>
-
-    <!-- IM Pritchard Card -->
-    <div class="compact-card" style="background: #fffbeb; border-color: #fcd34d; margin-bottom: 14px;">
-        <div class="compact-card-title" style="color: #92400e;">📌 IM Pritchard Regimen (กรณีไม่มี IV Pump / refer)</div>
-        <div id="im-regimen-body" style="font-size: 12px; color: #78350f; line-height: 1.5;"></div>
-    </div>
-
-    <!-- ══════════════ 3. TOXICITY MONITORING (Always Expanded) ══════════════ -->
-    <h3 class="section-header">
-        <span class="section-title-group">🔍 เฝ้าระวังพิษ MgSO4 (Toxicity Monitoring — ตรวจทุก 1-2 ชม.)</span>
-    </h3>
-
-    <div class="tox-bar">
-        <div class="tox-pill">
-            <div class="tox-pill-lbl">Deep Tendon Reflexes</div>
-            <div class="tox-pill-val">Present ✓</div>
-            <div class="tox-pill-sub">Absent = หยุดยาทันที</div>
-        </div>
-        <div class="tox-pill">
-            <div class="tox-pill-lbl">Respiratory Rate</div>
-            <div class="tox-pill-val">≥ 12 /min ✓</div>
-            <div class="tox-pill-sub">&lt; 12/min = หยุดยาทันที</div>
-        </div>
-        <div class="tox-pill">
-            <div class="tox-pill-lbl">Urine Output</div>
-            <div class="tox-pill-val">≥ 25 mL/hr ✓</div>
-            <div class="tox-pill-sub">&lt; 25 mL/hr = หยุดยา</div>
-        </div>
-    </div>
-
-    <div class="antidote-banner" id="antidote-banner-body" style="margin-bottom: 16px;">
-        <!-- Dynamically populated antidote note -->
-    </div>
-
-    <!-- ══════════════ 4. DIAGNOSTIC CRITERIA (Default Collapsed) ══════════════ -->
-    <h3 class="section-header collapse-toggle" role="button" aria-expanded="false" tabindex="0" id="dx-toggle">
-        <span class="section-title-group">
-            <span class="toggle-chevron">▼</span>
-            เกณฑ์วินิจฉัย — Diagnostic Criteria (Pre-eclampsia / Eclampsia)
-        </span>
-    </h3>
-    <div class="collapsible-body collapsed" id="dx-body">
-        <div class="grid-3col" style="margin-bottom: 14px;" id="dx-grid-container">
-            <!-- Dynamically populated from ob-engine.js -->
-        </div>
-    </div>
-
-    <!-- ══════════════ 5. RECURRENT SEIZURE (Default Collapsed) ══════════════ -->
-    <h3 class="section-header collapse-toggle" role="button" aria-expanded="false" tabindex="0" id="recurrent-toggle">
-        <span class="section-title-group">
-            <span class="toggle-chevron">▼</span>
-            ⚡ Recurrent Seizure — ชักซ้ำหลัง Loading Dose (MgSO4 2g IV)
-        </span>
-    </h3>
-    <div class="collapsible-body collapsed" id="recurrent-body">
-        <div class="compact-card" style="margin-bottom: 14px;">
-            <div class="compact-card-title">MgSO4 2g IV Slow Push (≤ 1 g/min อย่างน้อย 2 นาที)</div>
-            <table class="compact-table" style="margin-bottom: 10px;">
-                <thead>
-                    <tr>
-                        <th>ความเข้มข้น</th>
-                        <th>ปริมาณ</th>
-                        <th>วิธีเตรียม</th>
-                    </tr>
-                </thead>
-                <tbody id="recurrent-table-body">
-                    <!-- Dynamically populated -->
-                </tbody>
-            </table>
-            <div class="antidote-banner" style="background: #fef2f2; border-color: #fca5a5; color: #991b1b;" id="recurrent-2ndline-note">
-                <!-- 2nd line note -->
+        <div class="split">
+            <div>
+                <ol class="steps ladder" id="bp-ladder"></ol>
+                <p class="callout small" id="labetalol-ci" style="margin-top: var(--space-sm);"></p>
+            </div>
+            <div class="so-grid">
+                <div>
+                    <h3 style="margin-bottom: var(--space-xs);">BP &lt; 160/110: วัดซ้ำ</h3>
+                    <div class="table-wrap">
+                        <table class="data">
+                            <thead><tr><th scope="col">ความถี่</th><th scope="col">จำนวนครั้ง</th></tr></thead>
+                            <tbody id="bp-schedule"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="callout is-danger small">
+                    <p class="callout-title">ห้ามใช้ในครรภ์</p>
+                    <p>ACE inhibitors, ARBs, direct renin inhibitors, sodium nitroprusside (fetal renal failure, oligohydramnios)</p>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- ══════════════ 6. BP CONTROL (Default Collapsed) ══════════════ -->
-    <h3 class="section-header collapse-toggle" role="button" aria-expanded="false" tabindex="0" id="bp-toggle">
-        <span class="section-title-group">
-            <span class="toggle-chevron">▼</span>
-            🩺 BP Control — Severe Range (≥ 160/110 mmHg, เป้าหมาย 140-150 / 90-100 mmHg)
-        </span>
-    </h3>
-    <div class="collapsible-body collapsed" id="bp-body">
-        <div class="compact-card" style="margin-bottom: 14px;">
-            <table class="compact-table" style="margin-bottom: 10px;">
-                <thead>
-                    <tr>
-                        <th>ยา</th>
-                        <th>Dose Escalation</th>
-                        <th>Max Total</th>
-                        <th>ข้อระวัง / ข้อห้ามใช้</th>
-                    </tr>
-                </thead>
-                <tbody id="bp-table-body">
-                    <!-- Dynamically populated -->
-                </tbody>
-            </table>
-            <div class="safety-banner" style="margin: 0; background: #fff5f5; border-color: #feb2b2; color: #9b2c2c;">
-                <strong>⛔ Absolute Contraindications in Pregnancy:</strong> ACE inhibitors, ARBs, Direct Renin Inhibitors, Sodium Nitroprusside (เสี่ยงทารกเสียชีวิต / Fetal renal failure / Oligohydramnios)
+    <!-- Recurrent seizure -->
+    <details class="disclosure" id="recurrent-details">
+        <summary>ชักซ้ำระหว่างได้ MgSO4<span class="summary-meta">MgSO4 2 g IV</span></summary>
+        <div class="disclosure-body">
+            <div class="table-wrap">
+                <table class="data">
+                    <thead><tr><th scope="col">ความเข้มข้น</th><th scope="col">ปริมาณ</th><th scope="col">วิธีเตรียม</th></tr></thead>
+                    <tbody id="recurrent-table-body"></tbody>
+                </table>
+            </div>
+            <p class="small" id="recurrent-stepup"></p>
+            <div class="callout is-danger small" id="recurrent-2ndline-note"></div>
+        </div>
+    </details>
+
+    <!-- Second-line BP infusions -->
+    <details class="disclosure">
+        <summary>Second-line antihypertensive infusions<span class="summary-meta">Nicardipine, labetalol, hydralazine</span></summary>
+        <div class="disclosure-body">
+            <div class="table-wrap">
+                <table class="data">
+                    <thead><tr><th scope="col">ยา</th><th scope="col">วิธีผสม</th><th scope="col">Rate</th><th scope="col">Max</th></tr></thead>
+                    <tbody id="bp-second-line"></tbody>
+                </table>
+            </div>
+            <h3>First-line ทางเลือก (RTCOG)</h3>
+            <div class="table-wrap">
+                <table class="data">
+                    <thead><tr><th scope="col">ยา</th><th scope="col">Dose escalation</th><th scope="col">Max total</th><th scope="col">ข้อระวัง</th></tr></thead>
+                    <tbody id="bp-table-body"></tbody>
+                </table>
             </div>
         </div>
-    </div>
+    </details>
 
-    <!-- ══════════════ 7. LABOUR ROOM CARE & LAB ORDERS (Default Collapsed) ══════════════ -->
-    <h3 class="section-header collapse-toggle" role="button" aria-expanded="false" tabindex="0" id="lab-toggle">
-        <span class="section-title-group">
-            <span class="toggle-chevron">▼</span>
-            🏥 Labour Room Care &amp; Lab Orders — คำสั่งการรักษา &amp; การตรวจทางห้องปฏิบัติการ
-        </span>
-    </h3>
-    <div class="collapsible-body collapsed" id="lab-body">
-        <div class="compact-card" style="margin-bottom: 10px; background: #f0fdf4; border-color: #bbf7d0;">
-            <div class="compact-card-title" style="color: #166534;">📋 Labour Room Nursing Care &amp; Monitoring Orders</div>
-            <div style="font-size: 12.5px; color: #14532d; line-height: 1.6;">
-                • <strong>Admit:</strong> ห้องคลอด (Labour Room) · <strong>Activity:</strong> Absolute bed rest<br>
-                • <strong>Catheter:</strong> Retain Foley’s catheter<br>
-                • <strong>Record:</strong> Vital signs &amp; Urine output <strong>ทุก 1 ชม.</strong> · Deep Tendon Reflexes (DTR) <strong>ทุก 2 ชม.</strong><br>
-                • <strong>Toxicity Criteria:</strong> ถ้า RR &lt; 14/min (หรือ &lt;12), DTR หายไป, หรือ Urine output &lt; 30 mL/hr (หรือ &lt;25) → ประเมิน Mg Toxicity &amp; ให้ Calcium gluconate 10% 10 mL IV push
+    <!-- Labs and criteria -->
+    <details class="disclosure">
+        <summary>Labs และเกณฑ์วินิจฉัย<span class="summary-meta">Severe features</span></summary>
+        <div class="disclosure-body">
+            <div>
+                <h3 style="margin-bottom: var(--space-xs);">Lab orders</h3>
+                <ul class="check-list" id="lab-list"></ul>
             </div>
+            <div class="split" id="dx-grid-container"></div>
         </div>
-        <div class="lab-grid" style="margin-bottom: 14px;">
-            <div class="lab-item">☐ CBC &amp; Platelet count</div>
-            <div class="lab-item">☐ AST / ALT (LFT)</div>
-            <div class="lab-item">☐ Creatinine &amp; Uric acid</div>
-            <div class="lab-item">☐ Urine protein / Cr ratio</div>
-            <div class="lab-item">☐ Coagulation (PT/INR, aPTT)</div>
-            <div class="lab-item">☐ LDH &amp; Peripheral smear</div>
-            <div class="lab-item">☐ Serum Mg (ถ้า Cr &gt; 1.0)</div>
-            <div class="lab-item">☐ Type &amp; Screen &amp; NST</div>
-        </div>
-    </div>
-    <div class="reference-card no-print" style="margin-top:20px; padding:14px 18px; background:#f8f7f4; border:1px solid #d8d4c8; border-radius:8px; font-size:12.5px; color:#4a4a4a;">
-        <details>
-            <summary style="font-weight:700; cursor:pointer; color:#1a1a1a; display:flex; align-items:center; justify-content:space-between;">
-                <span>📚 ข้อมูลอ้างอิงและแนวทางเวชปฏิบัติ (ACOG 2024 / WHO Eclampsia Guidelines)</span>
-                <span style="font-size:11px; color:#737373;">ACOG Practice Bulletin 222 / Magpie Trial</span>
-            </summary>
-            <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #d8d4c8; line-height:1.6;">
-                <ul style="margin:0; padding-left:18px;">
-                    <li><strong>ACOG Practice Bulletin 222 (2020 / Reaffirmed 2024):</strong> Gestational Hypertension and Preeclampsia (Obstet Gynecol. 2020;135(6):e237-e260) — Magnesium Sulfate is drug of choice for eclampsia prevention and treatment (Magpie Trial: Lancet 2002;359:1877-1890).</li>
-                    <li><strong>Zuspan IV Regimen:</strong> Loading dose 4 g IV over 15-20 min, then Maintenance 1 g/hr (or 1-2 g/hr) continuous IV infusion for 24 hours postpartum or post-last seizure.</li>
-                    <li><strong>Pritchard IM Regimen:</strong> Loading 4 g IV + 10 g deep IM (5 g in each buttock with 1 mL 2% lidocaine), then 5 g IM q4h in alternating buttocks.</li>
-                    <li><strong>Toxicity &amp; Antidote:</strong> Monitor Patellar reflex (lost at 8-10 mg/dL), RR &ge;12/min (respiratory arrest &gt;12 mg/dL), and Urine Output &ge;25-30 mL/hr. Antidote: 10% Calcium Gluconate 10 mL (1 g) IV push over 3-5 minutes.</li>
-                </ul>
-            </div>
-        </details>
-    </div>
-</div>
+    </details>
 
-<!-- ══════════════ SCRIPTS ══════════════ -->
+    <!-- Serum Mg -->
+    <details class="disclosure">
+        <summary>ระดับ serum Mg และ antidote<span class="summary-meta">แนวทาง 2569</span></summary>
+        <div class="disclosure-body">
+            <div class="table-wrap">
+                <table class="data">
+                    <thead><tr><th scope="col">Effect</th><th scope="col">mg/dL</th><th scope="col">mEq/L</th><th scope="col">mmol/L</th></tr></thead>
+                    <tbody id="mg-level-body"></tbody>
+                </table>
+            </div>
+            <p class="small" id="antidote-alt"></p>
+        </div>
+    </details>
+
+    <!-- Legacy reference -->
+    <details class="disclosure no-print">
+        <summary>Reference: สูตรอื่น, IM Pritchard, textbook<span class="summary-meta">ไม่ใช่ order หลัก</span></summary>
+        <div class="disclosure-body">
+            <div>
+                <h3 style="margin-bottom: var(--space-xs);">IM Pritchard (กรณีไม่มี infusion pump หรือ refer)</h3>
+                <p class="small" id="im-regimen-body"></p>
+            </div>
+            <div>
+                <h3 style="margin-bottom: var(--space-xs);">Loading 4 g: วิธีเตรียมอื่น</h3>
+                <div class="table-wrap">
+                    <table class="data">
+                        <thead><tr><th scope="col">ความเข้มข้น</th><th scope="col">ปริมาณ</th><th scope="col">วิธีเตรียม</th><th scope="col">Pump rate</th></tr></thead>
+                        <tbody id="loading-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <h3 style="margin-bottom: var(--space-xs);">Maintenance: สูตรอื่น</h3>
+                <div class="table-wrap">
+                    <table class="data">
+                        <thead><tr><th scope="col">สูตร</th><th scope="col">ผสม</th><th scope="col">1 g/h</th><th scope="col">2 g/h</th></tr></thead>
+                        <tbody id="formula-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="small muted" id="textbook-ref-box"></div>
+            <ul class="list small muted">
+                <li>ACOG Practice Bulletin 222 (2020, reaffirmed 2024): Gestational hypertension and preeclampsia. Obstet Gynecol. 2020;135(6):e237-e260.</li>
+                <li>Magpie Trial. Lancet 2002;359:1877-1890.</li>
+                <li>แนวทางเวชปฏิบัติ RTCOG OB 69-046: การดูแลความดันโลหิตสูงในสตรีตั้งครรภ์ (Update 2569).</li>
+            </ul>
+        </div>
+    </details>
+
+</main>
+
 <script src="../shared/components.js"></script>
 <script src="../shared/ob-engine.js"></script>
 <script>
 (function() {
     'use strict';
 
-    // ─── Nav Bar ─────────────────────────────────────────────────────────────
     if (typeof ED_COMPONENTS !== 'undefined' && ED_COMPONENTS.injectNavBar) {
-        ED_COMPONENTS.injectNavBar();
+        ED_COMPONENTS.injectNavBar(undefined, undefined, 'MgSO4 Calculator (Pre-eclampsia/Eclampsia)');
     }
+    if (typeof MNRH_SEVERE_PE_SO === 'undefined') return;
 
-    // ─── Render Engine Data ──────────────────────────────────────────────────
-    function renderEngineData() {
-        if (typeof calcMgSO4Loading !== 'function') return;
+    const $ = id => document.getElementById(id);
+    const so = MNRH_SEVERE_PE_SO;
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const row = cells => `<tr>${cells.map(c => `<td${c.num ? ' class="num"' : ''}>${c.html != null ? c.html : esc(c)}</td>`).join('')}</tr>`;
 
-        // 0. Alternative Anticonvulsants Render
-        const altContainer = document.getElementById('alt-med-container');
-        if (altContainer && typeof ALTERNATIVE_ANTICONVULSANTS !== 'undefined') {
-            altContainer.innerHTML = ALTERNATIVE_ANTICONVULSANTS.map(m => `
-                <div class="alt-med-item">
-                    <strong>• ${m.name}:</strong> ${m.dose}
-                </div>
-            `).join('');
-        }
+    // Contraindication alternatives
+    $('alt-med-container').innerHTML = ALTERNATIVE_ANTICONVULSANTS
+        .map(m => `<li><strong>${esc(m.name)}</strong>: ${esc(m.dose)}</li>`).join('');
 
-        // 1. Loading Dose
-        const loading = calcMgSO4Loading();
-        const loadTbody = document.getElementById('loading-table-body');
-        if (loadTbody) {
-            const ivBag = loading.ivBagOption;
-            loadTbody.innerHTML = `
-                <tr>
-                    <td><span class="conc-badge conc-50">50%</span> 500 mg/mL</td>
-                    <td><strong>${loading.vol50pct} mL</strong> (≈1 amp)</td>
-                    <td>ดูด 50% MgSO4 <strong>${loading.vol50pct} mL</strong> + sterile water/NSS <strong>${loading.diluentVol} mL</strong> → ได้ <strong>${loading.vol10pct} mL of 10%</strong></td>
-                    <td><strong>${loading.pumpRateRange.min}-${loading.pumpRateRange.max} mL/hr</strong></td>
-                </tr>
-                <tr>
-                    <td><span class="conc-badge conc-10">10%</span> 100 mg/mL</td>
-                    <td><strong>${loading.vol10pct} mL</strong></td>
-                    <td>ใช้ 10% MgSO4 <strong>${loading.vol10pct} mL</strong> ตรง (ถ้ามี prefab)</td>
-                    <td><strong>${loading.pumpRateRange.min}-${loading.pumpRateRange.max} mL/hr</strong></td>
-                </tr>
-                <tr style="background: #f0fdf4;">
-                    <td><span class="conc-badge" style="background: #bbf7d0; color: #166534;">IV Bag 100 mL</span></td>
-                    <td><strong>${loading.vol50pct} mL</strong> (4 g)</td>
-                    <td>ดูด 50% MgSO4 <strong>${loading.vol50pct} mL</strong> ผสมใน <strong>D5W หรือ 0.9% NSS ${ivBag ? ivBag.diluentVol : 100} mL</strong> (รวม ${ivBag ? ivBag.totalVol : 108} mL)</td>
-                    <td><strong>${ivBag ? ivBag.pumpRateRange.min : 216}-${ivBag ? ivBag.pumpRateRange.max : 324} mL/hr</strong></td>
-                </tr>
-            `;
-        }
+    // 1. Loading (standing order)
+    const L = so.loading;
+    $('load-dose-sub').textContent = `in ${L.durationMin} min, pump ${L.pumpRate_mL_hr} mL/h`;
+    $('load-dose-mix').textContent = `${L.drug} + ${L.diluent} (รวม ${L.totalVol_mL} mL) IV drip ใน ${L.durationMin} นาที`;
 
-        // Textbook reference box
-        const tbBox = document.getElementById('textbook-ref-box');
-        if (tbBox && typeof TEXTBOOK_VARIATIONS !== 'undefined') {
-            tbBox.innerHTML = `
-                <strong>📚 Textbook Dosing Variations Reference:</strong><br>
-                • ${TEXTBOOK_VARIATIONS.tintinalli}<br>
-                • ${TEXTBOOK_VARIATIONS.rosen}<br>
-                • ${TEXTBOOK_VARIATIONS.goldfrank}
-            `;
-        }
+    // 2. Maintenance
+    const M = so.maintenance;
+    $('maint-mix').textContent = `50% MgSO4 ${M.mgso4_g} g (${M.mgso4_50pct_mL} mL) + ${M.diluent}`;
+    $('rate-2g-val').textContent = `${M.rate2g_mL_hr} mL/h`;
+    $('rate-2g-lbl').textContent = 'rate 2 g/h';
+    $('rate-1g-val').textContent = `${M.rate1g_mL_hr} mL/h`;
+    $('rate-1g-lbl').textContent = 'rate 1 g/h';
+    $('maint-actual').textContent = `ปริมาตรจริง ${M.totalVol_mL.toLocaleString('en-US')} mL: ${M.rate2g_mL_hr} mL/h ให้จริง ${M.actual2g_g_hr} g/h, ${M.rate1g_mL_hr} mL/h ให้จริง ${M.actual1g_g_hr} g/h`;
+    $('maint-duration').textContent = M.duration;
 
-        // 2. Maintenance IV
-        const maint = calcMgSO4MaintenanceIV();
-        const fA = maint.formulaA;
-        const fB = maint.formulaB;
+    const critIds = ['crit-bmi', 'crit-cr', 'crit-uo'];
+    $('reduce-criteria').innerHTML = M.reduceTo1gIf.map((c, i) =>
+        `<label class="check"><input type="checkbox" id="${critIds[i]}"> ${esc(c)}</label>`).join('');
 
-        const fC = maint.formulaC;
-
-        const fABody = document.getElementById('formula-a-body');
-        if (fABody) {
-            fABody.innerHTML = `
-                <strong>50% MgSO4 ${fA.mgso4_50pct_mL} mL (${fA.mgso4_g} g)</strong> ใน <strong>${fA.diluent}</strong><br>
-                ความเข้มข้น: ${fA.finalConc_mg_per_mL} mg/mL (1%)<br>
-                <div style="margin-top:6px;">
-                    <span class="rate-badge rate-1g">1 g/hr → ${fA.rate1g} mL/hr</span>
-                    <span class="rate-badge rate-2g">2 g/hr → ${fA.rate2g} mL/hr</span>
-                </div>
-            `;
-        }
-
-        const fBBody = document.getElementById('formula-b-body');
-        if (fBBody) {
-            fBBody.innerHTML = `
-                <strong>50% MgSO4 ${fB.mgso4_50pct_mL} mL (${fB.mgso4_g} g)</strong> ใน <strong>${fB.diluent}</strong><br>
-                ความเข้มข้น: ${fB.finalConc_mg_per_mL} mg/mL (4%)<br>
-                <div style="margin-top:6px;">
-                    <span class="rate-badge rate-1g">1 g/hr → ${fB.rate1g} mL/hr</span>
-                    <span class="rate-badge rate-2g">2 g/hr → ${fB.rate2g} mL/hr</span>
-                </div>
-            `;
-        }
-
-        const fCBody = document.getElementById('formula-c-body');
-        if (fCBody && fC) {
-            fCBody.innerHTML = `
-                <strong>50% MgSO4 ${fC.mgso4_50pct_mL} mL (${fC.mgso4_g} g)</strong> ใน <strong>${fC.diluent}</strong><br>
-                ความเข้มข้น: ${fC.finalConc_mg_per_mL} mg/mL (2%)<br>
-                <div style="margin-top:6px;">
-                    <span class="rate-badge rate-1g">1 g/hr → ${fC.rate1g} mL/hr</span>
-                    <span class="rate-badge rate-2g">2 g/hr → ${fC.rate2g} mL/hr</span>
-                </div>
-            `;
-        }
-
-        // 3. IM Regimen
-        const im = calcMgSO4IM();
-        const imBody = document.getElementById('im-regimen-body');
-        if (imBody) {
-            imBody.innerHTML = `
-                <strong>Loading:</strong> 50% MgSO4 <strong>${im.volPerSide} mL (${im.dosePerSideG} g) IM deep</strong> ข้างละ buttock (รวม ${im.loadDoseG} g) · ${im.lidocaineNote}<br>
-                <strong>Maintenance:</strong> 50% MgSO4 <strong>${im.maintVol} mL (${im.maintDoseG} g) IM deep ${im.maintInterval}</strong> (สลับข้าง)
-            `;
-        }
-
-        // 4. Toxicity Antidote Note
-        const tox = checkMgSO4Toxicity({});
-        const antidoteBody = document.getElementById('antidote-banner-body');
-        if (antidoteBody && typeof CALCIUM_ANTIDOTES !== 'undefined') {
-            const cg = CALCIUM_ANTIDOTES.calciumGluconate;
-            const cc = CALCIUM_ANTIDOTES.calciumChloride;
-            antidoteBody.innerHTML = `
-                <strong>💊 Antidote 1st Line:</strong> ${cg.name} ${cg.dose} (${cg.route})<br>
-                <span style="font-size:11.5px; opacity:0.95;">• <strong>Alternative 2nd Line:</strong> ${cc.name} ${cc.dose} (<strong>${cc.route}</strong> — ${cc.note})</span><br>
-                <span style="font-size:11px; opacity:0.9;">${tox.serumMgNote}</span>
-            `;
-        }
-
-        // 5. Diagnostic Criteria
-        const dxContainer = document.getElementById('dx-grid-container');
-        if (dxContainer && typeof DIAGNOSTIC_CRITERIA !== 'undefined') {
-            const pe = DIAGNOSTIC_CRITERIA.preeclampsia;
-            const spe = DIAGNOSTIC_CRITERIA.severePreeclampsia;
-            const ecl = DIAGNOSTIC_CRITERIA.eclampsia;
-
-            dxContainer.innerHTML = `
-                <div class="compact-card">
-                    <div class="compact-card-title" style="color: #d97706;">${pe.label}</div>
-                    ${pe.criteria.map(c => `<div class="dx-item">• ${c.text}</div>`).join('')}
-                </div>
-                <div class="compact-card">
-                    <div class="compact-card-title" style="color: #dc2626;">${spe.label}</div>
-                    ${spe.criteria.map(c => `<div class="dx-item">⚠️ ${c.text}</div>`).join('')}
-                </div>
-                <div class="compact-card">
-                    <div class="compact-card-title" style="color: #7c3aed;">${ecl.label}</div>
-                    ${ecl.criteria.map(c => `<div class="dx-item">🔴 ${c.text}</div>`).join('')}
-                </div>
-            `;
-        }
-
-        // 6. Recurrent Seizure
-        const recurrent = calcMgSO4RecurrentBolus();
-        const recTbody = document.getElementById('recurrent-table-body');
-        if (recTbody) {
-            recTbody.innerHTML = `
-                <tr>
-                    <td><span class="conc-badge conc-50">50%</span></td>
-                    <td><strong>${recurrent.vol50pct} mL</strong></td>
-                    <td>ดูด 50% <strong>${recurrent.vol50pct} mL</strong> + NSS <strong>${recurrent.diluentVol} mL</strong> → <strong>20 mL of 10%</strong></td>
-                </tr>
-                <tr>
-                    <td><span class="conc-badge conc-10">10%</span></td>
-                    <td><strong>${recurrent.vol10pct} mL</strong></td>
-                    <td>ใช้ 10% MgSO4 <strong>${recurrent.vol10pct} mL</strong> ตรง → Slow IV push</td>
-                </tr>
-            `;
-        }
-        const rec2nd = document.getElementById('recurrent-2ndline-note');
-        if (rec2nd) {
-            rec2nd.innerHTML = `<strong>⚠️ Second-line:</strong> ${recurrent.secondLine}`;
-        }
-
-        // 7. BP Protocols
-        const bpTbody = document.getElementById('bp-table-body');
-        if (bpTbody && typeof BP_PROTOCOLS !== 'undefined') {
-            const keys = ['hydralazine', 'labetalol', 'nifedipine', 'nicardipine'];
-            const rows = keys.map(key => {
-                const p = BP_PROTOCOLS[key];
-                if (!p) return '';
-                return `
-                    <tr>
-                        <td><strong>${p.name}</strong></td>
-                        <td>${p.steps.join('<br>')}</td>
-                        <td><strong style="color: #dc2626;">${p.maxTotal}</strong></td>
-                        <td><span style="font-size: 11.5px; color: #991b1b;">${p.contraindications || '-'}</span></td>
-                    </tr>
-                `;
-            }).join('');
-            bpTbody.innerHTML = rows;
-        }
+    function updateRate() {
+        const reduce = critIds.some(id => $(id).checked);
+        $('rate-1g').classList.toggle('is-active', reduce);
+        $('rate-2g').classList.toggle('is-active', !reduce);
     }
+    critIds.forEach(id => $(id).addEventListener('change', updateRate));
 
-    renderEngineData();
+    // 3. Bedside
+    $('bedside-list').textContent = so.bedside.join(', ') + `; ${so.admission[3]}`;
 
-    // ─── Collapsible Sections Event Handling ─────────────────────────────────
-    document.querySelectorAll('.collapse-toggle').forEach(toggle => {
-        const bodyId = toggle.id.replace('-toggle', '-body');
-        const body = document.getElementById(bodyId);
-        if (!body) return;
+    // Monitoring
+    $('monitor-body').innerHTML = so.monitoring.map(m => row([m.what, { html: esc(m.every), num: true }, m.notify])).join('');
+    const tox = checkMgSO4Toxicity({});
+    const cg = CALCIUM_ANTIDOTES.calciumGluconate;
+    $('antidote-banner-body').innerHTML = `<p class="callout-title">Mg toxicity: หยุด MgSO4</p>
+        <p>DTR หาย, RR &lt; 14/min หรือ urine &lt; 25 mL/h: ให้ <strong>${esc(cg.name)} ${esc(cg.dose)}</strong></p>
+        <p class="muted">${esc(tox.serumMgNote)}</p>`;
 
-        toggle.addEventListener('click', () => {
-            const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
-            toggle.setAttribute('aria-expanded', String(!isExpanded));
-            body.classList.toggle('collapsed', isExpanded);
-        });
+    function updateUO() {
+        const w = parseFloat($('ob-weight').value);
+        const out = $('uo-threshold');
+        if (!(w >= 30 && w <= 200)) {
+            out.textContent = 'ใส่น้ำหนักเพื่อคำนวณ 0.5 mL/kg/h';
+            return;
+        }
+        const perHour = Math.round(w * 0.5);
+        out.innerHTML = `Notify ถ้า urine &lt; <span class="uo-out">${perHour} mL/h</span> (&lt; <span class="uo-out">${perHour * 4} mL</span> ต่อ 4 ชม.)`;
+    }
+    $('ob-weight').addEventListener('input', updateUO);
 
-        toggle.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                toggle.click();
-            }
-        });
-    });
+    // BP ladder
+    $('bp-ladder').innerHTML = so.bpLadder.map(s =>
+        `<li><div><span class="step-title">${esc(s.drug)}</span><p class="step-body">${esc(s.how)}, ${esc(s.recheck)}</p></div></li>`).join('');
+    $('labetalol-ci').innerHTML = `<strong>Labetalol ห้ามใช้:</strong> ${esc(so.labetalolContraindications)}`;
+    $('bp-schedule').innerHTML = so.bpControlledSchedule.map(s => row([s.every, { html: `${s.times}`, num: true }])).join('');
 
+    // Recurrent seizure
+    const rec = calcMgSO4RecurrentBolus();
+    $('recurrent-table-body').innerHTML =
+        row(['50%', { html: `${rec.vol50pct} mL`, num: true }, { html: `ดูด 50% ${rec.vol50pct} mL + NSS ${rec.diluentVol} mL ได้ ${rec.vol10pct} mL of 10%` }]) +
+        row(['10%', { html: `${rec.vol10pct} mL`, num: true }, { html: `10% MgSO4 ${rec.vol10pct} mL slow IV push` }]);
+    $('recurrent-stepup').textContent = `${rec.rateNote}; ${rec.infusionStepUp}`;
+    $('recurrent-2ndline-note').innerHTML = `<p class="callout-title">Second line</p><p>${esc(rec.secondLine)}</p>`;
+
+    // BP second line and first-line alternatives
+    $('bp-second-line').innerHTML = BP_SECOND_LINE.map(d => row([{ html: `<strong>${esc(d.name)}</strong>` }, d.mix, d.rate, { html: esc(d.max), num: true }])).join('');
+    $('bp-table-body').innerHTML = ['labetalol', 'hydralazine', 'nifedipine'].map(k => {
+        const p = BP_PROTOCOLS[k];
+        return row([{ html: `<strong>${esc(p.name)}</strong>` }, { html: p.steps.map(esc).join('<br>') }, { html: esc(p.maxTotal), num: true }, p.contraindications]);
+    }).join('');
+
+    // Labs and criteria
+    $('lab-list').innerHTML = so.labs.map(l => `<li>${esc(l)}</li>`).join('');
+    const dx = DIAGNOSTIC_CRITERIA;
+    const dxCard = (c, cls) => `<div class="callout ${cls}"><p class="callout-title">${esc(c.label)}</p><ul class="list">${c.criteria.map(x => `<li>${esc(x.text)}</li>`).join('')}</ul><p class="muted" style="margin-top: var(--space-2xs);">${esc(c.note)}</p></div>`;
+    $('dx-grid-container').innerHTML = dxCard(dx.severePreeclampsia, 'is-danger') + `<div class="so-grid">${dxCard(dx.preeclampsia, '')}${dxCard(dx.eclampsia, 'is-warn')}</div>`;
+
+    // Serum Mg
+    $('mg-level-body').innerHTML = SERUM_MG_LEVELS.map(l => row([l.effect, { html: l.mgdl, num: true }, { html: l.meql, num: true }, { html: l.mmoll, num: true }])).join('');
+    const cc = CALCIUM_ANTIDOTES.calciumChloride;
+    $('antidote-alt').innerHTML = `<strong>ทางเลือก:</strong> ${esc(cc.name)} ${esc(cc.dose)}, ${esc(cc.route)} (ห้ามให้ทาง peripheral IV)`;
+
+    // Reference: IM, other loading preps, other formulas, textbooks
+    const im = calcMgSO4IM();
+    $('im-regimen-body').textContent = `Loading 50% MgSO4 ${im.volPerSide} mL (${im.dosePerSideG} g) deep IM ข้างละ buttock รวม ${im.loadDoseG} g, ${im.lidocaineNote}. Maintenance ${im.maintVol} mL (${im.maintDoseG} g) deep IM ${im.maintInterval} สลับข้าง; Cr > 1.0 mg/dL ลด maintenance 50%`;
+    const ld = calcMgSO4Loading();
+    $('loading-table-body').innerHTML =
+        row(['50%', { html: `${ld.vol50pct} mL`, num: true }, `50% ${ld.vol50pct} mL + sterile water/NSS ${ld.diluentVol} mL ได้ ${ld.vol10pct} mL of 10%`, { html: `${ld.pumpRateRange.min}–${ld.pumpRateRange.max} mL/h`, num: true }]) +
+        row(['IV bag', { html: `${ld.vol50pct} mL`, num: true }, `50% ${ld.vol50pct} mL ใน D5W หรือ NSS ${ld.ivBagOption.diluentVol} mL (รวม ${ld.ivBagOption.totalVol} mL)`, { html: `${ld.ivBagOption.pumpRateRange.min}–${ld.ivBagOption.pumpRateRange.max} mL/h`, num: true }]);
+    const mf = calcMgSO4MaintenanceIV();
+    $('formula-body').innerHTML = ['formulaA', 'formulaB', 'formulaC'].map(k => {
+        const f = mf[k];
+        return row([f.label, `50% ${f.mgso4_50pct_mL} mL (${f.mgso4_g} g) ใน ${f.diluent}`, { html: `${f.rate1g} mL/h`, num: true }, { html: `${f.rate2g} mL/h`, num: true }]);
+    }).join('');
+    $('textbook-ref-box').innerHTML = [TEXTBOOK_VARIATIONS.tintinalli, TEXTBOOK_VARIATIONS.rosen, TEXTBOOK_VARIATIONS.goldfrank].map(t => `<p>${esc(t)}</p>`).join('');
 })();
 </script>
 </body>

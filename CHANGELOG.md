@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.3.0] — 2026-11-22
+
+### MgSO4 and Burn Screens Redesigned; Severe Preeclampsia Order Updated to MNRH 2569 / RTCOG OB 69-046
+
+- **MgSO4 (`tools/mgso4-calculator.html`, `shared/ob-engine.js`):** the screen now leads with the MNRH standing order (loading 10% MgSO4 4 g + D5W 100 mL over 20 min at 420 mL/h; maintenance 50% MgSO4 40 g + 5% D/N/2 1000 mL at 50 mL/h, or 25 mL/h if BMI < 25, Cr > 1.1 mg/dL or UO < 0.5 mL/kg/h; monitoring with notify thresholds; labetalol 20/40/80 mg then hydralazine 10 mg ladder; BP recheck schedule). Added weight-based urine-output threshold, serum Mg table and second-line infusions (RTCOG). Toxicity RR threshold is now < 14/min; renal impairment keeps the 4 g loading. Legacy formulas, IM Pritchard and textbook variants moved to a closed reference section.
+- **Burn hub (`tools/burn-manager.html`):** sticky patient and TBSA summary beside the modules, one accordion treatment, keyboard-operable headers, token colours, no emoji icons, 12px type floor. All 41 fields, 121 script hooks and every calculation unchanged.
+- **Shared screen system (`tools/screen/`):** Hallmark tokens, base and component CSS for the redesigned tools; cached by the service worker (`er-hub-v120`).
+- **Tests:** ob-engine RR boundary updated to 14 and 7 standing-order tests added (622 total).
+
 ## [3.2.0] — 2026-11-22
 
 ### Audit Remediation: PHI Retention, Antivenom V2 Allergy Print, Accessibility, pnpm & CI

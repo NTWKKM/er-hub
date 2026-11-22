@@ -5,748 +5,175 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <meta name="referrer" content="no-referrer">
-    <title>🔥 Burn Management & Resuscitation Hub — ATLS 11th Ed / ABA 2023</title>
+    <title>Burn Management & Resuscitation Hub | ATLS 11th Ed, ABA 2023</title>
+    <meta name="description" content="Burn resuscitation for the emergency department: TBSA mapping, fluid rates, airway, smoke toxicology and escharotomy, following ATLS 11th edition and ABA 2023.">
     <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
     <link rel="stylesheet" href="../shared/base.css">
+    <link rel="stylesheet" href="screen/tool-screen.css">
     <style>
-        :root {
-            --burn-primary: #d97706;
-            --burn-primary-dark: #b45309;
-            --burn-bg-light: #fffbeb;
-            --burn-border: #fde68a;
-            --burn-deg1: #fef08a;
-            --burn-deg2: #fb923c;
-            --burn-deg3: #ef4444;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
+        /* Burn screen: page rules on the shared tool-screen system (tools/screen/tool-screen.css) */
+        .burn-layout { display: grid; grid-template-columns: minmax(0, 21rem) minmax(0, 1fr); gap: var(--space-lg); align-items: start; }
+        .burn-summary { position: sticky; top: calc(64px + var(--space-md)); display: grid; gap: var(--space-md); }
+        .burn-modules { display: grid; gap: var(--space-sm); min-width: 0; }
+
+        /* Patient inputs */
+        .patient-strip { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-sm); background: var(--color-paper-2); border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); padding: var(--space-md); }
+        .patient-strip .input-group:last-child { grid-column: 1 / -1; }
+        .input-group { display: grid; gap: var(--space-2xs); min-width: 0; align-content: start; }
+        .input-group > label:first-child { font-size: var(--text-sm); font-weight: 600; color: var(--color-ink-2); }
+        .input-group label:not(:first-child) { font-size: var(--text-xs); line-height: 1.35; }
+        .input-group #lund-column-badge { font-size: var(--text-xs) !important; color: var(--color-muted) !important; font-weight: 600 !important; }
+        .slider-row { display: flex; }
+        .slider-control { width: 100%; }
+
+        /* Signature: the TBSA panel */
+        .tbsa-banner { display: grid; gap: var(--space-sm); background: var(--color-panel); color: var(--color-panel-ink); border-radius: var(--radius-card); padding: var(--space-md); border-top: 4px solid var(--color-deg1); }
+        .tbsa-banner.severity-moderate { border-top-color: var(--color-deg2); }
+        .tbsa-banner.severity-major, .tbsa-banner.severity-critical { border-top-color: var(--color-deg3); }
+        .tbsa-score-group { display: flex; align-items: baseline; gap: var(--space-2xs); }
+        .tbsa-big-num { font-family: var(--font-display); font-size: 3.5rem; font-weight: 700; line-height: 1; letter-spacing: var(--tracking-display); font-variant-numeric: tabular-nums; color: var(--color-panel-ink); }
+        .tbsa-unit { font-size: var(--text-lg); font-weight: 600; color: var(--color-panel-muted); }
+        .tbsa-subtext { font-size: var(--text-xs); color: var(--color-panel-muted); }
+        .tbsa-banner label, .tbsa-banner span { color: inherit !important; }
+        .tbsa-banner > div:nth-child(2) { background: color-mix(in oklab, var(--color-panel) 80%, var(--color-panel-ink)) !important; border: 0 !important; border-radius: var(--radius-card) !important; padding: var(--space-xs) var(--space-sm) !important; justify-content: space-between; }
+        .tbsa-banner > div:nth-child(2) input { background: var(--color-paper-2); color: var(--color-ink) !important; }
+        .tbsa-banner > div:nth-child(3) { align-items: stretch !important; }
+        .tbsa-breakdown-tags { display: flex; flex-wrap: wrap; gap: var(--space-2xs); }
+        .tbsa-tag { display: inline-flex; align-items: center; gap: var(--space-2xs); font-size: var(--text-xs); font-weight: 600; padding: var(--space-3xs) var(--space-xs); border-radius: var(--radius-card); background: color-mix(in oklab, var(--color-panel) 80%, var(--color-panel-ink)); color: var(--color-panel-ink); font-variant-numeric: tabular-nums; }
+        .tbsa-tag::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--swatch); }
+        .tbsa-tag.tag-deg1 { --swatch: var(--color-deg1); }
+        .tbsa-tag.tag-deg2 { --swatch: var(--color-deg2); }
+        .tbsa-tag.tag-deg3 { --swatch: var(--color-deg3); }
+        .tbsa-quick-link { font-size: var(--text-sm); font-weight: 600; color: var(--color-panel-ink); text-decoration: underline; text-underline-offset: 0.2em; padding: var(--space-2xs) 0; }
+        .tbsa-quick-link:hover { color: var(--color-deg1); }
+        .tbsa-quick-link:focus-visible { outline: 2px solid var(--color-deg1); outline-offset: 2px; }
+
+        /* Module toolbar and accordions */
+        .module-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-xs); }
+        .module-toolbar-label { font-size: var(--text-sm); font-weight: 600; color: var(--color-muted); }
+        .module-toolbar > div { display: flex; gap: var(--space-2xs); }
+        .accordion-item { background: var(--color-paper-2); border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); }
+        .accordion-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); min-height: 44px; padding: var(--space-2xs) var(--space-md); cursor: pointer; font-weight: 700; font-size: var(--text-md); transition: background-color var(--dur-micro) var(--ease-out); }
+        .accordion-header:hover { background: var(--color-paper-3); }
+        .accordion-header:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+        .header-left-title { min-width: 0; }
+        .header-right-meta { display: flex; align-items: center; gap: var(--space-xs); flex: none; }
+        .chevron-icon { width: 8px; height: 8px; border-right: 2px solid var(--color-ink-2); border-bottom: 2px solid var(--color-ink-2); transform: rotate(45deg); transition: transform var(--dur-micro) var(--ease-out); }
+        .accordion-item.open > .accordion-header .chevron-icon { transform: rotate(-135deg); }
+        .accordion-item.open > .accordion-header { border-bottom: var(--rule-hair) solid var(--color-rule); }
+        .accordion-content { display: none; padding: var(--space-md); font-size: var(--text-sm); }
+        .accordion-item.open > .accordion-content { display: block; }
+        .badge-atls { font-size: var(--text-xs); font-weight: 600; padding: var(--space-3xs) var(--space-xs); border-radius: var(--radius-card); background: var(--color-accent-soft); color: var(--color-accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+        /* Fluid resuscitation */
+        .fluid-comparison-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-sm); margin-bottom: var(--space-sm); }
+        .fluid-formula-card { border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); padding: var(--space-sm); display: grid; gap: var(--space-xs); background: var(--color-paper-2); }
+        .fluid-formula-card.card-modified { border-color: var(--color-accent); box-shadow: inset 0 0 0 1px var(--color-accent); }
+        .fluid-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-xs); }
+        .fluid-hero-rate-box { border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); padding: var(--space-xs) var(--space-sm); background: var(--color-paper-3); }
+        .fluid-rate-big { font-family: var(--font-display); font-weight: 700; font-size: var(--text-3xl) !important; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--color-ink) !important; }
+        .card-modified .fluid-rate-big { color: var(--color-accent) !important; }
+        .fluid-formula-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-2xs); }
+        .fluid-mini-stat { border: var(--rule-hair) solid var(--color-rule) !important; border-radius: var(--radius-card); padding: var(--space-2xs) var(--space-xs); font-variant-numeric: tabular-nums; }
+        .titration-box { margin-top: var(--space-sm); padding: var(--space-sm); border-radius: var(--radius-card); border: var(--rule-hair) solid var(--color-success-line); background: var(--color-success-soft); }
+        .titration-box.alert-shock { border-color: var(--color-error-line); background: var(--color-error-soft); }
+        .titration-box.alert-under { border-color: var(--color-warn-line); background: var(--color-warn-soft); }
+        .bolus-btn { min-height: 32px; cursor: pointer; }
+        .bolus-btn.active { background: var(--color-error-soft) !important; box-shadow: inset 0 0 0 1px var(--color-error); color: var(--color-error) !important; }
+
+        /* Checklists */
+        .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: var(--space-2xs); }
+        .check-card { display: flex; gap: var(--space-xs); align-items: flex-start; padding: var(--space-xs) var(--space-sm); border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); background: var(--color-paper-2); cursor: pointer; line-height: 1.4; transition: border-color var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out); }
+        .check-card:hover { border-color: var(--color-ink-2); }
+        .check-card input[type="checkbox"] { margin-top: var(--space-3xs); }
+        .check-card.critical { border-color: var(--color-error-line); }
+        .check-card:has(input:checked) { background: var(--color-accent-soft); border-color: var(--color-accent); }
+        .check-card.critical:has(input:checked) { background: var(--color-error-soft); border-color: var(--color-error); }
+        .check-card:has(input:disabled) { cursor: default; }
+
+        /* Clinical images */
+        .clinical-img-grid { display: grid; gap: var(--space-sm); grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)) !important; }
+        .clinical-img-card { border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); overflow: hidden; background: var(--color-paper-2); }
+        .clinical-img-card img { width: 100%; height: auto; display: block; }
+        .clinical-img-caption { padding: var(--space-xs); font-size: var(--text-xs); color: var(--color-ink-2); line-height: 1.4; }
+
+        /* Body painter */
+        .paint-toolbar { display: flex; flex-wrap: wrap; gap: var(--space-2xs); align-items: center; margin-bottom: var(--space-sm); }
+        .degree-btn { display: inline-flex; align-items: center; gap: var(--space-xs); min-height: 40px; padding: 0 var(--space-sm); border: var(--rule-hair) solid var(--color-rule-2); border-radius: var(--radius-card); background: var(--color-paper-2); color: var(--color-ink); font-size: var(--text-xs); font-weight: 600; cursor: pointer; white-space: nowrap; transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out); }
+        .degree-btn:hover { border-color: var(--color-ink-2); }
+        .degree-btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+        .degree-btn.active { border-color: var(--color-ink); box-shadow: inset 0 0 0 1px var(--color-ink); background: var(--color-paper-3); }
+        .deg-swatch { width: 12px; height: 12px; border-radius: 2px; border: var(--rule-hair) solid var(--color-rule-2); }
+        .swatch-0 { background: var(--color-paper-3); }
+        .swatch-1 { background: var(--color-deg1); }
+        .swatch-2 { background: var(--color-deg2); }
+        .swatch-3 { background: var(--color-deg3); }
+        .body-mapper-wrapper { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-lg); padding: var(--space-md); border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); background: var(--color-paper-3); user-select: none; margin-bottom: var(--space-sm); }
+        .body-view-container { display: flex; flex-direction: column; align-items: center; gap: var(--space-2xs); }
+        .view-label { font-size: var(--text-sm); font-weight: 600; color: var(--color-ink-2); }
+        .body-svg { width: 200px; height: 400px; max-width: 100%; background: var(--color-paper-2); border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); touch-action: none; cursor: crosshair; }
+        .body-part { fill: var(--color-paper-3); stroke: var(--color-muted); stroke-width: 1.2px; cursor: pointer; transition: fill var(--dur-micro) var(--ease-out), stroke var(--dur-micro) var(--ease-out); }
+        .body-part:hover { stroke: var(--color-ink); stroke-width: 2px; }
+        .body-part.deg-0 { fill: var(--color-paper-3); }
+        .body-part.deg-1 { fill: var(--color-deg1); }
+        .body-part.deg-2 { fill: var(--color-deg2); }
+        .body-part.deg-3 { fill: var(--color-deg3); }
+        .region-pct-label { font-family: var(--font-body); font-size: 8px; font-weight: 700; fill: var(--color-ink-2); text-anchor: middle; dominant-baseline: central; pointer-events: none; user-select: none; }
+        .body-group { transition: transform var(--dur-short) var(--ease-out); }
+        .model-col-0 .group-head { transform: translate(0, 5px) scale(1.38); transform-origin: 100px 25px; }
+        .model-col-0 .group-legs { transform: translate(0, 15px) scale(0.85, 0.82); transform-origin: 100px 270px; }
+        .model-col-1 .group-head { transform: translate(0, 4px) scale(1.30); transform-origin: 100px 25px; }
+        .model-col-1 .group-legs { transform: translate(0, 10px) scale(0.88, 0.86); transform-origin: 100px 270px; }
+        .model-col-5 .group-head { transform: translate(0, 2px) scale(1.20); transform-origin: 100px 25px; }
+        .model-col-5 .group-legs { transform: translate(0, 6px) scale(0.92, 0.90); transform-origin: 100px 270px; }
+        .model-col-10 .group-head { transform: translate(0, 1px) scale(1.10); transform-origin: 100px 25px; }
+        .model-col-10 .group-legs { transform: translate(0, 3px) scale(0.96, 0.95); transform-origin: 100px 270px; }
+        .model-col-15 .group-head { transform: scale(1.05); transform-origin: 100px 25px; }
+        .model-col-15 .group-legs { transform: scale(0.98); transform-origin: 100px 270px; }
+        .model-col-adult .group-head, .model-col-adult .group-legs { transform: none; }
+
+        /* Actions */
+        .btn-action { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-xs); min-height: 40px; padding: 0 var(--space-md); border-radius: var(--radius-card); border: var(--rule-hair) solid var(--color-rule-2); background: var(--color-paper-2); color: var(--color-ink); font-weight: 600; font-size: var(--text-sm); cursor: pointer; white-space: nowrap; transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out); }
+        .btn-action:hover { background: var(--color-paper-3); border-color: var(--color-ink-2); }
+        .btn-action:active { transform: translateY(1px); }
+        .btn-action:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
+        .btn-primary:hover { background: color-mix(in oklab, var(--color-accent) 86%, var(--color-ink)); border-color: var(--color-accent); }
+        .action-bar { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-xs); margin-top: var(--space-sm); }
+        .preset-btn { min-height: 32px !important; }
+        .burn-reference { margin-top: var(--space-sm); padding: var(--space-sm) var(--space-md); border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); background: var(--color-paper-3); font-size: var(--text-sm); color: var(--color-ink-2); }
+        .burn-reference summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; }
+
+        @media (max-width: 60rem) {
+            .burn-layout { grid-template-columns: minmax(0, 1fr); }
+            .burn-summary { position: static; }
+        }
+        @media (max-width: 40rem) {
+            .fluid-comparison-grid { grid-template-columns: minmax(0, 1fr); }
+            .accordion-content > div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: minmax(0, 1fr) !important; }
+            .patient-strip { grid-template-columns: minmax(0, 1fr); }
         }
-
-        body.theme-neutral {
-            background-color: var(--paper);
-            color: var(--text-main);
-            font-family: var(--font-ui), 'Sarabun', sans-serif;
-            padding: var(--page-pad, 20px);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .burn-container {
-            width: 100%;
-            max-width: 1180px;
-            margin: 0 auto;
-            background: #ffffff;
-            border: 1px solid var(--rule);
-            border-radius: 8px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-            padding: 20px 24px;
-            box-sizing: border-box;
-        }
-
-        .badge-atls {
-            font-family: 'Inter Tight', sans-serif;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 4px;
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fcd34d;
-        }
-
-        /* ══ Patient Variables Strip ══ */
-        .patient-strip {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 14px 16px;
-            margin-bottom: 18px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 14px;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .input-group label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #475569;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-
-        .input-control {
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-size: 14px;
-            padding: 7px 10px;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 6px;
-            background: #ffffff;
-            color: #0f172a;
-            font-weight: 600;
-            transition: border-color 0.15s;
-        }
-
-        .input-control:focus {
-            outline: none;
-            border-color: var(--burn-primary);
-            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
-        }
-
-        .slider-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .slider-control {
-            flex: 1;
-            accent-color: var(--burn-primary);
-            cursor: pointer;
-        }
-
-        /* ══ TBSA Summary Banner (Full-Width, Severity Colors) ══ */
-        .tbsa-banner {
-            border-radius: 10px;
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-            gap: 12px;
-            transition: background 0.3s ease, border-color 0.3s ease;
-            background: #0f172a;
-            color: #ffffff;
-        }
-
-        .tbsa-banner.severity-minor { background: #0f172a; }
-        .tbsa-banner.severity-moderate { background: #78350f; }
-        .tbsa-banner.severity-major { background: #9a3412; }
-        .tbsa-banner.severity-critical { background: #7f1d1d; }
-
-        .tbsa-score-group {
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-        }
-
-        .tbsa-big-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2.6rem;
-            font-weight: 700;
-            color: #fbbf24;
-            line-height: 1;
-        }
-
-        .tbsa-unit {
-            font-family: 'Inter Tight', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #f8fafc;
-        }
-
-        .tbsa-subtext {
-            font-size: 12px;
-            color: #94a3b8;
-        }
-
-        .tbsa-breakdown-tags {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .tbsa-tag {
-            font-size: 11.5px;
-            font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .tbsa-tag.tag-deg1 { border-left: 3px solid #fef08a; }
-        .tbsa-tag.tag-deg2 { border-left: 3px solid #fb923c; }
-        .tbsa-tag.tag-deg3 { border-left: 3px solid #ef4444; }
-
-        .tbsa-quick-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #fbbf24;
-            cursor: pointer;
-            padding: 4px 10px;
-            border-radius: 5px;
-            background: rgba(251, 191, 36, 0.12);
-            border: 1px solid rgba(251, 191, 36, 0.25);
-            transition: background 0.15s;
-            text-decoration: none;
-        }
-
-        .tbsa-quick-link:hover {
-            background: rgba(251, 191, 36, 0.22);
-        }
-
-
-
-        /* ══ Dual Fluid Resuscitation Schedule Comparison ══ */
-        .fluid-comparison-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 12px;
-        }
-
-        @media (max-width: 720px) {
-            .fluid-comparison-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .fluid-formula-card {
-            border-radius: 8px;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .fluid-formula-card.card-modified {
-            background: #fffbeb;
-            border: 2px solid #f59e0b;
-        }
-
-        .fluid-formula-card.card-parkland {
-            background: #f8fafc;
-            border: 2px solid #cbd5e1;
-        }
-
-        .fluid-card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 6px;
-            border-bottom: 1.5px solid rgba(0, 0, 0, 0.08);
-        }
-
-        .fluid-hero-rate-box {
-            text-align: center;
-            background: #ffffff;
-            border-radius: 6px;
-            padding: 10px 8px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-        }
-
-        .fluid-rate-big {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            line-height: 1.1;
-        }
-
-        .fluid-formula-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            font-size: 12px;
-        }
-
-        .fluid-mini-stat {
-            background: #ffffff;
-            padding: 6px 8px;
-            border-radius: 5px;
-            border: 1px solid rgba(0, 0, 0, 0.06);
-        }
-
-        /* ══ Titration Assistant ══ */
-        .titration-box {
-            background: #f0fdf4;
-            border: 1.5px solid #bbf7d0;
-            border-radius: 8px;
-            padding: 12px 14px;
-            margin-top: 12px;
-            font-size: 12.5px;
-        }
-
-        .titration-box.alert-shock {
-            background: #fef2f2;
-            border-color: #fca5a5;
-        }
-
-        .titration-box.alert-under {
-            background: #fffbe6;
-            border-color: #fcd34d;
-        }
-
-        /* ══ Paint Degree Toolbar ══ */
-        .paint-toolbar {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-
-        .degree-btn {
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            border: 2px solid transparent;
-            background: #f8fafc;
-            color: #475569;
-            transition: all 0.15s;
-        }
-
-        .degree-btn:hover {
-            transform: translateY(-1px);
-        }
-
-        .degree-btn.active {
-            border-color: #0f172a;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        }
-
-        .color-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            border: 1px solid rgba(0, 0, 0, 0.2);
-        }
-
-        .dot-0 { background: #e2e8f0; }
-        .dot-1 { background: var(--burn-deg1); }
-        .dot-2 { background: var(--burn-deg2); }
-        .dot-3 { background: var(--burn-deg3); }
-
-        /* ══ Interactive SVG Body Painter ══ */
-        .body-painter-section {
-            scroll-margin-top: 20px;
-        }
-
-        .body-mapper-wrapper {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 16px 10px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-            user-select: none;
-        }
-
-        .body-view-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .view-label {
-            font-family: 'Inter Tight', sans-serif;
-            font-size: 12px;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 6px;
-        }
-
-        .body-svg {
-            width: 200px;
-            height: 400px;
-            background: #ffffff;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 8px;
-            touch-action: none;
-            cursor: crosshair;
-        }
-
-        .body-part {
-            fill: #e2e8f0;
-            stroke: #94a3b8;
-            stroke-width: 1.2px;
-            cursor: pointer;
-            transition: fill 0.12s ease, stroke 0.12s ease;
-        }
-
-        .body-part:hover {
-            stroke: #0f172a;
-            stroke-width: 2px;
-        }
-
-        .body-part.deg-0 { fill: #e2e8f0; }
-        .body-part.deg-1 { fill: var(--burn-deg1); }
-        .body-part.deg-2 { fill: var(--burn-deg2); }
-        .body-part.deg-3 { fill: var(--burn-deg3); }
-
-        .region-pct-label {
-            font-family: 'Inter Tight', sans-serif;
-            font-size: 8px;
-            font-weight: 700;
-            fill: #475569;
-            text-anchor: middle;
-            dominant-baseline: central;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        /* ══ Pediatric Visual Scaling Transformations ══ */
-        .body-group {
-            transition: transform 0.3s ease;
-        }
-
-        /* <1y Infant (Column '0'): Head 19% vs 7%, Legs 21% vs 33% */
-        .model-col-0 .group-head {
-            transform: translate(0, 5px) scale(1.38);
-            transform-origin: 100px 25px;
-        }
-        .model-col-0 .group-legs {
-            transform: translate(0, 15px) scale(0.85, 0.82);
-            transform-origin: 100px 270px;
-        }
-
-        /* 1–4y Toddler (Column '1'): Head 17% vs 7%, Legs 23% vs 33% */
-        .model-col-1 .group-head {
-            transform: translate(0, 4px) scale(1.30);
-            transform-origin: 100px 25px;
-        }
-        .model-col-1 .group-legs {
-            transform: translate(0, 10px) scale(0.88, 0.86);
-            transform-origin: 100px 270px;
-        }
-
-        /* 5–9y Child (Column '5'): Head 13% vs 7%, Legs 27% vs 33% */
-        .model-col-5 .group-head {
-            transform: translate(0, 2px) scale(1.20);
-            transform-origin: 100px 25px;
-        }
-        .model-col-5 .group-legs {
-            transform: translate(0, 6px) scale(0.92, 0.90);
-            transform-origin: 100px 270px;
-        }
-
-        /* 10–14y (Column '10'): Head 11% vs 7%, Legs 30% vs 33% */
-        .model-col-10 .group-head {
-            transform: translate(0, 1px) scale(1.10);
-            transform-origin: 100px 25px;
-        }
-        .model-col-10 .group-legs {
-            transform: translate(0, 3px) scale(0.96, 0.95);
-            transform-origin: 100px 270px;
-        }
-
-        /* 15–17y Adolescent (Column '15'): Head 9% vs 7%, Legs 31% vs 33% */
-        .model-col-15 .group-head {
-            transform: scale(1.05);
-            transform-origin: 100px 25px;
-        }
-        .model-col-15 .group-legs {
-            transform: scale(0.98);
-            transform-origin: 100px 270px;
-        }
-
-        /* Adult (≥18y): Baseline scale 1.0 */
-        .model-col-adult .group-head,
-        .model-col-adult .group-legs {
-            transform: none;
-        }
-
-        /* ══ Accordion & Subsections with Distinct Theme Headers ══ */
-        .accordion-item {
-            border: 1.5px solid #e2e8f0;
-            border-radius: 8px;
-            margin-bottom: 14px;
-            overflow: hidden;
-            background: #ffffff;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
-            transition: all 0.2s ease;
-        }
-
-        .accordion-header {
-            padding: 11px 16px;
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-weight: 700;
-            font-size: 13.5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            user-select: none;
-            transition: background 0.15s ease, color 0.15s ease;
-            gap: 8px;
-        }
-
-        .accordion-header .header-left-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .accordion-header .header-right-meta {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .accordion-header .chevron-icon {
-            font-size: 11px;
-            transition: transform 0.2s ease;
-            color: currentColor;
-            opacity: 0.85;
-            display: inline-block;
-        }
-
-        .accordion-item.open > .accordion-header .chevron-icon {
-            transform: rotate(180deg);
-        }
-
-        .accordion-content {
-            padding: 16px;
-            display: none;
-            font-size: 12.5px;
-            line-height: 1.55;
-            background: #ffffff;
-            border-top: 1.5px solid transparent;
-        }
-
-        .accordion-item.open > .accordion-content {
-            display: block;
-        }
-
-        /* ══ Theme Colors for Section Headers ══ */
-        /* Section 1: Fluid Resuscitation (Amber / Flame) */
-        .sec-fluid {
-            border-color: #fcd34d;
-        }
-        .sec-fluid > .accordion-header {
-            background: #fffbeb;
-            color: #78350f;
-            border-left: 6px solid #d97706;
-        }
-        .sec-fluid > .accordion-header:hover {
-            background: #fef3c7;
-        }
-        .sec-fluid.open > .accordion-content {
-            border-top-color: #fde68a;
-        }
-
-        /* Section 2: Inhalation & Airway (Clinical Blue) */
-        .sec-airway {
-            border-color: #bfdbfe;
-        }
-        .sec-airway > .accordion-header {
-            background: #eff6ff;
-            color: #1e40af;
-            border-left: 6px solid #2563eb;
-        }
-        .sec-airway > .accordion-header:hover {
-            background: #dbeafe;
-        }
-        .sec-airway.open > .accordion-content {
-            border-top-color: #bfdbfe;
-        }
-
-        /* Section 3: Smoke Toxicology: CO & Cyanide (Royal Purple) */
-        .sec-toxico {
-            border-color: #e9d5ff;
-        }
-        .sec-toxico > .accordion-header {
-            background: #faf5ff;
-            color: #6b21a8;
-            border-left: 6px solid #9333ea;
-        }
-        .sec-toxico > .accordion-header:hover {
-            background: #f3e8ff;
-        }
-        .sec-toxico.open > .accordion-content {
-            border-top-color: #e9d5ff;
-        }
-
-        /* Section 4: Circumferential Burns, Escharotomy & ABA Referral (Crimson Red) */
-        .sec-escharotomy {
-            border-color: #fecaca;
-        }
-        .sec-escharotomy > .accordion-header {
-            background: #fef2f2;
-            color: #991b1b;
-            border-left: 6px solid #dc2626;
-        }
-        .sec-escharotomy > .accordion-header:hover {
-            background: #fee2e2;
-        }
-        .sec-escharotomy.open > .accordion-content {
-            border-top-color: #fecaca;
-        }
-
-        /* Section 5: Body Surface Area Painter (Forest Emerald) */
-        .sec-painter {
-            border-color: #bbf7d0;
-        }
-        .sec-painter > .accordion-header {
-            background: #f0fdf4;
-            color: #166534;
-            border-left: 6px solid #16a34a;
-        }
-        .sec-painter > .accordion-header:hover {
-            background: #dcfce7;
-        }
-        .sec-painter.open > .accordion-content {
-            border-top-color: #bbf7d0;
-        }
-
-        /* ══ Checklist ══ */
-        .check-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .check-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 8px 10px;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .check-card:hover {
-            background: #f1f5f9;
-        }
-
-        .check-card input[type="checkbox"] {
-            margin-top: 2px;
-            accent-color: var(--burn-primary);
-        }
-
-        .check-card.critical {
-            border-left: 3px solid #ef4444;
-        }
-
-        /* ══ Clinical Assets Visuals ══ */
-        .clinical-img-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .clinical-img-card {
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            overflow: hidden;
-            background: #ffffff;
-        }
-
-        .clinical-img-card img {
-            width: 100%;
-            height: auto;
-            display: block;
-            background: #f8fafc;
-        }
-
-        .clinical-img-caption {
-            padding: 6px 10px;
-            font-size: 11px;
-            color: #64748b;
-            background: #f8fafc;
-            border-top: 1px solid #f1f5f9;
-        }
-
-        /* ══ Action Buttons ══ */
-        .action-bar {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-            padding-top: 16px;
-            border-top: 1.5px solid #f1f5f9;
-        }
-
-        .btn-action {
-            font-family: 'Inter Tight', 'Sarabun', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            padding: 9px 18px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            border: 1.5px solid transparent;
-            transition: all 0.15s;
-        }
-
-        .btn-primary {
-            background: var(--burn-primary);
-            color: #ffffff;
-        }
-
-        .btn-primary:hover {
-            background: var(--burn-primary-dark);
-        }
-
-        .btn-outline {
-            background: #ffffff;
-            border-color: #cbd5e1;
-            color: #0f172a;
-        }
-
-        .btn-outline:hover {
-            background: #f8fafc;
-            border-color: #94a3b8;
-        }
-
-        /* ══ Print Optimization ══ */
         @media print {
-            body {
-                background: #ffffff !important;
-                padding: 0 !important;
-            }
-            .burn-container {
-                box-shadow: none !important;
-                border: none !important;
-                padding: 0 !important;
-                max-width: 100% !important;
-            }
-            .action-bar, .paint-toolbar, .btn-action, .slider-control {
-                display: none !important;
-            }
-            .accordion-content {
-                display: block !important;
-            }
-            .body-painter-section {
-                break-inside: avoid;
-            }
+            .burn-layout { display: block; }
+            .action-bar, .paint-toolbar, .btn-action, .slider-control, .module-toolbar { display: none !important; }
+            .accordion-content { display: block !important; }
+            .body-painter-section { break-inside: avoid; }
         }
+
     </style>
 </head>
-<body class="theme-neutral">
+<body class="tool-screen" data-screen="burn">
 
-<div class="burn-container">
+<main class="screen burn-container">
+    <header class="screen-head">
+        <div>
+            <h1>Burn resuscitation</h1>
+            <p class="source">ATLS 11th edition, ABA 2023, Tintinalli 9th</p>
+        </div>
+    </header>
+    <div class="burn-layout">
+    <aside class="burn-summary" aria-label="Patient and TBSA summary">
 
     <!-- ═══════════════════════════════════════════════ -->
     <!-- 1. Patient Parameter Input Strip                -->
@@ -755,7 +182,7 @@
         <div class="input-group">
             <label for="input-age">Age (Years)</label>
             <input type="number" id="input-age" class="input-control" value="35" min="0" max="120" step="0.5">
-            <span id="lund-column-badge" style="font-size: 11px; font-weight: 700; color: var(--burn-primary-dark); margin-top: 2px;">Lund-Browder Bracket: Adult (≥18y)</span>
+            <span id="lund-column-badge" style="font-size: var(--text-xs); font-weight: 700; color: var(--burn-primary-dark); margin-top: 2px;">Lund-Browder Bracket: Adult (≥18y)</span>
         </div>
 
         <div class="input-group">
@@ -786,7 +213,7 @@
                 <option value="electrical">High-Voltage Electrical Burn</option>
                 <option value="chemical">Chemical Burn</option>
             </select>
-            <label style="margin-top: 6px; font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+            <label style="margin-top: 6px; font-size: var(--text-xs); display: flex; align-items: center; gap: 4px; cursor: pointer;">
                 <input type="checkbox" id="check-pigmenturia" style="accent-color: var(--burn-primary);"> Dark / Pigmented Urine (Pigmenturia / Myoglobin)
             </label>
         </div>
@@ -805,14 +232,14 @@
         </div>
 
         <!-- Direct % TBSA Input Box -->
-        <div style="background: rgba(255,255,255,0.92); padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--burn-border); display: flex; align-items: center; gap: 10px;">
+        <div style="background: var(--color-paper-2); padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--burn-border); display: flex; align-items: center; gap: 10px;">
             <div>
-                <label for="input-direct-tbsa" style="font-size: 11.5px; font-weight: 700; color: #78350f; display: block;">⚡ Direct % TBSA Entry:</label>
-                <span style="font-size: 10px; color: #92400e;">(ป้อน % แผลไหม้โดยตรง)</span>
+                <label for="input-direct-tbsa" style="font-size: var(--text-xs); font-weight: 700; color: var(--color-warn); display: block;">Direct % TBSA Entry:</label>
+                <span style="font-size: var(--text-xs); color: var(--color-warn);">(ป้อน % แผลไหม้โดยตรง)</span>
             </div>
             <div style="display: flex; align-items: center; gap: 4px;">
                 <input type="number" id="input-direct-tbsa" class="input-control" value="0" min="0" max="100" step="0.5" style="width: 75px; text-align: center; font-size: 1.15rem; font-weight: 700; color: var(--burn-primary-dark); padding: 4px 6px;">
-                <span style="font-weight: 700; font-size: 13px; color: #78350f;">%</span>
+                <span style="font-weight: 700; font-size: var(--text-sm); color: var(--color-warn);">%</span>
             </div>
         </div>
 
@@ -823,22 +250,24 @@
                 <span class="tbsa-tag tag-deg1" id="val-deg1-badge">1st Deg (Excl): 0%</span>
             </div>
             <a class="tbsa-quick-link" id="link-to-painter" href="#body-painter-section">
-                🎨 ไปยัง Body Painter ↓
+                ไปยัง Body Painter
             </a>
         </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════ -->
+    </aside>
+    <div class="burn-modules">
     <!-- Global Section Expand / Collapse Control Toolbar -->
     <!-- ═══════════════════════════════════════════════ -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; background: #f8fafc; padding: 10px 14px; border-radius: 8px; border: 1.5px solid #cbd5e1;">
-        <span style="font-size: 12.5px; font-weight: 700; color: #334155;">📑 หัวข้อการดูแลผู้ป่วยแผลไหม้ (Clinical Modules):</span>
+    <div class="module-toolbar">
+        <span class="module-toolbar-label">หัวข้อการดูแลผู้ป่วยแผลไหม้ (Clinical modules)</span>
         <div style="display: flex; gap: 8px;">
-            <button type="button" id="btn-expand-all" class="btn-action btn-outline" style="padding: 5px 12px; font-size: 11.5px; font-weight: 700; background: #ffffff; border-color: #94a3b8;">
-                ➕ ขยายทั้งหมด (Expand All)
+            <button type="button" id="btn-expand-all" class="tbtn is-quiet" >
+                ขยายทั้งหมด
             </button>
-            <button type="button" id="btn-collapse-all" class="btn-action btn-outline" style="padding: 5px 12px; font-size: 11.5px; font-weight: 700; background: #ffffff; border-color: #94a3b8;">
-                ➖ ยุบทั้งหมด (Collapse All)
+            <button type="button" id="btn-collapse-all" class="tbtn is-quiet" >
+                ยุบทั้งหมด
             </button>
         </div>
     </div>
@@ -847,23 +276,23 @@
     <!-- 1. IV FLUID RESUSCITATION (HERO SECTION)        -->
     <!-- ═══════════════════════════════════════════════ -->
     <div class="accordion-item sec-fluid open" id="sec-fluid">
-        <div class="accordion-header">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="false">
             <div class="header-left-title">
-                <span>💉 1. สารน้ำกู้ชีพ 24 ชั่วโมง (Fluid Resuscitation Schedule)</span>
+                <span>1. สารน้ำกู้ชีพ 24 ชั่วโมง (Fluid Resuscitation Schedule)</span>
             </div>
             <div class="header-right-meta">
                 <span class="badge-atls" id="badge-guideline-coeff">2 mL/kg/%</span>
-                <span class="chevron-icon">▼</span>
+                <span class="chevron-icon" aria-hidden="true"></span>
             </div>
         </div>
         <div class="accordion-content">
             <!-- Prehospital Initial Rate Banner (ATLS 11th Table 8-3) -->
-            <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
+            <div style="background: var(--color-paper-3); border: 1.5px solid var(--color-rule-2); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: var(--text-xs);">
                 <div>
-                    <strong style="color: #1e40af;">🚑 EMS Prehospital Initial IV Rate (ATLS 11th Table 8-3):</strong>
-                    <div style="color: #1e3a8a; font-size: 11px;">อัตราเริ่มให้สารน้ำเบื้องต้นทาง EMS/ER ก่อนคำนวณ % TBSA ละเอียด</div>
+                    <strong style="color: var(--color-ink);">EMS Prehospital Initial IV Rate (ATLS 11th Table 8-3):</strong>
+                    <div style="color: var(--color-ink); font-size: var(--text-xs);">อัตราเริ่มให้สารน้ำเบื้องต้นทาง EMS/ER ก่อนคำนวณ % TBSA ละเอียด</div>
                 </div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700; color: #1d4ed8;" id="val-prehospital-rate">500 mL/hr</div>
+                <div style="font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 700; color: var(--color-ink);" id="val-prehospital-rate">500 mL/hr</div>
             </div>
 
             <!-- Dual Formula Comparison Grid -->
@@ -872,33 +301,33 @@
                 <div class="fluid-formula-card card-modified">
                     <div class="fluid-card-top">
                         <div>
-                            <strong style="color: #92400e; font-size: 13px; display: block;">Modified Brooke (ATLS 11th)</strong>
-                            <span style="font-size: 10px; color: #b45309; font-weight: 600;">Consensus Standard (Recommended)</span>
+                            <strong style="color: var(--color-warn); font-size: var(--text-sm); display: block;">Modified Brooke (ATLS 11th)</strong>
+                            <span style="font-size: var(--text-xs); color: var(--color-warn); font-weight: 600;">Consensus Standard (Recommended)</span>
                         </div>
-                        <span class="badge-atls" id="badge-modified-brooke-coeff" style="font-size: 11px; font-weight: 700;">2 mL/kg/%</span>
+                        <span class="badge-atls" id="badge-modified-brooke-coeff" style="font-size: var(--text-xs); font-weight: 700;">2 mL/kg/%</span>
                     </div>
 
-                    <div class="fluid-hero-rate-box" id="box-modified-rate" style="border-color: #fde68a; transition: all 0.2s ease;">
+                    <div class="fluid-hero-rate-box" id="box-modified-rate" style="border-color: var(--color-warn-line); transition: all 0.2s ease;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div style="font-size: 10.5px; font-weight: 700; color: #78350f; text-transform: uppercase;" id="lbl-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
-                            <span id="badge-modified-shock" style="display: none; background: #ef4444; color: #ffffff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">🚨 Shock +25%</span>
+                            <div style="font-size: var(--text-xs); font-weight: 700; color: var(--color-warn); " id="lbl-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                            <span id="badge-modified-shock" style="display: none; background: var(--color-error); color: var(--color-paper-2); font-size: var(--text-xs); font-weight: 700; padding: 1px 6px; border-radius: 4px;">Shock +25%</span>
                         </div>
-                        <div class="fluid-rate-big" id="val-first8h-rate" style="font-size: 2.2rem; color: #b45309; margin: 4px 0;">0 mL/hr</div>
-                        <div style="font-size: 10px; color: #92400e;" id="val-time-remaining-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
+                        <div class="fluid-rate-big" id="val-first8h-rate" style="font-size: 2.2rem; color: var(--color-warn); margin: 4px 0;">0 mL/hr</div>
+                        <div style="font-size: var(--text-xs); color: var(--color-warn);" id="val-time-remaining-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
                     </div>
 
                     <div class="fluid-formula-grid">
-                        <div class="fluid-mini-stat" style="border-color: #fef08a;">
-                            <div style="color: #78350f; font-size: 10px; font-weight: 600;" id="lbl-total-24h">ยอดรวม 24 ชม.</div>
-                            <strong style="color: #0f172a; font-size: 13px;" id="val-total-24h">0 mL</strong>
+                        <div class="fluid-mini-stat" style="border-color: var(--color-warn-line);">
+                            <div style="color: var(--color-warn); font-size: var(--text-xs); font-weight: 600;" id="lbl-total-24h">ยอดรวม 24 ชม.</div>
+                            <strong style="color: var(--color-ink); font-size: var(--text-sm);" id="val-total-24h">0 mL</strong>
                         </div>
-                        <div class="fluid-mini-stat" style="border-color: #fef08a;">
-                            <div style="color: #78350f; font-size: 10px; font-weight: 600;" id="lbl-first8h-target">ยอด 8 ชม. แรก (50%)</div>
-                            <strong style="color: #0f172a; font-size: 13px;" id="val-first8h-target">0 mL</strong>
+                        <div class="fluid-mini-stat" style="border-color: var(--color-warn-line);">
+                            <div style="color: var(--color-warn); font-size: var(--text-xs); font-weight: 600;" id="lbl-first8h-target">ยอด 8 ชม. แรก (50%)</div>
+                            <strong style="color: var(--color-ink); font-size: var(--text-sm);" id="val-first8h-target">0 mL</strong>
                         </div>
-                        <div class="fluid-mini-stat" style="grid-column: span 2; border-color: #fef08a; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: #78350f; font-size: 10.5px; font-weight: 600;" id="lbl-next16h-rate">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
-                            <strong style="color: #0f172a; font-size: 13px;" id="val-next16h-rate">0 mL/hr</strong>
+                        <div class="fluid-mini-stat" style="grid-column: span 2; border-color: var(--color-warn-line); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--color-warn); font-size: var(--text-xs); font-weight: 600;" id="lbl-next16h-rate">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
+                            <strong style="color: var(--color-ink); font-size: var(--text-sm);" id="val-next16h-rate">0 mL/hr</strong>
                         </div>
                     </div>
                 </div>
@@ -907,79 +336,79 @@
                 <div class="fluid-formula-card card-parkland">
                     <div class="fluid-card-top">
                         <div>
-                            <strong style="color: #334155; font-size: 13px; display: block;">Classic Parkland (Baxter)</strong>
-                            <span style="font-size: 10px; color: #64748b; font-weight: 600;">Traditional Formula</span>
+                            <strong style="color: var(--color-ink-2); font-size: var(--text-sm); display: block;">Classic Parkland (Baxter)</strong>
+                            <span style="font-size: var(--text-xs); color: var(--color-muted); font-weight: 600;">Traditional Formula</span>
                         </div>
-                        <span style="font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #334155;">4 mL/kg/%</span>
+                        <span style="font-size: var(--text-xs); font-weight: 700; padding: 2px 6px; border-radius: 4px; background: var(--color-rule); color: var(--color-ink-2);">4 mL/kg/%</span>
                     </div>
 
-                    <div class="fluid-hero-rate-box" id="box-parkland-rate" style="border-color: #e2e8f0; transition: all 0.2s ease;">
+                    <div class="fluid-hero-rate-box" id="box-parkland-rate" style="border-color: var(--color-rule); transition: all 0.2s ease;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div style="font-size: 10.5px; font-weight: 700; color: #475569; text-transform: uppercase;" id="lbl-parkland-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
-                            <span id="badge-parkland-shock" style="display: none; background: #ef4444; color: #ffffff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">🚨 Shock +25%</span>
+                            <div style="font-size: var(--text-xs); font-weight: 700; color: var(--color-ink-2); " id="lbl-parkland-first8h-rate">อัตรา 8 ชม. แรก (First 8h Rate)</div>
+                            <span id="badge-parkland-shock" style="display: none; background: var(--color-error); color: var(--color-paper-2); font-size: var(--text-xs); font-weight: 700; padding: 1px 6px; border-radius: 4px;">Shock +25%</span>
                         </div>
-                        <div class="fluid-rate-big" id="val-parkland-first8h-rate" style="font-size: 2.2rem; color: #334155; margin: 4px 0;">0 mL/hr</div>
-                        <div style="font-size: 10px; color: #64748b;" id="val-parkland-time-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
+                        <div class="fluid-rate-big" id="val-parkland-first8h-rate" style="font-size: 2.2rem; color: var(--color-ink-2); margin: 4px 0;">0 mL/hr</div>
+                        <div style="font-size: var(--text-xs); color: var(--color-muted);" id="val-parkland-time-desc">เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)</div>
                     </div>
 
                     <div class="fluid-formula-grid">
-                        <div class="fluid-mini-stat" style="border-color: #e2e8f0;">
-                            <div style="color: #64748b; font-size: 10px; font-weight: 600;" id="lbl-parkland-total">ยอดรวม 24 ชม.</div>
-                            <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-total">0 mL</strong>
+                        <div class="fluid-mini-stat" style="border-color: var(--color-rule);">
+                            <div style="color: var(--color-muted); font-size: var(--text-xs); font-weight: 600;" id="lbl-parkland-total">ยอดรวม 24 ชม.</div>
+                            <strong style="color: var(--color-ink); font-size: var(--text-sm);" id="val-parkland-total">0 mL</strong>
                         </div>
-                        <div class="fluid-mini-stat" style="border-color: #e2e8f0;">
-                            <div style="color: #64748b; font-size: 10px; font-weight: 600;" id="lbl-parkland-first8h-target">ยอด 8 ชม. แรก (50%)</div>
-                            <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-first8h-target">0 mL</strong>
+                        <div class="fluid-mini-stat" style="border-color: var(--color-rule);">
+                            <div style="color: var(--color-muted); font-size: var(--text-xs); font-weight: 600;" id="lbl-parkland-first8h-target">ยอด 8 ชม. แรก (50%)</div>
+                            <strong style="color: var(--color-ink); font-size: var(--text-sm);" id="val-parkland-first8h-target">0 mL</strong>
                         </div>
-                        <div class="fluid-mini-stat" style="grid-column: span 2; border-color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: #64748b; font-size: 10.5px; font-weight: 600;" id="lbl-parkland-next16h-rate">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
-                            <strong style="color: #0f172a; font-size: 13px;" id="val-parkland-next16h-rate">0 mL/hr</strong>
+                        <div class="fluid-mini-stat" style="grid-column: span 2; border-color: var(--color-rule); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--color-muted); font-size: var(--text-xs); font-weight: 600;" id="lbl-parkland-next16h-rate">อัตราช่วง 16 ชม. ถัดไป (Next 16h):</span>
+                            <strong style="color: var(--color-ink); font-size: var(--text-sm);" id="val-parkland-next16h-rate">0 mL/hr</strong>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Pediatric Maintenance Banner (if <= 30kg) -->
-            <div id="peds-maintenance-banner" style="background: #f5f3ff; border: 1.5px solid #ddd6fe; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; display: none;">
-                <strong style="color: #6b21a8;">👶 Pediatric Maintenance Fluid (Holliday-Segar 4-2-1):</strong>
-                <div style="color: #4c1d95; margin-top: 2px;">
-                    ให้ <strong>D5LR หรือ D5 0.45% NaCl</strong> อัตรา <span id="val-peds-rate" style="font-family: monospace; font-weight: 700; font-size: 14px;">0 mL/hr</span> ควบคู่ไปกับสารน้ำกู้ชีพทาง IV อีกเส้น เพื่อป้องกันภาวะน้ำตาลในเลือดต่ำ (Hypoglycemia) ในเด็ก ≤ 30 kg
+            <div id="peds-maintenance-banner" style="background: var(--color-paper-3); border: 1.5px solid var(--color-rule-2); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: var(--text-xs); display: none;">
+                <strong style="color: var(--color-ink-2);">Pediatric Maintenance Fluid (Holliday-Segar 4-2-1):</strong>
+                <div style="color: var(--color-ink-2); margin-top: 2px;">
+                    ให้ <strong>D5LR หรือ D5 0.45% NaCl</strong> อัตรา <span id="val-peds-rate" style="font-variant-numeric: tabular-nums; font-weight: 700; font-size: var(--text-sm);">0 mL/hr</span> ควบคู่ไปกับสารน้ำกู้ชีพทาง IV อีกเส้น เพื่อป้องกันภาวะน้ำตาลในเลือดต่ำ (Hypoglycemia) ในเด็ก ≤ 30 kg
                 </div>
             </div>
 
             <!-- Urine Output Monitoring & Dynamic Titration -->
-            <div style="border-top: 1px solid #f1f5f9; padding-top: 12px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; font-weight: 700;">
+            <div style="border-top: 1px solid var(--color-paper-3); padding-top: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: var(--text-sm); font-weight: 700;">
                     <span>เป้าหมาย Urine Output (Target UO):</span>
-                    <span id="val-target-uo-text" style="color: var(--burn-primary-dark); font-family: monospace;">0.5 mL/kg/hr (35–50 mL/hr)</span>
+                    <span id="val-target-uo-text" style="color: var(--burn-primary-dark); font-variant-numeric: tabular-nums;">0.5 mL/kg/hr (35-50 mL/hr)</span>
                 </div>
 
                 <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px;">
-                    <span style="font-size: 12px; color: #475569; font-weight: 600;">ปริมาณปัสสาวะ 1 ชม. ล่าสุด:</span>
+                    <span style="font-size: var(--text-xs); color: var(--color-ink-2); font-weight: 600;">ปริมาณปัสสาวะ 1 ชม. ล่าสุด:</span>
                     <input aria-label="ปริมาณปัสสาวะ 1 ชม. ล่าสุด (mL/hr)" type="number" id="input-measured-uo" class="input-control" value="40" min="0" max="500" step="5" style="width: 80px; padding: 4px 8px;">
-                    <span style="font-size: 12px; color: #64748b;">mL/hr</span>
-                    <label style="font-size: 11.5px; margin-left: auto; color: #991b1b; display: flex; align-items: center; gap: 4px; font-weight: 700; cursor: pointer;">
-                        <input type="checkbox" id="check-hypotensive" style="accent-color: #ef4444;"> ภาวะช็อก/ความดันตก (Shock)
+                    <span style="font-size: var(--text-xs); color: var(--color-muted);">mL/hr</span>
+                    <label style="font-size: var(--text-xs); margin-left: auto; color: var(--color-error); display: flex; align-items: center; gap: 4px; font-weight: 700; cursor: pointer;">
+                        <input type="checkbox" id="check-hypotensive" style="accent-color: var(--color-error);"> ภาวะช็อก/ความดันตก (Shock)
                     </label>
                 </div>
 
                 <!-- Shock Bolus Interactive Subpanel -->
-                <div id="shock-bolus-panel" style="display: none; background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 8px; padding: 10px 12px; margin-top: 10px;">
+                <div id="shock-bolus-panel" style="display: none; background: var(--color-error-soft); border: 1.5px solid var(--color-error-line); border-radius: 8px; padding: 10px 12px; margin-top: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                         <div>
-                            <strong style="color: #991b1b; font-size: 12px;">🚨 Shock / Hypotension Fluid Bolus (ATLS 11th & Tintinalli):</strong>
-                            <div style="font-size: 11px; color: #7f1d1d;">เลือกขนาดสารน้ำอุ่น (Warmed Balanced LR) ที่ต้องการให้ IV Bolus ทันที:</div>
+                            <strong style="color: var(--color-error); font-size: var(--text-xs);">Shock / Hypotension Fluid Bolus (ATLS 11th & Tintinalli):</strong>
+                            <div style="font-size: var(--text-xs); color: var(--color-error);">เลือกขนาดสารน้ำอุ่น (Warmed Balanced LR) ที่ต้องการให้ IV Bolus ทันที:</div>
                         </div>
                         <div class="shock-bolus-selector" style="display: flex; gap: 6px;">
-                            <button type="button" class="bolus-btn btn-action" data-bolus="10" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #ef4444; background: #ffffff; color: #991b1b;">10 mL/kg</button>
-                            <button type="button" class="bolus-btn btn-action" data-bolus="15" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #ef4444; background: #ffffff; color: #991b1b;">15 mL/kg</button>
-                            <button type="button" class="bolus-btn btn-action active" data-bolus="20" style="padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; border: 1.5px solid #991b1b; background: #ef4444; color: #ffffff;">20 mL/kg</button>
+                            <button type="button" class="bolus-btn btn-action" data-bolus="10" style="padding: 3px 8px; font-size: var(--text-xs); font-weight: 700; border-radius: 4px; border: 1.5px solid var(--color-error); background: var(--color-paper-2); color: var(--color-error);">10 mL/kg</button>
+                            <button type="button" class="bolus-btn btn-action" data-bolus="15" style="padding: 3px 8px; font-size: var(--text-xs); font-weight: 700; border-radius: 4px; border: 1.5px solid var(--color-error); background: var(--color-paper-2); color: var(--color-error);">15 mL/kg</button>
+                            <button type="button" class="bolus-btn btn-action active" data-bolus="20" style="padding: 3px 8px; font-size: var(--text-xs); font-weight: 700; border-radius: 4px; border: 1.5px solid var(--color-error); background: var(--color-error); color: var(--color-paper-2);">20 mL/kg</button>
                         </div>
                     </div>
-                    <div style="margin-top: 8px; display: flex; align-items: baseline; gap: 8px; background: #ffffff; padding: 6px 10px; border-radius: 5px; border: 1px solid #fecaca;">
-                        <span style="font-size: 11.5px; font-weight: 600; color: #7f1d1d;">ปริมาณ Bolus ที่คำนวณได้:</span>
-                        <span id="val-shock-bolus-vol" style="font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; color: #991b1b;">1,400 mL</span>
-                        <span style="font-size: 11px; color: #991b1b;">IV over 15–30 min (Warmed LR / Hartmann's)</span>
+                    <div style="margin-top: 8px; display: flex; align-items: baseline; gap: 8px; background: var(--color-paper-2); padding: 6px 10px; border-radius: 5px; border: 1px solid var(--color-error-line);">
+                        <span style="font-size: var(--text-xs); font-weight: 600; color: var(--color-error);">ปริมาณ Bolus ที่คำนวณได้:</span>
+                        <span id="val-shock-bolus-vol" style="font-variant-numeric: tabular-nums; font-size: 1.25rem; font-weight: 700; color: var(--color-error);">1,400 mL</span>
+                        <span style="font-size: var(--text-xs); color: var(--color-error);">IV over 15-30 min (Warmed LR / Hartmann’s)</span>
                     </div>
                 </div>
 
@@ -996,29 +425,29 @@
     <!-- 2. INHALATION INJURY & AIRWAY MATRIX            -->
     <!-- ═══════════════════════════════════════════════ -->
     <div class="accordion-item sec-airway" id="sec-airway">
-        <div class="accordion-header">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="false">
             <div class="header-left-title">
-                <span>🫁 2. ประเมินทางเดินหายใจและการสูดดมควัน (Inhalation Injury & Airway Matrix)</span>
+                <span>2. ประเมินทางเดินหายใจและการสูดดมควัน (Inhalation Injury & Airway Matrix)</span>
             </div>
             <div class="header-right-meta">
-                <span class="chevron-icon">▼</span>
+                <span class="chevron-icon" aria-hidden="true"></span>
             </div>
         </div>
         <div class="accordion-content">
-            <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; font-size: 11.5px; line-height: 1.45;">
+            <div style="background: var(--color-paper-3); border: 1.5px solid var(--color-rule-2); border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; font-size: var(--text-xs); line-height: 1.45;">
                 <div style="display: flex; gap: 6px; align-items: flex-start;">
-                    <span style="font-size: 14px;">⭐</span>
+                    <span style="font-size: var(--text-sm);"></span>
                     <div>
-                        <strong style="color: #1e40af;">Airway & Drug Safety Pearls (ATLS 11th & Tintinalli):</strong>
-                        <ul style="margin: 3px 0 0 0; padding-left: 16px; color: #1e3a8a;">
-                            <li><strong>ขนาด ETT ผู้ใหญ่:</strong> ควรใช้ ETT ขนาดใหญ่ (เบอร์ ≥ <strong>7.5–8.0 mm</strong>) เพื่อให้สามารถส่องกล้อง Fiberoptic Bronchoscopy และดูดเสมหะเขม่าเหนียวได้</li>
+                        <strong style="color: var(--color-ink);">Airway & Drug Safety Pearls (ATLS 11th & Tintinalli):</strong>
+                        <ul style="margin: 3px 0 0 0; padding-left: 16px; color: var(--color-ink);">
+                            <li><strong>ขนาด ETT ผู้ใหญ่:</strong> ควรใช้ ETT ขนาดใหญ่ (เบอร์ ≥ <strong>7.5-8.0 mm</strong>) เพื่อให้สามารถส่องกล้อง Fiberoptic Bronchoscopy และดูดเสมหะเขม่าเหนียวได้</li>
                             <li><strong>ข้อห้ามใช้ Succinylcholine:</strong> <strong>ห้ามใช้ Succinylcholine หลังเกิดเหตุเกิน 24 ชั่วโมง</strong> เนื่องจากเสี่ยงต่อภาวะ Lethal Hyperkalemia รุนแรงถึงแก่ชีวิตจาก Upregulation ของ Acetylcholine Receptors</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <div style="font-size: 12px; color: #475569; margin-bottom: 8px;">
+            <div style="font-size: var(--text-xs); color: var(--color-ink-2); margin-bottom: 8px;">
                 ประเมินสัญญาณเตือนทางเดินหายใจอุดกั้นและพิษจากควันไฟตามแนวทาง <strong>ATLS 11th Edition</strong>:
             </div>
 
@@ -1063,16 +492,16 @@
                     <input type="checkbox" id="chk-carbonaceous" class="inhal-chk">
                     <div><strong>Carbonaceous Sputum:</strong> เสมหะปนเขม่าดำ (ไอมีเขม่าสีดำปน)</div>
                 </label>
-                <label class="check-card" id="card-chk-largetbsa" style="border-left: 3px solid #64748b;">
+                <label class="check-card" id="card-chk-largetbsa" style="border-left: 3px solid var(--color-muted);">
                     <input type="checkbox" id="chk-largetbsa" class="inhal-chk" disabled>
-                    <div><strong>Large TBSA Burn (>40%):</strong> แผลไหม้กว้างเกิน 40% TBSA (เสี่ยงทางเดินหายใจบวมรุนแรง) <span id="badge-largetbsa-status" style="font-size: 10.5px; font-weight: 700;"></span></div>
+                    <div><strong>Large TBSA Burn (>40%):</strong> แผลไหม้กว้างเกิน 40% TBSA (เสี่ยงทางเดินหายใจบวมรุนแรง) <span id="badge-largetbsa-status" style="font-size: var(--text-xs); font-weight: 700;"></span></div>
                 </label>
             </div>
 
             <!-- Triage Recommendation Box -->
-            <div id="inhal-triage-box" style="margin-top: 12px; padding: 12px 14px; border-radius: 6px; background: #f8fafc; border: 1.5px solid #cbd5e1;">
-                <strong id="inhal-triage-title" style="color: #0f172a;">ข้อแนะนำทางคลินิก:</strong>
-                <div id="inhal-triage-desc" style="margin-top: 3px; color: #334155;">เฝ้าระวังอาการทางเดินหายใจอย่างใกล้ชิด</div>
+            <div id="inhal-triage-box" style="margin-top: 12px; padding: 12px 14px; border-radius: 6px; background: var(--color-paper-2); border: 1.5px solid var(--color-rule-2);">
+                <strong id="inhal-triage-title" style="color: var(--color-ink);">ข้อแนะนำทางคลินิก:</strong>
+                <div id="inhal-triage-desc" style="margin-top: 3px; color: var(--color-ink-2);">เฝ้าระวังอาการทางเดินหายใจอย่างใกล้ชิด</div>
             </div>
 
             <!-- Focused Airway Visual Reference -->
@@ -1089,56 +518,56 @@
     <!-- 3. SMOKE INHALATION TOXICOLOGY (CO & CYANIDE)   -->
     <!-- ═══════════════════════════════════════════════ -->
     <div class="accordion-item sec-toxico" id="sec-toxico">
-        <div class="accordion-header">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="false">
             <div class="header-left-title">
-                <span>☠️ 3. พิษจากควันไฟ: Carbon Monoxide (CO) & Cyanide (CN)</span>
+                <span>3. พิษจากควันไฟ: Carbon Monoxide (CO) & Cyanide (CN)</span>
             </div>
             <div class="header-right-meta">
-                <span class="chevron-icon">▼</span>
+                <span class="chevron-icon" aria-hidden="true"></span>
             </div>
         </div>
         <div class="accordion-content">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                 <!-- Carbon Monoxide -->
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+                <div style="background: var(--color-paper-2); border: 1px solid var(--color-rule); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong style="color: #0f172a; font-size: 13.5px;">🫁 1. Carbon Monoxide (CO) Poisoning</strong>
-                        <span id="co-severity-badge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #e2e8f0; color: #475569;">Normal (<10%)</span>
+                        <strong style="color: var(--color-ink); font-size: var(--text-sm);">1. Carbon Monoxide (CO) Poisoning</strong>
+                        <span id="co-severity-badge" style="font-size: var(--text-xs); font-weight: 700; padding: 2px 8px; border-radius: 4px; background: var(--color-rule); color: var(--color-ink-2);">Normal (<10%)</span>
                     </div>
                     
-                    <div style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 8px 10px; border-radius: 6px; font-size: 11.5px; line-height: 1.4;">
-                        ⚠️ <strong>Pulse Oximeter ลวง:</strong> SpO2 ทั่วไปจะอ่านได้ 98–100% เสมอเพราะแยก Carboxyhemoglobin ไม่ออก — ต้องตรวจ <strong>COHb จาก Co-oximetry (ABG/VBG)</strong>
+                    <div style="background: var(--color-error-soft); border: 1px solid var(--color-error-line); color: var(--color-error); padding: 8px 10px; border-radius: 6px; font-size: var(--text-xs); line-height: 1.4;">
+                        <strong>Pulse Oximeter ลวง:</strong> SpO2 ทั่วไปจะอ่านได้ 98-100% เสมอเพราะแยก Carboxyhemoglobin ไม่ออก: ต้องตรวจ <strong>COHb จาก Co-oximetry (ABG/VBG)</strong>
                     </div>
 
-                    <div style="display: flex; gap: 10px; align-items: center; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0; flex-wrap: wrap;">
-                        <label style="font-size: 12px; font-weight: 600; color: #334155;">Carboxyhemoglobin (% COHb):</label>
+                    <div style="display: flex; gap: 10px; align-items: center; background: var(--color-paper-2); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--color-rule); flex-wrap: wrap;">
+                        <label style="font-size: var(--text-xs); font-weight: 600; color: var(--color-ink-2);">Carboxyhemoglobin (% COHb):</label>
                         <input aria-label="Carboxyhemoglobin (% COHb):" type="number" id="input-cohb" class="input-control" value="15" min="0" max="100" style="width: 70px; padding: 4px 8px; text-align: center; font-weight: 700;">
-                        <label style="font-size: 11.5px; display: flex; align-items: center; gap: 4px; cursor: pointer; color: #6b21a8; font-weight: 600; margin-left: auto;">
-                            <input type="checkbox" id="check-pregnant" style="accent-color: #9333ea;"> 🤰 หญิงตั้งครรภ์
+                        <label style="font-size: var(--text-xs); display: flex; align-items: center; gap: 4px; cursor: pointer; color: var(--color-ink-2); font-weight: 600; margin-left: auto;">
+                            <input type="checkbox" id="check-pregnant" style="accent-color: var(--color-accent);"> หญิงตั้งครรภ์
                         </label>
                     </div>
 
                     <!-- Half-life Comparison & Dynamic Estimator -->
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 11px; text-align: center;">
-                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 5px; padding: 6px 4px;">
-                            <div style="color: #64748b; font-size: 10px;">Room Air T½</div>
-                            <strong style="color: #0f172a; font-size: 11.5px;">~4–5 ชม.</strong>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: var(--text-xs); text-align: center;">
+                        <div style="background: var(--color-paper-2); border: 1px solid var(--color-rule); border-radius: 5px; padding: 6px 4px;">
+                            <div style="color: var(--color-muted); font-size: var(--text-xs);">Room Air T½</div>
+                            <strong style="color: var(--color-ink); font-size: var(--text-xs);">~4-5 ชม.</strong>
                         </div>
-                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 5px; padding: 6px 4px;">
-                            <div style="color: #1e40af; font-size: 10px;">100% O2 T½</div>
-                            <strong style="color: #1d4ed8; font-size: 11.5px;">40–80 นาที</strong>
+                        <div style="background: var(--color-paper-3); border: 1px solid var(--color-rule-2); border-radius: 5px; padding: 6px 4px;">
+                            <div style="color: var(--color-ink); font-size: var(--text-xs);">100% O2 T½</div>
+                            <strong style="color: var(--color-ink); font-size: var(--text-xs);">40-80 นาที</strong>
                         </div>
-                        <div style="background: #fdf4ff; border: 1px solid #f0abfc; border-radius: 5px; padding: 6px 4px;">
-                            <div style="color: #86198f; font-size: 10px;">HBO T½</div>
-                            <strong style="color: #a21caf; font-size: 11.5px;">20–30 นาที</strong>
+                        <div style="background: var(--color-paper-3); border: 1px solid var(--color-rule-2); border-radius: 5px; padding: 6px 4px;">
+                            <div style="color: var(--color-ink-2); font-size: var(--text-xs);">HBO T½</div>
+                            <strong style="color: var(--color-ink-2); font-size: var(--text-xs);">20-30 นาที</strong>
                         </div>
                     </div>
 
                     <!-- Dynamic Clearance Estimator -->
-                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 10px; font-size: 11.5px;">
+                    <div style="background: var(--color-success-soft); border: 1px solid var(--color-success-line); border-radius: 6px; padding: 8px 10px; font-size: var(--text-xs);">
                         <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
-                            <label for="select-co-o2" style="font-weight: 700; color: #166534;">⏱️ อุปกรณ์ให้ออกซิเจน:</label>
-                            <select id="select-co-o2" class="input-control" style="padding: 2px 6px; font-size: 11px; width: auto;">
+                            <label for="select-co-o2" style="font-weight: 700; color: var(--color-success);">⏱อุปกรณ์ให้ออกซิเจน:</label>
+                            <select id="select-co-o2" class="input-control" style="padding: 2px 6px; font-size: var(--text-xs); width: auto;">
                                 <option value="nrb_100">100% High-Flow O2 (NRB Mask) [T½ ~60m]</option>
                                 <option value="ett_100">100% O2 via ETT (Ventilator) [T½ ~45m]</option>
                                 <option value="hbo_3ata">Hyperbaric O2 (HBO 3.0 ATA) [T½ ~23m]</option>
@@ -1146,18 +575,18 @@
                             </select>
                         </div>
                         <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: baseline;">
-                            <span style="color: #15803d; font-size: 11px;">เวลาโดยประมาณสู่ระดับปลอดภัย (COHb &lt;5%):</span>
-                            <strong id="val-co-clearance-time" style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #166534;">--</strong>
+                            <span style="color: var(--color-success); font-size: var(--text-xs);">เวลาโดยประมาณสู่ระดับปลอดภัย (COHb &lt;5%):</span>
+                            <strong id="val-co-clearance-time" style="font-variant-numeric: tabular-nums; font-size: var(--text-sm); color: var(--color-success);">--</strong>
                         </div>
                     </div>
 
                     <!-- HBO Indications Checklist -->
-                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                    <div style="background: var(--color-paper-2); border: 1px solid var(--color-rule); border-radius: 6px; padding: 10px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <strong style="font-size: 12px; color: #0f172a;">🤿 เกณฑ์ส่งพิจารณา Hyperbaric O2 (HBO):</strong>
-                            <span id="hbo-threshold-label" style="font-size: 10.5px; font-weight: 700; color: #d97706;">เกณฑ์ COHb ≥25%</span>
+                            <strong style="font-size: var(--text-xs); color: var(--color-ink);">เกณฑ์ส่งพิจารณา Hyperbaric O2 (HBO):</strong>
+                            <span id="hbo-threshold-label" style="font-size: var(--text-xs); font-weight: 700; color: var(--color-warn);">เกณฑ์ COHb ≥25%</span>
                         </div>
-                        <div class="check-grid" style="grid-template-columns: 1fr; gap: 4px; font-size: 11.5px;">
+                        <div class="check-grid" style="grid-template-columns: 1fr; gap: 4px; font-size: var(--text-xs);">
                             <label class="check-card" id="card-hbo-cohb" style="padding: 4px 8px;">
                                 <input type="checkbox" id="chk-hbo-cohb" disabled>
                                 <div><strong>COHb สูงเกินเกณฑ์:</strong> ≥25% (หรือ ≥15% ในหญิงตั้งครรภ์)</div>
@@ -1172,7 +601,7 @@
                             </label>
                             <label class="check-card" style="padding: 4px 8px;">
                                 <input type="checkbox" id="chk-hbo-cardiac" class="hbo-manual-chk">
-                                <div><strong>กล้ามเนื้อหัวใจขาดเลือด:</strong> Ischemic ECG changes / Elevated Troponin</div>
+                                <div><strong>กล้ามเนื้อหัวใจขาดเลือด:</strong> Ischemic ECG changes or raised troponin</div>
                             </label>
                             <label class="check-card" style="padding: 4px 8px;">
                                 <input type="checkbox" id="chk-hbo-acidosis" class="hbo-manual-chk">
@@ -1182,62 +611,62 @@
                     </div>
 
                     <!-- HBO Dynamic Status Banner -->
-                    <div id="co-assessment-result" style="font-size: 12px; color: #334155;">
+                    <div id="co-assessment-result" style="font-size: var(--text-xs); color: var(--color-ink-2);">
                         <!-- Dynamically generated -->
                     </div>
                 </div>
 
                 <!-- Cyanide Poisoning & Hydroxocobalamin -->
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
-                    <strong style="color: #0f172a; font-size: 13.5px;">🧪 2. Cyanide (CN) Poisoning & Antidotes</strong>
+                <div style="background: var(--color-paper-2); border: 1px solid var(--color-rule); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+                    <strong style="color: var(--color-ink); font-size: var(--text-sm);">2. Cyanide (CN) Poisoning & Antidotes</strong>
 
-                    <div style="display: flex; gap: 8px; align-items: center; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                        <label for="input-lactate" style="font-size: 11.5px; font-weight: 600; color: #334155;">Serum Lactate (mmol/L):</label>
+                    <div style="display: flex; gap: 8px; align-items: center; background: var(--color-paper-2); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--color-rule);">
+                        <label for="input-lactate" style="font-size: var(--text-xs); font-weight: 600; color: var(--color-ink-2);">Serum Lactate (mmol/L):</label>
                         <input type="number" id="input-lactate" class="input-control" value="2.0" min="0" max="30" step="0.5" style="width: 65px; padding: 3px 6px; text-align: center; font-weight: 700;">
-                        <span style="font-size: 11px; color: #64748b;">(เกณฑ์สงสัย ≥ 8–10)</span>
+                        <span style="font-size: var(--text-xs); color: var(--color-muted);">(เกณฑ์สงสัย ≥ 8-10)</span>
                     </div>
 
                     <!-- ATLS 11th Presumptive Cyanide Triad Alert -->
-                    <div id="val-cn-presumptive-result" style="font-size: 11px; padding: 8px 10px; border-radius: 6px; background: #f8fafc; border: 1px solid #cbd5e1; line-height: 1.4;">
+                    <div id="val-cn-presumptive-result" style="font-size: var(--text-xs); padding: 8px 10px; border-radius: 6px; background: var(--color-paper-2); border: 1px solid var(--color-rule-2); line-height: 1.4;">
                         <!-- Dynamically updated -->
                     </div>
 
                     <!-- 1st Line Antidote: Hydroxocobalamin -->
-                    <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 6px; padding: 10px 12px;">
+                    <div style="background: var(--color-success-soft); border: 1.5px solid var(--color-success-line); border-radius: 6px; padding: 10px 12px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div style="font-family: 'Inter Tight', sans-serif; font-size: 11.5px; font-weight: 700; color: #166534; text-transform: uppercase;">
-                                ⭐ 1st-Line Antidote: Hydroxocobalamin (Cyanokit)
+                            <div style=" font-size: var(--text-xs); font-weight: 700; color: var(--color-success); ">
+                                1st-Line Antidote: Hydroxocobalamin (Cyanokit)
                             </div>
-                            <span style="font-size: 10px; font-weight: 700; color: #15803d; background: #dcfce7; padding: 1px 6px; border-radius: 4px;">70 mg/kg (Max 5g)</span>
+                            <span style="font-size: var(--text-xs); font-weight: 700; color: var(--color-success); background: var(--color-success-soft); padding: 1px 6px; border-radius: 4px;">70 mg/kg (Max 5g)</span>
                         </div>
-                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 700; color: #15803d; margin: 4px 0;" id="val-cyanide-dose">
+                        <div style="font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 700; color: var(--color-success); margin: 4px 0;" id="val-cyanide-dose">
                             4.9 g IV (4,900 mg)
                         </div>
-                        <div style="font-size: 11.5px; color: #166534; line-height: 1.4;">
+                        <div style="font-size: var(--text-xs); color: var(--color-success); line-height: 1.4;">
                             ผสมใน <strong>0.9% NaCl 200 mL</strong> (หรือ LR / D5W) หยดทาง IV ใน <strong>15 นาที</strong> (สามารถให้ซ้ำได้อีก 1 Dose หากอาการรุนแรงหรือ Cardiac Arrest)
                         </div>
                     </div>
 
                     <!-- 2nd Line / Alternative Antidote: Sodium Thiosulfate 25% -->
-                    <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 10px 12px;">
+                    <div style="background: var(--color-paper-2); border: 1.5px solid var(--color-rule-2); border-radius: 6px; padding: 10px 12px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <strong style="font-size: 12px; color: #334155;">🔄 Alternative Antidote: Sodium Thiosulfate 25%</strong>
-                            <span style="font-size: 10px; color: #64748b;">(หากไม่มี Cyanokit)</span>
+                            <strong style="font-size: var(--text-xs); color: var(--color-ink-2);">Alternative Antidote: Sodium Thiosulfate 25%</strong>
+                            <span style="font-size: var(--text-xs); color: var(--color-muted);">(หากไม่มี Cyanokit)</span>
                         </div>
                         <div style="margin-top: 4px; display: flex; align-items: baseline; gap: 8px;">
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700; color: #334155;" id="val-thiosulfate-dose">12.5 g (50 mL 25%)</div>
-                            <span style="font-size: 11px; color: #64748b;">IV over 10–20 min</span>
+                            <div style="font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 700; color: var(--color-ink-2);" id="val-thiosulfate-dose">12.5 g (50 mL 25%)</div>
+                            <span style="font-size: var(--text-xs); color: var(--color-muted);">IV over 10-20 min</span>
                         </div>
-                        <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
+                        <div style="font-size: var(--text-xs); color: var(--color-muted); margin-top: 2px;">
                             ขนาดเด็ก: 412.5 mg/kg (1.65 mL/kg ของสารละลาย 25%) สูงสุด 12.5 g (50 mL)
                         </div>
                     </div>
 
                     <!-- Clinical Warnings Box -->
-                    <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #78350f; line-height: 1.45;">
-                        <strong>⚠️ ข้อควรระวังสำคัญ (Toxicology Pearls):</strong>
+                    <div style="background: var(--color-warn-soft); border: 1px solid var(--color-warn-line); border-radius: 6px; padding: 8px 10px; font-size: var(--text-xs); color: var(--color-warn); line-height: 1.45;">
+                        <strong>ข้อควรระวังสำคัญ (Toxicology Pearls):</strong>
                         <ul style="margin: 4px 0 0 0; padding-left: 16px;">
-                            <li>ผิวหนัง เยื่อบุ และปัสสาวะจะเปลี่ยนเป็นสีแดงเข้ม (Dark Red/Purple) ชั่วคราว 24–72 ชม.</li>
+                            <li>ผิวหนัง เยื่อบุ และปัสสาวะจะเปลี่ยนเป็นสีแดงเข้ม (Dark Red/Purple) ชั่วคราว 24-72 ชม.</li>
                             <li>อาจรบกวนผลแล็บ Co-oximetry (COHb), Total Bilirubin, Creatinine ชั่วคราว</li>
                             <li><strong>ห้ามให้ Sodium Nitrite</strong> ในผู้ป่วยไฟไหม้ควัน เพราะก่อ Methemoglobinemia ซ้ำเติมกับ CO</li>
                         </ul>
@@ -1251,19 +680,19 @@
     <!-- 4. ESCHAROTOMY & ABA REFERRAL CRITERIA          -->
     <!-- ═══════════════════════════════════════════════ -->
     <div class="accordion-item sec-escharotomy" id="sec-escharotomy">
-        <div class="accordion-header">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="false">
             <div class="header-left-title">
-                <span>🔪 4. แผลไหม้รอบส่วน, การผ่าตัด Escharotomy & เกณฑ์ส่งต่อ ABA (Referral Criteria)</span>
+                <span>4. แผลไหม้รอบส่วน, การผ่าตัด Escharotomy & เกณฑ์ส่งต่อ ABA (Referral Criteria)</span>
             </div>
             <div class="header-right-meta">
-                <span class="chevron-icon">▼</span>
+                <span class="chevron-icon" aria-hidden="true"></span>
             </div>
         </div>
         <div class="accordion-content">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                 <div>
-                    <strong style="color: #0f172a; font-size: 13px;">🔪 สัญญาณเตือน Compartment Syndrome & ข้อบ่งชี้ Escharotomy:</strong>
-                    <ul style="margin: 6px 0; padding-left: 18px; font-size: 12px; color: #334155;">
+                    <strong style="color: var(--color-ink); font-size: var(--text-sm);">สัญญาณเตือน Compartment Syndrome & ข้อบ่งชี้ Escharotomy:</strong>
+                    <ul style="margin: 6px 0; padding-left: 18px; font-size: var(--text-xs); color: var(--color-ink-2);">
                         <li>แผลไหม้ระดับลึกรอบแขนขา (Circumferential full-thickness extremity burn)</li>
                         <li>ปวดรุนแรงผิดปกติเมื่อขยับกล้ามเนื้อตามแนวยาว (Pain on passive stretch)</li>
                         <li>ช่องกล้ามเนื้อบวมตึงมาก (Tense swollen compartment), ชาปลายมือปลายเท้า (Paresthesia)</li>
@@ -1288,10 +717,10 @@
 
                 <div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <strong style="color: #0f172a; font-size: 13px;">🏥 เกณฑ์ส่งต่อศูนย์รักษาแผลไหม้ (ABA 2023 Referral Criteria):</strong>
-                        <span id="aba-referral-badge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #e2e8f0; color: #475569;">0/10 ข้อ</span>
+                        <strong style="color: var(--color-ink); font-size: var(--text-sm);">เกณฑ์ส่งต่อศูนย์รักษาแผลไหม้ (ABA 2023 Referral Criteria):</strong>
+                        <span id="aba-referral-badge" style="font-size: var(--text-xs); font-weight: 700; padding: 2px 8px; border-radius: 4px; background: var(--color-rule); color: var(--color-ink-2);">0/10 ข้อ</span>
                     </div>
-                    <div id="aba-referral-banner" style="padding: 6px 10px; border-radius: 6px; font-size: 11.5px; margin-bottom: 8px; background: #f8fafc; border: 1px solid #cbd5e1; color: #475569;">
+                    <div id="aba-referral-banner" style="padding: 6px 10px; border-radius: 6px; font-size: var(--text-xs); margin-bottom: 8px; background: var(--color-paper-2); border: 1px solid var(--color-rule-2); color: var(--color-ink-2);">
                         ประเมินข้อบ่งชี้ส่งต่อศูนย์เฉพาะทาง Burn Center
                     </div>
                     <div class="check-grid" style="grid-template-columns: 1fr; gap: 4px;" id="aba-criteria-container">
@@ -1307,44 +736,44 @@
     <!-- Interactive SVG with drag-to-paint & peds model -->
     <!-- ═══════════════════════════════════════════════ -->
     <div class="accordion-item sec-painter body-painter-section" id="body-painter-section">
-        <div class="accordion-header">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="false">
             <div class="header-left-title">
-                <span>🎨 5. แผนผังระบายแผลคำนวณ % TBSA (Interactive Lund & Browder Painter)</span>
+                <span>5. แผนผังระบายแผลคำนวณ % TBSA (Interactive Lund & Browder Painter)</span>
             </div>
             <div class="header-right-meta">
-                <span id="quick-reset-btn" style="font-size: 11px; color: var(--burn-primary); cursor: pointer; text-decoration: underline; padding: 2px 6px;">ล้างทั้งหมด (Reset)</span>
-                <span class="chevron-icon">▼</span>
+                <button type="button" id="quick-reset-btn" class="tbtn is-quiet">ล้างทั้งหมด (Reset)</button>
+                <span class="chevron-icon" aria-hidden="true"></span>
             </div>
         </div>
         <div class="accordion-content">
             <!-- Degree Paint Selector -->
             <div class="paint-toolbar">
                 <button type="button" class="degree-btn" data-degree="0">
-                    <span class="color-dot dot-0"></span> ลบ (Eraser / 0%)
+                    <span aria-hidden="true" class="deg-swatch swatch-0"></span> ลบ (Eraser / 0%)
                 </button>
                 <button type="button" class="degree-btn" data-degree="1">
-                    <span class="color-dot dot-1"></span> 1st Degree (Superficial - ตัดออกจากสูตรน้ำ)
+                    <span aria-hidden="true" class="deg-swatch swatch-1"></span> 1st Degree (Superficial - ตัดออกจากสูตรน้ำ)
                 </button>
                 <button type="button" class="degree-btn active" data-degree="2">
-                    <span class="color-dot dot-2"></span> 2nd Degree (Partial Thickness)
+                    <span aria-hidden="true" class="deg-swatch swatch-2"></span> 2nd Degree (Partial Thickness)
                 </button>
                 <button type="button" class="degree-btn" data-degree="3">
-                    <span class="color-dot dot-3"></span> 3rd/4th Degree (Full Thickness)
+                    <span aria-hidden="true" class="deg-swatch swatch-3"></span> 3rd/4th Degree (Full Thickness)
                 </button>
-                <button type="button" id="btn-palm-plus" class="btn-action btn-outline" style="padding: 4px 10px; font-size: 11px; margin-left: auto;">
-                    ✋ +1% Palm
+                <button type="button" id="btn-palm-plus" class="btn-action btn-outline" style="padding: 4px 10px; font-size: var(--text-xs); margin-left: auto;">
+                    +1% Palm
                 </button>
             </div>
 
             <!-- Quick Anatomical Presets -->
-            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                <span style="font-size: 11px; font-weight: 700; color: #475569;">⚡ ลัดระบายทั้งส่วน (Quick Presets):</span>
-                <button type="button" class="preset-btn btn-action btn-outline" data-preset="head_all" style="padding: 2px 8px; font-size: 11px;">ทั้งศีรษะ (Head)</button>
-                <button type="button" class="preset-btn btn-action btn-outline" data-preset="trunk_ant_all" style="padding: 2px 8px; font-size: 11px;">ลำตัวหน้า (Ant Trunk)</button>
-                <button type="button" class="preset-btn btn-action btn-outline" data-preset="trunk_post_all" style="padding: 2px 8px; font-size: 11px;">หลัง/ก้น (Post Trunk)</button>
-                <button type="button" class="preset-btn btn-action btn-outline" data-preset="arm_r_all" style="padding: 2px 8px; font-size: 11px;">แขนขวา (R Arm)</button>
-                <button type="button" class="preset-btn btn-action btn-outline" data-preset="arm_l_all" style="padding: 2px 8px; font-size: 11px;">แขนซ้าย (L Arm)</button>
-                <button type="button" class="preset-btn btn-action btn-outline" data-preset="legs_both_all" style="padding: 2px 8px; font-size: 11px;">ขาทั้งสองข้าง (Both Legs)</button>
+            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; background: var(--color-paper-2); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--color-rule);">
+                <span style="font-size: var(--text-xs); font-weight: 700; color: var(--color-ink-2);">ลัดระบายทั้งส่วน (Quick Presets):</span>
+                <button type="button" class="preset-btn btn-action btn-outline" data-preset="head_all" style="padding: 2px 8px; font-size: var(--text-xs);">ทั้งศีรษะ (Head)</button>
+                <button type="button" class="preset-btn btn-action btn-outline" data-preset="trunk_ant_all" style="padding: 2px 8px; font-size: var(--text-xs);">ลำตัวหน้า (Ant Trunk)</button>
+                <button type="button" class="preset-btn btn-action btn-outline" data-preset="trunk_post_all" style="padding: 2px 8px; font-size: var(--text-xs);">หลัง/ก้น (Post Trunk)</button>
+                <button type="button" class="preset-btn btn-action btn-outline" data-preset="arm_r_all" style="padding: 2px 8px; font-size: var(--text-xs);">แขนขวา (R Arm)</button>
+                <button type="button" class="preset-btn btn-action btn-outline" data-preset="arm_l_all" style="padding: 2px 8px; font-size: var(--text-xs);">แขนซ้าย (L Arm)</button>
+                <button type="button" class="preset-btn btn-action btn-outline" data-preset="legs_both_all" style="padding: 2px 8px; font-size: var(--text-xs);">ขาทั้งสองข้าง (Both Legs)</button>
             </div>
 
             <!-- Dual SVG Body Diagrams (Anterior & Posterior) -->
@@ -1465,16 +894,16 @@
             </div>
 
             <!-- Instructions & Lund-Browder Quick Reference -->
-            <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 8px;">
-                <span>💡 คลิกหรือลากระบายสีบนร่างกายเพื่อกำหนดระดับความลึกของแผล — คำนวณ % ตามสัดส่วน Lund & Browder อัตโนมัติ</span>
+            <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: var(--text-xs); color: var(--color-muted); margin-bottom: 8px;">
+                <span>คลิกหรือลากระบายสีบนร่างกายเพื่อกำหนดระดับความลึกของแผล: คำนวณ % ตามสัดส่วน Lund & Browder อัตโนมัติ</span>
             </div>
 
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #475569;">
+            <div style="background: var(--color-paper-2); border: 1px solid var(--color-rule); border-radius: 6px; padding: 8px 10px; font-size: var(--text-xs); color: var(--color-ink-2);">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong style="color: #0f172a;">📐 Lund & Browder Age Proportions Reference:</strong>
+                    <strong style="color: var(--color-ink);">Lund & Browder Age Proportions Reference:</strong>
                     <span id="lund-ref-active-tag" style="font-weight: 700; color: var(--burn-primary-dark);">Adult Bracket</span>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 4px; margin-top: 6px; font-size: 10.5px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 4px; margin-top: 6px; font-size: var(--text-xs);">
                     <div>• <strong>ศีรษะ (Head):</strong> <span id="ref-val-head">7% (Infant 19%)</span></div>
                     <div>• <strong>ต้นขา (Thighs):</strong> <span id="ref-val-thigh">19% (Infant 11%)</span></div>
                     <div>• <strong>หน้าแข้ง (Legs):</strong> <span id="ref-val-leg">14% (Infant 10%)</span></div>
@@ -1489,21 +918,21 @@
     <!-- Action Bar -->
     <div class="action-bar">
         <button type="button" class="btn-action btn-outline" id="btn-copy-emr">
-            📋 คัดลอกบันทึกเวชระเบียน (Copy EMR Note)
+            คัดลอก EMR note
         </button>
         <button type="button" class="btn-action btn-primary" onclick="window.print()">
-            🖨️ พิมพ์แผนการกู้ชีพแผลไหม้ (Print Sheet)
+            พิมพ์แผนกู้ชีพ
         </button>
     </div>
 
     <!-- Clinical Evidence & Guidelines Drawer -->
-    <div class="reference-card no-print" style="margin-top:16px; padding:14px 18px; background:#f8f7f4; border:1px solid #d8d4c8; border-radius:8px; font-size:12.5px; color:#4a4a4a;">
+    <div class="burn-reference no-print">
         <details>
-            <summary style="font-weight:700; cursor:pointer; color:#1a1a1a; display:flex; align-items:center; justify-content:space-between;">
-                <span>📚 ข้อมูลอ้างอิงและแนวทางเวชปฏิบัติ (Burn Resuscitation Guidelines &amp; Evidence)</span>
-                <span style="font-size:11px; color:#737373;">ATLS 11th Edition (2025/2026) / ABA 2023 / ISBI</span>
+            <summary style="font-weight:700; cursor:pointer; color:var(--color-ink); display:flex; align-items:center; justify-content:space-between;">
+                <span>ข้อมูลอ้างอิงและแนวทางเวชปฏิบัติ (Burn Resuscitation Guidelines &amp; Evidence)</span>
+                <span style="font-size: var(--text-xs); color:var(--color-muted);">ATLS 11th Edition (2025/2026) / ABA 2023 / ISBI</span>
             </summary>
-            <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #d8d4c8; line-height:1.6;">
+            <div style="margin-top:10px; padding-top:8px; border-top:1px dashed var(--color-rule); line-height:1.6;">
                 <ul style="margin:0; padding-left:18px;">
                     <li><strong>ATLS 11th Edition (2025/2026) / ABA Consensus Formula:</strong> Modified Brooke formula is first-line ($2\text{ mL} \times \text{kg} \times \%TBSA$ for adults, $3\text{ mL} \times \text{kg} \times \%TBSA$ for pediatrics $\le 14\text{y}$ / $\le 30\text{ kg}$, $4\text{ mL} \times \text{kg} \times \%TBSA$ for electrical burns). 1st-degree erythema is <em>strictly excluded</em> from %TBSA calculation.</li>
                     <li><strong>Timing &amp; Maintenance:</strong> Half of 24-hour resuscitation volume is infused over the first 8 hours calculated <em>from time of injury</em> (not ED arrival). For children $\le 30\text{ kg}$, add maintenance fluid (D5LR via 4-2-1 rule) to prevent hypoglycemia.</li>
@@ -1513,7 +942,9 @@
             </div>
         </details>
     </div>
-</div>
+    </div>
+    </div>
+</main>
 
 <script src="../shared/components.js"></script>
 <script src="../shared/burn-engine.js"></script>
@@ -1720,7 +1151,7 @@
             label.className = 'check-card';
             label.id = `card-${item.id}`;
             label.style.padding = '4px 8px';
-            label.style.fontSize = '11.5px';
+            label.style.fontSize = 'var(--text-xs)';
             label.innerHTML = `
                 <input type="checkbox" id="${item.id}" class="aba-chk">
                 <div><strong>${idx + 1}.</strong> ${item.text}</div>
@@ -1754,14 +1185,14 @@
         btn.addEventListener('click', function () {
             document.querySelectorAll('.bolus-btn').forEach(b => {
                 b.classList.remove('active');
-                b.style.background = '#ffffff';
-                b.style.color = '#991b1b';
-                b.style.borderColor = '#ef4444';
+                b.style.background = 'var(--color-paper-2)';
+                b.style.color = 'var(--color-error)';
+                b.style.borderColor = 'var(--color-error)';
             });
             this.classList.add('active');
-            this.style.background = '#ef4444';
-            this.style.color = '#ffffff';
-            this.style.borderColor = '#991b1b';
+            this.style.background = 'var(--color-error)';
+            this.style.color = 'var(--color-paper-2)';
+            this.style.borderColor = 'var(--color-error)';
             selectedBolusMlKg = Number(this.dataset.bolus) || 20;
             recalculateAll(false);
         });
@@ -1810,9 +1241,16 @@
 
     // Accordion Header Toggle Listeners
     document.querySelectorAll('.accordion-header').forEach(header => {
+        const syncExpanded = () => header.setAttribute('aria-expanded', String(header.parentElement.classList.contains('open')));
+        syncExpanded();
+        new MutationObserver(syncExpanded).observe(header.parentElement, { attributes: true, attributeFilter: ['class'] });
         header.addEventListener('click', function (e) {
             if (e.target && e.target.id === 'quick-reset-btn') return;
             this.parentElement.classList.toggle('open');
+        });
+        header.addEventListener('keydown', function (e) {
+            if (e.target !== header) return;
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); header.click(); }
         });
     });
 
@@ -1884,7 +1322,7 @@
 
         // 1. Lund-Browder Column & Pediatric Model
         const col = BurnEngine.getLundBrowderAgeColumn(age);
-        const colNames = { '0': '<1y (Infant)', '1': '1–4y (Toddler)', '5': '5–9y (Child)', '10': '10–14y', '15': '15–17y (Adolescent)', 'adult': 'Adult (≥18y)' };
+        const colNames = { '0': '<1y (Infant)', '1': '1-4y (Toddler)', '5': '5-9y (Child)', '10': '10-14y', '15': '15-17y (Adolescent)', 'adult': 'Adult (≥18y)' };
         lundColumnBadge.textContent = `Lund-Browder Bracket: ${colNames[col] || col}`;
         updateBodyModelAndLabels(col);
 
@@ -2015,15 +1453,15 @@
         if (isHypo) {
             if (badgeModifiedShock) badgeModifiedShock.style.display = 'inline-block';
             if (badgeParklandShock) badgeParklandShock.style.display = 'inline-block';
-            if (boxModifiedRate) { boxModifiedRate.style.borderColor = '#fca5a5'; boxModifiedRate.style.background = '#fff5f5'; }
-            if (boxParklandRate) { boxParklandRate.style.borderColor = '#fca5a5'; boxParklandRate.style.background = '#fff5f5'; }
-            if (valTimeRemainingDesc) valTimeRemainingDesc.innerHTML = `<span style="color: #b91c1c; font-weight: 700;">🚨 ปรับเพิ่ม +25% สำหรับภาวะช็อก (Baseline: ${fluid.baselineFirst8hRate} mL/hr)</span>`;
-            if (valParklandTimeDesc) valParklandTimeDesc.innerHTML = `<span style="color: #b91c1c; font-weight: 700;">🚨 ปรับเพิ่ม +25% สำหรับภาวะช็อก (Baseline: ${fluid.parklandBaselineFirst8hRate} mL/hr)</span>`;
+            if (boxModifiedRate) { boxModifiedRate.style.borderColor = 'var(--color-error-line)'; boxModifiedRate.style.background = 'var(--color-error-soft)'; }
+            if (boxParklandRate) { boxParklandRate.style.borderColor = 'var(--color-error-line)'; boxParklandRate.style.background = 'var(--color-error-soft)'; }
+            if (valTimeRemainingDesc) valTimeRemainingDesc.innerHTML = `<span style="color: var(--color-error); font-weight: 700;">ปรับเพิ่ม +25% สำหรับภาวะช็อก (Baseline: ${fluid.baselineFirst8hRate} mL/hr)</span>`;
+            if (valParklandTimeDesc) valParklandTimeDesc.innerHTML = `<span style="color: var(--color-error); font-weight: 700;">ปรับเพิ่ม +25% สำหรับภาวะช็อก (Baseline: ${fluid.parklandBaselineFirst8hRate} mL/hr)</span>`;
         } else {
             if (badgeModifiedShock) badgeModifiedShock.style.display = 'none';
             if (badgeParklandShock) badgeParklandShock.style.display = 'none';
-            if (boxModifiedRate) { boxModifiedRate.style.borderColor = '#fde68a'; boxModifiedRate.style.background = ''; }
-            if (boxParklandRate) { boxParklandRate.style.borderColor = '#e2e8f0'; boxParklandRate.style.background = ''; }
+            if (boxModifiedRate) { boxModifiedRate.style.borderColor = 'var(--color-warn-line)'; boxModifiedRate.style.background = ''; }
+            if (boxParklandRate) { boxParklandRate.style.borderColor = 'var(--color-rule)'; boxParklandRate.style.background = ''; }
             if (valTimeRemainingDesc) valTimeRemainingDesc.textContent = elapsed >= 8.0 ? 'อัตราชดเชยเวลาที่เหลือใน 24 ชม.' : 'เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)';
             if (valParklandTimeDesc) valParklandTimeDesc.textContent = elapsed >= 8.0 ? 'อัตราชดเชยเวลาที่เหลือใน 24 ชม.' : 'เวลาที่เหลือใน 8 ชม. แรก (หักลบก่อนถึง รพ.)';
         }
@@ -2042,7 +1480,7 @@
 
         // 4. Urine Output & Titration
         const targetUO = BurnEngine.getTargetUrineOutput(weight, age, isElectrical, hasPigmenturia);
-        valTargetUoText.textContent = `${targetUO.targetMlKgHr} mL/kg/hr (${targetUO.targetMlHrMin}${targetUO.targetMlHrMin !== targetUO.targetMlHrMax ? '–' + targetUO.targetMlHrMax : ''} mL/hr)`;
+        valTargetUoText.textContent = `${targetUO.targetMlKgHr} mL/kg/hr (${targetUO.targetMlHrMin}${targetUO.targetMlHrMin !== targetUO.targetMlHrMax ? '-' + targetUO.targetMlHrMax : ''} mL/hr)`;
 
         const measuredUO = Number(inputMeasuredUo.value) || 0;
         const titration = BurnEngine.getUrineOutputTitration(fluid.baselineFirst8hRate, measuredUO, targetUO, isHypo, weight, selectedBolusMlKg);
@@ -2052,11 +1490,11 @@
 
         titrationAdviceBox.className = `titration-box ${titration.status === 'SHOCK_HYPOTENSION' ? 'alert-shock' : (titration.status === 'UNDER_RESUSCITATION' ? 'alert-under' : '')}`;
         if (isHypo) {
-            titrationStatusTitle.innerHTML = `<span style="color: #991b1b;">🚨 ภาวะช็อก/ความดันตก: ให้ IV Fluid Bolus ทันที และปรับเพิ่มเรทสูตรหลักด้านบนเป็น ${fluid.first8hHourlyRate} mL/hr (+25%) แล้ว</span>`;
-            titrationStatusDesc.innerHTML = `<strong>${titration.bolusAdvice}</strong><br><span style="color:#b91c1c; font-weight:600;">⚡ อัตราสารน้ำในการ์ดสูตรหลัก (Modified Brooke & Parkland) ด้านบนถูกปรับเพิ่มขึ้น +25% เรียบร้อยแล้ว (ช่วงปรับที่แนะนำ: ${titration.adjustedRateMin}–${titration.adjustedRateMax} mL/hr)</span>`;
+            titrationStatusTitle.innerHTML = `<span style="color: var(--color-error);">ภาวะช็อก/ความดันตก: ให้ IV Fluid Bolus ทันที และปรับเพิ่มเรทสูตรหลักด้านบนเป็น ${fluid.first8hHourlyRate} mL/hr (+25%) แล้ว</span>`;
+            titrationStatusDesc.innerHTML = `<strong>${titration.bolusAdvice}</strong><br><span style="color:var(--color-error); font-weight:600;">อัตราสารน้ำในการ์ดสูตรหลัก (Modified Brooke & Parkland) ด้านบนถูกปรับเพิ่มขึ้น +25% เรียบร้อยแล้ว (ช่วงปรับที่แนะนำ: ${titration.adjustedRateMin}-${titration.adjustedRateMax} mL/hr)</span>`;
         } else {
             titrationStatusTitle.textContent = titration.message;
-            titrationStatusDesc.textContent = `${titration.bolusAdvice} | อัตราสารน้ำที่แนะนำ: ${titration.suggestedRate} mL/hr (ช่วงปรับ ${titration.adjustedRateMin}–${titration.adjustedRateMax} mL/hr)`;
+            titrationStatusDesc.textContent = `${titration.bolusAdvice} | อัตราสารน้ำที่แนะนำ: ${titration.suggestedRate} mL/hr (ช่วงปรับ ${titration.adjustedRateMin}-${titration.adjustedRateMax} mL/hr)`;
         }
 
         // 5. Inhalation Injury Triage
@@ -2065,8 +1503,8 @@
         const badgeLarge = document.getElementById('badge-largetbsa-status');
         const cardLarge = document.getElementById('card-chk-largetbsa');
         if (chkLarge) chkLarge.checked = isLargeTbsa;
-        if (badgeLarge) { badgeLarge.textContent = isLargeTbsa ? '(🔥 Auto-flagged: Score +2)' : ''; badgeLarge.style.color = isLargeTbsa ? '#dc2626' : ''; }
-        if (cardLarge) cardLarge.style.borderLeft = isLargeTbsa ? '3px solid #dc2626' : '3px solid #64748b';
+        if (badgeLarge) { badgeLarge.textContent = isLargeTbsa ? '(Auto-flagged: Score +2)' : ''; badgeLarge.style.color = isLargeTbsa ? 'var(--color-error)' : ''; }
+        if (cardLarge) cardLarge.style.borderLeft = isLargeTbsa ? '3px solid var(--color-error)' : '3px solid var(--color-muted)';
 
         const inhalChecklist = {
             stridor: document.getElementById('chk-stridor').checked,
@@ -2083,17 +1521,17 @@
         };
         const inhalEval = BurnEngine.evaluateInhalationRisk(inhalChecklist);
         if (inhalEval.recommendation === 'IMMEDIATE_INTUBATION') {
-            inhalTriageBox.style.background = '#fef2f2'; inhalTriageBox.style.borderColor = '#fca5a5';
-            inhalTriageTitle.innerHTML = '<span style="color:#991b1b;">🚨 ข้อบ่งชี้ใส่ท่อช่วยหายใจทันที (Immediate Intubation Indicated):</span>';
-            inhalTriageDesc.innerHTML = `<span style="color:#7f1d1d;">พบอาการวิกฤต: ${inhalEval.criticalSigns.join(', ')}<br><strong>คำแนะนำ:</strong> ${inhalEval.ettRecommendation}</span>`;
+            inhalTriageBox.style.background = 'var(--color-error-soft)'; inhalTriageBox.style.borderColor = 'var(--color-error-line)';
+            inhalTriageTitle.innerHTML = '<span style="color:var(--color-error);">ข้อบ่งชี้ใส่ท่อช่วยหายใจทันที (Immediate Intubation Indicated):</span>';
+            inhalTriageDesc.innerHTML = `<span style="color:var(--color-error);">พบอาการวิกฤต: ${inhalEval.criticalSigns.join(', ')}<br><strong>คำแนะนำ:</strong> ${inhalEval.ettRecommendation}</span>`;
         } else if (inhalEval.recommendation === 'CLOSE_SERIAL_MONITORING_OR_EARLY_INTUBATION') {
-            inhalTriageBox.style.background = '#fffbeb'; inhalTriageBox.style.borderColor = '#fde68a';
-            inhalTriageTitle.innerHTML = '<span style="color:#92400e;">⚠️ มีความเสี่ยงสูดดมควันพิษ (High Suspicion Inhalation Injury):</span>';
-            inhalTriageDesc.innerHTML = `<span style="color:#78350f;">พบสัญญาณเตือน: ${inhalEval.warningSigns.join(', ')}<br>ให้ 100% Humidified O2 ทาง NRB และประเมินอาการทางเดินหายใจซ้ำทุก 15–30 นาที</span>`;
+            inhalTriageBox.style.background = 'var(--color-warn-soft)'; inhalTriageBox.style.borderColor = 'var(--color-warn-line)';
+            inhalTriageTitle.innerHTML = '<span style="color:var(--color-warn);">มีความเสี่ยงสูดดมควันพิษ (High Suspicion Inhalation Injury):</span>';
+            inhalTriageDesc.innerHTML = `<span style="color:var(--color-warn);">พบสัญญาณเตือน: ${inhalEval.warningSigns.join(', ')}<br>ให้ 100% Humidified O2 ทาง NRB และประเมินอาการทางเดินหายใจซ้ำทุก 15-30 นาที</span>`;
         } else {
-            inhalTriageBox.style.background = '#f8fafc'; inhalTriageBox.style.borderColor = '#cbd5e1';
-            inhalTriageTitle.innerHTML = '<span style="color:#0f172a;">✅ ไม่พบสัญญาณวิกฤตของทางเดินหายใจส่วนบน:</span>';
-            inhalTriageDesc.innerHTML = '<span style="color:#475569;">เฝ้าระวังอาการตามมาตรฐานและประเมินซ้ำเป็นระยะ</span>';
+            inhalTriageBox.style.background = 'var(--color-paper-2)'; inhalTriageBox.style.borderColor = 'var(--color-rule-2)';
+            inhalTriageTitle.innerHTML = '<span style="color:var(--color-ink);">ไม่พบสัญญาณวิกฤตของทางเดินหายใจส่วนบน:</span>';
+            inhalTriageDesc.innerHTML = '<span style="color:var(--color-ink-2);">เฝ้าระวังอาการตามมาตรฐานและประเมินซ้ำเป็นระยะ</span>';
         }
 
         // 6. Smoke Toxicology: CO & Cyanide
@@ -2131,12 +1569,12 @@
         const coSeverityBadge = document.getElementById('co-severity-badge');
         if (coSeverityBadge) {
             const tierColors = {
-                'NORMAL_OR_LOW': { bg: '#f1f5f9', color: '#475569', text: 'Normal (<10%)' },
-                'MILD_EXPOSURE': { bg: '#fef3c7', color: '#92400e', text: 'Mild (10–20%)' },
-                'MODERATE': { bg: '#fed7aa', color: '#9a3412', text: 'Moderate (20–30%)' },
-                'MODERATE_TO_SEVERE': { bg: '#fecaca', color: '#991b1b', text: 'Mod-Severe (30–40%)' },
-                'SEVERE': { bg: '#f87171', color: '#7f1d1d', text: 'Severe (40–60%)' },
-                'LETHAL': { bg: '#450a0a', color: '#ffffff', text: 'Lethal (>60%)' }
+                'NORMAL_OR_LOW': { bg: 'var(--color-paper-3)', color: 'var(--color-ink-2)', text: 'Normal (<10%)' },
+                'MILD_EXPOSURE': { bg: 'var(--color-warn-soft)', color: 'var(--color-warn)', text: 'Mild (10-20%)' },
+                'MODERATE': { bg: 'var(--color-warn-soft)', color: 'var(--color-warn)', text: 'Moderate (20-30%)' },
+                'MODERATE_TO_SEVERE': { bg: 'var(--color-error-line)', color: 'var(--color-error)', text: 'Mod-Severe (30–40%)' },
+                'SEVERE': { bg: 'var(--color-error-line)', color: 'var(--color-error)', text: 'Severe (40-60%)' },
+                'LETHAL': { bg: 'var(--color-error)', color: 'var(--color-paper-2)', text: 'Lethal (>60%)' }
             };
             const cfg = tierColors[coAssessment.severityTier] || tierColors.NORMAL_OR_LOW;
             coSeverityBadge.style.background = cfg.bg; coSeverityBadge.style.color = cfg.color; coSeverityBadge.textContent = cfg.text;
@@ -2144,9 +1582,9 @@
 
         if (coAssessmentResult) {
             if (isHboIndicated) {
-                coAssessmentResult.innerHTML = `<div style="background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 6px; padding: 8px 10px; color: #991b1b;"><strong style="display: block; font-size: 12px;">🚨 เข้าเกณฑ์ส่งพิจารณา Hyperbaric Oxygen (HBO)</strong><div style="margin-top: 2px; font-size: 11px; color: #7f1d1d;">• อาการ: ${coAssessment.symptomsDescription}<br>• แผนรักษา: ให้ 100% High-Flow O2 ทันที และประสานส่งต่อศูนย์ HBO Therapy ที่ใกล้ที่สุด</div></div>`;
+                coAssessmentResult.innerHTML = `<div style="background: var(--color-error-soft); border: 1.5px solid var(--color-error-line); border-radius: 6px; padding: 8px 10px; color: var(--color-error);"><strong style="display: block; font-size: var(--text-xs);">เข้าเกณฑ์ส่งพิจารณา Hyperbaric Oxygen (HBO)</strong><div style="margin-top: 2px; font-size: var(--text-xs); color: var(--color-error);">• อาการ: ${coAssessment.symptomsDescription}<br>• แผนรักษา: ให้ 100% High-Flow O2 ทันที และประสานส่งต่อศูนย์ HBO Therapy ที่ใกล้ที่สุด</div></div>`;
             } else {
-                coAssessmentResult.innerHTML = `<div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 6px; padding: 8px 10px; color: #166534;"><strong style="display: block; font-size: 12px;">✅ ยังไม่เข้าเกณฑ์ข้อบ่งชี้ส่ง HBO Therapy</strong><div style="margin-top: 2px; font-size: 11px; color: #15803d;">• อาการ: ${coAssessment.symptomsDescription}<br>• แผนรักษา: ให้ 100% High-Flow O2 ผ่าน Non-Rebreather Mask ต่อเนื่องจนระดับ COHb < 5–10%</div></div>`;
+                coAssessmentResult.innerHTML = `<div style="background: var(--color-success-soft); border: 1.5px solid var(--color-success-line); border-radius: 6px; padding: 8px 10px; color: var(--color-success);"><strong style="display: block; font-size: var(--text-xs);">ยังไม่เข้าเกณฑ์ข้อบ่งชี้ส่ง HBO Therapy</strong><div style="margin-top: 2px; font-size: var(--text-xs); color: var(--color-success);">• อาการ: ${coAssessment.symptomsDescription}<br>• แผนรักษา: ให้ 100% High-Flow O2 ผ่าน Non-Rebreather Mask ต่อเนื่องจนระดับ COHb < 5-10%</div></div>`;
             }
         }
 
@@ -2160,7 +1598,7 @@
                 valThiosulfateDose.textContent = `${thiosulfateG} g (${cnDosing.sodiumThiosulfateMl} mL 25%)`;
             }
         } else {
-            valCyanideDose.textContent = '⚠️ กรุณาใส่น้ำหนักผู้ป่วย';
+            valCyanideDose.textContent = 'กรุณาใส่น้ำหนักผู้ป่วย';
             if (valThiosulfateDose) valThiosulfateDose.textContent = '--';
         }
 
@@ -2175,14 +1613,14 @@
             });
 
             if (cnPresumptive.isPresumptiveCyanide) {
-                valCnPresumptiveResult.style.background = '#fef2f2';
-                valCnPresumptiveResult.style.borderColor = '#fca5a5';
-                valCnPresumptiveResult.style.color = '#991b1b';
-                valCnPresumptiveResult.innerHTML = `<strong>🚨 เข้าเกณฑ์สงสัยพิษไซยาไนด์รุนแรง (ATLS 11th Ch 9):</strong> พบข้อบ่งชี้ ${cnPresumptive.criteriaMetCount} ข้อ (${cnPresumptive.criteriaList.join(', ')}) → แนะนำให้ <strong>Hydroxocobalamin (Cyanokit)</strong> ทันที`;
+                valCnPresumptiveResult.style.background = 'var(--color-error-soft)';
+                valCnPresumptiveResult.style.borderColor = 'var(--color-error-line)';
+                valCnPresumptiveResult.style.color = 'var(--color-error)';
+                valCnPresumptiveResult.innerHTML = `<strong>เข้าเกณฑ์สงสัยพิษไซยาไนด์รุนแรง (ATLS 11th Ch 9):</strong> พบข้อบ่งชี้ ${cnPresumptive.criteriaMetCount} ข้อ (${cnPresumptive.criteriaList.join(', ')}) → แนะนำให้ <strong>Hydroxocobalamin (Cyanokit)</strong> ทันที`;
             } else {
-                valCnPresumptiveResult.style.background = '#f8fafc';
-                valCnPresumptiveResult.style.borderColor = '#cbd5e1';
-                valCnPresumptiveResult.style.color = '#475569';
+                valCnPresumptiveResult.style.background = 'var(--color-paper-2)';
+                valCnPresumptiveResult.style.borderColor = 'var(--color-rule-2)';
+                valCnPresumptiveResult.style.color = 'var(--color-ink-2)';
                 valCnPresumptiveResult.innerHTML = `<strong>เกณฑ์สงสัย ATLS 11th:</strong> เข้าเกณฑ์ ${cnPresumptive.criteriaMetCount}/5 ข้อ (ไฟไหม้ในที่ปิด + โคม่า/CPR + ช็อก + Lactate ≥8-10 + COHb >10%)`;
             }
         }
@@ -2221,16 +1659,16 @@
 
             if (abaReferralBadge) {
                 abaReferralBadge.textContent = `${checkedCount}/10 ข้อ`;
-                abaReferralBadge.style.background = checkedCount > 0 ? '#fee2e2' : '#f0fdf4';
-                abaReferralBadge.style.color = checkedCount > 0 ? '#991b1b' : '#166534';
+                abaReferralBadge.style.background = checkedCount > 0 ? 'var(--color-error-soft)' : 'var(--color-success-soft)';
+                abaReferralBadge.style.color = checkedCount > 0 ? 'var(--color-error)' : 'var(--color-success)';
             }
             if (abaReferralBanner) {
                 if (checkedCount > 0) {
-                    abaReferralBanner.style.background = '#fef2f2'; abaReferralBanner.style.borderColor = '#fca5a5'; abaReferralBanner.style.color = '#991b1b';
-                    abaReferralBanner.innerHTML = `🚨 <strong>เข้าเกณฑ์ส่งต่อศูนย์รักษาแผลไหม้ (Burn Center Referral):</strong> พบข้อบ่งชี้ ${checkedCount} ข้อ — แนะนำเตรียมส่งต่อ`;
+                    abaReferralBanner.style.background = 'var(--color-error-soft)'; abaReferralBanner.style.borderColor = 'var(--color-error-line)'; abaReferralBanner.style.color = 'var(--color-error)';
+                    abaReferralBanner.innerHTML = `<strong>เข้าเกณฑ์ส่งต่อศูนย์รักษาแผลไหม้ (Burn Center Referral):</strong> พบข้อบ่งชี้ ${checkedCount} ข้อ: แนะนำเตรียมส่งต่อ`;
                 } else {
-                    abaReferralBanner.style.background = '#f0fdf4'; abaReferralBanner.style.borderColor = '#bbf7d0'; abaReferralBanner.style.color = '#166534';
-                    abaReferralBanner.innerHTML = `✅ <strong>ยังไม่เข้าเกณฑ์ส่งต่อศูนย์เฉพาะทาง:</strong> ดูแลรักษาตามมาตรฐานในโรงพยาบาลทั่วไป`;
+                    abaReferralBanner.style.background = 'var(--color-success-soft)'; abaReferralBanner.style.borderColor = 'var(--color-success-line)'; abaReferralBanner.style.color = 'var(--color-success)';
+                    abaReferralBanner.innerHTML = `<strong>ยังไม่เข้าเกณฑ์ส่งต่อศูนย์เฉพาะทาง:</strong> ดูแลรักษาตามมาตรฐานในโรงพยาบาลทั่วไป`;
                 }
             }
         }
@@ -2259,7 +1697,7 @@
         const coClearance = valCoClearanceTime ? valCoClearanceTime.textContent : '--';
         const abaBadge = document.getElementById('aba-referral-badge') ? document.getElementById('aba-referral-badge').textContent : '0/10';
         const isHypo = checkHypotensive.checked;
-        const shockBolusNote = isHypo ? `\n- 🚨 Resuscitation Shock Bolus: Warmed LR ${Math.round(weight * selectedBolusMlKg).toLocaleString()} mL (${selectedBolusMlKg} mL/kg) IV in 15–30 min` : '';
+        const shockBolusNote = isHypo ? `\n- Resuscitation Shock Bolus: Warmed LR ${Math.round(weight * selectedBolusMlKg).toLocaleString()} mL (${selectedBolusMlKg} mL/kg) IV in 15-30 min` : '';
         const pedsMaintenanceNote = (Number(weight) > 0 && Number(weight) <= 30)
             ? `\n  * Pediatric Maintenance Fluid: D5LR ${valPedsRate.textContent} (Holliday-Segar for <= 30 kg)`
             : '';
@@ -2301,7 +1739,7 @@
     // ═══════════════════════════════════════════════
     if (typeof ED_COMPONENTS !== 'undefined' && ED_COMPONENTS.injectNavBar) {
         ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
-            '🔥 Burn Management & Resuscitation Hub — ATLS 11th Ed / ABA 2023', '🔥 Burn Hub (ATLS 11th)');
+            'Burn Management & Resuscitation Hub', 'Burn Hub (ATLS 11th)');
     }
     recalculateAll(false);
 })();

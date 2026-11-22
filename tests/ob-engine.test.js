@@ -182,14 +182,15 @@ describe('checkMgSO4Toxicity', () => {
         assert.ok(r.flags.some(f => f.id === 'dtr' && f.severity === 'critical'));
     });
 
-    test('RR <12 triggers critical flag', () => {
-        const r = checkMgSO4Toxicity({ rr: 10, dtrAbsent: false, urineOutput: 50 });
+    // RTCOG OB 69-046 (2569) and the MNRH standing order use RR < 14/min.
+    test('RR <14 triggers critical flag', () => {
+        const r = checkMgSO4Toxicity({ rr: 13, dtrAbsent: false, urineOutput: 50 });
         assert.equal(r.isToxic, true);
         assert.ok(r.flags.some(f => f.id === 'rr' && f.severity === 'critical'));
     });
 
-    test('RR exactly 12 does not trigger', () => {
-        const r = checkMgSO4Toxicity({ rr: 12, dtrAbsent: false, urineOutput: 50 });
+    test('RR exactly 14 does not trigger', () => {
+        const r = checkMgSO4Toxicity({ rr: 14, dtrAbsent: false, urineOutput: 50 });
         assert.equal(r.isToxic, false);
     });
 
@@ -386,5 +387,48 @@ describe('checkMgSO4Safety & Clinical Constants', () => {
         assert.ok(TEXTBOOK_VARIATIONS.tintinalli.includes('Tintinalli 9th'));
         assert.ok(TEXTBOOK_VARIATIONS.rosen.includes('Rosen 10th'));
         assert.ok(TEXTBOOK_VARIATIONS.goldfrank.includes('Goldfrank 11th'));
+    });
+});
+
+
+// ─── MNRH Standing Order: Severe Preeclampsia (2569) ────────────────────────
+describe('MNRH_SEVERE_PE_SO', () => {
+    const { MNRH_SEVERE_PE_SO: so, SERUM_MG_LEVELS, BP_SECOND_LINE, MGSO4_CONTRAINDICATIONS } = require('../shared/ob-engine.js');
+
+    test('loading: 10% MgSO4 4 g (40 mL) + D5W 100 mL over 20 min = 420 mL/hr', () => {
+        assert.equal(so.loading.doseG * 1000 / MGSO4_CONC_10PCT, 40);
+        assert.equal(so.loading.totalVol_mL, 40 + 100);
+        assert.equal(so.loading.pumpRate_mL_hr, so.loading.totalVol_mL / so.loading.durationMin * 60);
+    });
+
+    test('maintenance: 40 g in 1,080 mL; labelled 50/25 mL/h deliver 1.85/0.93 g/h', () => {
+        const m = so.maintenance;
+        assert.equal(m.mgso4_50pct_mL * MGSO4_CONC_50PCT / 1000, m.mgso4_g);
+        assert.equal(m.totalVol_mL, m.mgso4_50pct_mL + 1000);
+        const gPerMl = m.mgso4_g / m.totalVol_mL;
+        assert.equal(Math.round(gPerMl * m.rate2g_mL_hr * 100) / 100, m.actual2g_g_hr);
+        assert.equal(Math.round(gPerMl * m.rate1g_mL_hr * 100) / 100, m.actual1g_g_hr);
+    });
+
+    test('1 g/h criteria include BMI < 25, Cr > 1.1 mg/dL, UO < 0.5 mL/kg/h', () => {
+        assert.deepEqual(so.maintenance.reduceTo1gIf, ['BMI < 25 kg/m²', 'Cr > 1.1 mg/dL', 'Urine output < 0.5 mL/kg/h']);
+    });
+
+    test('BP ladder is labetalol 20 → 40 → 80 mg then hydralazine 10 mg', () => {
+        assert.deepEqual(so.bpLadder.map(s => s.drug), ['Labetalol 20 mg IV', 'Labetalol 40 mg IV', 'Labetalol 80 mg IV', 'Hydralazine 10 mg IV']);
+    });
+
+    test('controlled-BP recheck schedule totals 16 readings', () => {
+        assert.equal(so.bpControlledSchedule.reduce((n, s) => n + s.times, 0), 16);
+    });
+
+    test('renal impairment no longer reduces the loading dose', () => {
+        assert.ok(!MGSO4_CONTRAINDICATIONS.renalImpairment.action.includes('2 g IV bolus'));
+        assert.ok(MGSO4_CONTRAINDICATIONS.renalImpairment.action.includes('1 g/h'));
+    });
+
+    test('serum Mg table and second-line infusions are present', () => {
+        assert.equal(SERUM_MG_LEVELS[0].mgdl, '5–9');
+        assert.deepEqual(BP_SECOND_LINE.map(d => d.max), ['15 mg/h', '160 mg/h', '10 mg/h']);
     });
 });

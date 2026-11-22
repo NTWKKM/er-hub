@@ -1,7 +1,7 @@
 // service-worker.js — Offline PWA cache for ER Standing Order Hub
 // Caches all static assets for offline access (ED wifi outages during stroke workup)
 // CRITICAL: Always keep in sync with the nav-right version string in index.html
-const CACHE_VERSION = 'er-hub-v119';
+const CACHE_VERSION = 'er-hub-v120';
 const CACHE_DATE = '22/11/2569';
 const ASSETS = [
   './',
@@ -25,6 +25,9 @@ const ASSETS = [
   './tools/burn-manager.html',
   './tools/tb-calculator.html',
   './tools/mgso4-calculator.html',
+  './tools/screen/tool-screen.css',
+  './tools/screen/tokens.css',
+  './tools/screen/base.css',
   './tools/Urgent-Clinic-Home-Medication.html',
   './tools/score-hub.html',
   './tools/rsi-checklist.html',

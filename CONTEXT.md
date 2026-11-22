@@ -319,3 +319,13 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   5. **Single version line**: `package.json` version now tracks `CHANGELOG.md` (3.2.0); `CACHE_VERSION` remains the deploy/cache counter (`er-hub-v119`).
 - **Consequences**: Clinicians lose drafts idle for over a day; a new order-page control must be wired to the print path (or allowlisted with a reason) and labelled before tests pass.
 
+## ADR-39: Hallmark Redesign of MgSO4 and Burn Screens, MNRH 2569 Severe Preeclampsia Order
+
+- **Context**: Both screens read as generated (gradient banners, emoji icons, tracked-capital labels, five-colour accordions, 3:1 contrast, overflow at 320px) and were long and flat. RTCOG OB 69-046 (Update 2569) and a new MNRH standing order superseded the MgSO4 content.
+- **Decision**:
+  1. Full Hallmark redesign inside DESIGN.md's Braun palette, scoped to the two screens through `tools/screen/` (tokens, base, tool-screen.css); `shared/base.css` is untouched.
+  2. The MgSO4 screen leads with the hospital standing order; legacy regimens move to closed reference disclosures. Clinically confirmed by the requesting physician: loading = 10% MgSO4 40 mL + D5W 100 mL (140 mL, 420 mL/h); maintenance labelled 50/25 mL/h with the true 1.85/0.93 g/h noted; renal impairment no longer reduces loading to 2 g.
+  3. MgSO4 toxicity RR threshold moves from < 12 to < 14/min (RTCOG and standing order).
+  4. The burn screen keeps every id, handler and calculation; colours move to tokens, the summary becomes a sticky aside, accordions become keyboard-operable.
+- **Consequences**: `shared/base.css` still carries Floor findings for these pages (literal colours, `transition: all` on unused rules) until a hub-wide restyle; the burn CO badge keeps an en dash in "Mod-Severe (30–40%)" because a test pins that string.
+
