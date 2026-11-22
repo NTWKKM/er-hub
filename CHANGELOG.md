@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.4.0] — 2026-11-22
+
+### rt-PA and NSTEMI Re-audit: Enoxaparin Dosing, Guideline Alignment, Rescue Tips, Polish
+
+- **NSTEMI V1 and V2 (`orders/nstemi.html`, `orders/nstemi-v2.html`, `shared/clinical-engine.js`):**
+  - Enoxaparin now 0.75 mg/kg SC q12h for age ≥ 75 (was 1 mg/kg for everyone); eGFR < 30 keeps 1 mg/kg once daily. Dosing lives in `CLINICAL_ENGINE.calcEnoxaparinACS()` shared by both pages, with an inline fallback for HTML/engine version skew.
+  - Enoxaparin frequency auto-switches to once daily when eGFR falls below 30 and back when it rises; a manual choice survives until the eGFR band changes.
+  - Fondaparinux contraindication threshold moved from eGFR < 30 to < 20 (ESC 2023).
+  - V2 high-risk (invasive < 24 h) hint no longer offers ticagrelor pretreatment (ACC/AHA 2025).
+  - Thai 0.4 / 0.6 mL pre-filled syringe selection kept as is.
+- **rt-PA V1 and V2 (`orders/rtpa.html`, `orders/rtpa-v2.html`):** screen-only "Tips" popover for symptomatic ICH and orolingual angioedema after thrombolysis (printed order unchanged). Guideline labels aligned to AHA/ASA 2026; V1 reference no longer cites tenecteplase; low-dose alteplase reference states that AHA/ASA 2026 recommends 0.9 mg/kg or tenecteplase and keeps 0.6 mg/kg as an institutional option.
+- **Hallmark polish (no layout change):** emoji icons removed except strings pinned by tests, `transition: all` replaced, label capitals and mono removed, 10px screen text raised to 11px, risk-badge contrast raised, Clear Form demoted to an outline button, meta descriptions added.
+- **Service worker version skew (`service-worker.js`):** code (navigations, HTML, JS, CSS, JSON) is now network-first with `cache: 'no-cache'`, a 5 s timeout and cache fallback, so new HTML can no longer run against an older cached engine. The `/shared/*` static cache route is removed (only `docs/*` remains), precache bypasses the HTTP cache, and offline navigations ignore query strings so ER NOTE `?draft=` links open from cache. Fonts, images and PDFs stay cache-first.
+- **Tests:** `tests/nstemi-anticoag.test.js` (14) and `tests/sw-fetch-strategy.test.js` (8), including the first DOM tests for NSTEMI V1 (644 total). SW cache `er-hub-v121`.
+
 ## [3.3.0] — 2026-11-22
 
 ### MgSO4 and Burn Screens Redesigned; Severe Preeclampsia Order Updated to MNRH 2569 / RTCOG OB 69-046

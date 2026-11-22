@@ -329,3 +329,9 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   4. The burn screen keeps every id, handler and calculation; colours move to tokens, the summary becomes a sticky aside, accordions become keyboard-operable.
 - **Consequences**: `shared/base.css` still carries Floor findings for these pages (literal colours, `transition: all` on unused rules) until a hub-wide restyle; the burn CO badge keeps an en dash in "Mod-Severe (30–40%)" because a test pins that string.
 
+## ADR-40: rt-PA and NSTEMI Re-audit (2026-11-22)
+
+- **Context**: A re-audit found enoxaparin was 1 mg/kg regardless of age despite the page's own reference text, the enoxaparin frequency could not be overridden (V1) or was never auto-set (V2), the V2 high-risk hint offered ticagrelor pretreatment, fondaparinux used eGFR < 30, and stroke pages carried stale guideline labels. AHA/ASA 2026 recommends alteplase 0.9 mg/kg or tenecteplase 0.25 mg/kg and does not recommend 0.6 mg/kg.
+- **Decision** (confirmed by the requesting physician): age ≥ 75 → 0.75 mg/kg q12h; eGFR < 30 → auto once daily with manual override; fondaparinux CI below eGFR 20; keep Thai 0.4/0.6 mL syringe selection; keep 0.6 mg/kg alteplase as an institutional option with accurate wording; add screen-only rescue tips for sICH and angioedema without changing the printed order; V1 rt-PA stays alteplase-only.
+- **Consequences**: Enoxaparin rules live in `CLINICAL_ENGINE`. The service worker now serves all code network-first, so HTML and engines come from one deploy; the NSTEMI pages keep an inline fallback for the single transition in which the previous service worker still controls the page. Strings pinned by tests (`🖨️ Blank Order`, `🖨️ Blank NIHSS`, `⚠ Max dose capped`) keep their symbols.
+

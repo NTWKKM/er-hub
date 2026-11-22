@@ -1,7 +1,7 @@
 // service-worker.js — Offline PWA cache for ER Standing Order Hub
 // Caches all static assets for offline access (ED wifi outages during stroke workup)
 // CRITICAL: Always keep in sync with the nav-right version string in index.html
-const CACHE_VERSION = 'er-hub-v120';
+const CACHE_VERSION = 'er-hub-v121';
 const CACHE_DATE = '22/11/2569';
 const ASSETS = [
   './',
@@ -99,7 +99,8 @@ const ASSETS = [
 async function fetchWithRetry(url, maxRetries = 2, delayMs = 100) {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      const response = await fetch(url);
+      // 'reload' bypasses the HTTP cache so a new CACHE_VERSION never precaches stale files
+      const response = await fetch(url, { cache: 'reload' });
       if (response.ok || response.type === 'opaque') {
         // opaque responses (cross-origin) have no status property
         return response;
@@ -122,13 +123,14 @@ async function fetchWithRetry(url, maxRetries = 2, delayMs = 100) {
 }
 
 self.addEventListener('install', (event) => {
-  // Static Routing API — bypass SW fetch handler for known static assets (Chromium 123+)
+  // Static Routing API — serve immutable reference assets (PDFs, images) straight from cache
+  // (Chromium 123+). /shared/* is deliberately NOT routed here: engines and styles must stay
+  // in step with the HTML that loads them (see the fetch handler).
   if (event.addRoutes) {
     // Resolve against the SW scope so routes still match when hosted under a sub-path
-    // (e.g. GitHub Pages /er-hub/); a bare '/shared/*' would only match at the origin root.
+    // (e.g. GitHub Pages /er-hub/); a bare '/docs/*' would only match at the origin root.
     const scopePath = new URL(self.registration.scope).pathname;
     event.addRoutes([
-      { condition: { urlPattern: { pathname: scopePath + 'shared/*' }, requestMethod: 'GET' }, source: 'cache' },
       { condition: { urlPattern: { pathname: scopePath + 'docs/*' }, requestMethod: 'GET' }, source: 'cache' }
     ]);
   }
@@ -177,35 +179,86 @@ self.addEventListener('activate', (event) => {
   })());
 });
 
-self.addEventListener('fetch', (event) => {
-  // Network-first for navigation requests (with Navigation Preload support)
-  if (event.request.mode === 'navigate') {
-    event.respondWith((async () => {
-      try {
-        // Use Navigation Preload response if available (parallel fetch during SW wake)
-        const preloadResponse = await event.preloadResponse;
-        if (preloadResponse) return preloadResponse;
-        return await fetch(event.request);
-      } catch (err) {
-        // Offline fallback: serve from cache
-        const cached = await caches.match(event.request);
-        return cached || (await caches.match('./index.html'));
-      }
-    })());
-  } else {
-    // Cache-first for static assets (all self-hosted now)
-    event.respondWith(
-      caches.match(event.request).then((cached) => {
-        return cached || fetch(event.request).then((response) => {
-          // Cache successful same-origin responses for offline resilience
-          if (response.ok && event.request.url.startsWith(self.location.origin)) {
-            const clone = response.clone();
-            caches.open(CACHE_VERSION).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        }).catch(() => new Response('', { status: 503, statusText: 'Offline and not cached' }));
-      })
+// ── Fetch strategy ────────────────────────────────────────────────────────────
+// Code (navigations, HTML, JS, CSS, JSON) is network-first so a page and the engines it
+// loads always come from the same deploy. Serving HTML from the network but engines from
+// an older cache caused version skew (e.g. new NSTEMI HTML calling a function the cached
+// clinical-engine.js did not have). Fonts, images and PDFs stay cache-first.
+const NETWORK_TIMEOUT_MS = 5000;
+const CODE_PATH = /\.(?:html?|js|mjs|css|json)$/i;
+
+function isSameOrigin(request) {
+  return new URL(request.url).origin === self.location.origin;
+}
+
+function isCodeRequest(request) {
+  if (request.mode === 'navigate') return true;
+  if (!isSameOrigin(request)) return false;
+  if (request.destination === 'script' || request.destination === 'style') return true;
+  return CODE_PATH.test(new URL(request.url).pathname);
+}
+
+function withTimeout(promise, ms) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('network timeout')), ms);
+    promise.then(
+      (value) => { clearTimeout(timer); resolve(value); },
+      (err) => { clearTimeout(timer); reject(err); }
     );
+  });
+}
+
+async function networkFirst(request, preloadPromise) {
+  // 'no-cache' revalidates with the server (cheap 304) instead of trusting the HTTP cache
+  const network = Promise.resolve(preloadPromise || null)
+    .catch(() => null)
+    .then((preloaded) => preloaded || fetch(request, { cache: 'no-cache' }))
+    .then(async (response) => {
+      if (response && response.ok && response.type === 'basic') {
+        const cache = await caches.open(CACHE_VERSION);
+        await cache.put(request, response.clone());
+      }
+      return response;
+    });
+  try {
+    return await withTimeout(network, NETWORK_TIMEOUT_MS);
+  } catch (err) {
+    // Offline or very slow network: fall back to the cached copy (query strings such as
+    // ?draft=<id> are ignored so ER NOTE drafts still open offline)
+    const cached = await caches.match(request, { ignoreSearch: true });
+    if (cached) return cached;
+    if (request.mode === 'navigate') {
+      const shell = await caches.match('./index.html');
+      if (shell) return shell;
+    }
+    return new Response('', { status: 503, statusText: 'Offline and not cached' });
+  }
+}
+
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  try {
+    const response = await fetch(request);
+    // Cache successful same-origin responses for offline resilience
+    if (response.ok && isSameOrigin(request)) {
+      const cache = await caches.open(CACHE_VERSION);
+      await cache.put(request, response.clone());
+    }
+    return response;
+  } catch (err) {
+    return new Response('', { status: 503, statusText: 'Offline and not cached' });
+  }
+}
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+  if (isCodeRequest(event.request)) {
+    // Navigation Preload starts the network request in parallel with SW wake-up
+    const preload = event.request.mode === 'navigate' ? event.preloadResponse : null;
+    event.respondWith(networkFirst(event.request, preload));
+  } else {
+    event.respondWith(cacheFirst(event.request));
   }
 });
 

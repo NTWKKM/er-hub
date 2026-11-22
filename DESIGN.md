@@ -89,6 +89,10 @@ Custom properties declared under `:root` in `base.css` for standing-order form p
 
 ---
 
+### rt-PA Rescue Tips Popover
+
+Screen-only button (`.btn-rescue-tips`, outline, full width) below Clear Form on `orders/rtpa.html` and `orders/rtpa-v2.html` opens a native `[popover]` dialog (`#rescue-tips-pop`, max 560px, scrollable) listing sICH and angioedema rescue steps. Hidden in print; the printed standing order is unchanged.
+
 ## 3. Accessibility & Printing Constraints
 
 ### Accessibility (Screen)
