@@ -45,10 +45,10 @@
       <label><input type="radio" name="eye-mech" value="Other"> Other</label>
     </div>
   </div>
-  <div class="field-row"><label>สารเคมี (ถ้ามี) (Chemical agent)</label><input type="text" id="eye-chemical"></div>
+  <div class="field-row"><label for="eye-chemical">สารเคมี (ถ้ามี) (Chemical agent)</label><input type="text" id="eye-chemical"></div>
   <div class="inline-row">
-    <div class="field-row"><label>เวลาตั้งแต่บาดเจ็บ (Time since injury)</label><input type="text" id="eye-time"></div>
-    <div class="field-row"><label>อุปกรณ์ป้องกันดวงตา (Eye protection)</label><input type="text" id="eye-protection"></div>
+    <div class="field-row"><label for="eye-time">เวลาตั้งแต่บาดเจ็บ (Time since injury)</label><input type="text" id="eye-time"></div>
+    <div class="field-row"><label for="eye-protection">อุปกรณ์ป้องกันดวงตา (Eye protection)</label><input type="text" id="eye-protection"></div>
   </div>
   <div class="field-row"><label>ดวงตาที่ได้รับผลกระทบ (Affected eye(s))</label>
     <div class="checkbox-group">
@@ -62,8 +62,8 @@
 <div class="card">
   <h2 class="section-title"><span class="num">2</span>Visual Acuity</h2>
   <div class="inline-row">
-    <div class="field-row"><label>Right eye</label><input type="text" id="eye-va-r" placeholder="6/60, CF, HM, LP, NLP"></div>
-    <div class="field-row"><label>Left eye</label><input type="text" id="eye-va-l" placeholder="6/6"></div>
+    <div class="field-row"><label for="eye-va-r">Right eye</label><input type="text" id="eye-va-r" placeholder="6/60, CF, HM, LP, NLP"></div>
+    <div class="field-row"><label for="eye-va-l">Left eye</label><input type="text" id="eye-va-l" placeholder="6/6"></div>
     <div class="field-row"><label>Pinhole improvement</label>
       <div class="radio-group">
         <label><input type="radio" name="eye-pinhole" value="Yes"> Yes</label>
@@ -116,7 +116,7 @@
       <label><input type="checkbox" id="pupil-traumatic"> Traumatic mydriasis</label>
     </div>
   </div>
-  <div class="field-row"><label>Lens / Fundus (if viewable)</label><textarea id="eye-fundus" placeholder="lens status, red reflex, fundal view"></textarea></div>
+  <div class="field-row"><label for="eye-fundus">Lens / Fundus (if viewable)</label><textarea id="eye-fundus" placeholder="lens status, red reflex, fundal view"></textarea></div>
 </div>
 
 <div class="card">
@@ -128,7 +128,7 @@
       <label><input type="radio" name="eye-seidel" value="Not performed"> Not performed</label>
     </div>
   </div>
-  <div class="field-row"><label>FB location / removal</label><input type="text" id="eye-fb" placeholder="tarsal conjunctiva, corneal superficial, embedded"></div>
+  <div class="field-row"><label for="eye-fb">FB location / removal</label><input type="text" id="eye-fb" placeholder="tarsal conjunctiva, corneal superficial, embedded"></div>
   <div class="field-row"><label>Orbital / penetrating injury signs</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="orbit-deform"> Orbital wall deformity</label>
@@ -141,9 +141,9 @@
 
 <div class="card">
   <h2 class="section-title"><span class="num">5</span>Chemical Injury</h2>
-  <div class="field-row"><label>pH (pre / post irrigation)</label><input type="text" id="eye-ph" placeholder="pre ___ / post ___"></div>
-  <div class="field-row"><label>Irrigation</label><input type="text" id="eye-irrigate" value="Normal saline / LR ≥30 min until pH neutral"></div>
-  <div class="field-row"><label>Chemical grade / limbal ischemia</label><input type="text" id="eye-grade" placeholder="Dua grade I–VI"></div>
+  <div class="field-row"><label for="eye-ph">pH (pre / post irrigation)</label><input type="text" id="eye-ph" placeholder="pre ___ / post ___"></div>
+  <div class="field-row"><label for="eye-irrigate">Irrigation</label><input type="text" id="eye-irrigate" value="Normal saline / LR ≥30 min until pH neutral"></div>
+  <div class="field-row"><label for="eye-grade">Chemical grade / limbal ischemia</label><input type="text" id="eye-grade" placeholder="Dua grade I–VI"></div>
 </div>
 
 <div class="card">
@@ -159,8 +159,8 @@
       <label><input type="checkbox" id="rx-tetanus"> Tetanus prophylaxis checked</label>
     </div>
   </div>
-  <div class="field-row"><label>Tetanus</label><input type="text" id="eye-tetanus" placeholder="booster / TIG as indicated"></div>
-  <div class="field-row"><label>Consult / disposition</label>
+  <div class="field-row"><label for="eye-tetanus">Tetanus</label><input type="text" id="eye-tetanus" placeholder="booster / TIG as indicated"></div>
+  <div class="field-row"><label for="eye-consult">Consult / disposition</label>
     <select id="eye-consult">
       <option value="">— select —</option>
       <option>Ophthalmology ED consult now</option>

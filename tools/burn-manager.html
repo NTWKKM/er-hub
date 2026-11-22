@@ -762,7 +762,7 @@
             <label for="input-weight">Weight (kg)</label>
             <input type="number" id="input-weight" class="input-control" value="70" min="1" max="250" step="0.5">
             <div class="slider-row" style="margin-top: 4px;">
-                <input type="range" id="slider-weight" class="slider-control" min="2" max="150" value="70" step="1">
+                <input aria-label="Body weight (kg) slider" type="range" id="slider-weight" class="slider-control" min="2" max="150" value="70" step="1">
             </div>
         </div>
 
@@ -770,7 +770,7 @@
             <label for="input-elapsed">Time Post-Burn (Hours)</label>
             <input type="number" id="input-elapsed" class="input-control" value="1" min="0" max="24" step="0.5">
             <div class="slider-row" style="margin-top: 4px;">
-                <input type="range" id="slider-elapsed" class="slider-control" min="0" max="16" value="1" step="0.5">
+                <input aria-label="Hours elapsed since burn slider" type="range" id="slider-elapsed" class="slider-control" min="0" max="16" value="1" step="0.5">
             </div>
         </div>
 
@@ -956,7 +956,7 @@
 
                 <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px;">
                     <span style="font-size: 12px; color: #475569; font-weight: 600;">ปริมาณปัสสาวะ 1 ชม. ล่าสุด:</span>
-                    <input type="number" id="input-measured-uo" class="input-control" value="40" min="0" max="500" step="5" style="width: 80px; padding: 4px 8px;">
+                    <input aria-label="ปริมาณปัสสาวะ 1 ชม. ล่าสุด (mL/hr)" type="number" id="input-measured-uo" class="input-control" value="40" min="0" max="500" step="5" style="width: 80px; padding: 4px 8px;">
                     <span style="font-size: 12px; color: #64748b;">mL/hr</span>
                     <label style="font-size: 11.5px; margin-left: auto; color: #991b1b; display: flex; align-items: center; gap: 4px; font-weight: 700; cursor: pointer;">
                         <input type="checkbox" id="check-hypotensive" style="accent-color: #ef4444;"> ภาวะช็อก/ความดันตก (Shock)
@@ -1112,7 +1112,7 @@
 
                     <div style="display: flex; gap: 10px; align-items: center; background: #ffffff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0; flex-wrap: wrap;">
                         <label style="font-size: 12px; font-weight: 600; color: #334155;">Carboxyhemoglobin (% COHb):</label>
-                        <input type="number" id="input-cohb" class="input-control" value="15" min="0" max="100" style="width: 70px; padding: 4px 8px; text-align: center; font-weight: 700;">
+                        <input aria-label="Carboxyhemoglobin (% COHb):" type="number" id="input-cohb" class="input-control" value="15" min="0" max="100" style="width: 70px; padding: 4px 8px; text-align: center; font-weight: 700;">
                         <label style="font-size: 11.5px; display: flex; align-items: center; gap: 4px; cursor: pointer; color: #6b21a8; font-weight: 600; margin-left: auto;">
                             <input type="checkbox" id="check-pregnant" style="accent-color: #9333ea;"> 🤰 หญิงตั้งครรภ์
                         </label>

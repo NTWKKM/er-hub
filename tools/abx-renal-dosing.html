@@ -1351,7 +1351,7 @@
                 <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px;">
                     <div class="search-box-wrap">
                         <span class="search-icon">🔍</span>
-                        <input type="text" id="drug-search-input" class="search-input" placeholder="ค้นหาชื่อยา (เช่น Meropenem, Cefepime, Colistin, Pip/Tazo)..." oninput="handleSearch(this.value)">
+                        <input aria-label="Search drug name" type="text" id="drug-search-input" class="search-input" placeholder="ค้นหาชื่อยา (เช่น Meropenem, Cefepime, Colistin, Pip/Tazo)..." oninput="handleSearch(this.value)">
                     </div>
 
                     <button type="button" id="btn-filter-discordant" class="drop-factor-btn" onclick="toggleDiscordantFilter()" style="border: 1px solid var(--card-border); background: var(--surface-hover); min-height: 38px; padding: 0 12px; font-size: 0.78rem;">

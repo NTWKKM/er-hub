@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.2.0] — 2026-11-22
+
+### Audit Remediation: PHI Retention, Antivenom V2 Allergy Print, Accessibility, pnpm & CI
+
+- **Antivenom V2 (`orders/antivenom-v2.html`):** the horse-serum allergy free-text detail now prints on the order (`YES (Allergy) — <detail>`), rendered via `textContent`. Previously the field was shown but its value was dropped.
+- **Patient identifier retention (`tools/er-note/er-note.js`, `tools/Urgent-Clinic-Home-Medication.html`):** drafts holding the HN are purged after 24 h without edits (ER NOTE also removes future-dated and orphaned draft keys, and re-checks on tab re-focus). Home Medication drafts are stored as `{ savedAt, fields }`; legacy drafts are discarded once.
+- **Service worker (`service-worker.js`):** offline cache miss returns a `503` response instead of `undefined`; Static Routing API patterns resolve against the SW scope. Cache bumped to `er-hub-v119` (`22/11/2569`).
+- **Accessibility:** all 205 previously unlabelled form controls now have an accessible name (`<label for>` or `aria-label`), across NIHSS, ER NOTE, Home Medication, Electrolyte Hub, Burn Hub and order pages.
+- **Guards & tests:** added `input-read-guard`, `a11y-label-guard`, `er-note-retention` suites plus antivenom-v2 and service-worker regressions (558 → 613 tests).
+- **Tooling:** migrated to pnpm (`pnpm-lock.yaml`, standalone `pnpm-workspace.yaml`, `packageManager`, `.nvmrc`); `jsdom` 30.1.3 clears the `undici` and `source-map-js` advisories; GitHub Actions workflow runs tests and dependency audit. `package.json` version aligned with this changelog.
+- **Includes since 3.1.6:** Antimicrobial Renal Dosing Guide (T12, `shared/abx-engine.js`, PR #20) and English rt-PA labels/action buttons (`er-hub-v117`–`v118`).
+
 ## [3.1.6] — 2026-09-15
 
 ### Tenecteplase (TNK) Ceiling Cap Alignment & SW Cache Bump

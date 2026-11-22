@@ -1,8 +1,8 @@
 // service-worker.js — Offline PWA cache for ER Standing Order Hub
 // Caches all static assets for offline access (ED wifi outages during stroke workup)
 // CRITICAL: Always keep in sync with the nav-right version string in index.html
-const CACHE_VERSION = 'er-hub-v118';
-const CACHE_DATE = '19/09/2569';
+const CACHE_VERSION = 'er-hub-v119';
+const CACHE_DATE = '22/11/2569';
 const ASSETS = [
   './',
   './index.html',
@@ -121,9 +121,12 @@ async function fetchWithRetry(url, maxRetries = 2, delayMs = 100) {
 self.addEventListener('install', (event) => {
   // Static Routing API — bypass SW fetch handler for known static assets (Chromium 123+)
   if (event.addRoutes) {
+    // Resolve against the SW scope so routes still match when hosted under a sub-path
+    // (e.g. GitHub Pages /er-hub/); a bare '/shared/*' would only match at the origin root.
+    const scopePath = new URL(self.registration.scope).pathname;
     event.addRoutes([
-      { condition: { urlPattern: { pathname: '/shared/*' }, requestMethod: 'GET' }, source: 'cache' },
-      { condition: { urlPattern: { pathname: '/docs/*' }, requestMethod: 'GET' }, source: 'cache' }
+      { condition: { urlPattern: { pathname: scopePath + 'shared/*' }, requestMethod: 'GET' }, source: 'cache' },
+      { condition: { urlPattern: { pathname: scopePath + 'docs/*' }, requestMethod: 'GET' }, source: 'cache' }
     ]);
   }
   event.waitUntil(
@@ -197,7 +200,7 @@ self.addEventListener('fetch', (event) => {
             caches.open(CACHE_VERSION).then((cache) => cache.put(event.request, clone));
           }
           return response;
-        }).catch(() => cached);
+        }).catch(() => new Response('', { status: 503, statusText: 'Offline and not cached' }));
       })
     );
   }

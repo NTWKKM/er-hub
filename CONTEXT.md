@@ -80,10 +80,11 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | Form validation | `ED_VALIDATE` | `shared/form-validate.js` |
 | Nav injection | `ED_COMPONENTS.injectNavBar()` | `shared/components.js` |
 | ER NOTE registry | `ernote-registry` (localStorage key) | `tools/er-note/er-note.js` |
-| ER NOTE draft | `ernote-draft-{templateId}-{draftId}` (localStorage key) | `tools/er-note/er-note.js` |
+| ER NOTE draft | `ernote-draft-{templateId}-{draftId}` (localStorage key; 24 h retention) | `tools/er-note/er-note.js` |
+| Draft retention purge | `ErNote.registry.purgeExpired()` / `TTL_MS` | `tools/er-note/er-note.js` |
 | Investigation module | `ErNote.renderInvestigation()` | `tools/er-note/er-note.js` |
 | Treatment module | `ErNote.renderTreatment()` | `tools/er-note/er-note.js` |
-| Home medication draft | `er-hub-home-med-draft` (localStorage key) | `tools/Urgent-Clinic-Home-Medication.html` |
+| Home medication draft | `er-hub-home-med-draft` (localStorage key; `{ savedAt, fields }`, 24 h retention) | `tools/Urgent-Clinic-Home-Medication.html` |
 | Cached SW version & release date | `er-hub-cached-version` (localStorage key) | `shared/components.js`, `index.html` |
 
 ## Clinical Decision Boundaries
@@ -306,3 +307,15 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   5. Updated `service-worker.js` offline cache version to `er-hub-v113` (`09/09/2569`).
   6. **Service Worker Precache Failure Protection (`service-worker.js`)**:
      - Upgraded the install handler to prevent partial cache activation: replaced `Promise.allSettled` with atomic installation failure propagation. If any asset fails to fetch after retries, the partial cache is purged (`caches.delete(CACHE_VERSION)`) and an error is thrown, aborting installation so the existing complete offline cache is preserved and never prematurely deleted during activation.
+
+## ADR-38: Audit Remediation — Draft Retention, Input/Label Guards, pnpm & CI
+
+- **Context**: A repository audit (2026-11-22) found that (1) ER NOTE and Home Medication drafts kept the HN in `localStorage` indefinitely, contradicting the "no PHI stored" claim; (2) `orders/antivenom-v2.html` rendered the horse-serum allergy detail field but never printed it — V1/V2 drift; (3) 205 form controls had no accessible name; (4) there was no CI, the lockfile was npm while the toolchain standard is pnpm, and `jsdom` pulled vulnerable `undici`/`source-map-js`; (5) the service worker returned `undefined` to `respondWith()` on an offline cache miss and its static routes assumed root hosting.
+- **Decision**:
+  1. **24 h draft retention** for every `localStorage` record that can hold an HN. ER NOTE purges expired, future-dated and orphaned drafts on load and on tab re-focus; Home Medication stores `{ savedAt, fields }` and discards expired or legacy drafts.
+  2. **Keep V1 and V2 pages**, guarded by `tests/input-read-guard.test.js`, which fails when any order-page control is never read by script.
+  3. **Accessible names** for all controls (`<label for>` where a sibling label existed, otherwise a descriptive `aria-label`), enforced by `tests/a11y-label-guard.test.js`.
+  4. **pnpm + CI**: `pnpm-lock.yaml` with a standalone `pnpm-workspace.yaml`; GitHub Actions runs tests and `pnpm audit --audit-level high`; `jsdom` updated to 30.1.3 (resolves `undici` 8.13.1, `source-map-js` 1.2.4).
+  5. **Single version line**: `package.json` version now tracks `CHANGELOG.md` (3.2.0); `CACHE_VERSION` remains the deploy/cache counter (`er-hub-v119`).
+- **Consequences**: Clinicians lose drafts idle for over a day; a new order-page control must be wired to the print path (or allowlisted with a reason) and labelled before tests pass.
+

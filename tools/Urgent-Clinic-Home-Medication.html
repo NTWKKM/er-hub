@@ -374,10 +374,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <span style="display: inline-flex; align-items: center; gap: 12px;">
           <label><input type="checkbox" id="home-med-allergy-none"> ไม่แพ้ยา</label>
           <label><input type="checkbox" id="home-med-allergy-yes"> แพ้ยา</label>
-          <input type="text" id="home-med-allergy-detail" placeholder="ระบุชื่อยาที่แพ้..." style="width: 220px;">
+          <input aria-label="Drug allergy details" type="text" id="home-med-allergy-detail" placeholder="ระบุชื่อยาที่แพ้..." style="width: 220px;">
         </span>
         <span style="display: inline-flex; align-items: center; gap: 6px; margin-left: auto;">
-          BW <input type="text" id="home-med-weight" placeholder="น้ำหนัก" style="width: 60px; text-align: center;"> kg
+          BW <input aria-label="Body weight (kg)" type="text" id="home-med-weight" placeholder="น้ำหนัก" style="width: 60px; text-align: center;"> kg
         </span>
       </div>
     </div>
@@ -429,8 +429,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <label><input type="checkbox" id="home-med-amox-syr"> Amoxicillin syrup (250 mg/5 mL)</label>
             <span style="font-size: 10.5px; color: var(--muted); float: right;">(25-50 MKDay)</span>
             <div style="padding-left: 20px; margin-top: 2px;">
-              sig <input type="text" id="home-med-amox-syr-tsp" style="width: 40px; text-align: center;"> tsp tid po pc <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → ½ tsp]</span>
-              <span style="float: right;"><input type="text" id="home-med-amox-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+              sig <input aria-label="Amoxicillin syrup dose (tsp)" type="text" id="home-med-amox-syr-tsp" style="width: 40px; text-align: center;"> tsp tid po pc <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → ½ tsp]</span>
+              <span style="float: right;"><input aria-label="Amoxicillin syrup quantity" type="text" id="home-med-amox-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
             </div>
           </div>
 
@@ -438,8 +438,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <label><input type="checkbox" id="home-med-coamox-syr"> Co-amoxiclav syrup (400+57mg/5 mL)</label>
             <span style="font-size: 10.5px; color: var(--muted); float: right;">(25-50 MKDay)</span>
             <div style="padding-left: 20px; margin-top: 2px;">
-              sig <input type="text" id="home-med-coamox-syr-tsp" style="width: 40px; text-align: center;"> tsp bid po pc <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → ½ tsp]</span>
-              <span style="float: right;"><input type="text" id="home-med-coamox-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+              sig <input aria-label="Amoxicillin-clavulanate syrup dose (tsp)" type="text" id="home-med-coamox-syr-tsp" style="width: 40px; text-align: center;"> tsp bid po pc <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → ½ tsp]</span>
+              <span style="float: right;"><input aria-label="Amoxicillin-clavulanate syrup quantity" type="text" id="home-med-coamox-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
             </div>
           </div>
 
@@ -448,16 +448,16 @@ document.addEventListener('DOMContentLoaded', function() {
             <label><input type="checkbox" id="home-med-cotri-susp"> Cotrimoxazole susp. (40+200/5mL)</label>
             <span style="font-size: 10.5px; color: var(--muted); float: right;">(8-10MKDay)</span>
             <div style="padding-left: 20px; margin-top: 2px;">
-              sig <input type="text" id="home-med-cotri-susp-tsp" style="width: 40px; text-align: center;"> tsp bid po pc <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → 1 tsp]</span>
-              <span style="float: right;"><input type="text" id="home-med-cotri-susp-qty" style="width: 30px; text-align: center;"> ขวด</span>
+              sig <input aria-label="Co-trimoxazole suspension dose (tsp)" type="text" id="home-med-cotri-susp-tsp" style="width: 40px; text-align: center;"> tsp bid po pc <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → 1 tsp]</span>
+              <span style="float: right;"><input aria-label="Co-trimoxazole suspension quantity" type="text" id="home-med-cotri-susp-qty" style="width: 30px; text-align: center;"> ขวด</span>
             </div>
           </div>
           <div style="margin-bottom: 2px;">
             <label><input type="checkbox" id="home-med-metro-susp"> + Metronidazole susp. (200mg/5mL) 60 ml</label>
             <span style="font-size: 10.5px; color: var(--muted); float: right;">(20-30MKDay)</span>
             <div style="padding-left: 20px; margin-top: 2px;">
-              sig <input type="text" id="home-med-metro-susp-tsp" style="width: 40px; text-align: center;"> tsp tid po pc <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → ½ tsp]</span>
-              <span style="float: right;"><input type="text" id="home-med-metro-susp-qty" style="width: 30px; text-align: center;"> ขวด</span>
+              sig <input aria-label="Metronidazole suspension dose (tsp)" type="text" id="home-med-metro-susp-tsp" style="width: 40px; text-align: center;"> tsp tid po pc <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → ½ tsp]</span>
+              <span style="float: right;"><input aria-label="Metronidazole suspension quantity" type="text" id="home-med-metro-susp-qty" style="width: 30px; text-align: center;"> ขวด</span>
             </div>
           </div>
         </td>
@@ -490,8 +490,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <label><input type="checkbox" id="home-med-diclox-syr"> Dicloxacillin syrup (125 mg/5mL)</label>
             <span style="font-size: 10.5px; color: var(--muted); float: right;">(25-50 MKDay)</span>
             <div style="padding-left: 20px; margin-top: 2px;">
-              sig <input type="text" id="home-med-diclox-syr-tsp" style="width: 40px; text-align: center;"> tsp qid po ac hs <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → 1 tsp]</span>
-              <span style="float: right;"><input type="text" id="home-med-diclox-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+              sig <input aria-label="Dicloxacillin syrup dose (tsp)" type="text" id="home-med-diclox-syr-tsp" style="width: 40px; text-align: center;"> tsp qid po ac hs <span style="font-size: 10.5px; color: var(--muted);">[~10 kg → 1 tsp]</span>
+              <span style="float: right;"><input aria-label="Dicloxacillin syrup quantity" type="text" id="home-med-diclox-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
             </div>
           </div>
 
@@ -499,8 +499,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <label><input type="checkbox" id="home-med-cepha-syr"> Cephalexin syrup (125 mg/5mL)</label>
             <span style="font-size: 10.5px; color: var(--muted); float: right;">(25-50 MKDay)</span>
             <div style="padding-left: 20px; margin-top: 2px;">
-              sig <input type="text" id="home-med-cepha-syr-tsp" style="width: 40px; text-align: center;"> tsp po tid ac <span style="font-size: 10.5px; color: var(--muted);">[~10kg → 1 tsp]</span>
-              <span style="float: right;"><input type="text" id="home-med-cepha-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+              sig <input aria-label="Cephalexin syrup dose (tsp)" type="text" id="home-med-cepha-syr-tsp" style="width: 40px; text-align: center;"> tsp po tid ac <span style="font-size: 10.5px; color: var(--muted);">[~10kg → 1 tsp]</span>
+              <span style="float: right;"><input aria-label="Cephalexin syrup quantity" type="text" id="home-med-cepha-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
             </div>
           </div>
 
@@ -514,8 +514,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <label><input type="checkbox" id="home-med-eryth-syr"> Erythromycin syrup (125 mg/5mL)</label>
             <span style="font-size: 10.5px; color: var(--muted); float: right;">(20-50 MKDay)</span>
             <div style="padding-left: 20px; margin-top: 2px;">
-              sig <input type="text" id="home-med-eryth-syr-tsp" style="width: 40px; text-align: center;"> tsp po qid ac <span style="font-size: 10.5px; color: var(--muted);">[~10kg → 1 tsp]</span>
-              <span style="float: right;"><input type="text" id="home-med-eryth-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+              sig <input aria-label="Erythromycin syrup dose (tsp)" type="text" id="home-med-eryth-syr-tsp" style="width: 40px; text-align: center;"> tsp po qid ac <span style="font-size: 10.5px; color: var(--muted);">[~10kg → 1 tsp]</span>
+              <span style="float: right;"><input aria-label="Erythromycin syrup quantity" type="text" id="home-med-eryth-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
             </div>
           </div>
         </td>
@@ -537,36 +537,36 @@ document.addEventListener('DOMContentLoaded', function() {
           <div style="margin-bottom: 4px; font-weight: bold;">Paracetamol (500 mg)</div>
           <div style="padding-left: 10px; margin-bottom: 3px; display: flex; justify-content: space-between;">
             <label><input type="checkbox" id="home-med-para-500-1tab"> 1 tab po prn q 6 hr</label>
-            <span><input type="text" id="home-med-para-500-1tab-qty" style="width: 40px; text-align: center;"> tab</span>
+            <span><input aria-label="Paracetamol 500 1tab quantity" type="text" id="home-med-para-500-1tab-qty" style="width: 40px; text-align: center;"> tab</span>
           </div>
           <div style="padding-left: 10px; margin-bottom: 3px; display: flex; justify-content: space-between;">
             <label><input type="checkbox" id="home-med-para-500-2tab"> 2 tab po prn q 6 hr (น้ำหนัก &ge; 67 kg)</label>
-            <span><input type="text" id="home-med-para-500-2tab-qty" style="width: 40px; text-align: center;"> tab</span>
+            <span><input aria-label="Paracetamol 500 2tab quantity" type="text" id="home-med-para-500-2tab-qty" style="width: 40px; text-align: center;"> tab</span>
           </div>
           <div style="padding-left: 10px; margin-bottom: 6px;">
-            <label><input type="checkbox" id="home-med-para-other"> อื่นๆ</label> <input type="text" id="home-med-para-other-detail" style="width: 180px;">
+            <label><input type="checkbox" id="home-med-para-other"> อื่นๆ</label> <input aria-label="Paracetamol other details" type="text" id="home-med-para-other-detail" style="width: 180px;">
           </div>
 
           <div style="border-top: 1px dashed var(--line); margin: 6px 0;"></div>
 
           <div style="margin-bottom: 3px; display: flex; justify-content: space-between;">
             <label><input type="checkbox" id="home-med-ibu-200"> Ibuprofen (200 mg) 2x3 po pc</label>
-            <span><input type="text" id="home-med-ibu-200-qty" style="width: 40px; text-align: center;"> tab</span>
+            <span><input aria-label="Ibuprofen 200 quantity" type="text" id="home-med-ibu-200-qty" style="width: 40px; text-align: center;"> tab</span>
           </div>
           <div style="margin-bottom: 3px; display: flex; justify-content: space-between;">
             <label><input type="checkbox" id="home-med-naprox-250"> Naproxen (250 mg) 1x2 po pc</label>
-            <span><input type="text" id="home-med-naprox-250-qty" style="width: 40px; text-align: center;"> tab</span>
+            <span><input aria-label="Naproxen 250 quantity" type="text" id="home-med-naprox-250-qty" style="width: 40px; text-align: center;"> tab</span>
           </div>
           <div style="margin-bottom: 6px; display: flex; justify-content: space-between;">
             <label><input type="checkbox" id="home-med-vine"> ยาเถาวัลย์เปรียง 2x3 po pc <span style="font-size: 10.5px; color: var(--muted);">(ไม่ใช้ร่วมกับ NSAIDs)</span></label>
-            <span><input type="text" id="home-med-vine-qty" style="width: 40px; text-align: center;"> cap</span>
+            <span><input aria-label="Derris scandens (เถาวัลย์เปรียง) capsule quantity" type="text" id="home-med-vine-qty" style="width: 40px; text-align: center;"> cap</span>
           </div>
 
           <div style="border-top: 1px dashed var(--line); margin: 6px 0;"></div>
 
           <div style="margin-bottom: 2px; display: flex; justify-content: space-between;">
             <label><input type="checkbox" id="home-med-tramadol-50"> Tramadol (50 mg) 1 cap po prn q 8 hr</label>
-            <span><input type="text" id="home-med-tramadol-50-qty" style="width: 40px; text-align: center;"> cap</span>
+            <span><input aria-label="Tramadol 50 quantity" type="text" id="home-med-tramadol-50-qty" style="width: 40px; text-align: center;"> cap</span>
           </div>
         </td>
         <td>
@@ -574,28 +574,28 @@ document.addEventListener('DOMContentLoaded', function() {
             <label><input type="checkbox" id="home-med-para-syr"> Paracetamol syrup (120mg/5mL)</label>
             <span style="font-size: 10.5px; color: var(--muted); float: right;">(10-15 MKDose)</span>
             <div style="padding-left: 20px; margin-top: 2px;">
-              sig <input type="text" id="home-med-para-syr-tsp" style="width: 40px; text-align: center;"> tsp po prn q 6 hr <span style="font-size: 10.5px; color: var(--muted);">[~10kg → 1 tsp]</span>
-              <span style="float: right;"><input type="text" id="home-med-para-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+              sig <input aria-label="Paracetamol syrup dose (tsp)" type="text" id="home-med-para-syr-tsp" style="width: 40px; text-align: center;"> tsp po prn q 6 hr <span style="font-size: 10.5px; color: var(--muted);">[~10kg → 1 tsp]</span>
+              <span style="float: right;"><input aria-label="Paracetamol syrup quantity" type="text" id="home-med-para-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
             </div>
           </div>
 
           <div style="margin-bottom: 4px; border-top: 1px dashed var(--line); padding-top: 4px; display: flex; justify-content: space-between;">
             <label><input type="checkbox" id="home-med-para-325"> Paracetamol (325mg) 1 tab po prn q6hr</label>
-            <span><input type="text" id="home-med-para-325-qty" style="width: 40px; text-align: center;"> tab</span>
+            <span><input aria-label="Paracetamol 325 quantity" type="text" id="home-med-para-325-qty" style="width: 40px; text-align: center;"> tab</span>
           </div>
 
           <div style="margin-bottom: 4px; border-top: 1px dashed var(--line); padding-top: 4px;">
             <label><input type="checkbox" id="home-med-ibu-syr"> Ibuprofen syrup (100 mg/5mL)</label>
             <span style="font-size: 10.5px; color: var(--muted); float: right;">(5-10 MKDose)</span>
             <div style="padding-left: 20px; margin-top: 2px;">
-              sig <input type="text" id="home-med-ibu-syr-tsp" style="width: 40px; text-align: center;"> tsp po prn q 6 hr <span style="font-size: 10.5px; color: var(--muted);">[~10kg → 4 mL]</span>
-              <span style="float: right;"><input type="text" id="home-med-ibu-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
+              sig <input aria-label="Ibuprofen syrup dose (tsp)" type="text" id="home-med-ibu-syr-tsp" style="width: 40px; text-align: center;"> tsp po prn q 6 hr <span style="font-size: 10.5px; color: var(--muted);">[~10kg → 4 mL]</span>
+              <span style="float: right;"><input aria-label="Ibuprofen syrup quantity" type="text" id="home-med-ibu-syr-qty" style="width: 30px; text-align: center;"> ขวด</span>
             </div>
           </div>
 
           <div style="margin-bottom: 2px; border-top: 1px dashed var(--line); padding-top: 4px; display: flex; justify-content: space-between;">
             <label><input type="checkbox" id="home-med-ibu-200-child"> Ibuprofen (200 mg) 1x3 po pc</label>
-            <span><input type="text" id="home-med-ibu-200-child-qty" style="width: 40px; text-align: center;"> tab</span>
+            <span><input aria-label="Ibuprofen 200 child quantity" type="text" id="home-med-ibu-200-child-qty" style="width: 40px; text-align: center;"> tab</span>
           </div>
         </td>
       </tr>
@@ -608,15 +608,15 @@ document.addEventListener('DOMContentLoaded', function() {
         <td colspan="2">
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px; align-items: center;">
             <label><input type="checkbox" id="home-med-plygesal"> ยาไพลจีซาล (ยานวดแก้ปวดกล้ามเนื้อ) ทาถูนวดบริเวณที่ปวด วันละ 2 ครั้ง เช้า เย็น</label>
-            <span><input type="text" id="home-med-plygesal-qty" style="width: 40px; text-align: center;"> หลอด</span>
+            <span><input aria-label="Plygesal quantity" type="text" id="home-med-plygesal-qty" style="width: 40px; text-align: center;"> หลอด</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px; align-items: center;">
             <label><input type="checkbox" id="home-med-aloe"> เจลว่านหางจระเข้ (รักษาแผลไฟไหม้ น้ำร้อนลวก) ทาบริเวณแผล วันละ 3-4 ครั้ง</label>
-            <span><input type="text" id="home-med-aloe-qty" style="width: 40px; text-align: center;"> หลอด</span>
+            <span><input aria-label="Aloe vera gel quantity" type="text" id="home-med-aloe-qty" style="width: 40px; text-align: center;"> หลอด</span>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <label><input type="checkbox" id="home-med-other-drug"> อื่นๆ</label>
-            <input type="text" id="home-med-other-drug-detail" style="flex: 1;">
+            <input aria-label="Other medication details" type="text" id="home-med-other-drug-detail" style="flex: 1;">
           </div>
         </td>
       </tr>
@@ -650,10 +650,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td style="width: 40%; vertical-align: top; padding: 6px; border-right: 1px solid var(--line);">
                   <div style="display: flex; justify-content: space-between; margin-bottom: 4px; align-items: center;">
                     <label><input type="checkbox" id="home-med-erig"> ERIG (Max 40 IU/kg)</label>
-                    <span style="font-size: 11px;">BW = <input type="text" id="home-med-erig-weight" style="width: 45px; text-align: center;"> kg</span>
+                    <span style="font-size: 11px;">BW = <input aria-label="ERIG body weight (kg)" type="text" id="home-med-erig-weight" style="width: 45px; text-align: center;"> kg</span>
                   </div>
                   <div style="margin-bottom: 6px; padding-left: 18px;">
-                    sig SC รอบแผล ไม่เกิน <input type="text" id="home-med-erig-unit" style="width: 60px; text-align: center;"> Unit
+                    sig SC รอบแผล ไม่เกิน <input aria-label="ERIG dose (IU)" type="text" id="home-med-erig-unit" style="width: 60px; text-align: center;"> Unit
                   </div>
                   <div style="text-decoration: underline; margin-bottom: 4px; font-weight: bold; font-size: 11px; padding-left: 18px;">กรุณาระบุจำนวนที่ต้องการเบิก</div>
                   <div style="margin-bottom: 2px; padding-left: 18px;">
@@ -661,7 +661,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   </div>
                   <div style="display: flex; justify-content: space-between; margin-bottom: 2px; padding-left: 18px; align-items: center;">
                     <label><input type="checkbox" id="home-med-erig-large"> แผลใหญ่ / เบิกตามน้ำหนัก</label>
-                    <span><input type="text" id="home-med-erig-vials" style="width: 30px; text-align: center;"> Vial</span>
+                    <span><input aria-label="ERIG vials" type="text" id="home-med-erig-vials" style="width: 30px; text-align: center;"> Vial</span>
                   </div>
                   <div style="margin-bottom: 4px; padding-left: 18px;">
                     <label><input type="checkbox" id="home-med-erig-obs"> ให้สังเกตอาการหลังฉีด 30 นาที</label>
@@ -675,7 +675,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <label><input type="checkbox" id="home-med-hrig"> HRIG (Max 20 IU/kg)</label>
                   </div>
                   <div style="padding-left: 18px; margin-bottom: 2px;">
-                    sig <input type="text" id="home-med-hrig-unit" style="width: 50px; text-align: center;"> Unit (<input type="text" id="home-med-hrig-ml" style="width: 40px; text-align: center;"> ml) SC ฉีดรอบแผล
+                    sig <input aria-label="HRIG dose (IU)" type="text" id="home-med-hrig-unit" style="width: 50px; text-align: center;"> Unit (<input aria-label="HRIG volume (mL)" type="text" id="home-med-hrig-ml" style="width: 40px; text-align: center;"> ml) SC ฉีดรอบแผล
                   </div>
                   <div style="text-align: right; font-size: 10px; color: var(--muted);">
                     หมายเหตุ : 300 IU/Vial/2ml, 1,623 บาท
@@ -703,7 +703,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <label><input type="checkbox" id="home-med-rabies-course-im"> IM</label>
                   </div>
                   <div style="font-size: 11px; display: flex; align-items: center; gap: 4px;">
-                    หมายเหตุ: <input type="text" id="home-med-rabies-note" style="flex: 1;">
+                    หมายเหตุ: <input aria-label="1 dose (1 เข็ม) 0.5 mL IM 1 course (3 เข็ม 0,1,7 m — Rabies vaccine" type="text" id="home-med-rabies-note" style="flex: 1;">
                   </div>
                 </td>
               </tr>
@@ -715,7 +715,7 @@ document.addEventListener('DOMContentLoaded', function() {
   </table>
 
   <div style="text-align: right; margin-top: 20px; font-size: 14px; color: var(--text);">
-    แพทย์ <input type="text" id="home-med-doctor" style="width: 200px; text-align: center;">
+    แพทย์ <input aria-label="Prescribing physician" type="text" id="home-med-doctor" style="width: 200px; text-align: center;">
   </div>
 </div>
 
@@ -749,6 +749,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 // Auto-save form fields locally for this standalone tool
 const storageKey = 'er-hub-home-med-draft';
+const DRAFT_TTL_MS = 24 * 60 * 60 * 1000;
 
 function saveDraft() {
     const data = {};
@@ -758,7 +759,7 @@ function saveDraft() {
     document.querySelectorAll('input[type="checkbox"]').forEach(el => {
         data[el.id] = el.checked;
     });
-    try { localStorage.setItem(storageKey, JSON.stringify(data)); } catch(e) {}
+    try { localStorage.setItem(storageKey, JSON.stringify({ savedAt: Date.now(), fields: data })); } catch(e) {}
 }
 
 function loadDraft() {
@@ -766,7 +767,15 @@ function loadDraft() {
     try { saved = localStorage.getItem(storageKey); } catch(e) {}
     if (!saved) return;
     try {
-        const data = JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Draft holds the HN: discard if older than 24 h or in the legacy
+        // un-timestamped format, so identifiers do not linger on shared PCs.
+        const age = Date.now() - Number(parsed && parsed.savedAt);
+        if (!parsed || !parsed.fields || !(age >= 0 && age < DRAFT_TTL_MS)) {
+            try { localStorage.removeItem(storageKey); } catch (_) {}
+            return;
+        }
+        const data = parsed.fields;
         document.querySelectorAll('input[type="text"], input[type="number"]').forEach(el => {
             if (data[el.id] !== undefined) el.value = data[el.id];
         });

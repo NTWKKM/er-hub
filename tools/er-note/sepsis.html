@@ -188,7 +188,7 @@
       <label><input type="radio" name="sepsis-source-type" value="Other"> Other</label>
     </div>
   </div>
-  <div class="field-row"><label>ระบุแหล่งอื่นๆ (Other source detail)</label><input type="text" id="sepsis-source-other" placeholder="ระบุถ้าเลือก Other หรือเพิ่มรายละเอียด"></div>
+  <div class="field-row"><label for="sepsis-source-other">ระบุแหล่งอื่นๆ (Other source detail)</label><input type="text" id="sepsis-source-other" placeholder="ระบุถ้าเลือก Other หรือเพิ่มรายละเอียด"></div>
   <div class="field-row"><label>ปัจจัยเสี่ยง (Risk factors)</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="sepsis-dm"> DM</label>
@@ -214,7 +214,7 @@
       <label><input type="radio" name="sepsis-abx-timing" value="Low likelihood → defer ABx, monitor closely (conditional)"> Low likelihood → defer, monitor</label>
     </div>
   </div>
-  <div class="field-row"><label>Antibiotic regimen</label><input type="text" id="sepsis-abx" placeholder="e.g. Ceftriaxone 2g IV"></div>
+  <div class="field-row"><label for="sepsis-abx">Antibiotic regimen</label><input type="text" id="sepsis-abx" placeholder="e.g. Ceftriaxone 2g IV"></div>
   <div class="field-row"><label>Stewardship</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="sepsis-no-anaerobic"> No anaerobic coverage — no risk factor (Rec 28)</label>
@@ -233,14 +233,14 @@
       <label><input type="radio" name="sepsis-fluid-type" value="0.9% NS (TBI exception, Rec 44 remark)"> 0.9% NS (TBI exception)</label>
     </div>
   </div>
-  <div class="field-row"><label>Fluid volume / rate</label><input type="text" id="sepsis-fluid" placeholder="30 mL/kg first 3h if hypoperfusion (Rec 10)"></div>
+  <div class="field-row"><label for="sepsis-fluid">Fluid volume / rate</label><input type="text" id="sepsis-fluid" placeholder="30 mL/kg first 3h if hypoperfusion (Rec 10)"></div>
   <div class="field-row"><label>MAP target</label>
     <div class="radio-group">
       <label><input type="radio" name="sepsis-map-target" value="MAP ≥65 mmHg (Rec 13)"> MAP ≥65 mmHg</label>
       <label><input type="radio" name="sepsis-map-target" value="MAP 60–65 mmHg, age ≥65 (Rec 14)"> MAP 60–65 mmHg (age ≥65)</label>
     </div>
   </div>
-  <div class="field-row"><label>Vasopressor</label><input type="text" id="sepsis-vaso" placeholder="Norepinephrine first-line (Rec 53)"></div>
+  <div class="field-row"><label for="sepsis-vaso">Vasopressor</label><input type="text" id="sepsis-vaso" placeholder="Norepinephrine first-line (Rec 53)"></div>
   <div class="field-row"><label>Adjuncts</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="sepsis-corticosteroid"> IV corticosteroid — septic shock (Rec 79)</label>
@@ -287,7 +287,7 @@
       <label><input type="checkbox" id="post-education"> Patient &amp; family education</label>
     </div>
   </div>
-  <div class="field-row"><label>Disposition</label>
+  <div class="field-row"><label for="sepsis-disposition">Disposition</label>
     <select id="sepsis-disposition">
       <option value="">— select —</option>
       <option>ICU</option>
@@ -296,7 +296,7 @@
       <option>Discharge with OPD f/u</option>
     </select>
   </div>
-  <div class="field-row"><label>F/U</label><input type="text" id="sepsis-fu"></div>
+  <div class="field-row"><label for="sepsis-fu">F/U</label><input type="text" id="sepsis-fu"></div>
 </div>
 
 </form>

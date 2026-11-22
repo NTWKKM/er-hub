@@ -1,7 +1,7 @@
 # Architecture
 
 ER Standing Order Hub — MNRH Emergency Department clinical standing order system.
-100% client-side static site. No backend, no build step, no PHI stored.
+100% client-side static site. No backend, no build step, no data sent to any server. The only patient identifier persisted is the HN inside ER NOTE / Home Medication drafts in `localStorage`, purged after 24 h without edits (see Offline Behavior).
 
 ## Core Components
 
@@ -121,7 +121,7 @@ Standalone Home Medication Checklist (ใบสั่งยาและแผน
 Uses `er-note/er-note.css` for styling, but is completely decoupled from `er-note.js` draft/lifecycle logic.
 Features:
 
-- Self-contained local draft auto-saving to `localStorage` key `er-hub-home-med-draft` on change/input events.
+- Self-contained local draft auto-saving to `localStorage` key `er-hub-home-med-draft` on change/input events, stored as `{ savedAt, fields }`. Drafts older than 24 h, or in the legacy un-timestamped format, are discarded on load.
 - Synchronization of patient weight input with the ERIG dose weight input field.
 - Auto-calculation of ERIG dose (40 IU/kg, max 3000 IU) and HRIG dose (20 IU/kg, max 1500 IU) from patient weight input.
 - Custom clinical plain-text compiler copying checked prescriptions, patient weight, demographics, and immunizations to the clipboard.
@@ -212,6 +212,10 @@ Features:
 - **Documentation & Printing:**
   - One-click "Generate HIS Clinical Note" with clipboard copy and A4 print support.
 
+### Antimicrobial Renal Dosing Guide (`tools/abx-renal-dosing.html`) [T12]
+
+Offline antimicrobial dose-adjustment tool powered by `shared/abx-engine.js`. Computes Cockcroft-Gault CrCl (TBW/IBW/AdjBW selection), CKD-EPI eGFR with BSA de-indexing to absolute GFR, flags CrCl–eGFR tier discordance, and renders indication-filtered renal-tier dosing (including HD and CRRT tiers) with sepsis loading-dose guidance.
+
 ### Shared Engines (`shared/`)
 
 | File | Role | Dependencies |
@@ -226,6 +230,7 @@ Features:
 | `stemi-engine.js` | STEMI TNK weight-bracket dosing engine. Exports `calcTNK`. | None |
 | `ob-engine.js` | MgSO4 dosing & pre-eclampsia severity classification engine. | None |
 | `burn-engine.js` | Burn assessment & resuscitation engine. | None |
+| `abx-engine.js` | Antimicrobial renal dosing engine. Exports `calcIBW`, `calcABW`, `calcBMI`, `calcBSA`, `calcCrCl`, `calcAbsoluteGFR`, `getRenalTier`, `evaluateDiscordance`, `calculateDose`, `calculateDualDose`, `filterByIndication`, `getDrugsForIndication`. Non-finite or negative clearances resolve to the `unknown` tier. | None |
 | `electrolyte-engine.js` | Electrolyte and acid-base calculation and diagnostic tree engine. Grounded in 2026 international consensus. Exports `calcTBW`, `calcCorrectedSodium`, `calcAdrogueMadias`, `calcHyponatremiaInfusionRate`, `calcHyponatremiaBolus`, `calcFreeWaterDeficit`, `calcPotassiumDeficit`, `calcSpotUKCr`, `evaluatePotassiumSafety`, `calcBicarbonateDeficit`, `evaluateBicarbonateIndication`, `evaluateCalcium`, `calcHypercalcemiaHydration`, `calcMgRepletion`, `calcPhosphateRepletion`, `calcAnionGap`, `calcDeltaDelta`, `calcOsmolarGap`, `calcUrineGaps`, `calcFractionalExcretions`, `evaluateHyponatremiaWorkup`, `evaluateHypokalemiaWorkup`. | None |
 | `drug-data.js` | 17-drug catalog: concentrations, dose limits, safety ceilings, titration instructions, optional `indications` array for per-drug guide rendering, optional `absoluteMaxPerHour` for weight-based drugs with clinical hourly ceilings (e.g. Fentanyl 500 mcg/hr). | None |
 | `print-bootstrap.js` | Print/page lifecycle: `handlePrintBlankDirect()`, `handlePrintBlankDirectPdf()`, `openBlankPdf()`, `showResults()`, `clearResults()`, date/time helpers. | `components.js` |
@@ -244,9 +249,9 @@ Redirect script validates `order` slug against allow-list.
 ### Service Worker (`service-worker.js`)
 
 PWA offline cache. Network-first for navigation requests (with Navigation Preload enabled for parallel network+SW processing), cache-first for static assets.
-`CACHE_VERSION` is `er-hub-v91` and `CACHE_DATE` is `28/08/2569` — dynamically extracted by `index.html` and `shared/components.js` at runtime via `fetch()` and regex parsing, backed by `localStorage` (`er-hub-cached-version`) for cold-load offline resilience.
+`CACHE_VERSION` is `er-hub-v119` and `CACHE_DATE` is `22/11/2569` — dynamically extracted by `index.html` and `shared/components.js` at runtime via `fetch()` and regex parsing, backed by `localStorage` (`er-hub-cached-version`) for cold-load offline resilience.
 Precaches all HTML/CSS/JS + shared engines + ER NOTE templates + drip-calculator + nihss-v2.html + 512×512 app icon + source PDFs + 16 self-hosted WOFF2 font files in `shared/fonts/` (zero external CDN dependencies).
-Per-asset retry with exponential backoff via `fetchWithRetry()`. `Promise.allSettled()` ensures one failure doesn't block others. Includes Static Routing API progressive enhancement (Chromium 123+) for declarative cache matching.
+Per-asset retry with exponential backoff via `fetchWithRetry()`. Install is atomic: if any asset still fails, the partial cache is deleted and install aborts so the previous complete cache stays active. Includes Static Routing API progressive enhancement (Chromium 123+); route patterns are resolved against `registration.scope` so they match under a sub-path deployment. A cache miss while offline returns a synthetic `503` response instead of an undefined `respondWith()` value.
 
 ### PWA Manifest (`manifest.json`)
 
@@ -291,7 +296,7 @@ User enters history, exam, investigations, scoring variables
 | Patient form state | Client-only. Resets on navigation/tab close. No server sync. |
 | Calculation engines | Pure functional. Deterministic. Loaded from local disk. |
 | PWA asset cache | Service worker registered on `index.html`. Network-first for navigation, cache-first for assets. Cache version bumped on deploy. Per-asset retry on install failure. |
-| ER NOTE drafts | `localStorage` persistence. Schema v2 registry. v1 keys auto-migrate. Survive browser restarts until explicit clear/delete. Never uploaded. |
+| ER NOTE drafts | `localStorage` persistence. Schema v2 registry. v1 keys auto-migrate. Purged by `purgeExpiredDrafts()` on page load and on tab re-focus once `updatedAt` is ≥ 24 h old (or future-dated); orphan draft keys absent from the registry are removed too. Never uploaded. |
 
 ## Clinical & System Warnings
 
@@ -309,7 +314,7 @@ User enters history, exam, investigations, scoring variables
 
 ## Test Suite Architecture & Quality Guardrails
 
-The ER-Hub test suite is designed with high signal-to-noise ratio and zero clinical false-alarms. It comprises **15 high-value test suites** (239 tests total) executing via Node.js native test runner (`node:test`):
+The ER-Hub test suite is designed with high signal-to-noise ratio and zero clinical false-alarms. It comprises **30 test files** (613 tests total) executing via Node.js native test runner (`node:test`):
 
 ```bash
 node --test tests/*.test.js
@@ -334,13 +339,17 @@ node --test tests/*.test.js
 - [`pwa-assets.test.js`](file:///Users/ntwkkm/er-hub/tests/pwa-assets.test.js): Validates that every asset in `service-worker.js` `ASSETS` array exists on disk, ensuring offline installation never fails.
 - [`order-safety-guard.test.js`](file:///Users/ntwkkm/er-hub/tests/order-safety-guard.test.js): Ensures all hard-stop contraindication lock-out branches are followed by a `return;` statement.
 - [`dead-css-guard.test.js`](file:///Users/ntwkkm/er-hub/tests/dead-css-guard.test.js): Static AST/regex scanner that ensures no unused CSS classes are left in stylesheets.
+- [`input-read-guard.test.js`](file:///Users/ntwkkm/er-hub/tests/input-read-guard.test.js): Every value-bearing control on `orders/*.html` and NIHSS pages must have its value read by page script (directly or via an alias), so clinician input cannot silently drop from the printed order. Dynamically-addressed controls are listed in an explicit allowlist.
+- [`a11y-label-guard.test.js`](file:///Users/ntwkkm/er-hub/tests/a11y-label-guard.test.js): Every visible form control in every tracked page has an accessible name (`<label for>`, wrapping `<label>`, `aria-label`, or `aria-labelledby`).
+- [`er-note-retention.test.js`](file:///Users/ntwkkm/er-hub/tests/er-note-retention.test.js): 24 h retention purge for ER NOTE drafts (expired, future-dated, orphaned keys) and the Home Medication draft (expired and legacy formats).
 
 ## Standing Constraints
 
 These are invariant rules the codebase follows. They are not decisions with dates — they are the current contract.
 
 - **No build step.** Vanilla HTML/CSS/JS. No Vite, Webpack, bundler, or transpiler. GitHub Pages compatible.
-- **No npm dependencies.** Tests use `node:test` (Node built-in). Zero `node_modules`.
+- **No runtime dependencies.** The site ships zero packages. Tests use `node:test`; `jsdom` is the only dev dependency, managed with `pnpm` (`pnpm-lock.yaml`, standalone `pnpm-workspace.yaml`). CI (`.github/workflows/test.yml`) runs `pnpm test` and `pnpm audit --audit-level high` on every push to `main` and every pull request.
+- **Patient identifier retention ≤ 24 h.** Any `localStorage` record that can hold an HN must carry a timestamp and be purged after 24 h without edits.
 - **No shared component files across er-note/orders.** ER NOTE templates use local `er-note.css`/`er-note.js` only. Standing orders use `shared/` modules. The two families are decoupled.
 - **Braun cream theme.** Portal/order pages use Braun palette: `#f4f2ec` background, `#ebe7df` paper, `#F0EDE5` Braun White nav text, `#1a1a1a` ink. ER NOTE uses dark glassmorphism (`#0f1115` bg, `#5E6AD2` accent).
 - **Existing field `id`s preserved.** DOM IDs are the stable contract between HTML and JS. Renaming an ID requires updating all references and running `tests/id-integrity-guard.test.js`.

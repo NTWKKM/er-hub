@@ -1,0 +1,4 @@
+# Standalone workspace root: stops pnpm from attaching this repo to a parent
+# workspace (e.g. a pnpm-workspace.yaml in the home directory).
+packages:
+  - '.'

@@ -335,7 +335,7 @@
                 <!-- Tetanus -->
                 <div class="tetanus-panel">
                     <strong class="allergy-panel-title">ประวัติวัคซีนบาดทะยัก:</strong>
-                    <select id="tetanus-select" required>
+                    <select aria-label="ประวัติวัคซีนบาดทะยัก" id="tetanus-select" required>
                         <option value="complete_5y">ครบ 3 เข็ม ภายใน 5 ปี</option>
                         <option value="complete_gt5y">ครบ 3 เข็ม มากกว่า 5 ปี</option>
                         <option value="incomplete">ไม่ได้รับ/ไม่ครบ/ไม่ทราบประวัติ</option>
@@ -349,7 +349,7 @@
                         <label><input type="radio" name="horse-allergy" value="no" checked> ไม่มีประวัติแพ้</label>
                         <label><input type="radio" name="horse-allergy" value="yes"> มีประวัติแพ้ ⚠️</label>
                     </div>
-                    <input type="text" id="horse-allergy-detail" class="allergy-detail-input" placeholder="ระบุอาการแพ้" style="display:none;">
+                    <input aria-label="ระบุอาการแพ้" type="text" id="horse-allergy-detail" class="allergy-detail-input" placeholder="ระบุอาการแพ้" style="display:none;">
                 </div>
 
                 <!-- Penicillin allergy -->
@@ -377,7 +377,7 @@
                         </label>
                         <div class="indication-block" id="block-hemato-ind">
                             <strong style="font-size:12px; color:#555; display:block; margin-bottom:4px;">เลือกชนิดงู:</strong>
-                            <select id="hemato-snake-select" style="width:100%; margin-bottom:8px;">
+                            <select aria-label="เลือกชนิดงู — hematotoxin" id="hemato-snake-select" style="width:100%; margin-bottom:8px;">
                                 <option value="green_pit_viper">งูเขียวหางไหม้</option>
                                 <option value="malayan_pit_viper">งูกะปะ (MVP)</option>
                                 <option value="russell_viper">งูแมวเซา (RV)</option>
@@ -394,7 +394,7 @@
                         </label>
                         <div class="indication-block" id="block-neuro-ind" style="display:none;">
                             <strong style="font-size:12px; color:#555; display:block; margin-bottom:4px;">เลือกชนิดงู:</strong>
-                            <select id="neuro-snake-select" style="width:100%; margin-bottom:8px;">
+                            <select aria-label="เลือกชนิดงู — neurotoxin" id="neuro-snake-select" style="width:100%; margin-bottom:8px;">
                                 <option value="cobra">งูเห่า (Cobra)</option>
                                 <option value="king_cobra">งูจงอาง (King Cobra)</option>
                                 <option value="malayan_krait">งูทับสมิงคลา (Malayan Krait)</option>

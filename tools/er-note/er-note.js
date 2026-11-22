@@ -11,6 +11,9 @@
   var REGISTRY_KEY    = 'ernote-registry';
   var DRAFT_PREFIX    = 'ernote-draft-';
   var SCHEMA_VERSION  = 2;
+  // Drafts hold the HN (patient identifier). Purge anything idle for > 24 h so
+  // identifiers do not persist indefinitely on shared ED workstations.
+  var DRAFT_TTL_MS    = 24 * 60 * 60 * 1000;
 
   // Template name from filename (e.g. "sepsis", "general-er-note", "index")
   var templateName = (location.pathname.split('/').pop().replace(/\.html$/,'') || 'index');
@@ -80,6 +83,39 @@
       }
       saveRegistry(reg);
     } catch(err){}
+  }
+
+  /* ---- Retention: purge expired and orphaned drafts ---- */
+  function purgeExpiredDrafts(now){
+    now = (typeof now === 'number') ? now : Date.now();
+    try {
+      var reg = loadRegistry();
+      var kept = [];
+      var keepKeys = {};
+      for (var i = 0; i < reg.drafts.length; i++){
+        var d = reg.drafts[i];
+        var age = now - (Number(d.updatedAt) || 0);
+        if (age >= 0 && age < DRAFT_TTL_MS){
+          kept.push(d);
+          keepKeys[draftKey(d.template, d.id)] = true;
+        }
+      }
+      // Collect per-draft keys that are expired or no longer tracked (orphans)
+      var stale = [];
+      for (var j = 0; j < localStorage.length; j++){
+        var key = localStorage.key(j);
+        if (!key || key.indexOf(DRAFT_PREFIX) !== 0) continue;
+        if (!/-d_[a-z0-9_]+$/.test(key.slice(DRAFT_PREFIX.length))) continue; // v1 keys: migrated first
+        if (!keepKeys[key]) stale.push(key);
+      }
+      for (var k = 0; k < stale.length; k++) localStorage.removeItem(stale[k]);
+      var dropped = reg.drafts.length - kept.length;
+      if (dropped > 0){
+        reg.drafts = kept;
+        saveRegistry(reg);
+      }
+      return dropped + stale.length;
+    } catch(e){ return 0; }
   }
 
   /* ---- Draft CRUD ---- */
@@ -280,6 +316,14 @@
 
   /* ---- Init ---- */
   migrateV1();
+  purgeExpiredDrafts();
+  // Re-check when a long-open tab regains focus (e.g. next shift)
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'visible' && purgeExpiredDrafts() > 0 &&
+        window.ErNoteSidebar && typeof window.ErNoteSidebar.refresh === 'function'){
+      window.ErNoteSidebar.refresh();
+    }
+  });
   // Defer loadDraft so inline template scripts can render IX/TX containers first
   setTimeout(loadDraft, 0);
 
@@ -293,7 +337,9 @@
       createDraft: createDraft,
       deleteDraft: deleteDraft,
       genId: genId,
-      draftKey: draftKey
+      draftKey: draftKey,
+      purgeExpired: purgeExpiredDrafts,
+      TTL_MS: DRAFT_TTL_MS
     },
     getCurrentDraftId: function(){ return currentDraftId; },
     getHN: getHNValue,
