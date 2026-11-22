@@ -300,9 +300,11 @@
             out.textContent = 'ใส่น้ำหนักเพื่อคำนวณ 0.5 mL/kg/h';
             return;
         }
-        const perHour = w * 0.5;      // keep unrounded; round only for display
+        // The displayed numbers are the comparison boundary, so show them exactly (no rounding)
+        const fmt = (v) => String(Math.round(v * 100) / 100);
+        const perHour = w * 0.5;
         const per4h = perHour * 4;
-        out.innerHTML = `Notify ถ้า urine &lt; <span class="uo-out">${Math.round(perHour)} mL/h</span> (&lt; <span class="uo-out">${Math.round(per4h)} mL</span> ต่อ 4 ชม.)`;
+        out.innerHTML = `Notify ถ้า urine &lt; <span class="uo-out">${fmt(perHour)} mL/h</span> (&lt; <span class="uo-out">${fmt(per4h)} mL</span> ต่อ 4 ชม.)`;
     }
     $('ob-weight').addEventListener('input', updateUO);
 

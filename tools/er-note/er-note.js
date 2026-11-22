@@ -98,9 +98,14 @@
    * lock. So the registry is re-read right before each destructive step: a content key is
    * removed only if the latest registry still does not track it as live, and the pruned
    * registry is rebuilt from the latest copy so drafts added meanwhile are kept. */
+  var DRAFT_FUTURE_SKEW_MS = 5 * 60 * 1000;
+
   function isLiveDraft(d, now){
+    // A timestamp slightly later than `now` is a draft another tab wrote after this purge
+    // took its clock reading: keep it. A timestamp far in the future is invalid (it would
+    // never expire), so it is still purged.
     var age = now - (Number(d.updatedAt) || 0);
-    return age >= 0 && age < DRAFT_TTL_MS;
+    return age > -DRAFT_FUTURE_SKEW_MS && age < DRAFT_TTL_MS;
   }
 
   function liveDraftKeys(reg, now){

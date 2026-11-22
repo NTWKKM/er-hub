@@ -493,7 +493,7 @@
                     </summary>
                     <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #d8d4c8; line-height:1.6;">
                         <ul style="margin:0; padding-left:18px;">
-                            <li><strong>2023 ESC / 2025 ACC/AHA ACS Guidelines:</strong> Fondaparinux 2.5 mg SC OD is the preferred anticoagulant in non-immediate invasive strategy (Class I, Level A; OASIS-5 Trial) with lowest bleeding risk. Avoid if eGFR &lt; 20 mL/min/1.73m² (ESC 2023).</li>
+                            <li><strong>2023 ESC / 2025 ACC/AHA ACS Guidelines:</strong> Fondaparinux 2.5 mg SC OD is the preferred anticoagulant in non-immediate invasive strategy (Class I, Level A; OASIS-5 Trial) with lowest bleeding risk. Avoid if eGFR &lt; 30 mL/min/1.73m² (ESC 2023).</li>
                             <li><strong>Enoxaparin (LMWH):</strong> 1 mg/kg SC q12h. In eGFR &lt; 30 mL/min: adjust to 1 mg/kg SC OD. No age adjustment in NSTE-ACS (the 0.75 mg/kg regimen at age ≥75y applies to STEMI only).</li>
                             <li><strong>GRACE Risk Model 2.0:</strong> Validated in-hospital mortality score predicting ischemia and urgency of coronary angiography (Low &le;108, Intermediate 109-140, High &gt;140).</li>
                             <li><strong>CKD-EPI 2021:</strong> Race-free serum creatinine formula (Inker LA et al. N Engl J Med. 2021;385:1737-1749).</li>
@@ -818,7 +818,7 @@
 <script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const FONDA_MIN_EGFR = 20;   // ESC 2023: avoid fondaparinux when eGFR < 20
+    const FONDA_MIN_EGFR = 30;   // Avoid fondaparinux when eGFR < 30 (product label CrCl < 30; physician decision, ADR-40)
     const ENOX_MIN_EGFR  = 15;
     const ENOX_OD_EGFR   = 30;
     const MIN_AGE = 18;

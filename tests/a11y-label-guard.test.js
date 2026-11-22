@@ -13,6 +13,8 @@ const CONTROLS = 'input:not([type=hidden]):not([type=radio]):not([type=checkbox]
 
 /** Visible naming text of a label-like element, ignoring the control itself. */
 function nameText(node, control) {
+    // The referenced node may itself be the naming image (aria-labelledby → <img alt>)
+    if (node !== control && node.matches('img[alt]')) return node.getAttribute('alt').trim();
     const clone = node.cloneNode(true);
     clone.querySelectorAll('input,select,textarea,script,style').forEach(n => n.remove());
     const own = clone.textContent.trim();
@@ -65,7 +67,8 @@ describe('accessible-name rule fixtures', () => {
             '<label for="a">Weight</label><input id="a">' +
             '<label>Age <input id="b"></label>' +
             '<input id="c" aria-label="HN">' +
-            '<span id="t">Creatinine</span><input id="d" aria-labelledby="t">'
+            '<span id="t">Creatinine</span><input id="d" aria-labelledby="t">' +
+            '<img id="i" alt="Height" src="x.png"><input id="e" aria-labelledby="i">'
         ), []);
     });
 });

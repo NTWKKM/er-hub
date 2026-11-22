@@ -474,12 +474,17 @@ describe('tools/mgso4-calculator.html recurrent step-up display', () => {
         cb.dispatchEvent(new win.Event('change'));
         assert.match(out.textContent, /1\.5 g\/h/);
     });
-    test('urine-output threshold rounds only for display', () => {
+    test('urine-output threshold shows the exact comparison boundary', () => {
         const win = load();
         const w = win.document.getElementById('ob-weight');
-        w.value = '65';
-        w.dispatchEvent(new win.Event('input'));
-        // 65 kg × 0.5 = 32.5 mL/h → 33 shown; 4 h = 130 mL (not 33 × 4 = 132)
-        assert.match(win.document.getElementById('uo-threshold').textContent, /33 mL\/h.*130 mL/);
+        const show = (kg) => {
+            w.value = kg;
+            w.dispatchEvent(new win.Event('input'));
+            return win.document.getElementById('uo-threshold').textContent;
+        };
+        // 65 kg × 0.5 = 32.5 mL/h, 4 h = 130 mL
+        assert.match(show('65'), /< 32\.5 mL\/h.*< 130 mL/);
+        // 64.5 kg → 32.25 mL/h: must not display "< 32", which would miss a 32 mL/h output
+        assert.match(show('64.5'), /< 32\.25 mL\/h.*< 129 mL/);
     });
 });

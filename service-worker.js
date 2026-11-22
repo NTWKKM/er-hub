@@ -1,8 +1,8 @@
 // service-worker.js — Offline PWA cache for ER Standing Order Hub
 // Caches all static assets for offline access (ED wifi outages during stroke workup)
 // CRITICAL: Always keep in sync with the nav-right version string in index.html
-const CACHE_VERSION = 'er-hub-v122';
-const CACHE_DATE = '22/11/2569';
+const CACHE_VERSION = 'er-hub-v123';
+const CACHE_DATE = '23/11/2569';
 const ASSETS = [
   './',
   './index.html',
@@ -219,14 +219,17 @@ function withTimeout(promise, ms) {
   });
 }
 
-async function networkFirst(request, preloadPromise) {
-  // 'no-cache' revalidates with the server (cheap 304) instead of trusting the HTTP cache
+async function networkFirst(request, preloadPromise, waitUntil) {
+  // 'no-cache' revalidates with the server (cheap 304) instead of trusting the HTTP cache.
+  // The timeout covers only the network request; the cache write runs outside it (kept
+  // alive by waitUntil) so a slow write cannot turn a successful fetch into a fallback.
   const network = Promise.resolve(preloadPromise || null)
     .catch(() => null)
     .then((preloaded) => preloaded || fetch(request, { cache: 'no-cache' }))
-    .then(async (response) => {
+    .then((response) => {
       if (response && response.ok && response.type === 'basic') {
-        await putInCache(request, response.clone());
+        const write = putInCache(request, response.clone());
+        if (waitUntil) waitUntil(write);
       }
       return response;
     });
@@ -266,7 +269,7 @@ self.addEventListener('fetch', (event) => {
   if (isCodeRequest(event.request)) {
     // Navigation Preload starts the network request in parallel with SW wake-up
     const preload = event.request.mode === 'navigate' ? event.preloadResponse : null;
-    event.respondWith(networkFirst(event.request, preload));
+    event.respondWith(networkFirst(event.request, preload, (p) => event.waitUntil(p)));
   } else {
     event.respondWith(cacheFirst(event.request));
   }

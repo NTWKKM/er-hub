@@ -13,10 +13,11 @@ const ORIGIN = 'https://ntwkkm.github.io';
 const SCOPE = ORIGIN + '/er-hub/';
 
 /** Boot the real service-worker.js with mocked caches and fetch. */
-function bootSW({ network, cached = {} }) {
+function bootSW({ network, cached = {}, hangPut = false }) {
     const store = new Map(Object.entries(cached));      // url → body (the "old" cache)
     const fetchCalls = [];
     const handlers = {};
+    const pending = [];
     const keyOf = (req, opts = {}) => {
         const u = new URL(typeof req === 'string' ? req : req.url, SCOPE);
         if (opts.ignoreSearch) u.search = '';
@@ -31,7 +32,10 @@ function bootSW({ network, cached = {} }) {
         return undefined;
     };
     const caches = {
-        open: async () => ({ put: async (req, res) => { store.set(keyOf(req), await res.text()); } }),
+        open: async () => ({ put: async (req, res) => {
+            if (hangPut) return new Promise(() => {});   // a cache write that never finishes
+            store.set(keyOf(req), await res.text());
+        } }),
         match,
         keys: async () => [],
         delete: async () => true
@@ -54,13 +58,14 @@ function bootSW({ network, cached = {} }) {
         const event = {
             request: { url: new URL(url, SCOPE).href, method: 'GET', mode, destination },
             preloadResponse: Promise.resolve(undefined),
-            respondWith: (p) => { responded = p; }
+            respondWith: (p) => { responded = p; },
+            waitUntil: (p) => { pending.push(p); }
         };
         handlers.fetch(event);
         const res = await responded;
         return { status: res.status, body: await res.text() };
     }
-    return { request, fetchCalls, store };
+    return { request, fetchCalls, store, settle: () => Promise.all(pending), caches };
 }
 
 const ok = body => async () => {
@@ -76,9 +81,17 @@ describe('service worker fetch strategy', () => {
         const res = await sw.request('shared/clinical-engine.js', { destination: 'script' });
         assert.equal(res.body, 'NEW engine');
         assert.equal(sw.fetchCalls[0].opts.cache, 'no-cache', 'code requests revalidate past the HTTP cache');
+        await sw.settle();
         assert.equal(sw.store.get(SCOPE + 'shared/clinical-engine.js'), 'NEW engine', 'cache refreshed');
     });
 
+    test('a stalled cache write does not delay or replace a successful network response', async () => {
+        const sw = bootSW({ network: ok('NEW page'), cached: { [SCOPE + 'index.html']: 'OLD page' }, hangPut: true });
+        const t0 = Date.now();
+        const res = await sw.request('index.html', { destination: 'document' });
+        assert.equal(res.body, 'NEW page');
+        assert.ok(Date.now() - t0 < 1000, 'response is not held until the 5 s network timeout');
+    });
     test('stylesheets and page HTML are network-first too', async () => {
         const sw = bootSW({ network: ok('NEW'), cached: { [SCOPE + 'tools/screen/tool-screen.css']: 'OLD', [SCOPE + 'orders/nstemi-v2.html']: 'OLD' } });
         assert.equal((await sw.request('tools/screen/tool-screen.css', { destination: 'style' })).body, 'NEW');

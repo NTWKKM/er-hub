@@ -1,7 +1,7 @@
 /**
  * NSTEMI V1 and V2 anticoagulant and antiplatelet logic (re-audit 2026-11-22).
  *  - Enoxaparin: 1 mg/kg q12h at any age (no NSTE-ACS age adjustment); eGFR < 30 → 1 mg/kg OD (auto, overridable)
- *  - Fondaparinux contraindicated below eGFR 20 (ESC 2023)
+ *  - Fondaparinux contraindicated below eGFR 30 (ADR-40 amendment)
  *  - High risk (invasive < 24 h): hold P2Y12, no routine pretreatment (ACC/AHA 2025)
  */
 const { test, describe } = require('node:test');
@@ -100,19 +100,20 @@ for (const page of ['orders/nstemi.html', 'orders/nstemi-v2.html']) {
             assert.equal(freq(win), 'q12h', 'override must not be reset while the eGFR band is unchanged');
         });
 
-        test('fondaparinux at eGFR 20 is selectable without override', () => {
+        test('fondaparinux at eGFR 30 is selectable without override', () => {
             const win = loadHtmlDom(page);
-            fill(win, { weight: 70, age: 60, cr: 3.35 });     // eGFR 20 (CKD-EPI 2021)
-            assert.equal(CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021(3.35, 60, 'male'), 20);
+            fill(win, { weight: 70, age: 60, cr: 2.4 });      // eGFR 30 (CKD-EPI 2021)
+            assert.equal(CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021(2.4, 60, 'male'), 30);
             const radio = win.document.getElementById('ac-radio-fonda');
             assert.equal(radio.closest('label').classList.contains('ac-disabled'), false);
             radio.click();
             assert.equal(radio.checked, true, 'a single click selects fondaparinux');
         });
 
-        test('fondaparinux below eGFR 20 is contraindicated and needs a confirmed override', () => {
+        test('fondaparinux below eGFR 30 is contraindicated and needs a confirmed override', () => {
             const win = loadHtmlDom(page);
-            fill(win, { weight: 70, age: 60, cr: 3.6 });      // eGFR 19
+            fill(win, { weight: 70, age: 60, cr: 2.45 });     // eGFR 29
+            assert.equal(CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021(2.45, 60, 'male'), 29);
             const radio = win.document.getElementById('ac-radio-fonda');
             const label = radio.closest('label');
             assert.equal(label.classList.contains('ac-disabled'), true);
@@ -123,11 +124,11 @@ for (const page of ['orders/nstemi.html', 'orders/nstemi-v2.html']) {
             assert.equal(radio.checked, true, 'second click confirms the override');
         });
 
-        test('fondaparinux is not contraindicated at eGFR 20-29', () => {
+        test('fondaparinux hint states the eGFR < 30 contraindication', () => {
             const win = loadHtmlDom(page);
             fill(win, { weight: 70, age: 60, cr: 3.0 });      // eGFR ≈ 23
-            assert.doesNotMatch(win.document.getElementById('ac-fonda-hint').textContent, /CI: eGFR <30/);
-            assert.match(win.document.getElementById('ac-fonda-hint').textContent, /CI: eGFR <20/);
+            assert.match(win.document.getElementById('ac-fonda-hint').textContent, /CI: eGFR <30/);
+            assert.doesNotMatch(win.document.getElementById('ac-fonda-hint').textContent, /CI: eGFR <20/);
         });
     });
 }

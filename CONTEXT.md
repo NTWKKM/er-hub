@@ -91,7 +91,7 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 
 | Boundary | Rule | Source |
 | --- | --- | --- |
-| Fondaparinux CI | eGFR < 30 → contraindicated | 2025 ACC/AHA NSTE-ACS |
+| Fondaparinux CI | eGFR < 30 → contraindicated (override with confirmation) | Product label CrCl < 30; ADR-40 amendment |
 | Enoxaparin frequency | eGFR ≥ 30 → q12h; eGFR < 30 → q24h; eGFR < 15 → use Heparin | 2025 ACC/AHA NSTE-ACS |
 | TNK age cutoff | age ≥ 75 → 50% dose reduction | ASSENT-2 / ESC |
 | Clopidogrel age cutoff | age ≤ 75 → full 4 tabs (300/600 mg); age > 75 → 1 tab | PLATO-derived |
@@ -333,6 +333,6 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
 
 - **Context**: A re-audit found enoxaparin was 1 mg/kg regardless of age despite the page's own reference text, the enoxaparin frequency could not be overridden (V1) or was never auto-set (V2), the V2 high-risk hint offered ticagrelor pretreatment, fondaparinux used eGFR < 30, and stroke pages carried stale guideline labels. AHA/ASA 2026 recommends alteplase 0.9 mg/kg or tenecteplase 0.25 mg/kg and does not recommend 0.6 mg/kg.
 - **Decision** (confirmed by the requesting physician): age ≥ 75 → 0.75 mg/kg q12h; eGFR < 30 → auto once daily with manual override; fondaparinux CI below eGFR 20; keep Thai 0.4/0.6 mL syringe selection; keep 0.6 mg/kg alteplase as an institutional option with accurate wording; add screen-only rescue tips for sICH and angioedema without changing the printed order; V1 rt-PA stays alteplase-only.
-- **Amendment (2026-11-22, PR 21 review, confirmed by the requesting physician)**: NSTE-ACS enoxaparin is 1 mg/kg q12h at every age; the 0.75 mg/kg age ≥ 75 regimen belongs to STEMI (ExTRACT-TIMI 25) and the UA/NSTEMI label has no age adjustment. Fondaparinux stays gated on CKD-EPI eGFR < 20 (ESC 2023), not Cockcroft–Gault CrCl.
+- **Amendment (2026-11-22, PR 21 review, confirmed by the requesting physician)**: NSTE-ACS enoxaparin is 1 mg/kg q12h at every age; the 0.75 mg/kg age ≥ 75 regimen belongs to STEMI (ExTRACT-TIMI 25) and the UA/NSTEMI label has no age adjustment. Fondaparinux is gated on CKD-EPI eGFR < 30, reverting the < 20 decision above: ESC 2023 states CrCl < 20 mL/min (not eGFR), so the < 20 cutoff had no eGFR source, and < 30 matches the product label (CrCl < 30) and the glossary. eGFR is used as the CrCl surrogate, accepting that the two can differ.
 - **Consequences**: Enoxaparin rules live in `CLINICAL_ENGINE`. The service worker now serves all code network-first, so HTML and engines come from one deploy; the NSTEMI pages keep an inline fallback for the single transition in which the previous service worker still controls the page. Strings pinned by tests (`🖨️ Blank Order`, `🖨️ Blank NIHSS`, `⚠ Max dose capped`) keep their symbols.
 

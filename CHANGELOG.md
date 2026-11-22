@@ -5,9 +5,9 @@
 ### rt-PA and NSTEMI Re-audit: Enoxaparin Dosing, Guideline Alignment, Rescue Tips, Polish
 
 - **NSTEMI V1 and V2 (`orders/nstemi.html`, `orders/nstemi-v2.html`, `shared/clinical-engine.js`):**
-  - Enoxaparin now 0.75 mg/kg SC q12h for age ≥ 75 (was 1 mg/kg for everyone); eGFR < 30 keeps 1 mg/kg once daily. Dosing lives in `CLINICAL_ENGINE.calcEnoxaparinACS()` shared by both pages, with an inline fallback for HTML/engine version skew.
+  - Enoxaparin is 1 mg/kg SC q12h at every age (the 0.75 mg/kg age ≥ 75 regimen is STEMI-only and was removed after review); eGFR < 30 gives 1 mg/kg once daily. Dosing lives in `CLINICAL_ENGINE.calcEnoxaparinACS()` shared by both pages, with an inline fallback for HTML/engine version skew.
   - Enoxaparin frequency auto-switches to once daily when eGFR falls below 30 and back when it rises; a manual choice survives until the eGFR band changes.
-  - Fondaparinux contraindication threshold moved from eGFR < 30 to < 20 (ESC 2023).
+  - Fondaparinux contraindication stays at eGFR < 30 (a move to < 20 was reverted after review; ESC 2023 states CrCl < 20, the product label CrCl < 30).
   - V2 high-risk (invasive < 24 h) hint no longer offers ticagrelor pretreatment (ACC/AHA 2025).
   - Thai 0.4 / 0.6 mL pre-filled syringe selection kept as is.
 - **rt-PA V1 and V2 (`orders/rtpa.html`, `orders/rtpa-v2.html`):** screen-only "Tips" popover for symptomatic ICH and orolingual angioedema after thrombolysis (printed order unchanged). Guideline labels aligned to AHA/ASA 2026; V1 reference no longer cites tenecteplase; low-dose alteplase reference states that AHA/ASA 2026 recommends 0.9 mg/kg or tenecteplase and keeps 0.6 mg/kg as an institutional option.

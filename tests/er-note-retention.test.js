@@ -113,6 +113,20 @@ describe('ER NOTE v1 migration and concurrent purge', () => {
     });
 });
 
+describe('ER NOTE purge keeps drafts written after its clock reading', () => {
+    test('a draft another tab saved after the purge read the clock survives', () => {
+        const win = loadPage('tools/er-note/index.html', {});
+        const ls = win.localStorage;
+        const purgeNow = Date.now();
+        const later = { id: 'd_later_1', template: 'sepsis', hn: '321', cc: '', updatedAt: purgeNow + 50 };
+        ls.setItem('ernote-registry', JSON.stringify({ version: 2, drafts: [later] }));
+        ls.setItem('ernote-draft-sepsis-d_later_1', '{}');
+        assert.equal(win.ErNote.registry.purgeExpired(purgeNow), 0);
+        assert.notEqual(ls.getItem('ernote-draft-sepsis-d_later_1'), null);
+        assert.deepEqual(JSON.parse(ls.getItem('ernote-registry')).drafts.map(d => d.id), ['d_later_1']);
+    });
+});
+
 describe('Home Medication draft retention', () => {
     const key = 'er-hub-home-med-draft';
 
