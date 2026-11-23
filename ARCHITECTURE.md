@@ -249,7 +249,7 @@ Redirect script validates `order` slug against allow-list.
 ### Service Worker (`service-worker.js`)
 
 PWA offline cache. Code is network-first: navigations, HTML, JS, CSS and JSON are fetched with `cache: 'no-cache'` (Navigation Preload for navigations), written to the current cache in the background (the 5 s timeout covers only the network request, and a failed or slow cache write never replaces a good response), and fall back to the cache after 5 s or offline (query strings ignored, then the portal shell). This keeps a page and the engines it loads on the same deploy only when `CACHE_VERSION` changes with each deploy and every code fetch completes within 5 s; a request that times out falls back to whatever the cache holds, which may be from an earlier deploy. Cache-first code caused HTML/engine version skew, which is why code is network-first. A failed `cache.put` is logged and the network response is still returned. Fonts, images and PDFs stay cache-first, and only `docs/*` uses a Static Routing cache route. Precache fetches with `cache: 'reload'`.
-`CACHE_VERSION` is `er-hub-v123` and `CACHE_DATE` is `23/11/2569` — dynamically extracted by `index.html` and `shared/components.js` at runtime via `fetch()` and regex parsing, backed by `localStorage` (`er-hub-cached-version`) for cold-load offline resilience.
+`CACHE_VERSION` is `er-hub-v124` and `CACHE_DATE` is `23/11/2569` — dynamically extracted by `index.html` and `shared/components.js` at runtime via `fetch()` and regex parsing, backed by `localStorage` (`er-hub-cached-version`) for cold-load offline resilience.
 Precaches all HTML/CSS/JS + shared engines + ER NOTE templates + drip-calculator + nihss-v2.html + 512×512 app icon + source PDFs + 16 self-hosted WOFF2 font files in `shared/fonts/` (zero external CDN dependencies).
 Per-asset retry with exponential backoff via `fetchWithRetry()`. Install is atomic: if any asset still fails, the partial cache is deleted and install aborts so the previous complete cache stays active. Includes Static Routing API progressive enhancement (Chromium 123+); route patterns are resolved against `registration.scope` so they match under a sub-path deployment. A cache miss while offline returns a synthetic `503` response instead of an undefined `respondWith()` value.
 
@@ -314,7 +314,7 @@ User enters history, exam, investigations, scoring variables
 
 ## Test Suite Architecture & Quality Guardrails
 
-The ER-Hub test suite is designed with high signal-to-noise ratio and zero clinical false-alarms. It comprises **32 test files** (667 tests total) executing via Node.js native test runner (`node:test`):
+The ER-Hub test suite is designed with high signal-to-noise ratio and zero clinical false-alarms. It comprises **32 test files** (669 tests total) executing via Node.js native test runner (`node:test`):
 
 ```bash
 node --test tests/*.test.js

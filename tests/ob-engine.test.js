@@ -439,6 +439,9 @@ describe('BP escalation sequences and recurrent-seizure step-up (CodeRabbit PR 2
         assert.match(P.hydralazine.maxTotal, /20 mg \(รวม test dose\)/);
         assert.match(P.hydralazine.steps[2], /5–10 mg/);
         assert.match(P.hydralazine.steps[2], /1 \+ 5 \+ 10 mg/);
+        // Repeat dose → 20 min recheck → labetalol only if still severe-range
+        assert.match(P.hydralazine.steps[2], /วัด BP ซ้ำใน 20 min; ให้ Labetalol เฉพาะเมื่อ SBP ยัง ≥ 160 หรือ DBP ≥ 110 mmHg/);
+        assert.match(P.hydralazine.steps[2], /monitor BP ต่อ/);
     });
     test('labetalol 80 mg is followed by a 10 min recheck before conditional hydralazine', () => {
         assert.match(P.labetalol.steps[2], /80 mg IV, วัด BP ซ้ำใน 10 min; ให้ Hydralazine 10 mg IV เฉพาะเมื่อ SBP ยัง ≥ 160 หรือ DBP ≥ 110/);

@@ -146,7 +146,7 @@ const BP_PROTOCOLS = {
         steps: [
             'Test dose 1 mg IV นาน > 1 min',
             '5–10 mg IV นาน 2 min, วัด BP ใน 20 min',
-            'ถ้ายังสูง → 5–10 mg IV ซ้ำ โดยยอดรวมทั้งหมด (รวม test dose) ไม่เกิน 20 mg (เช่น 1 + 5 + 10 mg) แล้วเปลี่ยนเป็น Labetalol'
+            'ถ้ายังสูง → 5–10 mg IV ซ้ำ โดยยอดรวมทั้งหมด (รวม test dose) ไม่เกิน 20 mg (เช่น 1 + 5 + 10 mg), วัด BP ซ้ำใน 20 min; ให้ Labetalol เฉพาะเมื่อ SBP ยัง ≥ 160 หรือ DBP ≥ 110 mmHg, ถ้าไม่ถึงให้ monitor BP ต่อ'
         ],
         maxTotal: '20 mg (รวม test dose)',
         note: 'ถ้าครบ max → เปลี่ยนเป็น Labetalol หรือ consult specialist',

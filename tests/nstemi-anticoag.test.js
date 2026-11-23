@@ -82,9 +82,27 @@ for (const page of ['orders/nstemi.html', 'orders/nstemi-v2.html']) {
             const win = loadHtmlDom(page);
             fill(win, { weight: 70, age: 60, cr: 3.0 });      // eGFR ≈ 23 → q24h
             assert.equal(freq(win), 'q24h');
+            // Manual q12h override: without a band reset on Clear it would survive to the next patient
+            const q12 = win.document.querySelector('input[name="enox-freq"][value="q12h"]');
+            q12.checked = true;
+            q12.dispatchEvent(new win.Event('change', { bubbles: true }));
+            assert.equal(freq(win), 'q12h');
             win.document.getElementById('clear-btn').click();
             fill(win, { weight: 70, age: 60, cr: 3.0 });      // same band, new patient
             assert.equal(freq(win), 'q24h', 'auto-selection must run again after Clear');
+        });
+
+        test('enoxaparin label shows a placeholder, not "null mg", when the weight is deleted', () => {
+            const win = loadHtmlDom(page);
+            fill(win, { weight: 70, age: 60, cr: 0.9 });
+            chooseEnox(win);
+            assert.match(win.document.getElementById('screen-anticoag').textContent, /Enoxaparin 70 mg/);
+            const w = win.document.getElementById('weight');
+            w.value = '';
+            w.dispatchEvent(new win.Event('input', { bubbles: true }));
+            const label = win.document.getElementById('screen-anticoag').textContent;
+            assert.doesNotMatch(label, /null/);
+            assert.match(label, /Enoxaparin -- mg/);
         });
 
         test('eGFR < 30 auto-selects once daily, and a manual q12h override survives re-render', () => {

@@ -1055,8 +1055,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (choice === 'enox') {
             const freq = document.querySelector('input[name="enox-freq"]:checked')?.value || 'q12h';
             const enoxDose = enoxFor(weight, freq).dose;
+            const doseStr = enoxDose == null ? '--' : enoxDose;   // no weight yet: never "null mg"
             const routeStr = freq === 'q12h' ? 'SC q12h' : 'SC q24h';
-            return `Enoxaparin ${enoxDose} mg ${routeStr} × 5d`;
+            return `Enoxaparin ${doseStr} mg ${routeStr} × 5d`;
         }
         if (choice === 'hep') {
             const hepBolus = Math.min(Math.round(weight * 60), 4000);
