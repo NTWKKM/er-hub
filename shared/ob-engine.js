@@ -4,6 +4,8 @@
  * Pure functional — no DOM dependency. Follows anticoag-engine.js pattern.
  *
  * References:
+ *   - MNRH Standing Order: Severe Preeclampsia (2569) — primary order set
+ *   - RTCOG Clinical Practice Guideline OB 69-046: Preeclampsia (Update 2569)
  *   - ACOG Practice Bulletin 222 (2020) + Committee Opinion 692 (2017)
  *   - WHO/Pritchard-Zuspan regimen (Cochrane reviews)
  *   - Thai — CMU OB&GYN (รศ.พญ.เกษมศรี ศรีสุพรรณดิฐ, ACOG Task Force 2013 +
@@ -20,6 +22,79 @@ const MGSO4_CONC_50PCT = 500;  // mg/mL
 const MGSO4_CONC_10PCT = 100;  // mg/mL
 const MGSO4_AMP_VOL_ML = 10;   // standard ampule volume
 const MGSO4_AMP_DOSE_G = 5;    // grams per ampule (50% × 10 mL)
+
+/**
+ * MNRH Standing Order — Severe Preeclampsia (2569), aligned with RTCOG OB 69-046.
+ * This is the primary order set shown on the MgSO4 screen; the legacy formulas
+ * below are kept as reference only.
+ */
+const MNRH_SEVERE_PE_SO = {
+    title: 'Standing Order: Severe Preeclampsia',
+    source: 'MNRH Standing Order 2569 · RTCOG CPG OB 69-046 (Update 2569)',
+    admission: ['Admit LR', 'NPO', 'Retained Foley catheter', 'RLS 1000 mL IV drip (rate ตามแพทย์สั่ง)'],
+    labs: ['CBC', 'BUN, Cr', 'AST, ALT', 'LDH', 'UA หรือ UPCR หรือ 24 h urine protein (เลือกข้อใดข้อหนึ่ง)'],
+    bedside: ['10% Calcium gluconate 1 g', 'MgSO4 2 g'],
+    loading: {
+        doseG: 4,
+        drug: '10% MgSO4 4 g (40 mL)',
+        diluent: '5% D/W 100 mL',
+        totalVol_mL: 140,
+        durationMin: 20,
+        pumpRate_mL_hr: 420
+    },
+    maintenance: {
+        mgso4_g: 40,
+        mgso4_50pct_mL: 80,
+        diluent: '5% D/N/2 1000 mL',
+        totalVol_mL: 1080,
+        // Labelled rates per the standing order; actual delivery uses the true 1,080 mL volume.
+        rate2g_mL_hr: 50,
+        rate1g_mL_hr: 25,
+        actual2g_g_hr: 1.85,
+        actual1g_g_hr: 0.93,
+        reduceTo1gIf: ['BMI < 25 kg/m²', 'Cr > 1.1 mg/dL', 'Urine output < 0.5 mL/kg/h'],
+        duration: 'ต่อเนื่อง 24 ชม. หลังคลอด หรือหลังชักครั้งสุดท้าย (expectant < 34 wk: หยุดเมื่อครบ 48 ชม.)'
+    },
+    monitoring: [
+        { what: 'Urine output', every: 'q 4 h', notify: '< 0.5 mL/kg/h' },
+        { what: 'Serum Mg', every: 'q 4 h', notify: '< 4.8 หรือ > 8.4 mg/dL' },
+        { what: 'DTR', every: 'ต่อเนื่อง', notify: '< 2+' },
+        { what: 'Vital signs', every: 'q 4 h', notify: 'BP ≥ 160/110 mmHg, PR < 60/min, RR < 14/min' },
+        { what: 'อาการ', every: 'ต่อเนื่อง', notify: 'Severe headache, epigastric pain, blurred vision' }
+    ],
+    bpLadder: [
+        { step: 1, drug: 'Labetalol 20 mg IV', how: 'slow push 2 min', recheck: 'วัด BP ซ้ำใน 10 min' },
+        { step: 2, drug: 'Labetalol 40 mg IV', how: 'slow push 2 min', recheck: 'วัด BP ซ้ำใน 10 min' },
+        { step: 3, drug: 'Labetalol 80 mg IV', how: 'slow push 2 min', recheck: 'วัด BP ซ้ำใน 10 min' },
+        { step: 4, drug: 'Hydralazine 10 mg IV', how: 'slow push 2 min', recheck: 'วัด BP ซ้ำใน 20 min, ถ้ายังสูง consult Med' }
+    ],
+    labetalolContraindications: 'Asthma, heart failure, severe bradycardia, heart block > first degree, sick sinus syndrome, Prinzmetal’s angina, severe peripheral arterial disease, cardiogenic shock, severe prolonged hypotension',
+    bpControlledSchedule: [
+        { every: 'q 10 min', times: 6 },
+        { every: 'q 15 min', times: 4 },
+        { every: 'q 30 min', times: 2 },
+        { every: 'q 1 h', times: 4 }
+    ]
+};
+
+/**
+ * Serum magnesium reference levels (RTCOG OB 69-046).
+ */
+const SERUM_MG_LEVELS = [
+    { effect: 'Therapeutic level', mgdl: '5–9', meql: '4–7', mmoll: '2–3.5' },
+    { effect: 'Loss of patellar reflex', mgdl: '> 9', meql: '> 7', mmoll: '> 3.5' },
+    { effect: 'Respiratory paralysis', mgdl: '> 12', meql: '> 10', mmoll: '> 5' },
+    { effect: 'Cardiac arrest', mgdl: '> 30', meql: '> 25', mmoll: '> 12.5' }
+];
+
+/**
+ * Second-line antihypertensive infusions (RTCOG OB 69-046).
+ */
+const BP_SECOND_LINE = [
+    { name: 'Nicardipine infusion', mix: '10 mg/10 mL + NSS 90 mL = 100 mL (0.1 mg/mL)', rate: 'เริ่ม 25–50 mL/h (2.5–5 mg/h), เพิ่ม 2.5 mg/h q 15 min', max: '15 mg/h' },
+    { name: 'Labetalol infusion', mix: '500 mg/100 mL + 400 mL = 500 mL (1 mg/mL)', rate: 'เริ่ม 20 mg/h, เพิ่ม 20 mg/h q 30 min', max: '160 mg/h' },
+    { name: 'Hydralazine infusion', mix: '20 mg in NSS 100 mL (0.2 mg/mL), ห้ามใช้สารละลายที่มี glucose', rate: '0.5–10 mg/h', max: '10 mg/h' }
+];
 
 /**
  * Maintenance IV drip mixing formulas.
@@ -69,10 +144,11 @@ const BP_PROTOCOLS = {
     hydralazine: {
         name: 'Hydralazine IV',
         steps: [
-            '5 mg IV (ให้ช้า ≥2 min)',
-            'ถ้า BP ยังไม่ลดใน 20 min → 5-10 mg IV ซ้ำ q20min'
+            'Test dose 1 mg IV นาน > 1 min',
+            '5–10 mg IV นาน 2 min, วัด BP ใน 20 min',
+            'ถ้ายังสูง → 5–10 mg IV ซ้ำ โดยยอดรวมทั้งหมด (รวม test dose) ไม่เกิน 20 mg (เช่น 1 + 5 + 10 mg), วัด BP ซ้ำใน 20 min; ให้ Labetalol เฉพาะเมื่อ SBP ยัง ≥ 160 หรือ DBP ≥ 110 mmHg, ถ้าไม่ถึงให้ monitor BP ต่อ'
         ],
-        maxTotal: '20-30 mg',
+        maxTotal: '20 mg (รวม test dose)',
         note: 'ถ้าครบ max → เปลี่ยนเป็น Labetalol หรือ consult specialist',
         contraindications: 'หลีกเลี่ยงในผู้ป่วยโรคหลอดเลือดหัวใจตีบเฉียบพลัน (ACS) เนื่องจากเกิด reflex tachycardia'
     },
@@ -81,21 +157,22 @@ const BP_PROTOCOLS = {
         steps: [
             '20 mg IV (ให้ช้า ≥2 min)',
             'ถ้าไม่ตอบสนองใน 10 min → 40 mg IV',
-            'ถ้ายังไม่ตอบสนอง → 80 mg IV q10min'
+            'ถ้ายังไม่ตอบสนอง → 80 mg IV, วัด BP ซ้ำใน 10 min; ให้ Hydralazine 10 mg IV เฉพาะเมื่อ SBP ยัง ≥ 160 หรือ DBP ≥ 110 mmHg'
         ],
-        maxTotal: '220-300 mg',
+        maxTotal: '300 mg',
         note: 'ถ้าครบ max → เปลี่ยนเป็น Hydralazine หรือ consult specialist',
         contraindications: 'ห้ามใช้ใน Active asthma/Severe bronchospasm, Sinus bradycardia, Heart block > 1st degree'
     },
     nifedipine: {
         name: 'Nifedipine Oral',
         steps: [
-            '10 mg oral (Immediate-release)',
-            'ถ้ายังไม่ลดใน 30 min → repeat 10-20 mg oral q30min'
+            '10 mg oral (Immediate-release), วัด BP ใน 20 min',
+            'ถ้ายังสูง → 20 mg oral, วัด BP ใน 20 min',
+            'ถ้ายังสูง → 20 mg oral, วัด BP ใน 20 min; ให้ Labetalol 20 mg IV เฉพาะเมื่อ BP ยัง ≥ 160/110 mmHg'
         ],
-        maxTotal: '120 mg/day',
-        note: 'ถ้าครบ max → switch IV Labetalol 40 mg',
-        contraindications: 'ระวัง Overshoot hypotension และ tachycardia รุนแรง ซึ่งทำให้เกิด uteroplacental hypoperfusion'
+        maxTotal: '180 mg/day',
+        note: 'ห้ามเจาะแคปซูลหรืออมใต้ลิ้น',
+        contraindications: 'ระวัง Overshoot hypotension เมื่อใช้ร่วมกับ MgSO4 และ tachycardia'
     },
     nicardipine: {
         name: 'Nicardipine IV',
@@ -152,7 +229,7 @@ const MGSO4_CONTRAINDICATIONS = {
     renalImpairment: {
         title: 'Severe Renal Impairment (Dose Adjustment Required)',
         text: 'MgSO4 ขับออกทางไต 100% หากมี Renal insufficiency / oliguria ยาจะสะสมเกิดพิษร้ายแรง',
-        action: 'พิจ็ารณาลด Loading dose เหลือ 2 g IV bolus, เจาะ Serum Mg ก่อนให้, และ Hold/ลด Maintenance dose'
+        action: 'Loading 4 g ตามปกติ แล้วให้ maintenance 1 g/h และตรวจ serum Mg q 4 h (Cr > 1.1 mg/dL หรือ UO < 0.5 mL/kg/h); IM regimen ลด maintenance 50%'
     }
 };
 
@@ -209,7 +286,7 @@ const DIAGNOSTIC_CRITERIA = {
     severePreeclampsia: {
         label: 'Pre-eclampsia with Severe Features',
         criteria: [
-            { id: 'bp_160_110', text: 'BP ≥160/110 mmHg (คงอยู่ ≥15 นาที)', category: 'BP' },
+            { id: 'bp_160_110', text: 'BP ≥160/110 mmHg วัด 2 ครั้งห่าง ≥4 ชม. (เว้นแต่เริ่มยาลดความดันแล้ว)', category: 'BP' },
             { id: 'plt_lt_100k', text: 'Platelet <100,000 /μL (Thrombocytopenia)', category: 'Lab' },
             { id: 'lft_2x', text: 'AST/ALT ≥2× ULN (Elevated liver transaminases)', category: 'Lab' },
             { id: 'cr_gt_1_1', text: 'Cr >1.1 mg/dL หรือ doubling of baseline Cr (Renal insufficiency)', category: 'Lab' },
@@ -339,7 +416,10 @@ function calcMgSO4RecurrentBolus() {
         diluentVol,     // 16 mL NSS to dilute
         rateNote: 'Slow IV push ≤1 g/min (ให้ช้าๆ อย่างน้อย 2-5 นาที)',
         cpgHalfDoseNote: '10% MgSO4 2-4 g (half dose) IV push slowly',
-        secondLine: 'ถ้ายังชักหลัง repeat MgSO4 bolus → พิจารณา Benzodiazepine / Anticonvulsant second-line (Lorazepam 2-4 mg IV / Diazepam 5 mg IV / Phenytoin 15-20 mg/kg IV)'
+        // Applies only when maintenance is currently 1 g/h; never a reduction for patients at >= 1.5 g/h.
+        infusionStepUp: 'เพิ่ม maintenance เป็น 1.5 g/h หลัง bolus (เฉพาะผู้ที่ได้ 1 g/h อยู่)',
+        infusionStepUpFromG_hr: 1,
+        secondLine: 'ถ้ายังชักหลัง bolus 2 ครั้ง → Benzodiazepine หรือ anticonvulsant อื่น: Phenytoin 125 mg IV (เพิ่มได้ถึง 250 mg, ฉีดนาน 3–5 min), Diazepam 5 mg IV, หรือ Midazolam 5–10 mg IV/IM (RTCOG 2569)'
     };
 }
 
@@ -359,8 +439,8 @@ function checkMgSO4Toxicity({ rr, dtrAbsent, urineOutput }) {
     if (dtrAbsent === true) {
         flags.push({ id: 'dtr', text: 'DTR absent — หยุด maintenance ทันที', severity: 'critical' });
     }
-    if (rr != null && rr < 12) {
-        flags.push({ id: 'rr', text: `RR ${rr}/min (<12) — หยุด maintenance ทันที`, severity: 'critical' });
+    if (rr != null && rr < 14) {
+        flags.push({ id: 'rr', text: `RR ${rr}/min (<14) — หยุด maintenance ทันที`, severity: 'critical' });
     }
     if (urineOutput != null && urineOutput < 25) {
         flags.push({ id: 'uo', text: `UO ${urineOutput} mL/hr (<25 mL/hr) — หยุด maintenance`, severity: 'warning' });
@@ -370,7 +450,7 @@ function checkMgSO4Toxicity({ rr, dtrAbsent, urineOutput }) {
         isToxic: flags.length > 0,
         flags,
         antidoteNote: 'Calcium gluconate 10% 10 mL (1 g) IV push over 3-5 min — เตรียมพร้อมเสมอ',
-        serumMgNote: 'Therapeutic range: 4-7 mEq/L (4.8-8.4 mg/dL) — เจาะ serum Mg เมื่อ Cr >1.0 mg/dL'
+        serumMgNote: 'Notify ถ้า serum Mg < 4.8 หรือ > 8.4 mg/dL (ตรวจ q 4 h); RTCOG therapeutic 5–9 mg/dL (4–7 mEq/L)'
     };
 }
 
@@ -461,7 +541,7 @@ function checkMgSO4Safety({ hasMyasthenia, isRenalImpaired, rr, dtrAbsent, urine
     if (isRenalImpaired === true) {
         warnings.push({
             id: 'renal',
-            text: '⚠️ Severe Renal Impairment — ปรับลด Loading dose เป็น 2 g IV, เจาะ Serum Mg, และ Hold/ลด Maintenance',
+            text: 'Renal impairment — Loading 4 g ตามปกติ, maintenance 1 g/h, ตรวจ serum Mg q 4 h',
             severity: 'warning'
         });
     }
@@ -491,6 +571,9 @@ if (typeof module !== 'undefined' && module.exports) {
         classifyBPSeverity,
         evalSevereFeatures,
         MAINTENANCE_FORMULAS,
+        MNRH_SEVERE_PE_SO,
+        SERUM_MG_LEVELS,
+        BP_SECOND_LINE,
         BP_PROTOCOLS,
         DIAGNOSTIC_CRITERIA,
         MGSO4_CONTRAINDICATIONS,

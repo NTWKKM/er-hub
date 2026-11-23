@@ -1205,7 +1205,7 @@
                 <div class="input-group" style="margin-bottom:10px;">
                     <label for="na-target-delta">Target Na⁺ Rise in 24h (mEq/L)</label>
                     <div class="slider-row">
-                        <input type="range" id="na-target-slider" class="slider-control" min="2" max="10" value="6" step="1">
+                        <input aria-label="Target sodium correction slider" type="range" id="na-target-slider" class="slider-control" min="2" max="10" value="6" step="1">
                         <input type="number" id="na-target-delta" class="input-control-sm" value="6" min="2" max="10" style="width:70px; height:36px;">
                     </div>
                 </div>
@@ -1410,7 +1410,7 @@
                 <div class="input-group" style="margin-bottom:10px;">
                     <label for="k-iv-rate-input">IV Pump Infusion Rate (mL/hr)</label>
                     <div class="slider-row">
-                        <input type="range" id="k-iv-rate-slider" class="slider-control" min="20" max="250" value="100" step="10">
+                        <input aria-label="IV potassium infusion rate slider" type="range" id="k-iv-rate-slider" class="slider-control" min="20" max="250" value="100" step="10">
                         <input type="number" id="k-iv-rate-input" class="input-control-sm" value="100" min="10" max="300" style="width:80px; height:36px;">
                     </div>
                 </div>
@@ -1802,9 +1802,9 @@
                 <div class="card-sub">
                     <strong style="font-size:12px;">Urine Anion Gap (UAG = U_Na + U_K - U_Cl):</strong>
                     <div class="grid-3" style="margin-top:6px;">
-                        <input type="number" id="gap-u-na" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
-                        <input type="number" id="gap-u-k" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
-                        <input type="number" id="gap-u-cl" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
+                        <input aria-label="Urine sodium (mEq/L)" type="number" id="gap-u-na" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
+                        <input aria-label="Urine potassium (mEq/L)" type="number" id="gap-u-k" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
+                        <input aria-label="Urine chloride (mEq/L)" type="number" id="gap-u-cl" class="input-control-sm" style="font-family:var(--font-mono); font-size:13px; height:36px;" value="">
                     </div>
                     <p id="disp-uag-interp" style="font-size:12px; margin:6px 0 0; color:var(--graphite);">
                         Enter Urine Na⁺, K⁺, and Cl⁻ to calculate Urine Anion Gap.
@@ -1903,7 +1903,7 @@
                 </div>
                 <div class="decision-step" style="border-left-color:var(--signal-blue);">
                     <h4>Step 1: Serum Tonicity</h4>
-                    <select id="w-na-tonicity" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Step 1: Serum Tonicity" id="w-na-tonicity" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="hypo" selected>Hypotonic (Serum Osm &lt; 275 mOsm/kg)</option>
                         <option value="hyper">Hypertonic (Serum Osm &gt; 295 mOsm/kg — Hyperglycemia, Mannitol)</option>
                         <option value="iso">Isotonic / Pseudohyponatremia (Osm 275-295 — Lipids, Proteins)</option>
@@ -1911,7 +1911,7 @@
                 </div>
                 <div class="decision-step" style="border-left-color:var(--signal-blue);">
                     <h4>Step 2: Urine Osmolality</h4>
-                    <select id="w-na-uosm" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Step 2: Urine Osmolality" id="w-na-uosm" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="concentrated" selected>U_Osm ≥ 100 mOsm/kg (Impaired water excretion)</option>
                         <option value="dilute">U_Osm &lt; 100 mOsm/kg (Polydipsia, Beer Potomania, Tea &amp; Toast)</option>
                     </select>
@@ -1919,12 +1919,12 @@
                 <div class="decision-step" style="border-left-color:var(--signal-blue);">
                     <h4>Step 3: Volume Status &amp; Urine Na⁺</h4>
                     <div class="grid-2">
-                        <select id="w-na-vol" class="input-control-sm" style="height:36px; width:100%;">
+                        <select aria-label="Step 3: Volume status" id="w-na-vol" class="input-control-sm" style="height:36px; width:100%;">
                             <option value="euvolemic" selected>Euvolemic (Normal)</option>
                             <option value="hypovolemic">Hypovolemic (Dry)</option>
                             <option value="hypervolemic">Hypervolemic (Edematous)</option>
                         </select>
-                        <select id="w-na-una" class="input-control-sm" style="height:36px; width:100%;">
+                        <select aria-label="Step 3: Urine sodium" id="w-na-una" class="input-control-sm" style="height:36px; width:100%;">
                             <option value="high" selected>U_Na &gt; 30 mEq/L</option>
                             <option value="low">U_Na &lt; 20-30 mEq/L</option>
                         </select>
@@ -1945,7 +1945,7 @@
                 </div>
                 <div class="decision-step" style="border-left-color:var(--signal-red);">
                     <h4>Step 1: Urine Osmolality</h4>
-                    <select id="w-hyperna-uosm" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Step 1: Urine Osmolality" id="w-hyperna-uosm" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="dilute" selected>U_Osm &lt; 300 mOsm/kg (Diabetes Insipidus)</option>
                         <option value="intermediate">U_Osm 300 - 800 mOsm/kg (Partial DI / Osmotic Diuresis)</option>
                         <option value="concentrated">U_Osm &gt; 800 mOsm/kg (Extrarenal Loss / Sodium Overload)</option>
@@ -1953,7 +1953,7 @@
                 </div>
                 <div class="decision-step" style="border-left-color:var(--signal-red);">
                     <h4>Step 2: Desmopressin (DDAVP) Challenge Response</h4>
-                    <select id="w-hyperna-ddavp" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Desmopressin (DDAVP) challenge response" id="w-hyperna-ddavp" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="good" selected>&gt; 50% Increase in U_Osm (Central DI)</option>
                         <option value="poor">&lt; 50% Increase in U_Osm (Nephrogenic DI - Lithium/HyperCa)</option>
                     </select>
@@ -1975,14 +1975,14 @@
                 </div>
                 <div class="decision-step" style="border-left-color:var(--signal-cyan);">
                     <h4>Step 1: Spot Urine K⁺/Cr Ratio (Replaces TTKG)</h4>
-                    <select id="w-k-spot" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Spot urine K⁺/Cr ratio" id="w-k-spot" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="high" selected>Spot U_K/U_Cr ≥ 1.5 mmol/mmol (Renal K⁺ Wasting)</option>
                         <option value="low">Spot U_K/U_Cr &lt; 1.5 mmol/mmol (Extrarenal loss / GI / Shift)</option>
                     </select>
                 </div>
                 <div class="decision-step" style="border-left-color:var(--signal-cyan);">
                     <h4>Step 2: Blood Pressure Status</h4>
-                    <select id="w-k-bp" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Step 2: Blood Pressure Status" id="w-k-bp" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="normal" selected>Normal or Low BP</option>
                         <option value="hypertensive">Hypertension (Renin/Aldosterone pathway)</option>
                     </select>
@@ -1990,11 +1990,11 @@
                 <div class="decision-step" style="border-left-color:var(--signal-cyan);">
                     <h4>Step 3: Acid-Base &amp; Urine Chloride</h4>
                     <div class="grid-2">
-                        <select id="w-k-ab" class="input-control-sm" style="height:36px; width:100%;">
+                        <select aria-label="Step 3: Acid-base status" id="w-k-ab" class="input-control-sm" style="height:36px; width:100%;">
                             <option value="alkalosis" selected>Metabolic Alkalosis</option>
                             <option value="acidosis">Metabolic Acidosis (RTA)</option>
                         </select>
-                        <select id="w-k-ucl" class="input-control-sm" style="height:36px; width:100%;">
+                        <select aria-label="Step 3: Urine chloride" id="w-k-ucl" class="input-control-sm" style="height:36px; width:100%;">
                             <option value="high" selected>U_Cl &gt; 20 mEq/L (Chloride-Resistant)</option>
                             <option value="low">U_Cl &lt; 15 mEq/L (Chloride-Responsive / Vomiting)</option>
                         </select>
@@ -2015,7 +2015,7 @@
                 </div>
                 <div class="decision-step" style="border-left-color:var(--signal-amber);">
                     <h4>Step 1: Artifact &amp; Shift Screen</h4>
-                    <select id="w-hyperk-shift" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Step 1: Artifact &amp; Shift Screen" id="w-hyperk-shift" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="none" selected>No Hemolysis / True Sample</option>
                         <option value="hemolysis">Hemolyzed sample / Fist clenching (Pseudohyperkalemia)</option>
                         <option value="shift">Acidosis / Hyperglycemia / Rhabdomyolysis (Transcellular Shift)</option>
@@ -2024,11 +2024,11 @@
                 <div class="decision-step" style="border-left-color:var(--signal-amber);">
                     <h4>Step 2: Renal Function &amp; Spot U_K/U_Cr</h4>
                     <div class="grid-2">
-                        <select id="w-hyperk-gfr" class="input-control-sm" style="height:36px; width:100%;">
+                        <select aria-label="Step 2: Renal function (GFR)" id="w-hyperk-gfr" class="input-control-sm" style="height:36px; width:100%;">
                             <option value="normal" selected>Normal / Mild GFR (&gt; 30 mL/min)</option>
                             <option value="low">Severe AKI / ESRD (eGFR &lt; 30 mL/min)</option>
                         </select>
-                        <select id="w-hyperk-spot" class="input-control-sm" style="height:36px; width:100%;">
+                        <select aria-label="Step 2: Spot urine K⁺/Cr ratio" id="w-hyperk-spot" class="input-control-sm" style="height:36px; width:100%;">
                             <option value="low" selected>Spot U_K/U_Cr &lt; 2.0 (Impaired secretion)</option>
                             <option value="high">Spot U_K/U_Cr &gt; 2.0 (Intact secretion)</option>
                         </select>
@@ -2051,7 +2051,7 @@
                 </div>
                 <div class="decision-step" style="border-left-color:var(--signal-purple);">
                     <h4>Step 1: Modern ISE Anion Gap</h4>
-                    <select id="w-acido-ag" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Step 1: Modern ISE Anion Gap" id="w-acido-ag" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="high" selected>High AG (&gt; 10 mEq/L) — GOLD MARK / MUDPILES</option>
                         <option value="normal">Normal AG (≤ 10 mEq/L) — NAGMA / Hyperchloremic</option>
                     </select>
@@ -2059,11 +2059,11 @@
                 <div class="decision-step" style="border-left-color:var(--signal-purple);">
                     <h4>Step 2: Urine Anion Gap (UAG) &amp; Urine pH</h4>
                     <div class="grid-2">
-                        <select id="w-acido-uag" class="input-control-sm" style="height:36px; width:100%;">
+                        <select aria-label="Step 2: Urine anion gap" id="w-acido-uag" class="input-control-sm" style="height:36px; width:100%;">
                             <option value="neg" selected>Negative UAG (&lt; 0) — Intact NH₄⁺ excretion</option>
                             <option value="pos">Positive UAG (&gt; 0) — Impaired NH₄⁺ excretion</option>
                         </select>
-                        <select id="w-acido-uph" class="input-control-sm" style="height:36px; width:100%;">
+                        <select aria-label="Step 2: Urine pH" id="w-acido-uph" class="input-control-sm" style="height:36px; width:100%;">
                             <option value="alk" selected>Urine pH &gt; 5.5 (Distal RTA Type 1)</option>
                             <option value="acid">Urine pH &lt; 5.5 (Proximal / Type 4 RTA)</option>
                         </select>
@@ -2084,14 +2084,14 @@
                 </div>
                 <div class="decision-step" style="border-left-color:var(--signal-emerald);">
                     <h4>Step 1: Urine Chloride (U_Cl)</h4>
-                    <select id="w-alkalo-ucl" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Step 1: Urine Chloride (U_Cl)" id="w-alkalo-ucl" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="low" selected>U_Cl &lt; 15-20 mEq/L (Chloride-Responsive)</option>
                         <option value="high">U_Cl &gt; 20-25 mEq/L (Chloride-Resistant)</option>
                     </select>
                 </div>
                 <div class="decision-step" style="border-left-color:var(--signal-emerald);">
                     <h4>Step 2: Blood Pressure &amp; Volume</h4>
-                    <select id="w-alkalo-bp" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Step 2: Blood Pressure &amp; Volume" id="w-alkalo-bp" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="normal" selected>Normal / Low BP (Vomiting, Diuretics, Gitelman/Bartter)</option>
                         <option value="hypertensive">Hypertensive (Mineralocorticoid excess, Conn's, Cushing)</option>
                     </select>
@@ -2114,21 +2114,21 @@
             <div class="grid-3" style="margin-top:10px;">
                 <div class="decision-step" style="border-left-color:#64748b;">
                     <h4>Step 1: Primary Calcium Disorder</h4>
-                    <select id="w-ca-type" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Step 1: Primary Calcium Disorder" id="w-ca-type" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="hyper" selected>Hypercalcemia (iCa &gt; 1.33 or Ca &gt; 10.5)</option>
                         <option value="hypo">Hypocalcemia (iCa &lt; 1.15 or Ca &lt; 8.5)</option>
                     </select>
                 </div>
                 <div class="decision-step" style="border-left-color:#64748b;">
                     <h4>Step 2: Intact PTH (pg/mL)</h4>
-                    <select id="w-ca-pth" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Step 2: Intact PTH (pg/mL)" id="w-ca-pth" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="high" selected>Elevated / Inappropriately Normal PTH (&gt; 20 pg/mL)</option>
                         <option value="suppressed">Suppressed PTH (&lt; 15-20 pg/mL)</option>
                     </select>
                 </div>
                 <div class="decision-step" style="border-left-color:#64748b;">
                     <h4>Step 3: CCCR / Vitamin D</h4>
-                    <select id="w-ca-cccr" class="input-control-sm" style="height:36px; width:100%;">
+                    <select aria-label="Step 3: CCCR / Vitamin D" id="w-ca-cccr" class="input-control-sm" style="height:36px; width:100%;">
                         <option value="high" selected>CCCR &gt; 0.02 (Renal Ca Excretion High)</option>
                         <option value="low">CCCR &lt; 0.01 (Hypocalciuric / FHH pattern)</option>
                     </select>
@@ -2151,7 +2151,7 @@
                 <button type="button" id="btn-copy-note" class="btn btn-primary" style="padding:5px 14px; font-size:11.5px;">📋 Copy to Clipboard</button>
             </div>
         </div>
-        <textarea id="his-note-text" readonly></textarea>
+        <textarea aria-label="Generated HIS note text" id="his-note-text" readonly></textarea>
     </div>
 
     <div class="action-bar">

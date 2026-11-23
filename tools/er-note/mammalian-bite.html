@@ -56,7 +56,7 @@
       <label class="btn-tile"><input type="radio" name="bite-animal" value="Other mammal"><span class="tile-label">Other</span></label>
     </div>
   </div>
-  <div class="field-row"><label>วันที่/เวลาที่ถูกกัด (Date / time of bite)</label><input type="datetime-local" id="bite-time"></div>
+  <div class="field-row"><label for="bite-time">วันที่/เวลาที่ถูกกัด (Date / time of bite)</label><input type="datetime-local" id="bite-time"></div>
   <div class="field-row"><label>ตำแหน่งที่ถูกกัด (Location)</label>
     <div class="btn-group" id="location-group">
       <label class="btn-tile"><input type="radio" name="bite-location" value="Head / neck / face"><span class="tile-label">Head / Neck / Face</span></label>
@@ -204,8 +204,8 @@
       <label><input type="checkbox" id="wound-hand"> Hand / face / genitalia</label>
     </div>
   </div>
-  <div class="field-row"><label>Irrigation</label><input type="text" id="bite-irrigate" value="Normal saline, ≥15 min"></div>
-  <div class="field-row"><label>Other wound care</label><input type="text" id="bite-wound-care" placeholder="debridement, leave punctures open, delayed closure"></div>
+  <div class="field-row"><label for="bite-irrigate">Irrigation</label><input type="text" id="bite-irrigate" value="Normal saline, ≥15 min"></div>
+  <div class="field-row"><label for="bite-wound-care">Other wound care</label><input type="text" id="bite-wound-care" placeholder="debridement, leave punctures open, delayed closure"></div>
 </div>
 
 <div class="card">
@@ -220,7 +220,7 @@
   <div class="score-box score-line" id="rabies-line" data-copy="Rabies PEP: not determined">Rabies PEP plan: <span id="rabies-plan">— select animal, category, prior immunization —</span></div>
   <div class="field-row"><label>RIG details (if indicated)</label>
     <div class="inline-row">
-      <div class="field-row"><label>Product</label>
+      <div class="field-row"><label for="rig-product">Product</label>
         <select id="rig-product">
           <option value="">— select —</option>
           <option>Human rabies immunoglobulin (HRIG)</option>
@@ -228,11 +228,11 @@
           <option>None — previously vaccinated or not indicated</option>
         </select>
       </div>
-      <div class="field-row"><label>Dose (IU/kg)</label><input type="text" id="rig-dose" placeholder="HRIG 20 IU/kg or ERIG 40 IU/kg"></div>
-      <div class="field-row"><label>Infiltration</label><input type="text" id="rig-route" placeholder="wound + IM; remainder IM distant from vaccine"></div>
+      <div class="field-row"><label for="rig-dose">Dose (IU/kg)</label><input type="text" id="rig-dose" placeholder="HRIG 20 IU/kg or ERIG 40 IU/kg"></div>
+      <div class="field-row"><label for="rig-route">Infiltration</label><input type="text" id="rig-route" placeholder="wound + IM; remainder IM distant from vaccine"></div>
     </div>
   </div>
-  <div class="field-row"><label>Vaccine schedule</label><input type="text" id="rabies-vax-schedule" placeholder="Essen regimen days 0,3,7,14,28 (naive) or days 0,3 (prev. vaccinated)"></div>
+  <div class="field-row"><label for="rabies-vax-schedule">Vaccine schedule</label><input type="text" id="rabies-vax-schedule" placeholder="Essen regimen days 0,3,7,14,28 (naive) or days 0,3 (prev. vaccinated)"></div>
 </div>
 
 <div class="card">
@@ -340,7 +340,7 @@
       <label><input type="checkbox" id="abx-none"> None — superficial, early, low-risk</label>
     </div>
   </div>
-  <div class="field-row"><label>Antibiotic regimen</label>
+  <div class="field-row"><label for="bite-abx">Antibiotic regimen</label>
     <select id="bite-abx">
       <option value="">— select —</option>
       <option>Amoxicillin-clavulanate 875/125 mg PO q12h x 5 days</option>
@@ -349,7 +349,7 @@
       <option>Not indicated</option>
     </select>
   </div>
-  <div class="field-row"><label>Disposition</label>
+  <div class="field-row"><label for="bite-disp">Disposition</label>
     <select id="bite-disp">
       <option value="">— select —</option>
       <option>Discharge with wound care + PEP advice</option>
@@ -357,7 +357,7 @@
       <option>Admit for IV antibiotics</option>
     </select>
   </div>
-  <div class="field-row"><label>Follow-up / public-health notification</label><input type="text" id="bite-followup"></div>
+  <div class="field-row"><label for="bite-followup">Follow-up / public-health notification</label><input type="text" id="bite-followup"></div>
 </div>
 
 </form>

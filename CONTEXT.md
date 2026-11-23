@@ -80,17 +80,18 @@ Domain model and ubiquitous language for the ER Standing Order Hub — MNRH Emer
 | Form validation | `ED_VALIDATE` | `shared/form-validate.js` |
 | Nav injection | `ED_COMPONENTS.injectNavBar()` | `shared/components.js` |
 | ER NOTE registry | `ernote-registry` (localStorage key) | `tools/er-note/er-note.js` |
-| ER NOTE draft | `ernote-draft-{templateId}-{draftId}` (localStorage key) | `tools/er-note/er-note.js` |
+| ER NOTE draft | `ernote-draft-{templateId}-{draftId}` (localStorage key; 24 h retention) | `tools/er-note/er-note.js` |
+| Draft retention purge | `ErNote.registry.purgeExpired()` / `TTL_MS` | `tools/er-note/er-note.js` |
 | Investigation module | `ErNote.renderInvestigation()` | `tools/er-note/er-note.js` |
 | Treatment module | `ErNote.renderTreatment()` | `tools/er-note/er-note.js` |
-| Home medication draft | `er-hub-home-med-draft` (localStorage key) | `tools/Urgent-Clinic-Home-Medication.html` |
+| Home medication draft | `er-hub-home-med-draft` (localStorage key; `{ savedAt, fields }`, 24 h retention) | `tools/Urgent-Clinic-Home-Medication.html` |
 | Cached SW version & release date | `er-hub-cached-version` (localStorage key) | `shared/components.js`, `index.html` |
 
 ## Clinical Decision Boundaries
 
 | Boundary | Rule | Source |
 | --- | --- | --- |
-| Fondaparinux CI | eGFR < 30 → contraindicated | 2025 ACC/AHA NSTE-ACS |
+| Fondaparinux CI | eGFR < 30 → contraindicated (override with confirmation) | Product label CrCl < 30; ADR-40 amendment |
 | Enoxaparin frequency | eGFR ≥ 30 → q12h; eGFR < 30 → q24h; eGFR < 15 → use Heparin | 2025 ACC/AHA NSTE-ACS |
 | TNK age cutoff | age ≥ 75 → 50% dose reduction | ASSENT-2 / ESC |
 | Clopidogrel age cutoff | age ≤ 75 → full 4 tabs (300/600 mg); age > 75 → 1 tab | PLATO-derived |
@@ -306,3 +307,32 @@ Similarly, standalone tools in `tools/` (like `nihss.html` and `Urgent-Clinic-Ho
   5. Updated `service-worker.js` offline cache version to `er-hub-v113` (`09/09/2569`).
   6. **Service Worker Precache Failure Protection (`service-worker.js`)**:
      - Upgraded the install handler to prevent partial cache activation: replaced `Promise.allSettled` with atomic installation failure propagation. If any asset fails to fetch after retries, the partial cache is purged (`caches.delete(CACHE_VERSION)`) and an error is thrown, aborting installation so the existing complete offline cache is preserved and never prematurely deleted during activation.
+
+## ADR-38: Audit Remediation — Draft Retention, Input/Label Guards, pnpm & CI
+
+- **Context**: A repository audit (2026-11-22) found that (1) ER NOTE and Home Medication drafts kept the HN in `localStorage` indefinitely, contradicting the "no PHI stored" claim; (2) `orders/antivenom-v2.html` rendered the horse-serum allergy detail field but never printed it — V1/V2 drift; (3) 205 form controls had no accessible name; (4) there was no CI, the lockfile was npm while the toolchain standard is pnpm, and `jsdom` pulled vulnerable `undici`/`source-map-js`; (5) the service worker returned `undefined` to `respondWith()` on an offline cache miss and its static routes assumed root hosting.
+- **Decision**:
+  1. **24 h draft retention** for every `localStorage` record that can hold an HN. ER NOTE purges expired, future-dated and orphaned drafts on load and on tab re-focus; Home Medication stores `{ savedAt, fields }` and discards expired or legacy drafts.
+  2. **Keep V1 and V2 pages**, guarded by `tests/input-read-guard.test.js`, which fails when any order-page control is never read by script.
+  3. **Accessible names** for all controls (`<label for>` where a sibling label existed, otherwise a descriptive `aria-label`), enforced by `tests/a11y-label-guard.test.js`.
+  4. **pnpm + CI**: `pnpm-lock.yaml` with a standalone `pnpm-workspace.yaml`; GitHub Actions runs tests and `pnpm audit --audit-level high`; `jsdom` updated to 30.1.3 (resolves `undici` 8.13.1, `source-map-js` 1.2.4).
+  5. **Single version line**: `package.json` version now tracks `CHANGELOG.md` (3.2.0); `CACHE_VERSION` remains the deploy/cache counter (`er-hub-v119`).
+- **Consequences**: Clinicians lose drafts idle for over a day; a new order-page control must be wired to the print path (or allowlisted with a reason) and labelled before tests pass.
+
+## ADR-39: Hallmark Redesign of MgSO4 and Burn Screens, MNRH 2569 Severe Preeclampsia Order
+
+- **Context**: Both screens read as generated (gradient banners, emoji icons, tracked-capital labels, five-colour accordions, 3:1 contrast, overflow at 320px) and were long and flat. RTCOG OB 69-046 (Update 2569) and a new MNRH standing order superseded the MgSO4 content.
+- **Decision**:
+  1. Full Hallmark redesign inside DESIGN.md's Braun palette, scoped to the two screens through `tools/screen/` (tokens, base, tool-screen.css); `shared/base.css` is untouched.
+  2. The MgSO4 screen leads with the hospital standing order; legacy regimens move to closed reference disclosures. Clinically confirmed by the requesting physician: loading = 10% MgSO4 40 mL + D5W 100 mL (140 mL, 420 mL/h); maintenance labelled 50/25 mL/h with the true 1.85/0.93 g/h noted; renal impairment no longer reduces loading to 2 g.
+  3. MgSO4 toxicity RR threshold moves from < 12 to < 14/min (RTCOG and standing order).
+  4. The burn screen keeps every id, handler and calculation; colours move to tokens, the summary becomes a sticky aside, accordions become keyboard-operable.
+- **Consequences**: `shared/base.css` still carries Floor findings for these pages (literal colours, `transition: all` on unused rules) until a hub-wide restyle; the burn CO badge keeps an en dash in "Mod-Severe (30–40%)" because a test pins that string.
+
+## ADR-40: rt-PA and NSTEMI Re-audit (2026-11-22)
+
+- **Context**: A re-audit found enoxaparin was 1 mg/kg regardless of age despite the page's own reference text, the enoxaparin frequency could not be overridden (V1) or was never auto-set (V2), the V2 high-risk hint offered ticagrelor pretreatment, fondaparinux used eGFR < 30, and stroke pages carried stale guideline labels. AHA/ASA 2026 recommends alteplase 0.9 mg/kg or tenecteplase 0.25 mg/kg and does not recommend 0.6 mg/kg.
+- **Decision** (confirmed by the requesting physician): age ≥ 75 → 0.75 mg/kg q12h; eGFR < 30 → auto once daily with manual override; fondaparinux CI below eGFR 20; keep Thai 0.4/0.6 mL syringe selection; keep 0.6 mg/kg alteplase as an institutional option with accurate wording; add screen-only rescue tips for sICH and angioedema without changing the printed order; V1 rt-PA stays alteplase-only.
+- **Amendment (2026-11-22, PR 21 review, confirmed by the requesting physician)**: NSTE-ACS enoxaparin is 1 mg/kg q12h at every age; the 0.75 mg/kg age ≥ 75 regimen belongs to STEMI (ExTRACT-TIMI 25) and the UA/NSTEMI label has no age adjustment. Fondaparinux is gated on CKD-EPI eGFR < 30, reverting the < 20 decision above: ESC 2023 states CrCl < 20 mL/min (not eGFR), so the < 20 cutoff had no eGFR source, and < 30 matches the product label (CrCl < 30) and the glossary. eGFR is used as the CrCl surrogate, accepting that the two can differ.
+- **Consequences**: Enoxaparin rules live in `CLINICAL_ENGINE`. The service worker now serves all code network-first, so HTML and engines come from one deploy; the NSTEMI pages keep an inline fallback for the single transition in which the previous service worker still controls the page. Strings pinned by tests (`🖨️ Blank Order`, `🖨️ Blank NIHSS`, `⚠ Max dose capped`) keep their symbols.
+

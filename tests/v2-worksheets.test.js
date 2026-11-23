@@ -427,3 +427,31 @@ describe('rt-PA & Tenecteplase Stroke Worksheet (orders/rtpa-v2.html) DOM Execut
 
 
 
+
+describe('Antivenom V2 Worksheet (orders/antivenom-v2.html) allergy detail', () => {
+    test('Horse serum allergy free-text detail reaches the print order', () => {
+        const win = loadHtmlDom('orders/antivenom-v2.html');
+        const doc = win.document;
+        doc.querySelector('input[name="horse-allergy"][value="yes"]').checked = true;
+        doc.getElementById('horse-allergy-detail').value = 'urticaria, wheezing';
+        doc.getElementById('horse-allergy-detail').dispatchEvent(new win.Event('input', { bubbles: true }));
+        assert.match(doc.getElementById('p-horse-allergy').textContent, /YES \(Allergy\) — urticaria, wheezing/);
+    });
+
+    test('Allergy detail is rendered as text, not HTML', () => {
+        const win = loadHtmlDom('orders/antivenom-v2.html');
+        const doc = win.document;
+        doc.querySelector('input[name="horse-allergy"][value="yes"]').checked = true;
+        doc.getElementById('horse-allergy-detail').value = '<img src=x onerror=alert(1)>';
+        doc.getElementById('horse-allergy-detail').dispatchEvent(new win.Event('input', { bubbles: true }));
+        assert.equal(doc.getElementById('p-horse-allergy').querySelector('img'), null);
+    });
+
+    test('No allergy prints "No" even if stale detail text remains', () => {
+        const win = loadHtmlDom('orders/antivenom-v2.html');
+        const doc = win.document;
+        doc.getElementById('horse-allergy-detail').value = 'stale';
+        doc.getElementById('horse-allergy-detail').dispatchEvent(new win.Event('input', { bubbles: true }));
+        assert.equal(doc.getElementById('p-horse-allergy').textContent, 'No');
+    });
+});

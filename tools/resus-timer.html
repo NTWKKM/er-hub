@@ -980,7 +980,7 @@
                 <h1 class="resus-title">Resuscitation Assistant & Timer</h1>
             </div>
             <div class="header-tools">
-                <select id="patient-mode" class="tool-btn" onchange="updatePatientModeGuidance()" title="Patient Mode">
+                <select aria-label="Patient mode (adult or pediatric)" id="patient-mode" class="tool-btn" onchange="updatePatientModeGuidance()" title="Patient Mode">
                     <option value="adult">Adult (≥ Puberty)</option>
                     <option value="pediatric">Child (1 yr - Puberty)</option>
                     <option value="infant">Infant (&lt; 1 yr)</option>
@@ -1056,7 +1056,7 @@
                 </div>
 
                 <div class="shock-dock">
-                    <select class="shock-energy-select" id="shock-energy-select" disabled>
+                    <select aria-label="Defibrillation shock energy (J)" class="shock-energy-select" id="shock-energy-select" disabled>
                         <option value="200J Biphasic" selected>200J (Biphasic Default)</option>
                         <option value="120J Biphasic">120J Biphasic</option>
                         <option value="150J Biphasic">150J Biphasic</option>
@@ -1345,7 +1345,7 @@
 
             <!-- Custom Quick-Event Input -->
             <div class="custom-note-bar no-print">
-                <input type="text" class="custom-note-input" id="custom-note-input" placeholder="พิมพ์บันทึกเหตุการณ์ฉุกเฉิน (เช่น ใส่ ETT เบอร์ 7.5 ลึก 21cm, เปิด IO ขาขวา, ส่ง ABG)..." onkeypress="if(event.key==='Enter') addCustomNote()">
+                <input aria-label="Custom event note" type="text" class="custom-note-input" id="custom-note-input" placeholder="พิมพ์บันทึกเหตุการณ์ฉุกเฉิน (เช่น ใส่ ETT เบอร์ 7.5 ลึก 21cm, เปิด IO ขาขวา, ส่ง ABG)..." onkeypress="if(event.key==='Enter') addCustomNote()">
                 <button class="btn-note-add" onclick="addCustomNote()">+ Add Log</button>
             </div>
 

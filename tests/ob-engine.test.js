@@ -182,14 +182,15 @@ describe('checkMgSO4Toxicity', () => {
         assert.ok(r.flags.some(f => f.id === 'dtr' && f.severity === 'critical'));
     });
 
-    test('RR <12 triggers critical flag', () => {
-        const r = checkMgSO4Toxicity({ rr: 10, dtrAbsent: false, urineOutput: 50 });
+    // RTCOG OB 69-046 (2569) and the MNRH standing order use RR < 14/min.
+    test('RR <14 triggers critical flag', () => {
+        const r = checkMgSO4Toxicity({ rr: 13, dtrAbsent: false, urineOutput: 50 });
         assert.equal(r.isToxic, true);
         assert.ok(r.flags.some(f => f.id === 'rr' && f.severity === 'critical'));
     });
 
-    test('RR exactly 12 does not trigger', () => {
-        const r = checkMgSO4Toxicity({ rr: 12, dtrAbsent: false, urineOutput: 50 });
+    test('RR exactly 14 does not trigger', () => {
+        const r = checkMgSO4Toxicity({ rr: 14, dtrAbsent: false, urineOutput: 50 });
         assert.equal(r.isToxic, false);
     });
 
@@ -386,5 +387,107 @@ describe('checkMgSO4Safety & Clinical Constants', () => {
         assert.ok(TEXTBOOK_VARIATIONS.tintinalli.includes('Tintinalli 9th'));
         assert.ok(TEXTBOOK_VARIATIONS.rosen.includes('Rosen 10th'));
         assert.ok(TEXTBOOK_VARIATIONS.goldfrank.includes('Goldfrank 11th'));
+    });
+});
+
+
+// ─── MNRH Standing Order: Severe Preeclampsia (2569) ────────────────────────
+describe('MNRH_SEVERE_PE_SO', () => {
+    const { MNRH_SEVERE_PE_SO: so, SERUM_MG_LEVELS, BP_SECOND_LINE, MGSO4_CONTRAINDICATIONS } = require('../shared/ob-engine.js');
+
+    test('loading: 10% MgSO4 4 g (40 mL) + D5W 100 mL over 20 min = 420 mL/hr', () => {
+        assert.equal(so.loading.doseG * 1000 / MGSO4_CONC_10PCT, 40);
+        assert.equal(so.loading.totalVol_mL, 40 + 100);
+        assert.equal(so.loading.pumpRate_mL_hr, so.loading.totalVol_mL / so.loading.durationMin * 60);
+    });
+
+    test('maintenance: 40 g in 1,080 mL; labelled 50/25 mL/h deliver 1.85/0.93 g/h', () => {
+        const m = so.maintenance;
+        assert.equal(m.mgso4_50pct_mL * MGSO4_CONC_50PCT / 1000, m.mgso4_g);
+        assert.equal(m.totalVol_mL, m.mgso4_50pct_mL + 1000);
+        const gPerMl = m.mgso4_g / m.totalVol_mL;
+        assert.equal(Math.round(gPerMl * m.rate2g_mL_hr * 100) / 100, m.actual2g_g_hr);
+        assert.equal(Math.round(gPerMl * m.rate1g_mL_hr * 100) / 100, m.actual1g_g_hr);
+    });
+
+    test('1 g/h criteria include BMI < 25, Cr > 1.1 mg/dL, UO < 0.5 mL/kg/h', () => {
+        assert.deepEqual(so.maintenance.reduceTo1gIf, ['BMI < 25 kg/m²', 'Cr > 1.1 mg/dL', 'Urine output < 0.5 mL/kg/h']);
+    });
+
+    test('BP ladder is labetalol 20 → 40 → 80 mg then hydralazine 10 mg', () => {
+        assert.deepEqual(so.bpLadder.map(s => s.drug), ['Labetalol 20 mg IV', 'Labetalol 40 mg IV', 'Labetalol 80 mg IV', 'Hydralazine 10 mg IV']);
+    });
+
+    test('controlled-BP recheck schedule totals 16 readings', () => {
+        assert.equal(so.bpControlledSchedule.reduce((n, s) => n + s.times, 0), 16);
+    });
+
+    test('renal impairment no longer reduces the loading dose', () => {
+        assert.ok(!MGSO4_CONTRAINDICATIONS.renalImpairment.action.includes('2 g IV bolus'));
+        assert.ok(MGSO4_CONTRAINDICATIONS.renalImpairment.action.includes('1 g/h'));
+    });
+
+    test('serum Mg table and second-line infusions are present', () => {
+        assert.equal(SERUM_MG_LEVELS[0].mgdl, '5–9');
+        assert.deepEqual(BP_SECOND_LINE.map(d => d.max), ['15 mg/h', '160 mg/h', '10 mg/h']);
+    });
+});
+
+describe('BP escalation sequences and recurrent-seizure step-up (CodeRabbit PR 21)', () => {
+    const { BP_PROTOCOLS: P } = require('../shared/ob-engine.js');
+    test('hydralazine total including the 1 mg test dose stays within 20 mg', () => {
+        assert.match(P.hydralazine.maxTotal, /20 mg \(รวม test dose\)/);
+        assert.match(P.hydralazine.steps[2], /5–10 mg/);
+        assert.match(P.hydralazine.steps[2], /1 \+ 5 \+ 10 mg/);
+        // Repeat dose → 20 min recheck → labetalol only if still severe-range
+        assert.match(P.hydralazine.steps[2], /วัด BP ซ้ำใน 20 min; ให้ Labetalol เฉพาะเมื่อ SBP ยัง ≥ 160 หรือ DBP ≥ 110 mmHg/);
+        assert.match(P.hydralazine.steps[2], /monitor BP ต่อ/);
+    });
+    test('labetalol 80 mg is followed by a 10 min recheck before conditional hydralazine', () => {
+        assert.match(P.labetalol.steps[2], /80 mg IV, วัด BP ซ้ำใน 10 min; ให้ Hydralazine 10 mg IV เฉพาะเมื่อ SBP ยัง ≥ 160 หรือ DBP ≥ 110/);
+    });
+    test('final nifedipine 20 mg is followed by a 20 min recheck before conditional labetalol', () => {
+        assert.match(P.nifedipine.steps[2], /20 mg oral, วัด BP ใน 20 min; ให้ Labetalol 20 mg IV เฉพาะเมื่อ BP ยัง ≥ 160\/110/);
+    });
+    test('1.5 g/h step-up is scoped to patients currently on 1 g/h', () => {
+        const rec = calcMgSO4RecurrentBolus();
+        assert.equal(rec.infusionStepUpFromG_hr, 1);
+        assert.match(rec.infusionStepUp, /1\.5 g\/h/);
+    });
+});
+
+describe('tools/mgso4-calculator.html recurrent step-up display', () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const { JSDOM } = require('jsdom');
+    function load() {
+        const file = path.join(__dirname, '..', 'tools/mgso4-calculator.html');
+        const html = fs.readFileSync(file, 'utf8').replace(/<script src="([^"]+)"><\/script>/g, (m, src) => {
+            const p = path.resolve(path.dirname(file), src);
+            return fs.existsSync(p) ? '<script>' + fs.readFileSync(p, 'utf8') + '</script>' : m;
+        });
+        return new JSDOM(html, { url: 'file://' + file, runScripts: 'dangerously' }).window;
+    }
+    test('hidden at 2 g/h, shown once a 1 g/h criterion is ticked', () => {
+        const win = load();
+        const out = win.document.getElementById('recurrent-stepup');
+        assert.doesNotMatch(out.textContent, /1\.5 g\/h/);
+        const cb = win.document.getElementById('crit-cr');
+        cb.checked = true;
+        cb.dispatchEvent(new win.Event('change'));
+        assert.match(out.textContent, /1\.5 g\/h/);
+    });
+    test('urine-output threshold shows the exact comparison boundary', () => {
+        const win = load();
+        const w = win.document.getElementById('ob-weight');
+        const show = (kg) => {
+            w.value = kg;
+            w.dispatchEvent(new win.Event('input'));
+            return win.document.getElementById('uo-threshold').textContent;
+        };
+        // 65 kg × 0.5 = 32.5 mL/h, 4 h = 130 mL
+        assert.match(show('65'), /< 32\.5 mL\/h.*< 130 mL/);
+        // 64.5 kg → 32.25 mL/h: must not display "< 32", which would miss a 32 mL/h output
+        assert.match(show('64.5'), /< 32\.25 mL\/h.*< 129 mL/);
     });
 });

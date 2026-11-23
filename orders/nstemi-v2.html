@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <meta name="referrer" content="no-referrer">
+    <meta name="description" content="NSTEMI standing order V2: GRACE score, troponin, antiplatelet and anticoagulant selection (ACC/AHA 2025).">
     <title>NSTEMI Standing Order V2 — ED MNRH</title>
     <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
     <link rel="stylesheet" href="../shared/base.css">
@@ -162,7 +163,7 @@
             border-radius: 6px;
             background: #fff;
             cursor: pointer;
-            transition: all 150ms ease;
+            transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
             font-size: 13px;
         }
 
@@ -211,7 +212,6 @@
             font-size: 12px;
             font-weight: 600;
             color: var(--graphite);
-            text-transform: uppercase;
         }
 
         .risk-badge {
@@ -222,8 +222,8 @@
             font-weight: bold;
             font-size: 1.1em;
         }
-        .risk-low-mod   { background: #e8f8f0; color: #27ae60; border: 1px solid #86efac; }
-        .risk-high      { background: #fdf5e6; color: #d35400; border: 1px solid #fde68a; }
+        .risk-low-mod   { background: #e8f8f0; color: #1e7a45; border: 1px solid #86efac; }
+        .risk-high      { background: #fdf5e6; color: #a04000; border: 1px solid #fde68a; }
         .risk-very-high { background: #fde8e8; color: #c0392b; border: 1px solid #fca5a5; }
 
         .grace-breakdown {
@@ -279,7 +279,7 @@
             border: 1px solid var(--rule-light);
             border-radius: 6px;
             cursor: pointer;
-            transition: all 150ms ease;
+            transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
             margin-bottom: 6px;
         }
 
@@ -289,7 +289,7 @@
         }
 
         .ac-badge {
-            font-size: 10.5px;
+            font-size: 11px;
             font-weight: 700;
             padding: 2px 6px;
             border-radius: 4px;
@@ -318,6 +318,8 @@
         }
 
         .order-list { list-style: none !important; padding-left: 0 !important; }
+            button { white-space: nowrap; }
+        [hidden] { display: none !important; }
     </style>
 </head>
 <body class="theme-cardiac">
@@ -370,7 +372,7 @@
                         <label>ASA Allergy:</label>
                         <div style="display:flex; gap:8px; padding-top:4px;">
                             <label class="gender-radio"><input type="radio" name="asa-allergy" value="no" checked> ไม่มี</label>
-                            <label class="gender-radio"><input type="radio" name="asa-allergy" value="yes"> มี ⚠️</label>
+                            <label class="gender-radio"><input type="radio" name="asa-allergy" value="yes"> มี </label>
                         </div>
                     </div>
                 </div>
@@ -378,7 +380,7 @@
                 <!-- Troponin Box -->
                 <div class="troponin-box">
                     <div class="troponin-header">
-                        <strong style="font-size:13px;">🧪 hs-Troponin I (ng/L)</strong>
+                        <strong style="font-size:13px;">hs-Troponin I (ng/L)</strong>
                         <label class="flag-label" style="font-weight:normal; margin:0;">
                             <input type="checkbox" id="troponin-from-rphch">
                             เจาะ Troponin จาก รพช. แล้ว <small style="color:#888;">(ไม่ต้องเจาะซ้ำ)</small>
@@ -422,15 +424,15 @@
                     <div style="margin:12px 0 10px;">
                         <label class="flag-label">
                             <input type="checkbox" id="cardiac-arrest">
-                            <span>🫀 Cardiac arrest at admission <strong>(+39)</strong></span>
+                            <span>Cardiac arrest at admission <strong>(+39)</strong></span>
                         </label>
                         <label class="flag-label">
                             <input type="checkbox" id="st-deviation">
-                            <span>📈 ST segment deviation <strong>(+28)</strong></span>
+                            <span>ST segment deviation <strong>(+28)</strong></span>
                         </label>
                         <label class="flag-label">
                             <input type="checkbox" id="elevated-markers">
-                            <span>🧪 Elevated cardiac markers <strong>(+14)</strong></span>
+                            <span>Elevated cardiac markers <strong>(+14)</strong></span>
                         </label>
                     </div>
                 </div>
@@ -461,7 +463,7 @@
                 <!-- Column 3: Risk Stratification -->
                 <div class="input-column">
                     <h3>3. Risk Stratification</h3>
-                    <div class="sub-section sub-vh">⚡ Very High Risk (H0) → coro &lt; 2h</div>
+                    <div class="sub-section sub-vh">Very High Risk (H0) → coro &lt; 2h</div>
                     <label class="flag-label"><input type="checkbox" class="vh-flag"> Hemodynamic instability / shock</label>
                     <label class="flag-label"><input type="checkbox" class="vh-flag"> Recurrent / refractory chest pain</label>
                     <label class="flag-label"><input type="checkbox" class="vh-flag"> Life-threatening arrhythmias</label>
@@ -469,7 +471,7 @@
                     <label class="flag-label"><input type="checkbox" class="vh-flag"> Acute HF related to ACS</label>
                     <label class="flag-label"><input type="checkbox" class="vh-flag"> Recurrent dynamic ST-T changes</label>
 
-                    <div class="sub-section sub-h1" style="margin-top:10px;">🔴 High Risk (H1) → coro &lt; 24h</div>
+                    <div class="sub-section sub-h1" style="margin-top:10px;">High Risk (H1) → coro &lt; 24h</div>
                     <label class="flag-label"><input type="checkbox" class="h1-flag"> Troponin &gt; 99th percentile URL</label>
                     <label class="flag-label"><input type="checkbox" class="h1-flag"> Dynamic ST-T changes</label>
                 </div>
@@ -477,22 +479,22 @@
 
             <!-- Action Buttons -->
             <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:14px;">
-                <button type="button" id="create-order-btn" class="btn btn-calculate" style="flex:1 1 200px; margin:0;">🖨️ สร้างใบสั่งยา</button>
-                <button type="button" id="print-blank-btn" class="btn btn-print" style="flex:1 1 200px; margin:0;">🖨️ ใบสั่งยาเปล่า (Blank Order)</button>
-                <button type="button" id="clear-btn" class="btn btn-clear" style="flex:1 1 140px; margin:0;">🗑️ ล้างข้อมูล (Clear)</button>
+                <button type="button" id="create-order-btn" class="btn btn-calculate" style="flex:1 1 200px; margin:0;">สร้างใบสั่งยา</button>
+                <button type="button" id="print-blank-btn" class="btn btn-print" style="flex:1 1 200px; margin:0;">ใบสั่งยาเปล่า (Blank Order)</button>
+                <button type="button" id="clear-btn" class="btn btn-clear" style="flex:1 1 140px; margin:0;">ล้างข้อมูล (Clear)</button>
             </div>
 
             <!-- Clinical Evidence & Guidelines Drawer -->
             <div class="reference-card" style="margin-top:16px; padding:12px 16px; background:#f8f7f4; border:1px solid #d8d4c8; border-radius:8px; font-size:12.5px; color:#4a4a4a;">
                 <details>
                     <summary style="font-weight:700; cursor:pointer; color:#1a1a1a; display:flex; align-items:center; justify-content:space-between;">
-                        <span>📚 ข้อมูลอ้างอิงและแนวทางเวชปฏิบัติ (Clinical Guidelines &amp; Evidence)</span>
+                        <span>ข้อมูลอ้างอิงและแนวทางเวชปฏิบัติ (Clinical Guidelines &amp; Evidence)</span>
                         <span style="font-size:11px; color:#737373;">2025 ACC/AHA / 2023 ESC ACS / Thai ACS CPG</span>
                     </summary>
                     <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #d8d4c8; line-height:1.6;">
                         <ul style="margin:0; padding-left:18px;">
-                            <li><strong>2023 ESC / 2025 ACC/AHA ACS Guidelines:</strong> Fondaparinux 2.5 mg SC OD is the preferred anticoagulant in non-immediate invasive strategy (Class I, Level A; OASIS-5 Trial) with lowest bleeding risk. Capped/Contraindicated if eGFR &lt; 30 mL/min/1.73m².</li>
-                            <li><strong>Enoxaparin (LMWH):</strong> 1 mg/kg SC q12h. In eGFR &lt; 30 mL/min: adjust to 1 mg/kg SC OD. In age ≥75y: omit IV bolus and maintain 0.75 mg/kg SC q12h.</li>
+                            <li><strong>2023 ESC / 2025 ACC/AHA ACS Guidelines:</strong> Fondaparinux 2.5 mg SC OD is the preferred anticoagulant in non-immediate invasive strategy (Class I, Level A; OASIS-5 Trial) with lowest bleeding risk. Avoid if eGFR &lt; 30 mL/min/1.73m² (ESC 2023).</li>
+                            <li><strong>Enoxaparin (LMWH):</strong> 1 mg/kg SC q12h. In eGFR &lt; 30 mL/min: adjust to 1 mg/kg SC OD. No age adjustment in NSTE-ACS (the 0.75 mg/kg regimen at age ≥75y applies to STEMI only).</li>
                             <li><strong>GRACE Risk Model 2.0:</strong> Validated in-hospital mortality score predicting ischemia and urgency of coronary angiography (Low &le;108, Intermediate 109-140, High &gt;140).</li>
                             <li><strong>CKD-EPI 2021:</strong> Race-free serum creatinine formula (Inker LA et al. N Engl J Med. 2021;385:1737-1749).</li>
                         </ul>
@@ -560,7 +562,7 @@
             <!-- Left: DAPT Panel -->
             <div id="dapt-panel" class="panel-card">
                 <div class="panel-header">
-                    <strong>💊 Antiplatelet Loading (DAPT)</strong>
+                    <strong>Antiplatelet Loading (DAPT)</strong>
                     <button type="button" id="reset-dapt-btn" style="font-size:10px; padding:2px 8px; cursor:pointer; background:#f8d7da; border:1px solid #f5c6cb; border-radius:4px; color:#721c24; font-weight:bold;">ล้างตัวเลือก</button>
                 </div>
                 <div style="font-size:12px; display:flex; flex-direction:column; gap:6px;">
@@ -569,7 +571,7 @@
                             <input type="checkbox" id="dapt-asa">
                             <div>
                                 <strong style="color:var(--cardiac-primary);">ASA 300 mg chew stat</strong>
-                                <span id="dapt-badge-asa" class="ac-badge ac-badge-rec">✅ แนะนำ</span>
+                                <span id="dapt-badge-asa" class="ac-badge ac-badge-rec">แนะนำ</span>
                             </div>
                         </label>
                     </div>
@@ -618,7 +620,7 @@
             <div style="display:flex; flex-direction:column; gap:12px;">
                 <div id="anticoag-panel" class="panel-card">
                     <div class="panel-header">
-                        <strong>💊 Anticoagulant Selection</strong>
+                        <strong>Anticoagulant Selection</strong>
                         <button type="button" id="reset-anticoag-btn" style="font-size:10px; padding:2px 8px; cursor:pointer; background:#f8d7da; border:1px solid #f5c6cb; border-radius:4px; color:#721c24; font-weight:bold;">ล้างตัวเลือก</button>
                     </div>
                     <div style="font-size:12px; display:flex; flex-direction:column; gap:6px;">
@@ -638,7 +640,7 @@
                             <div style="width:100%;">
                                 <strong id="ac-enox-text" style="color:var(--cardiac-primary);">Enoxaparin -- mg SC</strong>
                                 <span id="ac-badge-enox" class="ac-badge" style="display:none;"></span>
-                                <div style="font-size:10.5px; color:#666;" id="ac-enox-hint">(1 mg/kg — GFR &lt; 30 → once daily)</div>
+                                <div style="font-size:10.5px; color:#666;" id="ac-enox-hint">(1 mg/kg q12h ทุกอายุ — GFR &lt; 30 → 1 mg/kg once daily)</div>
                                 <div id="enox-frequency-container" style="display:none; margin-top:4px; gap:12px;">
                                     <label style="cursor:pointer; display:inline-flex; align-items:center; gap:4px; margin:0;"><input type="radio" name="enox-freq" value="q12h" checked> q 12 hr</label>
                                     <label style="cursor:pointer; display:inline-flex; align-items:center; gap:4px; margin:0;"><input type="radio" name="enox-freq" value="q24h"> OD (once daily)</label>
@@ -660,7 +662,7 @@
                 </div>
 
                 <div style="padding:10px 14px; background:#fff; border:1px solid var(--rule); border-radius:6px; font-size:12px;">
-                    <strong>💊 Calculated Recommendation:</strong> <span id="screen-anticoag" style="color:var(--cardiac-primary); font-weight:bold;">--</span>
+                    <strong>Calculated Recommendation:</strong> <span id="screen-anticoag" style="color:var(--cardiac-primary); font-weight:bold;">--</span>
                 </div>
             </div>
         </div>
@@ -724,7 +726,7 @@
                     <strong>Labs &amp; Investigations:</strong>
                     <ul class="order-list">
                         <li>☐ CBC, PT, PTT, INR</li>
-                        <li>☐ BUN, Cr, E'lyte, Ca, Mg, P</li>
+                        <li>☐ BUN, Cr, E’lyte, Ca, Mg, P</li>
                         <li>☐ Anti-HIV</li>
                         <li id="p-troponin-lab">☐ hs-troponin I Hr.0 and 3</li>
                         <li>☐ CXR</li>
@@ -816,11 +818,23 @@
 <script src="../shared/form-validate.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const FONDA_MIN_EGFR = 30;
+    const FONDA_MIN_EGFR = 30;   // Avoid fondaparinux when eGFR < 30 (product label CrCl < 30; physician decision, ADR-40)
     const ENOX_MIN_EGFR  = 15;
     const ENOX_OD_EGFR   = 30;
     const MIN_AGE = 18;
     let currentEgfr = null;
+    // Guard against HTML/engine version skew while an older service worker still serves
+    // a cached clinical-engine.js: fall back to the same rules inline.
+    const ENOX_ENGINE = (typeof CLINICAL_ENGINE.calcEnoxaparinACS === 'function') ? CLINICAL_ENGINE : {
+        ENOX_OD_EGFR: 30,
+        enoxFreqForEgfr: e => (e === null || e === undefined || !Number.isFinite(Number(e))) ? null : (Number(e) < 30 ? 'q24h' : 'q12h'),
+        calcEnoxaparinACS: ({ weight, freq }) => {
+            const f = freq === 'q24h' ? 'q24h' : 'q12h';
+            return { mgPerKg: 1, dose: weight > 0 ? Math.round(weight) : null, freq: f };
+        }
+    };
+    let lastEnoxBand = null;     // eGFR band that last auto-set the enoxaparin frequency
+    const enoxFor = (weight, freq) => ENOX_ENGINE.calcEnoxaparinACS({ weight, freq });
     const $ = id => document.getElementById(id);
 
     // Static DOM Injections on Load
@@ -840,9 +854,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let fondaWarning = '&nbsp;<small>(Preferred)</small>';
         if (fondaOvr) {
-            fondaWarning = `&nbsp;<span style="color:#c0392b;font-weight:bold;font-size:9px;">⚠️ ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR &lt; ${FONDA_MIN_EGFR}</span>`;
+            fondaWarning = `&nbsp;<span style="color:#c0392b;font-weight:bold;font-size:9px;">ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR &lt; ${FONDA_MIN_EGFR}</span>`;
         } else if (fondaNA) {
-            fondaWarning = `&nbsp;<span style="color:#c0392b;font-size:9px;">⚠️ GFR&lt;${FONDA_MIN_EGFR} — ห้ามให้</span>`;
+            fondaWarning = `&nbsp;<span style="color:#c0392b;font-size:9px;">GFR&lt;${FONDA_MIN_EGFR} — ห้ามให้</span>`;
         }
         
         let html = `
@@ -858,8 +872,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const enoxRecClass = enoxSelected ? 'recommended' : '';
 
         if (!enoxNA || enoxOvr) {
-            const enoxDose = Math.round(weight * 1.0);
             const freq = document.querySelector('input[name="enox-freq"]:checked')?.value || 'q12h';
+            const enox = enoxFor(weight, freq);
+            const enoxDose = enox.dose || 0;
             const chkEnox = chk('enox');
             const chk40 = (choice === 'enox' && enoxDose < 50) ? '☑' : '☐';
             const chk60 = (choice === 'enox' && enoxDose >= 50) ? '☑' : '☐';
@@ -868,7 +883,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let enoxWarning = '';
             if (enoxOvr) {
-                enoxWarning = `&nbsp;<span style="color:#c0392b;font-weight:bold;font-size:9px;">⚠️ ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR &lt; ${ENOX_MIN_EGFR}</span>`;
+                enoxWarning = `&nbsp;<span style="color:#c0392b;font-weight:bold;font-size:9px;">ใช้นอกGuideline ไม่ควรให้เมื่อ eGFR &lt; ${ENOX_MIN_EGFR}</span>`;
             }
             
             html += `
@@ -876,7 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <strong>${chkEnox} Enoxaparin</strong>${enoxWarning}<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${chk40} 0.4 ml</strong> &nbsp;<strong>${chk60} 0.6 ml</strong><br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>${chkQ12} q 12 hr</strong> &nbsp;<strong>${chkOD} OD</strong> × 5 Days<br>
-                <span style="font-size:9px;color:#666;">(1 mg/kg = ${weight > 0 ? enoxDose + ' mg' : '............ mg'} — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br>
+                <span style="font-size:9px;color:#666;">(${enox.mgPerKg} mg/kg = ${weight > 0 ? enoxDose + ' mg' : '............ mg'} — GFR &lt; ${ENOX_OD_EGFR} → 1 mg/kg once daily)<br>
                 (CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)<br>
                 (0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>
             </div>`;
@@ -884,7 +899,7 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `
             <div class="ac-opt na">
                 <strong>☐ Enoxaparin</strong>
-                &nbsp;<span style="font-size:9px;color:#c0392b;">⚠️ GFR&lt;${ENOX_MIN_EGFR} — ไม่แนะนำ</span><br>
+                &nbsp;<span style="font-size:9px;color:#c0392b;">GFR&lt;${ENOX_MIN_EGFR} — ไม่แนะนำ</span><br>
                 <span style="font-size:9px;color:#666;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span>
             </div>`;
         }
@@ -919,9 +934,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!choice) return '--';
         if (choice === 'fonda') return 'Fondaparinux 2.5 mg SC OD × 5d';
         if (choice === 'enox') {
-            const enoxDose = Math.round(weight * 1.0);
             const freq = document.querySelector('input[name="enox-freq"]:checked')?.value || 'q12h';
-            return `Enoxaparin ${enoxDose} mg ${freq === 'q12h' ? 'SC q12h' : 'SC q24h'} × 5d`;
+            const enoxDose = enoxFor(weight, freq).dose;
+            const doseStr = enoxDose == null ? '--' : enoxDose;   // no weight yet: never "null mg"
+            return `Enoxaparin ${doseStr} mg ${freq === 'q12h' ? 'SC q12h' : 'SC q24h'} × 5d`;
         }
         if (choice === 'hep') {
             const hepBolus = Math.min(Math.round(weight * 60), 4000);
@@ -956,20 +972,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const recHep    = egfrKnown && egfrLive < ENOX_MIN_EGFR;
 
         if (egfrKnown && weight > 0) {
-            const enoxDose = Math.round(weight * 1.0);
+            const enoxFreq = document.querySelector('input[name="enox-freq"]:checked')?.value || 'q12h';
+            const enox = enoxFor(weight, enoxFreq);
+            const enoxDose = enox.dose;
             $('ac-fonda-hint').innerHTML = `(Preferred — eGFR ${egfrLive.toFixed(0)})<br><span style="color:#c0392b;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = `Enoxaparin ${enoxDose} mg SC`;
-            $('ac-enox-hint').innerHTML = `(1 mg/kg = ${enoxDose} mg — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
+            $('ac-enox-hint').innerHTML = `(${enox.mgPerKg} mg/kg = ${enoxDose} mg — GFR &lt; ${ENOX_OD_EGFR} → 1 mg/kg once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
         } else {
             $('ac-fonda-hint').innerHTML = `(Preferred — eGFR --)<br><span style="color:#c0392b;">(CI: eGFR &lt;${FONDA_MIN_EGFR} mL/min)<br>(— ถ้าทำ PCI ต้องเพิ่ม UFH bolus)</span>`;
             $('ac-enox-text').textContent = 'Enoxaparin -- mg SC';
-            $('ac-enox-hint').innerHTML = `(1 mg/kg = -- mg — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
+            $('ac-enox-hint').innerHTML = `(1 mg/kg q12h ทุกอายุ = -- mg — GFR &lt; ${ENOX_OD_EGFR} → 1 mg/kg once daily)<br><span style="color:#c0392b;">(CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)</span><br>(0.4 ml = 40 mg, 0.6 ml = 60 mg)`;
             $('ac-hep-hint').textContent = `(eGFR <${ENOX_MIN_EGFR} mL/min)`;
         }
 
-        _applyAcState('fonda', fondaCI, recFonda, egfrKnown ? `⚠️ CI: eGFR ${egfrLive.toFixed(0)} < ${FONDA_MIN_EGFR} — กดอีกครั้งเพื่อ override` : null);
-        _applyAcState('enox',  enoxCI,  recEnox,  egfrKnown ? `⚠️ CI: eGFR ${egfrLive.toFixed(0)} < ${ENOX_MIN_EGFR} — กดอีกครั้งเพื่อ override` : null);
+        _applyAcState('fonda', fondaCI, recFonda, egfrKnown ? `CI: eGFR ${egfrLive.toFixed(0)} < ${FONDA_MIN_EGFR} — กดอีกครั้งเพื่อ override` : null);
+        _applyAcState('enox',  enoxCI,  recEnox,  egfrKnown ? `CI: eGFR ${egfrLive.toFixed(0)} < ${ENOX_MIN_EGFR} — กดอีกครั้งเพื่อ override` : null);
         _applyAcState('hep',   false,   recHep, null);
 
         updateAnticoagOutput();
@@ -990,7 +1008,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 radio.disabled = false;
                 badge.style.display = 'inline-block';
                 badge.className = 'ac-badge ac-badge-ci';
-                badge.textContent = '⚠️ Override CI';
+                badge.textContent = 'Override CI';
                 if (ciDiv) ciDiv.style.display = 'none';
                 if (ovrDiv) {
                     ovrDiv.style.display = 'block';
@@ -1002,7 +1020,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 radio.disabled = false;
                 badge.style.display = 'inline-block';
                 badge.className = 'ac-badge ac-badge-ci';
-                badge.textContent = '⛔ CI';
+                badge.textContent = 'CI';
                 if (ciDiv) {
                     ciDiv.style.display = 'block';
                     ciDiv.textContent = ciMsg || `CI: eGFR < ${drug === 'fonda' ? FONDA_MIN_EGFR : ENOX_MIN_EGFR}`;
@@ -1018,7 +1036,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 label.classList.add('ac-recommended');
                 badge.style.display = 'inline-block';
                 badge.className = 'ac-badge ac-badge-rec';
-                badge.textContent = '✅ แนะนำ';
+                badge.textContent = 'แนะนำ';
             } else {
                 label.classList.remove('ac-recommended');
                 badge.style.display = 'none';
@@ -1040,7 +1058,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 label.classList.remove('ac-disabled');
                 label.classList.add('ac-override-pending');
                 const ciDiv = $(`ac-${drug}-ci-msg`);
-                if (ciDiv) ciDiv.textContent = '⚠️ ยืนยันการ Override? กดอีกครั้งเพื่อเลือกยานี้';
+                if (ciDiv) ciDiv.textContent = 'ยืนยันการ Override? กดอีกครั้งเพื่อเลือกยานี้';
             } else if (label.classList.contains('ac-override-pending')) {
                 label.classList.remove('ac-override-pending');
                 radio.checked = true;
@@ -1068,10 +1086,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!daptHint) return;
         if (vhCount > 0) {
             daptHint.style.display = 'block';
-            daptHint.innerHTML = '⚡ <strong>Very High Risk:</strong> แนะนำ Hold P2Y12 เพื่อทำ Emergency CAG &lt; 2h (ให้ ASA 300 mg อย่างเดียว)';
+            daptHint.innerHTML = '<strong>Very High Risk:</strong> แนะนำ Hold P2Y12 เพื่อทำ Emergency CAG &lt; 2h (ให้ ASA 300 mg อย่างเดียว)';
         } else if (h1Count > 0) {
             daptHint.style.display = 'block';
-            daptHint.innerHTML = '🔴 <strong>High Risk:</strong> Early Invasive &lt; 24h แนะนำ Hold P2Y12 หรือให้ Ticagrelor 180 mg';
+            daptHint.innerHTML = '<strong>High Risk:</strong> Early Invasive &lt; 24h แนะนำ Hold P2Y12 ไปโหลดใน Cath Lab (ไม่แนะนำ routine pretreatment)';
         } else {
             daptHint.style.display = 'block';
             daptHint.innerHTML = 'ℹ️ <strong>Standard ACS:</strong> ASA 300 mg + P2Y12 inhibitor ตามแผนการรักษา';
@@ -1097,6 +1115,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isNaN(cr) && cr > 0 && !isNaN(age) && age >= MIN_AGE && sex) {
             egfr = CLINICAL_ENGINE.calcEGFR_CKD_EPI_2021(cr, age, sex);
             currentEgfr = egfr;
+            // Auto-select the enoxaparin frequency only when the eGFR band changes,
+            // so a clinician's manual override survives later re-renders.
+            const band = ENOX_ENGINE.enoxFreqForEgfr(egfr);
+            if (band && band !== lastEnoxBand) {
+                const r = document.querySelector(`input[name="enox-freq"][value="${band}"]`);
+                if (r) r.checked = true;
+                lastEnoxBand = band;
+            }
             $('screen-egfr').textContent = egfr !== null ? egfr.toFixed(0) : '--';
         } else {
             currentEgfr = null;
@@ -1226,9 +1252,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const daptChoice = document.querySelector('input[name="dapt-p2y12"]:checked')?.value;
         const daptAsa = $('dapt-asa').checked;
         if (asaAllergy) {
-            $('p-asa').innerHTML = '<strong style="color:red;">YES ⚠️</strong>';
-            $('p-asa-stat').innerHTML = '<strong style="color:red;">☒ ห้ามให้ ASA (Allergy ⚠️)</strong>';
-            $('p-asa-cont').innerHTML = '<strong style="color:red;">☒ ห้ามให้ ASA (Allergy ⚠️)</strong>';
+            $('p-asa').innerHTML = '<strong style="color:red;">YES </strong>';
+            $('p-asa-stat').innerHTML = '<strong style="color:red;">ห้ามให้ ASA (Allergy )</strong>';
+            $('p-asa-cont').innerHTML = '<strong style="color:red;">ห้ามให้ ASA (Allergy )</strong>';
         } else {
             $('p-asa').textContent = 'No';
             $('p-asa-stat').textContent = daptAsa ? '☑ ASA (300) 1 tab chew stat' : '☐ ASA (300) 1 tab chew stat';
@@ -1323,6 +1349,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     $('clear-btn').addEventListener('click', () => {
         $('nstemi-form').reset();
+        lastEnoxBand = null;  // next patient: let the eGFR band auto-select the frequency again
         document.querySelectorAll('input[name="anticoag-choice"]').forEach(r => { r.checked = false; });
         document.querySelectorAll('input[name="dapt-p2y12"]').forEach(r => { r.checked = false; });
         calculateAndRender();
@@ -1363,7 +1390,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <strong>☐ Enoxaparin</strong><br>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>☐ 0.4 ml</strong> &nbsp;<strong>☐ 0.6 ml</strong><br>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SC &nbsp;<strong>☐ q 12 hr</strong> &nbsp;<strong>☐ OD</strong> × 5 Days<br>
-            <span style="font-size:9px;color:#666;">(1 mg/kg = ............ mg — GFR &lt; ${ENOX_OD_EGFR} → once daily)<br>
+            <span style="font-size:9px;color:#666;">(1 mg/kg q12h ทุกอายุ = ............ mg — GFR &lt; ${ENOX_OD_EGFR} → 1 mg/kg once daily)<br>
             (CI: eGFR &lt;${ENOX_MIN_EGFR} mL/min)<br>
             (0.4 ml = 40 mg, 0.6 ml = 60 mg)</span>
         </div>

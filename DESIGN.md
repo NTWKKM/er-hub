@@ -89,6 +89,10 @@ Custom properties declared under `:root` in `base.css` for standing-order form p
 
 ---
 
+### rt-PA Rescue Tips Popover
+
+Screen-only button (`.btn-rescue-tips`, outline, full width) below Clear Form on `orders/rtpa.html` and `orders/rtpa-v2.html` opens a native `[popover]` dialog (`#rescue-tips-pop`, max 560px, scrollable) listing sICH and angioedema rescue steps. Hidden in print; the printed standing order is unchanged.
+
 ## 3. Accessibility & Printing Constraints
 
 ### Accessibility (Screen)
@@ -96,6 +100,7 @@ Custom properties declared under `:root` in `base.css` for standing-order form p
 - **Favicon:** Hospital logo PNG (`docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png`) on all 9 pages for tab identification.
 - **ARIA Landmarks:** `role="navigation"` on the sticky nav bar. `aria-label="Home"` on the Home link.
 - **Live Regions:** `aria-live="polite"` on dose summary banners and stroke results container — screen readers announce computed doses without interrupting workflow. Both dose and weight sliders in the drip calculator have dynamic `aria-valuenow` + `aria-valuetext` updated on every `recalculate()` call.
+- **Accessible Names:** Every visible form control has an accessible name. Prefer `<label for="id">` (or a wrapping `<label>`) when visible label text exists; otherwise add a descriptive `aria-label` that names the clinical item and, for repeated cells (NIHSS assessments, Home Medication quantities), the column or drug (e.g. `NIHSS 5a. แขนซ้าย — score, assessment 2`, `Amoxicillin syrup quantity`). Enforced by `tests/a11y-label-guard.test.js`.
 - **Focus Indicators:** Interactive inputs feature a clear outline focus state (`border-color: #c0392b` or `#007bff` with `box-shadow` glow).
 - **Contrasts:** Minimum contrast ratio of 4.5:1 maintained for clinical text labels.
 - **Form Validation:** Non-blocking validation via `ED_VALIDATE` (`shared/form-validate.js`). Inline `.field-error` + `.inline-error-msg` for field-level errors. `.clinical-warning` banner for safety alerts (SK contraindication, absolute CI). Zero `alert()` calls in `orders/*.html` (ER NOTE and NIHSS are a separate, decoupled subsystem and use native `alert()`/`confirm()` — see Asset Isolation Rule).
@@ -117,7 +122,7 @@ Custom properties declared under `:root` in `base.css` for standing-order form p
 - **Manual Fill Support:** When printing blank orders, checkboxes render as ☐, calculated fields replaced with dotted lines. All hardcoded ☑ items are explicitly reset to ☐.
 - **NSTEMI Stat Medications Print:** Uses `.order-list-plain` modifier class (`list-style: none; padding-left: 0`) to render antiplatelet loading options (ASA, Clopidogrel 300/600, Ticagrelor, Prasugrel, ISDN) without bullet markers. 2-line layout: drug name on line 1, dose details indented on line 2 via `<br><span style="padding-left: 2em">`. Prasugrel print line uses normal text color (not red) — its Cath-lab restriction is a workflow note, not a contraindication. Ticagrelor continuation uses `1 x 2 pc` format. DAPT selection dynamically checks (☑) the selected P2Y12 line in both Stat Medications and Continuation sections; unselected options stay ☐.
 - **Lab/IV/O2 Hygiene:** Lab investigations, IV fluids, oxygen, monitoring, and non-drug continuation orders always render as ☐ in print. Only drug-related orders auto-check (☑).
-- **Clinical Guideline Hints:** Inline contraindication and prescribing notes rendered within the printed anticoagulant block using `font-size: 9px; color: #666`. Pattern: `(CI: [threshold] — [action])`. Applies to Fondaparinux `(CI: CrCl <30 mL/min — ถ้าทำ PCI ต้องเสริม UFH bolus)` and dosing reference notes for Enoxaparin syringe sizes. Critical alerts (drug absolutely contraindicated) use `color: #c0392b` with ⚠️ prefix. Non-critical guidance uses neutral `#666` grey.
+- **Clinical Guideline Hints:** Inline contraindication and prescribing notes rendered within the printed anticoagulant block using `font-size: 9px; color: #666`. Pattern: `(CI: [threshold] — [action])`. Applies to Fondaparinux `(CI: eGFR <30 mL/min — ถ้าทำ PCI ต้องเพิ่ม UFH bolus)` and dosing reference notes for Enoxaparin syringe sizes. Critical alerts (drug absolutely contraindicated) use `color: #c0392b` with ⚠️ prefix. Non-critical guidance uses neutral `#666` grey.
 - **Real-time UX Interaction:** `calculateAndRender()` pattern — all NSTEMI inputs wired to a single idempotent render function via `addEventListener('input'/'change')`. Results panel always visible; no gated "calculate" step. Graceful fallback: any missing field renders `--` rather than throwing. Auto-select of recommended drug fires only when a prerequisite value (eGFR) is available, preventing overwrite of manual clinician selection. Print triggered by `id="create-order-btn"` ("🖨️ สร้างใบสั่งยา") calling `window.print()`, and by the floating print action bar (`showFloatBar()` called on page load after `calculateAndRender()`) — `#print-btn` was removed, eliminating the recurring double-fire bug class. `setupCommonActions()` is NOT called for NSTEMI. Blank-order button (`id="print-blank-btn"`) calls `applyBlankTemplate()` + `window.print()` on user click — but cold-load and clear-btn call `applyBlankTemplate()` directly (DOM-only, no print dialog). Clear button resets form + validation state + anticoag/DAPT panel state + calls `calculateAndRender()` (re-renders GRACE score/risk badge to blank state) + `applyBlankTemplate()` without hiding `#results-container`. Print signature block in Column 1 (Progress Note) shows 3-line version attribution: `Version: 2.1.1` / `2025 ACC/AHA ACS` / `2023 ESC NSTEMI Guideline`.
 
 ---
@@ -271,14 +276,27 @@ Standalone worksheets located directly in `tools/` (e.g., `nihss.html`, `Urgent-
 - **Dynamic Medication Tracker**: Live Epinephrine 3–5 min countdown pill with auto-updating color status (green <3m, amber 3–5m, flashing red >5m). Antiarrhythmic (Amiodarone/Lidocaine) max dose clamping and special resuscitation medication quick logs.
 - **Collapsible Clinical Drawers**: Interactive accessible accordions (`role="button"`, `tabindex="0"`, `aria-expanded`) for (1) Resuscitation Drug Indications Guide, (2) 5 H's & 5 T's Diagnostic Checklist, and (3) Post-Cardiac Arrest Care Protocol (Part 11) with auto-open on ROSC.
 - **Timeline & EMR Export**: Real-time event log with timestamps, quick-event text input, undo function, one-click EMR summary copying, and clean black-and-white A4 print stylesheet.
+### Tool Screen System (`tools/screen/`)
+
+Hallmark-redesigned app screens (`tools/mgso4-calculator.html`, `tools/burn-manager.html`) share `tools/screen/tool-screen.css`, which imports `tokens.css` (colour, type, space, motion tokens in OKLCH, filled from the Braun palette above) and `base.css` (Floor rules: `overflow-x: clip`, instant `:focus-visible`, reduced-motion fallback). They still load `shared/base.css` for fonts and the injected nav.
+
+- **Palette**: paper `oklch(93% 0.012 85)` (≈ `#ebe7df`), paper-2 surfaces, ink `oklch(22% 0 0)`, one accent per screen set by `[data-screen]`: OB brick `oklch(46% 0.12 30)`, Burn flame `oklch(54% 0.17 45)`. Status colours (`--color-error`, `--color-warn`, `--color-success` with `-soft`/`-line` variants) carry state only. Burn depth swatches use `--color-deg1/2/3`.
+- **Type**: Inter Tight + Sarabun, one family; fixed 1.2 ratio scale; labels sentence case, never tracked capitals; figures in tabular numerals, never mono.
+- **Components**: `.panel`, `.callout` (`is-danger`, `is-warn`, `is-ok`), `.steps` (numbered order list), `table.data`, `details.disclosure`, `.field`, `.tbtn` (8 states), `.tag`, `.rate-option` (`is-active`). No emoji as icons, no gradients, no side stripes, no card inside a card.
+- **Density**: controls 40px (44px hit target), 4px spacing scale, container 1120px.
+
+### MgSO4 / Severe Preeclampsia (`tools/mgso4-calculator.html`)
+
+- **Signature**: the MNRH 2569 standing order as a numbered sheet: loading figure (4 g, 420 mL/h), maintenance rates (50 mL/h vs 25 mL/h) with the active rate highlighted by three 1 g/h criteria checkboxes, bedside preparation.
+- **Monitoring panel**: optional weight input computes the urine-output notify threshold (0.5 mL/kg/h, per hour and per 4 h); notify table; Mg-toxicity callout.
+- **BP panel**: labetalol 20 → 40 → 80 mg then hydralazine 10 mg ladder, labetalol contraindications, controlled-BP recheck schedule, pregnancy-contraindicated drugs.
+- **Disclosures (closed)**: recurrent seizure, second-line infusions and first-line alternatives, labs and diagnostic criteria, serum Mg levels and antidote, legacy reference (IM Pritchard, other mixes, textbooks).
+
 ### Burn Management & Resuscitation Hub (`tools/burn-manager.html`)
 
-- **Theme & Layout**: Responsive card-based layout with a full-width sticky `% TBSA` Hero summary bar (`--burn-primary: #ea580c`) featuring dynamic severity gradient shifts (Amber $\le 19\%$, Orange $20\text{--}39\%$, Crimson $\ge 40\%$), direct numerical input, and automated ABA referral syncing.
-- **High-Contrast Themed Accordions**: All 5 primary clinical sections use a collapsible accordion structure (Section 1 open by default for immediate emergency resuscitation display) with distinct domain-themed headers and thick left accent bars (`6px solid`):
-  - `sec-fluid` (Fluid Resuscitation): Flame Amber tint (`#fffbeb`, border `#fcd34d`, left `#d97706`, title `#78350f`). Open by default.
-  - `sec-airway` (Airway & Inhalation): Clinical Blue tint (`#eff6ff`, border `#bfdbfe`, left `#2563eb`, title `#1e40af`).
-  - `sec-toxico` (Smoke Toxicology & Antidotes): Royal Purple tint (`#faf5ff`, border `#e9d5ff`, left `#9333ea`, title `#6b21a8`).
-  - `sec-escharotomy` (Escharotomy & ABA Criteria): Surgical Crimson tint (`#fef2f2`, border `#fecaca`, left `#dc2626`, title `#991b1b`).
-  - `sec-painter` (Lund & Browder BSA Painter): Forest Emerald tint (`#f0fdf4`, border `#bbf7d0`, left `#16a34a`, title `#166534`).
-- **Global Accordion Toolbar**: Prominent "➕ ขยายทั้งหมด (Expand All)" and "➖ ยุบทั้งหมด (Collapse All)" controls below the TBSA summary banner for fast triage navigation.
-- **Interactive SVG Painter**: Dual anterior/posterior body diagram with dynamic pediatric scaling (6 age columns), multi-degree paint color palette (1st Degree yellow `#fef08a`, 2nd Degree orange `#fb923c`, 3rd/4th Degree crimson `#dc2626`), preset buttons, and smooth scroll auto-expansion.
+- **Layout**: two columns from 60rem: a sticky summary aside (patient inputs + TBSA panel) beside the clinical modules; one column below 60rem.
+- **Signature**: the TBSA panel on `--color-panel` (dark slate) with a 3.5rem tabular figure; its top edge takes the depth swatch for severity (`severity-minor` deg1, `moderate` deg2, `major`/`critical` deg3); direct % TBSA entry and depth tags sit inside it.
+- **Modules**: all five accordions share one treatment (paper-2, hairline, chevron), keyboard-operable (`role="button"`, `tabindex="0"`, `aria-expanded` synced). Section 1 (fluid) is open by default; the Modified Brooke card carries the accent ring as the recommended formula.
+- **States**: check cards fill with the accent (or error for critical items) when checked; titration box success / `alert-under` warn / `alert-shock` error; script-driven badges use token values, never literal colours.
+- **Painter**: degree buttons with square swatches (`.deg-swatch.swatch-0..3`), the selected degree outlined in ink; SVG fills use the depth tokens; pediatric scaling classes unchanged.
+

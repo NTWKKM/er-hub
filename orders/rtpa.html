@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <meta name="referrer" content="no-referrer">
+    <meta name="description" content="rt-PA stroke fast track worksheet: alteplase dosing and standing order for acute ischemic stroke (AHA/ASA 2026).">
     <title>rt-PA Dose Calculator — ED MNRH</title>
     <link rel="icon" type="image/png" href="../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png">
     <link rel="stylesheet" href="../shared/base.css">
@@ -380,7 +381,7 @@
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
             text-align: left;
             width: 100%;
             box-sizing: border-box;
@@ -484,9 +485,9 @@
             height: 44px;
             font-size: 15px;
             font-weight: bold;
-            background-color: #dc3545 !important;
-            color: #ffffff !important;
-            border: none !important;
+            background-color: #ffffff !important;
+            color: #b02a37 !important;
+            border: 1.5px solid #b02a37 !important;
             border-radius: 8px;
             cursor: pointer;
             margin-top: 0 !important;
@@ -654,6 +655,22 @@
                 font-size: 11pt;
             }
         }
+            [hidden] { display: none !important; }
+
+        /* Post-thrombolysis rescue tips */
+        .rescue-tips { margin-top: 12px; }
+        .btn-rescue-tips { width: 100%; min-height: 40px; padding: 8px 12px; border: 1px solid #d8d4c8; border-radius: 8px; background: #f8f7f4; color: #1a1a1a; font-size: 14px; font-weight: 600; text-align: left; cursor: pointer; white-space: nowrap; transition: background-color 0.15s ease, border-color 0.15s ease; }
+        .btn-rescue-tips:hover { background: #efece4; border-color: #4a4a4a; }
+        .btn-rescue-tips:focus-visible, .btn-rescue-close:focus-visible { outline: 2px solid #1a1a1a; outline-offset: 2px; }
+        .rescue-tips-pop { width: calc(100% - 32px); max-width: 560px; max-height: min(80vh, 720px); overflow-y: auto; margin: auto; padding: 16px 20px; border: 1px solid #d8d4c8; border-radius: 8px; background: #ffffff; color: #1a1a1a; font-size: 14px; line-height: 1.5; }
+        .rescue-tips-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .rescue-tips-pop h2 { font-size: 18px; margin: 0; }
+        .rescue-tips-pop h3 { font-size: 15px; margin: 12px 0 4px; }
+        .rescue-tips-pop ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+        .rescue-tips-src { margin-top: 12px; font-size: 12px; color: #4a4a4a; }
+        .btn-rescue-close { min-height: 32px; padding: 4px 12px; border: 1px solid #d8d4c8; border-radius: 6px; background: #ffffff; cursor: pointer; font-weight: 600; }
+        .btn-rescue-close:hover { border-color: #4a4a4a; }
+        @media print { .rescue-tips { display: none !important; } }
     </style>
 </head>
 
@@ -739,18 +756,46 @@
                 </div>
                 <button type="button" id="clear-btn" class="btn btn-clear-red">Clear Form</button>
 
+                <!-- Post-thrombolysis rescue tips (screen only; not part of the printed order) -->
+                <div class="rescue-tips no-print">
+                    <button type="button" class="btn-rescue-tips" popovertarget="rescue-tips-pop" aria-haspopup="dialog">Tips: sICH และ angioedema</button>
+                    <div id="rescue-tips-pop" popover role="dialog" aria-labelledby="rescue-tips-title" class="rescue-tips-pop">
+                        <div class="rescue-tips-head">
+                            <h2 id="rescue-tips-title">Rescue หลังให้ยาละลายลิ่มเลือด</h2>
+                            <button type="button" class="btn-rescue-close" popovertarget="rescue-tips-pop" popovertargetaction="hide">ปิด</button>
+                        </div>
+                        <h3>Symptomatic ICH (ภายใน 24 ชม.)</h3>
+                        <ol>
+                            <li>หยุดยา alteplase ที่ยังหยดอยู่ทันที</li>
+                            <li>STAT: CBC, PT/INR, aPTT, fibrinogen, type and cross-match; CT brain non-contrast ด่วน</li>
+                            <li>Cryoprecipitate 10 U IV ใน 10-30 นาที; ให้เพิ่มถ้า fibrinogen &lt; 150 mg/dL</li>
+                            <li>Tranexamic acid 1,000 mg IV ใน 10 นาที (หรือ aminocaproic acid 4-5 g IV ใน 1 ชม. แล้ว 1 g IV จนกว่าเลือดจะหยุด)</li>
+                            <li>ปรึกษา hematology และ neurosurgery; คุม BP, ICP, CPP, อุณหภูมิ และน้ำตาล</li>
+                        </ol>
+                        <h3>Orolingual angioedema</h3>
+                        <ol>
+                            <li>ประเมินและรักษา airway; หยุด alteplase และงด ACE inhibitor</li>
+                            <li>Methylprednisolone 125 mg IV, diphenhydramine 50 mg IV, famotidine 20 mg IV</li>
+                            <li>ถ้าบวมมากขึ้น: epinephrine 0.1% 0.3 mL IM หรือ 0.5 mL พ่นจมูก/nebulize</li>
+                            <li>ทางเลือก: icatibant 30 mg SC หรือ C1 esterase inhibitor 20 IU/kg</li>
+                            <li>ถ้า airway เสี่ยง: เตรียม awake fiberoptic intubation</li>
+                        </ol>
+                        <p class="rescue-tips-src">อ้างอิง: AHA/ASA AIS guideline (management of sICH and angioedema after IV thrombolysis); ตรวจสอบกับ protocol ของ รพ. ก่อนใช้</p>
+                    </div>
+                </div>
+
                 <!-- Clinical Evidence & Guidelines Drawer -->
                 <div class="reference-card" style="margin-top:16px; padding:12px 16px; background:#f8f7f4; border:1px solid #d8d4c8; border-radius:8px; font-size:12.5px; color:#4a4a4a;">
                     <details>
                         <summary style="font-weight:700; cursor:pointer; color:#1a1a1a; display:flex; align-items:center; justify-content:space-between;">
-                            <span>📚 ข้อมูลอ้างอิงและแนวทางเวชปฏิบัติ (Clinical Guidelines &amp; Evidence)</span>
+                            <span>ข้อมูลอ้างอิงและแนวทางเวชปฏิบัติ (Clinical Guidelines &amp; Evidence)</span>
                             <span style="font-size:11px; color:#737373;">AHA/ASA 2026 / ESO 2023 / Thai Stroke Society</span>
                         </summary>
                         <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #d8d4c8; line-height:1.6;">
                             <ul style="margin:0; padding-left:18px;">
-                                <li><strong>AHA/ASA AIS 2026:</strong> 2026 Guideline for the Early Management of Patients With Acute Ischemic Stroke (Stroke. 2026;57(2):e1-e120) — Class 1 recommendation for Alteplase 0.9 mg/kg (max 90 mg) or Tenecteplase 0.25 mg/kg single bolus (max 25 mg) within 4.5 hours of onset.</li>
+                                <li><strong>AHA/ASA AIS 2026:</strong> 2026 Guideline for the Early Management of Patients With Acute Ischemic Stroke (Stroke. 2026; doi:10.1161/STR.0000000000000513): Class 1 recommendation for alteplase 0.9 mg/kg (max 90 mg) within 4.5 hours of onset.</li>
                                 <li><strong>BP Safety Thresholds:</strong> Keep SBP &lt; 185 and DBP &lt; 110 mmHg prior to thrombolysis; keep &lt; 180/105 mmHg for ≥24h post-lysis. First-line IV Labetalol 10-20 mg or Nicardipine infusion 5-15 mg/hr.</li>
-                                <li><strong>Low-Dose Alteplase (ENCHANTED Trial):</strong> 0.6 mg/kg (15% bolus, 85% drip over 1 hr, max 60 mg) for Asian populations at high ICH risk (N Engl J Med. 2016;374:2313-2323).</li>
+                                <li><strong>Low-Dose Alteplase (ENCHANTED Trial):</strong> 0.6 mg/kg (15% bolus, 85% drip over 1 hr, max 60 mg) did not meet non-inferiority for functional outcome but had less sICH (N Engl J Med. 2016;374:2313-2323). AHA/ASA 2026 recommends 0.9 mg/kg alteplase or tenecteplase, not 0.6 mg/kg; kept here as an institutional option for patients at high bleeding risk.</li>
                                 <li><strong>Thai Stroke Society:</strong> แนวทางการรักษาโรคหลอดเลือดสมองตีบหรืออุดตันเฉียบพลันด้วยยาละลายลิ่มเลือด (2020).</li>
                             </ul>
                         </div>
@@ -901,7 +946,7 @@
                     </div>
                 </div>
 
-                <div class="version-attribution">Version 2.0 &middot; AHA/ASA 2019 Stroke Guideline &middot; MNRH ED</div>
+                <div class="version-attribution">Version 2.0, AHA/ASA 2026 Stroke Guideline, MNRH ED</div>
             <div id="print-sticker-container"></div>
             </div>
 
@@ -1007,7 +1052,7 @@
             </div>
 
             <p style="font-size:9pt;text-align:center;margin:4px 0;">
-                ให้ผู้ป่วยหรือผู้มีอำนาจกระทำการแทนผู้ป่วยเป็นผู้กรอกข้อความและกาเครื่องหมาย ✓ ในช่อง ☐</p>
+                ให้ผู้ป่วยหรือผู้มีอำนาจกระทำการแทนผู้ป่วยเป็นผู้กรอกข้อความและกาเครื่องหมาย ในช่อง ☐</p>
 
             <p style="font-size:9pt;">
                 โดยหนังสือฉบับนี้ ข้าพเจ้า นาย/นาง/นางสาว <span class="dotted-line" style="min-width:350px;"></span>
@@ -1517,7 +1562,7 @@
             if (ED_PRINT_BOOTSTRAP.handlePrintBlankDirect(() => document.getElementById('print-blank-btn').click())) return;
 
             ED_COMPONENTS.injectNavBar(undefined, '../docs/Logo_of_Maharat_Nakhon_Ratchasima-removebg-preview.png',
-                'rt-PA Stroke FAST TRACK — MNRH-ED Guideline: Thai Stroke Society 2020 &nbsp;|&nbsp; Version 2.0');
+                'rt-PA Stroke FAST TRACK — MNRH-ED Guideline: AHA/ASA 2026, Thai Stroke Society &nbsp;|&nbsp; Version 2.0');
             ED_COMPONENTS.setupCommonActions();
         });
     </script>

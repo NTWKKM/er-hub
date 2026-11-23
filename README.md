@@ -1,6 +1,6 @@
 # MNRH-ED Standing Order Hub
 
-Emergency Department clinical standing order system for **Maharat Nakhon Ratchasima Hospital** (โรงพยาบาลมหาราชนครราชสีมา). 100% client-side static site — no backend, no build step, no PHI stored.
+Emergency Department clinical standing order system for **Maharat Nakhon Ratchasima Hospital** (โรงพยาบาลมหาราชนครราชสีมา). 100% client-side static site — no backend, no build step, nothing sent to a server. ER NOTE and Home Medication drafts (which include the HN) are kept only in the browser's `localStorage`. Once a draft has gone 24 hours without edits it is removed at the next expiration check, so an idle draft can outlive 24 hours until that check runs. ER NOTE checks when a page loads or becomes visible again; Home Medication checks only when the page loads.
 
 ## Architecture
 
@@ -32,6 +32,7 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 │   ├── score-hub.html           ← Clinical Score & Risk Hub (T8)
 │   ├── rsi-checklist.html       ← RSI Checklist (T10)
 │   ├── resus-timer.html         ← Resuscitation Timer (T11)
+│   ├── abx-renal-dosing.html    ← Antimicrobial Renal Dosing Tool (T12)
 │   └── er-note/
 │       ├── index.html           ← ER NOTE portal hub (T9, 7 templates)
 │       ├── general-er-note.html ← General ER Note
@@ -53,32 +54,45 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 │   ├── stroke-engine.js         ← Stroke rt-PA thrombolytic dosing engine
 │   ├── stemi-engine.js          ← STEMI TNK weight-bracket dosing engine
 │   ├── ob-engine.js             ← MgSO4 dosing & pre-eclampsia severity classification engine
+│   ├── abx-engine.js            ← Antimicrobial renal dose adjustment (CrCl / eGFR tiers)
 │   ├── burn-engine.js           ← Burn assessment & resuscitation engine
 │   ├── electrolyte-engine.js    ← Electrolyte & acid-base calculation engine
 │   ├── drug-data.js             ← 17-drug catalog (concentrations, limits, warnings)
 │   ├── print-bootstrap.js       ← Print/page lifecycle (show/clear/print-blank-direct)
 │   ├── blank-print-engine.js    ← Declarative blank-print reset (rtpa/nstemi)
 │   └── form-validate.js         ← Non-blocking validation (replaces alert())
-├── tests/                       ← Unit tests (node:test, zero deps)
-│   ├── calc-engine.test.js
+├── tests/                       ← Unit + DOM tests (node:test; jsdom dev dependency)
+│   ├── a11y-label-guard.test.js
+│   ├── abx-engine.test.js
+│   ├── adversarial-abx-fuzz.test.js
+│   ├── adversarial-abx-ui.test.js
+│   ├── antibiotic-dosing.test.js
 │   ├── anticoag-engine.test.js
-│   ├── clinical-engine.test.js
-│   ├── stroke-engine.test.js
-│   ├── stemi-engine.test.js
-│   ├── ob-engine.test.js
-│   ├── burn-engine.test.js
-│   ├── electrolyte-engine.test.js
 │   ├── antivenom.test.js
-│   ├── drug-data.test.js
+│   ├── burn-engine.test.js
+│   ├── calc-engine.test.js
+│   ├── clinical-engine.test.js
 │   ├── components.test.js
-│   ├── score-hub.test.js
-│   ├── tb-calculator.test.js
-│   ├── v2-worksheets.test.js
-│   ├── index-flip-cards.test.js
 │   ├── dead-css-guard.test.js
+│   ├── drug-data.test.js
+│   ├── electrolyte-engine.test.js
+│   ├── empirical-m1-abx-engine.test.js
+│   ├── er-note-retention.test.js
 │   ├── id-integrity-guard.test.js
+│   ├── index-flip-cards.test.js
+│   ├── input-read-guard.test.js
+│   ├── ob-engine.test.js
 │   ├── order-safety-guard.test.js
-│   └── pwa-assets.test.js
+│   ├── pwa-assets.test.js
+│   ├── resus-timer.test.js
+│   ├── rtpa-remediation.test.js
+│   ├── score-hub.test.js
+│   ├── stemi-engine.test.js
+│   ├── stroke-engine.test.js
+│   ├── sw-update-toast.test.js
+│   ├── tb-calculator.test.js
+│   └── v2-worksheets.test.js
+├── .github/workflows/test.yml  ← CI: pnpm test + pnpm audit on push to main and on PRs
 ├── service-worker.js            ← PWA offline cache (network-first nav, cache-first assets)
 ├── manifest.json                ← PWA manifest (installable app)
 ├── ARCHITECTURE.md              ← System architecture & standing constraints
@@ -89,16 +103,18 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 
 ## Deployment
 
-GitHub Pages at **NTWKKM/er-hub**. Push to `main` → live. No CI build needed.
+GitHub Pages at **NTWKKM/er-hub**. Push to `main` → live. No build step; GitHub Actions runs the test suite and dependency audit on pushes to `main` and on pull requests (not on pushes to other branches).
 
 ## Key Design Rules
 
 - **Vanilla stack** — no Vite/Webpack/bundler. Offline-capable, GitHub Pages compatible, zero build dependencies.
-- **No npm dependencies** — tests use `node:test` (Node built-in).
+- **No runtime dependencies** — the site ships zero packages. Tests use `node:test`; `jsdom` is the only dev dependency (managed with `pnpm`).
 - **ER NOTE is standalone** — uses local `er-note.css`/`er-note.js`, not `shared/` modules.
 - **Braun cream theme** for orders/portal; dark glassmorphism for ER NOTE.
 - **Print output is plain text** — black-on-white A4, no screen-only UI.
-- **`CACHE_VERSION` sync** — `service-worker.js` must match `index.html` nav-right string.
+- **`CACHE_VERSION` bump** — bump `CACHE_VERSION`/`CACHE_DATE` in `service-worker.js` on every shipped change; the nav version badge reads it at runtime.
+- **Labelled controls** — every form control needs an accessible name (`<label for>`, wrapping `<label>`, or `aria-label`); enforced by `a11y-label-guard.test.js`.
+- **Every input reaches the order** — order-page controls must be read by script; enforced by `input-read-guard.test.js`.
 - **No `alert()`** — use `ED_VALIDATE` non-blocking validation.
 
 See `ARCHITECTURE.md`, `DESIGN.md`, and `CONTEXT.md` for full specifications. See `CHANGELOG.md` for version history.
@@ -106,7 +122,8 @@ See `ARCHITECTURE.md`, `DESIGN.md`, and `CONTEXT.md` for full specifications. Se
 ## Testing
 
 ```bash
-npm test
+pnpm install
+pnpm test
 ```
 
-Runs 367 unit tests via Node's built-in `node:test` (zero dependencies). Covers `calc-engine.js` (drip rate), `anticoag-engine.js` (heparin dosing + titration), `stroke-engine.js` (rt-PA dosing), `stemi-engine.js` (TNK dosing), `ob-engine.js` (MgSO4 dosing & toxicity evaluation), `burn-engine.js` (TBSA & fluid formulas), `electrolyte-engine.js` (Adrogué-Madias, FWD, potassium & acid-base math), `clinical-engine.js` (eGFR + GRACE score + Killip lookup + riskLevel boundaries), `drug-data.js` (17-drug catalog validation + absoluteMaxPerHour), `components.js` (date/time formatting), `form-validate.js`, `print-bootstrap.js`, `blank-print-engine.js`, and structural regression guards (dead-css, id-integrity, order-safety, PWA assets, score-hub, TB calculator, NIHSS V2, and 3D index flip cards). Tests are dev-only — they never ship to the browser.
+Runs 669 tests via Node's built-in `node:test` (DOM tests use `jsdom`). Covers `calc-engine.js` (drip rate), `anticoag-engine.js` (heparin dosing + titration), `stroke-engine.js` (rt-PA dosing), `stemi-engine.js` (TNK dosing), `ob-engine.js` (MgSO4 dosing & toxicity evaluation), `burn-engine.js` (TBSA & fluid formulas), `electrolyte-engine.js` (Adrogué-Madias, FWD, potassium & acid-base math), `clinical-engine.js` (eGFR + GRACE score + Killip lookup + riskLevel boundaries), `drug-data.js` (17-drug catalog validation + absoluteMaxPerHour), `components.js` (date/time formatting), `form-validate.js`, `print-bootstrap.js`, `blank-print-engine.js`, and structural regression guards (dead-css, id-integrity, order-safety, PWA assets, score-hub, TB calculator, NIHSS V2, 3D index flip cards, input-read, accessible-label, and ER NOTE draft-retention guards). Tests are dev-only — they never ship to the browser.

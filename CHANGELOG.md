@@ -1,5 +1,41 @@
 # Changelog
 
+## [3.4.0] — 2026-11-22
+
+### rt-PA and NSTEMI Re-audit: Enoxaparin Dosing, Guideline Alignment, Rescue Tips, Polish
+
+- **NSTEMI V1 and V2 (`orders/nstemi.html`, `orders/nstemi-v2.html`, `shared/clinical-engine.js`):**
+  - Enoxaparin is 1 mg/kg SC q12h at every age (the 0.75 mg/kg age ≥ 75 regimen is STEMI-only and was removed after review); eGFR < 30 gives 1 mg/kg once daily. Dosing lives in `CLINICAL_ENGINE.calcEnoxaparinACS()` shared by both pages, with an inline fallback for HTML/engine version skew.
+  - Enoxaparin frequency auto-switches to once daily when eGFR falls below 30 and back when it rises; a manual choice survives until the eGFR band changes.
+  - Fondaparinux contraindication stays at eGFR < 30 (a move to < 20 was reverted after review; ESC 2023 states CrCl < 20, the product label CrCl < 30).
+  - V2 high-risk (invasive < 24 h) hint no longer offers ticagrelor pretreatment (ACC/AHA 2025).
+  - Thai 0.4 / 0.6 mL pre-filled syringe selection kept as is.
+- **rt-PA V1 and V2 (`orders/rtpa.html`, `orders/rtpa-v2.html`):** screen-only "Tips" popover for symptomatic ICH and orolingual angioedema after thrombolysis (printed order unchanged). Guideline labels aligned to AHA/ASA 2026; V1 reference no longer cites tenecteplase; low-dose alteplase reference states that AHA/ASA 2026 recommends 0.9 mg/kg or tenecteplase and keeps 0.6 mg/kg as an institutional option.
+- **Hallmark polish (no layout change):** emoji icons removed except strings pinned by tests, `transition: all` replaced, label capitals and mono removed, 10px screen text raised to 11px, risk-badge contrast raised, Clear Form demoted to an outline button, meta descriptions added.
+- **Service worker version skew (`service-worker.js`):** code (navigations, HTML, JS, CSS, JSON) is now network-first with `cache: 'no-cache'`, a 5 s timeout and cache fallback, so new HTML can no longer run against an older cached engine. The `/shared/*` static cache route is removed (only `docs/*` remains), precache bypasses the HTTP cache, and offline navigations ignore query strings so ER NOTE `?draft=` links open from cache. Fonts, images and PDFs stay cache-first.
+- **Tests:** `tests/nstemi-anticoag.test.js` (14) and `tests/sw-fetch-strategy.test.js` (8), including the first DOM tests for NSTEMI V1 (644 total). SW cache `er-hub-v121`.
+
+## [3.3.0] — 2026-11-22
+
+### MgSO4 and Burn Screens Redesigned; Severe Preeclampsia Order Updated to MNRH 2569 / RTCOG OB 69-046
+
+- **MgSO4 (`tools/mgso4-calculator.html`, `shared/ob-engine.js`):** the screen now leads with the MNRH standing order (loading 10% MgSO4 4 g + D5W 100 mL over 20 min at 420 mL/h; maintenance 50% MgSO4 40 g + 5% D/N/2 1000 mL at 50 mL/h, or 25 mL/h if BMI < 25, Cr > 1.1 mg/dL or UO < 0.5 mL/kg/h; monitoring with notify thresholds; labetalol 20/40/80 mg then hydralazine 10 mg ladder; BP recheck schedule). Added weight-based urine-output threshold, serum Mg table and second-line infusions (RTCOG). Toxicity RR threshold is now < 14/min; renal impairment keeps the 4 g loading. Legacy formulas, IM Pritchard and textbook variants moved to a closed reference section.
+- **Burn hub (`tools/burn-manager.html`):** sticky patient and TBSA summary beside the modules, one accordion treatment, keyboard-operable headers, token colours, no emoji icons, 12px type floor. All 41 fields, 121 script hooks and every calculation unchanged.
+- **Shared screen system (`tools/screen/`):** Hallmark tokens, base and component CSS for the redesigned tools; cached by the service worker (`er-hub-v120`).
+- **Tests:** ob-engine RR boundary updated to 14 and 7 standing-order tests added (622 total).
+
+## [3.2.0] — 2026-11-22
+
+### Audit Remediation: PHI Retention, Antivenom V2 Allergy Print, Accessibility, pnpm & CI
+
+- **Antivenom V2 (`orders/antivenom-v2.html`):** the horse-serum allergy free-text detail now prints on the order (`YES (Allergy) — <detail>`), rendered via `textContent`. Previously the field was shown but its value was dropped.
+- **Patient identifier retention (`tools/er-note/er-note.js`, `tools/Urgent-Clinic-Home-Medication.html`):** drafts holding the HN are purged after 24 h without edits (ER NOTE also removes future-dated and orphaned draft keys, and re-checks on tab re-focus). Home Medication drafts are stored as `{ savedAt, fields }`; legacy drafts are discarded once.
+- **Service worker (`service-worker.js`):** offline cache miss returns a `503` response instead of `undefined`; Static Routing API patterns resolve against the SW scope. Cache bumped to `er-hub-v119` (`22/11/2569`).
+- **Accessibility:** all 205 previously unlabelled form controls now have an accessible name (`<label for>` or `aria-label`), across NIHSS, ER NOTE, Home Medication, Electrolyte Hub, Burn Hub and order pages.
+- **Guards & tests:** added `input-read-guard`, `a11y-label-guard`, `er-note-retention` suites plus antivenom-v2 and service-worker regressions (558 → 613 tests).
+- **Tooling:** migrated to pnpm (`pnpm-lock.yaml`, standalone `pnpm-workspace.yaml`, `packageManager`, `.nvmrc`); `jsdom` 30.1.3 clears the `undici` and `source-map-js` advisories; GitHub Actions workflow runs tests and dependency audit. `package.json` version aligned with this changelog.
+- **Includes since 3.1.6:** Antimicrobial Renal Dosing Guide (T12, `shared/abx-engine.js`, PR #20) and English rt-PA labels/action buttons (`er-hub-v117`–`v118`).
+
 ## [3.1.6] — 2026-09-15
 
 ### Tenecteplase (TNK) Ceiling Cap Alignment & SW Cache Bump

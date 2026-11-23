@@ -245,3 +245,17 @@ describe('PWA Cache Assets Validation', () => {
         );
     });
 });
+
+describe('Service worker fetch fallbacks', () => {
+    const sw = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'service-worker.js'), 'utf8');
+
+    test('Cache-first branch never resolves respondWith() with undefined when offline', () => {
+        assert.doesNotMatch(sw, /\.catch\(\(\)\s*=>\s*cached\)/);
+        assert.match(sw, /new Response\('', \{ status: 503/);
+    });
+
+    test('Static routes are resolved against the SW scope, not the origin root', () => {
+        assert.doesNotMatch(sw, /pathname:\s*'\/(shared|docs)\/\*'/);
+        assert.match(sw, /new URL\(self\.registration\.scope\)\.pathname/);
+    });
+});

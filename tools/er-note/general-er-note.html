@@ -47,7 +47,7 @@
       <button type="button" class="chip" data-text="Altered mental status">Altered mental status</button>
     </div>
   </div>
-  <div class="field-row"><label>อาการหลัก (Chief complaint)</label><input type="text" id="cc-text" placeholder="พิมพ์อาการหลักของผู้ป่วย"></div>
+  <div class="field-row"><label for="cc-text">อาการหลัก (Chief complaint)</label><input type="text" id="cc-text" placeholder="พิมพ์อาการหลักของผู้ป่วย"></div>
   <div class="field-row"><label>ประวัติการเจ็บป่วยปัจจุบัน (HPI) — เลือกได้จาก chip</label>
     <div class="chip-row" data-target="hpi-text">
       <button type="button" class="chip" data-text="เริ่มเป็นทันที (Sudden onset).">เริ่มเป็นทันที (Sudden onset)</button>
@@ -79,22 +79,22 @@
   </div>
   <div class="field-row"><label for="pmh-text">ประวัติการเจ็บป่วยเดิม (Past medical history)</label><textarea id="pmh-text"></textarea></div>
   <div class="inline-row">
-    <div class="field-row"><label>ยาที่รับประทาน (Medications)</label><input type="text" id="meds-text"></div>
-    <div class="field-row"><label>การแพ้ยา (Allergies)</label><input type="text" id="allergy-text" placeholder="NKDA / ระบุยาที่แพ้"></div>
+    <div class="field-row"><label for="meds-text">ยาที่รับประทาน (Medications)</label><input type="text" id="meds-text"></div>
+    <div class="field-row"><label for="allergy-text">การแพ้ยา (Allergies)</label><input type="text" id="allergy-text" placeholder="NKDA / ระบุยาที่แพ้"></div>
   </div>
 </div>
 
 <div class="card">
   <h2 class="section-title"><span class="num">3</span>Vitals &amp; General Appearance</h2>
   <div class="vitals-grid">
-    <div class="field-row"><label>BP</label><input type="text" id="vit-bp"></div>
-    <div class="field-row"><label>HR</label><input type="text" id="vit-hr"></div>
-    <div class="field-row"><label>RR</label><input type="text" id="vit-rr"></div>
-    <div class="field-row"><label>Temp</label><input type="text" id="vit-t"></div>
-    <div class="field-row"><label>SpO₂</label><input type="text" id="vit-spo2"></div>
-    <div class="field-row"><label>GCS / E V M</label><input type="text" id="vit-gcs"></div>
+    <div class="field-row"><label for="vit-bp">BP</label><input type="text" id="vit-bp"></div>
+    <div class="field-row"><label for="vit-hr">HR</label><input type="text" id="vit-hr"></div>
+    <div class="field-row"><label for="vit-rr">RR</label><input type="text" id="vit-rr"></div>
+    <div class="field-row"><label for="vit-t">Temp</label><input type="text" id="vit-t"></div>
+    <div class="field-row"><label for="vit-spo2">SpO₂</label><input type="text" id="vit-spo2"></div>
+    <div class="field-row"><label for="vit-gcs">GCS / E V M</label><input type="text" id="vit-gcs"></div>
   </div>
-  <div class="field-row"><label>General appearance</label><input type="text" id="gen-app"></div>
+  <div class="field-row"><label for="gen-app">General appearance</label><input type="text" id="gen-app"></div>
 </div>
 
 <div class="card">
@@ -142,9 +142,9 @@
 
 <div class="card">
   <h2 class="section-title"><span class="num">8</span>Plan &amp; Disposition</h2>
-  <div class="field-row"><label>Working diagnosis</label><input type="text" id="general-dx"></div>
-  <div class="field-row"><label>Plan</label><textarea id="general-plan"></textarea></div>
-  <div class="field-row"><label>Disposition</label>
+  <div class="field-row"><label for="general-dx">Working diagnosis</label><input type="text" id="general-dx"></div>
+  <div class="field-row"><label for="general-plan">Plan</label><textarea id="general-plan"></textarea></div>
+  <div class="field-row"><label for="general-disp">Disposition</label>
     <select id="general-disp">
       <option value="">— select —</option>
       <option>Admit</option>

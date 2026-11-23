@@ -35,7 +35,7 @@
 
 <div class="card">
   <h2 class="section-title"><span class="num">1</span>ประวัติอาการปวด (Pain History)</h2>
-  <div class="field-row"><label>การเริ่มและความก้าวหน้า (Onset & progression)</label><input type="text" id="abdo-onset" placeholder="sudden vs gradual, constant vs colicky"></div>
+  <div class="field-row"><label for="abdo-onset">การเริ่มและความก้าวหน้า (Onset & progression)</label><input type="text" id="abdo-onset" placeholder="sudden vs gradual, constant vs colicky"></div>
   <div class="field-row"><label>ตำแหน่ง (Location)</label>
     <div class="radio-group">
       <label><input type="radio" name="abdo-location" value="RUQ"> RUQ</label>
@@ -80,10 +80,10 @@
 
 <div class="card">
   <h2 class="section-title"><span class="num">2</span>ประวัติการผ่าตัดและสูตินรีเวช (Past Surgery & Gynae)</h2>
-  <div class="field-row"><label>ประวัติการผ่าตัดช่องท้อง (Prior abdominal surgery)</label><textarea id="abdo-surgery" placeholder="appendectomy, cholecystectomy, caesarean"></textarea></div>
+  <div class="field-row"><label for="abdo-surgery">ประวัติการผ่าตัดช่องท้อง (Prior abdominal surgery)</label><textarea id="abdo-surgery" placeholder="appendectomy, cholecystectomy, caesarean"></textarea></div>
   <div class="inline-row">
-    <div class="field-row"><label>ประจำเดือนครั้งสุดท้าย (LMP)</label><input type="text" id="abdo-lmp"></div>
-    <div class="field-row"><label>การตรวจการตั้งครรภ์ (Pregnancy test)</label>
+    <div class="field-row"><label for="abdo-lmp">ประจำเดือนครั้งสุดท้าย (LMP)</label><input type="text" id="abdo-lmp"></div>
+    <div class="field-row"><label for="abdo-hcg">การตรวจการตั้งครรภ์ (Pregnancy test)</label>
       <select id="abdo-hcg">
         <option value="">— select —</option>
         <option>Negative</option>
@@ -91,13 +91,13 @@
         <option>Not done</option>
       </select>
     </div>
-    <div class="field-row"><label>ประวัติสูตินรีเวช (Gynae history)</label><input type="text" id="abdo-gynae"></div>
+    <div class="field-row"><label for="abdo-gynae">ประวัติสูตินรีเวช (Gynae history)</label><input type="text" id="abdo-gynae"></div>
   </div>
 </div>
 
 <div class="card">
   <h2 class="section-title"><span class="num">3</span>Physical Exam</h2>
-  <div class="field-row"><label>General appearance</label><input type="text" id="abdo-general" placeholder="well / toxic / distended"></div>
+  <div class="field-row"><label for="abdo-general">General appearance</label><input type="text" id="abdo-general" placeholder="well / toxic / distended"></div>
   <div class="field-row"><label>Abdomen</label>
     <div class="checkbox-group">
       <label><input type="checkbox" id="exam-soft"> Soft, non-tender</label>
@@ -110,7 +110,7 @@
       <label><input type="checkbox" id="exam-distended"> Distended</label>
     </div>
   </div>
-  <div class="field-row"><label>Rectal / pelvic</label><input type="text" id="abdo-rectal"></div>
+  <div class="field-row"><label for="abdo-rectal">Rectal / pelvic</label><input type="text" id="abdo-rectal"></div>
 </div>
 
 <div class="card">
@@ -196,13 +196,13 @@
 
 <div class="card">
   <h2 class="section-title"><span class="num">8</span>Plan & Disposition</h2>
-  <div class="field-row"><label>Working diagnosis</label><input type="text" id="abdo-dx"></div>
-  <div class="field-row"><label>Plan</label><textarea id="abdo-plan"></textarea></div>
+  <div class="field-row"><label for="abdo-dx">Working diagnosis</label><input type="text" id="abdo-dx"></div>
+  <div class="field-row"><label for="abdo-plan">Plan</label><textarea id="abdo-plan"></textarea></div>
 </div>
 
 <div class="card">
   <h2 class="section-title"><span class="num">9</span>Disposition</h2>
-  <div class="field-row"><label>Decision</label>
+  <div class="field-row"><label for="abdo-disp">Decision</label>
     <select id="abdo-disp">
       <option value="">— select —</option>
       <option>OR / surgical consult</option>
