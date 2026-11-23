@@ -92,7 +92,7 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 │   ├── sw-update-toast.test.js
 │   ├── tb-calculator.test.js
 │   └── v2-worksheets.test.js
-├── .github/workflows/test.yml  ← CI: pnpm test + pnpm audit on push/PR
+├── .github/workflows/test.yml  ← CI: pnpm test + pnpm audit on push to main and on PRs
 ├── service-worker.js            ← PWA offline cache (network-first nav, cache-first assets)
 ├── manifest.json                ← PWA manifest (installable app)
 ├── ARCHITECTURE.md              ← System architecture & standing constraints
@@ -103,7 +103,7 @@ index.html                       ← Portal hub (Braun × Mid-Century Modern, SW
 
 ## Deployment
 
-GitHub Pages at **NTWKKM/er-hub**. Push to `main` → live. No build step; GitHub Actions runs the test suite and dependency audit on every push and pull request.
+GitHub Pages at **NTWKKM/er-hub**. Push to `main` → live. No build step; GitHub Actions runs the test suite and dependency audit on pushes to `main` and on pull requests (not on pushes to other branches).
 
 ## Key Design Rules
 
